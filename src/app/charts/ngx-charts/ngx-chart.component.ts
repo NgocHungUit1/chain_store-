@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import * as shape from 'd3-shape';
 import * as d3 from 'd3';
 import { single, multi, generateData } from './chartData';
-import { colorSets } from '@swimlane/ngx-charts/release/utils/color-sets';
+import { colorSets } from '@swimlane/ngx-charts/lib/utils/color-sets';
 @Component({
   selector: 'app-ngxchart',
   templateUrl: './ngx-chart.component.html',
