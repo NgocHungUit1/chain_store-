@@ -41,7 +41,7 @@ export class InputfieldComponent {
 
   constructor(private ngZone: NgZone) {}
 
-  @ViewChild('autosize')
+  @ViewChild('autosize', {static:true})
   autosize: CdkTextareaAutosize;
 
   triggerResize() {

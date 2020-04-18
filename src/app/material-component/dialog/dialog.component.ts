@@ -1,9 +1,9 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-dialog-overview-example-dialog',
-  template: `<h1 mat-dialog-title>Hi {{data.name}}</h1>
+    selector: 'app-dialog-overview-example-dialog',
+    template: `<h1 mat-dialog-title>Hi {{data.name}}</h1>
 <div mat-dialog-content>
   <p>What's your favorite animal?</p>
   <mat-form-field>
@@ -16,36 +16,36 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 </div>`
 })
 export class DialogOverviewExampleDialogComponent {
-  constructor(
-    public dialogRef: MatDialogRef<DialogOverviewExampleDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
+    constructor(
+        public dialogRef: MatDialogRef<DialogOverviewExampleDialogComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: any
+    ) { }
 
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
+    onNoClick(): void {
+        this.dialogRef.close();
+    }
 }
 
 @Component({
-  selector: 'app-dialog',
-  templateUrl: './dialog.component.html',
-  styleUrls: ['./dialog.component.scss']
+    selector: 'app-dialog',
+    templateUrl: './dialog.component.html',
+    styleUrls: ['./dialog.component.scss']
 })
 export class DialogComponent {
-  animal: string;
-  name: string;
+    animal: string;
+    name: string;
 
-  constructor(public dialog: MatDialog) {}
+    constructor(public dialog: MatDialog) { }
 
-  openDialog(): void {
-    const dialogRef = this.dialog.open(DialogOverviewExampleDialogComponent, {
-      width: '250px',
-      data: { name: this.name, animal: this.animal }
-    });
+    openDialog(): void {
+        const dialogRef = this.dialog.open(DialogOverviewExampleDialogComponent, {
+            width: '250px',
+            data: { name: this.name, animal: this.animal }
+        });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-      this.animal = result;
-    });
-  }
+        dialogRef.afterClosed().subscribe(result => {
+            console.log('The dialog was closed');
+            this.animal = result;
+        });
+    }
 }

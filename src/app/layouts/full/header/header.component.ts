@@ -7,6 +7,10 @@ import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 })
 export class AppHeaderComponent {
   public config: PerfectScrollbarConfigInterface = {};
+	
+  
+
+
   // This is for Notifications
   notifications: Object[] = [
     {

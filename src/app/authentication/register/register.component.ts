@@ -6,7 +6,8 @@ import {
   Validators,
   FormControl
 } from '@angular/forms';
-import { CustomValidators } from 'ng2-validation';
+import { CustomValidators  } from 'ngx-custom-validators';
+
 
 const password = new FormControl('', Validators.required);
 const confirmPassword = new FormControl('', CustomValidators.equalTo(password));

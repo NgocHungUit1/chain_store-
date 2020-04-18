@@ -2,12 +2,20 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import {
-  MatIconModule,
-  MatCardModule,
-  MatInputModule,
-  MatCheckboxModule,
-  MatButtonModule
-} from '@angular/material';
+    MatIconModule
+} from '@angular/material/icon';
+import {
+    MatCardModule,
+} from '@angular/material/card';
+import {
+    MatInputModule
+} from '@angular/material/input';
+import {
+    MatCheckboxModule
+} from '@angular/material/checkbox';
+import {
+    MatButtonModule
+} from '@angular/material/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
@@ -19,24 +27,24 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    RouterModule.forChild(AuthenticationRoutes),
-    MatIconModule,
-    MatCardModule,
-    MatInputModule,
-    MatCheckboxModule,
-    MatButtonModule,
-    FlexLayoutModule,
-    FormsModule,
-    ReactiveFormsModule
-  ],
-  declarations: [
-    ErrorComponent,
-    ForgotComponent,
-    LockscreenComponent,
-    LoginComponent,
-    RegisterComponent
-  ]
+    imports: [
+        CommonModule,
+        RouterModule.forChild(AuthenticationRoutes),
+        MatIconModule,
+        MatCardModule,
+        MatInputModule,
+        MatCheckboxModule,
+        MatButtonModule,
+        FlexLayoutModule,
+        FormsModule,
+        ReactiveFormsModule
+    ],
+    declarations: [
+        ErrorComponent,
+        ForgotComponent,
+        LockscreenComponent,
+        LoginComponent,
+        RegisterComponent
+    ]
 })
-export class AuthenticationModule {}
+export class AuthenticationModule { }

@@ -3,60 +3,64 @@ import { Observable, Observer } from 'rxjs';
 import { FormControl } from '@angular/forms';
 
 export interface ExampleTab {
-  label: string;
-  content: string;
+    label: string;
+    content: string;
 }
 
 @Component({
-  selector: 'app-tabs',
-  templateUrl: './tabs.component.html',
-  styleUrls: ['./tabs.component.scss']
+    selector: 'app-tabs',
+    templateUrl: './tabs.component.html',
+    styleUrls: ['./tabs.component.scss']
 })
 export class TabsComponent {
-  tabs = ['First', 'Second', 'Third'];
-  selected = new FormControl(0);
+    tabs = ['First', 'Second', 'Third'];
+    selected = new FormControl(0);
 
-  tabLoadTimes: Date[] = [];
+    tabLoadTimes: Date[] = [];
 
-  asyncTabs: Observable<ExampleTab[]>;
+    asyncTabs: Observable<ExampleTab[]>;
 
-  links = ['First', 'Second', 'Third'];
-  activeLink = this.links[0];
-  background = '';
+    links = ['First', 'Second', 'Third'];
+    activeLink = this.links[0];
+    background = '';
 
-  addTab(selectAfterAdding: boolean) {
-    this.tabs.push('New');
+    addTab(selectAfterAdding: boolean) {
+        this.tabs.push('New');
 
-    if (selectAfterAdding) {
-      this.selected.setValue(this.tabs.length - 1);
-    }
-  }
-
-  removeTab(index: number) {
-    this.tabs.splice(index, 1);
-  }
-
-  getTimeLoaded(index: number) {
-    if (!this.tabLoadTimes[index]) {
-      this.tabLoadTimes[index] = new Date();
+        if (selectAfterAdding) {
+            this.selected.setValue(this.tabs.length - 1);
+        }
     }
 
-    return this.tabLoadTimes[index];
-  }
+    removeTab(index: number) {
+        this.tabs.splice(index, 1);
+    }
 
-  constructor() {
-    this.asyncTabs = Observable.create((observer: Observer<ExampleTab[]>) => {
-      setTimeout(() => {
-        observer.next([
-          { label: 'First', content: 'Content 1' },
-          { label: 'Second', content: 'Content 2' },
-          { label: 'Third', content: 'Content 3' }
-        ]);
-      }, 1000);
-    });
-  }
+    getTimeLoaded(index: number) {
+        if (!this.tabLoadTimes[index]) {
+            this.tabLoadTimes[index] = new Date();
+        }
 
-  toggleBackground() {
-    this.background = this.background ? '' : 'primary';
-  }
+        return this.tabLoadTimes[index];
+    }
+
+    constructor() {
+        this.asyncTabs = Observable.create((observer: Observer<ExampleTab[]>) => {
+            setTimeout(() => {
+                observer.next([
+                    { label: 'First', content: 'Content 1' },
+                    { label: 'Second', content: 'Content 2' },
+                    { label: 'Third', content: 'Content 3' }
+                ]);
+            }, 1000);
+        });
+    }
+
+    toggleBackground() {
+        this.background = this.background ? '' : 'primary';
+    }
+
+    addLink() {
+        this.links.push(`Link ${this.links.length + 1}`);
+    }
 }

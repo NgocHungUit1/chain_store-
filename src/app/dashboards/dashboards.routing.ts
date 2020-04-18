@@ -9,11 +9,25 @@ export const DashboardsRoutes: Routes = [
     children: [
       {
         path: 'dashboard1',
-        component: Dashboard1Component
+        component: Dashboard1Component,
+		data: {
+          title: 'Dashboard 1',
+          urls: [
+            { title: 'Dashboard', url: '/dashboard' },
+            { title: 'Dashboard 1' }
+          ]
+        }
       },
       {
         path: 'dashboard2',
-        component: Dashboard2Component
+        component: Dashboard2Component,
+		data: {
+          title: 'Dashboard 2',
+          urls: [
+            { title: 'Dashboard', url: '/dashboard' },
+            { title: 'Dashboard 2' }
+          ]
+        }
       }
     ]
   }

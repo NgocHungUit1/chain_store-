@@ -40,9 +40,9 @@
     <mat-card-subtitle>You can also stack the chips if you want them on top of each other and/or use the
       <code>(focus)</code> event to run custom code.</mat-card-subtitle>
 
-    <mat-chip-list class="mat-chip-list-stacked">
-      <mat-chip *ngFor="let aColor of availableColors" (focus)="color = aColor.color" color="{{aColor.color}}" selected="true">
-        {{aColor.name}}
+    <mat-chip-list class="mat-chip-list-stacked" aria-label="Color selection">
+      <mat-chip *ngFor="let chip of availableColors" selected [color]="chip.color">
+        {{chip.name}}
       </mat-chip>
     </mat-chip-list>
   </mat-card-content>

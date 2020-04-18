@@ -6,7 +6,8 @@ import {
   Validators,
   FormControl
 } from '@angular/forms';
-import { CustomValidators } from 'ng2-validation';
+import { CustomValidators  } from 'ngx-custom-validators';
+
 
 @Component({
   selector: 'app-forgot',

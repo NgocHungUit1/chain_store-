@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import * as Chartist from 'chartist';
-import { ChartType, ChartEvent } from 'ng-chartist/dist/chartist.component';
+import { ChartType, ChartEvent } from 'ng-chartist';
 
 declare var require: any;
 
@@ -23,7 +23,7 @@ export class ChartistjsComponent {
         data: data['Bar'],
         options: {
             seriesBarDistance: 15,
-
+            height:400,
             axisX: {
                 showGrid: false, offset: 70
             },
@@ -51,6 +51,7 @@ export class ChartistjsComponent {
         data: data['LineWithArea'],
         options: {
           low: 0,
+          height:400,
           showArea: true,
           fullWidth: true
         }
@@ -61,6 +62,7 @@ export class ChartistjsComponent {
         data: data['Line'],
         options: {
           low: 0,
+          height:400,
           showArea: true,
           fullWidth: true
         }
@@ -71,6 +73,7 @@ export class ChartistjsComponent {
         data: data['Line2'],
         options: {
           low: 0,
+          height:400,
           showArea: true,
           fullWidth: true
         }
@@ -81,6 +84,7 @@ export class ChartistjsComponent {
         data: data['Scatter'],
         options: {
           showLine: false,
+          height:400,
           axisX: {
             labelInterpolationFnc: function(value: number, index: number): string {
               return index % 13 === 0 ? `W${value}` : null;
@@ -109,6 +113,7 @@ export class ChartistjsComponent {
           donutWidth: 50,
           startAngle: 270,
           total: 200,
+          height:400,
           showLabel: false
         }
       };
@@ -117,6 +122,7 @@ export class ChartistjsComponent {
         data: data['Pie'],
         options: {
           donut: true,
+          height:400,
           showLabel: false
         }
         // events: {
@@ -131,6 +137,7 @@ export class ChartistjsComponent {
         data: data['Bi-PolarBar'],
         options: {
           high: 10,
+          height:400,
           low: -10,
           axisX: {
             labelInterpolationFnc: function(value: number, index: number): number {

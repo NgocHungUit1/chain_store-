@@ -7,18 +7,20 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { DashboardsRoutes } from './dashboards.routing';
 import { ChartistModule } from 'ng-chartist';
 import { ChartsModule } from 'ng2-charts';
+import { NgApexchartsModule } from "ng-apexcharts";
 
 import { Dashboard1Component } from './dashboard1/dashboard1.component';
 import { Dashboard2Component } from './dashboard2/dashboard2.component';
 @NgModule({
-  imports: [
-    CommonModule,
-    DemoMaterialModule,
-    FlexLayoutModule,
-    ChartistModule,
-    ChartsModule,
-    RouterModule.forChild(DashboardsRoutes)
-  ],
-  declarations: [Dashboard1Component, Dashboard2Component]
+    imports: [
+        CommonModule,
+        DemoMaterialModule,
+        FlexLayoutModule,
+        ChartistModule,
+        ChartsModule,
+        NgApexchartsModule,
+        RouterModule.forChild(DashboardsRoutes)
+    ],
+    declarations: [Dashboard1Component, Dashboard2Component]
 })
-export class DashboardsModule {}
+export class DashboardsModule { }

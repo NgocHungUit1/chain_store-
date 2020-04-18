@@ -1,7 +1,6 @@
 import 'hammerjs';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { HttpModule } from '@angular/http';
 import { CommonModule } from '@angular/common';
 
 import { DemoMaterialModule } from '../demo-material-module';
@@ -23,7 +22,6 @@ import { NgxchartComponent } from './ngx-charts/ngx-chart.component';
     CommonModule,
     RouterModule.forChild(ChartsRoutes),
     DemoMaterialModule,
-    HttpModule,
     FormsModule,
     ReactiveFormsModule,
     FlexLayoutModule,

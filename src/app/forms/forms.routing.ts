@@ -10,81 +10,169 @@ import { PaginatiorComponent } from './paginator/paginator.component';
 import { SortheaderComponent } from './sortheader/sortheader.component';
 import { SelectfieldComponent } from './select/select.component';
 import { InputfieldComponent } from './input/input.component';
-import { TreeComponent } from './tree/tree.component';
 import { EditorComponent } from './editor/editor.component';
 import { FormValidationComponent } from './form-validation/form-validation.component';
-import { UploadComponent } from './file-upload/upload.component';
 import { WizardComponent } from './wizard/wizard.component';
 import { MultiselectComponent } from './multiselect/multiselect.component';
 
 export const FormRoutes: Routes = [
-  {
-    path: '',
-    children: [
-      {
-        path: 'autocomplete',
-        component: AutocompleteComponent
-      },
-      {
-        path: 'checkbox',
-        component: CheckboxComponent
-      },
-      {
-        path: 'radiobutton',
-        component: RadiobuttonComponent
-      },
-      {
-        path: 'datepicker',
-        component: DatepickerComponent
-      },
-      {
-        path: 'formfield',
-        component: FormfieldComponent
-      },
-      {
-        path: 'input',
-        component: InputfieldComponent
-      },
-      {
-        path: 'select',
-        component: SelectfieldComponent
-      },
-      {
-        path: 'tree',
-        component: TreeComponent
-      },
-      {
-        path: 'paginator',
-        component: PaginatiorComponent
-      },
-      {
-        path: 'form-layout',
-        component: FormLayoutComponent
-      },
-      {
-        path: 'editor',
-        component: EditorComponent
-      },
-      {
-        path: 'form-validation',
-        component: FormValidationComponent
-      },
-      {
-        path: 'file-upload',
-        component: UploadComponent
-      },
-      {
-        path: 'sortheader',
-        component: SortheaderComponent
-      },
-      {
-        path: 'wizard',
-        component: WizardComponent
-      },
-      {
-        path: 'multiselect',
-        component: MultiselectComponent
-      }
-    ]
-  }
+    {
+        path: '',
+        children: [
+            {
+                path: 'autocomplete',
+                component: AutocompleteComponent,
+                data: {
+                    title: 'Autocomplete',
+                    urls: [
+                        { title: 'Dashboard', url: '/dashboard' },
+                        { title: 'Autocomplete' }
+                    ]
+                }
+            },
+            {
+                path: 'checkbox',
+                component: CheckboxComponent,
+                data: {
+                    title: 'Checkbox',
+                    urls: [
+                        { title: 'Dashboard', url: '/dashboard' },
+                        { title: 'Checkbox' }
+                    ]
+                }
+            },
+            {
+                path: 'radiobutton',
+                component: RadiobuttonComponent,
+                data: {
+                    title: 'Radio Buttons',
+                    urls: [
+                        { title: 'Dashboard', url: '/dashboard' },
+                        { title: 'Radio Buttons' }
+                    ]
+                }
+            },
+            {
+                path: 'datepicker',
+                component: DatepickerComponent,
+                data: {
+                    title: 'Datepicker',
+                    urls: [
+                        { title: 'Dashboard', url: '/dashboard' },
+                        { title: 'Datepicker' }
+                    ]
+                }
+            },
+            {
+                path: 'formfield',
+                component: FormfieldComponent,
+                data: {
+                    title: 'Form Filed',
+                    urls: [
+                        { title: 'Dashboard', url: '/dashboard' },
+                        { title: 'Form Filed' }
+                    ]
+                }
+            },
+            {
+                path: 'input',
+                component: InputfieldComponent,
+                data: {
+                    title: 'Input Field',
+                    urls: [
+                        { title: 'Dashboard', url: '/dashboard' },
+                        { title: 'Input Field' }
+                    ]
+                }
+            },
+            {
+                path: 'select',
+                component: SelectfieldComponent,
+                data: {
+                    title: 'Select',
+                    urls: [
+                        { title: 'Dashboard', url: '/dashboard' },
+                        { title: 'Select' }
+                    ]
+                }
+            },
+            {
+                path: 'paginator',
+                component: PaginatiorComponent,
+                data: {
+                    title: 'Paginator',
+                    urls: [
+                        { title: 'Dashboard', url: '/dashboard' },
+                        { title: 'Paginator' }
+                    ]
+                }
+            },
+            {
+                path: 'form-layout',
+                component: FormLayoutComponent,
+                data: {
+                    title: 'Form Layout',
+                    urls: [
+                        { title: 'Dashboard', url: '/dashboard' },
+                        { title: 'Form Layout' }
+                    ]
+                }
+            },
+            {
+                path: 'editor',
+                component: EditorComponent,
+                data: {
+                    title: 'Form Editor',
+                    urls: [
+                        { title: 'Dashboard', url: '/dashboard' },
+                        { title: 'Form Editor' }
+                    ]
+                }
+            },
+            {
+                path: 'form-validation',
+                component: FormValidationComponent,
+                data: {
+                    title: 'Form Validation',
+                    urls: [
+                        { title: 'Dashboard', url: '/dashboard' },
+                        { title: 'Form Validation' }
+                    ]
+                }
+            },
+            {
+                path: 'sortheader',
+                component: SortheaderComponent,
+                data: {
+                    title: 'Sort Header',
+                    urls: [
+                        { title: 'Dashboard', url: '/dashboard' },
+                        { title: 'Sort Header' }
+                    ]
+                }
+            },
+            {
+                path: 'wizard',
+                component: WizardComponent,
+                data: {
+                    title: 'Form Wizard',
+                    urls: [
+                        { title: 'Dashboard', url: '/dashboard' },
+                        { title: 'Form Wizard' }
+                    ]
+                }
+            },
+            {
+                path: 'multiselect',
+                component: MultiselectComponent,
+                data: {
+                    title: 'Multiselect',
+                    urls: [
+                        { title: 'Dashboard', url: '/dashboard' },
+                        { title: 'Multiselect' }
+                    ]
+                }
+            }
+        ]
+    }
 ];

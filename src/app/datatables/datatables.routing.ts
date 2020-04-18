@@ -10,19 +10,47 @@ export const DataTablesRoutes: Routes = [
     children: [
       {
         path: 'basicdatatable',
-        component: DataTableComponent
+        component: DataTableComponent,
+		data: {
+          title: 'Basic Datatable',
+          urls: [
+            { title: 'Dashboard', url: '/dashboard' },
+            { title: 'Basic Datatable' }
+          ]
+        }
       },
       {
         path: 'editing',
-        component: TableEditingComponent
+        component: TableEditingComponent,
+		data: {
+          title: 'Editing Table',
+          urls: [
+            { title: 'Dashboard', url: '/dashboard' },
+            { title: 'Editing Table' }
+          ]
+        }
       },
       {
         path: 'filter',
-        component: TableFilterComponent
+        component: TableFilterComponent,
+		data: {
+          title: 'Filter Table',
+          urls: [
+            { title: 'Dashboard', url: '/dashboard' },
+            { title: 'Filter Table' }
+          ]
+        }
       },
       {
         path: 'materialtable',
-        component: MaterialTableComponent
+        component: MaterialTableComponent,
+		data: {
+          title: 'Material Table',
+          urls: [
+            { title: 'Dashboard', url: '/dashboard' },
+            { title: 'Material Table' }
+          ]
+        }
       }
     ]
   }

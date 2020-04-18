@@ -11,9 +11,9 @@
             <mat-table #table [dataSource]="data">
                 <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
                     <mat-header-cell *matHeaderCellDef> {{column}} </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
+                    <mat-cell *matCellDef="let element"> 
                         <span class="header-label">{{column}}:</span>
-                        {{element[column]}}
+                        {{element[column]}} 
                     </mat-cell>
                 </ng-container>
 
@@ -32,9 +32,9 @@
             <mat-table #table [dataSource]="dataSource" multiTemplateDataRows>
                 <ng-container matColumnDef="{{column}}" *ngFor="let column of columnsToDisplay1">
                     <mat-header-cell *matHeaderCellDef> {{column}} </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
+                    <mat-cell *matCellDef="let element"> 
                         <span class="header-label">{{column}}:</span>
-                        {{element[column]}}
+                        {{element[column]}} 
                     </mat-cell>
                 </ng-container>
 
@@ -92,32 +92,32 @@
                 <!-- Position Column -->
                 <ng-container matColumnDef="position">
                     <mat-header-cell *matHeaderCellDef> No. </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <span class="header-label">No:</span>{{element.position}}
+                    <mat-cell *matCellDef="let element"> 
+                        <span class="header-label">No:</span>{{element.position}} 
                     </mat-cell>
                 </ng-container>
 
                 <!-- Name Column -->
                 <ng-container matColumnDef="name">
                     <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <span class="header-label">Name:</span>{{element.name}}
+                    <mat-cell *matCellDef="let element"> 
+                        <span class="header-label">Name:</span>{{element.name}} 
                     </mat-cell>
                 </ng-container>
 
                 <!-- Weight Column -->
                 <ng-container matColumnDef="weight">
                     <mat-header-cell *matHeaderCellDef> Weight </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <span class="header-label">Weight :</span>{{element.weight}}
+                    <mat-cell *matCellDef="let element"> 
+                        <span class="header-label">Weight :</span>{{element.weight}} 
                     </mat-cell>
                 </ng-container>
 
                 <!-- Symbol Column -->
                 <ng-container matColumnDef="symbol">
                     <mat-header-cell *matHeaderCellDef> Symbol </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <span class="header-label">Symbol :</span> {{element.symbol}}
+                    <mat-cell *matCellDef="let element"> 
+                        <span class="header-label">Symbol :</span> {{element.symbol}} 
                     </mat-cell>
                 </ng-container>
 
@@ -139,31 +139,31 @@
                 <ng-container matColumnDef="position">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> No. </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <span class="header-label">No :</span> {{element.position}}
+                        <span class="header-label">No :</span> {{element.position}} 
                     </mat-cell>
                 </ng-container>
 
                 <!-- Name Column -->
                 <ng-container matColumnDef="name">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <span class="header-label">Name :</span> {{element.name}}
+                    <mat-cell *matCellDef="let element"> 
+                        <span class="header-label">Name :</span> {{element.name}} 
                     </mat-cell>
                 </ng-container>
 
                 <!-- Weight Column -->
                 <ng-container matColumnDef="weight">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Weight </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <span class="header-label">Weight :</span> {{element.weight}}
+                    <mat-cell *matCellDef="let element"> 
+                        <span class="header-label">Weight :</span> {{element.weight}} 
                     </mat-cell>
                 </ng-container>
 
                 <!-- Symbol Column -->
                 <ng-container matColumnDef="symbol">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Symbol </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <span class="header-label">Symbol :</span> {{element.symbol}}
+                    <mat-cell *matCellDef="let element"> 
+                        <span class="header-label">Symbol :</span> {{element.symbol}} 
                     </mat-cell>
                 </ng-container>
 

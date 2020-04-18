@@ -18,7 +18,7 @@ export class DataTableComponent {
 
   columns = [{ prop: 'name' }, { name: 'Gender' }, { name: 'Company' }];
 
-  @ViewChild(DataTableComponent) table: DataTableComponent;
+  @ViewChild(DataTableComponent, {static:true}) table: DataTableComponent;
   constructor() {
     this.rows = data;
     this.temp = [...data];

@@ -17,7 +17,7 @@ export class TableFilterComponent {
 
   columns = [{ prop: 'name' }, { name: 'Gender' }, { name: 'Company' }];
 
-  @ViewChild(TableFilterComponent) table: TableFilterComponent;
+  @ViewChild(TableFilterComponent, {static:true}) table: TableFilterComponent;
   constructor() {
     this.rows = data;
     this.temp = [...data];

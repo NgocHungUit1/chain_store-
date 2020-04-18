@@ -10,15 +10,36 @@ export const ChartsRoutes: Routes = [
     children: [
       {
         path: 'chartjs',
-        component: ChartjsComponent
+        component: ChartjsComponent,
+		data: {
+          title: 'ChartJs',
+          urls: [
+            { title: 'Dashboard', url: '/dashboard' },
+            { title: 'ChartJs' }
+          ]
+        }
       },
       {
         path: 'chartistjs',
-        component: ChartistjsComponent
+        component: ChartistjsComponent,
+		data: {
+          title: 'Chartist Charts',
+          urls: [
+            { title: 'Dashboard', url: '/dashboard' },
+            { title: 'Chartist Charts' }
+          ]
+        }
       },
       {
         path: 'ngxchart',
-        component: NgxchartComponent
+        component: NgxchartComponent,
+		data: {
+          title: 'Ngx Charts',
+          urls: [
+            { title: 'Dashboard', url: '/dashboard' },
+            { title: 'Ngx Charts' }
+          ]
+        }
       }
     ]
   }

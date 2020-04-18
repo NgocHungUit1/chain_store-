@@ -100,6 +100,9 @@ html .page-wrapper {
 .icon-box {
   width: 20%;
   display: inline-block;
+  overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 /*******************
  Mail page
@@ -464,4 +467,86 @@ Overall Responsive table
   cursor: auto;
   background-color: $white;
   border-color: $border;
+}
+
+.ticket-list{
+  td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
+    padding:0 15px!important;
+  }
+}
+
+.employee-list {
+
+  td.mat-cell,
+  td.mat-footer-cell,
+  th.mat-header-cell {
+    padding: 15px !important;
+  }
+
+  .d-flex {
+    align-items: center;
+  }
+}
+
+.chat-app {
+  .mat-list-item {
+    &.active {
+      background: rgba(0, 0, 0, 0.04);
+    }
+  }
+}
+
+.notes-app {
+
+  .mat-list-base .mat-list-item .mat-list-item-content,
+  .mat-list-base .mat-list-option .mat-list-item-content {
+    padding: 0 !important;
+  }
+
+  .mat-drawer-content {
+    height: calc(100vh - 190px) !important;
+  }
+
+  &.mat-card .mat-card-content {
+    padding: 0;
+    height: calc(100% - 64px);
+  }
+
+  .mat-input-element {
+    font-size: 14px !important;
+  }
+
+  .mat-form-field-appearance-legacy .mat-form-field-label {
+    top: 33px !important;
+    font-size: 14px !important;
+  }
+}
+
+.notes-color-panel {
+  min-width: 96px !important;
+
+  .mat-menu-content {
+    display: flex;
+
+    .mat-menu-item {
+      padding: 0 8px !important;
+    }
+
+    .mat-flat-button {
+      min-width: 20px !important;
+      padding: 0 !important;
+    }
+  }
+}
+
+.course-app {
+  .course-header {
+    .mat-card-header-text {
+      width: 100%;
+    }
+  }
+
+  .mat-card-content {
+    margin-bottom: 0 !important;
+  }
 }

@@ -12,23 +12,58 @@ export const PagesRoutes: Routes = [
     children: [
       {
         path: 'icons/material',
-        component: MatIconComponent
+        component: MatIconComponent,
+		data: {
+          title: 'Material Icons',
+          urls: [
+            { title: 'Dashboard', url: '/dashboard' },
+            { title: 'Material Icons' }
+          ]
+        }
       },
       {
         path: 'timeline',
-        component: TimelineComponent
+        component: TimelineComponent,
+		data: {
+          title: 'Timeline',
+          urls: [
+            { title: 'Dashboard', url: '/dashboard' },
+            { title: 'Timeline' }
+          ]
+        }
       },
       {
         path: 'invoice',
-        component: InvoiceComponent
+        component: InvoiceComponent,
+		data: {
+          title: 'Invoice',
+          urls: [
+            { title: 'Dashboard', url: '/dashboard' },
+            { title: 'Invoice' }
+          ]
+        }
       },
       {
         path: 'pricing',
-        component: PricingComponent
+        component: PricingComponent,
+		data: {
+          title: 'Pricing',
+          urls: [
+            { title: 'Dashboard', url: '/dashboard' },
+            { title: 'Pricing' }
+          ]
+        }
       },
       {
         path: 'helper',
-        component: HelperComponent
+        component: HelperComponent,
+		data: {
+          title: 'Helper',
+          urls: [
+            { title: 'Dashboard', url: '/dashboard' },
+            { title: 'Helper' }
+          ]
+        }
       }
     ]
   }

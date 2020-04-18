@@ -75,8 +75,8 @@
                 <mat-card-title>Datepicker input and change events</mat-card-title>
                 <mat-card-subtitle>A material 2 component for datepicker</mat-card-subtitle>
                 <mat-form-field>
-                    <input matInput [matDatepicker]="picker6" placeholder="Input & change events" (dateInput)="addEvent('input', $event)"
-                        (dateChange)="addEvent('change', $event)">
+                    <input matInput [matDatepicker]="picker6" placeholder="Input & change events"
+                        (dateInput)="addEvent('input', $event)" (dateChange)="addEvent('change', $event)">
                     <mat-datepicker-toggle matSuffix [for]="picker6"></mat-datepicker-toggle>
                     <mat-datepicker #picker6></mat-datepicker>
                 </mat-form-field>
@@ -194,7 +194,8 @@
             <mat-card-content>
                 <mat-card-title>Datepicker with min & max validation</mat-card-title>
                 <mat-form-field class="example-full-width">
-                    <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="minpicker" placeholder="Choose a date">
+                    <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="minpicker"
+                        placeholder="Choose a date">
                     <mat-datepicker-toggle matSuffix [for]="minpicker"></mat-datepicker-toggle>
                     <mat-datepicker #minpicker></mat-datepicker>
                 </mat-form-field>
@@ -211,7 +212,8 @@
             <mat-card-content>
                 <mat-card-title>Datepicker with filter validation</mat-card-title>
                 <mat-form-field class="example-full-width">
-                    <input matInput [matDatepickerFilter]="myFilter" [matDatepicker]="filterpicker" placeholder="Choose a date">
+                    <input matInput [matDatepickerFilter]="myFilter" [matDatepicker]="filterpicker"
+                        placeholder="Choose a date">
                     <mat-datepicker-toggle matSuffix [for]="filterpicker"></mat-datepicker-toggle>
                     <mat-datepicker #filterpicker></mat-datepicker>
                 </mat-form-field>
@@ -226,8 +228,8 @@
             <mat-card-content>
                 <mat-card-title>Datepicker input and change events</mat-card-title>
                 <mat-form-field>
-                    <input matInput [matDatepicker]="pickerevent" placeholder="Input & change events" (dateInput)="addEvent('input', $event)"
-                        (dateChange)="addEvent('change', $event)">
+                    <input matInput [matDatepicker]="pickerevent" placeholder="Input & change events"
+                        (dateInput)="addEvent('input', $event)" (dateChange)="addEvent('change', $event)">
                     <mat-datepicker-toggle matSuffix [for]="pickerevent"></mat-datepicker-toggle>
                     <mat-datepicker #pickerevent></mat-datepicker>
                 </mat-form-field>
@@ -253,6 +255,24 @@
 
                 <button mat-button (click)="french()">Dynamically switch to French</button>
 
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>
+
+<!-- New -->
+<div fxLayout="row wrap">
+    <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+        <mat-card>
+            <mat-card-content>
+                <mat-card-title>Datepicker with custom formats <span class="label label-primary">New</span>
+                </mat-card-title>
+                <mat-form-field class="m-t-15">
+                    <mat-label>Verbose datepicker</mat-label>
+                    <input matInput [matDatepicker]="customdp" [formControl]="customdate">
+                    <mat-datepicker-toggle matSuffix [for]="customdp"></mat-datepicker-toggle>
+                    <mat-datepicker #customdp></mat-datepicker>
+                </mat-form-field>
             </mat-card-content>
         </mat-card>
     </div>

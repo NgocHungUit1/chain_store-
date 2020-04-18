@@ -86,7 +86,7 @@ File: scss
 
     .mat-row {
       flex-direction: column;
-      align-items: start;
+      align-items: flex-start;
       padding: 8px 15px;
       &:after {
         min-height: unset;
@@ -114,4 +114,7 @@ File: scss
   .icon-box {
     width: 50%;
   }
+  .float-sm-left {
+		float: left;
+	}
 }

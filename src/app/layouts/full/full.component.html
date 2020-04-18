@@ -39,12 +39,12 @@
         <!-- ============================================================== -->
         <!-- Search - style you can find in header.scss -->
         <!-- ============================================================== -->
-        <button mat-icon-button class="srh-btn">
+        <button mat-icon-button class="srh-btn" (click)="showSearch = !showSearch">
             <mat-icon>search</mat-icon>
         </button>
-        <form class="app-search">
+        <form class="app-search" [ngClass]="{'show-search': showSearch}">
             <input type="text" class="form-control" placeholder="Search &amp; enter">
-            <a class="cl-srh-btn">
+            <a class="cl-srh-btn" (click)="showSearch = !showSearch">
                 <i class="ti-close"></i>
             </a>
         </form>
@@ -110,9 +110,9 @@
         <!-- Page container - style you can find in pages.scss -->
         <!-- ============================================================== -->
         <mat-sidenav-content class="page-wrapper">
-            
+            	<app-breadcrumb></app-breadcrumb>
                 <div class="page-content">
-
+	
                     <router-outlet>
                         <app-spinner></app-spinner>
                     </router-outlet>

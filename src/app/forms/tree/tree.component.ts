@@ -162,7 +162,6 @@ export class TreeComponent {
   private _isExpandable = (node: FileFlatNode) => node.expandable;
 
   private _getChildren = (node: FileNode): Observable<FileNode[]> =>
-    // tslint:disable-next-line:semicolon
     observableOf(node.children);
 
   hasChild = (_: number, _nodeData: FileFlatNode) => _nodeData.expandable;

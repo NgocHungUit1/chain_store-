@@ -5,7 +5,7 @@ import {
   Validators,
   FormControl
 } from '@angular/forms';
-import { CustomValidators } from 'ng2-validation';
+import { CustomValidators  } from 'ngx-custom-validators';
 
 const password = new FormControl('', Validators.required);
 const confirmPassword = new FormControl('', CustomValidators.equalTo(password));
@@ -50,7 +50,7 @@ export class FormValidationComponent implements OnInit {
       ],
       phone: [
         null,
-        Validators.compose([Validators.required, CustomValidators.phone('IN')])
+        Validators.compose([Validators.required])
       ],
       gender: [null, Validators.required],
       password: password,

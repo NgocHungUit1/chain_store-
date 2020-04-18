@@ -18,7 +18,7 @@ export class TableEditingComponent {
 
   columns = [{ prop: 'name' }, { name: 'Gender' }, { name: 'Company' }];
 
-  @ViewChild(TableEditingComponent) table: TableEditingComponent;
+  @ViewChild(TableEditingComponent, {static:true}) table: TableEditingComponent;
   constructor() {
     this.rows = data;
     this.temp = [...data];

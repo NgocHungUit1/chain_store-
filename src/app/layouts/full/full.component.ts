@@ -1,4 +1,4 @@
-import * as $ from 'jquery';
+
 import { MediaMatcher } from '@angular/cdk/layout';
 import { Router } from '@angular/router';
 import {
@@ -8,12 +8,12 @@ import {
   OnDestroy,
   ViewChild,
   HostListener,
-  Directive,
-  AfterViewInit
+  Directive
 } from '@angular/core';
 import { MenuItems } from '../../shared/menu-items/menu-items';
 import { AppHeaderComponent } from './header/header.component';
 import { AppSidebarComponent } from './sidebar/sidebar.component';
+import { AppBreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 /** @title Responsive sidenav */
@@ -22,7 +22,7 @@ import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
   templateUrl: 'full.component.html',
   styleUrls: []
 })
-export class FullComponent implements OnDestroy, AfterViewInit {
+export class FullComponent implements OnDestroy {
   mobileQuery: MediaQueryList;
   dir = 'ltr';
   green: boolean;
@@ -33,6 +33,8 @@ export class FullComponent implements OnDestroy, AfterViewInit {
   danger: boolean;
   showHide: boolean;
   sidebarOpened;
+	
+	public showSearch = false;
 
   public config: PerfectScrollbarConfigInterface = {};
   private _mobileQueryListener: () => void;
@@ -50,13 +52,6 @@ export class FullComponent implements OnDestroy, AfterViewInit {
   ngOnDestroy(): void {
     this.mobileQuery.removeListener(this._mobileQueryListener);
   }
-  ngAfterViewInit() {
-    // This is for the topbar search
-    (<any>$('.srh-btn, .cl-srh-btn')).on('click', function() {
-      (<any>$('.app-search')).toggle(200);
-    });
-    // This is for the megamenu
-  }
-
+ 
   // Mini sidebar
 }
