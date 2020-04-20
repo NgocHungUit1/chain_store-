@@ -32,7 +32,8 @@
               "node_modules/@swimlane/ngx-datatable/index.css",
               "node_modules/@swimlane/ngx-datatable/themes/material.css",
               "node_modules/@swimlane/ngx-datatable/assets/icons.css",
-              "src/assets/styles/style.scss"
+              "src/assets/styles/style.scss",
+              "src/assets/styles/rx20.scss"
             ],
             "scripts": []
           },

@@ -11,8 +11,8 @@ $mini-sidebar-width: 80px;
 Main sidebar
 ******************/
 
-/*-- ============================================================== 
- Small Desktop & above all (1024px) 
+/*-- ==============================================================
+ Small Desktop & above all (1024px)
  ============================================================== */
 
 @media (min-width: 769px) {
@@ -124,7 +124,7 @@ Main sidebar
         }
       }
       > .mat-list-item:last-child .sub-item {
-        right: 0px;
+        //right: 0px;
       }
     }
   }
