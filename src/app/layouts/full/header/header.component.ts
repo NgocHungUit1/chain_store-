@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
+import {Router} from "@angular/router";
+import {AuthService} from "../../../authentication/auth.service";
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -7,8 +9,6 @@ import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 })
 export class AppHeaderComponent {
   public config: PerfectScrollbarConfigInterface = {};
-	
-  
 
 
   // This is for Notifications
@@ -74,4 +74,19 @@ export class AppHeaderComponent {
       time: '9:00 AM'
     }
   ];
+
+  constructor(
+    private route: Router,
+    private authSer: AuthService
+  ) {
+
+  }
+
+  logout() {
+    this.authSer.logout().subscribe(res => {
+      if (res) {
+        this.route.navigate(['/', 'authentication', 'login']);
+      }
+    });
+  }
 }

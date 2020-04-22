@@ -23,6 +23,9 @@ import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 
 import { SharedModule } from './shared/shared.module';
 import { SpinnerComponent } from './shared/spinner.component';
+import {authTokenInterceptorProvider} from "./authentication/auth-token.interceptor";
+import {authInterceptorProvider} from "./authentication/auth.interceptor";
+import {NotifierModule} from "angular-notifier";
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -51,12 +54,28 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     SharedModule,
     RouterModule.forRoot(AppRoutes),
     NgMultiSelectDropDownModule.forRoot(),
+    NotifierModule.withConfig({
+      position: {
+        horizontal: {
+          position: "middle",
+          distance: 12
+        },
+        vertical: {
+          position: "top",
+          distance: 12,
+          gap: 10
+        }
+      },
+      theme: "material",
+    }),
   ],
   providers: [
     {
       provide: PERFECT_SCROLLBAR_CONFIG,
       useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
-    }
+    },
+    authTokenInterceptorProvider,
+    authInterceptorProvider
   ],
   bootstrap: [AppComponent]
 })

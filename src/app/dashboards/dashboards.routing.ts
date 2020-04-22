@@ -7,7 +7,7 @@ export const DashboardsRoutes: Routes = [
     path: '',
     component: Dashboard1Component,
     data: {
-      title: 'Tổng quan',
+      title: 'RX20.VN | Tổng quan',
       urls: [
         { title: 'Dashboard', url: '/dashboard' },
         { title: 'Tổng quan' }
