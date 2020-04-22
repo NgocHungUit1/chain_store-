@@ -32,34 +32,37 @@ File: scss
 
 // Red Theme
 
-.danger {  
+.danger {
 	@import 'colors/red';
   	@include angular-material-theme($red-app-theme);
 }
 
 // Blue Theme
 
-.blue {  
+.blue {
 	@import 'colors/blue';
   	@include angular-material-theme($blue-app-theme);
 }
 
 // Green Theme
 
-.green { 
-	@import 'colors/green'; 
+.green {
+	@import 'colors/green';
   	@include angular-material-theme($green-app-theme);
 }
 
 // Dark Theme
 
-.dark { 
-	@import 'colors/dark'; 
-  	@include angular-material-theme($dark-theme); 
+.dark {
+	@import 'colors/dark';
+  	@include angular-material-theme($dark-theme);
 }
-  
 
-$custom-typography: mat-typography-config( 
-  $font-family: 'Poppins'
-); 
+
+$custom-typography: mat-typography-config(
+  $font-family: 'Arial, Helvetica, sans-serif'
+);
 @include mat-core($custom-typography);
+.mat-header-cell {
+  font-size: 14px;
+}
