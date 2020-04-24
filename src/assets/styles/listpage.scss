@@ -14,7 +14,11 @@
     //color: map-get($primary-palette, default-contrast);
     box-shadow: none;
     height: 50px;
+    padding: 0px;
+  }
 
+  .mat-paginator-outer-container {
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
   }
 
   .mat-cell, .mat-footer-cell {
