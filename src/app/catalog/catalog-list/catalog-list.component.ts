@@ -24,9 +24,21 @@ export class CatalogListComponent extends ListComponentBase implements OnInit {
 
   apiFilter: CatalogFilter;
 
-  searchText: any;
+  columnsHeader = {
+    '#': '#',
+    'medicine_no': 'Mã thuốc',
+    'medicine_name': 'Tên thuốc',
+    'registration_no': 'Số đăng ký',
+    'main_active_substance': 'Hoạt chất chính',
+    'content': 'Hàm lượng',
+    'packing': 'Đóng gói',
+    'manufacturer': 'Nhà sản xuất',
+    'made_in': 'Nơi sản xuất',
+    'unit': 'Đơn vị',
+  };
 
-  displayedColumns: string[] = ['#', 'medicine_no', 'medicine_name', 'registration_no', 'main_active_substance', 'content', 'packing', 'manufacturer', 'made_in', 'unit'];
+  displayedColumns: string[] = ['#', 'medicine_no', 'medicine_name', 'registration_no', 'main_active_substance', 'manufacturer', 'made_in', 'unit'];
+  columnsToDisplay: string[] = ['#', 'medicine_no', 'medicine_name', 'registration_no', 'main_active_substance', 'content', 'packing', 'manufacturer', 'made_in', 'unit'];
   dataSource = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -64,7 +76,6 @@ export class CatalogListComponent extends ListComponentBase implements OnInit {
   }
 
   ngOnInit() {
-    this.selectedColumns = this.columnsToDisplay;
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
   }

@@ -9,13 +9,13 @@ export const CatalogRoutes: Routes = [
       {
         path: 'catalog',
         component: CatalogListComponent,
-        data: {
-          title: 'Danh mục thuốc của Cục Quản lý dược',
-          urls: [
-            { title: 'Dashboard', url: '/dashboard1' },
-            { title: 'Danh mục thuốc' }
-          ]
-        }
+        // data: {
+        //   title: 'Danh mục thuốc của Cục Quản lý dược',
+        //   urls: [
+        //     { title: 'Dashboard', url: '/dashboard1' },
+        //     { title: 'Danh mục thuốc' }
+        //   ]
+        // }
       },
     ]
   }

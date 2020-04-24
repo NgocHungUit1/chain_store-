@@ -1,0 +1,132 @@
+.dv-list-page, .dv-detail-page {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  margin: -15px;
+  font-size: 1rem;
+
+  .dv-header {
+    flex: 0 0 auto;
+    //background-color: #fff;
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    //background-color: map-get($primary-palette, default);
+    //color: map-get($primary-palette, default-contrast);
+    box-shadow: none;
+    height: 50px;
+
+  }
+
+  .mat-cell, .mat-footer-cell {
+    font-size: 1rem;
+  }
+
+  .dv-content {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+
+    .dv-drawer-container {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+
+      .dv-drawer-menu {
+        width: 240px;
+
+        .mat-drawer-inner-container {
+          flex: 1 1 auto;
+          display: flex;
+          flex-direction: column;
+
+          .dv-drawer-menu-content {
+            flex: 1 1 auto;
+            margin: 0;
+            overflow: auto;
+            box-shadow: none !important;
+            border-radius: 0;
+
+            .md-drppicker {
+              left: 5px!important;
+            }
+          }
+
+          .dv-drawer-menu-footer {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+        }
+      }
+
+      .dv-drawer-content {
+        background-color: white;
+        display: flex;
+        flex-direction: column;
+
+        .dv-drawer-content-header {
+          background: white;
+          flex: none;
+          font-size: 12px;
+          box-shadow: none;
+          border-top: none;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+
+          .dv-column-selector {
+            width: 70px;
+          }
+
+          .button-row {
+            button, a {
+              margin-right: 10px;
+            }
+          }
+        }
+
+        .dv-drawer-content-data {
+          flex: 1 1 auto;
+          overflow: auto;
+          box-shadow: none;
+          margin: 0;
+          padding: 0 12px 12px;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .dv-drawer-content-footer {
+          background: white;
+          flex: none;
+          font-size: 12px;
+          box-shadow: none;
+          border-bottom: none;
+          border-top: 1px solid rgba(0, 0, 0, 0.12);
+          display: flex;
+
+          .mat-paginator {
+            flex: auto;
+            font-size: 10px;
+
+            .mat-paginator-container {
+              min-height: 48px;
+            }
+            .mat-paginator-page-size-select {
+              margin: 4px 4px 0px 4px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+.dv-detail-page {
+  .dv-content {
+    .dv-drawer-container {
+      .dv-drawer-content {
+        .dv-drawer-content-data {
+          padding-top: 12px;
+        }
+      }
+    }
+  }
+}

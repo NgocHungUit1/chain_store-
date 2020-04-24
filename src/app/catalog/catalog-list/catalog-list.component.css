@@ -1,15 +1,15 @@
-.example-container {
+.table-container {
   position: relative;
   min-height: 200px;
 }
 
-.example-table-container {
+.table-content {
   position: relative;
   max-height: 500px;
   overflow: auto;
 }
 
-.example-loading-shade {
+.table-loading-shade {
   position: absolute;
   top: 0;
   left: 0;
@@ -22,7 +22,7 @@
   justify-content: center;
 }
 
-.example-rate-limit-reached {
+.table-rate-limit-reached {
   color: #980000;
   max-width: 360px;
   text-align: center;

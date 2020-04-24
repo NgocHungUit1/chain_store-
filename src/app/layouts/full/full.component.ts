@@ -25,15 +25,15 @@ import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 export class FullComponent implements OnDestroy {
   mobileQuery: MediaQueryList;
   dir = 'ltr';
-  green: boolean;
-  blue: boolean;
+  green: boolean = true;
+  blue: boolean = false;
   dark: boolean;
   minisidebar: boolean;
   boxed: boolean;
-  danger: boolean;
+  danger: boolean = false;
   showHide: boolean;
   sidebarOpened;
-	
+
 	public showSearch = false;
 
   public config: PerfectScrollbarConfigInterface = {};
@@ -52,6 +52,6 @@ export class FullComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.mobileQuery.removeListener(this._mobileQueryListener);
   }
- 
+
   // Mini sidebar
 }
