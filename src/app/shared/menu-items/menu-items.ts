@@ -48,10 +48,10 @@ const MENUITEMS = [
     name: 'Hàng hóa',
     type: 'sub',
     icon: 'store_mall_directory',
-    badge: [{type: 'red', value: '17'}],
+    // badge: [{type: 'red', value: '17'}],
     children: [
-      {state: 'catalog', name: 'Danh mục thuốc', type: 'link'},
-      {state: 'product', name: 'Thuốc', type: 'link'},
+      {state: 'medicine', name: 'Danh mục thuốc', type: 'link'},
+      {state: 'product', name: 'Sản phẩm', type: 'link'},
       {state: 'price_book', name: 'Thiết lập giá', type: 'link'},
       {state: 'stock_take', name: 'Kiểm kho', type: 'link'},
     ]

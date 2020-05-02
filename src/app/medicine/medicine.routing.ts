@@ -1,14 +1,14 @@
 import { Routes } from '@angular/router';
 
-import {CatalogListComponent} from "./catalog-list/catalog-list.component";
+import {MedicineListComponent} from "./medicine-list/medicine-list.component";
 
-export const CatalogRoutes: Routes = [
+export const MedicineRoutes: Routes = [
   {
     path: '',
     children: [
       {
-        path: 'catalog',
-        component: CatalogListComponent,
+        path: 'medicine',
+        component: MedicineListComponent,
         // data: {
         //   title: 'Danh mục thuốc của Cục Quản lý dược',
         //   urls: [

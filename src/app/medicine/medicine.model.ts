@@ -1,6 +1,6 @@
 import {ApiFilterBase} from "../shared/base";
 
-export class Category {
+export class Medicine {
   id: string;
   medicine_no: string;
   medicine_name: string;
@@ -14,7 +14,7 @@ export class Category {
 }
 
 
-export class CatalogFilter extends ApiFilterBase{
+export class MedicineFilter extends ApiFilterBase{
   id = '';
   medicine_no = '';
   medicine_name = '';
@@ -30,7 +30,7 @@ export class CatalogFilter extends ApiFilterBase{
   sort = '';
 
   getModelSearch() {
-    return 'MedicineCategorySearch';
+    return 'MedicineSearch';
   }
 
 }

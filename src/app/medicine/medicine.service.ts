@@ -2,17 +2,17 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpResponse} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment';
-import {Category, CatalogFilter} from './catalog.model';
+import {Medicine, MedicineFilter} from './medicine.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CatalogService {
+export class MedicineService {
 
   constructor(private http: HttpClient) {
   }
 
-  getApiUrl(filter?: CatalogFilter) {
+  getApiUrl(filter?: MedicineFilter) {
     if (!filter.page) {
       filter.page = 1;
     }
@@ -21,15 +21,15 @@ export class CatalogService {
       filter.pageSize = 20;
     }
 
-    let url = '/medicine-category?per-page=' + filter.pageSize;
+    let url = '/medicine?per-page=' + filter.pageSize;
 
     url += '&' + filter.toFilterString();
     return url;
   }
 
-  getStateUrl(filter?: CatalogFilter) {
+  getStateUrl(filter?: MedicineFilter) {
 
-    let url = '/medicine-category/list';
+    let url = '/medicine/list';
     if (!filter.page) {
       filter.page = 1;
     }
@@ -40,23 +40,23 @@ export class CatalogService {
     return url;
   }
 
-  getList(filter?: CatalogFilter): Observable<HttpResponse<any>> {
+  getList(filter?: MedicineFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrl(filter);
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
   getDetail(id: string) {
-    const url = environment.apiUrl + '/medicine-category/' + id;
+    const url = environment.apiUrl + '/medicine/' + id;
     return this.http.get<object>(url);
   }
 
   update(id: string, pos: any) {
-    const url = environment.apiUrl + '/medicine-category/' + id;
+    const url = environment.apiUrl + '/medicine/' + id;
     return this.http.put(url, pos);
   }
 
   create(data) {
-    const url = environment.apiUrl + '/medicine-category';
+    const url = environment.apiUrl + '/medicine';
     return this.http.post(url, data);
   }
 }

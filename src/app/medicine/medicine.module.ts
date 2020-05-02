@@ -8,14 +8,14 @@ import {PerfectScrollbarModule} from "ngx-perfect-scrollbar";
 import {Ng2SearchPipeModule} from "ng2-search-filter";
 import {RouterModule} from "@angular/router";
 import {DemoMaterialModule} from "../../../original_template/src/app/demo-material-module";
-import {CatalogRoutes} from "./catalog.routing";
-import {CatalogListComponent} from "./catalog-list/catalog-list.component";
+import {MedicineRoutes} from "./medicine.routing";
+import {MedicineListComponent} from "./medicine-list/medicine-list.component";
 
 @NgModule({
-  declarations: [CatalogListComponent],
+  declarations: [MedicineListComponent],
   imports: [
     CommonModule,
-    RouterModule.forChild(CatalogRoutes),
+    RouterModule.forChild(MedicineRoutes),
     DemoMaterialModule,
     FormsModule,
     ReactiveFormsModule,
@@ -26,5 +26,5 @@ import {CatalogListComponent} from "./catalog-list/catalog-list.component";
     Ng2SearchPipeModule
   ]
 })
-export class CatalogModule {
+export class MedicineModule {
 }

@@ -1,20 +1,20 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatTableDataSource, MatTable } from '@angular/material/table';
+import { MatTable } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
-import {CatalogFilter, Category} from "../catalog.model";
+import {MedicineFilter, Medicine} from "../medicine.model";
 import {MatSort} from "@angular/material/sort";
 import {ListComponentBase} from "../../shared/base";
-import {CatalogService} from "../catalog.service";
+import {MedicineService} from "../medicine.service";
 import {ActivatedRoute} from "@angular/router";
 
 @Component({
-  templateUrl: './catalog-list.component.html',
-  styleUrls: ['./catalog-list.component.css']
+  templateUrl: './medicine-list.component.html',
+  styleUrls: ['./medicine-list.component.css']
 })
-export class CatalogListComponent extends ListComponentBase implements OnInit {
+export class MedicineListComponent extends ListComponentBase implements OnInit {
 
   constructor(
-    private service: CatalogService,
+    private service: MedicineService,
     private route: ActivatedRoute
   ) {
     super();
@@ -22,7 +22,7 @@ export class CatalogListComponent extends ListComponentBase implements OnInit {
 
   @ViewChild(MatTable, { static: true }) table: MatTable<any>;
 
-  apiFilter: CatalogFilter;
+  apiFilter: MedicineFilter;
 
   columnsHeader = {
     '#': '#',
@@ -48,13 +48,13 @@ export class CatalogListComponent extends ListComponentBase implements OnInit {
   isLoadingResults = true;
   isRateLimitReached = false;
 
-  buildFilterFromParams(): CatalogFilter {
-    function write<K extends keyof CatalogFilter>(arg: CatalogFilter, key: K, value: CatalogFilter[K]): void {
+  buildFilterFromParams(): MedicineFilter {
+    function write<K extends keyof MedicineFilter>(arg: MedicineFilter, key: K, value: MedicineFilter[K]): void {
       arg[key] = value;
     }
 
-    const filter = new CatalogFilter();
-    const objectKeys = Object.keys(filter) as Array<keyof CatalogFilter>;
+    const filter = new MedicineFilter();
+    const objectKeys = Object.keys(filter) as Array<keyof MedicineFilter>;
 
     for (const attr of objectKeys) {
       write(filter, attr, this.route.snapshot.queryParams['MedicineCategorySearch[' + attr + ']']);
