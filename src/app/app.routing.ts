@@ -19,7 +19,7 @@ export const AppRoutes: Routes = [
       },
       {
         path: 'store',
-        loadChildren: () => import('./medicine/medicine.module').then(m => m.MedicineModule)
+        loadChildren: () => import('./store/store.module').then(m => m.StoreModule)
       },
       // {
       //     path: 'material',
