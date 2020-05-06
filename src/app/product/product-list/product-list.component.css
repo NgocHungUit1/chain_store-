@@ -1,0 +1,10 @@
+.mat-column-product_no,
+.mat-column-shortcut,
+.mat-column-original_price,
+.mat-column-sell_price,
+.mat-column-quantity_of_stock {
+  flex: 1 1 0%;
+}
+.mat-column-product_name {
+  flex: 2 1 0%;
+}

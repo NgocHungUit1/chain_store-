@@ -15,11 +15,7 @@
       </button>
       <h3>Danh mục thuốc của Cục Quản lý dược</h3>
       <span fxFlex="1 1 0%"></span>
-      <button mat-button routerLink="/agent/create">
-        <mat-icon>add</mat-icon>
-        Tạo mới
-      </button>
-      <div class="diva-column-select">
+      <div class="table-column-select">
         <mat-select [(ngModel)]="displayedColumns" [multiple]="true" style="width: 100%"
                     placeholder="Chọn cột">
           <mat-select-trigger>Chọn cột</mat-select-trigger>
@@ -49,47 +45,47 @@
               </ng-container>
 
               <ng-container matColumnDef="medicine_no">
-                <th mat-header-cell *matHeaderCellDef> Mã thuốc</th>
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['medicine_no']}}</th>
                 <td mat-cell *matCellDef="let element"> {{element.medicine_no}}</td>
               </ng-container>
 
               <ng-container matColumnDef="medicine_name">
-                <th mat-header-cell *matHeaderCellDef> Tên thuốc</th>
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['medicine_name']}}</th>
                 <td mat-cell *matCellDef="let element"> {{element.medicine_name}}</td>
               </ng-container>
 
               <ng-container matColumnDef="registration_no">
-                <th mat-header-cell *matHeaderCellDef> Số đăng ký</th>
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['registration_no']}}</th>
                 <td mat-cell *matCellDef="let element"> {{element.registration_no}}</td>
               </ng-container>
 
               <ng-container matColumnDef="main_active_substance">
-                <th mat-header-cell *matHeaderCellDef> Hoạt chất chính</th>
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['main_active_substance']}}</th>
                 <td mat-cell *matCellDef="let element"> {{element.main_active_substance}}</td>
               </ng-container>
 
               <ng-container matColumnDef="content">
-                <th mat-header-cell *matHeaderCellDef> Hàm lượng</th>
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['content']}}</th>
                 <td mat-cell *matCellDef="let element"> {{element.content}}</td>
               </ng-container>
 
               <ng-container matColumnDef="packing">
-                <th mat-header-cell *matHeaderCellDef> Đóng gói</th>
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['packing']}}</th>
                 <td mat-cell *matCellDef="let element"> {{element.packing}}</td>
               </ng-container>
 
               <ng-container matColumnDef="manufacturer">
-                <th mat-header-cell *matHeaderCellDef> Nhà sản xuất</th>
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['manufacturer']}}</th>
                 <td mat-cell *matCellDef="let element"> {{element.manufacturer}}</td>
               </ng-container>
 
               <ng-container matColumnDef="made_in">
-                <th mat-header-cell *matHeaderCellDef> Nơi sản xuất</th>
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['made_in']}}</th>
                 <td mat-cell *matCellDef="let element"> {{element.made_in}}</td>
               </ng-container>
 
               <ng-container matColumnDef="unit">
-                <th mat-header-cell *matHeaderCellDef> Đơn vị</th>
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['unit']}}</th>
                 <td mat-cell *matCellDef="let element"> {{element.unit}}</td>
               </ng-container>
 

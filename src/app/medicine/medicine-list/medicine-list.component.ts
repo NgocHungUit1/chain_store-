@@ -57,7 +57,7 @@ export class MedicineListComponent extends ListComponentBase implements OnInit {
     const objectKeys = Object.keys(filter) as Array<keyof MedicineFilter>;
 
     for (const attr of objectKeys) {
-      write(filter, attr, this.route.snapshot.queryParams['MedicineCategorySearch[' + attr + ']']);
+      write(filter, attr, this.route.snapshot.queryParams['MedicineSearch[' + attr + ']']);
     }
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
