@@ -22,6 +22,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
   }
 
   @ViewChild(MatTable, { static: true }) table: MatTable<any>;
+  @ViewChild('selectColumn') selectColumn;
 
   apiFilter: ProductFilter;
 
