@@ -1,0 +1,57 @@
+<h2 mat-dialog-title><strong>{{title}}</strong></h2>
+<form #userForm="ngForm" [formGroup]="form">
+  <mat-dialog-content class="mat-typography">
+    <mat-tab-group>
+      <mat-tab label="Thông tin">
+        <div fxLayout="row wrap">
+          <div fxFlex="100">
+            <div class="process-bar-container m-t-10 m-b-10" *ngIf="loading" style="height: 10px">
+              <mat-progress-bar mode="query"></mat-progress-bar>
+            </div>
+          </div>
+          <!-- Card column -->
+          <div fxFlex.gt-sm="58%" fxFlex="100">
+            <mat-form-field>
+              <input type="text" matInput [formControl]="form.controls['product_no']" placeholder="Mã hàng">
+            </mat-form-field>
+            <mat-form-field>
+              <input type="text" matInput [formControl]="form.controls['barcode']" placeholder="Mã vạch">
+            </mat-form-field>
+            <mat-form-field>
+              <input type="text" matInput [formControl]="form.controls['product_name']" placeholder="Tên thuốc">
+            </mat-form-field>
+            <mat-form-field>
+              <input type="text" matInput [formControl]="form.controls['shortcut']" placeholder="Tên viết tắt">
+            </mat-form-field>
+            <mat-form-field>
+              <input type="text" matInput [formControl]="form.controls['group_id']" placeholder="Nhóm">
+            </mat-form-field>
+            <mat-form-field>
+              <input type="text" matInput [formControl]="form.controls['using_id']" placeholder="Đường dùng">
+            </mat-form-field>
+          </div>
+          <div fxFlex.gt-sm="2%" fxFlex="100"></div>
+          <div fxFlex.gt-sm="40%" fxFlex="100">
+            <mat-form-field>
+              <input type="text" matInput [formControl]="form.controls['original_price']" placeholder="Giá vốn">
+            </mat-form-field>
+            <mat-form-field>
+              <input type="text" matInput [formControl]="form.controls['sell_price']" placeholder="Giá bán">
+            </mat-form-field>
+            <mat-form-field>
+              <input type="text" matInput [formControl]="form.controls['weight']" placeholder="Trọng lượng">
+            </mat-form-field>
+          </div>
+        </div>
+
+      </mat-tab>
+      <mat-tab label="Mô tả chi tiết">
+        <mat-card-content></mat-card-content>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-dialog-content>
+  <div mat-dialog-actions align="end">
+    <button mat-button [disabled]="loading" (click)="submit();" mat-flat-button color="warn">{{action}}</button>
+    <button mat-button type="button" (click)="closeDialog()">Bỏ qua</button>
+  </div>
+</form>

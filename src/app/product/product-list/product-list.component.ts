@@ -6,6 +6,9 @@ import {ProductFilter} from "../product.model";
 import {ActivatedRoute} from "@angular/router";
 import {ProductService} from "../product.service";
 import {ListComponentBase} from "../../shared/base";
+import {ProductMedicineDialogComponent} from "../product-medicine-dialog/product-medicine-dialog.component";
+import {MatDialog} from "@angular/material/dialog";
+import {NotifierService} from "angular-notifier";
 
 @Component({
   selector: 'app-product-list',
@@ -16,7 +19,9 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
 
   constructor(
     private service: ProductService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private dialog: MatDialog,
+    private notifySer: NotifierService
   ) {
     super();
   }
@@ -76,6 +81,18 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
   ngOnInit() {
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
+  }
+
+  openProductMedicineDialog(action, obj) {
+    obj.action = action;
+    obj.title = 'Thêm thuốc';
+    const dialogRef = this.dialog.open(ProductMedicineDialogComponent, {
+      data: obj
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.loadData();
+    });
   }
 
 }

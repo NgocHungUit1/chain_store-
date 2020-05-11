@@ -57,7 +57,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     NotifierModule.withConfig({
       position: {
         horizontal: {
-          position: "middle",
+          position: "right",
           distance: 12
         },
         vertical: {

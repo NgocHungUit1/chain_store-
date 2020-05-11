@@ -7,23 +7,29 @@ import {FlexLayoutModule} from "@angular/flex-layout";
 import {PerfectScrollbarModule} from "ngx-perfect-scrollbar";
 import {Ng2SearchPipeModule} from "ng2-search-filter";
 import {RouterModule} from "@angular/router";
-import {DemoMaterialModule} from "../../../original_template/src/app/demo-material-module";
 import {ProductListComponent} from "./product-list/product-list.component";
 import {ProductRoutes} from "./product.routing";
+import { ProductMedicineDialogComponent } from './product-medicine-dialog/product-medicine-dialog.component';
+import {DemoMaterialModule} from "../demo-material-module";
 
 @NgModule({
-  declarations: [ProductListComponent],
+  declarations: [
+    ProductListComponent,
+    ProductMedicineDialogComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(ProductRoutes),
-    DemoMaterialModule,
     FormsModule,
     ReactiveFormsModule,
     FlexLayoutModule,
     QuillModule.forRoot(),
     DragulaModule.forRoot(),
     PerfectScrollbarModule,
-    Ng2SearchPipeModule
+    Ng2SearchPipeModule,
+    DemoMaterialModule
+  ],
+  entryComponents: [
+    ProductMedicineDialogComponent
   ]
 })
 export class ProductModule {

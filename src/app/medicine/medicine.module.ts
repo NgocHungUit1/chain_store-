@@ -7,23 +7,23 @@ import {FlexLayoutModule} from "@angular/flex-layout";
 import {PerfectScrollbarModule} from "ngx-perfect-scrollbar";
 import {Ng2SearchPipeModule} from "ng2-search-filter";
 import {RouterModule} from "@angular/router";
-import {DemoMaterialModule} from "../../../original_template/src/app/demo-material-module";
 import {MedicineRoutes} from "./medicine.routing";
 import {MedicineListComponent} from "./medicine-list/medicine-list.component";
+import {DemoMaterialModule} from "../demo-material-module";
 
 @NgModule({
   declarations: [MedicineListComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(MedicineRoutes),
-    DemoMaterialModule,
     FormsModule,
     ReactiveFormsModule,
     FlexLayoutModule,
     QuillModule.forRoot(),
     DragulaModule.forRoot(),
     PerfectScrollbarModule,
-    Ng2SearchPipeModule
+    Ng2SearchPipeModule,
+    DemoMaterialModule
   ]
 })
 export class MedicineModule {
