@@ -36,9 +36,9 @@ export class AppSidebarComponent implements OnDestroy {
   }
 
   ngOnInit() {
-    this.authService.getPermissions().subscribe(res => {
-      this.permissions = res;
-    });
+    // this.authService.getPermissions().subscribe(res => {
+    //   this.permissions = res;
+    // });
   }
 
   ngOnDestroy(): void {

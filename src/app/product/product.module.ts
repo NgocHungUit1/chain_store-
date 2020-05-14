@@ -11,11 +11,13 @@ import {ProductListComponent} from "./product-list/product-list.component";
 import {ProductRoutes} from "./product.routing";
 import { ProductMedicineDialogComponent } from './product-medicine-dialog/product-medicine-dialog.component';
 import {DemoMaterialModule} from "../demo-material-module";
+import { ProductGroupFormDialogComponent } from './product-group-form-dialog/product-group-form-dialog.component';
 
 @NgModule({
   declarations: [
     ProductListComponent,
-    ProductMedicineDialogComponent],
+    ProductMedicineDialogComponent,
+    ProductGroupFormDialogComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(ProductRoutes),
@@ -29,7 +31,8 @@ import {DemoMaterialModule} from "../demo-material-module";
     DemoMaterialModule
   ],
   entryComponents: [
-    ProductMedicineDialogComponent
+    ProductMedicineDialogComponent,
+    ProductGroupFormDialogComponent
   ]
 })
 export class ProductModule {

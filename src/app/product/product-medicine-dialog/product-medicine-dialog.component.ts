@@ -1,9 +1,10 @@
 import {Component, Inject, OnInit, Optional} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {CustomValidators} from "ngx-custom-validators";
 import {ProductService} from "../product.service";
 import {NotifierService} from "angular-notifier";
+import {ProductGroupFormDialogComponent} from "../product-group-form-dialog/product-group-form-dialog.component";
 
 @Component({
   selector: 'app-product-medicine-dialog',
@@ -18,11 +19,16 @@ export class ProductMedicineDialogComponent implements OnInit {
   public form: FormGroup;
   loading = false;
 
+  groups = [];
+  usings = [];
+  placements = [];
+
   constructor(
     private fb: FormBuilder,
     private productSer: ProductService,
     public dialogRef: MatDialogRef<ProductMedicineDialogComponent>,
     public notifySer: NotifierService,
+    private dialog: MatDialog,
     //@Optional() is used to prevent error if no data is passed
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
     // console.log(data);
@@ -59,6 +65,9 @@ export class ProductMedicineDialogComponent implements OnInit {
       group_id: [
         1
       ],
+      placements: [
+        []
+      ],
       product_name: [
         null,
         Validators.required
@@ -85,6 +94,16 @@ export class ProductMedicineDialogComponent implements OnInit {
         this.dialogRef.close({ event: this.action, data: res });
       });
     }
+  }
+
+  openGroupFormDialog() {
+    const dialogRef = this.dialog.open(ProductGroupFormDialogComponent, {
+
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+    });
   }
 
   doAction() {
