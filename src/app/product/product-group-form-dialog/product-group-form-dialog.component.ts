@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {MatDialogRef} from "@angular/material/dialog";
 import {NotifierService} from "angular-notifier";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {GroupService} from "../group.service";
+import {GroupFilter} from "../group.model";
 
 @Component({
   selector: 'app-product-group-form-dialog',
@@ -18,8 +19,14 @@ export class ProductGroupFormDialogComponent implements OnInit {
     private groupSer: GroupService,
   ) { }
 
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
   public form: FormGroup;
   loading = false;
+
+  parentList = [];
 
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -34,6 +41,23 @@ export class ProductGroupFormDialogComponent implements OnInit {
         null
       ],
     });
+
+    const groupFilter = new GroupFilter();
+    groupFilter.parent_id = 0;
+
+    this.groupSer.getList(groupFilter).subscribe(res => {
+      this.parentList = res.body;
+    });
+  }
+
+  submit() {
+    if (this.form.valid) {
+      let data = this.form.getRawValue();
+      this.groupSer.create(data).subscribe(res => {
+        this.notifySer.notify('success', 'Thêm nhóm hàng thành công!');
+        this.dialogRef.close(res);
+      });
+    }
   }
 
 }

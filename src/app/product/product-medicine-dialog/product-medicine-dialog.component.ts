@@ -5,6 +5,8 @@ import {CustomValidators} from "ngx-custom-validators";
 import {ProductService} from "../product.service";
 import {NotifierService} from "angular-notifier";
 import {ProductGroupFormDialogComponent} from "../product-group-form-dialog/product-group-form-dialog.component";
+import {Group, GroupFilter} from "../group.model";
+import {GroupService} from "../group.service";
 
 @Component({
   selector: 'app-product-medicine-dialog',
@@ -19,13 +21,14 @@ export class ProductMedicineDialogComponent implements OnInit {
   public form: FormGroup;
   loading = false;
 
-  groups = [];
+  groups: Group[] = [];
   usings = [];
   placements = [];
 
   constructor(
     private fb: FormBuilder,
     private productSer: ProductService,
+    private groupSer: GroupService,
     public dialogRef: MatDialogRef<ProductMedicineDialogComponent>,
     public notifySer: NotifierService,
     private dialog: MatDialog,
@@ -38,6 +41,12 @@ export class ProductMedicineDialogComponent implements OnInit {
   }
 
   ngOnInit() {
+    let groupFilter = new GroupFilter();
+    // groupFilter.store_id = 1;
+    this.groupSer.getList(groupFilter).subscribe(res => {
+      this.groups = res.body;
+    });
+
     this.form = this.fb.group({
       product_no: [
         null,
@@ -63,7 +72,7 @@ export class ProductMedicineDialogComponent implements OnInit {
         1
       ],
       group_id: [
-        1
+        null,
       ],
       placements: [
         []
@@ -102,7 +111,10 @@ export class ProductMedicineDialogComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-
+      if (result !== false) {
+        this.groups.push(result);
+        this.form.patchValue({group_id: result.id});
+      }
     });
   }
 

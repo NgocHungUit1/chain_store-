@@ -1,8 +1,10 @@
 import {ApiFilterBase} from "../shared/base";
 
 export class Group {
-  id: string;
+  id: number;
+  store_id: number;
   name: string;
+  parent_id: number;
   description: string;
   status: string;
 }
@@ -11,6 +13,8 @@ export class Group {
 export class GroupFilter extends ApiFilterBase{
   id = '';
   name = '';
+  parent_id = 0;
+  store_id = 0;
   description = '';
   status = '';
   page = 1;
