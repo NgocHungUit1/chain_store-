@@ -72,7 +72,7 @@
                 </mat-form-field>
               </div>
               <div fxFlex="10">
-                <button mat-button aria-label="add" (click)="openGroupFormDialog()">
+                <button mat-button aria-label="add" (click)="openUsingFormDialog()">
                   <mat-icon>add</mat-icon>
                 </button>
               </div>
@@ -91,7 +91,7 @@
                 </mat-form-field>
               </div>
               <div fxFlex="10">
-                <button mat-button aria-label="add" (click)="openGroupFormDialog()">
+                <button mat-button aria-label="add" (click)="openPlacementFormDialog()">
                   <mat-icon>add</mat-icon>
                 </button>
               </div>
@@ -101,13 +101,13 @@
           <div fxFlex.gt-sm="2%" fxFlex="100"></div>
           <div fxFlex.gt-sm="40%" fxFlex="100">
             <mat-form-field>
-              <input type="text" matInput [formControl]="form.controls['original_price']" placeholder="Giá vốn">
+              <input type="number" matInput [formControl]="form.controls['original_price']" placeholder="Giá vốn">
             </mat-form-field>
             <mat-form-field>
-              <input type="text" matInput [formControl]="form.controls['sell_price']" placeholder="Giá bán">
+              <input type="number" matInput [formControl]="form.controls['sell_price']" placeholder="Giá bán">
             </mat-form-field>
             <mat-form-field>
-              <input type="text" matInput [formControl]="form.controls['weight']" placeholder="Trọng lượng">
+              <input type="number" matInput [formControl]="form.controls['weight']" placeholder="Trọng lượng">
             </mat-form-field>
           </div>
         </div>

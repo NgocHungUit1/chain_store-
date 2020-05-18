@@ -7,6 +7,12 @@ import {NotifierService} from "angular-notifier";
 import {ProductGroupFormDialogComponent} from "../product-group-form-dialog/product-group-form-dialog.component";
 import {Group, GroupFilter} from "../group.model";
 import {GroupService} from "../group.service";
+import {ProductUsingFormDialogComponent} from "../product-using-form-dialog/product-using-form-dialog.component";
+import {ProductPlacementFormDialogComponent} from "../product-placement-form-dialog/product-placement-form-dialog.component";
+import {UsingFilter} from "../using.model";
+import {PlacementService} from "../placement.service";
+import {UsingService} from "../using.service";
+import {PlacementFilter} from "../placement.model";
 
 @Component({
   selector: 'app-product-medicine-dialog',
@@ -29,13 +35,15 @@ export class ProductMedicineDialogComponent implements OnInit {
     private fb: FormBuilder,
     private productSer: ProductService,
     private groupSer: GroupService,
+    private usingSer: UsingService,
+    private placementSer: PlacementService,
     public dialogRef: MatDialogRef<ProductMedicineDialogComponent>,
     public notifySer: NotifierService,
     private dialog: MatDialog,
     //@Optional() is used to prevent error if no data is passed
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
     // console.log(data);
-    this.local_data = { ...data };
+    this.local_data = {...data};
     this.action = this.local_data.action;
     this.title = this.local_data.title;
   }
@@ -45,6 +53,18 @@ export class ProductMedicineDialogComponent implements OnInit {
     // groupFilter.store_id = 1;
     this.groupSer.getList(groupFilter).subscribe(res => {
       this.groups = res.body;
+    });
+
+    let usingFilter = new UsingFilter();
+    // usingFilter.store_id = 1;
+    this.usingSer.getList(usingFilter).subscribe(res => {
+      this.usings = res.body;
+    });
+
+    let placementFilter = new PlacementFilter();
+    // placementFilter.store_id = 1;
+    this.placementSer.getList(placementFilter).subscribe(res => {
+      this.placements = res.body;
     });
 
     this.form = this.fb.group({
@@ -69,7 +89,7 @@ export class ProductMedicineDialogComponent implements OnInit {
         null
       ],
       using_id: [
-        1
+        null
       ],
       group_id: [
         null,
@@ -100,15 +120,13 @@ export class ProductMedicineDialogComponent implements OnInit {
       this.productSer.create(data).subscribe(res => {
         this.loading = false;
         this.notifySer.notify('success', 'Thêm thuốc thành công!');
-        this.dialogRef.close({ event: this.action, data: res });
+        this.dialogRef.close({event: this.action, data: res});
       });
     }
   }
 
   openGroupFormDialog() {
-    const dialogRef = this.dialog.open(ProductGroupFormDialogComponent, {
-
-    });
+    const dialogRef = this.dialog.open(ProductGroupFormDialogComponent, {});
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== false) {
@@ -118,12 +136,38 @@ export class ProductMedicineDialogComponent implements OnInit {
     });
   }
 
+  openUsingFormDialog() {
+    const dialogRef = this.dialog.open(ProductUsingFormDialogComponent, {});
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== false) {
+        this.usings.push(result);
+        this.form.patchValue({using_id: result.id});
+      }
+    });
+  }
+
+  openPlacementFormDialog() {
+    const dialogRef = this.dialog.open(ProductPlacementFormDialogComponent, {});
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== false) {
+        this.placements.push(result);
+
+        let curSelects = this.form.controls['placements'].value;
+        curSelects.push(result.id);
+
+        this.form.patchValue({placements: curSelects});
+      }
+    });
+  }
+
   doAction() {
-    this.dialogRef.close({ event: this.action, data: this.local_data });
+    this.dialogRef.close({event: this.action, data: this.local_data});
   }
 
   closeDialog() {
-    this.dialogRef.close({ event: 'Cancel' });
+    this.dialogRef.close({event: 'Cancel'});
   }
 
 }

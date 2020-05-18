@@ -1,0 +1,13 @@
+<h1 mat-dialog-title>Thêm đường dùng</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field>
+      <mat-label>Tên đường dùng</mat-label>
+      <input matInput tabindex="1" [formControl]="this.form.controls['name']">
+    </mat-form-field>
+    </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="3" (click)="submit()"><mat-icon>save</mat-icon>Lưu</button>
+  <button mat-button (click)="onNoClick()" tabindex="-1"><mat-icon>cancel</mat-icon>Bỏ qua</button>
+</div>

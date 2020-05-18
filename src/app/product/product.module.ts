@@ -12,12 +12,17 @@ import {ProductRoutes} from "./product.routing";
 import { ProductMedicineDialogComponent } from './product-medicine-dialog/product-medicine-dialog.component';
 import {DemoMaterialModule} from "../demo-material-module";
 import { ProductGroupFormDialogComponent } from './product-group-form-dialog/product-group-form-dialog.component';
+import {ProductUsingFormDialogComponent} from "./product-using-form-dialog/product-using-form-dialog.component";
+import {ProductPlacementFormDialogComponent} from "./product-placement-form-dialog/product-placement-form-dialog.component";
 
 @NgModule({
   declarations: [
     ProductListComponent,
     ProductMedicineDialogComponent,
-    ProductGroupFormDialogComponent],
+    ProductGroupFormDialogComponent,
+    ProductUsingFormDialogComponent,
+    ProductPlacementFormDialogComponent
+  ],
   imports: [
     CommonModule,
     RouterModule.forChild(ProductRoutes),
@@ -32,7 +37,9 @@ import { ProductGroupFormDialogComponent } from './product-group-form-dialog/pro
   ],
   entryComponents: [
     ProductMedicineDialogComponent,
-    ProductGroupFormDialogComponent
+    ProductGroupFormDialogComponent,
+    ProductUsingFormDialogComponent,
+    ProductPlacementFormDialogComponent
   ]
 })
 export class ProductModule {
