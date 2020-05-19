@@ -1,7 +1,6 @@
 import {Component, Inject, OnInit, Optional} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {CustomValidators} from "ngx-custom-validators";
 import {ProductService} from "../product.service";
 import {NotifierService} from "angular-notifier";
 import {ProductGroupFormDialogComponent} from "../product-group-form-dialog/product-group-form-dialog.component";
@@ -30,6 +29,7 @@ export class ProductMedicineDialogComponent implements OnInit {
   groups: Group[] = [];
   usings = [];
   placements = [];
+  manufacturers = [];
 
   constructor(
     private fb: FormBuilder,
@@ -76,40 +76,25 @@ export class ProductMedicineDialogComponent implements OnInit {
           Validators.maxLength(10)
         ])
       ],
-      barcode: [
-        null
-      ],
-      product_type: [
-        'medicine'
-      ],
-      store_id: [
-        1
-      ],
-      shortcut: [
-        null
-      ],
-      using_id: [
-        null
-      ],
-      group_id: [
-        null,
-      ],
-      placements: [
-        []
-      ],
-      product_name: [
-        null,
-        Validators.required
-      ],
-      sell_price: [
-        null
-      ],
-      original_price: [
-        null
-      ],
-      weight: [
-        null
-      ],
+      barcode: [null],
+      product_type: ['medicine'],
+      store_id: [1],
+      shortcut: [null],
+      using_id: [null],
+      group_id: [null,],
+      placements: [[]],
+      product_name: [null, Validators.required],
+      sell_price: [null],
+      original_price: [null],
+      weight: [null],
+      base_unit: [null],
+      // Medicine
+      registration_no: [null],
+      main_active_substance: [null],
+      content: [null],
+      packing: [null],
+      manufacturer: [null],
+      made_in: [null],
     });
   }
 
