@@ -127,15 +127,19 @@ export class ProductMedicineDialogComponent implements OnInit {
       medicine_id: [null],
       // Medicine
       medicine: this.fb.group({
-        registration_no: [null],
-        main_active_substance: [null],
-        content: [null],
-        packing: [null],
-        manufacturer: [null],
+        registration_no: [null, Validators.required],
+        main_active_substance: [null, Validators.required],
+        content: [null, Validators.required],
+        packing: [null, Validators.required],
+        manufacturer: [null, Validators.required],
         made_in: [null]
       }),
 
-      units: new FormArray([])
+      units: new FormArray([]),
+      min_quantity: [0],
+      max_quantity: [0],
+      description: [null],
+      note: [null],
     });
 
     this.filteredMedicines = this.form.controls['product_name'].valueChanges.pipe(

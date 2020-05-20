@@ -1,9 +1,9 @@
 <h2 mat-dialog-title><strong>{{title}}</strong></h2>
 <form #userForm="ngForm" [formGroup]="form">
-  <mat-dialog-content class="mat-typography">
+  <mat-dialog-content class="mat-typography product-dialog">
     <mat-tab-group>
       <mat-tab label="Thông tin">
-        <div fxLayout="row wrap">
+        <div fxLayout="row wrap" class="m-t-20">
           <div fxFlex="100">
             <div class="process-bar-container m-t-10 m-b-10" *ngIf="loading" style="height: 10px">
               <mat-progress-bar mode="query"></mat-progress-bar>
@@ -255,7 +255,46 @@
 
       </mat-tab>
       <mat-tab label="Mô tả chi tiết">
-        <mat-card-content></mat-card-content>
+        <div fxLayout="row wrap" class="m-t-20">
+          <div fxFlex="100">
+            <mat-card style="margin: 0px; border: 1px solid #ccc">
+              <mat-card-content >
+                <div fxLayout="row wrap">
+                  <div fxFlex="50">
+                    <mat-form-field>
+                      <input type="number" matInput formControlName="min_quantity" placeholder="Số lượng tồn tối thiểu">
+                    </mat-form-field>
+                  </div>
+                  <div fxFlex="50">
+                    <mat-form-field>
+                      <input type="number" matInput formControlName="max_quantity" placeholder="Số lượng tồn tối đa">
+                    </mat-form-field>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="m-t-20">
+          <div fxFlex="100">
+            <quill-editor formControlName="description" placeholder="Mô tả" [style]="{height: '200px'}"></quill-editor>
+          </div>
+        </div>
+        <div fxLayout="row wrap" style="margin-top: 85px;">
+          <div fxFlex="100">
+            <mat-card style="margin: 0px; border: 1px solid #ccc">
+              <mat-card-content >
+                <div fxLayout="row wrap">
+                  <div fxFlex="100">
+                    <mat-form-field>
+                      <textarea matInput formControlName="note" placeholder="Ghi chú"></textarea>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
       </mat-tab>
     </mat-tab-group>
   </mat-dialog-content>

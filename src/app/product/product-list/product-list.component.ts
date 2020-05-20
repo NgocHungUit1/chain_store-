@@ -87,7 +87,9 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     obj.action = action;
     obj.title = 'Thêm thuốc';
     const dialogRef = this.dialog.open(ProductMedicineDialogComponent, {
-      data: obj
+      data: obj,
+      width: '50%',
+      minHeight: '80%',
     });
 
     dialogRef.afterClosed().subscribe(result => {
