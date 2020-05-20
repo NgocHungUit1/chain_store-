@@ -12,6 +12,11 @@ import {UsingFilter} from "../using.model";
 import {PlacementService} from "../placement.service";
 import {UsingService} from "../using.service";
 import {PlacementFilter} from "../placement.model";
+import {Medicine} from "../../medicine/medicine.model";
+import {Observable} from 'rxjs';
+import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
+import {MedicineService} from "../../medicine/medicine.service";
+import {of} from "rxjs/internal/observable/of";
 
 @Component({
   selector: 'app-product-medicine-dialog',
@@ -30,6 +35,9 @@ export class ProductMedicineDialogComponent implements OnInit {
   usings = [];
   placements = [];
   manufacturers = [];
+
+  medicines : Medicine[] = [];
+  filteredMedicines: Observable<Medicine[]>;
 
   fieldLabels = {
     product_no: 'Mã hàng',
@@ -64,6 +72,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     private groupSer: GroupService,
     private usingSer: UsingService,
     private placementSer: PlacementService,
+    private medicineSer: MedicineService,
     public dialogRef: MatDialogRef<ProductMedicineDialogComponent>,
     public notifySer: NotifierService,
     private dialog: MatDialog,
@@ -107,23 +116,54 @@ export class ProductMedicineDialogComponent implements OnInit {
       product_type: ['medicine'],
       store_id: [1],
       shortcut: [null],
-      using_id: [null],
-      group_id: [null,],
+      using_id: [null, Validators.required],
+      group_id: [null, Validators.required],
       placements: [[]],
       product_name: [null, Validators.required],
       sell_price: [null],
       original_price: [null],
       weight: [null],
       base_unit: [null],
+      medicine_id: [null],
       // Medicine
-      registration_no: [null],
-      main_active_substance: [null],
-      content: [null],
-      packing: [null],
-      manufacturer: [null],
-      made_in: [null],
+      medicine: this.fb.group({
+        registration_no: [null],
+        main_active_substance: [null],
+        content: [null],
+        packing: [null],
+        manufacturer: [null],
+        made_in: [null]
+      }),
+
       units: new FormArray([])
     });
+
+    this.filteredMedicines = this.form.controls['product_name'].valueChanges.pipe(
+      startWith(''),
+      // delay emits
+      debounceTime(300),
+      // use switch map so as to cancel previous subscribed events, before creating new once
+      switchMap(value => {
+        if (value !== '') {
+          // lookup from github
+          return this.lookup(value);
+        } else {
+          // if no value is present, return null
+          return of(null);
+        }
+      })
+    );
+  }
+
+  lookup(value: string): Observable<Medicine[]> {
+    return this.medicineSer.autocomplete(value).pipe(
+      // map the item property of the github results as our return object
+      map(results => results),
+      // catch errors
+      catchError(_ => {
+        return of(null);
+      })
+    );
   }
 
   submit() {
@@ -234,6 +274,29 @@ export class ProductMedicineDialogComponent implements OnInit {
     });
 
     this.units.push(group);
+  }
+
+  removeMedicine() {
+    this.form.patchValue({
+      medicine_id: null,
+      product_name: null,
+      medicine: {
+        registration_no: null,
+        main_active_substance: null,
+        content: null,
+        packing: null,
+        manufacturer: null,
+        made_in: null
+      }
+    });
+  }
+
+  selectedMedicine(medicine) {
+    this.form.patchValue({
+      medicine_id: medicine['id'],
+      product_name: medicine['medicine_name'],
+      medicine: medicine,
+    });
   }
 
 }

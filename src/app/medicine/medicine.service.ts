@@ -59,6 +59,11 @@ export class MedicineService {
     const url = environment.apiUrl + '/medicine';
     return this.http.post(url, data);
   }
+
+  autocomplete(term: string) {
+    const url = environment.apiUrl + '/medicine/autocomplete?term=' + term;
+    return this.http.get<Medicine[]>(url);
+  }
 }
 
 
