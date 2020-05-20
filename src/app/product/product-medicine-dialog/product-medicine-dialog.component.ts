@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit, Optional} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ProductService} from "../product.service";
 import {NotifierService} from "angular-notifier";
 import {ProductGroupFormDialogComponent} from "../product-group-form-dialog/product-group-form-dialog.component";
@@ -30,6 +30,33 @@ export class ProductMedicineDialogComponent implements OnInit {
   usings = [];
   placements = [];
   manufacturers = [];
+
+  fieldLabels = {
+    product_no: 'Mã hàng',
+    barcode: 'Mã vạch',
+    product_type: 'Loại hàng',
+    store_id: 'Cửa hàng',
+    shortcut: 'Tên viết tắt',
+    using_id: 'Đường dùng',
+    group_id: 'Nhóm hàng',
+    placements: 'Mã hàng',
+    product_name: 'Tên thuốc',
+    sell_price: 'Giá bán',
+    original_price: 'Giá gốc',
+    weight: 'Trọng lượng',
+    base_unit: 'Đơn vị cơ bản',
+    // Medicine
+    registration_no: 'Số đăng ký',
+    main_active_substance: 'Hoạt chất',
+    content: 'Hàm lượng',
+    packing: 'Quy cách đóng gói',
+    manufacturer: 'Hãng sản xuất',
+    made_in: 'Nước sản xuất',
+    unit_name: 'Tên đơn vị',
+    unit_value: 'Giá trị quy đổi',
+    unit_price: 'Giá bán',
+    unit_no: 'Mã hàng',
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -95,6 +122,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       packing: [null],
       manufacturer: [null],
       made_in: [null],
+      units: new FormArray([])
     });
   }
 
@@ -107,7 +135,41 @@ export class ProductMedicineDialogComponent implements OnInit {
         this.notifySer.notify('success', 'Thêm thuốc thành công!');
         this.dialogRef.close({event: this.action, data: res});
       });
+    } else {
+      let controls = Object.entries(this.form.controls);
+      let hasError = this.checkToShowControlError(controls);
+
+      if (!hasError) {
+        controls = Object.entries(this.units.controls);
+
+        for (let i = 0; i < controls.length; i++) {
+          const childControls = Object.entries(controls[i][1]['controls']);
+
+          hasError = this.checkToShowControlError(childControls);
+          if (hasError) {
+            break;
+          }
+        }
+      }
     }
+  }
+
+  checkToShowControlError(controls) {
+    const count = controls.length;
+    let hasError = false;
+
+    for (let i = 0; i < count; i++) {
+      const fieldName = controls[i][0];
+      const fieldControl = controls[i][1];
+
+      if (fieldControl['errors'] !== null) {
+        this.notifySer.notify('error', 'Lỗi thông tin trường ' + this.fieldLabels[fieldName]);
+        hasError = true;
+        break;
+      }
+    }
+
+    return hasError;
   }
 
   openGroupFormDialog() {
@@ -153,6 +215,25 @@ export class ProductMedicineDialogComponent implements OnInit {
 
   closeDialog() {
     this.dialogRef.close({event: 'Cancel'});
+  }
+
+  removeUnit(i) {
+    this.units.removeAt(i);
+  }
+
+  get units() {
+    return this.form.get('units') as FormArray;
+  }
+
+  addUnit() {
+    const group = new FormGroup({
+      unit_name: new FormControl('', Validators.required),
+      unit_value: new FormControl(0, Validators.required),
+      unit_price: new FormControl(0, Validators.required),
+      unit_no: new FormControl('')
+    });
+
+    this.units.push(group);
   }
 
 }
