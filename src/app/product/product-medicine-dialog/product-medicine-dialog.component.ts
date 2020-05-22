@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, Optional} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, Optional, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ProductService} from "../product.service";
@@ -18,6 +18,11 @@ import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operator
 import {MedicineService} from "../../medicine/medicine.service";
 import {of} from "rxjs/internal/observable/of";
 
+
+class ImageSnippet {
+  constructor(public src: string, public file: File) {}
+}
+
 @Component({
   selector: 'app-product-medicine-dialog',
   templateUrl: './product-medicine-dialog.component.html',
@@ -36,7 +41,6 @@ export class ProductMedicineDialogComponent implements OnInit {
   placements = [];
   manufacturers = [];
 
-  medicines : Medicine[] = [];
   filteredMedicines: Observable<Medicine[]>;
 
   fieldLabels = {
@@ -65,6 +69,16 @@ export class ProductMedicineDialogComponent implements OnInit {
     unit_price: 'Giá bán',
     unit_no: 'Mã hàng',
   };
+
+  imageButtons = [
+    {isShow: true},
+    {isShow: true},
+    {isShow: true},
+    {isShow: true},
+    {isShow: true},
+  ];
+
+  selectedFiles: ImageSnippet[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -300,6 +314,31 @@ export class ProductMedicineDialogComponent implements OnInit {
       medicine_id: medicine['id'],
       product_name: medicine['medicine_name'],
       medicine: medicine,
+    });
+  }
+
+  processFile(imageInput) {
+    const file: File = imageInput.files[0];
+    const reader = new FileReader();
+
+    reader.addEventListener('load', (event: any) => {
+      this.selectedFiles.push(new ImageSnippet(event.target.result, file));
+
+      this.selectedFiles.forEach((value, index) => {
+        this.imageButtons[index]['isShow'] = false;
+      });
+    });
+
+    reader.readAsDataURL(file);
+  }
+
+  removeSelectedImage(index) {
+    this.selectedFiles.splice(index, 1);
+    this.imageButtons.forEach(img => {
+      img.isShow = true;
+    });
+    this.selectedFiles.forEach((value, index) => {
+      this.imageButtons[index]['isShow'] = false;
     });
   }
 

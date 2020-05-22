@@ -28,9 +28,13 @@
             <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field>
-                  <input type="text" matInput [formControl]="form.controls['product_name']" placeholder="Tên thuốc" [matAutocomplete]="auto">
-                  <button mat-icon-button matPrefix><mat-icon>search</mat-icon></button>
-                  <button mat-icon-button matSuffix (click)="removeMedicine()" *ngIf="this.form.controls['product_name'].value">
+                  <input type="text" matInput [formControl]="form.controls['product_name']" placeholder="Tên thuốc"
+                         [matAutocomplete]="auto">
+                  <button mat-icon-button matPrefix>
+                    <mat-icon>search</mat-icon>
+                  </button>
+                  <button mat-icon-button matSuffix (click)="removeMedicine()"
+                          *ngIf="this.form.controls['product_name'].value">
                     <mat-icon>delete</mat-icon>
                   </button>
                   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedMedicine($event.option.value)">
@@ -96,7 +100,8 @@
                     </mat-option>
                   </mat-select>
 
-                  <mat-error *ngIf="form.controls['placements'].hasError('required')">Vui lòng chọn đường dùng</mat-error>
+                  <mat-error *ngIf="form.controls['placements'].hasError('required')">Vui lòng chọn đường dùng
+                  </mat-error>
                 </mat-form-field>
               </div>
               <div fxFlex="10">
@@ -105,7 +110,27 @@
                 </button>
               </div>
             </div>
-
+            <div fxLayout="row wrap">
+              <input type="file" id="file-input" #imageInput accept="image/*"
+                     (change)="processFile(imageInput)" style="display: none">
+              <ul class="product-upload-image">
+                <li class="show selected-image" *ngFor="let image of selectedFiles; index as i" [id]="'selected-image-'+i">
+                  <!--<label>-->
+                    <!--<span class="add-image-text"></span>-->
+                    <img [src]="image.src">
+                    <a class="delete-image" (click)="removeSelectedImage(i)" title="Xóa ảnh">
+                      <mat-icon>remove_circle_outline</mat-icon>
+                    </a>
+                  <!--</label>-->
+                </li>
+                <li *ngFor="let imgBtn of imageButtons; index as i;" [class]="imageButtons[i]['isShow'] ? 'show' : ''">
+                  <label for="file-input" >
+                    <span class="add-image-text">+ Thêm</span>
+                    <img src="/assets/images/default-product-img.jpg">
+                  </label>
+                </li>
+              </ul>
+            </div>
           </div>
           <div fxFlex.gt-sm="2%" fxFlex="100"></div>
           <div fxFlex.gt-sm="40%" fxFlex="100">
@@ -120,12 +145,9 @@
             </mat-form-field>
           </div>
 
+          <!-- Start Medicine -->
           <div fxFlex="100">
-
-          </div>
-
-          <div fxFlex="100">
-            <mat-card style="margin: 0px; border: 1px solid #ccc">
+            <mat-card style="margin: 10px 0px; border: 1px solid #ccc">
               <mat-card-content formGroupName="medicine">
                 <div fxLayout="row wrap">
                   <div fxFlex="100">
@@ -182,16 +204,17 @@
               </mat-card-content>
             </mat-card>
           </div>
+          <!-- End Medicine -->
 
-          <br>
-
+          <!-- Start Unit -->
           <div fxFlex="100">
             <mat-card style="margin: 10px 0px; border: 1px solid #ccc">
               <mat-card-content>
                 <div fxLayout="row wrap">
                   <div fxFlex="30">
                     <mat-form-field>
-                      <input type="text" matInput [formControl]="form.controls['base_unit']" placeholder="Đơn vị cơ bản">
+                      <input type="text" matInput [formControl]="form.controls['base_unit']"
+                             placeholder="Đơn vị cơ bản">
                     </mat-form-field>
                   </div>
                 </div>
@@ -201,40 +224,43 @@
                     <ng-container formArrayName="units">
                       <table>
                         <thead style="text-align: left">
-                          <th>Tên đơn vị</th>
-                          <th>Giá trị quy đổi</th>
-                          <th>Giá bán</th>
-                          <th>Mã hàng</th>
-                          <th></th>
+                        <th>Tên đơn vị</th>
+                        <th>Giá trị quy đổi</th>
+                        <th>Giá bán</th>
+                        <th>Mã hàng</th>
+                        <th></th>
                         </thead>
                         <tbody>
-                          <tr *ngFor="let _ of units.controls; index as i;">
-                            <ng-container [formGroupName]="i">
-                              <td>
-                                <mat-form-field>
-                                  <input type="text" formControlName="unit_name" matInput placeholder="Tên đơn vị">
-                                </mat-form-field>
-                              </td>
-                              <td>
-                                <mat-form-field>
-                                  <input type="number" formControlName="unit_value" matInput placeholder="Giá trị quy đổi">
-                                </mat-form-field>
-                              </td>
-                              <td>
-                                <mat-form-field>
-                                  <input type="number" formControlName="unit_price" matInput placeholder="Giá bán">
-                                </mat-form-field>
-                              </td>
-                              <td>
-                                <mat-form-field>
-                                  <input type="text" formControlName="unit_no" matInput placeholder="Mã hàng">
-                                </mat-form-field>
-                              </td>
-                              <td>
-                                <a (click)="removeUnit(i)"><mat-icon>delete</mat-icon></a>
-                              </td>
-                            </ng-container>
-                          </tr>
+                        <tr *ngFor="let _ of units.controls; index as i;">
+                          <ng-container [formGroupName]="i">
+                            <td>
+                              <mat-form-field>
+                                <input type="text" formControlName="unit_name" matInput placeholder="Tên đơn vị">
+                              </mat-form-field>
+                            </td>
+                            <td>
+                              <mat-form-field>
+                                <input type="number" formControlName="unit_value" matInput
+                                       placeholder="Giá trị quy đổi">
+                              </mat-form-field>
+                            </td>
+                            <td>
+                              <mat-form-field>
+                                <input type="number" formControlName="unit_price" matInput placeholder="Giá bán">
+                              </mat-form-field>
+                            </td>
+                            <td>
+                              <mat-form-field>
+                                <input type="text" formControlName="unit_no" matInput placeholder="Mã hàng">
+                              </mat-form-field>
+                            </td>
+                            <td>
+                              <a (click)="removeUnit(i)">
+                                <mat-icon>delete</mat-icon>
+                              </a>
+                            </td>
+                          </ng-container>
+                        </tr>
                         </tbody>
                       </table>
                     </ng-container>
@@ -243,7 +269,10 @@
 
                 <div fxLayout="row wrap">
                   <div fxFlex="100">
-                    <button mat-raised-button (click)="addUnit();" [disabled]="!form.controls['base_unit'].value"><mat-icon>add</mat-icon>Thêm đơn vị</button>
+                    <button mat-raised-button (click)="addUnit();" [disabled]="!form.controls['base_unit'].value">
+                      <mat-icon>add</mat-icon>
+                      Thêm đơn vị
+                    </button>
                   </div>
                 </div>
 
@@ -251,6 +280,8 @@
               </mat-card-content>
             </mat-card>
           </div>
+          <!-- End Unit -->
+
         </div>
 
       </mat-tab>
@@ -258,7 +289,7 @@
         <div fxLayout="row wrap" class="m-t-20">
           <div fxFlex="100">
             <mat-card style="margin: 0px; border: 1px solid #ccc">
-              <mat-card-content >
+              <mat-card-content>
                 <div fxLayout="row wrap">
                   <div fxFlex="50">
                     <mat-form-field>
@@ -283,7 +314,7 @@
         <div fxLayout="row wrap" style="margin-top: 85px;">
           <div fxFlex="100">
             <mat-card style="margin: 0px; border: 1px solid #ccc">
-              <mat-card-content >
+              <mat-card-content>
                 <div fxLayout="row wrap">
                   <div fxFlex="100">
                     <mat-form-field>
