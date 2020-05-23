@@ -330,7 +330,9 @@
     </mat-tab-group>
   </mat-dialog-content>
   <div mat-dialog-actions align="end">
-    <button mat-button [disabled]="loading" (click)="submit();" mat-flat-button color="warn">{{action}}</button>
+    <button mat-raised-button [disabled]="loading" (click)="submit();" mat-flat-button color="primary">
+      <mat-icon>save</mat-icon> Lưu
+    </button>
     <button mat-button type="button" (click)="closeDialog()">Bỏ qua</button>
   </div>
 </form>

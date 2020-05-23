@@ -59,6 +59,11 @@ export class ProductService {
     const url = environment.apiUrl + '/product';
     return this.http.post(url, data);
   }
+
+  uploadImage(formData) {
+    const url = environment.apiUrl + '/product/upload-image';
+    return this.http.post(url, formData);
+  }
 }
 
 

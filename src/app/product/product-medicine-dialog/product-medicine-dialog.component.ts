@@ -188,10 +188,30 @@ export class ProductMedicineDialogComponent implements OnInit {
     if (this.form.valid) {
       this.loading = true;
       const data = this.form.getRawValue();
-      this.productSer.create(data).subscribe(res => {
-        this.loading = false;
+      this.productSer.create(data).subscribe(product => {
         this.notifySer.notify('success', 'Thêm thuốc thành công!');
-        this.dialogRef.close({event: this.action, data: res});
+        if (this.selectedFiles.length > 0) {
+          /**
+           * Upload product images
+           */
+          let formData = new FormData();
+          formData.append('product_id', product['id']);
+
+          this.selectedFiles.forEach(imageSnip => {
+            formData.append('files[]', imageSnip.file);
+          });
+
+          this.productSer.uploadImage(formData).subscribe(res => {
+            this.loading = false;
+            if (res['success'] === false) {
+              this.notifySer.notify('error', 'Không thể tải hình ảnh!');
+            }
+            this.dialogRef.close({event: this.action, data: product});
+          });
+        } else {
+          this.loading = false;
+          this.dialogRef.close({event: this.action, data: product});
+        }
       });
     } else {
       let controls = Object.entries(this.form.controls);

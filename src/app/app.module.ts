@@ -26,6 +26,7 @@ import { SpinnerComponent } from './shared/spinner.component';
 import {authTokenInterceptorProvider} from "./authentication/auth-token.interceptor";
 import {authInterceptorProvider} from "./authentication/auth.interceptor";
 import {NotifierModule} from "angular-notifier";
+import {OverlayContainer} from "@angular/cdk/overlay";
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -79,4 +80,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule {
+  constructor(overlayContainer: OverlayContainer) {
+    overlayContainer.getContainerElement().classList.add('green');
+  }
+}
