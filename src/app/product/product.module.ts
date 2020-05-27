@@ -14,6 +14,9 @@ import {DemoMaterialModule} from "../demo-material-module";
 import { ProductGroupFormDialogComponent } from './product-group-form-dialog/product-group-form-dialog.component';
 import {ProductUsingFormDialogComponent} from "./product-using-form-dialog/product-using-form-dialog.component";
 import {ProductPlacementFormDialogComponent} from "./product-placement-form-dialog/product-placement-form-dialog.component";
+import { ProductTabInfoComponent } from './product-tab-info/product-tab-info.component';
+import { ProductTabStockChangeComponent } from './product-tab-stock-change/product-tab-stock-change.component';
+import { ProductTabStockComponent } from './product-tab-stock/product-tab-stock.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +24,10 @@ import {ProductPlacementFormDialogComponent} from "./product-placement-form-dial
     ProductMedicineDialogComponent,
     ProductGroupFormDialogComponent,
     ProductUsingFormDialogComponent,
-    ProductPlacementFormDialogComponent
+    ProductPlacementFormDialogComponent,
+    ProductTabInfoComponent,
+    ProductTabStockChangeComponent,
+    ProductTabStockComponent
   ],
   imports: [
     CommonModule,

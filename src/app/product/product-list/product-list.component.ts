@@ -2,18 +2,26 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from "@angular/material/paginator";
 import {MatTable} from "@angular/material/table";
 import {MatSort} from "@angular/material/sort";
-import {ProductFilter} from "../product.model";
+import {Product, ProductFilter} from "../product.model";
 import {ActivatedRoute} from "@angular/router";
 import {ProductService} from "../product.service";
 import {ListComponentBase} from "../../shared/base";
 import {ProductMedicineDialogComponent} from "../product-medicine-dialog/product-medicine-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {NotifierService} from "angular-notifier";
+import {animate, state, style, transition, trigger} from "@angular/animations";
 
 @Component({
   selector: 'app-product-list',
   templateUrl: './product-list.component.html',
-  styleUrls: ['./product-list.component.css']
+  styleUrls: ['./product-list.component.css'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ]
 })
 export class ProductListComponent extends ListComponentBase implements OnInit {
 
@@ -30,6 +38,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
   @ViewChild('selectColumn') selectColumn;
 
   apiFilter: ProductFilter;
+  expandedElement: Product | null;
 
   columnsHeader = {
     '#': '#',
@@ -43,7 +52,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
 
   displayedColumns: string[] = ['#', 'product_no', 'product_name', 'shortcut', 'original_price', 'sell_price', 'quantity_of_stock'];
   columnsToDisplay: string[] = ['#', 'product_no', 'product_name', 'shortcut', 'original_price', 'sell_price', 'quantity_of_stock'];
-  dataSource = [];
+  dataSource: Product[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
