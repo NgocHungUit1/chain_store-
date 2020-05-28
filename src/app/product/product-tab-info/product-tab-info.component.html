@@ -1,1 +1,84 @@
-<p>product-tab-info works!</p>
+<div fxLayout="row wrap" *ngIf="product !== null" class="m-b-20px">
+  <div fxFlex="100">
+    <h3 style="color: #009688">{{product.product_name}}</h3>
+  </div>
+  <div fxFlex="100">
+    <div fxLayout="row wrap">
+      <div fxFlex="40">
+
+      </div>
+      <div fxFlex="60" class="product-info">
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Mã hàng:</span> <strong>{{product.product_no}}</strong>
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Hãng sản xuất:</span> {{product.medicine.manufacturer}}
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Nhóm hàng:</span> {{product.group.name}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Nước sản xuất:</span> {{product.medicine.made_in}}
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Loại hàng:</span> {{product.product_type}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Quy cách đóng gói:</span> {{product.medicine.packing}}
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Định mức tồn:</span> {{product.min_quantity}} > {{product.max_quantity}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Mô tả:</span> {{product.description}}
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Giá bán:</span> {{product.sell_price}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Giá vốn:</span> {{product.original_price}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row product-info-row-last">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Vị trí:</span> <span *ngFor="let placement of product.productPlacements">{{placement.name}}, </span>
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Ghi chú đặt hàng:</span> {{product.note}}
+          </div>
+        </div>
+        <div fxLayout="row wrap">
+          <div fxFlex="100">
+            <button class="m-r-10" mat-raised-button color="primary"><mat-icon>edit</mat-icon> Cập nhật</button>
+            <button class="m-r-10" mat-raised-button color="accent"><mat-icon>file_copy</mat-icon> Sao chép</button>
+            <button class="m-r-10" mat-raised-button color="warn"><mat-icon>delete</mat-icon> Xóa</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

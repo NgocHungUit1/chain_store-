@@ -7,6 +7,7 @@ export class ApiFilterBase {
   page = 1;
   pageSize = 15;
   sort = '';
+  expand = '';
 
   getModelSearch() {
     return '';
@@ -16,7 +17,7 @@ export class ApiFilterBase {
     let res = '';
     for (const key of Object.keys(this)) {
       if (this[key]) {
-        if (key !== 'page' && key !== 'pageSize' && key !== 'sort') {
+        if (key !== 'page' && key !== 'pageSize' && key !== 'sort' && key !== 'expand') {
           if (key !== 'date_ranger') {
             res += '&' + this.getModelSearch() + '[' + key + ']=' + this[key];
           } else {

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpResponse} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment';
-import {ProductFilter} from "./product.model";
+import {Product, ProductFilter} from "./product.model";
 
 @Injectable({
   providedIn: 'root'
@@ -45,9 +45,9 @@ export class ProductService {
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
-  getDetail(id: string) {
-    const url = environment.apiUrl + '/product/' + id;
-    return this.http.get<object>(url);
+  getDetail(id: string, expand:string = '') {
+    const url = environment.apiUrl + '/product/' + id + '&expand=' + expand;
+    return this.http.get<Product>(url);
   }
 
   update(id: string, pos: any) {

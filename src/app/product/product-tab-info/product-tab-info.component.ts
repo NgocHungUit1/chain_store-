@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
+import {ProductService} from "../product.service";
+import {Product} from "../product.model";
 
 @Component({
   selector: 'app-product-tab-info',
@@ -7,7 +9,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProductTabInfoComponent implements OnInit {
 
-  constructor() { }
+  @Input() product: Product;
+
+  constructor(
+    private productSer: ProductService,
+  ) { }
 
   ngOnInit(): void {
   }

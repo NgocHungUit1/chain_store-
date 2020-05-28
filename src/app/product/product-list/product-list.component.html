@@ -95,9 +95,9 @@
                 <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
                   <div class="example-element-detail"
                        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-                    <mat-tab-group>
+                    <mat-tab-group style="width: 100%;">
                       <mat-tab label="Thông tin">
-                        <app-product-tab-info></app-product-tab-info>
+                        <app-product-tab-info [product]="element"></app-product-tab-info>
                       </mat-tab>
                       <mat-tab label="Thẻ kho">
                         <app-product-tab-stock-change></app-product-tab-stock-change>

@@ -1,4 +1,7 @@
 import {ApiFilterBase} from "../shared/base";
+import {Medicine} from "../medicine/medicine.model";
+import {Group} from "./group.model";
+import {Placement} from "./placement.model";
 
 export class Product {
   id: string;
@@ -9,8 +12,17 @@ export class Product {
   sell_price: number;
   weight: number;
   quantity_of_stock: number;
+  min_quantity: number;
+  max_quantity: number;
   base_unit: string;
+  description: string;
   status: string;
+  product_type: string;
+  note: string;
+  medicine: Medicine;
+  group: Group;
+  productPlacements: Placement[];
+  productUnits: object[];
 }
 
 
