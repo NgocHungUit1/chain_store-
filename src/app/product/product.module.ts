@@ -17,6 +17,7 @@ import {ProductPlacementFormDialogComponent} from "./product-placement-form-dial
 import { ProductTabInfoComponent } from './product-tab-info/product-tab-info.component';
 import { ProductTabStockChangeComponent } from './product-tab-stock-change/product-tab-stock-change.component';
 import { ProductTabStockComponent } from './product-tab-stock/product-tab-stock.component';
+import {AngularImageViewerModule} from "angular-x-image-viewer";
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { ProductTabStockComponent } from './product-tab-stock/product-tab-stock.
     DragulaModule.forRoot(),
     PerfectScrollbarModule,
     Ng2SearchPipeModule,
-    DemoMaterialModule
+    DemoMaterialModule,
+    AngularImageViewerModule
   ],
   entryComponents: [
     ProductMedicineDialogComponent,

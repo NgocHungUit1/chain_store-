@@ -69,4 +69,10 @@ File: scss
 .mat-dialog-content {
   font-size: 1rem;
 }
-
+.product-image-container {
+  position: relative;
+  margin: 20px 20px 0px 0px;
+}
+.product-image-container .img-container {
+  height: 385px!important;
+}

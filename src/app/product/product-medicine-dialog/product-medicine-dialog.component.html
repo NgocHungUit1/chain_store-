@@ -14,7 +14,7 @@
             <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field>
-                  <input type="text" matInput [formControl]="form.controls['product_no']" placeholder="Mã hàng">
+                  <input type="text" (change)="onProductNoChange()" matInput [formControl]="form.controls['product_no']" placeholder="Mã hàng">
                 </mat-form-field>
               </div>
             </div>
@@ -330,8 +330,14 @@
     </mat-tab-group>
   </mat-dialog-content>
   <div mat-dialog-actions align="end">
-    <button mat-raised-button [disabled]="loading" (click)="submit();" mat-flat-button color="primary">
+    <button mat-raised-button [disabled]="loading" (click)="submit('Save');" mat-flat-button color="primary">
       <mat-icon>save</mat-icon> Lưu
+    </button>
+    <button mat-raised-button [disabled]="loading" (click)="submit('SaveAndMore');" mat-flat-button color="primary">
+      <mat-icon>save</mat-icon> Lưu và Thêm mới
+    </button>
+    <button mat-raised-button [disabled]="loading" (click)="submit('SaveAndCopy');" mat-flat-button color="primary">
+      <mat-icon>save</mat-icon> Lưu và Sao chép
     </button>
     <button mat-button type="button" (click)="closeDialog()">Bỏ qua</button>
   </div>

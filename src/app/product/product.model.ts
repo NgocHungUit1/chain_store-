@@ -23,6 +23,7 @@ export class Product {
   group: Group;
   productPlacements: Placement[];
   productUnits: object[];
+  images: object[];
 }
 
 

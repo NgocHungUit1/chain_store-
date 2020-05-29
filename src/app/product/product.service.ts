@@ -46,8 +46,8 @@ export class ProductService {
   }
 
   getDetail(id: string, expand:string = '') {
-    const url = environment.apiUrl + '/product/' + id + '&expand=' + expand;
-    return this.http.get<Product>(url);
+    const url = environment.apiUrl + '/product/' + id + '?expand=' + expand;
+    return this.http.get<object>(url);
   }
 
   update(id: string, pos: any) {
@@ -63,6 +63,11 @@ export class ProductService {
   uploadImage(formData) {
     const url = environment.apiUrl + '/product/upload-image';
     return this.http.post(url, formData);
+  }
+
+  removeImage(id: string, imageId: string) {
+    const url = environment.apiUrl + '/product/remove-image';
+    return this.http.post(url, {product_id: id, image_id: id});
   }
 }
 

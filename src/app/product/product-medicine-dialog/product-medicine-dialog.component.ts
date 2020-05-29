@@ -20,7 +20,7 @@ import {of} from "rxjs/internal/observable/of";
 
 
 class ImageSnippet {
-  constructor(public src: string, public file: File) {}
+  constructor(public src: string, public file: File, public id: string) {}
 }
 
 @Component({
@@ -33,6 +33,8 @@ export class ProductMedicineDialogComponent implements OnInit {
   action: string;
   title: string;
   local_data: any;
+  product_id: string;
+  copy_product_id: string;
   public form: FormGroup;
   loading = false;
 
@@ -96,27 +98,11 @@ export class ProductMedicineDialogComponent implements OnInit {
     this.local_data = {...data};
     this.action = this.local_data.action;
     this.title = this.local_data.title;
+    this.copy_product_id = this.local_data.copy_product_id;
+    this.product_id = this.local_data.product_id;
   }
 
-  ngOnInit() {
-    let groupFilter = new GroupFilter();
-    // groupFilter.store_id = 1;
-    this.groupSer.getList(groupFilter).subscribe(res => {
-      this.groups = res.body;
-    });
-
-    let usingFilter = new UsingFilter();
-    // usingFilter.store_id = 1;
-    this.usingSer.getList(usingFilter).subscribe(res => {
-      this.usings = res.body;
-    });
-
-    let placementFilter = new PlacementFilter();
-    // placementFilter.store_id = 1;
-    this.placementSer.getList(placementFilter).subscribe(res => {
-      this.placements = res.body;
-    });
-
+  initForm() {
     this.form = this.fb.group({
       product_no: [
         null,
@@ -155,6 +141,33 @@ export class ProductMedicineDialogComponent implements OnInit {
       description: [null],
       note: [null],
     });
+  }
+
+  ngOnInit() {
+    let groupFilter = new GroupFilter();
+    // groupFilter.store_id = 1;
+    this.groupSer.getList(groupFilter).subscribe(res => {
+      this.groups = res.body;
+    });
+
+    let usingFilter = new UsingFilter();
+    // usingFilter.store_id = 1;
+    this.usingSer.getList(usingFilter).subscribe(res => {
+      this.usings = res.body;
+    });
+
+    let placementFilter = new PlacementFilter();
+    // placementFilter.store_id = 1;
+    this.placementSer.getList(placementFilter).subscribe(res => {
+      this.placements = res.body;
+    });
+
+    this.initForm();
+
+    if (this.product_id !== null || this.copy_product_id !== null) {
+      const id = this.product_id !== null ? this.product_id : this.copy_product_id;
+      this.loadProduct(id);
+    }
 
     this.filteredMedicines = this.form.controls['product_name'].valueChanges.pipe(
       startWith(''),
@@ -173,6 +186,55 @@ export class ProductMedicineDialogComponent implements OnInit {
     );
   }
 
+  loadProduct(id) {
+    this.productSer.getDetail(id, 'medicine,images,productPlacements,productUnits').subscribe(product => {
+      let placements = [];
+      product['productPlacements'].forEach(pPlacement => {
+        placements.push(pPlacement.id)
+      });
+
+      this.form.patchValue({
+        product_no: product['product_no'],
+        barcode: product['barcode'],
+        product_type: product['product_type'],
+        store_id: product['store_id'],
+        shortcut: product['shortcut'],
+        using_id: product['using_id'],
+        group_id: product['group_id'],
+        product_name: product['product_name'],
+        sell_price: product['sell_price'],
+        original_price: product['original_price'],
+        weight: product['weight'],
+        base_unit: product['base_unit'],
+        medicine_id: product['medicine_id'],
+        medicine: product['medicine'],
+        placements: placements,
+        min_quantity: product['min_quantity'],
+        max_quantity: product['max_quantity'],
+        description: product['description'],
+        note: product['note'],
+      });
+
+      product['productUnits'].forEach(pUnit => {
+        const group = new FormGroup({
+          unit_name: new FormControl(pUnit['name'], Validators.required),
+          unit_value: new FormControl(pUnit['value'], Validators.required),
+          unit_price: new FormControl(pUnit['sell_price'], Validators.required),
+          unit_no: new FormControl(pUnit['no']),
+          id: new FormControl(pUnit['id'])
+        });
+
+        this.units.push(group);
+      });
+
+      product['images'].forEach((pImage, index) => {
+        this.selectedFiles.push(new ImageSnippet(pImage['link'], null, pImage['id'] + ''));
+
+        this.imageButtons[index]['isShow'] = false;
+      });
+    });
+  }
+
   lookup(value: string): Observable<Medicine[]> {
     return this.medicineSer.autocomplete(value).pipe(
       // map the item property of the github results as our return object
@@ -184,36 +246,25 @@ export class ProductMedicineDialogComponent implements OnInit {
     );
   }
 
-  submit() {
+  submit(action) {
     if (this.form.valid) {
       this.loading = true;
       const data = this.form.getRawValue();
-      this.productSer.create(data).subscribe(product => {
-        this.notifySer.notify('success', 'Thêm thuốc thành công!');
-        if (this.selectedFiles.length > 0) {
-          /**
-           * Upload product images
-           */
-          let formData = new FormData();
-          formData.append('product_id', product['id']);
-
-          this.selectedFiles.forEach(imageSnip => {
-            formData.append('files[]', imageSnip.file);
-          });
-
-          this.productSer.uploadImage(formData).subscribe(res => {
-            this.loading = false;
-            if (res['success'] === false) {
-              this.notifySer.notify('error', 'Không thể tải hình ảnh!');
-            }
-            this.dialogRef.close({event: this.action, data: product});
-          });
-        } else {
-          this.loading = false;
-          this.dialogRef.close({event: this.action, data: product});
-        }
-      });
+      if (this.product_id === null) {
+        // Create New
+        this.productSer.create(data).subscribe(product => {
+          this.notifySer.notify('success', 'Thêm thuốc thành công!');
+          this.uploadImage(product, action);
+        });
+      } else if (this.product_id !== null) {
+        // UPDATE
+        this.productSer.update(this.product_id, data).subscribe(product => {
+          this.notifySer.notify('success', 'Cập nhật thuốc thành công!');
+          this.uploadImage(product, action);
+        });
+      }
     } else {
+      // Form errors
       let controls = Object.entries(this.form.controls);
       let hasError = this.checkToShowControlError(controls);
 
@@ -229,6 +280,52 @@ export class ProductMedicineDialogComponent implements OnInit {
           }
         }
       }
+    }
+  }
+
+  uploadImage(product, action) {
+    if (this.selectedFiles.length > 0) {
+      /**
+       * Upload product images
+       */
+      let formData = new FormData();
+      formData.append('product_id', product['id']);
+
+      this.selectedFiles.forEach(imageSnip => {
+        if (imageSnip.id.length === 0) {
+          formData.append('files[]', imageSnip.file);
+        } else {
+          formData.append('ids[]', imageSnip.id);
+        }
+      });
+
+      this.productSer.uploadImage(formData).subscribe(res => {
+        this.loading = false;
+        if (res['success'] === false) {
+          this.notifySer.notify('error', 'Không thể tải hình ảnh!');
+        }
+        if (action === 'Save') {
+          this.dialogRef.close({event: this.action, data: product});
+        } else if (action === 'SaveAndMore') {
+          this.form.reset({
+            store_id: 1,
+            product_type: 'medicine'
+          });
+          this.selectedFiles = [];
+          this.form.controls['units'] = new FormArray([]);
+          this.reloadImageButtons();
+        } else if (action === 'SaveAndCopy') {
+          this.product_id = null;
+          this.copy_product_id = product.id;
+          this.selectedFiles = [];
+          this.reloadImageButtons();
+          this.form.controls['units'] = new FormArray([]);
+          this.loadProduct(product.id);
+        }
+      });
+    } else {
+      this.loading = false;
+      this.dialogRef.close({event: this.action, data: product});
     }
   }
 
@@ -304,11 +401,13 @@ export class ProductMedicineDialogComponent implements OnInit {
   }
 
   addUnit() {
+    let index = this.units.length + 1;
+
     const group = new FormGroup({
       unit_name: new FormControl('', Validators.required),
       unit_value: new FormControl(0, Validators.required),
       unit_price: new FormControl(0, Validators.required),
-      unit_no: new FormControl('')
+      unit_no: new FormControl(this.form.controls['product_no'].value + '-' + index)
     });
 
     this.units.push(group);
@@ -342,7 +441,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     const reader = new FileReader();
 
     reader.addEventListener('load', (event: any) => {
-      this.selectedFiles.push(new ImageSnippet(event.target.result, file));
+      this.selectedFiles.push(new ImageSnippet(event.target.result, file, ''));
 
       this.selectedFiles.forEach((value, index) => {
         this.imageButtons[index]['isShow'] = false;
@@ -352,14 +451,37 @@ export class ProductMedicineDialogComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
-  removeSelectedImage(index) {
-    this.selectedFiles.splice(index, 1);
+  reloadImageButtons() {
     this.imageButtons.forEach(img => {
       img.isShow = true;
     });
     this.selectedFiles.forEach((value, index) => {
       this.imageButtons[index]['isShow'] = false;
     });
+  }
+
+  removeSelectedImage(index) {
+    let removeImage = this.selectedFiles[index];
+    this.selectedFiles.splice(index, 1);
+    if (removeImage['id'].length > 0) {
+      this.productSer.removeImage(this.product_id, removeImage['id']).subscribe(res => {
+        this.notifySer.notify('warning', 'Đã xóa hình ảnh!');
+        this.reloadImageButtons();
+      });
+    } else {
+      this.reloadImageButtons();
+    }
+
+  }
+
+  onProductNoChange() {
+    let productNo = this.form.controls['product_no'].value;
+    for (let i = 0; i < this.units.controls.length; i++) {
+      let index = i + 1;
+      this.units.controls[i].patchValue({
+        unit_no: productNo + '-' + index
+      });
+    }
   }
 
 }

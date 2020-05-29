@@ -29,6 +29,8 @@
         "@swimlane/ngx-datatable": "^17.0.0",
         "ajv": "^6.12.0",
         "angular-calendar": "^0.28.0",
+        "angular-notifier": "^6.0.1",
+        "angular-x-image-viewer": "^2.0.1",
         "apexcharts": "^3.16.0",
         "c3": "^0.4.24",
         "chart.js": "^2.9.3",
@@ -37,6 +39,7 @@
         "d3": "^5.15.0",
         "date-fns": "^1.30.1",
         "extend": "^3.0.2",
+        "font-awesome": "^4.7.0",
         "hammerjs": "^2.0.8",
         "handlebars": "^4.7.3",
         "lodash": "^4.17.15",
@@ -58,8 +61,7 @@
         "rxjs-compat": "^6.5.4",
         "rxjs-tslint": "^0.1.8",
         "tslib": "^1.10.0",
-        "zone.js": "~0.10.2",
-        "angular-notifier": "^6.0.1"
+        "zone.js": "~0.10.2"
     },
     "devDependencies": {
         "@angular-devkit/build-angular": "~0.900.3",

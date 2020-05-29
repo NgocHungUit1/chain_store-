@@ -1,11 +1,13 @@
-<div fxLayout="row wrap" *ngIf="product !== null" class="m-b-20px">
+<div fxLayout="row wrap" *ngIf="product !== null" class="m-b-20">
   <div fxFlex="100">
     <h3 style="color: #009688">{{product.product_name}}</h3>
   </div>
   <div fxFlex="100">
     <div fxLayout="row wrap">
       <div fxFlex="40">
-
+        <div class="product-image-container">
+          <angular-image-viewer [screenHeightOccupied]='0' [src]="images" [(index)]="imageIndex"></angular-image-viewer>
+        </div>
       </div>
       <div fxFlex="60" class="product-info">
         <div fxLayout="row wrap" class="product-info-row">
@@ -73,8 +75,8 @@
         </div>
         <div fxLayout="row wrap">
           <div fxFlex="100">
-            <button class="m-r-10" mat-raised-button color="primary"><mat-icon>edit</mat-icon> Cập nhật</button>
-            <button class="m-r-10" mat-raised-button color="accent"><mat-icon>file_copy</mat-icon> Sao chép</button>
+            <button class="m-r-10" mat-raised-button color="primary" (click)="openMedicineDialog(this.product.id, null)"><mat-icon>edit</mat-icon> Cập nhật</button>
+            <button class="m-r-10" mat-raised-button color="accent"  (click)="openMedicineDialog(null, this.product.id)"><mat-icon>file_copy</mat-icon> Sao chép</button>
             <button class="m-r-10" mat-raised-button color="warn"><mat-icon>delete</mat-icon> Xóa</button>
           </div>
         </div>

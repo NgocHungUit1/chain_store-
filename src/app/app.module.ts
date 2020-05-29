@@ -27,6 +27,7 @@ import {authTokenInterceptorProvider} from "./authentication/auth-token.intercep
 import {authInterceptorProvider} from "./authentication/auth.interceptor";
 import {NotifierModule} from "angular-notifier";
 import {OverlayContainer} from "@angular/cdk/overlay";
+import {AngularImageViewerModule} from "angular-x-image-viewer";
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -69,6 +70,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
       },
       theme: "material",
     }),
+    AngularImageViewerModule
   ],
   providers: [
     {

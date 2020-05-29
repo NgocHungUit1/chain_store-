@@ -74,7 +74,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'medicine,productPlacements,group';
+    filter.expand = 'medicine,productPlacements,group,images';
     return filter;
   }
 
@@ -96,6 +96,8 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
   openProductMedicineDialog(action, obj) {
     obj.action = action;
     obj.title = 'Thêm thuốc';
+    obj.product_id = null;
+    obj.copy_product_id = null;
     const dialogRef = this.dialog.open(ProductMedicineDialogComponent, {
       data: obj,
       width: '60%',
