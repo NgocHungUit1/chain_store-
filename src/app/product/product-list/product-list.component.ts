@@ -10,6 +10,7 @@ import {ProductMedicineDialogComponent} from "../product-medicine-dialog/product
 import {MatDialog} from "@angular/material/dialog";
 import {NotifierService} from "angular-notifier";
 import {animate, state, style, transition, trigger} from "@angular/animations";
+import { ProductMerchandiseFormDialogComponent } from '../product-merchandise-form-dialog/product-merchandise-form-dialog.component';
 
 @Component({
   selector: 'app-product-list',
@@ -102,6 +103,16 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
       data: obj,
       width: '60%',
       minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.loadData();
+    });
+  }
+
+  openProductMerchandiseFormDialog(action, obj){
+    const dialogRef = this.dialog.open(ProductMerchandiseFormDialogComponent, {
+
     });
 
     dialogRef.afterClosed().subscribe(result => {

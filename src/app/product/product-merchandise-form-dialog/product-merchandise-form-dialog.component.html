@@ -1,0 +1,45 @@
+<h2 mat-dialog-title><strong>{{title}}</strong></h2>
+<form #userForm="ngForm" >
+  <mat-dialog-content class="mat-typography product-dialog">
+    <mat-tab-group>
+      <mat-tab label="Thông tin">
+        <div fxLayout="row wrap" class="m-t-20">
+          <div fxFlex="100">
+            <div class="process-bar-container m-t-10 m-b-10" *ngIf="loading" style="height: 10px">
+              <mat-progress-bar mode="query"></mat-progress-bar>
+            </div>
+          </div>
+          <!-- Card column -->
+
+          <div fxFlex.gt-sm="2%" fxFlex="100"></div>
+
+
+          <!-- Start Medicine -->
+
+          <!-- End Medicine -->
+
+          <!-- Start Unit -->
+
+          <!-- End Unit -->
+
+        </div>
+
+      </mat-tab>
+      <mat-tab label="Mô tả chi tiết">
+
+      </mat-tab>
+    </mat-tab-group>
+  </mat-dialog-content>
+  <div mat-dialog-actions align="end">
+    <button mat-raised-button [disabled]="loading"  mat-flat-button color="primary">
+      <mat-icon>save</mat-icon> Lưu
+    </button>
+    <button mat-raised-button [disabled]="loading"  mat-flat-button color="primary">
+      <mat-icon>save</mat-icon> Lưu và Thêm mới
+    </button>
+    <button mat-raised-button [disabled]="loading"  mat-flat-button color="primary">
+      <mat-icon>save</mat-icon> Lưu và Sao chép
+    </button>
+    <button mat-button type="button" (click)="closeDialog()">Bỏ qua</button>
+  </div>
+</form>
