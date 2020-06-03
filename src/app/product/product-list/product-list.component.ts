@@ -111,8 +111,14 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
   }
 
   openProductMerchandiseFormDialog(action, obj){
+      obj.action = action;
+      obj.title = 'Thêm hàng hóa';
+      obj.product_id = null;
+      obj.copy_product_id = null;
     const dialogRef = this.dialog.open(ProductMerchandiseFormDialogComponent, {
-
+        data :obj,
+        width: '60%',
+        minHeight: '80%',
     });
 
     dialogRef.afterClosed().subscribe(result => {

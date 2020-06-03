@@ -2,6 +2,7 @@
 <form #userForm="ngForm" [formGroup]="form" >
   <mat-dialog-content class="mat-typography product-dialog">
     <mat-tab-group>
+      <!-- Tab thong tin  -->
       <mat-tab label="Thông tin">
         <div fxLayout="row wrap" class="m-t-20">
           <div fxFlex="100">
@@ -14,7 +15,7 @@
             <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field>
-                  <input type="text"  matInput [formControl]="form.controls['name']" placeholder="Tên">
+                  <input type="text"  matInput [formControl]="form.controls['product_no']" placeholder="Mã hàng hóa">
                 </mat-form-field>
               </div>
             </div>
@@ -37,7 +38,17 @@
         </div>
 
       </mat-tab>
+
+      <!-- Tab mo ta chi tiet  -->
       <mat-tab label="Mô tả chi tiết">
+
+      </mat-tab>
+      <!-- Tab Thành phần  -->
+      <mat-tab label="Thành phần">
+
+      </mat-tab>
+      <!-- Tab Món thêm  -->
+      <mat-tab label="Món thêm">
 
       </mat-tab>
     </mat-tab-group>
