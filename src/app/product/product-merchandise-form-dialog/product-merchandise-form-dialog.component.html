@@ -1,5 +1,5 @@
 <h2 mat-dialog-title><strong>{{title}}</strong></h2>
-<form #userForm="ngForm" >
+<form #userForm="ngForm" [formGroup]="form" >
   <mat-dialog-content class="mat-typography product-dialog">
     <mat-tab-group>
       <mat-tab label="Thông tin">
@@ -10,9 +10,21 @@
             </div>
           </div>
           <!-- Card column -->
+          <div fxFlex.gt-sm="58%" fxFlex="100">
+            <div fxLayout="row wrap">
+              <div fxFlex="100">
+                <mat-form-field>
+                  <input type="text"  matInput [formControl]="form.controls['name']" placeholder="Tên">
+                </mat-form-field>
+              </div>
+            </div>
 
+          </div>
           <div fxFlex.gt-sm="2%" fxFlex="100"></div>
 
+          <div fxFlex.gt-sm="40%" fxFlex="100">
+            40
+          </div>
 
           <!-- Start Medicine -->
 
@@ -31,7 +43,7 @@
     </mat-tab-group>
   </mat-dialog-content>
   <div mat-dialog-actions align="end">
-    <button mat-raised-button [disabled]="loading"  mat-flat-button color="primary">
+    <button mat-raised-button [disabled]="loading" (click)="submit('Save')"  mat-flat-button color="primary">
       <mat-icon>save</mat-icon> Lưu
     </button>
     <button mat-raised-button [disabled]="loading"  mat-flat-button color="primary">
