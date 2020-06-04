@@ -2,6 +2,8 @@ import { Component,Optional ,Inject, OnInit } from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {Observable} from 'rxjs';
+import {Group, GroupFilter} from "../group.model";
+import {ProductGroupFormDialogComponent} from "../product-group-form-dialog/product-group-form-dialog.component";
 
 
 @Component({
@@ -19,7 +21,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
   public form: FormGroup;
   loading = false;
 
-  // groups: Group[] = [];
+  groups: Group[] = [];
   usings = [];
   placements = [];
   manufacturers = [];
@@ -56,6 +58,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<ProductMerchandiseFormDialogComponent>,
+    private dialog: MatDialog,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
       this.local_data = {...data};
       this.action = this.local_data.action;
@@ -112,6 +115,17 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
   submit(action){
     console.log("ahihi");
 
+  }
+
+  openGroupFormDialog() {
+    const dialogRef = this.dialog.open(ProductGroupFormDialogComponent, {});
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== false && result !== undefined) {
+        this.groups.push(result);
+        this.form.patchValue({group_id: result.id});
+      }
+    });
   }
 
 }

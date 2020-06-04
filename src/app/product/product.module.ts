@@ -19,6 +19,7 @@ import { ProductTabStockChangeComponent } from './product-tab-stock-change/produ
 import { ProductTabStockComponent } from './product-tab-stock/product-tab-stock.component';
 import {AngularImageViewerModule} from "angular-x-image-viewer";
 import { ProductMerchandiseFormDialogComponent } from './product-merchandise-form-dialog/product-merchandise-form-dialog.component';
+import { ProductManufacturerFormDialogComponent } from './product-manufacturer-form-dialog/product-manufacturer-form-dialog.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { ProductMerchandiseFormDialogComponent } from './product-merchandise-for
     ProductTabInfoComponent,
     ProductTabStockChangeComponent,
     ProductTabStockComponent,
-    ProductMerchandiseFormDialogComponent
+    ProductMerchandiseFormDialogComponent,
+    ProductManufacturerFormDialogComponent
   ],
   imports: [
     CommonModule,
