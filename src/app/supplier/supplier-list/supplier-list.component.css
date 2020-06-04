@@ -1,0 +1,11 @@
+.mat-column-medicine_no,
+.mat-column-medicine_name,
+.mat-column-registration_no,
+.mat-column-manufacturer,
+.mat-column-made_in,
+.mat-column-unit {
+  flex: 1 1 0%;
+}
+.mat-column-main_active_substance, .mat-column-content {
+  flex: 2 1 0%;
+}
