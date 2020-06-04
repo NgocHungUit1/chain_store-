@@ -52,16 +52,16 @@
                 </mat-form-field>
               </div>
             </div>
+
             <div fxLayout="row wrap">
               <div fxFlex="90">
                 <mat-form-field>
                   <mat-select placeholder="Nhóm" [formControl]="form.controls['group_id']">
                     <mat-option>--</mat-option>
-                    <mat-option *ngFor="let group of groups" [value]="group.id">
-                      {{group.name}}
-                    </mat-option>
+                      <mat-option *ngFor="let group of groups" [value]="group.id">
+                        {{group.name}}
+                      </mat-option>
                   </mat-select>
-
                   <mat-error *ngIf="form.controls['group_id'].hasError('required')">Vui lòng chọn nhóm</mat-error>
                 </mat-form-field>
               </div>
@@ -71,6 +71,7 @@
                 </button>
               </div>
             </div>
+
             <div fxLayout="row wrap">
               <div fxFlex="90">
                 <mat-form-field>

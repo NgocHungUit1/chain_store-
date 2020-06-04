@@ -349,9 +349,9 @@ export class ProductMedicineDialogComponent implements OnInit {
 
   openGroupFormDialog() {
     const dialogRef = this.dialog.open(ProductGroupFormDialogComponent, {});
-
     dialogRef.afterClosed().subscribe(result => {
-      if (result !== false) {
+
+      if (result !== false && result !== undefined) {
         this.groups.push(result);
         this.form.patchValue({group_id: result.id});
       }
@@ -362,7 +362,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     const dialogRef = this.dialog.open(ProductUsingFormDialogComponent, {});
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result !== false) {
+      if (result !== false && result !== undefined) {
         this.usings.push(result);
         this.form.patchValue({using_id: result.id});
       }
@@ -373,7 +373,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     const dialogRef = this.dialog.open(ProductPlacementFormDialogComponent, {});
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result !== false) {
+      if (result !== false && result !== undefined) {
         this.placements.push(result);
 
         let curSelects = this.form.controls['placements'].value;
