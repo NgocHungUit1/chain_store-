@@ -1,7 +1,7 @@
-import {Component, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
+import {Component, Inject, OnInit, Optional} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {NotifierService} from 'angular-notifier';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {SupplierService} from '../supplier.service';
 import {map, startWith} from 'rxjs/operators';
 import {Observable} from 'rxjs/Observable';
@@ -23,6 +23,8 @@ export class SupplierFormDialogComponent implements OnInit {
   filteredProvinces: Observable<any[]>;
   filteredDistricts: Observable<any[]>;
   filteredWards: Observable<any[]>;
+  local_data: any;
+  supplier_id: string;
 
   public parentList = [];
   constructor(
@@ -31,7 +33,11 @@ export class SupplierFormDialogComponent implements OnInit {
     public locationSer: LocationService,
     private fb: FormBuilder,
     private supplierSer: SupplierService,
-  ) { }
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: Object
+  ) {
+    this.local_data = {...data};
+    this.supplier_id = this.local_data.supplier_id;
+  }
 
   onNoClick(): void {
     this.dialogRef.close();
@@ -73,6 +79,37 @@ export class SupplierFormDialogComponent implements OnInit {
       startWith(''),
       map(ward => (ward ? this.filterWard(ward) : this.wards.slice()))
     );
+
+    if (this.supplier_id !== null && this.supplier_id !== undefined) {
+      this.loadSupplier(this.supplier_id);
+    }
+  }
+
+  loadSupplier(id) {
+    this.supplierSer.getDetail(id, 'province,district,ward').subscribe(supplier => {
+      this.form.patchValue({
+        name: supplier['name'],
+        phone_number: supplier['phone_number'],
+        email: supplier['email'],
+        address: supplier['address'],
+        company_name: supplier['company_name'],
+        tax_code: supplier['tax_code'],
+        district: supplier['district'],
+        ward: supplier['ward'],
+        province: supplier['province'],
+        note: supplier['note'],
+      });
+      if (supplier['province_id'] !== null) {
+        this.locationSer.autocomplete('', 'district', supplier['province_id']).subscribe(locations => {
+          this.districts = locations;
+        });
+      }
+      if (supplier['district_id'] !== null) {
+        this.locationSer.autocomplete('', 'ward', supplier['district_id']).subscribe(locations => {
+          this.wards = locations;
+        });
+      }
+    });
   }
 
   filterProvince(name: string) {
@@ -115,10 +152,17 @@ export class SupplierFormDialogComponent implements OnInit {
       if (data['ward'] !== null) {
         data['ward_id'] = data['ward'].id;
       }
-      this.supplierSer.create(data).subscribe(res => {
-        this.notifySer.notify('success', 'Thêm nhà cung cấp thành công!');
-        this.dialogRef.close(res);
-      });
+      if (this.supplier_id !== null && this.supplier_id !== undefined) {
+        this.supplierSer.update(this.supplier_id, data).subscribe(res => {
+          this.notifySer.notify('success', 'Cập nhật nhà cung cấp thành công!');
+          this.dialogRef.close(res);
+        });
+      } else {
+        this.supplierSer.create(data).subscribe(res => {
+          this.notifySer.notify('success', 'Thêm nhà cung cấp thành công!');
+          this.dialogRef.close(res);
+        });
+      }
     }
   }
 

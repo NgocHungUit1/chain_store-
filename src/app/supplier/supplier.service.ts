@@ -45,9 +45,9 @@ export class SupplierService {
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
-  getDetail(id: string) {
-    const url = environment.apiUrl + '/supplier/' + id;
-    return this.http.get<object>(url);
+  getDetail(id: string, expand: string) {
+    const url = environment.apiUrl + '/supplier/' + id + '?expand=' + expand;
+    return this.http.get<Supplier>(url);
   }
 
   update(id: string, pos: any) {
@@ -63,6 +63,16 @@ export class SupplierService {
   autocomplete(term: string) {
     const url = environment.apiUrl + '/supplier/autocomplete?term=' + term;
     return this.http.get<Supplier[]>(url);
+  }
+
+  activate(id) {
+    const url = environment.apiUrl + '/supplier/activate?id=' + id;
+    return this.http.post(url, {});
+  }
+
+  lock(id) {
+    const url = environment.apiUrl + '/supplier/lock?id=' + id;
+    return this.http.post(url, {});
   }
 }
 

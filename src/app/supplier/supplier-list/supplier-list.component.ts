@@ -5,20 +5,30 @@ import {MatSort} from '@angular/material/sort';
 import {ListComponentBase} from '../../shared/base';
 import {SupplierService} from '../supplier.service';
 import {ActivatedRoute} from '@angular/router';
-import {SupplierFilter} from '../supplier.model';
+import {Supplier, SupplierFilter} from '../supplier.model';
 import {MatDialog} from '@angular/material/dialog';
 import {SupplierFormDialogComponent} from '../supplier-form-dialog/supplier-form-dialog.component';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import {NotifierService} from 'angular-notifier';
 
 @Component({
   templateUrl: './supplier-list.component.html',
-  styleUrls: ['./supplier-list.component.css']
+  styleUrls: ['./supplier-list.component.css'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ]
 })
 export class SupplierListComponent extends ListComponentBase implements OnInit {
 
   constructor(
     private service: SupplierService,
     private dialog: MatDialog,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private notifyService: NotifierService
   ) {
     super();
   }
@@ -56,6 +66,7 @@ export class SupplierListComponent extends ListComponentBase implements OnInit {
     'status'
   ];
   dataSource = [];
+  expandedElement: Supplier | null;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -77,6 +88,7 @@ export class SupplierListComponent extends ListComponentBase implements OnInit {
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
+    filter.expand = 'province,district,ward';
     return filter;
   }
 

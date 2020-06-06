@@ -43,8 +43,8 @@
               GitHub's API rate limit has been reached. It will be reset in one minute.
             </div>
           </div>
-          <div class="table-content table-responsive">
-            <table mat-table [dataSource]="dataSource" class="table employee-list no-wrap">
+          <div class="table-responsive">
+            <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="">
 
               <ng-container matColumnDef="#">
                 <th mat-header-cell *matHeaderCellDef> #</th>
@@ -78,11 +78,34 @@
 
               <ng-container matColumnDef="status">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['status']}}</th>
-                <td mat-cell *matCellDef="let element"> {{element.status}}</td>
+                <td mat-cell *matCellDef="let element">
+                  <label *ngIf="element.status == '10'" class="label label-warning">Ngưng hoạt động</label>
+                  <label *ngIf="element.status == '1'" class="label label-success">Hoạt động</label>
+                </td>
               </ng-container>
 
-              <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              <ng-container matColumnDef="expandedDetail">
+                <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
+                  <div class="example-element-detail"
+                       [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                    <mat-tab-group style="width: 100%;">
+                      <mat-tab label="Thông tin">
+                        <app-supplier-tab-info [supplier]="element"></app-supplier-tab-info>
+                      </mat-tab>
+                      <mat-tab label="Dư nợ">
+                        <app-supplier-tab-debt></app-supplier-tab-debt>
+                      </mat-tab>
+                    </mat-tab-group>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+              <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" class="example-element-row"
+                  [class.example-expanded-row]="expandedElement === element"
+                  (click)="expandedElement = expandedElement === element ? null : element">
+              </tr>
+              <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
             </table>
           </div>
           <mat-paginator #paginator [length]="pageTotalCount" [pageSize]="pageSize"

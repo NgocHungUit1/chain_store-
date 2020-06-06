@@ -11,11 +11,15 @@ import {DemoMaterialModule} from '../demo-material-module';
 import {SupplierListComponent} from './supplier-list/supplier-list.component';
 import {SupplierRoutes} from './supplier.routing';
 import {SupplierFormDialogComponent} from './supplier-form-dialog/supplier-form-dialog.component';
+import {SupplierTabInfoComponent} from './supplier-tab-info/supplier-tab-info.component';
+import {SupplierTabDebtComponent} from './supplier-tab-debt/supplier-tab-debt.component';
 
 @NgModule({
   declarations: [
     SupplierListComponent,
-    SupplierFormDialogComponent
+    SupplierFormDialogComponent,
+    SupplierTabInfoComponent,
+    SupplierTabDebtComponent
   ],
   imports: [
     CommonModule,

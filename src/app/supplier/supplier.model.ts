@@ -1,4 +1,5 @@
-import {ApiFilterBase} from "../shared/base";
+import {ApiFilterBase} from '../shared/base';
+import {Location} from '../location/location.model';
 
 export class Supplier {
   id: string;
@@ -8,7 +9,12 @@ export class Supplier {
   email: string;
   tax_code: string;
   branch_id: number;
+  note: string;
   status: string;
+  address: string;
+  province: Location;
+  district: Location;
+  ward: Location;
 }
 
 
@@ -20,6 +26,8 @@ export class SupplierFilter extends ApiFilterBase{
   email = '';
   tax_code = '';
   branch_id = '';
+  note = '';
+  address = '';
   status = '';
   page = 1;
   pageSize = 15;
