@@ -56,6 +56,17 @@ const MENUITEMS = [
       {state: 'stock_take', name: 'Kiểm kho', type: 'link'},
     ]
   },
+  {
+    state: 'partner',
+    name: 'Đối tác',
+    type: 'sub',
+    icon: 'contacts',
+    // badge: [{type: 'red', value: '17'}],
+    children: [
+      {state: 'customer', name: 'Khách hàng', type: 'link'},
+      {state: 'supplier', name: 'Nhà cung cấp', type: 'link'},
+    ]
+  },
   // {
   //     state: 'material',
   //     name: 'Ui',

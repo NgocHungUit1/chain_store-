@@ -16,16 +16,16 @@
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Hãng sản xuất:</span> {{ product.medicine?.manufacturer }}
+            <span class="product-field-label">Hãng sản xuất:</span> <span *ngIf="product.medicine">{{product.medicine.manufacturer}}</span>
           </div>
         </div>
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Nhóm hàng:</span> {{product.group.name}}
+            <span class="product-field-label">Nhóm hàng:</span> <span *ngIf="product.group">{{product.group.name}}</span>
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Nước sản xuất:</span> {{product.medicine?.made_in}}
+            <span class="product-field-label">Nước sản xuất:</span> <span *ngIf="product.medicine">{{product.medicine.made_in}}</span>
           </div>
         </div>
         <div fxLayout="row wrap" class="product-info-row">
@@ -34,7 +34,7 @@
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Quy cách đóng gói:</span> {{product.medicine?.packing}}
+            <span class="product-field-label">Quy cách đóng gói:</span> <span *ngIf="product.medicine">{{product.medicine.packing}}</span>
           </div>
         </div>
         <div fxLayout="row wrap" class="product-info-row">

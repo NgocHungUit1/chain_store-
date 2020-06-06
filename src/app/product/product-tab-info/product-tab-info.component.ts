@@ -26,7 +26,7 @@ export class ProductTabInfoComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    let data = [];
+    const data = [];
 
     this.product.images.forEach(pImage => {
       data.push(pImage['link']);
@@ -36,7 +36,7 @@ export class ProductTabInfoComponent implements OnInit {
   }
 
   openMedicineDialog(id, copy_product_id = null) {
-    let obj = {
+    const obj = {
       action: copy_product_id !== null ? 'Copy' : 'Update',
       title: copy_product_id !== null ? 'Sao chép thuốc' : 'Cập nhật thuốc',
       product_id: id,
