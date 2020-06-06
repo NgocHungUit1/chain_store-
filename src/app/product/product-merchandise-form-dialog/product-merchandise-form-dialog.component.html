@@ -12,6 +12,7 @@
           </div>
           <!-- Card column -->
           <div fxFlex.gt-sm="58%" fxFlex="100">
+
             <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field>
@@ -20,20 +21,56 @@
               </div>
             </div>
 
+            <div fxLayout="row wrap">
+              <div fxFlex="100">
+                <mat-form-field>
+                  <input type="text"  matInput [formControl]="form.controls['product_name']" placeholder="Tên hàng">
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div fxLayout="row wrap">
+              <div fxFlex="90">
+                <mat-form-field>
+                  <mat-select placeholder="Nhóm" [formControl]="form.controls['group_id']">
+                    <mat-option>--</mat-option>
+                    <mat-option *ngFor="let group of groups" [value]="group.id">
+                      {{group.name}}
+                    </mat-option>
+                  </mat-select>
+
+                  <mat-error *ngIf="form.controls['group_id'].hasError('required')">Vui lòng chọn nhóm</mat-error>
+                </mat-form-field>
+              </div>
+              <div fxFlex="10">
+                <button mat-button aria-label="add" (click)="openGroupFormDialog()">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+            </div>
+
+            <div fxLayout="row wrap">
+              <div fxFlex="100">
+                <mat-form-field>
+                  <input type="number"  matInput [formControl]="form.controls['original_price']" placeholder="Giá vốn">
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div fxLayout="row wrap">
+              <div fxFlex="100">
+                <mat-form-field>
+                  <input type="number"  matInput [formControl]="form.controls['sell_price']" placeholder="Giá gốc">
+                </mat-form-field>
+              </div>
+            </div>
           </div>
           <div fxFlex.gt-sm="2%" fxFlex="100"></div>
-
+<!-- Hình ảnh -->
           <div fxFlex.gt-sm="40%" fxFlex="100">
             40
           </div>
 
-          <!-- Start Medicine -->
-
-          <!-- End Medicine -->
-
-          <!-- Start Unit -->
-
-          <!-- End Unit -->
 
         </div>
 
@@ -41,12 +78,48 @@
 
       <!-- Tab mo ta chi tiet  -->
       <mat-tab label="Mô tả chi tiết">
-
+        <div fxLayout="row wrap" class="m-t-20">
+          <div fxFlex="100">
+            <mat-card style="margin: 0px; border: 1px solid #ccc">
+              <mat-card-content>
+                <div fxLayout="row wrap">
+                  <div fxFlex="50">
+                    <mat-form-field>
+                      <input type="number" matInput formControlName="min_quantity" placeholder="Định mức tồn tối thiểu">
+                    </mat-form-field>
+                  </div>
+                  <div fxFlex="50">
+                    <mat-form-field>
+                      <input type="number" matInput formControlName="max_quantity" placeholder="Định mức tồn tối đa">
+                    </mat-form-field>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="m-t-20">
+          <div fxFlex="100">
+            <quill-editor formControlName="description" placeholder="Mô tả" [style]="{height: '200px'}"></quill-editor>
+          </div>
+        </div>
+        <div fxLayout="row wrap" style="margin-top: 85px;">
+          <div fxFlex="100">
+            <mat-card style="margin: 0px; border: 1px solid #ccc">
+              <mat-card-content>
+                <div fxLayout="row wrap">
+                  <div fxFlex="100">
+                    <mat-form-field>
+                      <textarea matInput formControlName="note" placeholder="Mẫu ghi chú (hóa đơn, đặt hàng)"></textarea>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
       </mat-tab>
-      <!-- Tab Thành phần  -->
-      <mat-tab label="Thành phần">
 
-      </mat-tab>
       <!-- Tab Món thêm  -->
       <mat-tab label="Món thêm">
 

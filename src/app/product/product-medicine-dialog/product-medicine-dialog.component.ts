@@ -17,6 +17,9 @@ import {Observable} from 'rxjs';
 import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
 import {MedicineService} from "../../medicine/medicine.service";
 import {of} from "rxjs/internal/observable/of";
+import { ManufacturerService } from '../manufacturer.service';
+import { ManufacturerFilter } from '../manufacturer.model';
+import { ProductManufacturerFormDialogComponent } from '../product-manufacturer-form-dialog/product-manufacturer-form-dialog.component';
 
 
 class ImageSnippet {
@@ -88,6 +91,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     private groupSer: GroupService,
     private usingSer: UsingService,
     private placementSer: PlacementService,
+    private manufacturerSer : ManufacturerService,
     private medicineSer: MedicineService,
     public dialogRef: MatDialogRef<ProductMedicineDialogComponent>,
     public notifySer: NotifierService,
@@ -161,6 +165,12 @@ export class ProductMedicineDialogComponent implements OnInit {
     this.placementSer.getList(placementFilter).subscribe(res => {
       this.placements = res.body;
     });
+
+    let manufacturerFilter = new ManufacturerFilter();
+    this.manufacturerSer.getList(manufacturerFilter).subscribe(res => {
+      this.manufacturers =  res.body;
+    })
+
 
     this.initForm();
 
@@ -349,9 +359,9 @@ export class ProductMedicineDialogComponent implements OnInit {
 
   openGroupFormDialog() {
     const dialogRef = this.dialog.open(ProductGroupFormDialogComponent, {});
-
     dialogRef.afterClosed().subscribe(result => {
-      if (result !== false) {
+
+      if (result !== false && result !== undefined) {
         this.groups.push(result);
         this.form.patchValue({group_id: result.id});
       }
@@ -362,7 +372,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     const dialogRef = this.dialog.open(ProductUsingFormDialogComponent, {});
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result !== false) {
+      if (result !== false && result !== undefined) {
         this.usings.push(result);
         this.form.patchValue({using_id: result.id});
       }
@@ -373,13 +383,23 @@ export class ProductMedicineDialogComponent implements OnInit {
     const dialogRef = this.dialog.open(ProductPlacementFormDialogComponent, {});
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result !== false) {
+      if (result !== false && result !== undefined) {
         this.placements.push(result);
 
         let curSelects = this.form.controls['placements'].value;
         curSelects.push(result.id);
 
         this.form.patchValue({placements: curSelects});
+      }
+    });
+  }
+
+  openManufacturerFormDialog(){
+    const dialogRef = this.dialog.open(ProductManufacturerFormDialogComponent, {});
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== false && result !== undefined) {
+        this.manufacturers.push(result);
+        this.form.patchValue({ medicine : {manufacturer : result.id} });
       }
     });
   }
