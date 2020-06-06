@@ -56,7 +56,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     shortcut: 'Tên viết tắt',
     using_id: 'Đường dùng',
     group_id: 'Nhóm hàng',
-    placements: 'Mã hàng',
+    placements: 'Vị trí',
     product_name: 'Tên thuốc',
     sell_price: 'Giá bán',
     original_price: 'Giá gốc',
@@ -72,7 +72,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     unit_name: 'Tên đơn vị',
     unit_value: 'Giá trị quy đổi',
     unit_price: 'Giá bán',
-    unit_no: 'Mã hàng',
+    unit_no: 'Mã đơn vị',
   };
 
   imageButtons = [

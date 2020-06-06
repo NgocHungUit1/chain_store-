@@ -2,8 +2,18 @@ import { Component,Optional ,Inject, OnInit } from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {Observable} from 'rxjs';
+import {NotifierService} from "angular-notifier";
+import {ProductService} from "../product.service";
+import {GroupService} from "../group.service";
 import {Group, GroupFilter} from "../group.model";
+import {PlacementService} from "../placement.service";
+import {PlacementFilter} from "../placement.model";
 import {ProductGroupFormDialogComponent} from "../product-group-form-dialog/product-group-form-dialog.component";
+import {ProductPlacementFormDialogComponent} from "../product-placement-form-dialog/product-placement-form-dialog.component";
+
+class ImageSnippet {
+  constructor(public src: string, public file: File, public id: string) {}
+}
 
 
 @Component({
@@ -55,8 +65,25 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
     unit_no: 'Mã hàng',
   };
 
+  imageButtons = [
+    {isShow: true},
+    {isShow: true},
+    {isShow: true},
+    {isShow: true},
+    {isShow: true},
+  ];
+
+  selectedFiles: ImageSnippet[] = [];
+
+
+
+
   constructor(
     private fb: FormBuilder,
+    private productSer: ProductService,
+    private groupSer: GroupService,
+    public notifySer: NotifierService,
+    private placementSer: PlacementService,
     public dialogRef: MatDialogRef<ProductMerchandiseFormDialogComponent>,
     private dialog: MatDialog,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
@@ -70,13 +97,13 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
 
   initForm(){
     this.form = this.fb.group({
-      name : [null, Validators.required],
+      // name : [null, Validators.required],
       product_no: [null, Validators.required],
       barcode: [null],
-      product_type: ['medicine'],
+      product_type: ['merchandise'],
       store_id: [1],
       shortcut: [null],
-      using_id: [null, Validators.required],
+      using_id: [-1],
       group_id: [null, Validators.required],
       placements: [[]],
       product_name: [null, Validators.required],
@@ -85,15 +112,16 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       weight: [null],
       base_unit: [null],
       medicine_id: [null],
+      quantity_of_stock : [null],
       // Medicine
-      medicine: this.fb.group({
-        registration_no: [null, Validators.required],
-        main_active_substance: [null, Validators.required],
-        content: [null, Validators.required],
-        packing: [null, Validators.required],
-        manufacturer: [null, Validators.required],
-        made_in: [null]
-      }),
+      // medicine: this.fb.group({
+      //   registration_no: [null, Validators.required],
+      //   main_active_substance: [null, Validators.required],
+      //   content: [null, Validators.required],
+      //   packing: [null, Validators.required],
+      //   manufacturer: [null, Validators.required],
+      //   made_in: [null]
+      // }),
 
       units: new FormArray([]),
       min_quantity: [0],
@@ -106,15 +134,232 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
 
   ngOnInit() {
 
+    let groupFilter = new GroupFilter();
+    // groupFilter.store_id = 1;
+    this.groupSer.getList(groupFilter).subscribe(res => {
+      this.groups = res.body;
+    });
+
+    let placementFilter = new PlacementFilter();
+    this.placementSer.getList(placementFilter).subscribe(res => {
+      this.placements = res.body;
+    });
+
     this.initForm();
+
+    if (this.product_id !== null ) {
+      const id = this.product_id !== null ? this.product_id : this.copy_product_id;
+      this.loadProduct(id,null);
+    }
+
+    if(this.copy_product_id !== null){
+      const id = this.product_id !== null ? this.product_id : this.copy_product_id;
+      this.loadProduct(id, true);
+    }
   }
 
   closeDialog() {
     this.dialogRef.close({event: 'Cancel'});
   }
-  submit(action){
-    console.log("ahihi");
 
+  removeUnit(i) {
+    this.units.removeAt(i);
+  }
+
+  get units() {
+    return this.form.get('units') as FormArray;
+  }
+
+  addUnit() {
+    let index = this.units.length + 1;
+
+    const group = new FormGroup({
+      unit_name: new FormControl('', Validators.required),
+      unit_value: new FormControl(0, Validators.required),
+      unit_price: new FormControl(0, Validators.required),
+      unit_no: new FormControl(this.form.controls['product_no'].value + '-' + index)
+    });
+
+    this.units.push(group);
+  }
+
+  submit(action) {
+    if (this.form.valid) {
+      this.loading = true;
+      const data = this.form.getRawValue();
+
+      if (this.product_id === null) {
+        // Create New
+        this.productSer.create(data).subscribe(product => {
+          this.notifySer.notify('success', 'Thêm thuốc thành công!');
+          this.uploadImage(product, action);
+        });
+      } else if (this.product_id !== null) {
+        // UPDATE
+        this.productSer.update(this.product_id, data).subscribe(product => {
+          this.notifySer.notify('success', 'Cập nhật thuốc thành công!');
+          this.uploadImage(product, action);
+        });
+      }
+    } else {
+
+      // Form errors
+      let controls = Object.entries(this.form.controls);
+      let hasError = this.checkToShowControlError(controls);
+
+      if (!hasError) {
+        controls = Object.entries(this.units.controls);
+
+        for (let i = 0; i < controls.length; i++) {
+          const childControls = Object.entries(controls[i][1]['controls']);
+
+          hasError = this.checkToShowControlError(childControls);
+          if (hasError) {
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  uploadImage(product, action) {
+    if (this.selectedFiles.length > 0) {
+      /**
+       * Upload product images
+       */
+      let formData = new FormData();
+      formData.append('product_id', product['id']);
+
+      this.selectedFiles.forEach(imageSnip => {
+        if (imageSnip.id.length === 0) {
+          formData.append('files[]', imageSnip.file);
+        } else {
+          formData.append('ids[]', imageSnip.id);
+        }
+      });
+
+      this.productSer.uploadImage(formData).subscribe(res => {
+        this.loading = false;
+        if (res['success'] === false) {
+          this.notifySer.notify('error', 'Không thể tải hình ảnh!');
+        }
+        if (action === 'Save') {
+          this.dialogRef.close({event: this.action, data: product});
+        } else if (action === 'SaveAndMore') {
+          this.form.reset({
+            store_id: 1,
+            product_type: 'merchandise'
+          });
+          this.selectedFiles = [];
+          this.form.controls['units'] = new FormArray([]);
+          this.reloadImageButtons();
+        } else if (action === 'SaveAndCopy') {
+          this.product_id = null;
+          this.copy_product_id = product.id;
+          this.selectedFiles = [];
+          this.reloadImageButtons();
+          this.form.controls['units'] = new FormArray([]);
+          this.loadProduct(product.id, true);
+        }
+      });
+    } else {
+      this.loading = false;
+      this.dialogRef.close({event: this.action, data: product});
+    }
+  }
+
+  checkToShowControlError(controls) {
+
+    const count = controls.length;
+    let hasError = false;
+
+    for (let i = 0; i < count; i++) {
+      const fieldName = controls[i][0];
+      const fieldControl = controls[i][1];
+
+      if (fieldControl['errors'] !== null) {
+
+        this.notifySer.notify('error', 'Lỗi thông tin trường ' + this.fieldLabels[fieldName]);
+        hasError = true;
+        break;
+      }
+    }
+
+    return hasError;
+  }
+
+  loadProduct(id, copy = null) {
+    this.productSer.getDetail(id, 'medicine,images,productPlacements,productUnits').subscribe(product => {
+      let placements = [];
+      product['productPlacements'].forEach(pPlacement => {
+        placements.push(pPlacement.id)
+      });
+
+      if(copy == null){
+        this.form.patchValue({
+          product_no: product['product_no'],
+          barcode: product['barcode'],
+          product_type: product['product_type'],
+          store_id: product['store_id'],
+          shortcut: product['shortcut'],
+          using_id: product['using_id'],
+          group_id: product['group_id'],
+          product_name: product['product_name'],
+          sell_price: product['sell_price'],
+          original_price: product['original_price'],
+          weight: product['weight'],
+          base_unit: product['base_unit'],
+          medicine_id: product['medicine_id'],
+          medicine: product['medicine'],
+          placements: placements,
+          min_quantity: product['min_quantity'],
+          max_quantity: product['max_quantity'],
+          description: product['description'],
+          note: product['note'],
+        });
+      }else{
+        this.form.patchValue({
+          product_no: '',
+          barcode: product['barcode'],
+          product_type: product['product_type'],
+          store_id: product['store_id'],
+          shortcut: product['shortcut'],
+          using_id: product['using_id'],
+          group_id: product['group_id'],
+          product_name: product['product_name'],
+          sell_price: product['sell_price'],
+          original_price: product['original_price'],
+          weight: product['weight'],
+          base_unit: product['base_unit'],
+          medicine_id: product['medicine_id'],
+          medicine: product['medicine'],
+          placements: placements,
+          min_quantity: product['min_quantity'],
+          max_quantity: product['max_quantity'],
+          description: product['description'],
+          note: product['note'],
+        });
+      }
+
+
+      product['productUnits'].forEach(pUnit => {
+        const group = new FormGroup({
+          unit_name: new FormControl(pUnit['name'], Validators.required),
+          unit_value: new FormControl(pUnit['value'], Validators.required),
+          unit_price: new FormControl(pUnit['sell_price'], Validators.required),
+          unit_no: new FormControl(pUnit['no']),
+          id: new FormControl(pUnit['id'])
+        });
+
+        this.units.push(group);
+      });
+
+      product['images'].forEach((pImage, index) => {
+        this.selectedFiles.push(new ImageSnippet(pImage['link'], null, pImage['id'] + ''));
+
+        this.imageButtons[index]['isShow'] = false;
+      });
+    });
   }
 
   openGroupFormDialog() {
@@ -127,5 +372,74 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       }
     });
   }
+
+  openPlacementFormDialog() {
+    const dialogRef = this.dialog.open(ProductPlacementFormDialogComponent, {});
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== false && result !== undefined) {
+        this.placements.push(result);
+
+        let curSelects = this.form.controls['placements'].value;
+        curSelects.push(result.id);
+
+        this.form.patchValue({placements: curSelects});
+      }
+    });
+  }
+
+  processFile(imageInput) {
+    const file: File = imageInput.files[0];
+    const reader = new FileReader();
+
+    reader.addEventListener('load', (event: any) => {
+      this.selectedFiles.push(new ImageSnippet(event.target.result, file, ''));
+
+      this.selectedFiles.forEach((value, index) => {
+        this.imageButtons[index]['isShow'] = false;
+      });
+    });
+
+    reader.readAsDataURL(file);
+  }
+
+  reloadImageButtons() {
+    this.imageButtons.forEach(img => {
+      img.isShow = true;
+    });
+    this.selectedFiles.forEach((value, index) => {
+      this.imageButtons[index]['isShow'] = false;
+    });
+  }
+
+  removeSelectedImage(index) {
+    let removeImage = this.selectedFiles[index];
+    this.selectedFiles.splice(index, 1);
+    if (removeImage['id'].length > 0) {
+      this.productSer.removeImage(this.product_id, removeImage['id']).subscribe(res => {
+        this.notifySer.notify('warning', 'Đã xóa hình ảnh!');
+        this.reloadImageButtons();
+      });
+    } else {
+      this.reloadImageButtons();
+    }
+  }
+
+  onProductNoChange() {
+    let productNo = this.form.controls['product_no'].value;
+    for (let i = 0; i < this.units.controls.length; i++) {
+      let index = i + 1;
+      this.units.controls[i].patchValue({
+        unit_no: productNo + '-' + index
+      });
+    }
+  }
+
+
+
+
+
+
+
 
 }

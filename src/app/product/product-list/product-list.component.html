@@ -61,6 +61,11 @@
                 <td mat-cell *matCellDef="let element"> {{element.id}}</td>
               </ng-container>
 
+              <ng-container matColumnDef="product_type">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_type']}}</th>
+                <td mat-cell *matCellDef="let element"> {{ productTypeLable[element.product_type] }}</td>
+              </ng-container>
+
               <ng-container matColumnDef="product_no">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_no']}}</th>
                 <td mat-cell *matCellDef="let element"> {{element.product_no}}</td>

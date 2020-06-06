@@ -69,6 +69,11 @@ export class ProductService {
     const url = environment.apiUrl + '/product/remove-image';
     return this.http.post(url, {product_id: id, image_id: id});
   }
+
+  delete(id: string){
+    const url = environment.apiUrl + '/product/delete-product';
+    return this.http.post(url, {product_id: id});
+  }
 }
 
 

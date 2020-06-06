@@ -43,6 +43,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
 
   columnsHeader = {
     '#': '#',
+    'product_type': 'Phân loại',
     'product_no': 'Mã hàng',
     'product_name': 'Tên hàng',
     'shortcut': 'Tên ngắn',
@@ -51,8 +52,13 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     'quantity_of_stock': 'Tồn kho'
   };
 
-  displayedColumns: string[] = ['#', 'product_no', 'product_name', 'shortcut', 'original_price', 'sell_price', 'quantity_of_stock'];
-  columnsToDisplay: string[] = ['#', 'product_no', 'product_name', 'shortcut', 'original_price', 'sell_price', 'quantity_of_stock'];
+  productTypeLable = {
+    'medicine': 'Thuốc',
+    'merchandise': 'Hàng hóa',
+  };
+
+  displayedColumns: string[] = ['#','product_type', 'product_no', 'product_name', 'shortcut', 'original_price', 'sell_price', 'quantity_of_stock'];
+  columnsToDisplay: string[] = ['#','product_type', 'product_no', 'product_name', 'shortcut', 'original_price', 'sell_price', 'quantity_of_stock'];
   dataSource: Product[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;

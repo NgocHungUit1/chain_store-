@@ -16,7 +16,7 @@
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Hãng sản xuất:</span> {{product.medicine.manufacturer}}
+            <span class="product-field-label">Hãng sản xuất:</span> {{ product.medicine?.manufacturer }}
           </div>
         </div>
         <div fxLayout="row wrap" class="product-info-row">
@@ -25,7 +25,7 @@
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Nước sản xuất:</span> {{product.medicine.made_in}}
+            <span class="product-field-label">Nước sản xuất:</span> {{product.medicine?.made_in}}
           </div>
         </div>
         <div fxLayout="row wrap" class="product-info-row">
@@ -34,7 +34,7 @@
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Quy cách đóng gói:</span> {{product.medicine.packing}}
+            <span class="product-field-label">Quy cách đóng gói:</span> {{product.medicine?.packing}}
           </div>
         </div>
         <div fxLayout="row wrap" class="product-info-row">
@@ -74,11 +74,19 @@
           </div>
         </div>
         <div fxLayout="row wrap">
-          <div fxFlex="100">
+          <!-- kiem tra loai show form -->
+          <div fxFlex="100" *ngIf="product.product_type == 'medicine' ">
             <button class="m-r-10" mat-raised-button color="primary" (click)="openMedicineDialog(this.product.id, null)"><mat-icon>edit</mat-icon> Cập nhật</button>
             <button class="m-r-10" mat-raised-button color="accent"  (click)="openMedicineDialog(null, this.product.id)"><mat-icon>file_copy</mat-icon> Sao chép</button>
             <button class="m-r-10" mat-raised-button color="warn"><mat-icon>delete</mat-icon> Xóa</button>
           </div>
+
+          <div fxFlex="100" *ngIf="product.product_type == 'merchandise' ">
+            <button class="m-r-10" mat-raised-button color="primary" (click)="openMerchandiseFormDialog(this.product.id, null)"><mat-icon>edit</mat-icon> Cập nhật</button>
+            <button class="m-r-10" mat-raised-button color="accent"  (click)="openMerchandiseFormDialog(null, this.product.id)"><mat-icon>file_copy</mat-icon> Sao chép</button>
+            <button class="m-r-10" mat-raised-button color="warn" (click)="deleteMerchandise(this.product.id)"><mat-icon>delete</mat-icon> Xóa</button>
+          </div>
+
         </div>
       </div>
     </div>
