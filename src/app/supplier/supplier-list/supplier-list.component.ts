@@ -6,6 +6,8 @@ import {ListComponentBase} from '../../shared/base';
 import {SupplierService} from '../supplier.service';
 import {ActivatedRoute} from '@angular/router';
 import {SupplierFilter} from '../supplier.model';
+import {MatDialog} from '@angular/material/dialog';
+import {SupplierFormDialogComponent} from '../supplier-form-dialog/supplier-form-dialog.component';
 
 @Component({
   templateUrl: './supplier-list.component.html',
@@ -15,6 +17,7 @@ export class SupplierListComponent extends ListComponentBase implements OnInit {
 
   constructor(
     private service: SupplierService,
+    private dialog: MatDialog,
     private route: ActivatedRoute
   ) {
     super();
@@ -57,7 +60,6 @@ export class SupplierListComponent extends ListComponentBase implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  resultsLength = 0;
   isLoadingResults = true;
   isRateLimitReached = false;
 
@@ -83,7 +85,6 @@ export class SupplierListComponent extends ListComponentBase implements OnInit {
     this.service.getList(this.apiFilter).subscribe(res => {
       this.dataSource = res.body;
       this.reloadFilter(res);
-      const url = this.service.getStateUrl(this.apiFilter);
       this.isLoadingResults = false;
     });
   }
@@ -91,5 +92,16 @@ export class SupplierListComponent extends ListComponentBase implements OnInit {
   ngOnInit() {
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
+  }
+
+  openSupplierFormDialog() {
+    const dialogRef = this.dialog.open(SupplierFormDialogComponent, {
+      width: '50%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.loadData();
+    });
   }
 }

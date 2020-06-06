@@ -10,9 +10,13 @@ import {RouterModule} from '@angular/router';
 import {DemoMaterialModule} from '../demo-material-module';
 import {SupplierListComponent} from './supplier-list/supplier-list.component';
 import {SupplierRoutes} from './supplier.routing';
+import {SupplierFormDialogComponent} from './supplier-form-dialog/supplier-form-dialog.component';
 
 @NgModule({
-  declarations: [SupplierListComponent],
+  declarations: [
+    SupplierListComponent,
+    SupplierFormDialogComponent
+  ],
   imports: [
     CommonModule,
     RouterModule.forChild(SupplierRoutes),
@@ -24,6 +28,9 @@ import {SupplierRoutes} from './supplier.routing';
     PerfectScrollbarModule,
     Ng2SearchPipeModule,
     DemoMaterialModule
+  ],
+  entryComponents: [
+    SupplierFormDialogComponent
   ]
 })
 export class SupplierModule {
