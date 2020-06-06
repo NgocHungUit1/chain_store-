@@ -1,22 +1,22 @@
 import {Component, ElementRef, Inject, OnInit, Optional, ViewChild} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
-import {ProductService} from "../product.service";
-import {NotifierService} from "angular-notifier";
-import {ProductGroupFormDialogComponent} from "../product-group-form-dialog/product-group-form-dialog.component";
-import {Group, GroupFilter} from "../group.model";
-import {GroupService} from "../group.service";
-import {ProductUsingFormDialogComponent} from "../product-using-form-dialog/product-using-form-dialog.component";
-import {ProductPlacementFormDialogComponent} from "../product-placement-form-dialog/product-placement-form-dialog.component";
-import {UsingFilter} from "../using.model";
-import {PlacementService} from "../placement.service";
-import {UsingService} from "../using.service";
-import {PlacementFilter} from "../placement.model";
-import {Medicine} from "../../medicine/medicine.model";
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {ProductService} from '../product.service';
+import {NotifierService} from 'angular-notifier';
+import {ProductGroupFormDialogComponent} from '../product-group-form-dialog/product-group-form-dialog.component';
+import {Group, GroupFilter} from '../group.model';
+import {GroupService} from '../group.service';
+import {ProductUsingFormDialogComponent} from '../product-using-form-dialog/product-using-form-dialog.component';
+import {ProductPlacementFormDialogComponent} from '../product-placement-form-dialog/product-placement-form-dialog.component';
+import {UsingFilter} from '../using.model';
+import {PlacementService} from '../placement.service';
+import {UsingService} from '../using.service';
+import {PlacementFilter} from '../placement.model';
+import {Medicine} from '../../medicine/medicine.model';
 import {Observable} from 'rxjs';
 import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
-import {MedicineService} from "../../medicine/medicine.service";
-import {of} from "rxjs/internal/observable/of";
+import {MedicineService} from '../../medicine/medicine.service';
+import {of} from 'rxjs/internal/observable/of';
 import { ManufacturerService } from '../manufacturer.service';
 import { ManufacturerFilter } from '../manufacturer.model';
 import { ProductManufacturerFormDialogComponent } from '../product-manufacturer-form-dialog/product-manufacturer-form-dialog.component';
@@ -96,9 +96,9 @@ export class ProductMedicineDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<ProductMedicineDialogComponent>,
     public notifySer: NotifierService,
     private dialog: MatDialog,
-    //@Optional() is used to prevent error if no data is passed
+    // @Optional() is used to prevent error if no data is passed
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
-    // console.log(data);
+    // console.log(data);
     this.local_data = {...data};
     this.action = this.local_data.action;
     this.title = this.local_data.title;
@@ -148,28 +148,28 @@ export class ProductMedicineDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    let groupFilter = new GroupFilter();
+    const groupFilter = new GroupFilter();
     // groupFilter.store_id = 1;
     this.groupSer.getList(groupFilter).subscribe(res => {
       this.groups = res.body;
     });
 
-    let usingFilter = new UsingFilter();
+    const usingFilter = new UsingFilter();
     // usingFilter.store_id = 1;
     this.usingSer.getList(usingFilter).subscribe(res => {
       this.usings = res.body;
     });
 
-    let placementFilter = new PlacementFilter();
+    const placementFilter = new PlacementFilter();
     // placementFilter.store_id = 1;
     this.placementSer.getList(placementFilter).subscribe(res => {
       this.placements = res.body;
     });
 
-    let manufacturerFilter = new ManufacturerFilter();
+    const manufacturerFilter = new ManufacturerFilter();
     this.manufacturerSer.getList(manufacturerFilter).subscribe(res => {
       this.manufacturers =  res.body;
-    })
+    });
 
 
     this.initForm();
@@ -198,7 +198,7 @@ export class ProductMedicineDialogComponent implements OnInit {
 
   loadProduct(id) {
     this.productSer.getDetail(id, 'medicine,images,productPlacements,productUnits').subscribe(product => {
-      let placements = [];
+      const placements = [];
       product['productPlacements'].forEach(pPlacement => {
         placements.push(pPlacement.id)
       });
@@ -298,7 +298,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       /**
        * Upload product images
        */
-      let formData = new FormData();
+      const formData = new FormData();
       formData.append('product_id', product['id']);
 
       this.selectedFiles.forEach(imageSnip => {
@@ -386,7 +386,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       if (result !== false && result !== undefined) {
         this.placements.push(result);
 
-        let curSelects = this.form.controls['placements'].value;
+        const curSelects = this.form.controls['placements'].value;
         curSelects.push(result.id);
 
         this.form.patchValue({placements: curSelects});
@@ -421,7 +421,7 @@ export class ProductMedicineDialogComponent implements OnInit {
   }
 
   addUnit() {
-    let index = this.units.length + 1;
+    const index = this.units.length + 1;
 
     const group = new FormGroup({
       unit_name: new FormControl('', Validators.required),
@@ -481,7 +481,7 @@ export class ProductMedicineDialogComponent implements OnInit {
   }
 
   removeSelectedImage(index) {
-    let removeImage = this.selectedFiles[index];
+    const removeImage = this.selectedFiles[index];
     this.selectedFiles.splice(index, 1);
     if (removeImage['id'].length > 0) {
       this.productSer.removeImage(this.product_id, removeImage['id']).subscribe(res => {
@@ -495,9 +495,9 @@ export class ProductMedicineDialogComponent implements OnInit {
   }
 
   onProductNoChange() {
-    let productNo = this.form.controls['product_no'].value;
+    const productNo = this.form.controls['product_no'].value;
     for (let i = 0; i < this.units.controls.length; i++) {
-      let index = i + 1;
+      const index = i + 1;
       this.units.controls[i].patchValue({
         unit_no: productNo + '-' + index
       });
