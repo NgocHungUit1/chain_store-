@@ -79,12 +79,12 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
 
 
   constructor(
+    public dialogRef: MatDialogRef<ProductMerchandiseFormDialogComponent>,
     private fb: FormBuilder,
     private productSer: ProductService,
     private groupSer: GroupService,
     public notifySer: NotifierService,
     private placementSer: PlacementService,
-    public dialogRef: MatDialogRef<ProductMerchandiseFormDialogComponent>,
     private dialog: MatDialog,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
       this.local_data = {...data};
@@ -128,7 +128,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       max_quantity: [0],
       description: [null],
       note: [null],
-    })
+    });
   }
 
 
@@ -191,16 +191,19 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       if (this.product_id === null) {
         // Create New
         this.productSer.create(data).subscribe(product => {
-          this.notifySer.notify('success', 'Thêm thuốc thành công!');
+          this.notifySer.notify('success', 'Thêm hàng hóa thành công!');
           this.uploadImage(product, action);
+          this.dialogRef.close({event: action, data: product});
         });
       } else if (this.product_id !== null) {
         // UPDATE
         this.productSer.update(this.product_id, data).subscribe(product => {
-          this.notifySer.notify('success', 'Cập nhật thuốc thành công!');
+          this.notifySer.notify('success', 'Cập nhật hàng hóa thành công!');
           this.uploadImage(product, action);
+          this.dialogRef.close({event: action, data: product});
         });
       }
+
     } else {
 
       // Form errors
@@ -288,7 +291,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
     return hasError;
   }
 
-  loadProduct(id, copy = null) {
+  loadProduct(id, copy: any = null) {
     this.productSer.getDetail(id, 'medicine,images,productPlacements,productUnits').subscribe(product => {
       let placements = [];
       product['productPlacements'].forEach(pPlacement => {

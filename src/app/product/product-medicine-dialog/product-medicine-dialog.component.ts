@@ -174,9 +174,14 @@ export class ProductMedicineDialogComponent implements OnInit {
 
     this.initForm();
 
-    if (this.product_id !== null || this.copy_product_id !== null) {
+    if (this.product_id !== null ) {
       const id = this.product_id !== null ? this.product_id : this.copy_product_id;
-      this.loadProduct(id);
+      this.loadProduct(id,null);
+    }
+
+    if(this.copy_product_id !== null){
+      const id = this.product_id !== null ? this.product_id : this.copy_product_id;
+      this.loadProduct(id, true);
     }
 
     this.filteredMedicines = this.form.controls['product_name'].valueChanges.pipe(
@@ -196,34 +201,59 @@ export class ProductMedicineDialogComponent implements OnInit {
     );
   }
 
-  loadProduct(id) {
+  loadProduct(id, copy: any = null) {
     this.productSer.getDetail(id, 'medicine,images,productPlacements,productUnits').subscribe(product => {
       const placements = [];
       product['productPlacements'].forEach(pPlacement => {
         placements.push(pPlacement.id)
       });
 
-      this.form.patchValue({
-        product_no: product['product_no'],
-        barcode: product['barcode'],
-        product_type: product['product_type'],
-        store_id: product['store_id'],
-        shortcut: product['shortcut'],
-        using_id: product['using_id'],
-        group_id: product['group_id'],
-        product_name: product['product_name'],
-        sell_price: product['sell_price'],
-        original_price: product['original_price'],
-        weight: product['weight'],
-        base_unit: product['base_unit'],
-        medicine_id: product['medicine_id'],
-        medicine: product['medicine'],
-        placements: placements,
-        min_quantity: product['min_quantity'],
-        max_quantity: product['max_quantity'],
-        description: product['description'],
-        note: product['note'],
-      });
+      if(copy == null){
+        this.form.patchValue({
+          product_no: product['product_no'],
+          barcode: product['barcode'],
+          product_type: product['product_type'],
+          store_id: product['store_id'],
+          shortcut: product['shortcut'],
+          using_id: product['using_id'],
+          group_id: product['group_id'],
+          product_name: product['product_name'],
+          sell_price: product['sell_price'],
+          original_price: product['original_price'],
+          weight: product['weight'],
+          base_unit: product['base_unit'],
+          medicine_id: product['medicine_id'],
+          medicine: product['medicine'],
+          placements: placements,
+          min_quantity: product['min_quantity'],
+          max_quantity: product['max_quantity'],
+          description: product['description'],
+          note: product['note'],
+        });
+      }else{
+        this.form.patchValue({
+          product_no: '',
+          barcode: product['barcode'],
+          product_type: product['product_type'],
+          store_id: product['store_id'],
+          shortcut: product['shortcut'],
+          using_id: product['using_id'],
+          group_id: product['group_id'],
+          product_name: product['product_name'],
+          sell_price: product['sell_price'],
+          original_price: product['original_price'],
+          weight: product['weight'],
+          base_unit: product['base_unit'],
+          medicine_id: product['medicine_id'],
+          medicine: product['medicine'],
+          placements: placements,
+          min_quantity: product['min_quantity'],
+          max_quantity: product['max_quantity'],
+          description: product['description'],
+          note: product['note'],
+        });
+      }
+
 
       product['productUnits'].forEach(pUnit => {
         const group = new FormGroup({
@@ -265,12 +295,14 @@ export class ProductMedicineDialogComponent implements OnInit {
         this.productSer.create(data).subscribe(product => {
           this.notifySer.notify('success', 'Thêm thuốc thành công!');
           this.uploadImage(product, action);
+          this.dialogRef.close({event: action, data: product});
         });
       } else if (this.product_id !== null) {
         // UPDATE
         this.productSer.update(this.product_id, data).subscribe(product => {
           this.notifySer.notify('success', 'Cập nhật thuốc thành công!');
           this.uploadImage(product, action);
+          this.dialogRef.close({event: action, data: product});
         });
       }
     } else {
@@ -330,7 +362,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           this.selectedFiles = [];
           this.reloadImageButtons();
           this.form.controls['units'] = new FormArray([]);
-          this.loadProduct(product.id);
+          this.loadProduct(product.id,true);
         }
       });
     } else {

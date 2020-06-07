@@ -3,6 +3,8 @@ import {ProductService} from "../product.service";
 import {Product} from "../product.model";
 import {ProductMedicineDialogComponent} from "../product-medicine-dialog/product-medicine-dialog.component";
 import { ProductMerchandiseFormDialogComponent } from "../product-merchandise-form-dialog/product-merchandise-form-dialog.component";
+import { ProductPopupDeleteDialogComponent } from "../product-popup-delete-dialog/product-popup-delete-dialog.component";
+
 import {MatDialog} from "@angular/material/dialog";
 import {NotifierService} from "angular-notifier";
 
@@ -35,6 +37,17 @@ export class ProductTabInfoComponent implements OnInit {
     this.images = data;
   }
 
+  loadProduct(id){
+    // this.productSer.getDetail(id, 'images,productPlacements,productUnits').subscribe(res => {
+    //   console.warn(res);
+    // });
+
+    this.productSer.getProducts(id, 'images,productPlacements,productUnits').subscribe(res => {
+      this.product = res;
+    });
+
+  }
+
   openMedicineDialog(id, copy_product_id = null) {
     const obj = {
       action: copy_product_id !== null ? 'Copy' : 'Update',
@@ -50,7 +63,9 @@ export class ProductTabInfoComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      // this.product = result;
+      if(result.event !== 'Cancel'){
+        this.loadProduct(result.data.id);
+      }
     });
   }
 
@@ -69,13 +84,50 @@ export class ProductTabInfoComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      // this.product = result;
+      if(result.event !== 'Cancel'){
+        this.loadProduct(result.data.id);
+      }
     });
   }
 
   deleteMerchandise(id){
-    this.productSer.delete(id).subscribe(product => {
-      this.notifySer.notify('success', 'Xóa hàng hóa thành công!');
+
+    let obj = {
+      action: 'Delete',
+      title: 'Xóa hàng hóa',
+      product_id: id,
+    };
+
+    const dialogRef = this.dialog.open(ProductPopupDeleteDialogComponent, {
+      data: obj,
+      width: '20%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result.event == 'Delete'){
+        // BUG
+        this.product = null;
+      }
+    });
+  }
+
+  deleteMedicine(id){
+    let obj = {
+      action: 'Delete',
+      title: 'Xóa thuốc',
+      product_id: id,
+    };
+    const dialogRef = this.dialog.open(ProductPopupDeleteDialogComponent, {
+      data: obj,
+      width: '20%',
+      minHeight: '80%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if(result.event == 'Delete'){
+        // BUG
+        this.product = null;
+      }
     });
   }
 

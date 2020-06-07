@@ -78,7 +78,7 @@
           <div fxFlex="100" *ngIf="product.product_type == 'medicine' ">
             <button class="m-r-10" mat-raised-button color="primary" (click)="openMedicineDialog(this.product.id, null)"><mat-icon>edit</mat-icon> Cập nhật</button>
             <button class="m-r-10" mat-raised-button color="accent"  (click)="openMedicineDialog(null, this.product.id)"><mat-icon>file_copy</mat-icon> Sao chép</button>
-            <button class="m-r-10" mat-raised-button color="warn"><mat-icon>delete</mat-icon> Xóa</button>
+            <button class="m-r-10" mat-raised-button color="warn" (click)="deleteMedicine(this.product.id)"><mat-icon>delete</mat-icon> Xóa</button>
           </div>
 
           <div fxFlex="100" *ngIf="product.product_type == 'merchandise' ">

@@ -50,6 +50,12 @@ export class ProductService {
     return this.http.get<object>(url);
   }
 
+  public getProducts(id: string, expand:string = ''): Observable<Product> {
+    const url = environment.apiUrl + '/product/' + id + '?expand=' + expand;
+    // return this.http.get<object>(url);
+    return this.http.get<Product>(url);
+  }
+
   update(id: string, pos: any) {
     const url = environment.apiUrl + '/product/' + id;
     return this.http.put(url, pos);
