@@ -98,6 +98,14 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
   ngOnInit() {
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
+
+    this.service.subscribeLoadProduct.subscribe(action => {
+        if (action === true) {
+          this.apiFilter = this.buildFilterFromParams();
+          this.loadData();
+          this.service.setLoadProduct(false);
+        }
+    });
   }
 
   openProductMedicineDialog(action, obj) {

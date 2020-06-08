@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpResponse} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {Observable , BehaviorSubject} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {Product, ProductFilter} from "./product.model";
 
@@ -8,6 +8,13 @@ import {Product, ProductFilter} from "./product.model";
   providedIn: 'root'
 })
 export class ProductService {
+
+  private loadProduct: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  subscribeLoadProduct: Observable<boolean> = this.loadProduct.asObservable();
+
+  setLoadProduct(action: boolean) {
+    this.loadProduct.next(action);
+  }
 
   constructor(private http: HttpClient) {
   }

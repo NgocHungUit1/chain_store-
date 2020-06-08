@@ -47,6 +47,7 @@ export class ProductPopupDeleteDialogComponent implements OnInit {
     this.productSer.delete(this.product_id).subscribe(product => {
       this.notifySer.notify('success', 'Xóa hàng hóa thành công!');
       this.dialogRef.close({event: 'Delete'});
+      this.productSer.setLoadProduct(true);
     });
   }
 
