@@ -87,7 +87,7 @@ export class ProductService {
     const url = environment.apiUrl + '/product/delete-product';
     return this.http.post(url, {product_id: id});
 
-    // const url = environment.apiUrl + '/product/delete/' + id;
+    // const url = environment.apiUrl + '/product/delete/' + id;A
     // return this.http.delete(url);
   }
 }
