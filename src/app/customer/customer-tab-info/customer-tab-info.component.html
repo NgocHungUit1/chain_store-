@@ -1,0 +1,95 @@
+<div fxLayout="row wrap" *ngIf="customer !== null" class="m-b-20">
+  <div fxFlex="100">
+    <h3 style="color: #009688">{{customer.name}}</h3>
+  </div>
+  <div fxFlex="100">
+    <div fxLayout="row wrap">
+      <div fxFlex="58" class="product-info">
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Mã khách hàng:</span> <strong>{{customer.id}}</strong>
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Tên khách hàng:</span> {{customer.name}}
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Địa chỉ:</span> {{customer.address}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Tỉnh/Thành phố:</span> <span *ngIf="customer.province">{{customer.province.name}}</span>
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Quận/Huyện:</span> <span *ngIf="customer.district">{{customer.district.name}}</span>
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Phường/Xã:</span> <span *ngIf="customer.ward">{{customer.ward.name}}</span>
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Điện thoại:</span> {{customer.phone}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Email:</span> {{customer.email}}
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row product-info-row-last">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Công ty:</span> {{customer.name_company}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Mã số thuế:</span> {{customer.tax_code}}
+          </div>
+        </div>
+      </div>
+
+      <div fxFlex="2"></div>
+
+      <div fxFlex="40" class="product-info">
+
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="100" class="product-info-field">
+            <span class="product-field-label">Giới tính:</span>
+                {{ sexHeader[customer.sex] }}
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="100" class="product-info-field">
+            <span class="product-field-label">Trạng thái:</span>
+            <label *ngIf="customer.status == '10'" class="label label-warning">Ngưng hoạt động</label>
+            <label *ngIf="customer.status == '1'" class="label label-success">Hoạt động</label>
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="100" class="product-info-field">
+            <span class="product-field-label">Facebook:</span>
+                {{customer.facebook}}
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" class="product-info-row product-info-row-last">
+          <div fxFlex="100" class="product-info-field">
+            <span class="product-field-label">Ghi chú:</span> {{customer.note}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div fxFlex="100" align="end">
+    <button class="m-r-10" mat-raised-button color="primary" (click)="openCustomerFormDialog(this.customer.id, null)"><mat-icon>edit</mat-icon> Cập nhật</button>
+    <button class="m-r-10" mat-raised-button color="accent"  (click)="lock()" *ngIf="this.customer.status == '1'"><mat-icon>lock</mat-icon> Ngừng hoạt động</button>
+    <button class="m-r-10" mat-raised-button color="accent"  (click)="activate()" *ngIf="this.customer.status == '10'"><mat-icon>lock_open</mat-icon> Kích hoạt</button>
+    <button class="m-r-10" mat-raised-button color="warn"><mat-icon>delete</mat-icon> Xóa</button>
+  </div>
+</div>

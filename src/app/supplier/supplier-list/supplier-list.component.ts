@@ -1,15 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTable } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
-import {MatSort} from '@angular/material/sort';
-import {ListComponentBase} from '../../shared/base';
-import {SupplierService} from '../supplier.service';
-import {ActivatedRoute} from '@angular/router';
-import {Supplier, SupplierFilter} from '../supplier.model';
-import {MatDialog} from '@angular/material/dialog';
-import {SupplierFormDialogComponent} from '../supplier-form-dialog/supplier-form-dialog.component';
-import {animate, state, style, transition, trigger} from '@angular/animations';
-import {NotifierService} from 'angular-notifier';
+import { MatSort } from '@angular/material/sort';
+import { ListComponentBase } from '../../shared/base';
+import { SupplierService } from '../supplier.service';
+import { ActivatedRoute } from '@angular/router';
+import { Supplier, SupplierFilter } from '../supplier.model';
+import { MatDialog } from '@angular/material/dialog';
+import { SupplierFormDialogComponent } from '../supplier-form-dialog/supplier-form-dialog.component';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { NotifierService } from 'angular-notifier';
 
 @Component({
   templateUrl: './supplier-list.component.html',
