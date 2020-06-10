@@ -4,6 +4,8 @@ import { CustomerService } from '../customer.service';
 import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { CustomerFormDialogComponent } from '../customer-form-dialog/customer-form-dialog.component';
+import { CustomerPopupDeleteDialogComponent } from '../customer-popup-delete-dialog/customer-popup-delete-dialog.component';
+
 @Component({
   selector: 'app-customer-tab-info',
   templateUrl: './customer-tab-info.component.html',
@@ -27,7 +29,7 @@ export class CustomerTabInfoComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  loadCustomer( id){
+  loadCustomer(id) {
     this.customerSer.getDetail(id, 'province,district,ward').subscribe(res => {
       this.customer = res;
     });
@@ -53,6 +55,25 @@ export class CustomerTabInfoComponent implements OnInit {
     });
   }
 
+  openDeleteCustomer(id) {
+
+    let obj = {
+      action: 'Delete',
+      title: 'Xóa khách hàng',
+      customer_id: id,
+    };
+
+    const dialogRef = this.dialog.open(CustomerPopupDeleteDialogComponent, {
+      data: obj,
+      width: '20%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+    });
+  }
+
   lock() {
     this.customerSer.lock(this.customer.id).subscribe(x => {
       this.customer.status = '10';
@@ -66,5 +87,7 @@ export class CustomerTabInfoComponent implements OnInit {
       this.notifyService.notify('success', 'Đã kích hoạt thành công!');
     });
   }
+
+
 
 }

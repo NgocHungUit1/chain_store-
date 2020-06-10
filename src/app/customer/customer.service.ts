@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Customer, CustomerFilter } from './customer.model';
 
@@ -8,6 +8,13 @@ import { Customer, CustomerFilter } from './customer.model';
   providedIn: 'root'
 })
 export class CustomerService {
+
+  private loadCustomer: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  subscribeLoadCustomer: Observable<boolean> = this.loadCustomer.asObservable();
+
+  setLoadCustmer(action: boolean) {
+    this.loadCustomer.next(action);
+  }
 
   constructor(private http: HttpClient) { }
 
@@ -72,5 +79,10 @@ export class CustomerService {
   lock(id) {
     const url = environment.apiUrl + '/customer/lock?id=' + id;
     return this.http.post(url, {});
+  }
+
+  delete(id: string) {
+    const url = environment.apiUrl + '/customer/delete-customer';
+    return this.http.post(url, { customer_id: id });
   }
 }

@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {HttpClient, HttpResponse} from '@angular/common/http';
-import {Observable , BehaviorSubject} from 'rxjs';
-import {environment} from '../../environments/environment';
-import {Product, ProductFilter} from "./product.model";
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { Product, ProductFilter } from "./product.model";
 
 @Injectable({
   providedIn: 'root'
@@ -49,15 +49,15 @@ export class ProductService {
 
   getList(filter?: ProductFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrl(filter);
-    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+    return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
   }
 
-  getDetail(id: string, expand:string = '') {
+  getDetail(id: string, expand: string = '') {
     const url = environment.apiUrl + '/product/' + id + '?expand=' + expand;
     return this.http.get<object>(url);
   }
 
-  public getProducts(id: string, expand:string = ''): Observable<Product> {
+  public getProducts(id: string, expand: string = ''): Observable<Product> {
     const url = environment.apiUrl + '/product/' + id + '?expand=' + expand;
     // return this.http.get<object>(url);
     return this.http.get<Product>(url);
@@ -80,12 +80,12 @@ export class ProductService {
 
   removeImage(id: string, imageId: string) {
     const url = environment.apiUrl + '/product/remove-image';
-    return this.http.post(url, {product_id: id, image_id: id});
+    return this.http.post(url, { product_id: id, image_id: id });
   }
 
-  delete(id: string){
+  delete(id: string) {
     const url = environment.apiUrl + '/product/delete-product';
-    return this.http.post(url, {product_id: id});
+    return this.http.post(url, { product_id: id });
 
     // const url = environment.apiUrl + '/product/delete/' + id;A
     // return this.http.delete(url);

@@ -11,7 +11,6 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { NotifierService } from 'angular-notifier';
 import { CustomerFormDialogComponent } from '../customer-form-dialog/customer-form-dialog.component';
 
-
 @Component({
   // selector: 'app-customer-list',
   templateUrl: './customer-list.component.html',
@@ -108,6 +107,14 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
   ngOnInit(): void {
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
+
+    this.service.subscribeLoadCustomer.subscribe(action => {
+      if (action === true) {
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+        this.service.setLoadCustmer(false);
+      }
+    });
   }
 
   openCustomerFormDialog() {

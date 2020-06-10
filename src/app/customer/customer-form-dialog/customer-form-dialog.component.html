@@ -44,8 +44,10 @@
 
           <div fxFlex="100">
             <mat-form-field>
-              <input matInput placeholder="Tỉnh/Thành phố" tabindex="4" aria-label="Tỉnh/Thành phố" [matAutocomplete]="province" formControlName="province">
-              <mat-autocomplete #province="matAutocomplete" [displayWith]="displayLocation" (optionSelected)='onProvinceChange($event.option.value)'>
+              <input matInput placeholder="Tỉnh/Thành phố" tabindex="4" aria-label="Tỉnh/Thành phố"
+                [matAutocomplete]="province" formControlName="province">
+              <mat-autocomplete #province="matAutocomplete" [displayWith]="displayLocation"
+                (optionSelected)='onProvinceChange($event.option.value)'>
                 <mat-option *ngFor="let province of filteredProvinces | async" [value]="province">
                   <span>{{province.name}}</span>
                 </mat-option>
@@ -54,8 +56,10 @@
           </div>
           <div fxFlex="100">
             <mat-form-field>
-              <input matInput placeholder="Quận/Huyện" tabindex="4" aria-label="Quận/Huyện" [matAutocomplete]="district" formControlName="district">
-              <mat-autocomplete #district="matAutocomplete" [displayWith]="displayLocation" (optionSelected)='onDistrictChange($event.option.value)'>
+              <input matInput placeholder="Quận/Huyện" tabindex="4" aria-label="Quận/Huyện" [matAutocomplete]="district"
+                formControlName="district">
+              <mat-autocomplete #district="matAutocomplete" [displayWith]="displayLocation"
+                (optionSelected)='onDistrictChange($event.option.value)'>
                 <mat-option *ngFor="let district of filteredDistricts | async" [value]="district">
                   <span>{{district.name}}</span>
                 </mat-option>
@@ -64,7 +68,8 @@
           </div>
           <div fxFlex="100">
             <mat-form-field>
-              <input matInput placeholder="Phường/Xã" tabindex="4" aria-label="Phường/Xã" [matAutocomplete]="ward" formControlName="ward">
+              <input matInput placeholder="Phường/Xã" tabindex="4" aria-label="Phường/Xã" [matAutocomplete]="ward"
+                formControlName="ward">
               <mat-autocomplete #ward="matAutocomplete" [displayWith]="displayLocation">
                 <mat-option *ngFor="let ward of filteredWards | async" [value]="ward">
                   <span>{{ward.name}}</span>
@@ -80,8 +85,6 @@
       <div fxFlex="48">
         <div fxLayout="row wrap">
 
-
-
           <div fxFlex="100">
             <mat-form-field>
               <mat-label>Mã số thuế</mat-label>
@@ -90,21 +93,10 @@
           </div>
 
           <div fxFlex="100">
-            <!-- <mat-form-field>
-              <mat-label>Giới tính</mat-label>
-              <input matInput tabindex="8" formControlName="sex">
-            </mat-form-field> -->
-
-            <!-- <mat-radio-group matInput tabindex="8" formControlName="sex" aria-label="Giới tính">
-              <mat-radio-button  value="1">Nam</mat-radio-button>
-              <mat-radio-button  value="0">Nữ</mat-radio-button>
-
-            </mat-radio-group> -->
-
 
             <mat-label>Giới tính</mat-label>
-            <mat-radio-group matInput formControlName="sex"  >
-              <mat-radio-button  *ngFor="let sexItem of sexItems"  [value]="sexItem.id">
+            <mat-radio-group matInput formControlName="sex">
+              <mat-radio-button *ngFor="let sexItem of sexItems" [value]="sexItem.id">
                 {{sexItem.title}}
               </mat-radio-button>
             </mat-radio-group>

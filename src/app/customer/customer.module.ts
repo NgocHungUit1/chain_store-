@@ -13,6 +13,7 @@ import { CustomerListComponent } from './customer-list/customer-list.component';
 import { CustomerFormDialogComponent } from './customer-form-dialog/customer-form-dialog.component';
 import { CustomerTabInfoComponent } from './customer-tab-info/customer-tab-info.component';
 import { CustomerTabDebtComponent } from './customer-tab-debt/customer-tab-debt.component';
+import { CustomerPopupDeleteDialogComponent } from './customer-popup-delete-dialog/customer-popup-delete-dialog.component';
 
 
 
@@ -21,7 +22,8 @@ import { CustomerTabDebtComponent } from './customer-tab-debt/customer-tab-debt.
     CustomerListComponent,
     CustomerFormDialogComponent,
     CustomerTabInfoComponent,
-    CustomerTabDebtComponent
+    CustomerTabDebtComponent,
+    CustomerPopupDeleteDialogComponent
   ],
   imports: [
     CommonModule,
