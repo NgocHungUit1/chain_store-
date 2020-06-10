@@ -32,8 +32,9 @@
         </a>
         <mat-nav-list class="sub-item" *ngIf="menuitem.type === 'sub'">
             <mat-list-item *ngFor="let childitem of menuitem.children" routerLinkActive="selected">
-                <a [routerLink]="['/', menuitem.state, childitem.state ]" class="relative" routerLinkActive="selected">{{
-                    childitem.name}}</a>
+                <a [routerLink]="['/', menuitem.state, childitem.state ]" class="relative" routerLinkActive="selected">
+                  <mat-icon>{{ childitem.icon }}</mat-icon>
+                  {{childitem.name}}</a>
             </mat-list-item>
         </mat-nav-list>
         <div class="saperator text-muted" *ngIf="menuitem.type === 'saperator'">
