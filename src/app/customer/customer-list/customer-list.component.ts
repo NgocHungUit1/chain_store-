@@ -43,7 +43,7 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
     'name': 'Khách hàng',
     'phone': 'Số điện thoại',
     'email': 'Email',
-    'name_company': 'Tên công ty',
+    'company_name': 'Tên công ty',
     'tax_code': 'Mã số thuế',
     'status': 'Trạng thái',
   };
@@ -54,13 +54,13 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
     'phone',
     'email',
     'tax_code',
-    'name_company',
+    'company_name',
     'status'
   ];
   columnsToDisplay: string[] = [
     '#',
     'name',
-    'name_company',
+    'company_name',
     'phone',
     'email',
     'tax_code',

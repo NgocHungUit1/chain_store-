@@ -4,7 +4,7 @@ import { Location } from '../location/location.model';
 export class Customer {
   id: string;
   name: string;
-  name_company: string;
+  company_name: string;
   phone: string;
   sex: number;
   dob: string;
@@ -23,7 +23,7 @@ export class Customer {
 export class CustomerFilter extends ApiFilterBase {
   id = '';
   name = '';
-  name_company = '';
+  company_name = '';
   phone = '';
   sex = '';
   dob = '';

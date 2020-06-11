@@ -66,16 +66,29 @@ export class CustomerFormDialogComponent implements OnInit {
           Validators.maxLength(32)
         ])
       ],
-      phone: [null, Validators.required],
-      email: [null],
-      address: [null],
-      name_company: [null],
-      tax_code: [null],
+      phone: [null, Validators.compose([
+        Validators.required,
+        Validators.maxLength(20)
+      ])],
+      email: [null, Validators.compose([
+        Validators.maxLength(20)
+      ])],
+      address: [null, Validators.compose([
+        Validators.maxLength(200)
+      ])],
+      company_name: [null, Validators.compose([
+        Validators.maxLength(64)
+      ])],
+      tax_code: [null, Validators.compose([
+        Validators.maxLength(20)
+      ])],
       district: [null],
       ward: [null],
       province: [null],
       note: [null],
-      facebook: [null],
+      facebook: [null, Validators.compose([
+        Validators.maxLength(100)
+      ])],
       dob: [null],
       sex: [null]
     });
@@ -119,7 +132,7 @@ export class CustomerFormDialogComponent implements OnInit {
         phone: customer['phone'],
         email: customer['email'],
         address: customer['address'],
-        name_company: customer['name_company'],
+        company_name: customer['company_name'],
         tax_code: customer['tax_code'],
         district: customer['district'],
         ward: customer['ward'],
@@ -179,7 +192,7 @@ export class CustomerFormDialogComponent implements OnInit {
 
       if (data['dob'] !== null) {
         const momentDate = new Date(data['dob']); // Replace event.value with your date value
-        const formattedDate = moment(momentDate).format('MM/DD/YYYY');
+        const formattedDate = moment(momentDate).format('YYYY-MM-DD');
         data['dob'] = formattedDate;
       }
 
