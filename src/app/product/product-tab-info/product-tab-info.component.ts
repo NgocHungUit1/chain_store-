@@ -1,13 +1,11 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {ProductService} from "../product.service";
-import {Product} from "../product.model";
-import {ProductMedicineDialogComponent} from "../product-medicine-dialog/product-medicine-dialog.component";
+import { Component, Input, OnInit } from '@angular/core';
+import { ProductService } from "../product.service";
+import { Product } from "../product.model";
+import { ProductMedicineDialogComponent } from "../product-medicine-dialog/product-medicine-dialog.component";
 import { ProductMerchandiseFormDialogComponent } from "../product-merchandise-form-dialog/product-merchandise-form-dialog.component";
 import { ProductPopupDeleteDialogComponent } from "../product-popup-delete-dialog/product-popup-delete-dialog.component";
-
-import {MatDialog} from "@angular/material/dialog";
-import {NotifierService} from "angular-notifier";
-
+import { MatDialog } from "@angular/material/dialog";
+import { NotifierService } from "angular-notifier";
 
 @Component({
   selector: 'app-product-tab-info',
@@ -37,11 +35,7 @@ export class ProductTabInfoComponent implements OnInit {
     this.images = data;
   }
 
-  loadProduct(id){
-    // this.productSer.getDetail(id, 'images,productPlacements,productUnits').subscribe(res => {
-    //   console.warn(res);
-    // });
-
+  loadProduct(id) {
     this.productSer.getProducts(id, 'images,productPlacements,productUnits').subscribe(res => {
       this.product = res;
     });
@@ -63,13 +57,13 @@ export class ProductTabInfoComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if(result.event !== 'Cancel'){
+      if (result.event !== 'Cancel') {
         this.loadProduct(result.data.id);
       }
     });
   }
 
-  openMerchandiseFormDialog(id, copy_product_id = null){
+  openMerchandiseFormDialog(id, copy_product_id = null) {
     let obj = {
       action: copy_product_id !== null ? 'Copy' : 'Update',
       title: copy_product_id !== null ? 'Sao chép hàng hóa' : 'Cập nhật hàng hóa',
@@ -84,13 +78,13 @@ export class ProductTabInfoComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if(result.event !== 'Cancel'){
+      if (result.event !== 'Cancel') {
         this.loadProduct(result.data.id);
       }
     });
   }
 
-  deleteMerchandise(id){
+  deleteMerchandise(id) {
 
     let obj = {
       action: 'Delete',
@@ -105,14 +99,14 @@ export class ProductTabInfoComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if(result.event == 'Delete'){
+      if (result.event == 'Delete') {
         // BUG
         this.product = null;
       }
     });
   }
 
-  deleteMedicine(id){
+  deleteMedicine(id) {
     let obj = {
       action: 'Delete',
       title: 'Xóa thuốc',
@@ -124,7 +118,7 @@ export class ProductTabInfoComponent implements OnInit {
       minHeight: '80%',
     });
     dialogRef.afterClosed().subscribe(result => {
-      if(result.event == 'Delete'){
+      if (result.event == 'Delete') {
         // BUG
         this.product = null;
       }
