@@ -14,6 +14,7 @@ export interface ChildrenItems {
   state: string;
   name: string;
   type?: string;
+  icon?: string;
 }
 
 export interface Menu {
@@ -47,13 +48,27 @@ const MENUITEMS = [
     state: 'store',
     name: 'Hàng hóa',
     type: 'sub',
-    icon: 'store_mall_directory',
+    icon: 'web_asset',
     // badge: [{type: 'red', value: '17'}],
     children: [
-      {state: 'medicine', name: 'Danh mục thuốc', type: 'link'},
-      {state: 'product', name: 'Sản phẩm', type: 'link'},
-      {state: 'price_book', name: 'Thiết lập giá', type: 'link'},
-      {state: 'stock_take', name: 'Kiểm kho', type: 'link'},
+      {state: 'medicine', name: 'Danh mục thuốc', type: 'link', icon: 'list'},
+      {state: 'product', name: 'Sản phẩm', type: 'link', icon: 'local_pharmacy'},
+      {state: 'price-book', name: 'Thiết lập giá', type: 'link', icon: 'loyalty'},
+      {state: 'stock-take', name: 'Kiểm kho', type: 'link', icon: 'check_circle_outline'},
+    ]
+  },
+  {
+    state: 'transaction',
+    name: 'Giao dịch',
+    type: 'sub',
+    icon: 'sync_alt',
+    // badge: [{type: 'red', value: '17'}],
+    children: [
+      {state: 'invoice', name: 'Hóa đơn', type: 'link', icon: 'receipt'},
+      {state: 'return', name: 'Trả hàng', type: 'link', icon: 'keyboard_return'},
+      {state: 'warehouse', name: 'Nhập hàng', type: 'link', icon: 'local_grocery_store'},
+      {state: 'out-stock', name: 'Trả hàng nhập', type: 'link', 'icon': 'assignment_return'},
+      {state: 'move', name: 'Chuyển hàng', type: 'link', icon: 'local_shipping'},
     ]
   },
   {
@@ -63,8 +78,8 @@ const MENUITEMS = [
     icon: 'contacts',
     // badge: [{type: 'red', value: '17'}],
     children: [
-      {state: 'customer', name: 'Khách hàng', type: 'link'},
-      {state: 'supplier', name: 'Nhà cung cấp', type: 'link'},
+      {state: 'customer', name: 'Khách hàng', type: 'link', icon: 'person'},
+      {state: 'supplier', name: 'Nhà cung cấp', type: 'link', icon: 'people'},
     ]
   },
   // {
