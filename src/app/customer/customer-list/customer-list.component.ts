@@ -124,7 +124,9 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this.loadData();
+      if (result) {
+        this.loadData();
+      }
     });
   }
 

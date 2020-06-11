@@ -110,6 +110,10 @@ export class CustomerFormDialogComponent implements OnInit {
 
   loadCustomer(id) {
     this.customerSer.getDetail(id, 'province,district,ward').subscribe(customer => {
+      let dobStr = null;
+      if (customer['dob'] !== null) {
+        dobStr = new Date(customer['dob']).toISOString();
+      }
       this.form.patchValue({
         name: customer['name'],
         phone: customer['phone'],
@@ -122,7 +126,7 @@ export class CustomerFormDialogComponent implements OnInit {
         province: customer['province'],
         note: customer['note'],
         facebook: customer['facebook'],
-        dob: new Date(customer['dob']).toISOString(),
+        dob: dobStr,
         sex: customer['sex']
       });
 
@@ -173,9 +177,11 @@ export class CustomerFormDialogComponent implements OnInit {
     if (this.form.valid) {
       const data = this.form.getRawValue();
 
-      let momentDate = new Date(data['dob']); // Replace event.value with your date value
-      let formattedDate = moment(momentDate).format("MM/DD/YYYY");
-      data['dob'] = formattedDate;
+      if (data['dob'] !== null) {
+        const momentDate = new Date(data['dob']); // Replace event.value with your date value
+        const formattedDate = moment(momentDate).format('MM/DD/YYYY');
+        data['dob'] = formattedDate;
+      }
 
       if (data['province'] !== null) {
         data['province_id'] = data['province'].id;
