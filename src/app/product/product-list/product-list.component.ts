@@ -1,15 +1,15 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {MatPaginator} from "@angular/material/paginator";
-import {MatTable} from "@angular/material/table";
-import {MatSort} from "@angular/material/sort";
-import {Product, ProductFilter} from "../product.model";
-import {ActivatedRoute} from "@angular/router";
-import {ProductService} from "../product.service";
-import {ListComponentBase} from "../../shared/base";
-import {ProductMedicineDialogComponent} from "../product-medicine-dialog/product-medicine-dialog.component";
-import {MatDialog} from "@angular/material/dialog";
-import {NotifierService} from "angular-notifier";
-import {animate, state, style, transition, trigger} from "@angular/animations";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from "@angular/material/paginator";
+import { MatTable } from "@angular/material/table";
+import { MatSort } from "@angular/material/sort";
+import { Product, ProductFilter } from "../product.model";
+import { ActivatedRoute } from "@angular/router";
+import { ProductService } from "../product.service";
+import { ListComponentBase } from "../../shared/base";
+import { ProductMedicineDialogComponent } from "../product-medicine-dialog/product-medicine-dialog.component";
+import { MatDialog } from "@angular/material/dialog";
+import { NotifierService } from "angular-notifier";
+import { animate, state, style, transition, trigger } from "@angular/animations";
 import { ProductMerchandiseFormDialogComponent } from '../product-merchandise-form-dialog/product-merchandise-form-dialog.component';
 
 @Component({
@@ -57,8 +57,8 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     'merchandise': 'Hàng hóa',
   };
 
-  displayedColumns: string[] = ['#','product_type', 'product_no', 'product_name', 'shortcut', 'original_price', 'sell_price', 'quantity_of_stock'];
-  columnsToDisplay: string[] = ['#','product_type', 'product_no', 'product_name', 'shortcut', 'original_price', 'sell_price', 'quantity_of_stock'];
+  displayedColumns: string[] = ['#', 'product_type', 'product_no', 'product_name', 'shortcut', 'original_price', 'sell_price', 'quantity_of_stock'];
+  columnsToDisplay: string[] = ['#', 'product_type', 'product_no', 'product_name', 'shortcut', 'original_price', 'sell_price', 'quantity_of_stock'];
   dataSource: Product[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -100,11 +100,11 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     this.loadData();
 
     this.service.subscribeLoadProduct.subscribe(action => {
-        if (action === true) {
-          this.apiFilter = this.buildFilterFromParams();
-          this.loadData();
-          this.service.setLoadProduct(false);
-        }
+      if (action === true) {
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+        this.service.setLoadProduct(false);
+      }
     });
   }
 
@@ -125,14 +125,14 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
   }
 
   openProductMerchandiseFormDialog(action, obj) {
-      obj.action = action;
-      obj.title = 'Thêm hàng hóa';
-      obj.product_id = null;
-      obj.copy_product_id = null;
+    obj.action = action;
+    obj.title = 'Thêm hàng hóa';
+    obj.product_id = null;
+    obj.copy_product_id = null;
     const dialogRef = this.dialog.open(ProductMerchandiseFormDialogComponent, {
-        data: obj,
-        width: '60%',
-        minHeight: '80%',
+      data: obj,
+      width: '60%',
+      minHeight: '80%',
     });
 
     dialogRef.afterClosed().subscribe(result => {
