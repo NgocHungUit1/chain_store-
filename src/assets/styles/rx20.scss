@@ -89,3 +89,9 @@ File: scss
 .select-product .mat-form-field-wrapper {
   padding-bottom: 5px;
 }
+.warehouse-product-table .mat-form-field .mat-form-field-prefix, .mat-table .mat-form-field .mat-form-field-suffix {
+  display: none;
+}
+.warehouse-product-table .mat-form-field:hover .mat-form-field-prefix, .mat-table .mat-form-field:hover .mat-form-field-suffix {
+  display: block;
+}
