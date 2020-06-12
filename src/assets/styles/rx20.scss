@@ -79,3 +79,13 @@ File: scss
 #snav .mat-nav-list .mat-list-item.selected > .mat-list-item-content > .mat-nav-list .mat-list-item.selected > .mat-list-item-content a.selected mat-icon {
   color: #2f3d4a;
 }
+.mat-toolbar .select-product .mat-focused .mat-form-field-underline .mat-form-field-ripple {
+  background-color: #009688;
+}
+.select-product .mat-form-field-appearance-legacy .mat-form-field-underline {
+  bottom: 5px;
+  background-color: rgba(0, 0, 0, 0.42);
+}
+.select-product .mat-form-field-wrapper {
+  padding-bottom: 5px;
+}

@@ -8,6 +8,7 @@ export class Product {
   product_no: string;
   barcode: string;
   product_name: string;
+  default_image: string;
   original_price: number;
   sell_price: number;
   weight: number;

@@ -97,6 +97,22 @@
         <mat-icon>arrow_back</mat-icon>
       </button>
       <h3>Nhập hàng</h3>
+      <div class="select-product">
+        <mat-form-field>
+          <input type="text" [formControl]="selectProduct" matInput
+                 [matAutocomplete]="chooseProduct" placeholder="Tìm hàng hóa theo mã hoặc tên">
+          <button mat-icon-button matPrefix>
+            <mat-icon>search</mat-icon>
+          </button>
+          <mat-autocomplete #chooseProduct="matAutocomplete" (optionSelected)="onSelectedProduct($event.option.value)">
+            <mat-option *ngFor="let product of filteredProducts | async" [value]="product">
+              <img class="example-option-img" aria-hidden [src]="product.default_image" height="25">
+              <span>{{product.product_name}}</span> |
+              <small>Slt: {{product.quantity_of_stock}}</small>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
       <span fxFlex="1 1 0%"></span>
       <div class="diva-column-select">
         <button mat-raised-button color="primary" (click)="selectColumn.toggle();">
@@ -124,11 +140,11 @@
             </div>
           </div>
           <div class=" table-responsive">
-            <table mat-table [dataSource]="dataSource" class="table employee-list no-wrap">
+            <table mat-table [dataSource]="dataSource" class="table no-wrap">
 
               <ng-container matColumnDef="#">
                 <th mat-header-cell *matHeaderCellDef> #</th>
-                <td mat-cell *matCellDef="let element"> {{element.id}}</td>
+                <td mat-cell *matCellDef="let element; let i = index;"> {{i + 1}}</td>
               </ng-container>
 
               <ng-container matColumnDef="product_no">
@@ -138,27 +154,47 @@
 
               <ng-container matColumnDef="product_name">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_name']}}</th>
-                <td mat-cell *matCellDef="let element"> {{ element.product.name }}</td>
+                <td mat-cell *matCellDef="let element"> {{ element.product.product_name }}</td>
               </ng-container>
 
               <ng-container matColumnDef="quantity">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['quantity']}}</th>
-                <td mat-cell *matCellDef="let element"> {{element.quantity}}</td>
+                <td mat-cell *matCellDef="let element; let i = index">
+                  <mat-form-field>
+                    <input matInput class="quantity-input" [value]="element.quantity" (change)="recalculate(i)" [(ngModel)]="dataSource[i]['quantity']" >
+                    <button mat-icon-button matPrefix (click)="dataSource[i]['quantity'] = dataSource[i]['quantity'] > 1 ? (dataSource[i]['quantity'] - 1) : 1;recalculate(i);">
+                      <mat-icon>indeterminate_check_box</mat-icon>
+                    </button>
+                    <button mat-icon-button matSuffix (click)="dataSource[i]['quantity'] = dataSource[i]['quantity'] + 1;recalculate(i);">
+                      <mat-icon>add_box</mat-icon>
+                    </button>
+                  </mat-form-field>
+                </td>
               </ng-container>
 
               <ng-container matColumnDef="price">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['price']}}</th>
-                <td mat-cell *matCellDef="let element"> {{element.price}}</td>
+                <td mat-cell *matCellDef="let element; let i = index">
+                  <mat-form-field>
+                    <input matInput class="price-input" [value]="element.price" (change)="recalculate(i)" [(ngModel)]="dataSource[i]['price']" >
+                  </mat-form-field>
+                </td>
               </ng-container>
 
               <ng-container matColumnDef="discount">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['discount']}}</th>
-                <td mat-cell *matCellDef="let element"> {{element.discount}}</td>
+                <td mat-cell *matCellDef="let element; let i = index">
+                  <mat-form-field>
+                    <input matInput class="discount-input" [value]="element.discount" (change)="recalculate(i)" [(ngModel)]="dataSource[i]['discount']" >
+                  </mat-form-field>
+                </td>
               </ng-container>
 
               <ng-container matColumnDef="amount">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['amount']}}</th>
-                <td mat-cell *matCellDef="let element"> {{element.amount}}</td>
+                <td mat-cell *matCellDef="let element">
+                  {{element.amount}}
+                </td>
               </ng-container>
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>

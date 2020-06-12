@@ -15,6 +15,8 @@ import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operator
 import {of} from 'rxjs/internal/observable/of';
 import {SupplierService} from '../../supplier/supplier.service';
 import {WarehouseService} from '../warehouse.service';
+import {Product} from '../../product/product.model';
+import {ProductService} from '../../product/product.service';
 
 @Component({
   selector: 'app-warehouse-create',
@@ -25,12 +27,13 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
 
   constructor(
     private mainService: WarehouseService,
-    private warehourProductService: WarehouseProductService,
+    private warehouseProductService: WarehouseProductService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,
     private fb: FormBuilder,
     private supplierSer: SupplierService,
+    private productSer: ProductService,
     private notifySer: NotifierService
   ) {
     super();
@@ -38,6 +41,8 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
 
   @ViewChild(MatTable, { static: true }) table: MatTable<any>;
   @ViewChild('selectColumn') selectColumn;
+
+  selectProduct = new FormControl();
 
   apiFilter: WarehouseProductFilter;
 
@@ -72,6 +77,7 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
   form: FormGroup;
 
   filteredSuppliers: Observable<Supplier[]>;
+  filteredProducts: Observable<Product[]>;
 
   ngOnInit() {
     const date = new FormControl(new Date());
@@ -107,6 +113,21 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
         }
       })
     );
+    this.filteredProducts = this.selectProduct.valueChanges.pipe(
+      startWith(''),
+      // delay emits
+      debounceTime(300),
+      // use switch map so as to cancel previous subscribed events, before creating new once
+      switchMap(value => {
+        if (value !== '') {
+          // lookup from github
+          return this.lookupProduct(value);
+        } else {
+          // if no value is present, return null
+          return of(null);
+        }
+      })
+    );
   }
 
   displaySupplier(supplier?: Supplier): string | undefined {
@@ -124,9 +145,20 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
     );
   }
 
+  lookupProduct(value: string): Observable<Product[]> {
+    return this.productSer.autocomplete(value).pipe(
+      // map the item property of the github results as our return object
+      map(results => results),
+      // catch errors
+      catchError(_ => {
+        return of(null);
+      })
+    );
+  }
+
   loadData(): void {
     this.isLoadingResults = true;
-    this.warehourProductService.getList(this.apiFilter).subscribe(res => {
+    this.warehouseProductService.getList(this.apiFilter).subscribe(res => {
       this.dataSource = res.body;
       this.reloadFilter(res);
       this.isLoadingResults = false;
@@ -169,6 +201,25 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
         this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
       });
     }
+  }
+
+  onSelectedProduct(product) {
+    const warehouseProduct = new WarehouseProduct();
+    warehouseProduct.product_id = product.id;
+    warehouseProduct.product = product;
+    warehouseProduct.quantity = 1;
+    warehouseProduct.price = product.original_price;
+    warehouseProduct.discount = 0;
+    warehouseProduct.amount = product.original_price;
+
+    const data = this.dataSource.concat([warehouseProduct]);
+    this.dataSource = data;
+
+    this.selectProduct.patchValue(null);
+  }
+
+  recalculate(i) {
+    this.dataSource[i]['amount'] = (this.dataSource[i]['price'] - this.dataSource[i]['discount']) * this.dataSource[i]['quantity'];
   }
 
 }
