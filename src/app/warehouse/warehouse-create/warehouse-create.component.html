@@ -53,34 +53,40 @@
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Tổng tiền hàng</mat-label>
-                <input matInput tabindex="5" formControlName="total_amount" readonly="readonly">
+                <input matInput tabindex="5" formControlName="total_amount" readonly>
               </mat-form-field>
             </div>
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Giảm giá</mat-label>
-                <input matInput tabindex="6" formControlName="total_discount">
+                <input matInput tabindex="6" formControlName="total_discount" readonly>
               </mat-form-field>
             </div>
             <div fxFlex="100">
               <mat-form-field>
-                <mat-label>Cần trả nhà cung cấp</mat-label>
-                <input matInput tabindex="7" formControlName="remain_amount" readonly>
+                <mat-label>Tiền trả nhà cung cấp</mat-label>
+                <input matInput tabindex="7" formControlName="paid_amount" (change)="recalculateWarehouse();">
+              </mat-form-field>
+            </div>
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Tính vào công nợ</mat-label>
+                <input matInput tabindex="8" formControlName="remain_amount" readonly>
               </mat-form-field>
             </div>
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Ghi chú</mat-label>
-                <textarea matInput tabindex="8" formControlName="note" rows="2"></textarea>
+                <textarea matInput tabindex="9" formControlName="note" rows="2"></textarea>
               </mat-form-field>
             </div>
             <div fxFlex="100">
               <div mat-dialog-actions align="end">
-                <button mat-raised-button color="accent" fxFlex="45" tabindex="9" (click)="submitDraft()" style="margin-right: 10px">
+                <button mat-raised-button color="accent" fxFlex="45" tabindex="10" (click)="submitDraft()" style="margin-right: 10px">
                   <mat-icon>save</mat-icon>
                   Lưu tạm
                 </button>
-                <button mat-raised-button color="primary" fxFlex="55" (click)="submit()" [disabled]="this.form.invalid" tabindex="10">
+                <button mat-raised-button color="primary" fxFlex="55" (click)="submit()" [disabled]="this.form.invalid" tabindex="11">
                   <mat-icon>check</mat-icon>
                   Hoàn thành
                 </button>
@@ -114,21 +120,6 @@
         </mat-form-field>
       </div>
       <span fxFlex="1 1 0%"></span>
-      <div class="diva-column-select">
-        <button mat-raised-button color="primary" (click)="selectColumn.toggle();">
-          <mat-icon>menu</mat-icon>
-        </button>
-        <mat-select [(ngModel)]="displayedColumns" #selectColumn [multiple]="true"
-                    style="width: 100%; display: inline-flex; margin-left: -20px; color: white"
-                    placeholder="Chọn cột">
-          <mat-select-trigger></mat-select-trigger>
-          <mat-option *ngFor="let column of columnsToDisplay" [value]="column">{{columnsHeader[column]}}</mat-option>
-        </mat-select>
-      </div>
-      <button style="margin-left: 10px" mat-raised-button color="primary" (click)="loadData()">
-        <mat-icon>refresh</mat-icon>
-        Làm mới
-      </button>
     </mat-toolbar>
     <div fxLayout="row wrap">
       <div fxFlex="100">
@@ -140,7 +131,7 @@
             </div>
           </div>
           <div class=" table-responsive">
-            <table mat-table [dataSource]="dataSource" class="table warehouse-product-table no-wrap">
+            <table mat-table [dataSource]="productDataSource" class="table warehouse-product-table no-wrap">
 
               <ng-container matColumnDef="#">
                 <th mat-header-cell *matHeaderCellDef> #</th>
@@ -161,11 +152,11 @@
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['quantity']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index">
                   <mat-form-field>
-                    <input matInput class="quantity-input" [value]="element.quantity" (change)="recalculate(i)" [(ngModel)]="dataSource[i]['quantity']" >
-                    <button mat-icon-button matPrefix (click)="dataSource[i]['quantity'] = dataSource[i]['quantity'] > 1 ? (dataSource[i]['quantity'] - 1) : 1;recalculate(i);">
+                    <input matInput class="quantity-input" [value]="element['quantity']" (change)="recalculateItem(i)" [(ngModel)]="data[i]['quantity']" >
+                    <button mat-icon-button matPrefix (click)="data[i]['quantity'] = data[i]['quantity'] > 1 ? (data[i]['quantity'] - 1) : 1;recalculateItem(i);">
                       <mat-icon>indeterminate_check_box</mat-icon>
                     </button>
-                    <button mat-icon-button matSuffix (click)="dataSource[i]['quantity'] = dataSource[i]['quantity'] + 1;recalculate(i);">
+                    <button mat-icon-button matSuffix (click)="data[i]['quantity'] = data[i]['quantity'] + 1;recalculateItem(i);">
                       <mat-icon>add_box</mat-icon>
                     </button>
                   </mat-form-field>
@@ -176,7 +167,7 @@
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['price']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index">
                   <mat-form-field>
-                    <input matInput class="price-input" [value]="element.price" (change)="recalculate(i)" [(ngModel)]="dataSource[i]['price']" >
+                    <input matInput class="price-input" [value]="element['price']" (change)="recalculateItem(i)" [(ngModel)]="data[i]['price']" >
                   </mat-form-field>
                 </td>
               </ng-container>
@@ -185,7 +176,7 @@
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['discount']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index">
                   <mat-form-field>
-                    <input matInput class="discount-input" [value]="element.discount" (change)="recalculate(i)" [(ngModel)]="dataSource[i]['discount']" >
+                    <input matInput class="discount-input" [value]="element['discount']" (change)="recalculateItem(i)" [(ngModel)]="data[i]['discount']" >
                   </mat-form-field>
                 </td>
               </ng-container>
@@ -194,6 +185,13 @@
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['amount']}}</th>
                 <td mat-cell *matCellDef="let element">
                   {{element.amount}}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element; let i = index">
+                  <button mat-icon-button (click)="removeProduct(i)"><mat-icon>delete</mat-icon> </button>
                 </td>
               </ng-container>
 

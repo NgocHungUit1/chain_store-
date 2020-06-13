@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {MatTable} from '@angular/material/table';
+import {MatTable, MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
 import {NotifierService} from 'angular-notifier';
@@ -65,13 +65,15 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
     'price',
     'discount',
     'amount',
+    'actions'
   ];
-  dataSource: WarehouseProduct[] = [];
+  data: WarehouseProduct[] = [];
+  productDataSource = new MatTableDataSource<WarehouseProduct>([]);
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  isLoadingResults = true;
+  isLoadingResults = false;
   isRateLimitReached = false;
 
   form: FormGroup;
@@ -94,7 +96,7 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
       note: [null],
     });
     this.apiFilter = this.buildFilterFromParams();
-    this.loadData();
+    // this.loadData();
 
     this.displayedColumns = this.columnsToDisplay;
 
@@ -159,7 +161,8 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
   loadData(): void {
     this.isLoadingResults = true;
     this.warehouseProductService.getList(this.apiFilter).subscribe(res => {
-      this.dataSource = res.body;
+      this.data = res.body;
+      this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
       this.reloadFilter(res);
       this.isLoadingResults = false;
     });
@@ -196,6 +199,7 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
 
         data['date'] = effDate.toISOString().split('T')[0];
       }
+      data['items'] = this.data;
       this.mainService.create(data).subscribe(res => {
         this.notifySer.notify('success', 'Lưu thành công.');
         this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
@@ -212,14 +216,49 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
     warehouseProduct.discount = 0;
     warehouseProduct.amount = product.original_price;
 
-    const data = this.dataSource.concat([warehouseProduct]);
-    this.dataSource = data;
-
+    const newData = this.data.concat([warehouseProduct]);
+    this.data = newData;
+    this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+    this.recalculateWarehouse();
     this.selectProduct.patchValue(null);
   }
 
-  recalculate(i) {
-    this.dataSource[i]['amount'] = (this.dataSource[i]['price'] - this.dataSource[i]['discount']) * this.dataSource[i]['quantity'];
+  recalculateItem(i) {
+    if (this.data[i] !== undefined) {
+      this.data[i]['amount'] = (this.data[i]['price'] - this.data[i]['discount']) * this.data[i]['quantity'];
+      this.recalculateWarehouse();
+    }
+  }
+
+  recalculateWarehouse() {
+    let quantity = 0;
+    let discount = 0;
+    let amount = 0;
+    const paidAmount = this.form.controls['paid_amount'].value;
+
+    this.data.forEach(item => {
+      quantity = quantity + item['quantity'];
+      discount = discount + item['discount'];
+      amount = amount + item['amount'];
+    });
+    const remainAmount = paidAmount - amount;
+
+    this.form.patchValue({
+      quantity: quantity,
+      total_amount: amount,
+      total_discount: discount,
+      remain_amount: remainAmount,
+    });
+  }
+
+  removeProduct(i) {
+    const newData = this.data;
+    newData.splice(i, 1);
+
+    this.data = newData;
+
+    this.recalculateWarehouse();
+    this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
   }
 
 }

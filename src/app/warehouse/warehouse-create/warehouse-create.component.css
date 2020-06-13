@@ -13,6 +13,10 @@
   max-width: 30px;
   text-align: right;
 }
+.mat-column-actions {
+  max-width: 30px;
+  text-align: center;
+}
 .mat-column-product_name {
   flex: 3 1 0;
 }
