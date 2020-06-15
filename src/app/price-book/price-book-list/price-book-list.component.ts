@@ -9,6 +9,7 @@ import { ListComponentBase } from "../../shared/base";
 import { MatDialog } from "@angular/material/dialog";
 import { NotifierService } from "angular-notifier";
 import { animate, state, style, transition, trigger } from "@angular/animations";
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-price-book-list',
@@ -38,7 +39,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
 
   apiFilter: PriceBookProductFilter;
   expandedElement: PriceBookProduct | null;
-
+  key_work: string;
   columnsHeader = {
     '#': '#',
     'product_type': 'Phân loại',
@@ -79,6 +80,8 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.expand = 'medicine,productPlacements,group,images';
+    filter.product_name = this.key_work;
+    filter.product_no = this.key_work;
     return filter;
   }
 
@@ -94,6 +97,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
 
 
   ngOnInit() {
+
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
 
@@ -104,6 +108,12 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
         this.service.setLoadProduct(false);
       }
     });
+  }
+
+  inputSearch(event: any) {
+    this.key_work = event.target.value;
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
   }
 
 }

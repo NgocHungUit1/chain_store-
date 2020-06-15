@@ -58,3 +58,9 @@ tr.example-element-row:not(.example-expanded-row):active {
 .example-expanded-row {
   background-color: #ebf5ea;
 }
+
+.select-product {
+  margin-left: 50px;
+  font-size: 1rem;
+  min-width: 215px;
+}

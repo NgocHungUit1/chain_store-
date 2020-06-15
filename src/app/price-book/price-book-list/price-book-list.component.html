@@ -14,6 +14,20 @@
         <mat-icon>menu</mat-icon>
       </button>
       <h3>Danh sách hàng hóa</h3>
+
+      <div class="select-product">
+        <form >
+          <mat-form-field>
+            <input type="text" matInput (keyup.enter)="inputSearch($event)" on-focusout="inputSearch($event)"
+              placeholder="Tìm hàng hóa theo mã hoặc tên">
+            <button mat-icon-button matPrefix>
+              <mat-icon>search</mat-icon>
+            </button>
+
+          </mat-form-field>
+        </form>
+      </div>
+
       <span fxFlex="1 1 0%"></span>
       <button mat-raised-button color="primary" [matMenuTriggerFor]="createMenu" style="margin-right: 10px">
         <mat-icon>add</mat-icon>
