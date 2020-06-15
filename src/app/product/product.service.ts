@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Product, ProductFilter } from "./product.model";
+import { Product, ProductFilter } from './product.model';
 
 @Injectable({
   providedIn: 'root'
@@ -90,6 +90,12 @@ export class ProductService {
     // const url = environment.apiUrl + '/product/delete/' + id;A
     // return this.http.delete(url);
   }
+
+  autocomplete(term: string) {
+    const url = environment.apiUrl + '/product/autocomplete?term=' + term;
+    return this.http.get<Product[]>(url);
+  }
+
 }
 
 
