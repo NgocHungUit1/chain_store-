@@ -94,7 +94,10 @@
                 <td mat-cell *matCellDef="let element"> {{element.sell_price}}</td>
               </ng-container>
 
-
+              <ng-container matColumnDef="common_price">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['common_price']}}</th>
+                <td mat-cell *matCellDef="let element"> {{element.common_price}}</td>
+              </ng-container>
 
               <ng-container matColumnDef="expandedDetail">
                 <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">

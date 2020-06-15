@@ -47,6 +47,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     'product_name': 'Tên hàng',
     'original_price': 'Giá gốc',
     'sell_price': 'Giá bán',
+    'common_price': 'Giá chung'
   };
 
   productTypeLable = {
@@ -54,8 +55,8 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     'merchandise': 'Hàng hóa',
   };
 
-  displayedColumns: string[] = ['#', 'product_type', 'product_no', 'product_name', 'original_price', 'sell_price'];
-  columnsToDisplay: string[] = ['#', 'product_type', 'product_no', 'product_name', 'original_price', 'sell_price'];
+  displayedColumns: string[] = ['#', 'product_type', 'product_no', 'product_name', 'original_price', 'sell_price', 'common_price'];
+  columnsToDisplay: string[] = ['#', 'product_type', 'product_no', 'product_name', 'original_price', 'sell_price', 'common_price'];
   dataSource: PriceBookProduct[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
