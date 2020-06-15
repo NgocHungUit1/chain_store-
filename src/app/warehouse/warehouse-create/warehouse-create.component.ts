@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {MatTable} from '@angular/material/table';
+import {MatTable, MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
 import {NotifierService} from 'angular-notifier';
@@ -15,6 +15,8 @@ import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operator
 import {of} from 'rxjs/internal/observable/of';
 import {SupplierService} from '../../supplier/supplier.service';
 import {WarehouseService} from '../warehouse.service';
+import {Product} from '../../product/product.model';
+import {ProductService} from '../../product/product.service';
 
 @Component({
   selector: 'app-warehouse-create',
@@ -25,12 +27,13 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
 
   constructor(
     private mainService: WarehouseService,
-    private warehourProductService: WarehouseProductService,
+    private warehouseProductService: WarehouseProductService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,
     private fb: FormBuilder,
     private supplierSer: SupplierService,
+    private productSer: ProductService,
     private notifySer: NotifierService
   ) {
     super();
@@ -38,6 +41,8 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
 
   @ViewChild(MatTable, { static: true }) table: MatTable<any>;
   @ViewChild('selectColumn') selectColumn;
+
+  selectProduct = new FormControl();
 
   apiFilter: WarehouseProductFilter;
 
@@ -60,18 +65,21 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
     'price',
     'discount',
     'amount',
+    'actions'
   ];
-  dataSource: WarehouseProduct[] = [];
+  data: WarehouseProduct[] = [];
+  productDataSource = new MatTableDataSource<WarehouseProduct>([]);
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  isLoadingResults = true;
+  isLoadingResults = false;
   isRateLimitReached = false;
 
   form: FormGroup;
 
   filteredSuppliers: Observable<Supplier[]>;
+  filteredProducts: Observable<Product[]>;
 
   ngOnInit() {
     const date = new FormControl(new Date());
@@ -88,7 +96,7 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
       note: [null],
     });
     this.apiFilter = this.buildFilterFromParams();
-    this.loadData();
+    // this.loadData();
 
     this.displayedColumns = this.columnsToDisplay;
 
@@ -101,6 +109,21 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
         if (value !== '') {
           // lookup from github
           return this.lookup(value);
+        } else {
+          // if no value is present, return null
+          return of(null);
+        }
+      })
+    );
+    this.filteredProducts = this.selectProduct.valueChanges.pipe(
+      startWith(''),
+      // delay emits
+      debounceTime(300),
+      // use switch map so as to cancel previous subscribed events, before creating new once
+      switchMap(value => {
+        if (value !== '') {
+          // lookup from github
+          return this.lookupProduct(value);
         } else {
           // if no value is present, return null
           return of(null);
@@ -124,10 +147,22 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
     );
   }
 
+  lookupProduct(value: string): Observable<Product[]> {
+    return this.productSer.autocomplete(value).pipe(
+      // map the item property of the github results as our return object
+      map(results => results),
+      // catch errors
+      catchError(_ => {
+        return of(null);
+      })
+    );
+  }
+
   loadData(): void {
     this.isLoadingResults = true;
-    this.warehourProductService.getList(this.apiFilter).subscribe(res => {
-      this.dataSource = res.body;
+    this.warehouseProductService.getList(this.apiFilter).subscribe(res => {
+      this.data = res.body;
+      this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
       this.reloadFilter(res);
       this.isLoadingResults = false;
     });
@@ -164,11 +199,66 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
 
         data['date'] = effDate.toISOString().split('T')[0];
       }
+      data['items'] = this.data;
       this.mainService.create(data).subscribe(res => {
         this.notifySer.notify('success', 'Lưu thành công.');
         this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
       });
     }
+  }
+
+  onSelectedProduct(product) {
+    const warehouseProduct = new WarehouseProduct();
+    warehouseProduct.product_id = product.id;
+    warehouseProduct.product = product;
+    warehouseProduct.quantity = 1;
+    warehouseProduct.price = product.original_price;
+    warehouseProduct.discount = 0;
+    warehouseProduct.amount = product.original_price;
+
+    const newData = this.data.concat([warehouseProduct]);
+    this.data = newData;
+    this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+    this.recalculateWarehouse();
+    this.selectProduct.patchValue(null);
+  }
+
+  recalculateItem(i) {
+    if (this.data[i] !== undefined) {
+      this.data[i]['amount'] = (this.data[i]['price'] - this.data[i]['discount']) * this.data[i]['quantity'];
+      this.recalculateWarehouse();
+    }
+  }
+
+  recalculateWarehouse() {
+    let quantity = 0;
+    let discount = 0;
+    let amount = 0;
+    const paidAmount = this.form.controls['paid_amount'].value;
+
+    this.data.forEach(item => {
+      quantity = quantity + item['quantity'];
+      discount = discount + item['discount'];
+      amount = amount + item['amount'];
+    });
+    const remainAmount = paidAmount - amount;
+
+    this.form.patchValue({
+      quantity: quantity,
+      total_amount: amount,
+      total_discount: discount,
+      remain_amount: remainAmount,
+    });
+  }
+
+  removeProduct(i) {
+    const newData = this.data;
+    newData.splice(i, 1);
+
+    this.data = newData;
+
+    this.recalculateWarehouse();
+    this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
   }
 
 }
