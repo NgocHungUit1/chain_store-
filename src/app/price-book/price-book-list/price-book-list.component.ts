@@ -10,6 +10,10 @@ import { MatDialog } from "@angular/material/dialog";
 import { NotifierService } from "angular-notifier";
 import { animate, state, style, transition, trigger } from "@angular/animations";
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { CreatePriceListFormDialogComponent } from '../create-price-list-form-dialog/create-price-list-form-dialog.component';
+
+
+
 
 @Component({
   selector: 'app-price-book-list',
@@ -25,7 +29,12 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 })
 export class PriceBookListComponent extends ListComponentBase implements OnInit {
 
+  public priceListForm: FormGroup;
+  priceLists: [];
+
+
   constructor(
+    private fb: FormBuilder,
     private service: PriceBookProductService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
@@ -39,7 +48,8 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
 
   apiFilter: PriceBookProductFilter;
   expandedElement: PriceBookProduct | null;
-  key_work: string;
+
+
   columnsHeader = {
     '#': '#',
     'product_type': 'Phân loại',
@@ -81,9 +91,15 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.expand = 'medicine,productPlacements,group,images';
-    filter.product_name = this.key_work;
-    filter.product_no = this.key_work;
     return filter;
+  }
+
+  initPriceListForm() {
+    this.priceListForm = this.fb.group({
+      price_list_id: [
+        null
+      ],
+    });
   }
 
   loadData(): void {
@@ -111,10 +127,25 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     });
   }
 
-  inputSearch(event: any) {
-    this.key_work = event.target.value;
-    this.apiFilter = this.buildFilterFromParams();
-    this.loadData();
+  openCreatePriceListFormDialog() {
+    const dialogRef = this.dialog.open(CreatePriceListFormDialogComponent, {});
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== false && result !== undefined) {
+        // this.placements.push(result);
+
+        // const curSelects = this.form.controls['placements'].value;
+        // curSelects.push(result.id);
+
+        // this.form.patchValue({placements: curSelects});
+      }
+    });
   }
+
+  // inputSearch(event: any) {
+  //   this.key_work = event.target.value;
+  //   this.apiFilter = this.buildFilterFromParams();
+  //   this.loadData();
+  // }
 
 }
