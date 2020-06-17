@@ -45,7 +45,7 @@ export class WarehouseService {
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
-  getDetail(id: string, expand: string) {
+  getDetail(id: string, expand: string = '') {
     const url = environment.apiUrl + '/warehouse/' + id + '?expand=' + expand;
     return this.http.get<Warehouse>(url);
   }
@@ -73,6 +73,11 @@ export class WarehouseService {
   lock(id) {
     const url = environment.apiUrl + '/warehouse/lock?id=' + id;
     return this.http.post(url, {});
+  }
+
+  delete(id) {
+    const url = environment.apiUrl + '/warehouse/' + id;
+    return this.http.delete(url, {});
   }
 }
 

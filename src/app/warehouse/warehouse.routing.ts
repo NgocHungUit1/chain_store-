@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import {WarehouseListComponent} from './warehouse-list/warehouse-list.component';
 import {WarehouseCreateComponent} from './warehouse-create/warehouse-create.component';
-import {WarehouseUpdateComponent} from './warehouse-update/warehouse-update.component';
 
 
 export const WarehouseRoutes: Routes = [
@@ -18,7 +17,7 @@ export const WarehouseRoutes: Routes = [
       },
       {
         path: 'warehouse/update/:id',
-        component: WarehouseUpdateComponent
+        component: WarehouseCreateComponent
       }
     ]
   }

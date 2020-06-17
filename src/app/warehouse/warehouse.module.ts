@@ -10,15 +10,16 @@ import {DemoMaterialModule} from '../demo-material-module';
 import {PerfectScrollbarModule} from 'ngx-perfect-scrollbar';
 import {WarehouseRoutes} from './warehouse.routing';
 import { WarehouseCreateComponent } from './warehouse-create/warehouse-create.component';
-import { WarehouseUpdateComponent } from './warehouse-update/warehouse-update.component';
 import {WarehouseListComponent} from './warehouse-list/warehouse-list.component';
+import {WarehouseTabInfoComponent} from './warehouse-tab-info/warehouse-tab-info.component';
 
 
 @NgModule({
   declarations: [
     WarehouseListComponent,
     WarehouseCreateComponent,
-    WarehouseUpdateComponent],
+    WarehouseTabInfoComponent
+  ],
   imports: [
     CommonModule,
     RouterModule.forChild(WarehouseRoutes),

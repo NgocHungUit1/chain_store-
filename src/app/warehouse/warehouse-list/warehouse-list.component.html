@@ -17,7 +17,7 @@
       <span fxFlex="1 1 0%"></span>
       <button mat-raised-button color="primary" routerLink="/transaction/warehouse/create" style="margin-right: 10px">
         <mat-icon>add</mat-icon>
-        Thêm mới
+        Nhập hàng
       </button>
       <div class="diva-column-select">
         <button mat-raised-button color="primary" (click)="selectColumn.toggle();">
@@ -63,29 +63,29 @@
 
               <ng-container matColumnDef="total_amount">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['total_amount']}}</th>
-                <td mat-cell *matCellDef="let element"> {{element.total_amount}}</td>
+                <td mat-cell *matCellDef="let element"> {{element.total_amount | currency : 'VND' : ''}}</td>
               </ng-container>
 
-              <ng-container matColumnDef="total_discount">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['total_discount']}}</th>
-                <td mat-cell *matCellDef="let element"> {{element.total_discount}}</td>
+              <ng-container matColumnDef="discount_amount">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['discount_amount']}}</th>
+                <td mat-cell *matCellDef="let element"> {{element.discount_amount | currency : 'VND' : ''}}</td>
               </ng-container>
 
               <ng-container matColumnDef="paid_amount">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['paid_amount']}}</th>
-                <td mat-cell *matCellDef="let element"> {{element.paid_amount}}</td>
+                <td mat-cell *matCellDef="let element"> {{element.paid_amount | currency : 'VND' : ''}}</td>
               </ng-container>
 
               <ng-container matColumnDef="remain_amount">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['remain_amount']}}</th>
-                <td mat-cell *matCellDef="let element"> {{element.remain_amount}}</td>
+                <td mat-cell *matCellDef="let element"> {{element.remain_amount | currency : 'VND' : ''}}</td>
               </ng-container>
 
               <ng-container matColumnDef="status">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['status']}}</th>
                 <td mat-cell *matCellDef="let element">
-                  <label *ngIf="element.status == '10'" class="label label-warning">Ngưng hoạt động</label>
-                  <label *ngIf="element.status == '1'" class="label label-success">Hoạt động</label>
+                  <label *ngIf="element.status == '10'" class="label label-warning">Lưu tạm</label>
+                  <label *ngIf="element.status == '1'" class="label label-success">Đã nhập</label>
                 </td>
               </ng-container>
 
@@ -95,7 +95,7 @@
                        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
                     <mat-tab-group style="width: 100%;">
                       <mat-tab label="Thông tin">
-
+                        <app-warehouse-tab-info [model]="element" [expandedElement]="element == expandedElement ? true : false" (reload)="loadData();"></app-warehouse-tab-info>
                       </mat-tab>
                       <mat-tab label="Dư nợ">
 
