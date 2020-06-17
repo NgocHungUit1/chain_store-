@@ -1,7 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef } from "@angular/material/dialog";
 import { NotifierService } from "angular-notifier";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { FormBuilder, FormGroup, Validators, FormControl } from "@angular/forms";
+import { PriceListService } from "../price-list.service";
 
 @Component({
   selector: 'app-create-price-list-form-dialog',
@@ -15,19 +16,20 @@ export class CreatePriceListFormDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<CreatePriceListFormDialogComponent>,
     public notifySer: NotifierService,
     private fb: FormBuilder,
+    private priceListSer: PriceListService,
   ) { }
 
   onNoClick(): void {
     this.dialogRef.close();
   }
 
-  public formPriceList: FormGroup;
-
+  public form: FormGroup;
   loading = false;
 
 
   ngOnInit(): void {
-    this.formPriceList = this.fb.group({
+
+    this.form = this.fb.group({
       name: [
         null,
         Validators.compose([
@@ -39,14 +41,13 @@ export class CreatePriceListFormDialogComponent implements OnInit {
   }
 
   submit() {
-    if (this.formPriceList.valid) {
-      let data = this.formPriceList.getRawValue();
-      console.log(data);
+    if (this.form.valid) {
+      let data = this.form.getRawValue();
       this.dialogRef.close();
-      // this.mainSer.create(data).subscribe(res => {
-      //   this.notifySer.notify('success', 'Thêm vị trí thành công!');
-      //   this.dialogRef.close(res);
-      // });
+      this.priceListSer.create(data).subscribe(res => {
+        this.notifySer.notify('success', 'Thêm bảng giá thành công!');
+        this.dialogRef.close(res);
+      });
     }
   }
 

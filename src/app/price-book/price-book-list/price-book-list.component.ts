@@ -1,17 +1,18 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator } from "@angular/material/paginator";
-import { MatTable } from "@angular/material/table";
-import { MatSort } from "@angular/material/sort";
-import { PriceBookProduct, PriceBookProductFilter } from "../price-book-product.model";
-import { ActivatedRoute } from "@angular/router";
-import { PriceBookProductService } from "../price-book-product.service";
-import { ListComponentBase } from "../../shared/base";
-import { MatDialog } from "@angular/material/dialog";
-import { NotifierService } from "angular-notifier";
-import { animate, state, style, transition, trigger } from "@angular/animations";
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTable } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
+import { PriceBookProduct, PriceBookProductFilter } from '../price-book-product.model';
+import { ActivatedRoute } from '@angular/router';
+import { PriceBookProductService } from '../price-book-product.service';
+import { ListComponentBase } from '../../shared/base';
+import { MatDialog } from '@angular/material/dialog';
+import { NotifierService } from 'angular-notifier';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CreatePriceListFormDialogComponent } from '../create-price-list-form-dialog/create-price-list-form-dialog.component';
-
+import { PriceListService } from '../price-list.service';
+import { PriceList, PriceListFilter } from '../price-list.model';
 
 
 
@@ -30,7 +31,7 @@ import { CreatePriceListFormDialogComponent } from '../create-price-list-form-di
 export class PriceBookListComponent extends ListComponentBase implements OnInit {
 
   public priceListForm: FormGroup;
-  priceLists: [];
+  priceLists: PriceList[] = [];
 
 
   constructor(
@@ -38,7 +39,8 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     private service: PriceBookProductService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private notifySer: NotifierService
+    private notifySer: NotifierService,
+    private priceListSer: PriceListService
   ) {
     super();
   }
@@ -96,9 +98,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
 
   initPriceListForm() {
     this.priceListForm = this.fb.group({
-      price_list_id: [
-        null
-      ],
+      priceLists: [[]],
     });
   }
 
@@ -114,17 +114,23 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
 
 
   ngOnInit() {
-
-    this.apiFilter = this.buildFilterFromParams();
-    this.loadData();
-
-    this.service.subscribeLoadProduct.subscribe(action => {
-      if (action === true) {
-        this.apiFilter = this.buildFilterFromParams();
-        this.loadData();
-        this.service.setLoadProduct(false);
-      }
+    const priceListFilter = new PriceListFilter();
+    this.priceListSer.getList(priceListFilter).subscribe(res => {
+      this.priceLists = res.body;
     });
+    this.initPriceListForm();
+
+
+    // this.apiFilter = this.buildFilterFromParams();
+    // this.loadData();
+
+    // this.service.subscribeLoadProduct.subscribe(action => {
+    //   if (action === true) {
+    //     this.apiFilter = this.buildFilterFromParams();
+    //     this.loadData();
+    //     this.service.setLoadProduct(false);
+    //   }
+    // });
   }
 
   openCreatePriceListFormDialog() {
@@ -132,12 +138,10 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== false && result !== undefined) {
-        // this.placements.push(result);
-
-        // const curSelects = this.form.controls['placements'].value;
-        // curSelects.push(result.id);
-
-        // this.form.patchValue({placements: curSelects});
+        this.priceLists.push(result);
+        const curSelects = this.priceListForm.controls['priceLists'].value;
+        curSelects.push(result.id);
+        this.priceListForm.patchValue({ priceLists: curSelects });
       }
     });
   }

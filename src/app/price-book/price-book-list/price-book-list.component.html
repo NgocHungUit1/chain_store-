@@ -8,7 +8,7 @@
 
             <div fxFlex="80">
               <mat-form-field>
-                <mat-select placeholder="Chọn bảng giá" multiple formControlName="price_list_id">
+                <mat-select placeholder="Chọn bảng giá" multiple formControlName="priceLists">
                   <mat-option>--</mat-option>
                   <mat-option *ngFor="let priceList of priceLists" [value]="priceList.id">
                     {{priceList.name}}
@@ -29,6 +29,6 @@
     </mat-card>
   </div>
   <div fxFlex="83">
-    ádhaisd
+    
   </div>
 </div>
