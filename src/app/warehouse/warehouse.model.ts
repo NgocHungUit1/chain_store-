@@ -1,33 +1,34 @@
 import {ApiFilterBase} from '../shared/base';
-import {Location} from '../location/location.model';
 import {Product} from '../product/product.model';
+import {Supplier} from '../supplier/supplier.model';
+import {User} from '../user/user.model';
 
 export class Warehouse {
   id: string;
-  name: string;
-  company_name: string;
-  phone_number: string;
-  email: string;
-  tax_code: string;
-  branch_id: number;
+  no: string;
+  supplier_id: number;
+  total_discount: number;
+  total_amount: number;
+  paid_amount: number;
+  total_quantity: number;
+  product_count: number;
   note: string;
-  status: string;
-  address: string;
-  province: Location;
-  district: Location;
-  ward: Location;
+  status: number;
+  remain_amount: string;
+  supplier: Supplier;
+  created_by: number;
+  created_user: User;
 }
 
 export class WarehouseFilter extends ApiFilterBase {
   id = '';
-  name = '';
-  company_name = '';
-  phone_number = '';
-  email = '';
-  tax_code = '';
-  branch_id = '';
+  no = '';
+  supplier_id = 0;
+  total_discount = 0;
+  total_amount = 0;
+  paid_amount = 0;
   note = '';
-  address = '';
+  remain_amount = '';
   status = '';
   page = 1;
   pageSize = 15;
@@ -41,6 +42,7 @@ export class WarehouseFilter extends ApiFilterBase {
 export class WarehouseProduct {
   id: string;
   product_id: number;
+  warehouse_id: number;
   product: Product;
   quantity: number;
   price: number;
@@ -50,6 +52,7 @@ export class WarehouseProduct {
 
 export class WarehouseProductFilter extends ApiFilterBase {
   id = '';
+  warehouse_id = '';
   product_id = '';
   quantity = '';
   price = '';

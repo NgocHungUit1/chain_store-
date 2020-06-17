@@ -45,6 +45,12 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
   selectProduct = new FormControl();
 
   apiFilter: WarehouseProductFilter;
+  updateModelId = null;
+
+  statuses = [
+    {id: '1', name: 'Đã nhập'},
+    {id: '10', name: 'Lưu tạm'},
+  ];
 
   columnsHeader = {
     '#': '#',
@@ -89,14 +95,13 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
       supplier: [null, Validators.required],
       status: [null],
       quantity: [null],
+      total_price: [null],
       total_amount: [null],
-      total_discount: [null],
+      discount_amount: [null],
       paid_amount: [null],
       remain_amount: [null],
       note: [null],
     });
-    this.apiFilter = this.buildFilterFromParams();
-    // this.loadData();
 
     this.displayedColumns = this.columnsToDisplay;
 
@@ -130,6 +135,39 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
         }
       })
     );
+
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id !== null && id !== undefined) {
+      this.updateModelId = id;
+      this.mainService.getDetail(this.updateModelId, 'supplier').subscribe(res => {
+        let dateStr = null;
+        if (res['date'] !== null) {
+          dateStr = new Date(res['date']).toISOString();
+        }
+        this.form.patchValue({
+          date: dateStr,
+          no: res['no'],
+          supplier: res['supplier'],
+          status: res['status'] + '',
+          quantity: res['total_quantity'],
+          total_price: res['total_price'],
+          total_amount: res['total_amount'],
+          discount_amount: res['discount_amount'],
+          paid_amount: res['paid_amount'],
+          remain_amount: res['remain_amount'],
+          note: res['note'],
+        });
+        this.form.controls['date'].disable();
+        this.form.controls['supplier'].disable();
+        this.form.controls['no'].disable();
+        this.form.controls['status'].disable();
+        this.form.controls['quantity'].disable();
+        this.form.controls['total_price'].disable();
+        this.form.controls['remain_amount'].disable();
+
+        this.loadData();
+      });
+    }
   }
 
   displaySupplier(supplier?: Supplier): string | undefined {
@@ -160,10 +198,26 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
 
   loadData(): void {
     this.isLoadingResults = true;
+    this.apiFilter = this.buildFilterFromParams();
     this.warehouseProductService.getList(this.apiFilter).subscribe(res => {
-      this.data = res.body;
+      const newData = [];
+      res.body.forEach(item => {
+        const warehouseProduct = new WarehouseProduct();
+        if (this.updateModelId !== null) {
+          warehouseProduct.id = item.id;
+        }
+        warehouseProduct.product_id = item.product_id;
+        warehouseProduct.product = item.product;
+        warehouseProduct.quantity = item.quantity;
+        warehouseProduct.price = item.price;
+        warehouseProduct.discount = item.discount;
+        warehouseProduct.amount = item.amount;
+
+        newData.push(warehouseProduct);
+      });
+      this.data = newData;
       this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
-      this.reloadFilter(res);
+      this.recalculateWarehouse();
       this.isLoadingResults = false;
     });
   }
@@ -182,15 +236,14 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'medicine,productPlacements,group,images';
+    filter.expand = 'product';
+    if (this.updateModelId !== null) {
+      filter.warehouse_id = this.updateModelId;
+    }
     return filter;
   }
 
-  submitDraft() {
-    console.log('draft');
-  }
-
-  submit() {
+  submit(status) {
     if (this.form.valid) {
       const data = this.form.getRawValue();
       data['supplier_id'] = data['supplier']['id'];
@@ -200,10 +253,19 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
         data['date'] = effDate.toISOString().split('T')[0];
       }
       data['items'] = this.data;
-      this.mainService.create(data).subscribe(res => {
-        this.notifySer.notify('success', 'Lưu thành công.');
-        this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
-      });
+      data['status'] = status;
+      if (this.updateModelId !== null) {
+        delete data['date'];
+        delete data['supplier'];
+        this.mainService.update(this.updateModelId, data).subscribe(res => {
+          this.notifySer.notify('success', 'Lưu thành công.');
+        });
+      } else {
+        this.mainService.create(data).subscribe(res => {
+          this.notifySer.notify('success', 'Lưu thành công.');
+          this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
+        });
+      }
     }
   }
 
@@ -232,22 +294,21 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
 
   recalculateWarehouse() {
     let quantity = 0;
-    let discount = 0;
-    let amount = 0;
+    let price = 0;
     const paidAmount = this.form.controls['paid_amount'].value;
+    const discount = this.form.controls['discount_amount'].value;
 
     this.data.forEach(item => {
       quantity = quantity + item['quantity'];
-      discount = discount + item['discount'];
-      amount = amount + item['amount'];
+      price = price + (item['quantity'] * (item['price'] - item['discount']));
     });
-    const remainAmount = paidAmount - amount;
+    const remainAmount = paidAmount - (price - discount);
 
     this.form.patchValue({
       quantity: quantity,
-      total_amount: amount,
-      total_discount: discount,
+      total_price: price,
       remain_amount: remainAmount,
+      total_amount: price - discount
     });
   }
 

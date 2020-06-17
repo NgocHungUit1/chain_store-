@@ -41,7 +41,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     'date': 'Ngày nhập',
     'supplier_id': 'Tên đối tác',
     'total_amount': 'Tổng tiền',
-    'total_discount': 'Giảm giá',
+    'discount_amount': 'Giảm giá',
     'paid_amount': 'Đã trả',
     'remain_amount': 'Còn lại',
     'status': 'Trạng thái',
@@ -52,7 +52,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     'date',
     'supplier_id',
     'total_amount',
-    'total_discount',
+    'discount_amount',
     'paid_amount',
     'remain_amount',
     'status'
@@ -62,7 +62,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     'date',
     'supplier_id',
     'total_amount',
-    'total_discount',
+    'discount_amount',
     'paid_amount',
     'remain_amount',
     'status'
@@ -90,7 +90,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'supplier';
+    filter.expand = 'supplier,created_user,product_count,total_quantity';
     return filter;
   }
 
