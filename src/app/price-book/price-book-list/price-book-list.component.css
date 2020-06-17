@@ -1,3 +1,8 @@
 .title-price-list{
   padding: 10px 0 0 20px;
 }
+.select-product {
+  margin-left: 50px;
+  font-size: 1rem;
+  min-width: 215px;
+}

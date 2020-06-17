@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatTable } from '@angular/material/table';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { PriceBookProduct, PriceBookProductFilter } from '../price-book-product.model';
 import { ActivatedRoute } from '@angular/router';
@@ -13,6 +13,13 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { CreatePriceListFormDialogComponent } from '../create-price-list-form-dialog/create-price-list-form-dialog.component';
 import { PriceListService } from '../price-list.service';
 import { PriceList, PriceListFilter } from '../price-list.model';
+import { WarehouseProduct, WarehouseProductFilter } from '../../warehouse/warehouse.model';
+import { Product } from '../../product/product.model';
+import { Observable } from 'rxjs/index';
+import { WarehouseProductService } from '../../warehouse/warehouse-product.service';
+import { ProductService } from '../../product/product.service';
+import { of } from 'rxjs/internal/observable/of';
+import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 
 
 
@@ -40,7 +47,10 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private notifySer: NotifierService,
-    private priceListSer: PriceListService
+    private priceListSer: PriceListService,
+    private warehouseProductService: WarehouseProductService,
+    private productSer: ProductService,
+
   ) {
     super();
   }
@@ -48,18 +58,22 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
   @ViewChild(MatTable, { static: true }) table: MatTable<any>;
   @ViewChild('selectColumn') selectColumn;
 
-  apiFilter: PriceBookProductFilter;
   expandedElement: PriceBookProduct | null;
 
+  apiFilter: WarehouseProductFilter;
+
+  selectProduct = new FormControl();
+  data: WarehouseProduct[] = [];
+  productDataSource = new MatTableDataSource<WarehouseProduct>([]);
+
+  filteredProducts: Observable<Product[]>;
+
+  form: FormGroup;
 
   columnsHeader = {
     '#': '#',
-    'product_type': 'Phân loại',
     'product_no': 'Mã hàng',
     'product_name': 'Tên hàng',
-    'original_price': 'Giá gốc',
-    'sell_price': 'Giá bán',
-    'common_price': 'Giá chung'
   };
 
   productTypeLable = {
@@ -67,27 +81,28 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     'merchandise': 'Hàng hóa',
   };
 
-  displayedColumns: string[] = ['#', 'product_type', 'product_no', 'product_name', 'original_price', 'sell_price', 'common_price'];
-  columnsToDisplay: string[] = ['#', 'product_type', 'product_no', 'product_name', 'original_price', 'sell_price', 'common_price'];
-  dataSource: PriceBookProduct[] = [];
+  displayedColumns: string[] = ['#', 'product_no', 'product_name' ];
+  columnsToDisplay: string[] = ['#', 'product_no', 'product_name'];
+  // dataSource: PriceBookProduct[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  isLoadingResults = true;
+  isLoadingResults = false;
   isRateLimitReached = false;
 
 
-  buildFilterFromParams(): PriceBookProductFilter {
-    function write<K extends keyof PriceBookProductFilter>(arg: PriceBookProductFilter, key: K, value: PriceBookProductFilter[K]): void {
+
+  buildFilterFromParams(): WarehouseProductFilter {
+    function write<K extends keyof WarehouseProductFilter>(arg: WarehouseProductFilter, key: K, value: WarehouseProductFilter[K]): void {
       arg[key] = value;
     }
 
-    const filter = new PriceBookProductFilter();
-    const objectKeys = Object.keys(filter) as Array<keyof PriceBookProductFilter>;
+    const filter = new WarehouseProductFilter();
+    const objectKeys = Object.keys(filter) as Array<keyof WarehouseProductFilter>;
 
     for (const attr of objectKeys) {
-      write(filter, attr, this.route.snapshot.queryParams['ProductSearch[' + attr + ']']);
+      write(filter, attr, this.route.snapshot.queryParams['WarehouseProductSearch[' + attr + ']']);
     }
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
@@ -102,12 +117,13 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     });
   }
 
+
   loadData(): void {
     this.isLoadingResults = true;
-    this.service.getList(this.apiFilter).subscribe(res => {
-      this.dataSource = res.body;
+    this.warehouseProductService.getList(this.apiFilter).subscribe(res => {
+      this.data = res.body;
+      this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
       this.reloadFilter(res);
-      const url = this.service.getStateUrl(this.apiFilter);
       this.isLoadingResults = false;
     });
   }
@@ -120,18 +136,53 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     });
     this.initPriceListForm();
 
+    const date = new FormControl(new Date());
+    this.form = this.fb.group({
+      date: date,
+      no: [null],
+      supplier: [null, Validators.required],
+      status: [null],
+      quantity: [null],
+      total_amount: [null],
+      total_discount: [null],
+      paid_amount: [null],
+      remain_amount: [null],
+      note: [null],
+    });
 
-    // this.apiFilter = this.buildFilterFromParams();
+
+    this.apiFilter = this.buildFilterFromParams();
     // this.loadData();
 
-    // this.service.subscribeLoadProduct.subscribe(action => {
-    //   if (action === true) {
-    //     this.apiFilter = this.buildFilterFromParams();
-    //     this.loadData();
-    //     this.service.setLoadProduct(false);
-    //   }
-    // });
+
+    this.filteredProducts = this.selectProduct.valueChanges.pipe(
+      startWith(''),
+      // delay emits
+      debounceTime(300),
+      // use switch map so as to cancel previous subscribed events, before creating new once
+      switchMap(value => {
+        if (value !== '') {
+          // lookup from github
+          return this.lookupProduct(value);
+        } else {
+          // if no value is present, return null
+          return of(null);
+        }
+      })
+    );
   }
+
+  lookupProduct(value: string): Observable<Product[]> {
+    return this.productSer.autocomplete(value).pipe(
+      // map the item property of the github results as our return object
+      map(results => results),
+      // catch errors
+      catchError(_ => {
+        return of(null);
+      })
+    );
+  }
+
 
   openCreatePriceListFormDialog() {
     const dialogRef = this.dialog.open(CreatePriceListFormDialogComponent, {});
@@ -151,5 +202,52 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
   //   this.apiFilter = this.buildFilterFromParams();
   //   this.loadData();
   // }
+
+  onSelectedProduct(product) {
+    const warehouseProduct = new WarehouseProduct();
+    warehouseProduct.product_id = product.id;
+    warehouseProduct.product = product;
+    warehouseProduct.quantity = 1;
+    warehouseProduct.price = product.original_price;
+    warehouseProduct.discount = 0;
+    warehouseProduct.amount = product.original_price;
+
+    const newData = this.data.concat([warehouseProduct]);
+    this.data = newData;
+    this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+    this.recalculateWarehouse();
+    this.selectProduct.patchValue(null);
+  }
+
+  recalculateWarehouse() {
+    let quantity = 0;
+    let discount = 0;
+    let amount = 0;
+    const paidAmount = this.form.controls['paid_amount'].value;
+
+    this.data.forEach(item => {
+      quantity = quantity + item['quantity'];
+      discount = discount + item['discount'];
+      amount = amount + item['amount'];
+    });
+    const remainAmount = paidAmount - amount;
+
+    this.form.patchValue({
+      quantity: quantity,
+      total_amount: amount,
+      total_discount: discount,
+      remain_amount: remainAmount,
+    });
+  }
+
+  removeProduct(i) {
+    const newData = this.data;
+    newData.splice(i, 1);
+
+    this.data = newData;
+
+    this.recalculateWarehouse();
+    this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+  }
 
 }
