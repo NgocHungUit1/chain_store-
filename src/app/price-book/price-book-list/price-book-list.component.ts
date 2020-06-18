@@ -2,9 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import { PriceBookProduct, PriceBookProductFilter } from '../price-book-product.model';
 import { ActivatedRoute } from '@angular/router';
-import { PriceBookProductService } from '../price-book-product.service';
 import { ListComponentBase } from '../../shared/base';
 import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
@@ -12,6 +10,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CreatePriceListFormDialogComponent } from '../create-price-list-form-dialog/create-price-list-form-dialog.component';
 import { PriceListService } from '../price-list.service';
+import { PriceListProductService } from '../price-list-product.service';
 import { PriceList, PriceListFilter } from '../price-list.model';
 import { WarehouseProduct, WarehouseProductFilter } from '../../warehouse/warehouse.model';
 import { Product } from '../../product/product.model';
@@ -20,7 +19,7 @@ import { WarehouseProductService } from '../../warehouse/warehouse-product.servi
 import { ProductService } from '../../product/product.service';
 import { of } from 'rxjs/internal/observable/of';
 import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
-
+import { exit } from 'process';
 
 
 @Component({
@@ -43,11 +42,11 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
 
   constructor(
     private fb: FormBuilder,
-    private service: PriceBookProductService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private notifySer: NotifierService,
     private priceListSer: PriceListService,
+    private priceListProductSer: PriceListProductService,
     private warehouseProductService: WarehouseProductService,
     private productSer: ProductService,
 
@@ -58,7 +57,6 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
   @ViewChild(MatTable, { static: true }) table: MatTable<any>;
   @ViewChild('selectColumn') selectColumn;
 
-  expandedElement: PriceBookProduct | null;
 
   apiFilter: WarehouseProductFilter;
 
@@ -69,7 +67,6 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
   filteredProducts: Observable<Product[]>;
 
   form: FormGroup;
-
   columnsHeader = {
     '#': '#',
     'product_no': 'Mã hàng',
@@ -81,9 +78,8 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     'merchandise': 'Hàng hóa',
   };
 
-  displayedColumns: string[] = ['#', 'product_no', 'product_name' ];
+  displayedColumns: string[] = ['#', 'product_no', 'product_name'];
   columnsToDisplay: string[] = ['#', 'product_no', 'product_name'];
-  // dataSource: PriceBookProduct[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -204,6 +200,14 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
   // }
 
   onSelectedProduct(product) {
+    let aPriceLists = this.priceListForm.controls['priceLists'].value;
+    if (aPriceLists.length <= 0) {
+      this.notifySer.notify('warning', 'Chưa chọn bảng giá!');
+      this.selectProduct.patchValue(null);
+      return;
+    }
+
+
     const warehouseProduct = new WarehouseProduct();
     warehouseProduct.product_id = product.id;
     warehouseProduct.product = product;
