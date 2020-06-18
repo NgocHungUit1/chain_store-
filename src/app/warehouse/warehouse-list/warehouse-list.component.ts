@@ -91,6 +91,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.expand = 'supplier,created_user,product_count,total_quantity';
+    filter.type = 'import';
     return filter;
   }
 

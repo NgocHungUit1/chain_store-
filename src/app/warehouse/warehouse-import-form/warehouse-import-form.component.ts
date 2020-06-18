@@ -19,11 +19,11 @@ import {Product} from '../../product/product.model';
 import {ProductService} from '../../product/product.service';
 
 @Component({
-  selector: 'app-warehouse-create',
-  templateUrl: './warehouse-create.component.html',
-  styleUrls: ['./warehouse-create.component.css']
+  selector: 'app-warehouse-import-form',
+  templateUrl: './warehouse-import-form.component.html',
+  styleUrls: ['./warehouse-import-form.component.css']
 })
-export class WarehouseCreateComponent extends ListComponentBase implements OnInit {
+export class WarehouseImportFormComponent extends ListComponentBase implements OnInit {
 
   constructor(
     private mainService: WarehouseService,
@@ -48,7 +48,7 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
   updateModelId = null;
 
   statuses = [
-    {id: '1', name: 'Đã nhập'},
+    {id: '1', name: 'Hoàn thành'},
     {id: '10', name: 'Lưu tạm'},
   ];
 
@@ -94,6 +94,7 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
       no: [null],
       supplier: [null, Validators.required],
       status: [null],
+      type: ['import'],
       quantity: [null],
       total_price: [null],
       total_amount: [null],
@@ -295,6 +296,8 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
   recalculateWarehouse() {
     let quantity = 0;
     let price = 0;
+    let remainAmount = 0;
+    let totalAmount = 0;
     const paidAmount = this.form.controls['paid_amount'].value;
     const discount = this.form.controls['discount_amount'].value;
 
@@ -302,13 +305,13 @@ export class WarehouseCreateComponent extends ListComponentBase implements OnIni
       quantity = quantity + item['quantity'];
       price = price + (item['quantity'] * (item['price'] - item['discount']));
     });
-    const remainAmount = paidAmount - (price - discount);
-
+    remainAmount = paidAmount - (price - discount);
+    totalAmount = price - discount;
     this.form.patchValue({
       quantity: quantity,
       total_price: price,
       remain_amount: remainAmount,
-      total_amount: price - discount
+      total_amount: totalAmount
     });
   }
 

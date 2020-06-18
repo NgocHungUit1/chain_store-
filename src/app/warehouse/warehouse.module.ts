@@ -9,16 +9,20 @@ import {QuillModule} from 'ngx-quill';
 import {DemoMaterialModule} from '../demo-material-module';
 import {PerfectScrollbarModule} from 'ngx-perfect-scrollbar';
 import {WarehouseRoutes} from './warehouse.routing';
-import { WarehouseCreateComponent } from './warehouse-create/warehouse-create.component';
 import {WarehouseListComponent} from './warehouse-list/warehouse-list.component';
-import {WarehouseTabInfoComponent} from './warehouse-tab-info/warehouse-tab-info.component';
+import {WarehouseReturnListComponent} from './warehouse-return-list/warehouse-return-list.component';
+import {WarehouseReturnFormComponent} from './warehouse-return-form/warehouse-return-form.component';
+import {WarehouseImportFormComponent} from './warehouse-import-form/warehouse-import-form.component';
+import {WarehouseInfoTabComponent} from './warehouse-info-tab/warehouse-info-tab.component';
 
 
 @NgModule({
   declarations: [
     WarehouseListComponent,
-    WarehouseCreateComponent,
-    WarehouseTabInfoComponent
+    WarehouseImportFormComponent,
+    WarehouseInfoTabComponent,
+    WarehouseReturnListComponent,
+    WarehouseReturnFormComponent
   ],
   imports: [
     CommonModule,

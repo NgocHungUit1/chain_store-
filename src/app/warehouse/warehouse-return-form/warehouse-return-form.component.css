@@ -1,0 +1,31 @@
+.warehouse-info {
+  margin: 0px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 0px;
+  min-height: 839px;
+}
+.select-product {
+  margin-left: 50px;
+  font-size: 1rem;
+  min-width: 215px;
+}
+.mat-column-quantity, .mat-column-price, .mat-column-amount, .mat-column-discount {
+  max-width: 30px;
+  text-align: right;
+}
+.mat-column-actions {
+  max-width: 30px;
+  text-align: center;
+}
+.mat-column-product_name {
+  flex: 3 1 0;
+}
+.mat-table .mat-form-field {
+  padding-left: 10px;
+}
+.quantity-input {
+  text-align: center;
+}
+.price-input, .discount-input {
+  text-align: right;
+}

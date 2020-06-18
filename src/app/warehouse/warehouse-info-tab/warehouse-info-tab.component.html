@@ -4,11 +4,15 @@
       <div fxFlex="70" class="product-info">
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Mã nhập hàng:</span> <strong>{{model.no}}</strong>
+            <span class="product-field-label" *ngIf="model.type == 'import'">Mã nhập hàng:</span>
+            <span class="product-field-label" *ngIf="model.type == 'return'">Mã trả hàng:</span>
+            <strong>{{model.no}}</strong>
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Trạng thái:</span> {{model.status}}
+            <span class="product-field-label">Trạng thái:</span>
+            <label *ngIf="model.status == '10'" class="label label-warning">Lưu tạm</label>
+            <label *ngIf="model.status == '1'" class="label label-success">Hoàn thành</label>
           </div>
         </div>
         <div fxLayout="row wrap" class="product-info-row">
@@ -25,7 +29,7 @@
       <div fxFlex="30" class="product-info">
         <div fxLayout="row wrap">
           <div fxFlex="100" class="product-info-field model-note">
-            <span class="product-field-label">Ghi chú đặt hàng:</span> {{model.note}}
+            <span class="product-field-label">Ghi chú:</span> {{model.note}}
           </div>
         </div>
       </div>
@@ -111,7 +115,8 @@
         </div>
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="50" class="product-info-field">
-            <label>Tổng tiền hàng:</label>
+            <label *ngIf="model.type === 'import'">Tổng tiền hàng:</label>
+            <label *ngIf="model.type === 'return'">Tổng tiền hàng trả:</label>
           </div>
           <div fxFlex="50" class="product-info-field">
             <span>{{model.total_price | currency : 'VND' : ''}}</span>
@@ -127,7 +132,8 @@
         </div>
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="50" class="product-info-field">
-            <label>Tổng cộng:</label>
+            <label *ngIf="model.type === 'import'">Tổng cộng:</label>
+            <label *ngIf="model.type === 'return'">NCC cần trả:</label>
           </div>
           <div fxFlex="50" class="product-info-field">
             <span>{{model.total_amount | currency : 'VND' : ''}}</span>
@@ -135,7 +141,8 @@
         </div>
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="50" class="product-info-field">
-            <label>Tiền đã trả nhà cung cấp:</label>
+            <label *ngIf="model.type === 'import'">Tiền đã trả NCC:</label>
+            <label *ngIf="model.type === 'return'">NCC đã trả:</label>
           </div>
           <div fxFlex="50" class="product-info-field">
             <span>{{model.paid_amount | currency : 'VND' : ''}}</span>

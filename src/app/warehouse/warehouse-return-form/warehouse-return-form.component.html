@@ -1,0 +1,208 @@
+<div fxLayout="row">
+  <div fxFlex="83">
+    <mat-toolbar class="dv-header">
+      <button mat-icon-button routerLink="/transaction/warehouse-return">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h3>Trả hàng</h3>
+      <div class="select-product">
+        <mat-form-field>
+          <input type="text" [formControl]="selectProduct" matInput
+                 [matAutocomplete]="chooseProduct" placeholder="Tìm hàng hóa theo mã hoặc tên">
+          <button mat-icon-button matPrefix>
+            <mat-icon>search</mat-icon>
+          </button>
+          <mat-autocomplete #chooseProduct="matAutocomplete" (optionSelected)="onSelectedProduct($event.option.value)">
+            <mat-option *ngFor="let product of filteredProducts | async" [value]="product">
+              <img class="example-option-img" aria-hidden [src]="product.default_image" height="25">
+              <span>{{product.product_name}}</span> |
+              <small>Slt: {{product.quantity_of_stock}}</small>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+      <span fxFlex="1 1 0%"></span>
+    </mat-toolbar>
+    <div fxLayout="row wrap">
+      <div fxFlex="100">
+        <div class="table-container">
+          <div class="table-loading-shade" *ngIf="isLoadingResults || isRateLimitReached">
+            <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+            <div class="table-rate-limit-reached" *ngIf="isRateLimitReached">
+              GitHub's API rate limit has been reached. It will be reset in one minute.
+            </div>
+          </div>
+          <div class=" table-responsive">
+            <table mat-table [dataSource]="productDataSource" class="table warehouse-product-table no-wrap">
+
+              <ng-container matColumnDef="#">
+                <th mat-header-cell *matHeaderCellDef> #</th>
+                <td mat-cell *matCellDef="let element; let i = index;"> {{i + 1}}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="product_no">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_no']}}</th>
+                <td mat-cell *matCellDef="let element"> {{ element.product.product_no }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="product_name">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_name']}}</th>
+                <td mat-cell *matCellDef="let element"> {{ element.product.product_name }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="quantity">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['quantity']}}</th>
+                <td mat-cell *matCellDef="let element; let i = index">
+                  <mat-form-field>
+                    <input matInput class="quantity-input" [value]="element['quantity']" (change)="recalculateItem(i)" [(ngModel)]="data[i]['quantity']" >
+                    <button mat-icon-button matPrefix (click)="data[i]['quantity'] = data[i]['quantity'] > 1 ? (data[i]['quantity'] - 1) : 1;recalculateItem(i);">
+                      <mat-icon>indeterminate_check_box</mat-icon>
+                    </button>
+                    <button mat-icon-button matSuffix (click)="data[i]['quantity'] = data[i]['quantity'] + 1;recalculateItem(i);">
+                      <mat-icon>add_box</mat-icon>
+                    </button>
+                  </mat-form-field>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="price">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['price']}}</th>
+                <td mat-cell *matCellDef="let element; let i = index">
+                  <mat-form-field>
+                    <input matInput class="price-input" [value]="element['price']" (change)="recalculateItem(i)" [(ngModel)]="data[i]['price']" >
+                  </mat-form-field>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="discount">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['discount']}}</th>
+                <td mat-cell *matCellDef="let element; let i = index">
+                  <mat-form-field>
+                    <input matInput class="discount-input" [value]="element['discount']" (change)="recalculateItem(i)" [(ngModel)]="data[i]['discount']" >
+                  </mat-form-field>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="amount">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['amount']}}</th>
+                <td mat-cell *matCellDef="let element">
+                  {{element.amount | currency : 'VND' : ''}}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element; let i = index">
+                  <button mat-icon-button (click)="removeProduct(i)"><mat-icon>delete</mat-icon> </button>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div fxFlex="17">
+    <mat-card class="warehouse-info">
+      <mat-card-content>
+        <form [formGroup]="form">
+          <div fxLayout="row wrap">
+            <div fxFlex="60">
+              <mat-form-field>
+                <input matInput [matDatepicker]="date_picker" [formControl]="form.controls['date']"
+                       placeholder="Ngày trả">
+                <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>
+                <mat-datepicker #date_picker></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div fxFlex="40">
+            </div>
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Mã phiếu trả</mat-label>
+                <input matInput tabindex="2" formControlName="no">
+              </mat-form-field>
+            </div>
+            <div fxFlex="100">
+              <mat-form-field>
+                <input type="text" matInput [formControl]="form.controls['supplier']" placeholder="Nhà cung cấp"
+                       [matAutocomplete]="auto">
+                <button mat-icon-button matPrefix>
+                  <mat-icon>search</mat-icon>
+                </button>
+                <button mat-icon-button matSuffix (click)="this.form.patchValue({supplier: null});"
+                        *ngIf="this.form.controls['supplier'].value && this.updateModelId === null">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySupplier">
+                  <mat-option *ngFor="let supplier of filteredSuppliers | async" [value]="supplier">
+                    {{supplier.name}}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Trạng thái</mat-label>
+                <mat-select [formControl]="form.controls['status']" placeholder="Chọn trạng thái">
+                  <mat-option *ngFor="let status of statuses" value="{{status.id}}">{{status.name}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Số lượng</mat-label>
+                <input matInput tabindex="4" formControlName="quantity" readonly="readonly">
+              </mat-form-field>
+            </div>
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Tổng tiền hàng cần trả</mat-label>
+                <input matInput tabindex="5" formControlName="total_price" readonly>
+              </mat-form-field>
+            </div>
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Giảm giá</mat-label>
+                <input matInput tabindex="6" formControlName="discount_amount" (change)="recalculateWarehouse();">
+              </mat-form-field>
+            </div>
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>NCC đã trả</mat-label>
+                <input matInput tabindex="7" formControlName="paid_amount" (change)="recalculateWarehouse();">
+              </mat-form-field>
+            </div>
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Tính vào công nợ</mat-label>
+                <input matInput tabindex="8" formControlName="remain_amount" readonly>
+              </mat-form-field>
+            </div>
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Ghi chú</mat-label>
+                <textarea matInput tabindex="9" formControlName="note" rows="3"></textarea>
+              </mat-form-field>
+            </div>
+            <div fxFlex="100">
+              <div mat-dialog-actions align="end">
+                <button mat-raised-button color="accent" fxFlex="45" tabindex="10" [disabled]="this.form.invalid" (click)="submit(10)" style="margin-right: 10px">
+                  <mat-icon>save</mat-icon>
+                  Lưu tạm
+                </button>
+                <button mat-raised-button color="primary" fxFlex="55" (click)="submit(1)" [disabled]="this.form.invalid" tabindex="11">
+                  <mat-icon>check</mat-icon>
+                  Hoàn thành
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
