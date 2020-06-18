@@ -85,7 +85,7 @@
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['status']}}</th>
                 <td mat-cell *matCellDef="let element">
                   <label *ngIf="element.status == '10'" class="label label-warning">Lưu tạm</label>
-                  <label *ngIf="element.status == '1'" class="label label-success">Đã nhập</label>
+                  <label *ngIf="element.status == '1'" class="label label-success">Hoàn thành</label>
                 </td>
               </ng-container>
 
@@ -95,7 +95,7 @@
                        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
                     <mat-tab-group style="width: 100%;">
                       <mat-tab label="Thông tin">
-                        <app-warehouse-tab-info [model]="element" [expandedElement]="element == expandedElement ? true : false" (reload)="loadData();"></app-warehouse-tab-info>
+                        <app-warehouse-info-tab [model]="element" [expandedElement]="element == expandedElement ? true : false" (reload)="loadData();"></app-warehouse-info-tab>
                       </mat-tab>
                       <mat-tab label="Dư nợ">
 

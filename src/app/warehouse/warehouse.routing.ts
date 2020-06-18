@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 import {WarehouseListComponent} from './warehouse-list/warehouse-list.component';
-import {WarehouseCreateComponent} from './warehouse-create/warehouse-create.component';
+import {WarehouseReturnListComponent} from './warehouse-return-list/warehouse-return-list.component';
+import {WarehouseReturnFormComponent} from './warehouse-return-form/warehouse-return-form.component';
+import {WarehouseImportFormComponent} from './warehouse-import-form/warehouse-import-form.component';
 
 
 export const WarehouseRoutes: Routes = [
@@ -13,12 +15,24 @@ export const WarehouseRoutes: Routes = [
       },
       {
         path: 'warehouse/create',
-        component: WarehouseCreateComponent
+        component: WarehouseImportFormComponent
       },
       {
         path: 'warehouse/update/:id',
-        component: WarehouseCreateComponent
-      }
+        component: WarehouseImportFormComponent
+      },
+      {
+        path: 'warehouse-return',
+        component: WarehouseReturnListComponent
+      },
+      {
+        path: 'warehouse-return/create',
+        component: WarehouseReturnFormComponent
+      },
+      {
+        path: 'warehouse-return/update/:id',
+        component: WarehouseReturnFormComponent
+      },
     ]
   }
 ];

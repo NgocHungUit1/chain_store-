@@ -8,11 +8,11 @@ import {WarehouseProductService} from '../warehouse-product.service';
 import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
-  selector: 'app-warehouse-tab-info',
-  templateUrl: './warehouse-tab-info.component.html',
-  styleUrls: ['./warehouse-tab-info.component.css']
+  selector: 'app-warehouse-info-tab',
+  templateUrl: './warehouse-info-tab.component.html',
+  styleUrls: ['./warehouse-info-tab.component.css']
 })
-export class WarehouseTabInfoComponent implements OnChanges {
+export class WarehouseInfoTabComponent implements OnChanges {
 
   @Input() model: Warehouse;
   @Input() expandedElement: boolean;
@@ -90,8 +90,9 @@ export class WarehouseTabInfoComponent implements OnChanges {
   finish() {
     if (this.model.status === 10) {
       this.modelSer.update(this.model.id, {status: 1}).subscribe(res => {
+        const typeStr = res['type'] === 'import' ? 'nhập' : 'trả';
         this.model.status = res['status'];
-        this.notifySer.notify('success', 'Hoàn thành đơn nhập hàng');
+        this.notifySer.notify('success', 'Hoàn thành đơn ' + typeStr + ' hàng');
       });
     }
   }
@@ -99,8 +100,10 @@ export class WarehouseTabInfoComponent implements OnChanges {
   reopen() {
     if (this.model.status === 1) {
       this.modelSer.update(this.model.id, {status: 10}).subscribe(res => {
-        this.notifySer.notify('success', 'Mở lại đơn nhập hàng');
-        this.router.navigate(['/transaction/warehouse/update/' + this.model.id]);
+        const typeStr = res['type'] === 'import' ? 'nhập' : 'trả';
+        const routeStr = res['type'] === 'import' ? 'warehouse' : 'warehouse-return';
+        this.notifySer.notify('success', 'Mở lại đơn ' + typeStr + ' hàng');
+        this.router.navigate(['/transaction/' + routeStr + '/update/' + this.model.id]);
       });
     }
   }
@@ -108,7 +111,8 @@ export class WarehouseTabInfoComponent implements OnChanges {
   delete() {
     // TODO: call confirm dialog
     this.modelSer.delete(this.model.id).subscribe(res => {
-      this.notifySer.notify('warning', 'Đã xóa đơn nhập hàng');
+      const typeStr = res['type'] === 'import' ? 'nhập' : 'trả';
+      this.notifySer.notify('warning', 'Đã xóa đơn ' + typeStr + ' hàng');
       this.reload.emit(null);
     });
   }
