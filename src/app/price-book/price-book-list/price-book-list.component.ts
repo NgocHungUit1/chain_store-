@@ -12,6 +12,7 @@ import { CreatePriceListFormDialogComponent } from '../create-price-list-form-di
 import { PriceListService } from '../price-list.service';
 import { PriceListProductService } from '../price-list-product.service';
 import { PriceList, PriceListFilter } from '../price-list.model';
+import { PriceListProduct, PriceListProductFilter } from '../price-list-product.model';
 import { WarehouseProduct, WarehouseProductFilter } from '../../warehouse/warehouse.model';
 import { Product } from '../../product/product.model';
 import { Observable } from 'rxjs/index';
@@ -58,11 +59,11 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
   @ViewChild('selectColumn') selectColumn;
 
 
-  apiFilter: WarehouseProductFilter;
+  apiFilter: PriceListProductFilter;
 
   selectProduct = new FormControl();
-  data: WarehouseProduct[] = [];
-  productDataSource = new MatTableDataSource<WarehouseProduct>([]);
+  data: PriceListProduct[] = [];
+  productDataSource = new MatTableDataSource<PriceListProduct>([]);
 
   filteredProducts: Observable<Product[]>;
 
@@ -89,21 +90,23 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
 
 
 
-  buildFilterFromParams(): WarehouseProductFilter {
-    function write<K extends keyof WarehouseProductFilter>(arg: WarehouseProductFilter, key: K, value: WarehouseProductFilter[K]): void {
+  buildFilterFromParams(): PriceListProductFilter {
+    function write<K extends keyof PriceListProductFilter>(arg: PriceListProductFilter, key: K, value: PriceListProductFilter[K]): void {
       arg[key] = value;
     }
-
-    const filter = new WarehouseProductFilter();
-    const objectKeys = Object.keys(filter) as Array<keyof WarehouseProductFilter>;
+    const aPriceLists = this.priceListForm.controls['priceLists'].value;
+    const filter = new PriceListProductFilter();
+    const objectKeys = Object.keys(filter) as Array<keyof PriceListProductFilter>;
 
     for (const attr of objectKeys) {
-      write(filter, attr, this.route.snapshot.queryParams['WarehouseProductSearch[' + attr + ']']);
+      write(filter, attr, this.route.snapshot.queryParams['PriceListProductSearch[' + attr + ']']);
     }
+
+    filter.price_list_id = aPriceLists;
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'medicine,productPlacements,group,images';
+    filter.expand = 'product';
     return filter;
   }
 
@@ -113,12 +116,12 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     });
   }
 
-
+  //@NGHIA
   loadData(): void {
     this.isLoadingResults = true;
-    this.warehouseProductService.getList(this.apiFilter).subscribe(res => {
+    this.priceListProductSer.getList(this.apiFilter).subscribe(res => {
       this.data = res.body;
-      this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+      this.productDataSource = new MatTableDataSource<PriceListProduct>(this.data);
       this.reloadFilter(res);
       this.isLoadingResults = false;
     });
@@ -193,11 +196,10 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     });
   }
 
-  // inputSearch(event: any) {
-  //   this.key_work = event.target.value;
-  //   this.apiFilter = this.buildFilterFromParams();
-  //   this.loadData();
-  // }
+  choosePriceList(event: any) {
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
+  }
 
   onSelectedProduct(product) {
     let aPriceLists = this.priceListForm.controls['priceLists'].value;
@@ -207,51 +209,48 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
       return;
     }
 
+    aPriceLists.forEach((priceListID, index) => {
+      this.handlePriceListProduct(product, priceListID);
+    });
 
-    const warehouseProduct = new WarehouseProduct();
-    warehouseProduct.product_id = product.id;
-    warehouseProduct.product = product;
-    warehouseProduct.quantity = 1;
-    warehouseProduct.price = product.original_price;
-    warehouseProduct.discount = 0;
-    warehouseProduct.amount = product.original_price;
+    // const mPriceListProduct = new PriceListProduct();
+    // mPriceListProduct.product_id = product.id;
+    // mPriceListProduct.price_list_id = '1';
+    // mPriceListProduct.product = product;
 
-    const newData = this.data.concat([warehouseProduct]);
-    this.data = newData;
-    this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
-    this.recalculateWarehouse();
+    // this.priceListProductSer.create( mPriceListProduct).subscribe(mPriceListProduct => {
+    //   // this.notifySer.notify('success', 'Cập nhật thuốc thành công!');
+    //   // this.dialogRef.close({event: action, data: product});
+    //   console.log(mPriceListProduct);
+
+    // });
+
+
+    // const newData = this.data.concat([mPriceListProduct]);
+    // this.data = newData;
+
+    // this.productDataSource = new MatTableDataSource<PriceListProduct>(this.data);
+    // this.recalculateWarehouse();
     this.selectProduct.patchValue(null);
   }
 
-  recalculateWarehouse() {
-    let quantity = 0;
-    let discount = 0;
-    let amount = 0;
-    const paidAmount = this.form.controls['paid_amount'].value;
+  handlePriceListProduct(product: any, priceListID: any) {
+    //@NGHIA
+    this.priceListProductSer.exist(product.id, priceListID).subscribe(result => {
+      if (result === false) {
+        let mPriceListProduct = new PriceListProduct();
+        mPriceListProduct.product_id = product.id;
+        mPriceListProduct.price_list_id = priceListID;
+        mPriceListProduct.price = product.sell_price;
 
-    this.data.forEach(item => {
-      quantity = quantity + item['quantity'];
-      discount = discount + item['discount'];
-      amount = amount + item['amount'];
-    });
-    const remainAmount = paidAmount - amount;
-
-    this.form.patchValue({
-      quantity: quantity,
-      total_amount: amount,
-      total_discount: discount,
-      remain_amount: remainAmount,
+        this.priceListProductSer.create(mPriceListProduct).subscribe(mPriceListProduct => {
+          this.notifySer.notify('success', 'Cập nhật thuốc thành công!');
+        });
+        this.loadData();
+      }
     });
   }
 
-  removeProduct(i) {
-    const newData = this.data;
-    newData.splice(i, 1);
 
-    this.data = newData;
-
-    this.recalculateWarehouse();
-    this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
-  }
 
 }

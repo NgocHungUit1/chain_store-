@@ -1,9 +1,11 @@
 import { ApiFilterBase } from "../shared/base";
+import { Product } from '../product/product.model';
 
 export class PriceListProduct {
   id: string;
   price_list_id: string;
   product_id: string;
+  product: Product;
   price: string;
 }
 
