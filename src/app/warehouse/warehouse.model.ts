@@ -47,11 +47,15 @@ export class WarehouseProduct {
   id: string;
   product_id: number;
   warehouse_id: number;
+  product_unit_id: number;
   product: Product;
   quantity: number;
   price: number;
   discount: number;
   amount: number;
+  note: string;
+  productUnits: object[];
+  product_parcels: object[];
 }
 
 export class WarehouseProductFilter extends ApiFilterBase {
