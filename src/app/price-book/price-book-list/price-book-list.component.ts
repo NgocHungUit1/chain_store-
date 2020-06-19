@@ -243,12 +243,18 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     });
   }
 
-  setCurrentRow(event: any) {
-    console.log(event.target.value);
-  }
+  // setCurrentRow(event: any) {
+  //   console.log(event.target.value);
+  // }
 
-  savePrice(event: any) {
-    console.log(event.target.value);
+  savePrice(event: any, element) {
+    console.log((event.target.value));
+    element['price'] = Number(event.target.value);
+    this.priceListProductSer.update(element.id,element).subscribe(element => {
+      this.notifySer.notify('success', 'Lưu thành công!');
+      this.apiFilter = this.buildFilterFromParams();
+      this.loadData();
+    });
   }
 
 
