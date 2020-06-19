@@ -64,6 +64,11 @@ export class PriceListProductService {
         const url = environment.apiUrl + '/price-list-product/exist';
         return this.http.post(url, { product_id: product_id, price_list_id: price_list_id });
     }
+
+    delete(id: string) {
+        const url = environment.apiUrl + '/price-list-product/delete/' + id;
+        return this.http.delete(url);
+    }
 }
 
 

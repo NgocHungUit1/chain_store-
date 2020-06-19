@@ -6,3 +6,9 @@
   font-size: 1rem;
   min-width: 215px;
 }
+.action-button{
+  width: 70px;
+}
+.input-price{
+  max-width: 100px;
+}

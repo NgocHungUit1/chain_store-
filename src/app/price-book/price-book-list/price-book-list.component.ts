@@ -72,7 +72,10 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     '#': '#',
     'product_no': 'Mã hàng',
     'product_name': 'Tên hàng',
-    'actions' : 'actions',
+    'original_price': 'Giá vốn',
+    'sell_price': 'Giá bán',
+    'actions': 'X',
+    'price': 'Giá chung',
   };
 
   productTypeLable = {
@@ -80,8 +83,8 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     'merchandise': 'Hàng hóa',
   };
 
-  displayedColumns: string[] = ['#', 'product_no', 'product_name'];
-  columnsToDisplay: string[] = ['#', 'product_no', 'product_name', 'actions'];
+  displayedColumns: string[] = ['actions', '#', 'product_no', 'product_name', 'original_price', 'sell_price', 'price'];
+  columnsToDisplay: string[] = ['#', 'product_no', 'product_name', 'original_price', 'sell_price', 'actions', 'price'];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -224,6 +227,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
         this.priceListProductSer.create(mPriceListProduct).subscribe(mPriceListProduct => {
           this.notifySer.notify('success', 'Cập nhật thuốc thành công!');
         });
+        this.apiFilter = this.buildFilterFromParams();
         this.loadData();
       } else {
         this.notifySer.notify('warning', 'Đã tồn tại !');
@@ -231,12 +235,20 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     });
   }
 
-  removeProduct(i) {
-    const newData = this.data;
-    newData.splice(i, 1);
+  removeProduct(id) {
+    this.priceListProductSer.delete(id).subscribe(product => {
+      this.notifySer.notify('success', 'Xóa thành công!');
+      this.apiFilter = this.buildFilterFromParams();
+      this.loadData();
+    });
+  }
 
-    this.data = newData;
+  setCurrentRow(event: any) {
+    console.log(event.target.value);
+  }
 
+  savePrice(event: any) {
+    console.log(event.target.value);
   }
 
 
