@@ -72,6 +72,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     '#': '#',
     'product_no': 'Mã hàng',
     'product_name': 'Tên hàng',
+    'actions' : 'actions',
   };
 
   productTypeLable = {
@@ -80,7 +81,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
   };
 
   displayedColumns: string[] = ['#', 'product_no', 'product_name'];
-  columnsToDisplay: string[] = ['#', 'product_no', 'product_name'];
+  columnsToDisplay: string[] = ['#', 'product_no', 'product_name', 'actions'];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -95,6 +96,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
       arg[key] = value;
     }
     const aPriceLists = this.priceListForm.controls['priceLists'].value;
+
     const filter = new PriceListProductFilter();
     const objectKeys = Object.keys(filter) as Array<keyof PriceListProductFilter>;
 
@@ -182,7 +184,6 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     );
   }
 
-
   openCreatePriceListFormDialog() {
     const dialogRef = this.dialog.open(CreatePriceListFormDialogComponent, {});
 
@@ -202,43 +203,20 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
   }
 
   onSelectedProduct(product) {
-    let aPriceLists = this.priceListForm.controls['priceLists'].value;
-    if (aPriceLists.length <= 0) {
+    const priceListID = this.priceListForm.controls['priceLists'].value;
+
+    if (priceListID === undefined) {
       this.notifySer.notify('warning', 'Chưa chọn bảng giá!');
-      this.selectProduct.patchValue(null);
-      return;
-    }
-
-    aPriceLists.forEach((priceListID, index) => {
+    } else {
       this.handlePriceListProduct(product, priceListID);
-    });
-
-    // const mPriceListProduct = new PriceListProduct();
-    // mPriceListProduct.product_id = product.id;
-    // mPriceListProduct.price_list_id = '1';
-    // mPriceListProduct.product = product;
-
-    // this.priceListProductSer.create( mPriceListProduct).subscribe(mPriceListProduct => {
-    //   // this.notifySer.notify('success', 'Cập nhật thuốc thành công!');
-    //   // this.dialogRef.close({event: action, data: product});
-    //   console.log(mPriceListProduct);
-
-    // });
-
-
-    // const newData = this.data.concat([mPriceListProduct]);
-    // this.data = newData;
-
-    // this.productDataSource = new MatTableDataSource<PriceListProduct>(this.data);
-    // this.recalculateWarehouse();
+    }
     this.selectProduct.patchValue(null);
   }
 
   handlePriceListProduct(product: any, priceListID: any) {
-    //@NGHIA
     this.priceListProductSer.exist(product.id, priceListID).subscribe(result => {
       if (result === false) {
-        let mPriceListProduct = new PriceListProduct();
+        const mPriceListProduct = new PriceListProduct();
         mPriceListProduct.product_id = product.id;
         mPriceListProduct.price_list_id = priceListID;
         mPriceListProduct.price = product.sell_price;
@@ -247,10 +225,19 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
           this.notifySer.notify('success', 'Cập nhật thuốc thành công!');
         });
         this.loadData();
+      } else {
+        this.notifySer.notify('warning', 'Đã tồn tại !');
       }
     });
   }
 
+  removeProduct(i) {
+    const newData = this.data;
+    newData.splice(i, 1);
+
+    this.data = newData;
+
+  }
 
 
 }
