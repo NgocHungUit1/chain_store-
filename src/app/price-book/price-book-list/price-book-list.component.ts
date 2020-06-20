@@ -67,7 +67,6 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
   productDataSource = new MatTableDataSource<PriceListProduct>([]);
 
   filteredProducts: Observable<Product[]>;
-  priceListSelected: string;
   form: FormGroup;
   columnsHeader = {
     '#': '#',
@@ -118,7 +117,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
 
   initPriceListForm() {
     this.priceListForm = this.fb.group({
-      priceLists: [[]],
+      priceLists: ['13'],
     });
   }
 
@@ -135,20 +134,22 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
 
   ngOnInit() {
     const priceListFilter = new PriceListFilter();
+    this.initPriceListForm();
+
     this.priceListSer.getList(priceListFilter).subscribe(res => {
       this.priceLists = res.body;
-      // this.priceLists.forEach((element, index) => {
-      //   if (element.is_default === 1) {
-      //     this.priceListSelected = element.id;
-      //   }
-      // });
+      this.priceLists.forEach((element, index) => {
+        if (element.is_default === 1) {
+          this.priceListForm.patchValue({
+            priceLists: element.id,
+          });
+        }
+
+      });
+      this.apiFilter = this.buildFilterFromParams();
+      this.loadData();
 
     });
-
-    this.initPriceListForm();
-    this.apiFilter = this.buildFilterFromParams();
-    // this.loadData();
-
 
     this.filteredProducts = this.selectProduct.valueChanges.pipe(
       startWith(''),
