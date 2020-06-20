@@ -69,6 +69,14 @@ export class PriceListProductService {
         const url = environment.apiUrl + '/price-list-product/delete/' + id;
         return this.http.delete(url);
     }
+
+    updatePriceAll(price_list_id: string, data: any) {
+        const url = environment.apiUrl + '/price-list-product/update-price-all';
+        return this.http.post(url, {
+            price_list_id: price_list_id,
+            data: data
+        });
+    }
 }
 
 

@@ -1,10 +1,47 @@
 <h1 mat-dialog-title>Thêm bảng giá</h1>
 <div mat-dialog-content>
   <div [formGroup]="form">
-    <mat-form-field>
-      <mat-label>Tên bảng giá</mat-label>
-      <input matInput tabindex="1" formControlName="name" >
-    </mat-form-field>
+
+    <div fxLayout="row wrap">
+      <div fxFlex="100">
+        <mat-form-field>
+          <mat-label>Tên bảng giá</mat-label>
+          <input matInput tabindex="1" formControlName="name">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div fxLayout="row wrap">
+      <div fxFlex="48">
+        <mat-form-field>
+          <mat-label>Hiệu lực từ ngày</mat-label>
+          <input matInput tabindex="3" [matDatepicker]="date_from" formControlName="date_from">
+          <mat-datepicker-toggle matSuffix [for]="date_from"></mat-datepicker-toggle>
+          <mat-datepicker #date_from></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div fxFlex="4"></div>
+      <div fxFlex="48">
+        <mat-form-field>
+          <mat-label>Đến ngày</mat-label>
+          <input matInput tabindex="3" [matDatepicker]="date_to" formControlName="date_to">
+          <mat-datepicker-toggle matSuffix [for]="date_to"></mat-datepicker-toggle>
+          <mat-datepicker #date_to></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div fxLayout="row wrap">
+      <div fxFlex="100" class="form-radio-field">
+        <mat-label>Trạng thái</mat-label>
+        <mat-radio-group tabindex="10" formControlName="status">
+          <mat-radio-button class="item-radio-button" *ngFor="let statusItem of statusItems" [value]="statusItem.id">
+            {{statusItem.title}}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+    </div>
+
   </div>
 </div>
 <div mat-dialog-actions>

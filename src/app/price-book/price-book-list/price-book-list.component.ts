@@ -13,14 +13,16 @@ import { PriceListService } from '../price-list.service';
 import { PriceListProductService } from '../price-list-product.service';
 import { PriceList, PriceListFilter } from '../price-list.model';
 import { PriceListProduct, PriceListProductFilter } from '../price-list-product.model';
-import { WarehouseProduct, WarehouseProductFilter } from '../../warehouse/warehouse.model';
 import { Product } from '../../product/product.model';
 import { Observable } from 'rxjs/index';
-import { WarehouseProductService } from '../../warehouse/warehouse-product.service';
 import { ProductService } from '../../product/product.service';
 import { of } from 'rxjs/internal/observable/of';
 import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 import { exit } from 'process';
+import { element } from 'protractor';
+import { resolve } from 'dns';
+import { rejects } from 'assert';
+import { SetupCommonPriceDialogComponent } from '../setup-common-price-dialog/setup-common-price-dialog.component';
 
 
 @Component({
@@ -48,7 +50,6 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     private notifySer: NotifierService,
     private priceListSer: PriceListService,
     private priceListProductSer: PriceListProductService,
-    private warehouseProductService: WarehouseProductService,
     private productSer: ProductService,
 
   ) {
@@ -66,7 +67,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
   productDataSource = new MatTableDataSource<PriceListProduct>([]);
 
   filteredProducts: Observable<Product[]>;
-
+  priceListSelected: string;
   form: FormGroup;
   columnsHeader = {
     '#': '#',
@@ -121,7 +122,6 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     });
   }
 
-  //@NGHIA
   loadData(): void {
     this.isLoadingResults = true;
     this.priceListProductSer.getList(this.apiFilter).subscribe(res => {
@@ -137,24 +137,15 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     const priceListFilter = new PriceListFilter();
     this.priceListSer.getList(priceListFilter).subscribe(res => {
       this.priceLists = res.body;
+      // this.priceLists.forEach((element, index) => {
+      //   if (element.is_default === 1) {
+      //     this.priceListSelected = element.id;
+      //   }
+      // });
+
     });
+
     this.initPriceListForm();
-
-    const date = new FormControl(new Date());
-    this.form = this.fb.group({
-      date: date,
-      no: [null],
-      supplier: [null, Validators.required],
-      status: [null],
-      quantity: [null],
-      total_amount: [null],
-      total_discount: [null],
-      paid_amount: [null],
-      remain_amount: [null],
-      note: [null],
-    });
-
-
     this.apiFilter = this.buildFilterFromParams();
     // this.loadData();
 
@@ -188,7 +179,10 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
   }
 
   openCreatePriceListFormDialog() {
-    const dialogRef = this.dialog.open(CreatePriceListFormDialogComponent, {});
+    const dialogRef = this.dialog.open(CreatePriceListFormDialogComponent, {
+      width: '40%',
+      minHeight: '80%',
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== false && result !== undefined) {
@@ -243,19 +237,29 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     });
   }
 
-  // setCurrentRow(event: any) {
-  //   console.log(event.target.value);
-  // }
-
   savePrice(event: any, element) {
     console.log((event.target.value));
     element['price'] = Number(event.target.value);
-    this.priceListProductSer.update(element.id,element).subscribe(element => {
+    this.priceListProductSer.update(element.id, element).subscribe(element => {
       this.notifySer.notify('success', 'Lưu thành công!');
       this.apiFilter = this.buildFilterFromParams();
       this.loadData();
     });
   }
 
+  dialogSetUpCommonPrice(data, pageTotalCount) {
+    data.pageTotalCount = pageTotalCount;
+    const dialogRef = this.dialog.open(SetupCommonPriceDialogComponent, {
+      data: data,
+      width: '45%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.apiFilter = this.buildFilterFromParams();
+      this.loadData();
+    });
+
+  }
 
 }

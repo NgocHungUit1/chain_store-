@@ -11,11 +11,12 @@ import { PriceBookRoutes } from './price-book.routing';
 import { DemoMaterialModule } from '../demo-material-module';
 import { PriceBookListComponent } from './price-book-list/price-book-list.component';
 import { CreatePriceListFormDialogComponent } from './create-price-list-form-dialog/create-price-list-form-dialog.component';
+import { SetupCommonPriceDialogComponent } from './setup-common-price-dialog/setup-common-price-dialog.component';
 
 
 
 @NgModule({
-  declarations: [PriceBookListComponent, CreatePriceListFormDialogComponent],
+  declarations: [PriceBookListComponent, CreatePriceListFormDialogComponent, SetupCommonPriceDialogComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(PriceBookRoutes),

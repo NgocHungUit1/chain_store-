@@ -3,6 +3,7 @@ import { MatDialogRef } from "@angular/material/dialog";
 import { NotifierService } from "angular-notifier";
 import { FormBuilder, FormGroup, Validators, FormControl } from "@angular/forms";
 import { PriceListService } from "../price-list.service";
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-create-price-list-form-dialog',
@@ -11,6 +12,18 @@ import { PriceListService } from "../price-list.service";
 })
 
 export class CreatePriceListFormDialogComponent implements OnInit {
+
+
+  statusItems: any[] = [
+    {
+      'id': 10,
+      'title': 'Áp dụng'
+    },
+    {
+      'id': 0,
+      'title': 'Chưa áp dụng'
+    }
+  ];
 
   constructor(
     public dialogRef: MatDialogRef<CreatePriceListFormDialogComponent>,
@@ -37,12 +50,29 @@ export class CreatePriceListFormDialogComponent implements OnInit {
           Validators.maxLength(32)
         ])
       ],
+      date_from: [
+        null
+      ],
+      date_to: [null],
+      status: 10
     });
   }
 
   submit() {
     if (this.form.valid) {
-      let data = this.form.getRawValue();
+      const data = this.form.getRawValue();
+
+      if (data['date_from'] !== null) {
+        const momentDate = new Date(data['date_from']);
+        const formattedDate = moment(momentDate).format('YYYY-MM-DD');
+        data['date_from'] = formattedDate;
+      }
+      if (data['date_to'] !== null) {
+        const momentDate = new Date(data['date_to']);
+        const formattedDate = moment(momentDate).format('YYYY-MM-DD');
+        data['date_to'] = formattedDate;
+      }
+
       this.dialogRef.close();
       this.priceListSer.create(data).subscribe(res => {
         this.notifySer.notify('success', 'Thêm bảng giá thành công!');
