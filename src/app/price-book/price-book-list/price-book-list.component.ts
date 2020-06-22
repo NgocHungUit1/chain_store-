@@ -41,7 +41,8 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
 
   public priceListForm: FormGroup;
   priceLists: PriceList[] = [];
-
+  public priceListCommon: PriceList;
+  public priceListChoose: PriceList;
 
   constructor(
     private fb: FormBuilder,
@@ -99,6 +100,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
       arg[key] = value;
     }
     const aPriceLists = this.priceListForm.controls['priceLists'].value;
+    this.setPriceListChoose(aPriceLists); // luu cho bien price list chon
 
     const filter = new PriceListProductFilter();
     const objectKeys = Object.keys(filter) as Array<keyof PriceListProductFilter>;
@@ -115,9 +117,18 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     return filter;
   }
 
+  setPriceListChoose(value: string) {
+    if (value !== this.priceListCommon.id) {
+      const list = this.priceLists;
+      const result = list.filter(item => item.id === value);
+      this.priceListChoose = result[0];
+    } else {
+      this.priceListChoose = null;
+    }
+  }
   initPriceListForm() {
     this.priceListForm = this.fb.group({
-      priceLists: ['13'],
+      priceLists: [null],
     });
   }
 
@@ -143,6 +154,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
           this.priceListForm.patchValue({
             priceLists: element.id,
           });
+          this.priceListCommon = element;
         }
 
       });

@@ -34,10 +34,10 @@
   <div fxFlex="83">
 
     <mat-toolbar class="dv-header">
-      <button mat-icon-button routerLink="../">
+      <!-- <button mat-icon-button routerLink="../">
         <mat-icon>arrow_back</mat-icon>
-      </button>
-      <h3>Nhập hàng</h3>
+      </button> -->
+      <!-- <h3>Nhập hàng</h3> -->
       <div class="select-product">
         <mat-form-field>
           <input type="text" [formControl]="selectProduct" matInput [matAutocomplete]="chooseProduct"
@@ -94,8 +94,10 @@
                 <td mat-cell *matCellDef="let element"> {{ element.product.sell_price | number }}</td>
               </ng-container>
 
-              <ng-container matColumnDef="price">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['price']}}</th>
+              <ng-container matColumnDef="price" >
+                <!-- columnsHeader['price'] -->
+                <th mat-header-cell *matHeaderCellDef>
+                  {{  priceListChoose ? priceListChoose.name : columnsHeader['price'] }}</th>
                 <td mat-cell *matCellDef="let element">
                   <button mat-icon-button (click)="dialogSetUpCommonPrice(element,pageTotalCount)">
                     <mat-icon>edit</mat-icon>

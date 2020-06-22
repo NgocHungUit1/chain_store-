@@ -1,5 +1,6 @@
+
 .title-price-list{
-  padding: 10px 0 0 20px;
+  padding: 16px 0 0 20px;
 }
 .select-product {
   margin-left: 50px;
@@ -15,4 +16,7 @@
 }
 .mat-icon-edit{
   padding: 10px 0;
+}
+.mat-card{
+  margin : 0px !important;
 }

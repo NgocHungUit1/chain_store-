@@ -41,7 +41,13 @@ export class CreatePriceListFormDialogComponent implements OnInit {
 
 
   ngOnInit(): void {
-
+    const today = new Date();
+    const todayISOstring = today.toISOString();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const day = today.getDate();
+    const nextYear = new Date(year + 1, month, day);
+    const nextYearISOstring = nextYear.toISOString();
     this.form = this.fb.group({
       name: [
         null,
@@ -51,9 +57,9 @@ export class CreatePriceListFormDialogComponent implements OnInit {
         ])
       ],
       date_from: [
-        null
+        todayISOstring
       ],
-      date_to: [null],
+      date_to: [nextYearISOstring],
       status: 10
     });
   }
