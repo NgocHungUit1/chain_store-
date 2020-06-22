@@ -55,6 +55,7 @@ export class WarehouseProduct {
   amount: number;
   note: string;
   productUnits: object[];
+  productParcels: object[];
   product_parcels: object[];
 }
 

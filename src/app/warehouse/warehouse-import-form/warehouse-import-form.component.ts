@@ -220,6 +220,13 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         warehouseProduct.price = item.price;
         warehouseProduct.discount = item.discount;
         warehouseProduct.amount = item.amount;
+        warehouseProduct.product_unit_id = item.product_unit_id;
+        warehouseProduct.productUnits = item.productUnits !== undefined ? item.productUnits : [];
+        warehouseProduct.product_parcels = item.productParcels !== undefined ? item.productParcels : [];
+
+        if (item.productParcels !== undefined && item.productParcels.length > 0) {
+          this.parcels = this.parcels.concat(item.productParcels);
+        }
 
         newData.push(warehouseProduct);
       });
@@ -244,7 +251,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'product';
+    filter.expand = 'product,productParcels,productUnits';
     if (this.updateModelId !== null) {
       filter.warehouse_id = this.updateModelId;
     }

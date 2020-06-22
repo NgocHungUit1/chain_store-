@@ -50,15 +50,42 @@
                 <td mat-cell *matCellDef="let element"> {{ element.product.product_name }}</td>
               </ng-container>
 
+              <ng-container matColumnDef="product_parcel">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_parcel']}}</th>
+                <td mat-cell *matCellDef="let element; let i = index">
+                  <mat-form-field class="parcel-field">
+                    <mat-select multiple [(ngModel)]="data[i]['product_parcels']" (selectionChange)="onParcelSelectedChange(i, $event.value)">
+                      <mat-option *ngFor="let parcel of parcels" [value]="parcel">
+                        {{parcel['parcel_no']}} - {{parcel['expiration_date']}} - SL: {{parcel['quantity']}}
+                      </mat-option>
+                    </mat-select>
+                    <button mat-icon-button matSuffix aria-label="add" (click)="openParcelFormDialog(i);">
+                      <mat-icon>add</mat-icon>
+                    </button>
+                  </mat-form-field>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="product_unit_id">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_unit_id']}}</th>
+                <td mat-cell *matCellDef="let element; let i = index">
+                  <mat-form-field *ngIf="element.productUnits.length">
+                    <mat-select matInput [(ngModel)]="data[i]['product_unit_id']" (selectionChange)="onUnitChange(i, $event)">
+                      <mat-option *ngFor="let unit of element.productUnits" [value]="unit.id">{{unit.name}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </td>
+              </ng-container>
+
               <ng-container matColumnDef="quantity">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['quantity']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index">
                   <mat-form-field>
-                    <input matInput class="quantity-input" [value]="element['quantity']" (change)="recalculateItem(i)" [(ngModel)]="data[i]['quantity']" >
-                    <button mat-icon-button matPrefix (click)="data[i]['quantity'] = data[i]['quantity'] > 1 ? (data[i]['quantity'] - 1) : 1;recalculateItem(i);">
+                    <input matInput class="quantity-input" [value]="element['quantity']" (change)="recalculateItem(i)" [(ngModel)]="data[i]['quantity']" [disabled]="data[i]['product_parcels'].length > 1">
+                    <button mat-icon-button matPrefix (click)="changeQuantity(i, -1)" [disabled]="element['quantity'] === 1 || data[i]['product_parcels'].length > 1">
                       <mat-icon>indeterminate_check_box</mat-icon>
                     </button>
-                    <button mat-icon-button matSuffix (click)="data[i]['quantity'] = data[i]['quantity'] + 1;recalculateItem(i);">
+                    <button mat-icon-button matSuffix (click)="changeQuantity(i, 1);" [disabled]="data[i]['product_parcels'].length > 1">
                       <mat-icon>add_box</mat-icon>
                     </button>
                   </mat-form-field>
