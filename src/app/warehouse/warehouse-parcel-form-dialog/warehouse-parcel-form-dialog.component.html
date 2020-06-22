@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>Thêm Lô</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field>
+      <input matInput tabindex="1" placeholder="Lô" [formControl]="this.form.controls['parcel_no']">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput tabindex="2" [matDatepicker]="date_picker" [formControl]="form.controls['expiration_date']"
+             placeholder="Hạn sử dụng">
+      <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>
+      <mat-datepicker #date_picker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput tabindex="3" type="number" placeholder="Số lượng" [formControl]="this.form.controls['quantity']">
+    </mat-form-field>
+    </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="4" (click)="submit()"><mat-icon>save</mat-icon>Ok</button>
+  <button mat-button (click)="onNoClick()" tabindex="-1"><mat-icon>cancel</mat-icon>Bỏ qua</button>
+</div>

@@ -14,6 +14,7 @@ import {WarehouseReturnListComponent} from './warehouse-return-list/warehouse-re
 import {WarehouseReturnFormComponent} from './warehouse-return-form/warehouse-return-form.component';
 import {WarehouseImportFormComponent} from './warehouse-import-form/warehouse-import-form.component';
 import {WarehouseInfoTabComponent} from './warehouse-info-tab/warehouse-info-tab.component';
+import {WarehouseParcelFormDialogComponent} from './warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import {WarehouseInfoTabComponent} from './warehouse-info-tab/warehouse-info-tab
     WarehouseImportFormComponent,
     WarehouseInfoTabComponent,
     WarehouseReturnListComponent,
-    WarehouseReturnFormComponent
+    WarehouseReturnFormComponent,
+    WarehouseParcelFormDialogComponent
   ],
   imports: [
     CommonModule,
@@ -35,6 +37,9 @@ import {WarehouseInfoTabComponent} from './warehouse-info-tab/warehouse-info-tab
     PerfectScrollbarModule,
     Ng2SearchPipeModule,
     DemoMaterialModule
+  ],
+  entryComponents: [
+    WarehouseParcelFormDialogComponent
   ]
 })
 export class WarehouseModule { }
