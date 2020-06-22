@@ -13,15 +13,25 @@
   max-width: 30px;
   text-align: right;
 }
+.mat-column-product_unit_id {
+  max-width: 35px;
+  text-align: right;
+}
+.mat-column-product_parcel, .mat-column-product_no {
+  flex: 1 1 0px;
+}
 .mat-column-actions {
   max-width: 30px;
   text-align: center;
 }
 .mat-column-product_name {
-  flex: 3 1 0;
+  flex: 2 1 0px;
 }
 .mat-table .mat-form-field {
   padding-left: 10px;
+}
+.mat-table .mat-form-field.parcel-field {
+  padding-left: 0px;
 }
 .quantity-input {
   text-align: center;

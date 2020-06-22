@@ -17,6 +17,7 @@ import {SupplierService} from '../../supplier/supplier.service';
 import {WarehouseService} from '../warehouse.service';
 import {Product} from '../../product/product.model';
 import {ProductService} from '../../product/product.service';
+import {WarehouseParcelFormDialogComponent} from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
 
 @Component({
   selector: 'app-warehouse-return-form',
@@ -46,7 +47,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
 
   apiFilter: WarehouseProductFilter;
   updateModelId = null;
-
+  parcels: object[] = [];
   statuses = [
     {id: '1', name: 'Hoàn thành'},
     {id: '10', name: 'Lưu tạm'},
@@ -56,6 +57,8 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
     '#': '#',
     'product_no': 'Mã hàng',
     'product_name': 'Tên hàng',
+    'product_parcel': 'Lô',
+    'product_unit_id': 'Đơn vị',
     'quantity': 'Số lượng',
     'price': 'Đơn giá',
     'discount': 'Giảm giá',
@@ -67,6 +70,8 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
     '#',
     'product_no',
     'product_name',
+    'product_parcel',
+    'product_unit_id',
     'quantity',
     'price',
     'discount',
@@ -214,6 +219,14 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
         warehouseProduct.discount = item.discount;
         warehouseProduct.amount = item.amount;
 
+        warehouseProduct.product_unit_id = item.product_unit_id;
+        warehouseProduct.productUnits = item.productUnits !== undefined ? item.productUnits : [];
+        warehouseProduct.product_parcels = item.productParcels !== undefined ? item.productParcels : [];
+
+        if (item.productParcels !== undefined && item.productParcels.length > 0) {
+          this.parcels = this.parcels.concat(item.productParcels);
+        }
+
         newData.push(warehouseProduct);
       });
       this.data = newData;
@@ -237,7 +250,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'product';
+    filter.expand = 'product,productParcels,productUnits';
     if (this.updateModelId !== null) {
       filter.warehouse_id = this.updateModelId;
     }
@@ -271,19 +284,29 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
   }
 
   onSelectedProduct(product) {
-    const warehouseProduct = new WarehouseProduct();
-    warehouseProduct.product_id = product.id;
-    warehouseProduct.product = product;
-    warehouseProduct.quantity = 1;
-    warehouseProduct.price = product.original_price;
-    warehouseProduct.discount = 0;
-    warehouseProduct.amount = product.original_price;
+    this.productSer.getDetail(product.id, 'productUnits').subscribe(res => {
+      const warehouseProduct = new WarehouseProduct();
+      warehouseProduct.product_id = product.id;
+      warehouseProduct.product = product;
+      warehouseProduct.quantity = 1;
+      warehouseProduct.price = product.original_price;
+      warehouseProduct.discount = 0;
+      warehouseProduct.amount = product.original_price;
+      warehouseProduct.productUnits = res['productUnits'];
+      warehouseProduct.product_parcels = [];
 
-    const newData = this.data.concat([warehouseProduct]);
-    this.data = newData;
-    this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
-    this.recalculateWarehouse();
-    this.selectProduct.patchValue(null);
+      if (res['productUnits'].length > 0) {
+        res['productUnits'].sort((a, b) => (a.value > b.value) ? 1 : -1);
+        warehouseProduct.product_unit_id = res['productUnits'][0]['id'];
+        warehouseProduct.price = res['productUnits'][0]['sell_price'];
+      }
+
+      const newData = this.data.concat([warehouseProduct]);
+      this.data = newData;
+      this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+      this.recalculateWarehouse();
+      this.selectProduct.patchValue(null);
+    });
   }
 
   recalculateItem(i) {
@@ -323,6 +346,43 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
 
     this.recalculateWarehouse();
     this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+  }
+
+  openParcelFormDialog(index) {
+    const dialogRef = this.dialog.open(WarehouseParcelFormDialogComponent, {
+      width: '20%'
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== false && result !== undefined) {
+        this.parcels.push(result);
+        this.data[index]['product_parcels'].push(result);
+        let quantity = 0;
+        this.data[index]['product_parcels'].forEach(parcel => {
+          quantity = quantity + parcel['quantity'];
+        });
+        this.data[index]['quantity'] = quantity;
+        this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
+        this.recalculateWarehouse();
+      }
+    });
+  }
+
+  changeQuantity(index, value) {
+    this.data[index]['quantity'] = this.data[index]['quantity'] + value;
+    if (this.data[index]['product_parcels'].length === 1) {
+      this.data[index]['product_parcels'][0]['quantity'] = this.data[index]['quantity'];
+    }
+    this.recalculateItem(index);
+  }
+
+  onParcelSelectedChange(index, value) {
+    let quantity = 0;
+    this.data[index]['product_parcels'].forEach(parcel => {
+      quantity = quantity + parcel['quantity'];
+    });
+    this.data[index]['quantity'] = quantity;
+    this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
+    this.recalculateWarehouse();
   }
 
 }
