@@ -1,0 +1,59 @@
+<div mat-dialog-content>
+    <div [formGroup]="form" class="form-set-up">
+
+        <div fxLayout="row wrap">
+            <div fxFlex="20" class="form-radio-field">
+                <label class="label-title">
+                    Giá mới <span class="local-price">[{{ local_data.price | number }}]</span> =
+                </label>
+
+            </div>
+            <div fxFlex="2"></div>
+            <div fxFlex="15">
+                <mat-form-field>
+                    <mat-select formControlName="choose">
+                        <mat-option *ngFor="let chooseItem of chooseItems" [value]="chooseItem.id">
+                            {{ chooseItem.title }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div fxFlex="20" class="form-radio-field">
+                <mat-radio-group tabindex="10" formControlName="calculation">
+                    <mat-radio-button *ngFor="let calculationItem of calculationItems" [value]="calculationItem.id">
+                        {{calculationItem.title}}
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
+            <div fxFlex="20">
+                <mat-form-field>
+                    <input matInput tabindex="1" formControlName="numberInput" type="number" min="0">
+                </mat-form-field>
+            </div>
+            <div fxFlex="23" class="form-radio-field">
+                <mat-radio-group tabindex="10" formControlName="type">
+                    <mat-radio-button *ngFor=" let typeItem of typeItems" [value]="typeItem.id">
+                        {{typeItem.title}}
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
+        </div>
+        <mat-divider></mat-divider>
+        <div fxLayout="row wrap" class="customer-mat-check">
+            <div fxFlex="100">
+                <mat-checkbox formControlName="allow_all">Áp dụng công thức cho {{ local_data.pageTotalCount }} sản phẩm
+                    trong bảng giá?</mat-checkbox>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="3" (click)="submit()">
+        <mat-icon>save</mat-icon>Lưu
+    </button>
+    <button mat-button (click)="onNoClick()" tabindex="-1">
+        <mat-icon>cancel</mat-icon>Bỏ qua
+    </button>
+</div>

@@ -48,6 +48,13 @@
                 </button>
               </div>
             </div>
+            <div fxLayout="row wrap">
+              <div fxFlex="100">
+                <mat-form-field>
+                  <input type="number" matInput [formControl]="form.controls['original_price']" placeholder="Giá vốn">
+                </mat-form-field>
+              </div>
+            </div>
 
             <div fxLayout="row wrap">
               <div fxFlex="100">
@@ -81,7 +88,8 @@
             <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field>
-                <input type="number" matInput [formControl]="form.controls['quantity_of_stock']" placeholder="Tồn kho">
+                  <input type="number" matInput [formControl]="form.controls['quantity_of_stock']"
+                    placeholder="Tồn kho">
                 </mat-form-field>
               </div>
             </div>
@@ -145,71 +153,71 @@
                     </mat-expansion-panel-header>
 
 
-                        <div fxLayout="row wrap">
-                          <div fxFlex="30">
-                            <mat-form-field>
-                              <input type="text" matInput [formControl]="form.controls['base_unit']"
-                                placeholder="Đơn vị cơ bản">
-                            </mat-form-field>
-                          </div>
-                        </div>
+                    <div fxLayout="row wrap">
+                      <div fxFlex="30">
+                        <mat-form-field>
+                          <input type="text" matInput [formControl]="form.controls['base_unit']"
+                            placeholder="Đơn vị cơ bản">
+                        </mat-form-field>
+                      </div>
+                    </div>
 
-                        <div fxLayout="row wrap" *ngIf="units.length > 0">
-                          <div fxFlex="100">
-                            <ng-container formArrayName="units">
-                              <table>
-                                <thead style="text-align: left">
-                                  <th>Tên đơn vị</th>
-                                  <th>Giá trị quy đổi</th>
-                                  <th>Giá bán</th>
-                                  <th>Mã hàng</th>
-                                  <th></th>
-                                </thead>
-                                <tbody>
-                                  <tr *ngFor="let _ of units.controls; index as i;">
-                                    <ng-container [formGroupName]="i">
-                                      <td>
-                                        <mat-form-field>
-                                          <input type="text" formControlName="unit_name" matInput placeholder="Tên đơn vị">
-                                        </mat-form-field>
-                                      </td>
-                                      <td>
-                                        <mat-form-field>
-                                          <input type="number" formControlName="unit_value" matInput
-                                            placeholder="Giá trị quy đổi">
-                                        </mat-form-field>
-                                      </td>
-                                      <td>
-                                        <mat-form-field>
-                                          <input type="number" formControlName="unit_price" matInput placeholder="Giá bán">
-                                        </mat-form-field>
-                                      </td>
-                                      <td>
-                                        <mat-form-field>
-                                          <input type="text" formControlName="unit_no" matInput placeholder="Mã hàng">
-                                        </mat-form-field>
-                                      </td>
-                                      <td>
-                                        <a (click)="removeUnit(i)">
-                                          <mat-icon>delete</mat-icon>
-                                        </a>
-                                      </td>
-                                    </ng-container>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </ng-container>
-                          </div>
-                        </div>
+                    <div fxLayout="row wrap" *ngIf="units.length > 0">
+                      <div fxFlex="100">
+                        <ng-container formArrayName="units">
+                          <table>
+                            <thead style="text-align: left">
+                              <th>Tên đơn vị</th>
+                              <th>Giá trị quy đổi</th>
+                              <th>Giá bán</th>
+                              <th>Mã hàng</th>
+                              <th></th>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let _ of units.controls; index as i;">
+                                <ng-container [formGroupName]="i">
+                                  <td>
+                                    <mat-form-field>
+                                      <input type="text" formControlName="unit_name" matInput placeholder="Tên đơn vị">
+                                    </mat-form-field>
+                                  </td>
+                                  <td>
+                                    <mat-form-field>
+                                      <input type="number" formControlName="unit_value" matInput
+                                        placeholder="Giá trị quy đổi">
+                                    </mat-form-field>
+                                  </td>
+                                  <td>
+                                    <mat-form-field>
+                                      <input type="number" formControlName="unit_price" matInput placeholder="Giá bán">
+                                    </mat-form-field>
+                                  </td>
+                                  <td>
+                                    <mat-form-field>
+                                      <input type="text" formControlName="unit_no" matInput placeholder="Mã hàng">
+                                    </mat-form-field>
+                                  </td>
+                                  <td>
+                                    <a (click)="removeUnit(i)">
+                                      <mat-icon>delete</mat-icon>
+                                    </a>
+                                  </td>
+                                </ng-container>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </ng-container>
+                      </div>
+                    </div>
 
-                        <div fxLayout="row wrap">
-                          <div fxFlex="100">
-                            <button mat-raised-button (click)="addUnit();" [disabled]="!form.controls['base_unit'].value">
-                              <mat-icon>add</mat-icon>
-                              Thêm đơn vị
-                            </button>
-                          </div>
-                        </div>
+                    <div fxLayout="row wrap">
+                      <div fxFlex="100">
+                        <button mat-raised-button (click)="addUnit();" [disabled]="!form.controls['base_unit'].value">
+                          <mat-icon>add</mat-icon>
+                          Thêm đơn vị
+                        </button>
+                      </div>
+                    </div>
 
 
 
