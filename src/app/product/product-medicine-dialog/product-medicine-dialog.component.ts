@@ -1,29 +1,29 @@
-import {Component, ElementRef, Inject, OnInit, Optional, ViewChild} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {ProductService} from '../product.service';
-import {NotifierService} from 'angular-notifier';
-import {ProductGroupFormDialogComponent} from '../product-group-form-dialog/product-group-form-dialog.component';
-import {Group, GroupFilter} from '../group.model';
-import {GroupService} from '../group.service';
-import {ProductUsingFormDialogComponent} from '../product-using-form-dialog/product-using-form-dialog.component';
-import {ProductPlacementFormDialogComponent} from '../product-placement-form-dialog/product-placement-form-dialog.component';
-import {UsingFilter} from '../using.model';
-import {PlacementService} from '../placement.service';
-import {UsingService} from '../using.service';
-import {PlacementFilter} from '../placement.model';
-import {Medicine} from '../../medicine/medicine.model';
-import {Observable} from 'rxjs';
-import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
-import {MedicineService} from '../../medicine/medicine.service';
-import {of} from 'rxjs/internal/observable/of';
+import { Component, ElementRef, Inject, OnInit, Optional, ViewChild } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ProductService } from '../product.service';
+import { NotifierService } from 'angular-notifier';
+import { ProductGroupFormDialogComponent } from '../product-group-form-dialog/product-group-form-dialog.component';
+import { Group, GroupFilter } from '../group.model';
+import { GroupService } from '../group.service';
+import { ProductUsingFormDialogComponent } from '../product-using-form-dialog/product-using-form-dialog.component';
+import { ProductPlacementFormDialogComponent } from '../product-placement-form-dialog/product-placement-form-dialog.component';
+import { UsingFilter } from '../using.model';
+import { PlacementService } from '../placement.service';
+import { UsingService } from '../using.service';
+import { PlacementFilter } from '../placement.model';
+import { Medicine } from '../../medicine/medicine.model';
+import { Observable } from 'rxjs';
+import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
+import { MedicineService } from '../../medicine/medicine.service';
+import { of } from 'rxjs/internal/observable/of';
 import { ManufacturerService } from '../manufacturer.service';
 import { ManufacturerFilter } from '../manufacturer.model';
 import { ProductManufacturerFormDialogComponent } from '../product-manufacturer-form-dialog/product-manufacturer-form-dialog.component';
 
 
 class ImageSnippet {
-  constructor(public src: string, public file: File, public id: string) {}
+  constructor(public src: string, public file: File, public id: string) { }
 }
 
 @Component({
@@ -76,11 +76,11 @@ export class ProductMedicineDialogComponent implements OnInit {
   };
 
   imageButtons = [
-    {isShow: true},
-    {isShow: true},
-    {isShow: true},
-    {isShow: true},
-    {isShow: true},
+    { isShow: true },
+    { isShow: true },
+    { isShow: true },
+    { isShow: true },
+    { isShow: true },
   ];
 
   selectedFiles: ImageSnippet[] = [];
@@ -91,7 +91,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     private groupSer: GroupService,
     private usingSer: UsingService,
     private placementSer: PlacementService,
-    private manufacturerSer : ManufacturerService,
+    private manufacturerSer: ManufacturerService,
     private medicineSer: MedicineService,
     public dialogRef: MatDialogRef<ProductMedicineDialogComponent>,
     public notifySer: NotifierService,
@@ -99,7 +99,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     // @Optional() is used to prevent error if no data is passed
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
     // console.log(data);
-    this.local_data = {...data};
+    this.local_data = { ...data };
     this.action = this.local_data.action;
     this.title = this.local_data.title;
     this.copy_product_id = this.local_data.copy_product_id;
@@ -168,18 +168,18 @@ export class ProductMedicineDialogComponent implements OnInit {
 
     const manufacturerFilter = new ManufacturerFilter();
     this.manufacturerSer.getList(manufacturerFilter).subscribe(res => {
-      this.manufacturers =  res.body;
+      this.manufacturers = res.body;
     });
 
 
     this.initForm();
 
-    if (this.product_id !== null ) {
+    if (this.product_id !== null) {
       const id = this.product_id !== null ? this.product_id : this.copy_product_id;
-      this.loadProduct(id,null);
+      this.loadProduct(id, null);
     }
 
-    if(this.copy_product_id !== null){
+    if (this.copy_product_id !== null) {
       const id = this.product_id !== null ? this.product_id : this.copy_product_id;
       this.loadProduct(id, true);
     }
@@ -208,7 +208,7 @@ export class ProductMedicineDialogComponent implements OnInit {
         placements.push(pPlacement.id)
       });
 
-      if(copy == null){
+      if (copy == null) {
         this.form.patchValue({
           product_no: product['product_no'],
           barcode: product['barcode'],
@@ -230,7 +230,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           description: product['description'],
           note: product['note'],
         });
-      }else{
+      } else {
         this.form.patchValue({
           product_no: '',
           barcode: product['barcode'],
@@ -295,14 +295,14 @@ export class ProductMedicineDialogComponent implements OnInit {
         this.productSer.create(data).subscribe(product => {
           this.notifySer.notify('success', 'Thêm thuốc thành công!');
           this.uploadImage(product, action);
-          this.dialogRef.close({event: action, data: product});
+          this.dialogRef.close({ event: action, data: product });
         });
       } else if (this.product_id !== null) {
         // UPDATE
         this.productSer.update(this.product_id, data).subscribe(product => {
           this.notifySer.notify('success', 'Cập nhật thuốc thành công!');
           this.uploadImage(product, action);
-          this.dialogRef.close({event: action, data: product});
+          this.dialogRef.close({ event: action, data: product });
         });
       }
     } else {
@@ -347,7 +347,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           this.notifySer.notify('error', 'Không thể tải hình ảnh!');
         }
         if (action === 'Save') {
-          this.dialogRef.close({event: this.action, data: product});
+          this.dialogRef.close({ event: this.action, data: product });
         } else if (action === 'SaveAndMore') {
           this.form.reset({
             store_id: 1,
@@ -362,12 +362,12 @@ export class ProductMedicineDialogComponent implements OnInit {
           this.selectedFiles = [];
           this.reloadImageButtons();
           this.form.controls['units'] = new FormArray([]);
-          this.loadProduct(product.id,true);
+          this.loadProduct(product.id, true);
         }
       });
     } else {
       this.loading = false;
-      this.dialogRef.close({event: this.action, data: product});
+      this.dialogRef.close({ event: this.action, data: product });
     }
   }
 
@@ -395,7 +395,7 @@ export class ProductMedicineDialogComponent implements OnInit {
 
       if (result !== false && result !== undefined) {
         this.groups.push(result);
-        this.form.patchValue({group_id: result.id});
+        this.form.patchValue({ group_id: result.id });
       }
     });
   }
@@ -406,7 +406,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result !== false && result !== undefined) {
         this.usings.push(result);
-        this.form.patchValue({using_id: result.id});
+        this.form.patchValue({ using_id: result.id });
       }
     });
   }
@@ -421,27 +421,27 @@ export class ProductMedicineDialogComponent implements OnInit {
         const curSelects = this.form.controls['placements'].value;
         curSelects.push(result.id);
 
-        this.form.patchValue({placements: curSelects});
+        this.form.patchValue({ placements: curSelects });
       }
     });
   }
 
-  openManufacturerFormDialog(){
+  openManufacturerFormDialog() {
     const dialogRef = this.dialog.open(ProductManufacturerFormDialogComponent, {});
     dialogRef.afterClosed().subscribe(result => {
       if (result !== false && result !== undefined) {
         this.manufacturers.push(result);
-        this.form.patchValue({ medicine : {manufacturer : result.id} });
+        this.form.patchValue({ medicine: { manufacturer: result.id } });
       }
     });
   }
 
   doAction() {
-    this.dialogRef.close({event: this.action, data: this.local_data});
+    this.dialogRef.close({ event: this.action, data: this.local_data });
   }
 
   closeDialog() {
-    this.dialogRef.close({event: 'Cancel'});
+    this.dialogRef.close({ event: 'Cancel' });
   }
 
   removeUnit(i) {

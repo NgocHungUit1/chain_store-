@@ -1,9 +1,10 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef } from "@angular/material/dialog";
+import { Component, Inject, OnInit, Optional } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NotifierService } from "angular-notifier";
 import { FormBuilder, FormGroup, Validators, FormControl } from "@angular/forms";
 import { PriceListService } from "../price-list.service";
 import * as moment from 'moment';
+import { element } from 'protractor';
 
 @Component({
   selector: 'app-create-price-list-form-dialog',
@@ -13,7 +14,10 @@ import * as moment from 'moment';
 
 export class CreatePriceListFormDialogComponent implements OnInit {
 
-
+  title: string;
+  local_data: any;
+  action: string;
+  priceListChoose: any;
   statusItems: any[] = [
     {
       'id': 10,
@@ -30,7 +34,13 @@ export class CreatePriceListFormDialogComponent implements OnInit {
     public notifySer: NotifierService,
     private fb: FormBuilder,
     private priceListSer: PriceListService,
-  ) { }
+    // @Optional() is used to prevent error if no data is passed
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
+    this.local_data = { ...data };
+    this.action = this.local_data.action;
+    this.priceListChoose = this.local_data.priceListChoose;
+    this.title = this.local_data.title;
+  }
 
   onNoClick(): void {
     this.dialogRef.close();
@@ -39,8 +49,7 @@ export class CreatePriceListFormDialogComponent implements OnInit {
   public form: FormGroup;
   loading = false;
 
-
-  ngOnInit(): void {
+  initForm() {
     const today = new Date();
     const todayISOstring = today.toISOString();
     const year = today.getFullYear();
@@ -64,6 +73,35 @@ export class CreatePriceListFormDialogComponent implements OnInit {
     });
   }
 
+  ngOnInit(): void {
+    this.initForm();
+    if (this.action === 'update') {
+      this.loadForm();
+    }
+  }
+
+  loadForm() {
+    const priceListChoose = this.priceListChoose;
+    this.priceListSer.getDetail(priceListChoose.id).subscribe(element => {
+      let date_from = null;
+      let date_to = null;
+      if (element['date_from'] !== null) {
+        date_from = new Date(element['date_from']).toISOString();
+      }
+      if (element['date_to'] !== null) {
+        date_to = new Date(element['date_to']).toISOString();
+      }
+      this.form.patchValue({
+        name: priceListChoose.name,
+        date_from: date_from,
+        date_to: date_to,
+        status: element['status']
+      });
+    });
+
+  }
+
+
   submit() {
     if (this.form.valid) {
       const data = this.form.getRawValue();
@@ -79,11 +117,17 @@ export class CreatePriceListFormDialogComponent implements OnInit {
         data['date_to'] = formattedDate;
       }
 
-      this.dialogRef.close();
-      this.priceListSer.create(data).subscribe(res => {
-        this.notifySer.notify('success', 'Thêm bảng giá thành công!');
-        this.dialogRef.close(res);
-      });
+      if(this.action === 'create'){
+        this.priceListSer.create(data).subscribe(res => {
+          this.notifySer.notify('success', 'Thêm bảng giá thành công!');
+          this.dialogRef.close(res);
+        });
+      }else{
+        this.priceListSer.update(this.priceListChoose.id,data).subscribe(res => {
+          this.notifySer.notify('success', 'Cập nhật bảng giá thành công!');
+          this.dialogRef.close(res);
+        });
+      }
     }
   }
 

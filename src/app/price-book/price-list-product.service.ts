@@ -77,6 +77,11 @@ export class PriceListProductService {
             data: data
         });
     }
+
+    getListProductCommon(common_id: string, list_product_choose: string[]) {
+        const url = environment.apiUrl + '/price-list-product/get-list-product-common';
+        return this.http.post(url, { common_id: common_id, list_product_choose: list_product_choose });
+    }
 }
 
 

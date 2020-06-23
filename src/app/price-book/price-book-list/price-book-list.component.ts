@@ -40,9 +40,10 @@ import { SetupCommonPriceDialogComponent } from '../setup-common-price-dialog/se
 export class PriceBookListComponent extends ListComponentBase implements OnInit {
 
   public priceListForm: FormGroup;
-  priceLists: PriceList[] = [];
+  public priceLists: PriceList[] = [];
   public priceListCommon: PriceList;
-  public priceListChoose: PriceList;
+  public priceListChoose: PriceList; // luu tru bang gia dang chon neu la bang gia chung se la null
+  public priceListProductCommonExist = []; // dung cho truong hop chon 1 bang gia khac bang gia chung
 
   constructor(
     private fb: FormBuilder,
@@ -77,6 +78,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     'sell_price': 'Giá bán',
     'actions': 'X',
     'price': 'Giá chung',
+    'common': 'Giá chung',
   };
 
   productTypeLable = {
@@ -85,7 +87,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
   };
 
   displayedColumns: string[] = ['actions', '#', 'product_no', 'product_name', 'original_price', 'sell_price', 'price'];
-  columnsToDisplay: string[] = ['#', 'product_no', 'product_name', 'original_price', 'sell_price', 'actions', 'price'];
+  // columnsToDisplay: string[] = ['#', 'product_no', 'product_name', 'original_price', 'sell_price', 'actions', 'price', 'price'];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -113,7 +115,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'product';
+    filter.expand = 'product,pricelistproduct';
     return filter;
   }
 
@@ -122,8 +124,11 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
       const list = this.priceLists;
       const result = list.filter(item => item.id === value);
       this.priceListChoose = result[0];
+      this.displayedColumns = ['actions', '#', 'product_no', 'product_name', 'original_price', 'sell_price', 'common', 'price'];
     } else {
       this.priceListChoose = null;
+      this.displayedColumns = ['actions', '#', 'product_no', 'product_name', 'original_price', 'sell_price', 'price'];
+
     }
   }
   initPriceListForm() {
@@ -135,10 +140,44 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
   loadData(): void {
     this.isLoadingResults = true;
     this.priceListProductSer.getList(this.apiFilter).subscribe(res => {
-      this.data = res.body;
-      this.productDataSource = new MatTableDataSource<PriceListProduct>(this.data);
-      this.reloadFilter(res);
-      this.isLoadingResults = false;
+      // truong hop khong phai bang gia chung
+      const list = res.body;
+      if (this.priceListChoose !== null && Array.isArray(list)) {
+        const listProductChoose = list.map(obj => obj.product_id);
+        const common_id = this.priceListCommon.id;
+        // tien hanh xu ly add common vao list
+        this.priceListProductSer.getListProductCommon(common_id, listProductChoose).subscribe(resCommon => {
+          if (Array.isArray(resCommon)) {
+            this.priceListProductCommonExist = resCommon;
+            this.data = res.body;
+            // code group array by key
+            const group = this.priceListProductCommonExist.reduce((r, a) => {
+              r[a.product_id] = [...r[a.product_id] || [], a];
+              return r;
+            }, {});
+            // add common || null
+            this.data.forEach(elementData => {
+              if (group[elementData.product_id] !== undefined) {
+                elementData.common = group[elementData.product_id][0];
+              } else {
+                elementData.common = null;
+              }
+            });
+          } else {
+            this.data = res.body;
+          }
+          this.productDataSource = new MatTableDataSource<PriceListProduct>(this.data);
+          this.reloadFilter(res);
+          this.isLoadingResults = false;
+        });
+      } else {
+        this.data = res.body;
+        this.productDataSource = new MatTableDataSource<PriceListProduct>(this.data);
+        this.reloadFilter(res);
+        this.isLoadingResults = false;
+      }
+
+
     });
   }
 
@@ -191,8 +230,14 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     );
   }
 
-  openCreatePriceListFormDialog() {
+  createPriceListFormDialog() {
+    const obj = {
+      title: 'Thêm bảng giá',
+      priceListChoose: this.priceListChoose,
+      action: 'create',
+    };
     const dialogRef = this.dialog.open(CreatePriceListFormDialogComponent, {
+      data: obj,
       width: '40%',
       minHeight: '80%',
     });
@@ -201,9 +246,35 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
       if (result !== false && result !== undefined) {
         this.priceLists.push(result);
         const curSelects = this.priceListForm.controls['priceLists'].value;
-        curSelects.push(result.id);
         this.priceListForm.patchValue({ priceLists: curSelects });
       }
+    });
+  }
+
+  updatePriceListFormDialog() {
+    const obj = {
+      title: 'Sửa bảng giá',
+      priceListChoose: this.priceListChoose,
+      action: 'update',
+    };
+    const dialogRef = this.dialog.open(CreatePriceListFormDialogComponent, {
+      data: obj,
+      width: '40%',
+      minHeight: '80%',
+    });
+
+    // @NGHIA chua thay doi sau khi luu
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== false && result !== undefined) {
+        // this.priceLists.push(result);
+        // const curSelects = this.priceListForm.controls['priceLists'].value;
+        // this.priceListForm.patchValue({ priceLists: curSelects });
+        // console.log(result);
+        this.priceListChoose = result;
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+      }
+
     });
   }
 
@@ -232,10 +303,11 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
         mPriceListProduct.price = product.sell_price;
 
         this.priceListProductSer.create(mPriceListProduct).subscribe(mPriceListProduct => {
-          this.notifySer.notify('success', 'Cập nhật thuốc thành công!');
+          this.notifySer.notify('success', 'Thêm thành công!');
+          this.apiFilter = this.buildFilterFromParams();
+          this.loadData();
         });
-        this.apiFilter = this.buildFilterFromParams();
-        this.loadData();
+
       } else {
         this.notifySer.notify('warning', 'Đã tồn tại !');
       }
@@ -251,7 +323,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
   }
 
   savePrice(event: any, element) {
-    console.log((event.target.value));
+    // console.log((event.target.value));
     element['price'] = Number(event.target.value);
     this.priceListProductSer.update(element.id, element).subscribe(element => {
       this.notifySer.notify('success', 'Lưu thành công!');
@@ -269,6 +341,20 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      this.apiFilter = this.buildFilterFromParams();
+      this.loadData();
+    });
+
+  }
+
+  addNewCommonPrice(element) {
+    const mPriceListProduct = new PriceListProduct();
+    mPriceListProduct.product_id = element.product_id;
+    mPriceListProduct.price_list_id = this.priceListCommon.id;
+    mPriceListProduct.price = element.product.sell_price;
+
+    this.priceListProductSer.create(mPriceListProduct).subscribe(mPriceListProduct => {
+      this.notifySer.notify('success', 'Thêm vào bảng giá chung thành công!');
       this.apiFilter = this.buildFilterFromParams();
       this.loadData();
     });
