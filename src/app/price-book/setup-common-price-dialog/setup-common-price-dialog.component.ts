@@ -13,6 +13,7 @@ import { PriceListProductService } from '../price-list-product.service';
 export class SetupCommonPriceDialogComponent implements OnInit {
 
   local_data: any;
+  price_list_common_id: string;
   chooseItems: any[] = [
     {
       'id': 'sell',
@@ -55,6 +56,7 @@ export class SetupCommonPriceDialogComponent implements OnInit {
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object
   ) {
     this.local_data = { ...data };
+    this.price_list_common_id = this.local_data.price_list_common_id;
   }
 
   onNoClick(): void {
@@ -83,7 +85,7 @@ export class SetupCommonPriceDialogComponent implements OnInit {
         this.notifySer.notify('warning', 'Phần trăm không đúng!');
         return;
       }
-      
+
       if (data.allow_all === 0) {
         var result = 0;
         var b = data.numberInput;
@@ -114,7 +116,7 @@ export class SetupCommonPriceDialogComponent implements OnInit {
 
         this.dialogRef.close();
       } else { // not allow all
-        this.priceListProductSer.updatePriceAll(this.local_data.price_list_id, data).subscribe(result => {
+        this.priceListProductSer.updatePriceAll(this.local_data.price_list_id, this.price_list_common_id, data).subscribe(result => {
           if (result === true) {
             this.notifySer.notify('success', 'Cập nhật tất cả thành công!');
             this.dialogRef.close();

@@ -128,9 +128,9 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     } else {
       this.priceListChoose = null;
       this.displayedColumns = ['actions', '#', 'product_no', 'product_name', 'original_price', 'sell_price', 'price'];
-
     }
   }
+
   initPriceListForm() {
     this.priceListForm = this.fb.group({
       priceLists: [null],
@@ -266,11 +266,14 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     // @NGHIA chua thay doi sau khi luu
     dialogRef.afterClosed().subscribe(result => {
       if (result !== false && result !== undefined) {
-        // this.priceLists.push(result);
-        // const curSelects = this.priceListForm.controls['priceLists'].value;
-        // this.priceListForm.patchValue({ priceLists: curSelects });
-        // console.log(result);
+
         this.priceListChoose = result;
+        this.priceLists.forEach((element, index) => {
+          if (element.id === result.id) {
+            this.priceLists[index] = result;
+          }
+        });
+
         this.apiFilter = this.buildFilterFromParams();
         this.loadData();
       }
@@ -334,6 +337,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
 
   dialogSetUpCommonPrice(data, pageTotalCount) {
     data.pageTotalCount = pageTotalCount;
+    data.price_list_common_id = this.priceListCommon.id;
     const dialogRef = this.dialog.open(SetupCommonPriceDialogComponent, {
       data: data,
       width: '45%',

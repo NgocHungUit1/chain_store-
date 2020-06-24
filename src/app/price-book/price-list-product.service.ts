@@ -70,10 +70,11 @@ export class PriceListProductService {
         return this.http.delete(url);
     }
 
-    updatePriceAll(price_list_id: string, data: any) {
+    updatePriceAll(price_list_id: string, price_list_common_id: string, data: any) {
         const url = environment.apiUrl + '/price-list-product/update-price-all';
         return this.http.post(url, {
             price_list_id: price_list_id,
+            price_list_common_id: price_list_common_id,
             data: data
         });
     }
