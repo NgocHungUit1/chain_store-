@@ -73,11 +73,53 @@ export class SetupCommonPriceDialogComponent implements OnInit {
       numberInput: [0],
       allow_all: [0]
     });
+    this.updatePriceEvent();
   }
 
   // cong thuc 
   // result = a + calculation*b
   // result = a + calculation*b*a/100
+
+  updatePriceEvent() {
+    const data = this.form.getRawValue();
+    if (data.type === 'percent' && data.numberInput > 100) {
+      this.form.patchValue({
+        numberInput: 100,
+      });
+      this.notifySer.notify('warning', 'Phần trăm không đúng!');
+      return;
+    }
+    this.form.patchValue({
+      numberInput: data.numberInput,
+    });
+
+    var result = 0;
+    var b = data.numberInput;
+    var a = 0;
+    var calculation = 1;
+    if (data.calculation !== 'plus') {
+      calculation = -1;
+    }
+
+    if (data.choose === 'sell') {
+      a = this.local_data.product.sell_price;
+    } else if (data.choose === 'original') {
+      a = this.local_data.product.original_price;
+    } else {
+      a = this.local_data.price;
+    }
+
+    if (data.type === 'vnd') {
+      result = a + calculation * b;
+    } else {
+      result = a + calculation * b * a / 100;
+    }
+    // var element = this.local_data;
+    this.local_data.price = result;
+
+
+  }
+
   submit() {
     if (this.form.valid) {
       const data = this.form.getRawValue();

@@ -12,7 +12,7 @@
             <div fxFlex="15">
                 <mat-form-field>
                     <mat-select formControlName="choose">
-                        <mat-option *ngFor="let chooseItem of chooseItems" [value]="chooseItem.id">
+                        <mat-option *ngFor="let chooseItem of chooseItems" [value]="chooseItem.id" (click)="updatePriceEvent()">
                             {{ chooseItem.title }}
                         </mat-option>
                     </mat-select>
@@ -20,19 +20,21 @@
             </div>
             <div fxFlex="20" class="form-radio-field">
                 <mat-radio-group tabindex="10" formControlName="calculation">
-                    <mat-radio-button *ngFor="let calculationItem of calculationItems" [value]="calculationItem.id">
+                    <mat-radio-button *ngFor="let calculationItem of calculationItems" [value]="calculationItem.id" 
+                    (click)="updatePriceEvent()"  (mouseover)="updatePriceEvent()" (mouseout)="updatePriceEvent()">
                         {{calculationItem.title}}
                     </mat-radio-button>
                 </mat-radio-group>
             </div>
             <div fxFlex="20">
                 <mat-form-field>
-                    <input matInput tabindex="1" formControlName="numberInput" type="number" min="0">
+                    <input matInput tabindex="1" formControlName="numberInput" type="number" min="0"  (keypress)="updatePriceEvent()" (keyup)="updatePriceEvent()">
                 </mat-form-field>
             </div>
             <div fxFlex="23" class="form-radio-field">
                 <mat-radio-group tabindex="10" formControlName="type">
-                    <mat-radio-button *ngFor=" let typeItem of typeItems" [value]="typeItem.id">
+                    <mat-radio-button *ngFor=" let typeItem of typeItems" [value]="typeItem.id" 
+                    (click)="updatePriceEvent()"  (mouseover)="updatePriceEvent()" (mouseout)="updatePriceEvent()">
                         {{typeItem.title}}
                     </mat-radio-button>
                 </mat-radio-group>
