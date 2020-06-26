@@ -183,6 +183,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
 
 
   ngOnInit() {
+
     const priceListFilter = new PriceListFilter();
     this.initPriceListForm();
 
@@ -243,11 +244,17 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     });
 
     dialogRef.afterClosed().subscribe(result => {
+
       if (result !== false && result !== undefined) {
+        this.priceListChoose = result;
         this.priceLists.push(result);
-        const curSelects = this.priceListForm.controls['priceLists'].value;
-        this.priceListForm.patchValue({ priceLists: curSelects });
+        this.priceListForm.patchValue({
+          priceLists: result.id,
+        });
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
       }
+
     });
   }
 

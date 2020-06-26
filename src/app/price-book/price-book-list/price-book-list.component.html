@@ -1,5 +1,12 @@
-<div fxLayout="row">
-  <div fxFlex="17">
+<mat-sidenav-container>
+
+  <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true">
+    <mat-toolbar class="dv-header">
+      <button mat-icon-button>
+        <mat-icon>filter_list</mat-icon>
+      </button>
+      <h3>Lọc và tìm kiếm</h3>
+    </mat-toolbar>
     <mat-card class="price-list-info">
       <mat-card-title class="title-price-list">Bảng giá</mat-card-title>
       <mat-card-content>
@@ -28,16 +35,12 @@
         </form>
       </mat-card-content>
     </mat-card>
-  </div>
+  </mat-sidenav>
 
   <!-- show list, search mat-autocomplete -->
-  <div fxFlex="83">
+  <mat-sidenav-content>
 
     <mat-toolbar class="dv-header">
-      <!-- <button mat-icon-button routerLink="../">
-        <mat-icon>arrow_back</mat-icon>
-      </button> -->
-      <!-- <h3>Nhập hàng</h3> -->
       <div class="select-product">
         <mat-form-field>
           <input type="text" [formControl]="selectProduct" matInput [matAutocomplete]="chooseProduct"
@@ -142,5 +145,5 @@
       </div>
     </div>
 
-  </div>
-</div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

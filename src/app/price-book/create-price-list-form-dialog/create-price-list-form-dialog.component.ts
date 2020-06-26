@@ -117,17 +117,25 @@ export class CreatePriceListFormDialogComponent implements OnInit {
         data['date_to'] = formattedDate;
       }
 
-      if(this.action === 'create'){
-        this.priceListSer.create(data).subscribe(res => {
-          this.notifySer.notify('success', 'Thêm bảng giá thành công!');
-          this.dialogRef.close(res);
-        });
-      }else{
-        this.priceListSer.update(this.priceListChoose.id,data).subscribe(res => {
-          this.notifySer.notify('success', 'Cập nhật bảng giá thành công!');
-          this.dialogRef.close(res);
-        });
-      }
+      this.priceListSer.exist(data).subscribe(res => {
+        if (res === true) {
+          this.notifySer.notify('warning', 'Bảng giá đã tồn tại!');
+        } else {
+          if (this.action === 'create') {
+            this.priceListSer.create(data).subscribe(res => {
+              this.notifySer.notify('success', 'Thêm bảng giá thành công!');
+              this.dialogRef.close(res);
+            });
+          } else {
+            this.priceListSer.update(this.priceListChoose.id, data).subscribe(res => {
+              this.notifySer.notify('success', 'Cập nhật bảng giá thành công!');
+              this.dialogRef.close(res);
+            });
+          }
+        }
+      });
+
+
     }
   }
 

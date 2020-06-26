@@ -59,6 +59,11 @@ export class PriceListService {
         const url = environment.apiUrl + '/price-list';
         return this.http.post(url, data);
     }
+
+    exist(data) {
+        const url = environment.apiUrl + '/price-list/exist';
+        return this.http.post(url, { data: data });
+    }
 }
 
 
