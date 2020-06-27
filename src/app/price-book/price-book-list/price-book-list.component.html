@@ -1,6 +1,6 @@
 <mat-sidenav-container>
 
-  <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true">
+  <mat-sidenav  #sidenav class="left-sidebar" mode="side" opened>
     <mat-toolbar class="dv-header">
       <button mat-icon-button>
         <mat-icon>filter_list</mat-icon>
@@ -41,6 +41,9 @@
   <mat-sidenav-content>
 
     <mat-toolbar class="dv-header">
+      <button mat-icon-button (click)="sidenav.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
       <div class="select-product">
         <mat-form-field>
           <input type="text" [formControl]="selectProduct" matInput [matAutocomplete]="chooseProduct"
@@ -106,7 +109,7 @@
                   </button>
                 </th>
                 <td mat-cell *matCellDef="let element">
-                  <button mat-icon-button (click)="dialogSetUpCommonPrice(element,pageTotalCount)">
+                  <button mat-icon-button (click)="dialogSetUpCommonPrice(element,pageTotalCount, element?.common?.price)">
                     <mat-icon>edit</mat-icon>
                   </button>
                   <mat-form-field class="input-price">

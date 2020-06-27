@@ -1,9 +1,12 @@
 
+.left-sidebar .dv-header {
+  padding-left: 16px;
+}
 .title-price-list{
   padding: 16px 0 0 20px;
 }
 .select-product {
-  margin-left: 50px;
+  margin-left: 10px;
   font-size: 1rem;
   min-width: 215px;
 }

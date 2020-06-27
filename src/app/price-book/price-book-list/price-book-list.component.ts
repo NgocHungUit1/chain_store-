@@ -342,9 +342,11 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     });
   }
 
-  dialogSetUpCommonPrice(data, pageTotalCount) {
+  dialogSetUpCommonPrice(data, pageTotalCount,element_common_price) {
     data.pageTotalCount = pageTotalCount;
     data.price_list_common_id = this.priceListCommon.id;
+    data.element_common_price = element_common_price;
+    
     const dialogRef = this.dialog.open(SetupCommonPriceDialogComponent, {
       data: data,
       width: '45%',

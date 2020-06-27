@@ -14,6 +14,8 @@ export class SetupCommonPriceDialogComponent implements OnInit {
 
   local_data: any;
   price_list_common_id: string;
+  element_common_price: any;
+  price_data: any; // cho view de fix loi khong bi day gia
   chooseItems: any[] = [
     {
       'id': 'sell',
@@ -57,6 +59,8 @@ export class SetupCommonPriceDialogComponent implements OnInit {
   ) {
     this.local_data = { ...data };
     this.price_list_common_id = this.local_data.price_list_common_id;
+    this.element_common_price = this.local_data.element_common_price;
+    this.price_data = this.local_data.price;
   }
 
   onNoClick(): void {
@@ -71,7 +75,8 @@ export class SetupCommonPriceDialogComponent implements OnInit {
       calculation: ['plus'],
       type: ['vnd'],
       numberInput: [0],
-      allow_all: [0]
+      allow_all: [0],
+      element_common_price: this.element_common_price
     });
     this.updatePriceEvent();
   }
@@ -106,7 +111,11 @@ export class SetupCommonPriceDialogComponent implements OnInit {
     } else if (data.choose === 'original') {
       a = this.local_data.product.original_price;
     } else {
-      a = this.local_data.price;
+      if (this.element_common_price === null) {
+        a = this.local_data.price;
+      } else {
+        a = this.element_common_price; // lay gia tri cua bang gia chung
+      }
     }
 
     if (data.type === 'vnd') {
@@ -114,10 +123,7 @@ export class SetupCommonPriceDialogComponent implements OnInit {
     } else {
       result = a + calculation * b * a / 100;
     }
-    // var element = this.local_data;
-    this.local_data.price = result;
-
-
+    this.price_data = result; // khac voi submit de khong bi day gia
   }
 
   submit() {
@@ -142,7 +148,11 @@ export class SetupCommonPriceDialogComponent implements OnInit {
         } else if (data.choose === 'original') {
           a = this.local_data.product.original_price;
         } else {
-          a = this.local_data.price;
+          if (data.element_common_price === null) {
+            a = this.local_data.price;
+          } else {
+            a = data.element_common_price; // lay gia tri cua bang gia chung
+          }
         }
 
         if (data.type === 'vnd') {
@@ -151,7 +161,7 @@ export class SetupCommonPriceDialogComponent implements OnInit {
           result = a + calculation * b * a / 100;
         }
         var element = this.local_data;
-        element['price'] = result;
+        element['price'] = result; // add gia tri moi
         this.priceListProductSer.update(this.local_data.id, element).subscribe(element => {
           this.notifySer.notify('success', 'Lưu thành công!');
         });
