@@ -1,7 +1,7 @@
-import {Routes} from '@angular/router';
+import { Routes } from '@angular/router';
 
-import {FullComponent} from './layouts/full/full.component';
-import {AppBlankComponent} from './layouts/blank/blank.component';
+import { FullComponent } from './layouts/full/full.component';
+import { AppBlankComponent } from './layouts/blank/blank.component';
 
 export const AppRoutes: Routes = [
   {
@@ -29,6 +29,10 @@ export const AppRoutes: Routes = [
         path: 'transaction',
         loadChildren: () => import('./warehouse/warehouse.module').then(m => m.WarehouseModule)
       },
+      {
+        path: 'sale',
+        loadChildren: () => import('./sale/sale.module').then(m => m.SaleModule)
+      }
       // {
       //     path: 'material',
       //     loadChildren:

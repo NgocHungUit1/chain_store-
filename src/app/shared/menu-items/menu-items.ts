@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 
 export interface BadgeItem {
   type: string;
@@ -51,10 +51,10 @@ const MENUITEMS = [
     icon: 'web_asset',
     // badge: [{type: 'red', value: '17'}],
     children: [
-      {state: 'medicine', name: 'Danh mục thuốc', type: 'link', icon: 'list'},
-      {state: 'product', name: 'Sản phẩm', type: 'link', icon: 'local_pharmacy'},
-      {state: 'price-book', name: 'Thiết lập giá', type: 'link', icon: 'loyalty'},
-      {state: 'stock-take', name: 'Kiểm kho', type: 'link', icon: 'check_circle_outline'},
+      { state: 'medicine', name: 'Danh mục thuốc', type: 'link', icon: 'list' },
+      { state: 'product', name: 'Sản phẩm', type: 'link', icon: 'local_pharmacy' },
+      { state: 'price-book', name: 'Thiết lập giá', type: 'link', icon: 'loyalty' },
+      { state: 'stock-take', name: 'Kiểm kho', type: 'link', icon: 'check_circle_outline' },
     ]
   },
   {
@@ -64,11 +64,11 @@ const MENUITEMS = [
     icon: 'sync_alt',
     // badge: [{type: 'red', value: '17'}],
     children: [
-      {state: 'invoice', name: 'Hóa đơn', type: 'link', icon: 'receipt'},
-      {state: 'return', name: 'Trả hàng', type: 'link', icon: 'keyboard_return'},
-      {state: 'warehouse', name: 'Nhập hàng', type: 'link', icon: 'local_grocery_store'},
-      {state: 'warehouse-return', name: 'Trả hàng nhập', type: 'link', 'icon': 'assignment_return'},
-      {state: 'move', name: 'Chuyển hàng', type: 'link', icon: 'local_shipping'},
+      { state: 'invoice', name: 'Hóa đơn', type: 'link', icon: 'receipt' },
+      { state: 'return', name: 'Trả hàng', type: 'link', icon: 'keyboard_return' },
+      { state: 'warehouse', name: 'Nhập hàng', type: 'link', icon: 'local_grocery_store' },
+      { state: 'warehouse-return', name: 'Trả hàng nhập', type: 'link', 'icon': 'assignment_return' },
+      { state: 'move', name: 'Chuyển hàng', type: 'link', icon: 'local_shipping' },
     ]
   },
   {
@@ -78,9 +78,15 @@ const MENUITEMS = [
     icon: 'contacts',
     // badge: [{type: 'red', value: '17'}],
     children: [
-      {state: 'customer', name: 'Khách hàng', type: 'link', icon: 'person'},
-      {state: 'supplier', name: 'Nhà cung cấp', type: 'link', icon: 'people'},
+      { state: 'customer', name: 'Khách hàng', type: 'link', icon: 'person' },
+      { state: 'supplier', name: 'Nhà cung cấp', type: 'link', icon: 'people' },
     ]
+  },
+  {
+    state: 'sale',
+    name: 'Bán hàng',
+    type: 'link',
+    icon: 'shopping_basket',
   },
   // {
   //     state: 'material',

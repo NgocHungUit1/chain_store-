@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { SupplierListComponent} from './supplier-list/supplier-list.component';
+import { SupplierListComponent } from './supplier-list/supplier-list.component';
 
 export const SupplierRoutes: Routes = [
   {
