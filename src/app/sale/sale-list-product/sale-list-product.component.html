@@ -1,0 +1,9 @@
+<mat-paginator #paginator [length]="pageTotalCount" [pageSize]="pageSize"
+[pageSizeOptions]="pageSizeOptions"
+(page)="onMatPageChange($event)"
+[pageIndex]="page - 1" showFirstLastButtons></mat-paginator>
+<ul>
+    <li *ngFor="let object of dataSource">
+        {{ object.product_name }}
+    </li>
+</ul>

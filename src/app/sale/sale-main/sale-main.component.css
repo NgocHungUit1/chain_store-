@@ -11,6 +11,7 @@ html .page-wrapper .page-content {
     background-color: #ffffff;
     height: 100%;
     position: relative;
+    bottom: 0px;
 }
 
 .product-cart {
@@ -23,7 +24,7 @@ html .page-wrapper .page-content {
     -webkit-flex: 1;
     -ms-flex: 1;
     flex: 1;
-    height: 500px;
+    height: 400px;
 }
 
 .product-list--icon {
@@ -40,4 +41,8 @@ html .page-wrapper .page-content {
     background: #a1a1a1;
     margin-top: 2px;
     display: block;
+}
+
+.product-list--change {
+    
 }

@@ -12,10 +12,11 @@ import { AngularImageViewerModule } from "angular-x-image-viewer";
 import { SaleMainComponent } from './sale-main/sale-main.component';
 import { RouterModule } from '@angular/router';
 import { SaleRoutes } from './sale.routing';
+import { SaleListProductComponent } from './sale-list-product/sale-list-product.component';
 
 
 @NgModule({
-  declarations: [SaleMainComponent],
+  declarations: [SaleMainComponent, SaleListProductComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(SaleRoutes),
