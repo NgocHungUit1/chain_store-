@@ -1,0 +1,43 @@
+
+html .page-wrapper .page-content {
+    padding: 0px;
+}
+
+.mat-list-item {
+    float: right;
+  }
+
+.container-action-sale {
+    background-color: #ffffff;
+    height: 100%;
+    position: relative;
+}
+
+.product-cart {
+    transition: height 200ms ease-out;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: white;
+    border-bottom: 1px solid #e1e1e1;
+    padding: 5px;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    height: 500px;
+}
+
+.product-list--icon {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    height: 10px;
+    width: 30px;
+}
+
+.product-list--icon-style {
+    width: 29px;
+    height: 2px;
+    background: #a1a1a1;
+    margin-top: 2px;
+    display: block;
+}
