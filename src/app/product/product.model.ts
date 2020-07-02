@@ -1,7 +1,7 @@
-import {ApiFilterBase} from "../shared/base";
-import {Medicine} from "../medicine/medicine.model";
-import {Group} from "./group.model";
-import {Placement} from "./placement.model";
+import { ApiFilterBase } from "../shared/base";
+import { Medicine } from "../medicine/medicine.model";
+import { Group } from "./group.model";
+import { Placement } from "./placement.model";
 
 export class Product {
   id: string;
@@ -28,7 +28,7 @@ export class Product {
 }
 
 
-export class ProductFilter extends ApiFilterBase{
+export class ProductFilter extends ApiFilterBase {
   id = '';
   product_no = '';
   barcode = '';

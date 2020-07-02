@@ -1,4 +1,4 @@
-import {ApiFilterBase} from "../shared/base";
+import { ApiFilterBase } from "../shared/base";
 
 export class Using {
   id: number;
@@ -9,7 +9,7 @@ export class Using {
 }
 
 
-export class UsingFilter extends ApiFilterBase{
+export class UsingFilter extends ApiFilterBase {
   id = '';
   name = '';
   store_id = 0;

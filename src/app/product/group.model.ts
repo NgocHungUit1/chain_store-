@@ -1,4 +1,4 @@
-import {ApiFilterBase} from "../shared/base";
+import { ApiFilterBase } from "../shared/base";
 
 export class Group {
   id: number;
@@ -10,7 +10,7 @@ export class Group {
 }
 
 
-export class GroupFilter extends ApiFilterBase{
+export class GroupFilter extends ApiFilterBase {
   id = '';
   name = '';
   parent_id = 0;

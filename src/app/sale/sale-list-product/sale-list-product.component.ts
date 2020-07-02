@@ -7,6 +7,7 @@ import { ProductService } from '../../product/product.service';
 import { ProductFilter, Product } from '../../product/product.model';
 import { ActivatedRoute } from '@angular/router';
 import { ListComponentBase } from '../../shared/base';
+import { OrderService } from '../order.service';
 
 @Component({
   selector: 'app-sale-list-product',
@@ -17,6 +18,7 @@ import { ListComponentBase } from '../../shared/base';
 export class SaleListProductComponent extends ListComponentBase implements OnInit {
 
   constructor(
+    private orderService: OrderService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private productSer: ProductService,
@@ -70,4 +72,8 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
     this.loadData();
   }
 
+  addProductToOrder(object){
+    console.log(object); //@NGHIA
+    
+  }
 }
