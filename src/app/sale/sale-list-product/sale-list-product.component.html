@@ -1,9 +1,21 @@
-<mat-paginator #paginator [length]="pageTotalCount" [pageSize]="pageSize"
-[pageSizeOptions]="pageSizeOptions"
-(page)="onMatPageChange($event)"
-[pageIndex]="page - 1" showFirstLastButtons></mat-paginator>
-<ul>
-    <li *ngFor="let object of dataSource">
-        {{ object.product_name }}
-    </li>
-</ul>
+<div class="container-list-product">
+
+    <mat-paginator #paginator [length]="pageTotalCount" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+        (page)="onMatPageChange($event)" [pageIndex]="page - 1" showFirstLastButtons></mat-paginator>
+
+    <mat-grid-list cols="9" rowHeight="84px">
+        <mat-grid-tile *ngFor="let object of dataSource" class="grid-custom">
+            <div class="product-image">
+                <img src="assets/images/big/img1.jpg" style="max-width: 40px;">
+                <span class="product-price">
+                    {{ object.sell_price | number }}
+                </span>
+            </div>
+            <div class="content">
+                <span class="product-name">
+                    {{ object.product_name }}
+                </span>
+            </div>
+        </mat-grid-tile>
+    </mat-grid-list>
+</div>

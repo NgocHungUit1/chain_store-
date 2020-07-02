@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatPaginator } from "@angular/material/paginator";
 import { MatTable } from "@angular/material/table";
 import { MatSort } from "@angular/material/sort";
@@ -10,6 +10,7 @@ import { ListComponentBase } from '../../shared/base';
 
 @Component({
   selector: 'app-sale-list-product',
+  encapsulation: ViewEncapsulation.None,
   templateUrl: './sale-list-product.component.html',
   styleUrls: ['./sale-list-product.component.css']
 })
