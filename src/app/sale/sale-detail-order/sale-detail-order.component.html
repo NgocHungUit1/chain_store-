@@ -1,0 +1,8 @@
+<ul>
+    <li *ngFor="let itemProduct of listProduct" class="product-item">
+        {{ itemProduct.amount }}
+        {{ itemProduct.product?.product_name }}
+        {{ itemProduct.product?.product_no }}
+
+    </li>
+</ul>

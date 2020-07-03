@@ -2,10 +2,10 @@ import { Product } from '../product/product.model';
 
 export class Detail {
     product: Product;
-    amount: string;
-    total: string;
-    price: string;
-    discount: string;
+    amount: number;
+    total: number;
+    price: number;
+    discount: number;
     discount_type: string;
     note: string;
 }

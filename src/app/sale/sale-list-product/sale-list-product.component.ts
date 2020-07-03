@@ -73,7 +73,9 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
   }
 
   addProductToOrder(object){
-    console.log(object); //@NGHIA
+    // console.log(object); //@NGHIA
+    this.orderService.addProduct(object);
+    
     
   }
 }
