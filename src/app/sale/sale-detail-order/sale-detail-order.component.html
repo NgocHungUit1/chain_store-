@@ -1,8 +1,62 @@
-<ul>
-    <li *ngFor="let itemProduct of listProduct" class="product-item">
-        {{ itemProduct.amount }}
-        {{ itemProduct.product?.product_name }}
-        {{ itemProduct.product?.product_no }}
+<div *ngFor="let itemProduct of listProduct; let i = index" class="product-item">
+    <div fxLayout="row wrap" class="row-item">
+        <div fxFlex="7">
+            <span class="row-count-number">{{  countProduct-i  }}</span>
+            <button mat-icon-button (click)="deleleProduct(itemProduct)">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </div>
+        <div fxFlex="7">
+            <span class="row-text row-product-no">
+                {{ itemProduct.product?.product_no }}
+            </span>
+        </div>
+        <div fxFlex="45">
+            <span class="row-text row-product-name">
+                {{ itemProduct.product?.product_name }}
+            </span>
+            <span class="row-product-note">
+                <span>Ghi chú liều dùng</span>
+                <button mat-icon-button>
+                    <mat-icon class="row-icon-edit">edit</mat-icon>
+                </button>
+            </span>
+        </div>
+        <div fxFlex="10">
+            <div fxLayout="row wrap" class="row-amount">
+                <div fxFlex="30">
+                    <button mat-icon-button class="row-button-edit-amount">
+                        <mat-icon>keyboard_arrow_up</mat-icon>
+                    </button>
+                </div>
+                <div fxFlex="40" class="row-amount-number">
+                    <input matInput tabindex="3" value="{{ itemProduct.amount }}">
+                </div>
+                <div fxFlex="30">
+                    <button mat-icon-button class="row-button-edit-amount">
+                        <mat-icon>keyboard_arrow_down</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div fxFlex="2"></div>
+        <div fxFlex="12">
+            <div fxLayout="row wrap">
+                <div fxFlex="70" style="padding-top: 10px; font-size: 20px; text-align: right;">
+                    <input matInput type="text" value="{{ itemProduct.product?.sell_price | number }}">
+                </div>
+                <div fxFlex="30">
+                    <button mat-icon-button>
+                        <mat-icon class="row-icon-edit-price">edit</mat-icon>
+                    </button>
+                </div>
+            </div>
 
-    </li>
-</ul>
+        </div>
+        <div fxFlex="17" class="row-total-price">
+            <input matInput type="text" value="{{ itemProduct.product?.sell_price * itemProduct.amount | number }}">
+        </div>
+
+    </div>
+
+</div>

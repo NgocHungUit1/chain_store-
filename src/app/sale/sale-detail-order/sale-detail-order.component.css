@@ -1,3 +1,68 @@
 .product-item {
-    list-style: none;
+  padding: 10px;
+  border: 1px solid #ececec;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+.product-item:hover {
+  background-color: #ececec;
+}
+
+.row-item {
+  position: relative;
+}
+
+.row-text {
+  padding-top: 10px;
+  position: absolute;
+}
+
+.row-count-number {
+  font-size: 15px;
+  padding:0 10px;
+}
+
+.row-product-note {
+  padding-top: 20px;
+  position: absolute;
+  color: #666666;
+}
+
+.row-amount {
+  position: relative;
+  width: 110px;
+}
+
+.row-product-no {
+  font-size: 15px;
+}
+
+.row-product-name {
+  font-size: 15px;
+}
+
+.row-amount-number {
+  padding: 10px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.row-icon-edit {
+  font-size: 15px;
+}
+
+.row-button-edit-amount {
+  /* padding: 0px !important; */
+}
+
+.row-icon-edit-price {
+  font-size: 20px;
+}
+
+.row-total-price {
+  padding-top: 10px;
+  font-size: 20px;
+  text-align: right;
+  font-weight: 600;
 }

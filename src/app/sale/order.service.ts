@@ -40,5 +40,13 @@ export class OrderService {
 
   }
 
+  deleteProduct(id: string) {
+    if (this.ObjectOrder.value !== null) {
+      const order = this.ObjectOrder.value;
+      delete order['listProduct'][id];
+      this.ObjectOrder.next(order);
+    }
+  }
+
   constructor() { }
 }

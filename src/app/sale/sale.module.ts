@@ -14,10 +14,11 @@ import { RouterModule } from '@angular/router';
 import { SaleRoutes } from './sale.routing';
 import { SaleListProductComponent } from './sale-list-product/sale-list-product.component';
 import { SaleDetailOrderComponent } from './sale-detail-order/sale-detail-order.component';
+import { SaleSiderbarOrderComponent } from './sale-siderbar-order/sale-siderbar-order.component';
 
 
 @NgModule({
-  declarations: [SaleMainComponent, SaleListProductComponent, SaleDetailOrderComponent],
+  declarations: [SaleMainComponent, SaleListProductComponent, SaleDetailOrderComponent, SaleSiderbarOrderComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(SaleRoutes),
