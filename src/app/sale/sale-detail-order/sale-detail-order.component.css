@@ -20,7 +20,7 @@
 
 .row-count-number {
   font-size: 15px;
-  padding:0 10px;
+  padding: 0 10px;
 }
 
 .row-product-note {
@@ -46,6 +46,8 @@
   padding: 10px;
   text-align: center;
   font-size: 18px;
+  float: right;
+  min-width: 50px;
 }
 
 .row-icon-edit {

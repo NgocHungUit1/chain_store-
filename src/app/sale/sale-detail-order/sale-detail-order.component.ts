@@ -19,7 +19,6 @@ export class SaleDetailOrderComponent implements OnInit {
 
   ngOnInit(): void {
     this.orderService.subscribeObjectOrder.subscribe(res => {
-      // this.listProduct = res['listProduct'];
       if (res !== null && res['listProduct'] !== undefined) {
         const obj = res['listProduct'];
         this.listProduct = [];
@@ -30,13 +29,23 @@ export class SaleDetailOrderComponent implements OnInit {
         }
         this.listProduct.reverse();
       }
-      // console.log(this.listProduct);
     });
   }
 
   deleleProduct(itemProduct) {
-      const id = itemProduct?.product?.id;
-      this.orderService.deleteProduct(id);
+    const id = itemProduct?.product?.id;
+    this.orderService.deleteProduct(id);
   }
 
+  upAmountProduct(product_id) {
+    this.orderService.upAmountProduct(product_id);
+  }
+
+  downAmountProduct(product_id) {
+    this.orderService.downAmountProduct(product_id);
+  }
+
+  inputAmountProduct(product_id, value) {
+    this.orderService.inputAmountProduct(product_id, value);
+  }
 }

@@ -44,6 +44,11 @@
 
 </mat-toolbar>
 
+<div class="table-loading-shade" *ngIf="isLoadingResults">
+    <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+
+</div>
+
 <div fxLayout="row wrap">
     <div fxFlex="74">
         <div class="container-main-sale">

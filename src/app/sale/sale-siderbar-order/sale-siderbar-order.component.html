@@ -1,38 +1,58 @@
 <div class="main-sale-siderbar-order">
-    <div class="user-action">
-        NHân viên
-    </div>
+    <form [formGroup]="form">
 
-    <div class="customer-action">
-        Khách hang
-    </div>
-    <div class="pricebook-action">
-        thiết lập giá
-    </div>
-    <mat-divider></mat-divider>
-    <div class="order-detail">
-        <div fxLayout="row wrap" class="price-product">
-            <div fxFlex="70" class="price-product-text">
-                <span matBadge="{{ countProduct }}" matBadgeOverlap="false">Tổng tiền hàng </span>
+        <div class="user-action">
+            NHân viên
+        </div>
+
+        <div class="customer-action">
+            Khách hang
+        </div>
+        <div class="pricebook-action">
+            <div fxLayout="row wrap">
+                <!-- <div fxFlex="20">
+                    <mat-icon class="icon-bookmark_border">bookmark_border</mat-icon>
+                </div> -->
+                <div fxFlex="100">
+                    <mat-form-field>
+                        <mat-select placeholder="Chọn bảng giá" (selectionChange)="choosePriceBook($event)"
+                            formControlName="priceBookID">
+                            <mat-option *ngFor="let priceList of priceLists" [value]="priceList.id">
+                                {{ priceList.name }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
             </div>
-            <div fxFlex="30" class="price-product-number">
-                <input matInput type="text" value="1000">
 
+        </div>
+        <mat-divider></mat-divider>
+        <div class="order-detail">
+            <div fxLayout="row wrap" class="price-product">
+                <div fxFlex="70" class="price-product-text">
+                    <span matBadge="{{ countProduct }}" matBadgeOverlap="false">Tổng tiền hàng </span>
+                </div>
+                <div fxFlex="30" class="price-product-number">
+                    <input matInput type="text" value="1000">
+
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="order-note">
-        <mat-form-field class="example-full-width">
-            <mat-label>Ghi chú</mat-label>
-            <textarea matInput placeholder=""></textarea>
-        </mat-form-field>
-    </div>
-    <button mat-button class="payment-button btn-success">
-        <span>Thanh toán</span>
-    </button>
+        <div class="order-note">
+            <mat-form-field class="example-full-width">
+                <mat-label>Ghi chú</mat-label>
+                <textarea matInput placeholder=""></textarea>
+            </mat-form-field>
+        </div>
+        <button mat-button class="payment-button btn-success">
+            <span>Thanh toán</span>
+        </button>
 
-    <span class="support-content">
-        <mat-icon>phone</mat-icon> Hỗ trợ khách hàng 1900 6522
-    </span>
+        <span class="support-content">
+            <mat-icon>phone</mat-icon> Hỗ trợ khách hàng 1900 6522
+        </span>
+
+    </form>
+
 </div>

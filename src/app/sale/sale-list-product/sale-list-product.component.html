@@ -6,7 +6,8 @@
     <mat-grid-list cols="9" rowHeight="84px">
         <mat-grid-tile *ngFor="let object of dataSource" class="grid-custom" (click)="addProductToOrder(object)">
             <div class="product-image">
-                <img src="assets/images/big/img1.jpg" style="max-width: 40px;">
+                <!-- <img src="assets/images/big/img1.jpg" > -->
+                <img class="example-option-img" aria-hidden [src]="object.default_image" style="max-width: 40px;">
                 <span class="product-price">
                     {{ object.sell_price | number }}
                 </span>

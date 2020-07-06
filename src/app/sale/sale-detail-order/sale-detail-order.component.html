@@ -24,16 +24,20 @@
         </div>
         <div fxFlex="10">
             <div fxLayout="row wrap" class="row-amount">
-                <div fxFlex="30">
-                    <button mat-icon-button class="row-button-edit-amount">
+                <div fxFlex="25">
+                    <button mat-icon-button class="row-button-edit-amount"
+                        (click)="upAmountProduct(itemProduct.product?.id)">
                         <mat-icon>keyboard_arrow_up</mat-icon>
                     </button>
                 </div>
-                <div fxFlex="40" class="row-amount-number">
-                    <input matInput tabindex="3" value="{{ itemProduct.amount }}">
+                <div fxFlex="50" class="row-amount-number">
+                    <input matInput type="number" tabindex="3" min="0"
+                        (input)="inputAmountProduct(itemProduct.product?.id,$event.target.value)"
+                        value="{{ itemProduct.amount }}">
                 </div>
-                <div fxFlex="30">
-                    <button mat-icon-button class="row-button-edit-amount">
+                <div fxFlex="25">
+                    <button mat-icon-button class="row-button-edit-amount"
+                        (click)="downAmountProduct(itemProduct.product?.id)">
                         <mat-icon>keyboard_arrow_down</mat-icon>
                     </button>
                 </div>
