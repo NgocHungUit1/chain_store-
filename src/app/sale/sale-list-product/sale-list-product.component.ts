@@ -8,6 +8,7 @@ import { ProductFilter, Product } from '../../product/product.model';
 import { ActivatedRoute } from '@angular/router';
 import { ListComponentBase } from '../../shared/base';
 import { OrderService } from '../order.service';
+import { PriceListProductService } from '../../price-book/price-list-product.service';
 
 @Component({
   selector: 'app-sale-list-product',
@@ -22,6 +23,8 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private productSer: ProductService,
+    private priceListProductSer: PriceListProductService,
+
   ) {
     super();
   }
@@ -61,6 +64,37 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
     this.isLoadingResults = true;
     this.productSer.getList(this.apiFilter).subscribe(res => {
       this.dataSource = res.body;
+      const list = res.body;
+
+      const priceBookID = this.orderService.getPriceBookID();
+
+      if (priceBookID !== null && Array.isArray(list)) {
+        const listProductChoose = list.map(obj => obj.id);
+        // console.log(listProductChoose);
+
+        const common_id = priceBookID;
+        // tien hanh xu ly add common vao list
+        this.priceListProductSer.getListProductCommon(common_id, listProductChoose).subscribe(resCommon => {
+          if (Array.isArray(resCommon)) {
+            const priceListProductCommonExist = resCommon;
+            this.dataSource = res.body;
+            // code group array by key
+            const group = priceListProductCommonExist.reduce((r, a) => {
+              r[a.product_id] = [...r[a.product_id] || [], a];
+              return r;
+            }, {});
+            // add common || null
+            this.dataSource.forEach(elementData => {
+              if (group[elementData.id] !== undefined) {
+                elementData.common = group[elementData.id][0];
+              } else {
+                elementData.common = null;
+              }
+            });
+          }
+        });
+      }
+
       this.reloadFilter(res);
       const url = this.productSer.getStateUrl(this.apiFilter);
       this.isLoadingResults = false;
@@ -69,13 +103,15 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
 
   ngOnInit(): void {
     this.apiFilter = this.buildFilterFromParams();
-    this.loadData();
+    this.orderService.subscribePriceBookID.subscribe(priceBookID => {
+      if (priceBookID !== null) {
+        this.loadData();
+      }
+    });
+
   }
 
-  addProductToOrder(object){
-    // console.log(object); //@NGHIA
+  addProductToOrder(object) {
     this.orderService.addProduct(object);
-    
-    
   }
 }

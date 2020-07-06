@@ -1,13 +1,13 @@
 <div *ngFor="let itemProduct of listProduct; let i = index" class="product-item">
     <div fxLayout="row wrap" class="row-item">
-        <div fxFlex="7">
-            <span class="row-count-number">{{  countProduct-i  }}</span>
+        <div fxFlex="7" class="row-count-number">
+            <span>{{  countProduct-i  }}</span>
             <button mat-icon-button (click)="deleleProduct(itemProduct)">
                 <mat-icon>delete</mat-icon>
             </button>
         </div>
-        <div fxFlex="7">
-            <span class="row-text row-product-no">
+        <div fxFlex="7" class="row-product-no">
+            <span>
                 {{ itemProduct.product?.product_no }}
             </span>
         </div>
@@ -22,43 +22,40 @@
                 </button>
             </span>
         </div>
-        <div fxFlex="10">
-            <div fxLayout="row wrap" class="row-amount">
-                <div fxFlex="25">
-                    <button mat-icon-button class="row-button-edit-amount"
+        <div fxFlex="10" class="row-amount">
+            <div fxLayout="row wrap">
+                <mat-form-field>
+                    <button matPrefix mat-icon-button class="row-button-edit-amount"
                         (click)="upAmountProduct(itemProduct.product?.id)">
                         <mat-icon>keyboard_arrow_up</mat-icon>
                     </button>
-                </div>
-                <div fxFlex="50" class="row-amount-number">
-                    <input matInput type="number" tabindex="3" min="0"
+                    <input matInput type="number" tabindex="3" min="0" class="row-amount-number"
                         (input)="inputAmountProduct(itemProduct.product?.id,$event.target.value)"
                         value="{{ itemProduct.amount }}">
-                </div>
-                <div fxFlex="25">
-                    <button mat-icon-button class="row-button-edit-amount"
+                    <button matSuffix mat-icon-button class="row-button-edit-amount"
                         (click)="downAmountProduct(itemProduct.product?.id)">
                         <mat-icon>keyboard_arrow_down</mat-icon>
                     </button>
-                </div>
+                </mat-form-field>
             </div>
         </div>
         <div fxFlex="2"></div>
         <div fxFlex="12">
             <div fxLayout="row wrap">
-                <div fxFlex="70" style="padding-top: 10px; font-size: 20px; text-align: right;">
-                    <input matInput type="text" value="{{ itemProduct.product?.sell_price | number }}">
+                <div fxFlex="100" style=" font-size: 20px; text-align: right;">
+                    <mat-form-field>
+                        <input matInput type="text" value="{{  itemProduct?.common_price | number }}">
+                        <button mat-icon-button matSuffix>
+                            <mat-icon class="row-icon-edit-price">edit</mat-icon>
+                        </button>
+                    </mat-form-field>
                 </div>
-                <div fxFlex="30">
-                    <button mat-icon-button>
-                        <mat-icon class="row-icon-edit-price">edit</mat-icon>
-                    </button>
-                </div>
+
             </div>
 
         </div>
         <div fxFlex="17" class="row-total-price">
-            <input matInput type="text" value="{{ itemProduct.product?.sell_price * itemProduct.amount | number }}">
+            {{ itemProduct?.common_price * itemProduct.amount | number }}
         </div>
 
     </div>

@@ -9,6 +9,8 @@ import { OrderService } from '../order.service';
 import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 import { ProductService } from '../../product/product.service';
 import { of } from 'rxjs/internal/observable/of';
+import { PriceListFilter } from '../../price-book/price-list.model';
+import { PriceListService } from '../../price-book/price-list.service';
 
 @Component({
   selector: 'app-sale-main',
@@ -26,6 +28,7 @@ export class SaleMainComponent implements OnInit {
     private notifySer: NotifierService,
     private orderService: OrderService,
     private productSer: ProductService,
+    private priceListSer: PriceListService,
 
   ) {
     // super();
@@ -40,9 +43,17 @@ export class SaleMainComponent implements OnInit {
     this.isLoadingResults = false;
 
     this.orderService.subscribeLoadPage.subscribe(action => {
-      if (action === true) {
-        this.orderService.setLoadProduct(false);
-      }
+      this.isLoadingResults = action;
+    });
+
+    const priceListFilter = new PriceListFilter();
+    this.priceListSer.getList(priceListFilter).subscribe(res => {
+      const priceLists = res.body;
+      priceLists.forEach((element, index) => {
+        if (element.is_default === 1) {
+          this.orderService.addPriceBookID(element.id);
+        }
+      });
     });
 
     this.filteredProducts = this.selectProduct.valueChanges.pipe(

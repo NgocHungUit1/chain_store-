@@ -25,6 +25,7 @@ export class Product {
   productPlacements: Placement[];
   productUnits: object[];
   images: object[];
+  common: object;
 }
 
 

@@ -22,9 +22,16 @@ export class OrderService {
   subscribePriceBookID: Observable<string> = this.priceBookID.asObservable();
 
   // Luu thong tin khach hang
-  private customerID: BehaviorSubject<string> = new BehaviorSubject<string>(null);
-  subscribeCustomerID: Observable<string> = this.customerID.asObservable();
+  private customer: BehaviorSubject<object> = new BehaviorSubject<object>(null);
+  subscribeCustomer: Observable<object> = this.customer.asObservable();
 
+  // ghi chu khach hang
+  private note: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+  subscribeNote: Observable<string> = this.note.asObservable();
+
+  addCustomer(customerObj: object) {
+    this.customer.next(customerObj);
+  }
 
   setLoadProduct(action: boolean) {
     this.loadPage.next(action);
@@ -34,14 +41,17 @@ export class OrderService {
     this.priceBookID.next(priceBookID);
   }
 
-  addProduct(object: Product) { // @NGHIA
+  getPriceBookID() {
+    return this.priceBookID.value;
+  }
+
+  addProduct(object: Product) {
     if (this.ObjectOrder.value === null) {
       const listProduct = {};
       const order = {};
       listProduct[object.id] = { 'product': object, 'amount': 1 };
       order['listProduct'] = listProduct;
       this.ObjectOrder.next(order);
-
     } else {
       const order = this.ObjectOrder.value;
       const listProduct = order['listProduct'];

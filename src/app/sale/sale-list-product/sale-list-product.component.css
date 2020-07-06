@@ -32,6 +32,7 @@ mat-grid-tile {
   top: 40px;
   font-weight: 600;
   color: #3d933c;
+  margin-left: 10px;
 }
 
 .grid-custom:hover {

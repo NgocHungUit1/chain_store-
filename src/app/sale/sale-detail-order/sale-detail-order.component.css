@@ -1,5 +1,5 @@
 .product-item {
-  padding: 10px;
+  padding: 0 10px;
   border: 1px solid #ececec;
   border-radius: 3px;
   font-size: 12px;
@@ -21,6 +21,7 @@
 .row-count-number {
   font-size: 15px;
   padding: 0 10px;
+  padding-top: 20px
 }
 
 .row-product-note {
@@ -30,12 +31,14 @@
 }
 
 .row-amount {
-  position: relative;
+  /* position: relative; */
   width: 110px;
+  font-size: 20px;
 }
 
 .row-product-no {
   font-size: 15px;
+  padding-top: 20px;
 }
 
 .row-product-name {
@@ -43,11 +46,11 @@
 }
 
 .row-amount-number {
-  padding: 10px;
+  /* padding: 10px; */
   text-align: center;
-  font-size: 18px;
+  /* font-size: 18px;
   float: right;
-  min-width: 50px;
+  min-width: 50px; */
 }
 
 .row-icon-edit {
@@ -63,7 +66,7 @@
 }
 
 .row-total-price {
-  padding-top: 10px;
+  padding-top: 28px;
   font-size: 20px;
   text-align: right;
   font-weight: 600;
