@@ -73,8 +73,52 @@
                     <span matBadge="{{ countProduct }}" matBadgeOverlap="false">Tổng tiền hàng </span>
                 </div>
                 <div fxFlex="50" class="price-product-number">
-                    <input matInput type="text" value="{{ sumPrice | number}}">
+                    <input matInput type="text"  value="{{ sumPrice | number}}">
 
+                </div>
+            </div>
+        </div>
+
+        <div class="order-discount">
+            <div fxLayout="row wrap" class="price-discount">
+                <div fxFlex="50" class="price-discount-text">
+                    <span>Giảm giá </span>
+                </div>
+                <div fxFlex="50" class="price-discount-number">
+                    <input matInput type="text" value="{{ sumPrice | number}}">
+                </div>
+            </div>
+        </div>
+
+        <div class="customer-need">
+            <div fxLayout="row wrap" class="customer-need">
+                <div fxFlex="50" class="customer-need-text">
+                    <span>Khách cần trả</span>
+                </div>
+                <div fxFlex="50" class="customer-need-number">
+                    <input matInput type="text" value="{{ sumPrice | number}}">
+                </div>
+            </div>
+        </div>
+
+        <div class="customer-pay">
+            <div fxLayout="row wrap" class="customer-pay">
+                <div fxFlex="50" class="customer-pay-text">
+                    <span>Khách thanh toán</span>
+                </div>
+                <div fxFlex="50" class="customer-pay-number">
+                    <input matInput type="text" value="{{ sumPrice | number}}">
+                </div>
+            </div>
+        </div>
+
+        <div class="excess-cash">
+            <div fxLayout="row wrap" class="excess-cash">
+                <div fxFlex="50" class="cexcess-cash-text">
+                    <span>Tiền thừa trả khách</span>
+                </div>
+                <div fxFlex="50" class="excess-cash-number">
+                    <input matInput type="text" value="{{ sumPrice | number}}">
                 </div>
             </div>
         </div>
