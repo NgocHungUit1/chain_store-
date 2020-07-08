@@ -37,8 +37,16 @@ export class AuthService {
   }
 
   login(username: string, password: string, remember?: boolean): Observable<any> {
+    const domain = window.location.hostname;
+    let subDomain = '';
+    if (domain.indexOf('.') < 0 ||
+      domain.split('.')[0] === 'example' || domain.split('.')[0] === 'lvh' || domain.split('.')[0] === 'www') {
+      subDomain = '';
+    } else {
+      subDomain = domain.split('.')[0];
+    }
     const url = environment.apiUrl + '/auth/login';
-    return this.httpClient.post(url, {username: username, password: password, remember: remember});
+    return this.httpClient.post(url, {username: username, password: password, remember: remember, subdomain: subDomain});
   }
 
   logout(): Observable<boolean> {
