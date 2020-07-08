@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {MatDialogRef} from "@angular/material/dialog";
-import {NotifierService} from "angular-notifier";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import { MatDialogRef } from "@angular/material/dialog";
+import { NotifierService } from "angular-notifier";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ManufacturerService } from '../manufacturer.service';
 
 @Component({

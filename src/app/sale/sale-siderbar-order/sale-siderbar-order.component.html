@@ -69,11 +69,11 @@
         <mat-divider></mat-divider>
         <div class="order-detail">
             <div fxLayout="row wrap" class="price-product">
-                <div fxFlex="50" class="price-product-text">
+                <div fxFlex="50" class="price-product-text ">
                     <span matBadge="{{ countProduct }}" matBadgeOverlap="false">Tổng tiền hàng </span>
                 </div>
                 <div fxFlex="50" class="price-product-number">
-                    <input matInput type="text"  value="{{ sumPrice | number}}">
+                    <input matInput type="text" value="{{ sumPrice | number}}">
 
                 </div>
             </div>
@@ -81,44 +81,55 @@
 
         <div class="order-discount">
             <div fxLayout="row wrap" class="price-discount">
-                <div fxFlex="50" class="price-discount-text">
+                <div fxFlex="50" class="price-discount-text ">
                     <span>Giảm giá </span>
                 </div>
                 <div fxFlex="50" class="price-discount-number">
-                    <input matInput type="text" value="{{ sumPrice | number}}">
+                    <mat-form-field style="text-align: right">
+                        <button mat-icon-button matPrefix>
+                            <mat-icon class="row-edit-price-discount-number" (click)="openDiscountSiderBar()">edit
+                            </mat-icon>
+                        </button>
+                        <input matInput type="text" value="{{ numberDiscount | number}}" [disabled]="true">
+                    </mat-form-field>
                 </div>
             </div>
         </div>
 
         <div class="customer-need">
             <div fxLayout="row wrap" class="customer-need">
-                <div fxFlex="50" class="customer-need-text">
+                <div fxFlex="50" class="customer-need-text label-text">
                     <span>Khách cần trả</span>
                 </div>
                 <div fxFlex="50" class="customer-need-number">
-                    <input matInput type="text" value="{{ sumPrice | number}}">
+                    <input matInput type="text" value="{{ sumPrice - numberDiscount | number}}">
                 </div>
             </div>
         </div>
 
         <div class="customer-pay">
             <div fxLayout="row wrap" class="customer-pay">
-                <div fxFlex="50" class="customer-pay-text">
+                <div fxFlex="50" class="customer-pay-text ">
                     <span>Khách thanh toán</span>
                 </div>
                 <div fxFlex="50" class="customer-pay-number">
-                    <input matInput type="text" value="{{ sumPrice | number}}">
+                    <mat-form-field style="text-align: right">
+                        <button mat-icon-button matPrefix>
+                            <mat-icon class="row-edit-customer-pay-number" (click)="openPaymentSiderBarDialog()">credit_card</mat-icon>
+                        </button>
+                        <input matInput type="text" value="{{ customerPay | number}}">
+                    </mat-form-field>
                 </div>
             </div>
         </div>
 
         <div class="excess-cash">
             <div fxLayout="row wrap" class="excess-cash">
-                <div fxFlex="50" class="cexcess-cash-text">
+                <div fxFlex="50" class="cexcess-cash-text label-text">
                     <span>Tiền thừa trả khách</span>
                 </div>
                 <div fxFlex="50" class="excess-cash-number">
-                    <input matInput type="text" value="{{ sumPrice | number}}">
+                    <input matInput type="text" value="{{ customerPay - sumPrice + numberDiscount | number}}">
                 </div>
             </div>
         </div>

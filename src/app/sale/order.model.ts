@@ -19,3 +19,13 @@ export class Order {
     discount_type: string;
     note: string;
 }
+
+export class DiscountSiderBar {
+    number: number;
+    type: string;
+}
+
+export class PaymentSiderBar{
+    number: number;
+    type: string;
+}

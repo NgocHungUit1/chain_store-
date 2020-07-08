@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { Order, Detail } from '../sale/order.model';
+import { Order, Detail, DiscountSiderBar, PaymentSiderBar } from '../sale/order.model';
 import { Product } from '../product/product.model';
 import { log } from 'console';
 
@@ -28,6 +28,31 @@ export class OrderService {
   // ghi chu khach hang
   private note: BehaviorSubject<string> = new BehaviorSubject<string>(null);
   subscribeNote: Observable<string> = this.note.asObservable();
+
+  // giam gia
+  private discountSiderBar: BehaviorSubject<DiscountSiderBar> = new BehaviorSubject<DiscountSiderBar>(null);
+  subscribeDiscountSiderBar: Observable<DiscountSiderBar> = this.discountSiderBar.asObservable();
+
+  // luu thanh toan khach hang
+  private paymentSiderBar: BehaviorSubject<PaymentSiderBar> = new BehaviorSubject<PaymentSiderBar>(null);
+  subscribePaymentSiderBar: Observable<PaymentSiderBar> = this.paymentSiderBar.asObservable();
+
+  //
+  setPaymentSiderBar(obj: PaymentSiderBar) {
+    this.paymentSiderBar.next(obj);
+  }
+
+  getPaymentSiderBar() {
+    return this.paymentSiderBar.value;
+  }
+
+  //
+  setDiscountSiderBar(obj: DiscountSiderBar) {
+    this.discountSiderBar.next(obj);
+  }
+  getDiscountSiderBar() {
+    return this.discountSiderBar.value;
+  }
 
   addCustomer(customerObj: object) {
     this.customer.next(customerObj);

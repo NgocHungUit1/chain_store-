@@ -15,10 +15,12 @@ import { SaleRoutes } from './sale.routing';
 import { SaleListProductComponent } from './sale-list-product/sale-list-product.component';
 import { SaleDetailOrderComponent } from './sale-detail-order/sale-detail-order.component';
 import { SaleSiderbarOrderComponent } from './sale-siderbar-order/sale-siderbar-order.component';
+import { DiscountSiderbarDialogComponent } from './discount-siderbar-dialog/discount-siderbar-dialog.component';
+import { PaymentSiderbarDialogComponent } from './payment-siderbar-dialog/payment-siderbar-dialog.component';
 
 
 @NgModule({
-  declarations: [SaleMainComponent, SaleListProductComponent, SaleDetailOrderComponent, SaleSiderbarOrderComponent],
+  declarations: [SaleMainComponent, SaleListProductComponent, SaleDetailOrderComponent, SaleSiderbarOrderComponent, DiscountSiderbarDialogComponent, PaymentSiderbarDialogComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(SaleRoutes),

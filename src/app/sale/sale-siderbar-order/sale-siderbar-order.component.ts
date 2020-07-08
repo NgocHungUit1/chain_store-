@@ -9,6 +9,9 @@ import { Customer } from '../../customer/customer.model';
 import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/internal/observable/of';
 import { CustomerService } from '../../customer/customer.service';
+import { MatDialog } from '@angular/material/dialog';
+import { DiscountSiderbarDialogComponent } from '../discount-siderbar-dialog/discount-siderbar-dialog.component';
+import { PaymentSiderbarDialogComponent } from '../payment-siderbar-dialog/payment-siderbar-dialog.component';
 
 @Component({
   selector: 'app-sale-siderbar-order',
@@ -21,6 +24,8 @@ export class SaleSiderbarOrderComponent implements OnInit {
   public listProduct: any = [];
   public countProduct: number = 0;
   public sumPrice: number = 0;
+  public numberDiscount: number = 0;
+  public customerPay: number = 0;
   public priceLists: PriceList[] = [];
   public priceListCommon: PriceList;
   public form: FormGroup;
@@ -34,6 +39,7 @@ export class SaleSiderbarOrderComponent implements OnInit {
     public fb: FormBuilder,
     private priceListProductSer: PriceListProductService,
     public customerService: CustomerService,
+    private dialog: MatDialog,
   ) { }
 
   initForm() {
@@ -142,8 +148,28 @@ export class SaleSiderbarOrderComponent implements OnInit {
 
     });
 
-  }
+    // discount 
+    this.orderService.subscribeDiscountSiderBar.subscribe(res => {
+      if (res !== null) {
+        if (res.type === 'vnd') {
+          this.numberDiscount = res.number;
+        } else {
+          this.numberDiscount = this.sumPrice * res.number / 100;
+        }
+      } else {
+        this.numberDiscount = 0;
+      }
+    });
 
+    // customerPay
+    this.orderService.subscribePaymentSiderBar.subscribe(res => {
+      if (res !== null) {
+        this.customerPay = res.number;
+      } else {
+        this.customerPay = 0;
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.initForm();
@@ -181,4 +207,25 @@ export class SaleSiderbarOrderComponent implements OnInit {
     this.orderService.addPriceBookID(this.form.controls['priceBookID'].value);
   }
 
+  openDiscountSiderBar() {
+    const dialogRef = this.dialog.open(DiscountSiderbarDialogComponent, {
+      width: '30%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // this.loadData();
+    });
+  }
+
+  openPaymentSiderBarDialog() {
+    const dialogRef = this.dialog.open(PaymentSiderbarDialogComponent, {
+      width: '40%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // this.loadData();
+    });
+  }
 }
