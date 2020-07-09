@@ -2,6 +2,11 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { OrderService } from '../order.service';
 import { ActivatedRoute } from '@angular/router';
 import { PriceListProductService } from '../../price-book/price-list-product.service';
+import { NoteDetailOrderDialogComponent } from '../note-detail-order-dialog/note-detail-order-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { observable } from 'rxjs';
+import { PriceDetailOrderDialogComponent } from '../price-detail-order-dialog/price-detail-order-dialog.component';
+import { Product } from '../../product/product.model';
 
 @Component({
   selector: 'app-sale-detail-order',
@@ -13,10 +18,12 @@ export class SaleDetailOrderComponent implements OnInit {
 
   listProduct: any = [];
   countProduct: number = 0;
+
   constructor(
     private orderService: OrderService,
     private route: ActivatedRoute,
     private priceListProductSer: PriceListProductService,
+    private dialog: MatDialog,
   ) { }
 
   loadData() {
@@ -101,5 +108,37 @@ export class SaleDetailOrderComponent implements OnInit {
 
   inputAmountProduct(product_id, value) {
     this.orderService.inputAmountProduct(product_id, value);
+  }
+
+  openNoteDetailOrderDialog(id: string, note_detail_sale: string) {
+    const obj = {
+      id: id,
+      note_detail_sale: note_detail_sale
+    };
+    const dialogRef = this.dialog.open(NoteDetailOrderDialogComponent, {
+      data: obj,
+      width: '40%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // this.loadData();
+    });
+  }
+
+  openPriceDetailOrderDialog(product: Product, common_price: string) {
+    const obj = {
+      product: product,
+      common_price: common_price
+    };
+    const dialogRef = this.dialog.open(PriceDetailOrderDialogComponent, {
+      data: obj,
+      width: '30%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // this.loadData();
+    });
   }
 }

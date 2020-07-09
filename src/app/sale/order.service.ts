@@ -124,6 +124,17 @@ export class OrderService {
     }
   }
 
+  updateNoteDetailOrder(id: string, note_detail_sale: string) {
+    const order = this.ObjectOrder.value;
+    order['listProduct'][id]['product']['note_detail_sale'] = note_detail_sale;
+    this.ObjectOrder.next(order);
+  }
+
+  updateProduct(id: string, product: Product) {
+    const order = this.ObjectOrder.value;
+    order['listProduct'][id]['product'] = product;
+    this.ObjectOrder.next(order);
+  }
 
   inputAmountProduct(id: string, value: number) {
     if (this.ObjectOrder.value !== null) {

@@ -25,7 +25,12 @@ export class Product {
   productPlacements: Placement[];
   productUnits: object[];
   images: object[];
-  common: object;
+  common: object;  // use for sale page
+  note_detail_sale: string; // use for sale page
+
+  discount: string; // use for setup price detail
+  discount_type: string; // use for setup price detail
+  end_price: string; // use for setup price detail
 }
 
 

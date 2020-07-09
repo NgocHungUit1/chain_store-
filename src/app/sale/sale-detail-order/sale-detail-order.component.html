@@ -16,9 +16,12 @@
                 {{ itemProduct.product?.product_name }}
             </span>
             <span class="row-product-note">
-                <span>Ghi chú liều dùng</span>
+                <span *ngIf="itemProduct.product?.note_detail_sale === undefined">Ghi chú liều dùng</span>
+                <span *ngIf="itemProduct.product?.note_detail_sale">{{ itemProduct.product?.note_detail_sale }}</span>
                 <button mat-icon-button>
-                    <mat-icon class="row-icon-edit">edit</mat-icon>
+                    <mat-icon class="row-icon-edit"
+                        (click)="openNoteDetailOrderDialog(itemProduct.product?.id, itemProduct.product?.note_detail_sale)">
+                        edit</mat-icon>
                 </button>
             </span>
         </div>
@@ -42,20 +45,40 @@
         <div fxFlex="2"></div>
         <div fxFlex="12">
             <div fxLayout="row wrap">
-                <div fxFlex="100" >
-                    <mat-form-field style=" font-size: 20px; text-align: right;">
+                <div fxFlex="100">
+
+                    <mat-form-field style=" font-size: 20px; text-align: right;" *ngIf="itemProduct.product?.end_price === undefined">
                         <input matInput type="text" value="{{  itemProduct?.common_price | number }}">
                         <button mat-icon-button matPrefix>
-                            <mat-icon class="row-icon-edit-price">edit</mat-icon>
+                            <mat-icon class="row-icon-edit-price"
+                                (click)="openPriceDetailOrderDialog(itemProduct.product,itemProduct.common_price)">
+                                edit</mat-icon>
                         </button>
                     </mat-form-field>
+
+                    <mat-form-field style=" font-size: 20px; text-align: right;"
+                        *ngIf="itemProduct.product?.end_price !== undefined">
+                        <input matInput type="text" value="{{  itemProduct.product?.end_price | number }}">
+                        <button mat-icon-button matPrefix>
+                            <mat-icon class="row-icon-edit-price"
+                                (click)="openPriceDetailOrderDialog(itemProduct.product,itemProduct.common_price)">
+                                edit</mat-icon>
+                        </button>
+                    </mat-form-field>
+
                 </div>
 
             </div>
 
         </div>
         <div fxFlex="17" class="row-total-price">
-            {{ itemProduct?.common_price * itemProduct.amount | number }}
+            <span *ngIf="itemProduct.product?.end_price === undefined">
+                {{ itemProduct?.common_price * itemProduct.amount | number }}
+            </span>
+
+            <span *ngIf="itemProduct.product?.end_price !== undefined">
+                {{ itemProduct.product?.end_price * itemProduct.amount | number }}
+            </span>
         </div>
 
     </div>

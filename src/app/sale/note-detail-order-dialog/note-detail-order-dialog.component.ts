@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, Optional } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { OrderService } from '../order.service';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-note-detail-order-dialog',
@@ -7,9 +10,41 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NoteDetailOrderDialogComponent implements OnInit {
 
-  constructor() { }
+  local_data: any;
+  id: string;
+  note_detail_sale: string;
+  constructor(
+    public dialogRef: MatDialogRef<NoteDetailOrderDialogComponent>,
+    private orderService: OrderService,
+    private fb: FormBuilder,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
+    this.local_data = { ...data };
+    this.id = this.local_data.id;
+    this.note_detail_sale = this.local_data.note_detail_sale;
+  }
+
+  public form: FormGroup;
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
 
   ngOnInit(): void {
+
+    this.form = this.fb.group({
+      noteDetailOrder: [
+        this.note_detail_sale,
+        Validators.compose([
+          Validators.required,
+          Validators.maxLength(32)
+        ])
+      ],
+    });
+  }
+
+  submit() {
+    this.orderService.updateNoteDetailOrder(this.id, this.form.controls['noteDetailOrder'].value);
+    this.dialogRef.close();
   }
 
 }

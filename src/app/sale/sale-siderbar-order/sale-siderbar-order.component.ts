@@ -103,10 +103,19 @@ export class SaleSiderbarOrderComponent implements OnInit {
             this.sumPrice = 0;
             this.listProduct.forEach(elementData => {
               if (group[elementData.product.id] !== undefined) {
-                this.sumPrice += group[elementData.product.id][0]['price'] * elementData.amount; // gia chung * so luong
+                if (elementData.product.end_price === undefined) {
+                  this.sumPrice += group[elementData.product.id][0]['price'] * elementData.amount; // gia chung * so luong
+                } else {
+                  this.sumPrice += elementData.product.end_price * elementData.amount; // gia chung * so luong
+                }
               } else {
-                this.sumPrice += elementData.product.sell_price * elementData.amount; // gia ban * so luong
+                if (elementData.product.end_price === undefined) {
+                  this.sumPrice += elementData.product.sell_price * elementData.amount; // gia ban * so luong
+                } else {
+                  this.sumPrice += elementData.product.end_price * elementData.amount; // gia ban * so luong
+                }
               }
+
             });
           }
         });
