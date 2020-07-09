@@ -42,10 +42,10 @@
         <div fxFlex="2"></div>
         <div fxFlex="12">
             <div fxLayout="row wrap">
-                <div fxFlex="100" style=" font-size: 20px; text-align: right;">
-                    <mat-form-field>
+                <div fxFlex="100" >
+                    <mat-form-field style=" font-size: 20px; text-align: right;">
                         <input matInput type="text" value="{{  itemProduct?.common_price | number }}">
-                        <button mat-icon-button matSuffix>
+                        <button mat-icon-button matPrefix>
                             <mat-icon class="row-icon-edit-price">edit</mat-icon>
                         </button>
                     </mat-form-field>

@@ -45,6 +45,7 @@ export class SaleSiderbarOrderComponent implements OnInit {
   initForm() {
     this.form = this.fb.group({
       priceBookID: [null],
+      noteSiderBar: [null]
     });
   }
 

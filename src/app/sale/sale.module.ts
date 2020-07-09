@@ -17,10 +17,11 @@ import { SaleDetailOrderComponent } from './sale-detail-order/sale-detail-order.
 import { SaleSiderbarOrderComponent } from './sale-siderbar-order/sale-siderbar-order.component';
 import { DiscountSiderbarDialogComponent } from './discount-siderbar-dialog/discount-siderbar-dialog.component';
 import { PaymentSiderbarDialogComponent } from './payment-siderbar-dialog/payment-siderbar-dialog.component';
+import { NoteDetailOrderDialogComponent } from './note-detail-order-dialog/note-detail-order-dialog.component';
 
 
 @NgModule({
-  declarations: [SaleMainComponent, SaleListProductComponent, SaleDetailOrderComponent, SaleSiderbarOrderComponent, DiscountSiderbarDialogComponent, PaymentSiderbarDialogComponent],
+  declarations: [SaleMainComponent, SaleListProductComponent, SaleDetailOrderComponent, SaleSiderbarOrderComponent, DiscountSiderbarDialogComponent, PaymentSiderbarDialogComponent, NoteDetailOrderDialogComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(SaleRoutes),

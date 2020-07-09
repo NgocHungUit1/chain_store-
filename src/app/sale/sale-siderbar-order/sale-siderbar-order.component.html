@@ -129,7 +129,8 @@
                     <span>Tiền thừa trả khách</span>
                 </div>
                 <div fxFlex="50" class="excess-cash-number">
-                    <input matInput type="text" value="{{ customerPay - sumPrice + numberDiscount | number}}">
+                    <input matInput type="text" *ngIf="customerPay - sumPrice + numberDiscount > 0" value="{{ customerPay - sumPrice + numberDiscount | number}}">
+                    <input matInput type="text" *ngIf="customerPay - sumPrice + numberDiscount <= 0" value="0">
                 </div>
             </div>
         </div>
@@ -137,7 +138,7 @@
         <div class="order-note">
             <mat-form-field class="example-full-width">
                 <mat-label>Ghi chú</mat-label>
-                <textarea matInput placeholder=""></textarea>
+                <textarea matInput placeholder="" formControlName="noteSiderBar"></textarea>
             </mat-form-field>
         </div>
         <button mat-button class="payment-button btn-success">
