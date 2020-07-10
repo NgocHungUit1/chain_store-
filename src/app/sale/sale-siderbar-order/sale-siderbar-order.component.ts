@@ -12,6 +12,9 @@ import { CustomerService } from '../../customer/customer.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DiscountSiderbarDialogComponent } from '../discount-siderbar-dialog/discount-siderbar-dialog.component';
 import { PaymentSiderbarDialogComponent } from '../payment-siderbar-dialog/payment-siderbar-dialog.component';
+import { SaleCustomerFormDialogComponent } from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
+import { UserService } from '../user.service';
+import { User } from '../user.model';
 
 @Component({
   selector: 'app-sale-siderbar-order',
@@ -30,8 +33,12 @@ export class SaleSiderbarOrderComponent implements OnInit {
   public priceListCommon: PriceList;
   public form: FormGroup;
   selectCustomer = new FormControl();
+  selectUser = new FormControl();
+
 
   public filteredCustomers: Observable<Customer[]>;
+  public filteredUsers: Observable<User[]>;
+
 
   constructor(
     private orderService: OrderService,
@@ -40,10 +47,12 @@ export class SaleSiderbarOrderComponent implements OnInit {
     private priceListProductSer: PriceListProductService,
     public customerService: CustomerService,
     private dialog: MatDialog,
+    private userService: UserService,
   ) { }
 
   initForm() {
     this.form = this.fb.group({
+      userID: [null],
       priceBookID: [null],
       noteSiderBar: [null]
     });
@@ -52,6 +61,12 @@ export class SaleSiderbarOrderComponent implements OnInit {
   onSelectedCustomer(customer) {
     this.orderService.addCustomer(customer);
     this.selectCustomer.patchValue(customer.name);
+  }
+
+  onSelectedUser(user) {
+    console.log(user);
+
+    this.selectUser.patchValue(user.username);
   }
 
   loadData() {
@@ -200,6 +215,25 @@ export class SaleSiderbarOrderComponent implements OnInit {
         }
       })
     );
+
+    // tim kiem nhan vien
+    this.filteredUsers = this.selectUser.valueChanges.pipe(
+      startWith(''),
+      // delay emits
+      debounceTime(300),
+      // use switch map so as to cancel previous subscribed events, before creating new once
+      switchMap(value => {
+        if (value !== '') {
+          // lookup from github
+          return this.lookupUser(value);
+        } else {
+          // if no value is present, return null
+          return of(null);
+        }
+      })
+    );
+
+
   }
 
   lookupCustomer(value: string): Observable<Customer[]> {
@@ -213,8 +247,23 @@ export class SaleSiderbarOrderComponent implements OnInit {
     );
   }
 
+  lookupUser(value: string): Observable<User[]> {
+    return this.userService.autocomplete(value).pipe(
+      // map the item property of the github results as our return object
+      map(results => results),
+      // catch errors
+      catchError(_ => {
+        return of(null);
+      })
+    );
+  }
+
   choosePriceBook(event: any) {
     this.orderService.addPriceBookID(this.form.controls['priceBookID'].value);
+  }
+
+  chooseUser(event: any) {
+    console.log(this.form.controls['userID'].value);
   }
 
   openDiscountSiderBar() {
@@ -236,6 +285,20 @@ export class SaleSiderbarOrderComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       // this.loadData();
+    });
+  }
+
+  openSaleCustomerFormDialogComponent() {
+    const dialogRef = this.dialog.open(SaleCustomerFormDialogComponent, {
+      width: '40%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // this.loadData();
+      // console.log(result);
+      this.orderService.addCustomer(result);
+      this.selectCustomer.patchValue(result.name);
     });
   }
 }

@@ -104,4 +104,12 @@ export class PriceDetailOrderDialogComponent implements OnInit {
       return;
     }
   }
+
+  onEndPriceChange() {
+    this.form.patchValue({
+      discountPriceDetailOrder: 0,
+      discountTypePriceDetailOrder: 'vnd'
+    });
+
+  }
 }
