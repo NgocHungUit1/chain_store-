@@ -15,23 +15,28 @@ import { PaymentSiderbarDialogComponent } from '../payment-siderbar-dialog/payme
 import { SaleCustomerFormDialogComponent } from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
 import { UserService } from '../user.service';
 import { User } from '../user.model';
+import { NotifierService } from 'angular-notifier';
 
 @Component({
   selector: 'app-sale-siderbar-order',
   templateUrl: './sale-siderbar-order.component.html',
   styleUrls: ['./sale-siderbar-order.component.css'],
 })
+
+
 export class SaleSiderbarOrderComponent implements OnInit {
 
   today: number = Date.now();
-  public listProduct: any = [];
-  public countProduct: number = 0;
-  public sumPrice: number = 0;
-  public numberDiscount: number = 0;
-  public customerPay: number = 0;
-  public priceLists: PriceList[] = [];
-  public priceListCommon: PriceList;
-  public form: FormGroup;
+  listProduct: any = [];
+  countProduct: number = 0;
+  sumPrice: number = 0;
+  numberDiscount: number = 0; // use for view
+  discount: number = 0; // use for payment
+  discount_type: number = 1; // use for payment
+  customerPay: number = 0;
+  priceLists: PriceList[] = [];
+  priceListCommon: PriceList;
+  form: FormGroup;
   selectCustomer = new FormControl();
   selectUser = new FormControl();
 
@@ -39,15 +44,15 @@ export class SaleSiderbarOrderComponent implements OnInit {
   public filteredCustomers: Observable<Customer[]>;
   public filteredUsers: Observable<User[]>;
 
-
   constructor(
     private orderService: OrderService,
     private priceListSer: PriceListService,
-    public fb: FormBuilder,
+    private fb: FormBuilder,
     private priceListProductSer: PriceListProductService,
-    public customerService: CustomerService,
+    private customerService: CustomerService,
     private dialog: MatDialog,
     private userService: UserService,
+    private notifySer: NotifierService,
   ) { }
 
   initForm() {
@@ -64,9 +69,10 @@ export class SaleSiderbarOrderComponent implements OnInit {
   }
 
   onSelectedUser(user) {
-    console.log(user);
-
     this.selectUser.patchValue(user.username);
+    this.form.patchValue({
+      'userID': user.id
+    });
   }
 
   loadData() {
@@ -178,9 +184,12 @@ export class SaleSiderbarOrderComponent implements OnInit {
       if (res !== null) {
         if (res.type === 'vnd') {
           this.numberDiscount = res.number;
+          this.discount_type = 1;
         } else {
           this.numberDiscount = this.sumPrice * res.number / 100;
+          this.discount_type = 2;
         }
+        this.discount = res.number;
       } else {
         this.numberDiscount = 0;
       }
@@ -262,10 +271,6 @@ export class SaleSiderbarOrderComponent implements OnInit {
     this.orderService.addPriceBookID(this.form.controls['priceBookID'].value);
   }
 
-  chooseUser(event: any) {
-    console.log(this.form.controls['userID'].value);
-  }
-
   openDiscountSiderBar() {
     const dialogRef = this.dialog.open(DiscountSiderbarDialogComponent, {
       width: '30%',
@@ -295,10 +300,70 @@ export class SaleSiderbarOrderComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      // this.loadData();
-      // console.log(result);
       this.orderService.addCustomer(result);
       this.selectCustomer.patchValue(result.name);
+    });
+  }
+
+  payment() {
+    const customer = this.orderService.getCustomer();
+    if (customer === null) {
+      this.notifySer.notify('warning', 'Chưa chọn khách hàng !');
+      return;
+    }
+    if (this.form.controls['userID'].value === null) {
+      this.notifySer.notify('warning', 'Chưa chọn nhân viên !');
+      return;
+    }
+    this.orderService.setLoadProduct(true);
+    const list = this.listProduct;
+    const invoiceDetail = [];
+    list.forEach(element => {
+      let price = 0;
+      let discount = 0;
+      let discount_type = 1;
+      if (element.product.end_price === undefined) {
+        price = element.common_price;
+      } else {
+        price = element.product.end_price;
+      }
+      if (element.product?.discount_type === 'percent') {
+        discount_type = 2;
+      }
+
+      if (element.product?.discount !== undefined) {
+        discount = element.product?.discount;
+      }
+      invoiceDetail.push({
+        product_id: element.product.id,
+        amount: element.amount,
+        price: price,
+        note: element.product?.note_detail_sale,
+        discount: discount,
+        discount_type: discount_type,
+      });
+    });
+
+    const dataInvoice = {
+      Invoice: {
+        customer_id: customer?.id,
+        total: this.sumPrice, // tong tien hang
+        discount: this.discount,
+        discount_type: this.discount_type,
+        note: this.form.controls['noteSiderBar'].value,
+        price_book_id: this.form.controls['priceBookID'].value,
+        // created_by: this.form.controls['userID'].value, @NGHIA store id
+      },
+      InvoiceDetail: invoiceDetail
+    };
+
+    this.orderService.saleOrder(dataInvoice).subscribe(res => {
+      this.orderService.setLoadProduct(false);
+      if (res === true) {
+        this.notifySer.notify('success', 'Lưu thành công !');
+      } else {
+        this.notifySer.notify('warning', 'Thất bại !');
+      }
     });
   }
 }

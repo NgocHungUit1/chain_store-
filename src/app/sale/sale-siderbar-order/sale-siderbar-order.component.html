@@ -39,7 +39,7 @@
                             <mat-icon>search</mat-icon>
                         </button>
                         <mat-autocomplete #chooseProduct="matAutocomplete"
-                            (optionSelected)="onSelectedCustomer($event.option.value)">
+                            (optionSelected)="onSelectedCustomer($event.option.value)" >
                             <mat-option *ngFor="let customer of filteredCustomers | async" [value]="customer">
                                 <span>{{customer.name}}</span> |
                                 <small>phone: {{customer.phone}}</small>
@@ -144,7 +144,7 @@
                 <textarea matInput placeholder="" formControlName="noteSiderBar"></textarea>
             </mat-form-field>
         </div>
-        <button mat-button class="payment-button btn-success">
+        <button mat-button class="payment-button btn-success" (click)="payment()">
             <span>Thanh toán</span>
         </button>
 

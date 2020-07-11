@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Order, Detail, DiscountSiderBar, PaymentSiderBar } from '../sale/order.model';
 import { Product } from '../product/product.model';
-import { log } from 'console';
+import { environment } from '../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { Customer } from '../customer/customer.model';
 
 @Injectable({
   providedIn: 'root'
@@ -22,8 +24,8 @@ export class OrderService {
   subscribePriceBookID: Observable<string> = this.priceBookID.asObservable();
 
   // Luu thong tin khach hang
-  private customer: BehaviorSubject<object> = new BehaviorSubject<object>(null);
-  subscribeCustomer: Observable<object> = this.customer.asObservable();
+  private customer: BehaviorSubject<Customer> = new BehaviorSubject<Customer>(null);
+  subscribeCustomer: Observable<Customer> = this.customer.asObservable();
 
   // ghi chu khach hang
   private note: BehaviorSubject<string> = new BehaviorSubject<string>(null);
@@ -54,8 +56,12 @@ export class OrderService {
     return this.discountSiderBar.value;
   }
 
-  addCustomer(customerObj: object) {
+  addCustomer(customerObj: Customer) {
     this.customer.next(customerObj);
+  }
+
+  getCustomer() {
+    return this.customer.value;
   }
 
   setLoadProduct(action: boolean) {
@@ -148,5 +154,11 @@ export class OrderService {
     }
   }
 
-  constructor() { }
+  constructor(private http: HttpClient) {
+  }
+
+  saleOrder(data) {
+    const url = environment.apiUrl + '/invoice/sale-order';
+    return this.http.post(url, data);
+  }
 }
