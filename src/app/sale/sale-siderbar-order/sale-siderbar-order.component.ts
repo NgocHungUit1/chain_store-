@@ -360,6 +360,8 @@ export class SaleSiderbarOrderComponent implements OnInit {
     this.orderService.saleOrder(dataInvoice).subscribe(res => {
       this.orderService.setLoadProduct(false);
       if (res === true) {
+        this.orderService.resetDATA(); //@nghia
+        this.loadData();
         this.notifySer.notify('success', 'Lưu thành công !');
       } else {
         this.notifySer.notify('warning', 'Thất bại !');

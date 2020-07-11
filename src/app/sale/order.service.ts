@@ -27,10 +27,6 @@ export class OrderService {
   private customer: BehaviorSubject<Customer> = new BehaviorSubject<Customer>(null);
   subscribeCustomer: Observable<Customer> = this.customer.asObservable();
 
-  // ghi chu khach hang
-  private note: BehaviorSubject<string> = new BehaviorSubject<string>(null);
-  subscribeNote: Observable<string> = this.note.asObservable();
-
   // giam gia
   private discountSiderBar: BehaviorSubject<DiscountSiderBar> = new BehaviorSubject<DiscountSiderBar>(null);
   subscribeDiscountSiderBar: Observable<DiscountSiderBar> = this.discountSiderBar.asObservable();
@@ -40,6 +36,13 @@ export class OrderService {
   subscribePaymentSiderBar: Observable<PaymentSiderBar> = this.paymentSiderBar.asObservable();
 
   //
+  resetDATA() {
+    this.ObjectOrder.next(null);
+    this.customer.next(null);
+    this.paymentSiderBar.next(null);
+    this.discountSiderBar.next(null);
+  }
+
   setPaymentSiderBar(obj: PaymentSiderBar) {
     this.paymentSiderBar.next(obj);
   }
