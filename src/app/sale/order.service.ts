@@ -19,6 +19,10 @@ export class OrderService {
   private loadPage: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   subscribeLoadPage: Observable<boolean> = this.loadPage.asObservable();
 
+  // load detail
+  private loadDetailPage: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  subscribeLoadDetailPage: Observable<boolean> = this.loadDetailPage.asObservable();
+  
   // chon bang
   private priceBookID: BehaviorSubject<string> = new BehaviorSubject<string>(null);
   subscribePriceBookID: Observable<string> = this.priceBookID.asObservable();
@@ -71,6 +75,10 @@ export class OrderService {
     this.loadPage.next(action);
   }
 
+  setLoadDetailPage(action: boolean) {
+    this.loadDetailPage.next(action);
+  }
+  
   addPriceBookID(priceBookID: string) {
     this.priceBookID.next(priceBookID);
   }

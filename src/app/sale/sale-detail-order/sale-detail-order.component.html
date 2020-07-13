@@ -1,3 +1,6 @@
+<div class="table-loading-shade" *ngIf="isLoadingResults">
+    <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+</div>
 <div *ngFor="let itemProduct of listProduct; let i = index" class="product-item">
     <div fxLayout="row wrap" class="row-item">
         <div fxFlex="7" class="row-count-number">
@@ -47,8 +50,10 @@
             <div fxLayout="row wrap">
                 <div fxFlex="100">
 
-                    <mat-form-field style=" font-size: 20px; text-align: right;" *ngIf="itemProduct.product?.end_price === undefined">
-                        <input matInput type="text" value="{{  itemProduct?.common_price | number }}">
+                    <mat-form-field style=" font-size: 20px; text-align: right;"
+                        *ngIf="itemProduct.product?.end_price === undefined">
+                        <input matInput type="text" value="{{  itemProduct?.common_price | number }}" disabled="true"
+                            style="color:black">
                         <button mat-icon-button matPrefix>
                             <mat-icon class="row-icon-edit-price"
                                 (click)="openPriceDetailOrderDialog(itemProduct.product,itemProduct.common_price)">
@@ -58,7 +63,8 @@
 
                     <mat-form-field style=" font-size: 20px; text-align: right;"
                         *ngIf="itemProduct.product?.end_price !== undefined">
-                        <input matInput type="text" value="{{  itemProduct.product?.end_price | number }}">
+                        <input matInput type="text" value="{{  itemProduct.product?.end_price | number }}"
+                            disabled="true" style="color:black">
                         <button mat-icon-button matPrefix>
                             <mat-icon class="row-icon-edit-price"
                                 (click)="openPriceDetailOrderDialog(itemProduct.product,itemProduct.common_price)">

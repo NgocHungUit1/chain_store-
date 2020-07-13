@@ -358,14 +358,27 @@ export class SaleSiderbarOrderComponent implements OnInit {
     };
 
     this.orderService.saleOrder(dataInvoice).subscribe(res => {
-      this.orderService.setLoadProduct(false);
       if (res === true) {
-        this.orderService.resetDATA(); //@nghia
+        this.resetDataSiderBar();
         this.loadData();
         this.notifySer.notify('success', 'Lưu thành công !');
       } else {
         this.notifySer.notify('warning', 'Thất bại !');
       }
+      this.orderService.setLoadProduct(false);
+      this.orderService.setLoadDetailPage(true);
     });
   }
+
+  resetDataSiderBar() {
+    this.orderService.resetDATA(); //@nghia
+    this.orderService.addCustomer(null);
+    this.selectCustomer.patchValue(null);
+    this.selectUser.patchValue(null);
+    this.form.patchValue({
+      'userID': [null]
+    });
+  }
+
+
 }

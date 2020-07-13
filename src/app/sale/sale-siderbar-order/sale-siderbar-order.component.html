@@ -26,7 +26,6 @@
                     </mat-form-field>
                 </div>
             </div>
-
         </div>
 
         <div class="customer-action">
@@ -39,7 +38,7 @@
                             <mat-icon>search</mat-icon>
                         </button>
                         <mat-autocomplete #chooseProduct="matAutocomplete"
-                            (optionSelected)="onSelectedCustomer($event.option.value)" >
+                            (optionSelected)="onSelectedCustomer($event.option.value)">
                             <mat-option *ngFor="let customer of filteredCustomers | async" [value]="customer">
                                 <span>{{customer.name}}</span> |
                                 <small>phone: {{customer.phone}}</small>
@@ -53,8 +52,8 @@
                     </button>
                 </div>
             </div>
-
         </div>
+
         <div class="pricebook-action">
             <mat-form-field>
                 <button mat-button matPrefix>
@@ -77,7 +76,6 @@
                 </div>
                 <div fxFlex="50" class="price-product-number">
                     <input matInput type="text" value="{{ sumPrice | number}}">
-
                 </div>
             </div>
         </div>
@@ -93,7 +91,8 @@
                             <mat-icon class="row-edit-price-discount-number" (click)="openDiscountSiderBar()">edit
                             </mat-icon>
                         </button>
-                        <input matInput type="text" value="{{ numberDiscount | number}}" [disabled]="true">
+                        <input matInput type="text" value="{{ numberDiscount | number}}" [disabled]="true"
+                            style="color:black">
                     </mat-form-field>
                 </div>
             </div>
@@ -118,7 +117,8 @@
                 <div fxFlex="50" class="customer-pay-number">
                     <mat-form-field style="text-align: right">
                         <button mat-icon-button matPrefix>
-                            <mat-icon class="row-edit-customer-pay-number" (click)="openPaymentSiderBarDialog()">credit_card</mat-icon>
+                            <mat-icon class="row-edit-customer-pay-number" (click)="openPaymentSiderBarDialog()">
+                                credit_card</mat-icon>
                         </button>
                         <input matInput type="text" value="{{ customerPay | number}}">
                     </mat-form-field>
@@ -132,7 +132,8 @@
                     <span>Tiền thừa trả khách</span>
                 </div>
                 <div fxFlex="50" class="excess-cash-number">
-                    <input matInput type="text" *ngIf="customerPay - sumPrice + numberDiscount > 0" value="{{ customerPay - sumPrice + numberDiscount | number}}">
+                    <input matInput type="text" *ngIf="customerPay - sumPrice + numberDiscount > 0"
+                        value="{{ customerPay - sumPrice + numberDiscount | number}}">
                     <input matInput type="text" *ngIf="customerPay - sumPrice + numberDiscount <= 0" value="0">
                 </div>
             </div>

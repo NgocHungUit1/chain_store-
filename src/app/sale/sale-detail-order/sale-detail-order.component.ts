@@ -18,6 +18,7 @@ export class SaleDetailOrderComponent implements OnInit {
 
   listProduct: any = [];
   countProduct: number = 0;
+  isLoadingResults = true;
 
   constructor(
     private orderService: OrderService,
@@ -77,19 +78,25 @@ export class SaleDetailOrderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.orderService.subscribePriceBookID.subscribe(priceBookID => {
-      if (priceBookID !== null) {
-        const one = new Promise<string>((resolve, reject) => {
-          this.orderService.setLoadProduct(true);
-          this.loadData();
-          resolve();
-        }).then(() => {
-          this.orderService.setLoadProduct(false);
-        });
+    this.isLoadingResults = false;
+
+    this.orderService.subscribeLoadDetailPage.subscribe(action => {
+      if (action === true) {
+        this.listProduct = null;
       }
     });
 
-
+    this.orderService.subscribePriceBookID.subscribe(priceBookID => {
+      if (priceBookID !== null) {
+        const one = new Promise<string>((resolve, reject) => {
+          this.isLoadingResults = true;
+          this.loadData();
+          resolve();
+        }).then(() => {
+          this.isLoadingResults = false;
+        });
+      }
+    });
 
   }
 
