@@ -34,7 +34,7 @@ export class FullComponent implements OnDestroy {
   showHide: boolean;
   sidebarOpened;
 
-	public showSearch = false;
+  public showSearch = false;
 
   public config: PerfectScrollbarConfigInterface = {};
   private _mobileQueryListener: () => void;
@@ -42,7 +42,8 @@ export class FullComponent implements OnDestroy {
   constructor(
     changeDetectorRef: ChangeDetectorRef,
     media: MediaMatcher,
-    public menuItems: MenuItems
+    public menuItems: MenuItems,
+    public router: Router
   ) {
     this.mobileQuery = media.matchMedia('(min-width: 768px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();

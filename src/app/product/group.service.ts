@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {HttpClient, HttpResponse} from '@angular/common/http';
-import {Observable} from 'rxjs';
-import {environment} from '../../environments/environment';
-import {GroupFilter} from "./group.model";
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { GroupFilter } from "./group.model";
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +42,7 @@ export class GroupService {
 
   getList(filter?: GroupFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrl(filter);
-    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+    return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
   }
 
   getDetail(id: string) {

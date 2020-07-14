@@ -1,7 +1,7 @@
-import {ApiFilterBase} from "../shared/base";
-import {Medicine} from "../medicine/medicine.model";
-import {Group} from "./group.model";
-import {Placement} from "./placement.model";
+import { ApiFilterBase } from "../shared/base";
+import { Medicine } from "../medicine/medicine.model";
+import { Group } from "./group.model";
+import { Placement } from "./placement.model";
 
 export class Product {
   id: string;
@@ -25,10 +25,16 @@ export class Product {
   productPlacements: Placement[];
   productUnits: object[];
   images: object[];
+  common: object;  // use for sale page
+  note_detail_sale: string; // use for sale page
+
+  discount: string; // use for setup price detail
+  discount_type: string; // use for setup price detail
+  end_price: string; // use for setup price detail
 }
 
 
-export class ProductFilter extends ApiFilterBase{
+export class ProductFilter extends ApiFilterBase {
   id = '';
   product_no = '';
   barcode = '';

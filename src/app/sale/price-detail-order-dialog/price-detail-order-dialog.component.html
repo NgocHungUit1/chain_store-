@@ -1,0 +1,43 @@
+<div mat-dialog-content>
+    <form [formGroup]="form" class="mat-h3">
+        <div fxLayout="row wrap">
+            <mat-form-field>
+                <mat-label>Đơn giá</mat-label>
+                <input matInput type="number" tabindex="1" formControlName="commonPriceDetailOrder">
+            </mat-form-field>
+        </div>
+
+        <div fxLayout="row wrap">
+            <div fxFlex="50">
+                <mat-form-field>
+                    <mat-label>Giảm giá</mat-label>
+                    <input matInput type="number" tabindex="1" (keyup)="updateEvent()" formControlName="discountPriceDetailOrder">
+                </mat-form-field>
+            </div>
+            <div fxFlex="50">
+                <mat-radio-group tabindex="2" formControlName="discountTypePriceDetailOrder">
+                    <mat-radio-button *ngFor=" let typeItem of typeItems" [value]="typeItem.id" (click)="updateEvent()"
+                       >
+                        {{typeItem.title}}
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
+        </div>
+
+        <div fxLayout="row wrap">
+            <mat-form-field>
+                <mat-label>Giá bán</mat-label>
+                <input matInput type="number" tabindex="1" formControlName="endPriceDetailOrder" (change)="onEndPriceChange()" >
+            </mat-form-field>
+        </div>
+
+    </form>
+</div>
+<div mat-dialog-actions>
+    <button mat-raised-button color="primary" tabindex="3" (click)="submit()">
+        <mat-icon>save</mat-icon>Lưu
+    </button>
+    <button mat-button (click)="onNoClick()" tabindex="-1">
+        <mat-icon>cancel</mat-icon>Bỏ qua
+    </button>
+</div>

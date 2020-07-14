@@ -1,0 +1,67 @@
+<mat-toolbar color="primary" class="topbar telative">
+    <!-- ============================================================== -->
+    <!-- Logo - style you can find in header.scss -->
+    <!-- ============================================================== -->
+    <div class="navbar-header">
+        <!-- Logo icon -->
+        <b>
+        </b>
+        <!--End Logo icon -->
+        <!-- Logo text -->
+        <div class="select-product">
+            <mat-form-field>
+                <input class="input-search-product" type="text" [formControl]="selectProduct" matInput
+                    [matAutocomplete]="chooseProduct" placeholder="Tìm hàng hóa ">
+                <button mat-icon-button matPrefix>
+                    <mat-icon>search</mat-icon>
+                </button>
+                <mat-autocomplete #chooseProduct="matAutocomplete"
+                    (optionSelected)="onSelectedProduct($event.option.value)">
+                    <mat-option *ngFor="let product of filteredProducts | async" [value]="product">
+                        <img class="example-option-img" aria-hidden [src]="product.default_image" height="25">
+                        <span>{{product.product_name}}</span> |
+                        <small>Slt: {{product.quantity_of_stock}}</small>
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- sidebar toggle -->
+    <!-- ============================================================== -->
+
+
+    <!-- ============================================================== -->
+    <!-- Search - style you can find in header.scss -->
+    <!-- ============================================================== -->
+
+
+    <span fxFlex></span>
+
+    <button mat-icon-button class="ml-xs overflow-visible">
+        <mat-icon>reorder</mat-icon>
+    </button>
+
+</mat-toolbar>
+
+<div class="table-loading-shade" *ngIf="isLoadingResults">
+    <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+</div>
+
+<div fxLayout="row wrap">
+    <div fxFlex="74">
+        <div class="container-main-sale">
+            <div class="product-cart">
+                <app-sale-detail-order></app-sale-detail-order>
+            </div>
+            <app-sale-list-product></app-sale-list-product>
+
+        </div>
+    </div>
+    <div fxFlex="0.5"></div>
+    <div fxFlex="25">
+        <div class="container-action-sale">
+            <app-sale-siderbar-order></app-sale-siderbar-order>
+        </div>
+    </div>
+</div>

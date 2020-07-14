@@ -1,0 +1,95 @@
+.main-sale-siderbar-order {
+  margin: 12px
+}
+
+.payment-button {
+  width: 100%;
+  height: 67px;
+  background-color: #56ad51;
+  bottom: 0px;
+  margin-bottom: 10px;
+}
+
+.payment-button span {
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffff;
+}
+
+.order-detail {
+  margin-top: 18px;
+}
+
+.price-product-text {
+  font-size: 15px;
+  text-align: left;
+}
+
+.label-text {
+  font-size: 15px;
+  text-align: left;
+  padding-top: 18px;
+}
+
+.price-product-number {
+  font-size: 18px;
+  text-align: right;
+}
+
+
+.support-content {
+  font-size: 11px;
+  color: #666666;
+  margin: 10px;
+}
+
+.support-content .mat-icon {
+  font-size: 11px;
+  align-items: center;
+}
+
+.pricebook-action {
+  padding-bottom: 20px;
+}
+
+.price-discount-text {
+  font-size: 15px;
+  text-align: left;
+  padding-top: 25px;
+}
+
+.customer-pay-text {
+  font-size: 15px;
+  text-align: left;
+  padding-top: 25px;
+}
+
+.customer-need-text {
+  font-weight: 600;
+}
+
+.customer-need-number {
+  padding-top: 18px;
+  color: #56ad51;
+  font-size: 20px;
+  text-align: right;
+  font-weight: 600;
+}
+
+.customer-pay-number {
+  font-size: 18px;
+}
+
+.excess-cash-number {
+  padding-top: 18px;
+  font-size: 18px;
+  text-align: right;
+}
+
+.price-discount-number {
+  font-size: 18px;
+}
+
+.order-note{
+  padding-top: 18px;
+}

@@ -1,4 +1,4 @@
-import {ApiFilterBase} from "../shared/base";
+import { ApiFilterBase } from "../shared/base";
 
 export class Manufacturer {
   id: number;
@@ -8,7 +8,7 @@ export class Manufacturer {
 }
 
 
-export class ManufacturerFilter extends ApiFilterBase{
+export class ManufacturerFilter extends ApiFilterBase {
   id = '';
   name = '';
   description = '';

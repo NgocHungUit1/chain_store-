@@ -1,0 +1,45 @@
+.container-list-product {
+  background-color: #ebebeb;
+  height: 100%;
+
+}
+
+mat-grid-tile {
+  background: #ebebeb;
+  position: relative;
+  padding: 10px 5px;
+  margin: 1px;
+}
+
+.dv-list-page {
+  margin: 0px;
+}
+
+.product-image {
+  position: absolute;
+  left: 4px;
+  top: 8px
+}
+
+.content {
+  position: absolute;
+  top: 8px;
+  left: 47px;
+}
+
+.product-price {
+  position: absolute;
+  top: 40px;
+  font-weight: 600;
+  color: #3d933c;
+  margin-left: 10px;
+}
+
+.grid-custom:hover {
+  background-color: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.product-name {
+  font-size: 15px;
+}
