@@ -304,7 +304,7 @@ export class SaleSiderbarOrderComponent implements OnInit {
       this.selectCustomer.patchValue(result.name);
     });
   }
-
+  // ------------------------------------------------------ PAYMENT ----------------------------------------------------------//
   payment() {
     const customer = this.orderService.getCustomer();
     if (customer === null) {
@@ -315,7 +315,19 @@ export class SaleSiderbarOrderComponent implements OnInit {
       this.notifySer.notify('warning', 'Chưa chọn nhân viên !');
       return;
     }
+    if (this.customerPay === 0) {
+      this.notifySer.notify('warning', 'Chưa chọn thanh toán !');
+      return;
+    }
+    if (this.sumPrice - this.numberDiscount >= this.customerPay) {
+      this.notifySer.notify('warning', 'Thanh toán chưa đủ !');
+      return;
+    }
     this.orderService.setLoadProduct(true);
+    const paymentSiderBar =  this.orderService.getPaymentSiderBar();
+    // console.log(paymentSiderBar);
+    // return;
+    
     const list = this.listProduct;
     const invoiceDetail = [];
     list.forEach(element => {
@@ -354,7 +366,8 @@ export class SaleSiderbarOrderComponent implements OnInit {
         price_book_id: this.form.controls['priceBookID'].value,
         // created_by: this.form.controls['userID'].value, @NGHIA store id
       },
-      InvoiceDetail: invoiceDetail
+      InvoiceDetail: invoiceDetail,
+      PaymentMethod: paymentSiderBar.type,
     };
 
     this.orderService.saleOrder(dataInvoice).subscribe(res => {
