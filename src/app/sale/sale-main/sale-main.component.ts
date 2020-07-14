@@ -20,7 +20,6 @@ import { PriceListService } from '../../price-book/price-list.service';
 })
 export class SaleMainComponent implements OnInit {
 
-
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -37,7 +36,6 @@ export class SaleMainComponent implements OnInit {
   selectProduct = new FormControl();
   public filteredProducts: Observable<Product[]>;
   isLoadingResults = true;
-
 
   ngOnInit(): void {
     this.isLoadingResults = false;

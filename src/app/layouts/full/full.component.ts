@@ -10,12 +10,13 @@ import {
   HostListener,
   Directive
 } from '@angular/core';
+
 import { MenuItems } from '../../shared/menu-items/menu-items';
 import { AppHeaderComponent } from './header/header.component';
 import { AppSidebarComponent } from './sidebar/sidebar.component';
 import { AppBreadcrumbComponent } from './breadcrumb/breadcrumb.component';
-
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
+
 /** @title Responsive sidenav */
 @Component({
   selector: 'app-full-layout',

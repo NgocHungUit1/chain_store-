@@ -4,8 +4,10 @@
 <div class="main-container" [dir]="dir" [ngClass]="{'minisidebar': minisidebar, 'boxed': boxed, 'danger': danger, 'blue': blue, 'green': green, 'dark': dark, 'sidebar-opened': sidebarOpened, 'sidebar-closed': !sidebarOpened }">
     <!-- ============================================================== -->
     <!-- Topbar - style you can find in header.scss -->
-    <!-- ============================================================== -->
-    <mat-toolbar *ngIf="this.router.url !== '/sale'" color="primary" class="topbar telative">
+    <!-- ==============================================================
+    *ngIf="this.router.url !== '/sale'"
+    -->
+    <mat-toolbar color="primary" class="topbar telative">
         <!-- ============================================================== -->
         <!-- Logo - style you can find in header.scss -->
         <!-- ============================================================== -->
@@ -34,15 +36,16 @@
         <!-- ============================================================== -->
         <!-- Search - style you can find in header.scss -->
         <!-- ============================================================== -->
-        <button mat-icon-button class="srh-btn" (click)="showSearch = !showSearch">
+        <button *ngIf="this.router.url !== '/sale'" mat-icon-button class="srh-btn" (click)="showSearch = !showSearch">
             <mat-icon>search</mat-icon>
         </button>
-        <form class="app-search" [ngClass]="{'show-search': showSearch}">
+        <form *ngIf="this.router.url !== '/sale'" class="app-search" [ngClass]="{'show-search': showSearch}">
             <input type="text" class="form-control" placeholder="Search &amp; enter">
             <a class="cl-srh-btn" (click)="showSearch = !showSearch">
                 <i class="ti-close"></i>
             </a>
         </form>
+
         <span fxFlex></span>
         <!-- ============================================================== -->
         <!-- app header component - style you can find in header.scss / header.component.ts-->

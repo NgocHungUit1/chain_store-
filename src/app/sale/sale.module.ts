@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { QuillModule } from "ngx-quill";
 import { DragulaModule } from "ng2-dragula";
 import { CommonModule } from '@angular/common';
@@ -20,6 +20,7 @@ import { PaymentSiderbarDialogComponent } from './payment-siderbar-dialog/paymen
 import { NoteDetailOrderDialogComponent } from './note-detail-order-dialog/note-detail-order-dialog.component';
 import { PriceDetailOrderDialogComponent } from './price-detail-order-dialog/price-detail-order-dialog.component';
 import { SaleCustomerFormDialogComponent } from './sale-customer-form-dialog/sale-customer-form-dialog.component';
+import { SearchCustomerComponent } from './search-customer/search-customer.component';
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import { SaleCustomerFormDialogComponent } from './sale-customer-form-dialog/sal
     PaymentSiderbarDialogComponent,
     NoteDetailOrderDialogComponent,
     PriceDetailOrderDialogComponent,
-    SaleCustomerFormDialogComponent],
+    SaleCustomerFormDialogComponent,
+    SearchCustomerComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(SaleRoutes),
@@ -45,6 +47,7 @@ import { SaleCustomerFormDialogComponent } from './sale-customer-form-dialog/sal
     Ng2SearchPipeModule,
     DemoMaterialModule,
     AngularImageViewerModule
-  ]
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SaleModule { }
