@@ -20,15 +20,15 @@ export class PaymentSiderbarDialogComponent implements OnInit {
   ];
   typeItems: any[] = [
     {
-      'id': '1',
+      'id': 'cash',
       'title': 'Tiền mặt'
     },
     {
-      'id': '2',
+      'id': 'card',
       'title': 'Thẻ'
     },
     {
-      'id': '3',
+      'id': 'transfer',
       'title': 'Chuyển khoản'
     }
   ];
@@ -43,7 +43,7 @@ export class PaymentSiderbarDialogComponent implements OnInit {
   ngOnInit(): void {
     const paymentSiderBar = this.orderService.getPaymentSiderBar();
     var numberValue = 0;
-    var typeValue = '1';
+    var typeValue = 'cash';
     if (paymentSiderBar !== null) {
       numberValue = paymentSiderBar?.number;
       typeValue = paymentSiderBar?.type;

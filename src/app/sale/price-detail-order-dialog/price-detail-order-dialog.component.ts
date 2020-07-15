@@ -52,8 +52,6 @@ export class PriceDetailOrderDialogComponent implements OnInit {
     }
     if (this.product.discount) {
       discountPrice = this.product.discount;
-      console.log("discount");
-
     }
     if (this.product.end_price) {
       endPrice = this.product.end_price;

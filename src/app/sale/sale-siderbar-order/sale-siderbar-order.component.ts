@@ -32,7 +32,7 @@ export class SaleSiderbarOrderComponent implements OnInit {
   sumPrice: number = 0;
   numberDiscount: number = 0; // use for view
   discount: number = 0; // use for payment
-  discount_type: number = 1; // use for payment
+  discount_type: string = 'vnd'; // use for payment
   customerPay: number = 0;
   priceLists: PriceList[] = [];
   priceListCommon: PriceList;
@@ -184,10 +184,10 @@ export class SaleSiderbarOrderComponent implements OnInit {
       if (res !== null) {
         if (res.type === 'vnd') {
           this.numberDiscount = res.number;
-          this.discount_type = 1;
+          this.discount_type = 'vnd';
         } else {
           this.numberDiscount = this.sumPrice * res.number / 100;
-          this.discount_type = 2;
+          this.discount_type = 'precent';
         }
         this.discount = res.number;
       } else {
@@ -324,23 +324,23 @@ export class SaleSiderbarOrderComponent implements OnInit {
       return;
     }
     this.orderService.setLoadProduct(true);
-    const paymentSiderBar =  this.orderService.getPaymentSiderBar();
+    const paymentSiderBar = this.orderService.getPaymentSiderBar();
     // console.log(paymentSiderBar);
     // return;
-    
+
     const list = this.listProduct;
     const invoiceDetail = [];
     list.forEach(element => {
       let price = 0;
       let discount = 0;
-      let discount_type = 1;
+      let discount_type = 'vnd';
       if (element.product.end_price === undefined) {
         price = element.common_price;
       } else {
         price = element.product.end_price;
       }
       if (element.product?.discount_type === 'percent') {
-        discount_type = 2;
+        discount_type = element.product?.discount_type;
       }
 
       if (element.product?.discount !== undefined) {
@@ -359,7 +359,7 @@ export class SaleSiderbarOrderComponent implements OnInit {
     const dataInvoice = {
       Invoice: {
         customer_id: customer?.id,
-        total: this.sumPrice, // tong tien hang
+        total_price: this.sumPrice, // tong tien hang
         discount: this.discount,
         discount_type: this.discount_type,
         note: this.form.controls['noteSiderBar'].value,
@@ -391,6 +391,8 @@ export class SaleSiderbarOrderComponent implements OnInit {
     this.form.patchValue({
       'userID': [null]
     });
+    this.sumPrice = 0;
+    this.countProduct = 0;
   }
 
 

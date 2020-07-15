@@ -120,7 +120,8 @@
                             <mat-icon class="row-edit-customer-pay-number" (click)="openPaymentSiderBarDialog()">
                                 credit_card</mat-icon>
                         </button>
-                        <input matInput type="text" value="{{ customerPay | number}}">
+                        <input matInput type="text" value="{{ customerPay | number}}" [disabled]="true"
+                            style="color:black">
                     </mat-form-field>
                 </div>
             </div>
