@@ -1,9 +1,9 @@
 <div class="table-loading-shade" *ngIf="isLoadingResults">
     <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
 </div>
-<div fxLayout="row wrap" class="custom-search-customer">
-    <app-search-customer></app-search-customer>
-</div>
+<!-- <div fxLayout="row wrap" class="custom-search-customer">
+    <app-search-product-sale></app-search-product-sale>
+</div> -->
 <div *ngFor="let itemProduct of listProduct; let i = index" class="product-item">
     <div fxLayout="row wrap" class="row-item">
         <div fxFlex="7" class="row-count-number">

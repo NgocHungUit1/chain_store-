@@ -1,35 +1,41 @@
 import * as $ from 'jquery';
-import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
-import {RouterModule} from '@angular/router';
-import {FormsModule} from '@angular/forms';
-import {HttpClientModule, HttpClient} from '@angular/common/http';
-import {AppRoutes} from './app.routing';
-import {AppComponent} from './app.component';
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { AppRoutes } from './app.routing';
+import { AppComponent } from './app.component';
 
-import {FlexLayoutModule} from '@angular/flex-layout';
-import {FullComponent} from './layouts/full/full.component';
-import {AppBlankComponent} from './layouts/blank/blank.component';
-import {AppHeaderComponent} from './layouts/full/header/header.component';
-import {AppSidebarComponent} from './layouts/full/sidebar/sidebar.component';
-import {AppBreadcrumbComponent} from './layouts/full/breadcrumb/breadcrumb.component';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {DemoMaterialModule} from './demo-material-module';
-import {NgMultiSelectDropDownModule} from 'ng-multiselect-dropdown';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { FullComponent } from './layouts/full/full.component';
+import { CartComponent } from './layouts/cart/cart.component';
+import { AppHeaderCartComponent } from './layouts/cart/header/header-cart.component';
 
-import {PerfectScrollbarModule} from 'ngx-perfect-scrollbar';
-import {PERFECT_SCROLLBAR_CONFIG} from 'ngx-perfect-scrollbar';
-import {PerfectScrollbarConfigInterface} from 'ngx-perfect-scrollbar';
 
-import {SharedModule} from './shared/shared.module';
-import {SpinnerComponent} from './shared/spinner.component';
-import {authTokenInterceptorProvider} from "./authentication/auth-token.interceptor";
-import {authInterceptorProvider} from "./authentication/auth.interceptor";
-import {NotifierModule} from "angular-notifier";
-import {OverlayContainer} from "@angular/cdk/overlay";
-import {AngularImageViewerModule} from "angular-x-image-viewer";
-import {MAT_DATE_LOCALE} from '@angular/material/core';
-import {MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/material-moment-adapter';
+
+import { AppBlankComponent } from './layouts/blank/blank.component';
+import { AppHeaderComponent } from './layouts/full/header/header.component';
+import { AppSidebarComponent } from './layouts/full/sidebar/sidebar.component';
+import { AppBreadcrumbComponent } from './layouts/full/breadcrumb/breadcrumb.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DemoMaterialModule } from './demo-material-module';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+
+import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
+import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
+import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
+
+import { SharedModule } from './shared/shared.module';
+import { SpinnerComponent } from './shared/spinner.component';
+import { authTokenInterceptorProvider } from "./authentication/auth-token.interceptor";
+import { authInterceptorProvider } from "./authentication/auth.interceptor";
+import { NotifierModule } from "angular-notifier";
+import { OverlayContainer } from "@angular/cdk/overlay";
+import { AngularImageViewerModule } from "angular-x-image-viewer";
+import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
+import { SearchProductComponent } from './layouts/cart/search-product/search-product.component';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -41,11 +47,14 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   declarations: [
     AppComponent,
     FullComponent,
+    CartComponent,
     AppHeaderComponent,
     SpinnerComponent,
     AppBlankComponent,
     AppSidebarComponent,
-    AppBreadcrumbComponent
+    AppBreadcrumbComponent,
+    AppHeaderCartComponent,
+    SearchProductComponent
   ],
   imports: [
     BrowserModule,
@@ -72,7 +81,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
       },
       theme: 'material',
     }),
-    AngularImageViewerModule
+    AngularImageViewerModule,
+    ReactiveFormsModule
   ],
   providers: [
     {
@@ -81,7 +91,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     },
     authTokenInterceptorProvider,
     authInterceptorProvider,
-    {provide: MAT_DATE_LOCALE, useValue: 'vi'}
+    { provide: MAT_DATE_LOCALE, useValue: 'vi' }
   ],
   bootstrap: [AppComponent]
 })

@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { FullComponent } from './layouts/full/full.component';
+import { CartComponent } from './layouts/cart/cart.component';
 import { AppBlankComponent } from './layouts/blank/blank.component';
 
 export const AppRoutes: Routes = [
@@ -29,10 +30,10 @@ export const AppRoutes: Routes = [
         path: 'transaction',
         loadChildren: () => import('./warehouse/warehouse.module').then(m => m.WarehouseModule)
       },
-      {
-        path: 'sale',
-        loadChildren: () => import('./sale/sale.module').then(m => m.SaleModule)
-      }
+      // {
+      //   path: 'sale',
+      //   loadChildren: () => import('./sale/sale.module').then(m => m.SaleModule)
+      // }
       // {
       //     path: 'material',
       //     loadChildren:
@@ -70,6 +71,16 @@ export const AppRoutes: Routes = [
       //     path: 'charts',
       //     loadChildren: () => import('./charts/chartslib.module').then(m => m.ChartslibModule)
       // }
+    ]
+  },
+  {
+    path: '',
+    component: CartComponent,
+    children: [
+      {
+        path: 'sale',
+        loadChildren: () => import('./sale/sale.module').then(m => m.SaleModule)
+      }
     ]
   },
   {

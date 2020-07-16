@@ -12,11 +12,11 @@ import { OrderService } from '../order.service';
 import { of } from 'rxjs/internal/observable/of';
 
 @Component({
-  selector: 'app-search-customer',
-  templateUrl: './search-customer.component.html',
-  styleUrls: ['./search-customer.component.css']
+  selector: 'app-search-product-sale',
+  templateUrl: './search-product-sale.component.html',
+  styleUrls: ['./search-product-sale.component.css']
 })
-export class SearchCustomerComponent implements OnInit {
+export class SearchProductSaleComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,

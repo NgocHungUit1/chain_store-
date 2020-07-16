@@ -20,7 +20,7 @@ import { PaymentSiderbarDialogComponent } from './payment-siderbar-dialog/paymen
 import { NoteDetailOrderDialogComponent } from './note-detail-order-dialog/note-detail-order-dialog.component';
 import { PriceDetailOrderDialogComponent } from './price-detail-order-dialog/price-detail-order-dialog.component';
 import { SaleCustomerFormDialogComponent } from './sale-customer-form-dialog/sale-customer-form-dialog.component';
-import { SearchCustomerComponent } from './search-customer/search-customer.component';
+import { SearchProductSaleComponent } from './search-product-sale/search-product-sale.component';
 
 
 @NgModule({
@@ -34,7 +34,7 @@ import { SearchCustomerComponent } from './search-customer/search-customer.compo
     NoteDetailOrderDialogComponent,
     PriceDetailOrderDialogComponent,
     SaleCustomerFormDialogComponent,
-    SearchCustomerComponent],
+    SearchProductSaleComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(SaleRoutes),

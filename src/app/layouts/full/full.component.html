@@ -1,7 +1,8 @@
 <!-- ============================================================== -->
 <!-- Main wrapper - style you can find in pages.scss -->
 <!-- ============================================================== -->
-<div class="main-container" [dir]="dir" [ngClass]="{'minisidebar': minisidebar, 'boxed': boxed, 'danger': danger, 'blue': blue, 'green': green, 'dark': dark, 'sidebar-opened': sidebarOpened, 'sidebar-closed': !sidebarOpened }">
+<div class="main-container" [dir]="dir"
+    [ngClass]="{'minisidebar': minisidebar, 'boxed': boxed, 'danger': danger, 'blue': blue, 'green': green, 'dark': dark, 'sidebar-opened': sidebarOpened, 'sidebar-closed': !sidebarOpened }">
     <!-- ============================================================== -->
     <!-- Topbar - style you can find in header.scss -->
     <!-- ==============================================================
@@ -30,16 +31,17 @@
         <!-- sidebar toggle -->
         <!-- ============================================================== -->
 
-        <button mat-icon-button (click)="snav.toggle()" fxShow.sm="true" fxShow.xs="true" fxShow.gt-lg="false" fxShow="false">
+        <button mat-icon-button (click)="snav.toggle()" fxShow.sm="true" fxShow.xs="true" fxShow.gt-lg="false"
+            fxShow="false">
             <mat-icon>menu</mat-icon>
         </button>
         <!-- ============================================================== -->
         <!-- Search - style you can find in header.scss -->
         <!-- ============================================================== -->
-        <button *ngIf="this.router.url !== '/sale'" mat-icon-button class="srh-btn" (click)="showSearch = !showSearch">
+        <button mat-icon-button class="srh-btn" (click)="showSearch = !showSearch">
             <mat-icon>search</mat-icon>
         </button>
-        <form *ngIf="this.router.url !== '/sale'" class="app-search" [ngClass]="{'show-search': showSearch}">
+        <form class="app-search" [ngClass]="{'show-search': showSearch}">
             <input type="text" class="form-control" placeholder="Search &amp; enter">
             <a class="cl-srh-btn" (click)="showSearch = !showSearch">
                 <i class="ti-close"></i>
@@ -61,12 +63,14 @@
     <!-- ============================================================== -->
     <!-- End Topbar - style you can find in pages.scss -->
     <!-- ============================================================== -->
-    <mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 0 : 0" [ngClass]="{'minisidebar': minisidebar}">
+    <mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 0 : 0"
+        [ngClass]="{'minisidebar': minisidebar}">
         <!-- ============================================================== -->
         <!-- Sidebar - style you can find in sidebar.scss -->
         <!-- ============================================================== -->
-        <mat-sidenav #snav id="snav" [mode]="mobileQuery.matches ? 'side' : 'over'" fixedTopGap="0" [opened]="mobileQuery.matches"
-            [disableClose]="mobileQuery.matches" (open)="sidebarOpened = true" (close)="sidebarOpened = false">
+        <mat-sidenav #snav id="snav" [mode]="mobileQuery.matches ? 'side' : 'over'" fixedTopGap="0"
+            [opened]="mobileQuery.matches" [disableClose]="mobileQuery.matches" (open)="sidebarOpened = true"
+            (close)="sidebarOpened = false">
             <app-sidebar></app-sidebar>
         </mat-sidenav>
         <!-- ============================================================== -->
@@ -81,7 +85,8 @@
 
                     <h3 mat-subheader class="text-uppercase font-weight-bold">Settings</h3>
                     <mat-list-item>
-                        <mat-slide-toggle color="warn" (change)="dir = (dir == 'rtl' ? 'ltr' : 'rtl')">RTL</mat-slide-toggle>
+                        <mat-slide-toggle color="warn" (change)="dir = (dir == 'rtl' ? 'ltr' : 'rtl')">RTL
+                        </mat-slide-toggle>
                     </mat-list-item>
                     <mat-list-item>
                         <mat-slide-toggle color="warn" [(ngModel)]="boxed">Boxed Layout</mat-slide-toggle>
@@ -89,16 +94,20 @@
                     <mat-divider></mat-divider>
                     <h3 mat-subheader class="text-uppercase font-weight-bold">Colors</h3>
                     <mat-list-item>
-                        <mat-checkbox color="warn" [(ngModel)]="danger" (change)="green = blue = false" class="text-danger">Red</mat-checkbox>
+                        <mat-checkbox color="warn" [(ngModel)]="danger" (change)="green = blue = false"
+                            class="text-danger">Red</mat-checkbox>
                     </mat-list-item>
                     <mat-list-item>
-                        <mat-checkbox color="warn" [(ngModel)]="green" (change)="danger = blue = false" class="text-megna">Teal Green</mat-checkbox>
+                        <mat-checkbox color="warn" [(ngModel)]="green" (change)="danger = blue = false"
+                            class="text-megna">Teal Green</mat-checkbox>
                     </mat-list-item>
                     <mat-list-item>
-                        <mat-checkbox color="warn" [(ngModel)]="blue" (change)="green = danger = false" class="text-info">Blue</mat-checkbox>
+                        <mat-checkbox color="warn" [(ngModel)]="blue" (change)="green = danger = false"
+                            class="text-info">Blue</mat-checkbox>
                     </mat-list-item>
                     <mat-list-item>
-                        <mat-checkbox color="warn" [(ngModel)]="dark" (change)="green = blue = danger = false">Dark</mat-checkbox>
+                        <mat-checkbox color="warn" [(ngModel)]="dark" (change)="green = blue = danger = false">Dark
+                        </mat-checkbox>
                     </mat-list-item>
                 </mat-nav-list>
             </div>
@@ -108,14 +117,14 @@
         <!-- Page container - style you can find in pages.scss -->
         <!-- ============================================================== -->
         <mat-sidenav-content class="page-wrapper">
-            	<!--<app-breadcrumb></app-breadcrumb>-->
-                <div class="page-content">
+            <!--<app-breadcrumb></app-breadcrumb>-->
+            <div class="page-content">
 
-                    <router-outlet>
-                        <app-spinner></app-spinner>
-                    </router-outlet>
+                <router-outlet>
+                    <app-spinner></app-spinner>
+                </router-outlet>
 
-                </div>
+            </div>
 
         </mat-sidenav-content>
         <!-- ============================================================== -->
