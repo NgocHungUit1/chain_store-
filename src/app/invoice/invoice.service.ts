@@ -35,7 +35,7 @@ export class InvoiceService {
     }
     if (!filter.pageSize) {
       filter.pageSize = 20;
-    }
+    } 
     url += '?' + filter.toFilterString();
     return url;
   }
