@@ -1,8 +1,9 @@
 import { Routes } from '@angular/router';
-import {WarehouseListComponent} from './warehouse-list/warehouse-list.component';
-import {WarehouseReturnListComponent} from './warehouse-return-list/warehouse-return-list.component';
-import {WarehouseReturnFormComponent} from './warehouse-return-form/warehouse-return-form.component';
-import {WarehouseImportFormComponent} from './warehouse-import-form/warehouse-import-form.component';
+import { WarehouseListComponent } from './warehouse-list/warehouse-list.component';
+import { WarehouseReturnListComponent } from './warehouse-return-list/warehouse-return-list.component';
+import { WarehouseReturnFormComponent } from './warehouse-return-form/warehouse-return-form.component';
+import { WarehouseImportFormComponent } from './warehouse-import-form/warehouse-import-form.component';
+import { InvoiceListComponent } from '../invoice/invoice-list/invoice-list.component';
 
 
 export const WarehouseRoutes: Routes = [
@@ -32,6 +33,10 @@ export const WarehouseRoutes: Routes = [
       {
         path: 'warehouse-return/update/:id',
         component: WarehouseReturnFormComponent
+      },
+      {
+        path: 'invoice',
+        component: InvoiceListComponent
       },
     ]
   }

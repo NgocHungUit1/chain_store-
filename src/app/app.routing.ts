@@ -30,10 +30,10 @@ export const AppRoutes: Routes = [
         path: 'transaction',
         loadChildren: () => import('./warehouse/warehouse.module').then(m => m.WarehouseModule)
       },
-      // {
-      //   path: 'sale',
-      //   loadChildren: () => import('./sale/sale.module').then(m => m.SaleModule)
-      // }
+      {
+        path: 'invoice',
+        loadChildren: () => import('./invoice/invoice.module').then(m => m.InvoiceModule)
+      }
       // {
       //     path: 'material',
       //     loadChildren:
