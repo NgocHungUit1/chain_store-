@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { Router } from "@angular/router";
 import { AuthService } from "../../../authentication/auth.service";
+import { log } from 'console';
+import { OrderService } from '../../../sale/order.service';
 @Component({
   selector: 'app-header-cart',
   templateUrl: './header-cart.component.html',
@@ -77,7 +79,9 @@ export class AppHeaderCartComponent {
 
   constructor(
     private route: Router,
-    private authSer: AuthService
+    private authSer: AuthService,
+    private orderService: OrderService,
+
   ) {
 
   }
@@ -88,5 +92,10 @@ export class AppHeaderCartComponent {
         this.route.navigate(['/', 'authentication', 'login']);
       }
     });
+  }
+
+  //@NGHIA
+  onChangeSlideToggle(e: any){
+    console.log(e.checked);
   }
 }

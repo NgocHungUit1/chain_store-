@@ -39,25 +39,16 @@
         <!-- Search - style you can find in header.scss -->
         <!-- ============================================================== -->
 
-        <!-- <button mat-icon-button class="srh-btn" (click)="showSearch = !showSearch">
-            <mat-icon>search</mat-icon>
-        </button>
-        <form class="app-search" [ngClass]="{'show-search': showSearch}">
-            <input type="text" class="form-control"  placeholder="Search &amp; enter">
-            
-            <a class="cl-srh-btn" (click)="showSearch = !showSearch">
-                <i class="ti-close"></i>
-            </a>
-        </form> -->
 
         <div class="select-product">
             <mat-form-field>
-                <input class="input-search-product" style="outline: 0;" type="text" [formControl]="selectProduct"  matInput
-                    [matAutocomplete]="chooseProduct" placeholder="Tìm hàng hóa ">
+                <input class="input-search-product" style="outline: 0;" type="text" [formControl]="selectProduct"
+                    matInput [matAutocomplete]="chooseProduct" placeholder="Tìm hàng hóa ">
                 <button mat-button matPrefix>
                     <mat-icon>search</mat-icon>
                 </button>
-                <mat-autocomplete #chooseProduct="matAutocomplete" (optionSelected)="onSelectedProduct($event.option.value)">
+                <mat-autocomplete #chooseProduct="matAutocomplete"
+                    (optionSelected)="onSelectedProduct($event.option.value)">
                     <mat-option *ngFor="let product of filteredProducts | async" [value]="product">
                         <img class="example-option-img" aria-hidden [src]="product.default_image" height="25">
                         <span>{{product.product_name}}</span> |
@@ -67,22 +58,6 @@
             </mat-form-field>
         </div>
 
-        <!-- <div class="select-product">
-            <mat-form-field>
-                <input class="input-search-product" type="text" [formControl]="selectProduct" matInput
-                    [matAutocomplete]="chooseProduct" placeholder="Tìm hàng hóa ">
-                <button mat-button matPrefix>
-                    <mat-icon>search</mat-icon>
-                </button>
-                <mat-autocomplete #chooseProduct="matAutocomplete" (optionSelected)="onSelectedProduct($event.option.value)">
-                    <mat-option *ngFor="let product of filteredProducts | async" [value]="product">
-                        <img class="example-option-img" aria-hidden [src]="product.default_image" height="25">
-                        <span>{{product.product_name}}</span> |
-                        <small>Slt: {{product.quantity_of_stock}}</small>
-                    </mat-option>
-                </mat-autocomplete>
-            </mat-form-field>
-        </div> -->
 
         <span fxFlex></span>
         <!-- ============================================================== -->

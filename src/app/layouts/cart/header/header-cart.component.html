@@ -1,4 +1,16 @@
 <!-- ============================================================== -->
+<!-- Print - style you can find in header.scss -->
+<!-- ============================================================== -->
+<button [matMenuTriggerFor]="print" mat-icon-button>
+    <mat-icon>print</mat-icon>
+</button>
+<mat-menu #print="matMenu" class="mymegamenu">
+    <span mat-menu-item>
+        <mat-slide-toggle (change)="onChangeSlideToggle($event)">Tự động in hóa đơn</mat-slide-toggle>
+    </span>
+</mat-menu>
+
+<!-- ============================================================== -->
 <!-- Notification - style you can find in header.scss -->
 <!-- ============================================================== -->
 <button [matMenuTriggerFor]="notification" mat-icon-button class="m-r-10">
@@ -81,11 +93,15 @@
     <img src="assets/images/users/1.jpg" alt="user" class="profile-pic"> </button>
 <mat-menu #profile="matMenu" class="mymegamenu">
     <button mat-menu-item>
-        <mat-icon>settings</mat-icon> Settings </button>
+        <mat-icon>settings</mat-icon> Settings
+    </button>
     <button mat-menu-item>
-        <mat-icon>account_box</mat-icon> Profile </button>
+        <mat-icon>account_box</mat-icon> Profile
+    </button>
     <button mat-menu-item>
-        <mat-icon>notifications_off</mat-icon> Disable notifications </button>
+        <mat-icon>notifications_off</mat-icon> Disable notifications
+    </button>
     <button mat-menu-item (click)="logout()">
-        <mat-icon>exit_to_app</mat-icon> Đăng xuất </button>
+        <mat-icon>exit_to_app</mat-icon> Đăng xuất
+    </button>
 </mat-menu>

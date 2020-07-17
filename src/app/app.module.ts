@@ -35,7 +35,6 @@ import { OverlayContainer } from "@angular/cdk/overlay";
 import { AngularImageViewerModule } from "angular-x-image-viewer";
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
-import { SearchProductComponent } from './layouts/cart/search-product/search-product.component';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -54,7 +53,6 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     AppSidebarComponent,
     AppBreadcrumbComponent,
     AppHeaderCartComponent,
-    SearchProductComponent
   ],
   imports: [
     BrowserModule,

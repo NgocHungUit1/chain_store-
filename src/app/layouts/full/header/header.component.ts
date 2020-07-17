@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
-import {Router} from "@angular/router";
-import {AuthService} from "../../../authentication/auth.service";
+import { Router } from "@angular/router";
+import { AuthService } from "../../../authentication/auth.service";
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
