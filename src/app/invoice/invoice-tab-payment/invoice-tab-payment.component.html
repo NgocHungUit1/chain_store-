@@ -1,1 +1,30 @@
-<p>invoice-tab-payment works!</p>
+<table mat-table [dataSource]="payment" class="mat-elevation-z8">
+
+    <ng-container matColumnDef="#">
+        <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['#'] }} </th>
+        <td mat-cell *matCellDef="let element; let i = index;"> {{ i + 1 }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="payment_no">
+        <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['payment_no'] }} </th>
+        <td mat-cell *matCellDef="let element"> {{element.payment_no}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="payment_method">
+        <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['payment_method'] }} </th>
+        <td mat-cell *matCellDef="let element"> {{element.payment_method}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="total_price">
+        <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['total_price'] }} </th>
+        <td mat-cell *matCellDef="let element"> {{element.total_price | number}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="created_by">
+        <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['created_by'] }} </th>
+        <td mat-cell *matCellDef="let element"> {{element.created_by}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns" class="header-element-row"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

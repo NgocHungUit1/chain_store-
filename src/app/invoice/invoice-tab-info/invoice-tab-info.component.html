@@ -1,1 +1,102 @@
-<p>invoice-tab-info works!</p>
+<div fxLayout="row wrap" class="m-b-20">
+    <div fxFlex="100">
+        <h3 style="color: #009688">{{ invoice.invoice_no }}</h3>
+    </div>
+    <div fxFlex="100">
+        <div fxLayout="row wrap">
+            <div fxFlex="70" class="invoice-info">
+                <div fxLayout="row wrap" class="invoice-info-row">
+                    <div fxFlex="48" class="invoice-info-field">
+                        <span class="invoice-field-label">Mã hàng :</span> <strong>{{invoice.invoice_no}}</strong>
+                    </div>
+                    <div fxFlex="4"></div>
+                    <div fxFlex="48" class="invoice-info-field">
+                        <span class="invoice-field-label">Trạng thái :</span> <strong>{{ invoice.invoice_no }}</strong>
+                    </div>
+                </div>
+
+                <div fxLayout="row wrap" class="invoice-info-row">
+                    <div fxFlex="48" class="invoice-info-field">
+                        <span class="invoice-field-label">Thời gian :</span> <strong>{{ invoice.created_at }}</strong>
+                    </div>
+                    <div fxFlex="4"></div>
+                    <div fxFlex="48" class="invoice-info-field">
+                        <span class="invoice-field-label">Chi nhánh :</span> <strong>{{ invoice.store?.name }}</strong>
+                    </div>
+                </div>
+
+                <div fxLayout="row wrap" class="invoice-info-row">
+                    <div fxFlex="48" class="invoice-info-field">
+                        <span class="invoice-field-label">Khách hàng :</span>
+                        <strong>{{ invoice.customer?.name }}</strong>
+                    </div>
+                    <div fxFlex="4"></div>
+                    <div fxFlex="48" class="invoice-info-field">
+                        <span class="invoice-field-label">Người bán :</span> <strong>{{ invoice.invoice_no }}</strong>
+                    </div>
+                </div>
+
+                <div fxLayout="row wrap" class="invoice-info-row">
+                    <div fxFlex="48" class="invoice-info-field">
+                        <span class="invoice-field-label">Bảng giá :</span>
+                        <strong>{{invoice.priceBook?.name }}</strong>
+                    </div>
+                    <div fxFlex="4"></div>
+                    <div fxFlex="48" class="invoice-info-field">
+                        <span class="invoice-field-label">Người tạo :</span>
+                        <strong>{{ invoice.user?.username }}</strong>
+                    </div>
+                </div>
+
+            </div>
+
+            <div fxFlex="30">
+                <div class="invoice-image-container">
+                    <span class="invoice-field-label">Ghi chú :</span> <strong>{{invoice.note}}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p></p>
+
+    <div fxFlex="100">
+        <table mat-table [dataSource]="invoice.detail" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="#">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['#'] }} </th>
+                <td mat-cell *matCellDef="let element; let i = index;"> {{ i + 1 }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="product_id">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['product_id'] }} </th>
+                <td mat-cell *matCellDef="let element"> {{element.product_id}} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns" class="header-element-row"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    </div>
+
+    <div fxLayout="row wrap">
+        <div fxFlex="100">
+            <button class="m-r-10" mat-raised-button color="primary">
+                <mat-icon>edit</mat-icon> Cập nhật
+            </button>
+            <button class="m-r-10" mat-raised-button color="accent">
+                <mat-icon>file_copy</mat-icon> Lưu
+            </button>
+            <button class="m-r-10" mat-raised-button color="info">
+                <mat-icon>print</mat-icon>In
+            </button>
+            <button class="m-r-10" mat-raised-button color="info">
+                <mat-icon>file_copy</mat-icon> Xuất file
+            </button>
+            <button class="m-r-10" mat-raised-button color="accent">
+                <mat-icon>file_copy</mat-icon> Sao chép
+            </button>
+            <button class="m-r-10" mat-raised-button color="warn">
+                <mat-icon>delete</mat-icon> Hủy bỏ
+            </button>
+        </div>
+    </div>
+</div>

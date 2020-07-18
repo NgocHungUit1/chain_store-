@@ -1,0 +1,29 @@
+.invoice-info .invoice-info-row {
+  margin: 20px 0px;
+}
+
+.invoice-info .invoice-info-row .invoice-info-field {
+  border-bottom: 1px solid #eee;
+  padding: 3px 0 10px;
+}
+
+.invoice-info .invoice-info-row-last .invoice-info-field {
+  border-bottom: 0px;
+}
+
+.invoice-info .invoice-info-row .invoice-field-label {
+  min-width: 100px;
+  display: inline-block;
+}
+
+table {
+  width: 100%;
+  border-style: solid;
+  border-width: 1px;
+  border-color: beige;
+  margin-top: 10px;
+}
+
+.header-element-row {
+  background-color: #dcf4fd;
+}
