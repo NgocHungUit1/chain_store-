@@ -117,4 +117,32 @@ export class WarehouseInfoTabComponent implements OnChanges {
     });
   }
 
+  reconnect(item) {
+    this.modelSer.reconnect(item.id).subscribe(res => {
+      if (res['success']) {
+        this.notifySer.notify('success', 'Cập nhật liên thông phiếu nhập thành công.');
+      }
+    });
+  }
+
+  connect(item) {
+    this.modelSer.connect(item.id).subscribe(res => {
+      if (res['success']) {
+        item.national_pharmacy_no = res['national_pharmacy_no'];
+        this.notifySer.notify('success', 'Liên thông phiếu nhập thành công.');
+      }
+    });
+  }
+
+  disconnect(item) {
+    this.modelSer.disconnect(item.id).subscribe(res => {
+      if (res['success']) {
+        item.national_pharmacy_no = null;
+        this.notifySer.notify('success', 'Gỡ liên thông phiếu nhập thành công.');
+      } else if (res['message'] !== undefined) {
+        this.notifySer.notify('error', res['message']);
+      }
+    });
+  }
+
 }

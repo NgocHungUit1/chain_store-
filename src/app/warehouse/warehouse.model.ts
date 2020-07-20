@@ -17,6 +17,7 @@ export class Warehouse {
   status: number;
   type: string;
   remain_amount: string;
+  national_pharmacy_no: string;
   supplier: Supplier;
   created_by: number;
   created_user: User;

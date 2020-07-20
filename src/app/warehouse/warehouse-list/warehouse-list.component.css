@@ -3,6 +3,7 @@
 .mat-column-registration_no,
 .mat-column-manufacturer,
 .mat-column-made_in,
+.mat-column-national_pharmacy_no,
 .mat-column-unit {
   flex: 1 1 0%;
 }

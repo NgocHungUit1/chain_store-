@@ -79,6 +79,21 @@ export class WarehouseService {
     const url = environment.apiUrl + '/warehouse/' + id;
     return this.http.delete(url, {});
   }
+
+  connect(id) {
+    const url = environment.apiUrl + '/warehouse/connect?id=' + id;
+    return this.http.post(url, {});
+  }
+
+  disconnect(id) {
+    const url = environment.apiUrl + '/warehouse/disconnect?id=' + id;
+    return this.http.post(url, {});
+  }
+
+  reconnect(id) {
+    const url = environment.apiUrl + '/warehouse/connect?id=' + id + '&reconnect=1';
+    return this.http.post(url, {});
+  }
 }
 
 
