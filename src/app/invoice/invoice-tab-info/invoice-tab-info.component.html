@@ -57,24 +57,106 @@
             </div>
         </div>
     </div>
-    <p></p>
 
     <div fxFlex="100">
-        <table mat-table [dataSource]="invoice.detail" class="mat-elevation-z8">
+        <table mat-table [dataSource]="invoice.detail" class="">
 
-            <ng-container matColumnDef="#">
-                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['#'] }} </th>
-                <td mat-cell *matCellDef="let element; let i = index;"> {{ i + 1 }} </td>
+            <ng-container matColumnDef="product_no">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['product_no'] }} </th>
+                <td mat-cell *matCellDef="let element; let i = index;"> {{ element.product?.product_no }} </td>
             </ng-container>
 
-            <ng-container matColumnDef="product_id">
-                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['product_id'] }} </th>
-                <td mat-cell *matCellDef="let element"> {{element.product_id}} </td>
+            <ng-container matColumnDef="product_name">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['product_name'] }} </th>
+                <td mat-cell *matCellDef="let element"> {{ element.product?.product_name }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="common_price">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['common_price'] }} </th>
+                <td mat-cell *matCellDef="let element"> {{ element?.common_price | number }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="amount">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['amount'] }} </th>
+                <td mat-cell *matCellDef="let element"> {{ element.amount }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="discount">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['discount'] }} </th>
+                <td mat-cell *matCellDef="let element"> {{ element.discount }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="price">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['price'] }} </th>
+                <td mat-cell *matCellDef="let element"> {{ element.price | number }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="total_price">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['total_price'] }} </th>
+                <td mat-cell *matCellDef="let element"> {{ element.price * element.amount | number }} </td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns" class="header-element-row"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
+    </div>
+    
+
+     <!-- tom tat don hang -->
+    <div fxFlex="100">
+        <div fxLayout="row wrap">
+            <div fxFlex="70" class="invoice-detail-info">
+                
+            </div>
+
+            <div fxFlex="30">
+                <div fxLayout="row wrap" class="invoice-detail-info-row">
+                    <div fxFlex="48" class="invoice-detail-info-field">
+                        <span class="invoice-detail-field-label">Tổng số lượng :</span> 
+                    </div>
+                    <div fxFlex="4"></div>
+                    <div fxFlex="48" class="invoice-detail-info-field">
+                        <strong>{{ invoice.user?.username }}</strong>
+                    </div>
+                </div>
+                <div fxLayout="row wrap" class="invoice-detail-info-row">
+                    <div fxFlex="48" class="invoice-detail-info-field">
+                        <span class="invoice-detail-field-label">Tổng tiền hàng :</span> 
+                    </div>
+                    <div fxFlex="4"></div>
+                    <div fxFlex="48" class="invoice-detail-info-field">
+                        <strong>{{ invoice?.discount |number }}</strong>
+                    </div>
+                </div>
+                <div fxLayout="row wrap" class="invoice-detail-info-row">
+                    <div fxFlex="48" class="invoice-detail-info-field">
+                        <span class="invoice-field-label">Giảm giá hóa đơn :</span> 
+                    </div>
+                    <div fxFlex="4"></div>
+                    <div fxFlex="48" class="invoice-detail-info-field">
+                        <strong>{{ invoice?.discount }}</strong>
+                    </div>
+                </div>
+                <div fxLayout="row wrap" class="invoice-detail-info-row">
+                    <div fxFlex="48" class="invoice-detail-info-field">
+                        <span class="invoice-detail-field-label">Khách cần trả :</span> 
+                    </div>
+                    <div fxFlex="4"></div>
+                    <div fxFlex="48" class="invoice-detail-info-field">
+                        <strong>{{ invoice.user?.username }}</strong>
+                    </div>
+                </div>
+                <div fxLayout="row wrap" class="invoice-detail-info-row">
+                    <div fxFlex="48" class="invoice-detail-info-field">
+                        <span class="invoice-detail-field-label">Khách đã trả :</span> 
+                    </div>
+                    <div fxFlex="4"></div>
+                    <div fxFlex="48" class="invoice-detail-info-field">
+                        <strong>{{ invoice.user?.username }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div fxLayout="row wrap">

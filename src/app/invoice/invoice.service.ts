@@ -35,7 +35,7 @@ export class InvoiceService {
     }
     if (!filter.pageSize) {
       filter.pageSize = 20;
-    } 
+    }
     url += '?' + filter.toFilterString();
     return url;
   }
@@ -45,10 +45,10 @@ export class InvoiceService {
     return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
   }
 
-  getDetail(id: string, expand: string = '') {
-    const url = environment.apiUrl + '/invoice/' + id + '?expand=' + expand;
-    return this.http.get<object>(url);
-  }
+  // getDetail(id: string, expand: string = '') {
+  //   const url = environment.apiUrl + '/invoice/' + id + '?expand=' + expand;
+  //   return this.http.get<object>(url);
+  // }
 
   public getInvoices(id: string, expand: string = ''): Observable<Invoice> {
     const url = environment.apiUrl + '/invoice/' + id + '?expand=' + expand;
@@ -73,6 +73,11 @@ export class InvoiceService {
   autocomplete(term: string) {
     const url = environment.apiUrl + '/invoice/autocomplete?term=' + term;
     return this.http.get<Invoice[]>(url);
+  }
+
+  getDetail(invoice_id: string, price_book_id: string) {
+    const url = environment.apiUrl + '/invoice/detail';
+    return this.http.post(url, { invoice_id: invoice_id, price_book_id: price_book_id });
   }
 
 }

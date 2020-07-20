@@ -9,6 +9,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { InvoiceFilter, Invoice } from '../invoice.model';
 import { InvoiceService } from '../invoice.service';
+import { element } from 'protractor';
 
 @Component({
   selector: 'app-invoice-list',
@@ -87,6 +88,12 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
           + date.slice(5, 7) + '/'
           + date.slice(0, 4) + ' '
           + date.slice(11, 16);
+
+        // cap nhat chi tiet san pham , bang gia chung
+        this.service.getDetail(elementData.id, elementData.price_book_id).subscribe(respon => {
+          elementData.detail = respon;
+        });
+        // console.log(elementData);
       });
       this.dataSource = data;
       this.reloadFilter(res);

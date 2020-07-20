@@ -6,7 +6,9 @@
   border-bottom: 1px solid #eee;
   padding: 3px 0 10px;
 }
-
+.invoice-detail-info-field {
+  padding: 3px 0 10px;
+}
 .invoice-info .invoice-info-row-last .invoice-info-field {
   border-bottom: 0px;
 }
@@ -26,4 +28,5 @@ table {
 
 .header-element-row {
   background-color: #dcf4fd;
+  font-weight: 600;
 }
