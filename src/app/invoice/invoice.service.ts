@@ -80,6 +80,10 @@ export class InvoiceService {
     return this.http.post(url, { invoice_id: invoice_id, price_book_id: price_book_id });
   }
 
+  getSumaryInvoice() {
+    const url = environment.apiUrl + '/invoice/index-sumary';
+    return this.http.post(url, {});
+  }
 }
 
 

@@ -11,20 +11,35 @@ export class Store {
   name: string;
 }
 
+export class InvoiceDetail {
+  id: string;
+  invoice_id: string;
+  product_id: string;
+  amount: number;
+  note: string;
+  price: number;
+  discount: number;
+  discount_type: string;
+}
+
 export class Invoice {
   id: string;
   invoice_no: string;
   customer: Customer;
-  discount: string;
+  total_price: number;
+  total_payment: number;
+  discount_price: number;
+  discount: number;
   discount_type: string;
   note: string;
   priceBook: PriceList;
   store: Store;
   payment: object[];
-  detail: object[]; // @NGHIA
+  detail: InvoiceDetail[]; 
   user: User;
   created_by: string;
   created_at: string;
+  stt: number; // for view
 }
 
 export class InvoiceFilter extends ApiFilterBase {

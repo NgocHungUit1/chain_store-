@@ -22,20 +22,28 @@ export class InvoiceTabInfoComponent implements OnInit {
     'total_price': 'Thành tiền'
   };
 
-  TongSoLuong: number;
-  TongTienHang: number;
-  GiamGiaHoaDon: number;
+  TongSoLuong: number = 0;
+  TongTienHang: number = 0;
+  GiamGiaHoaDon: number = 0;
   KhachCanTra: number;
-  KhachDaTra: number;
+  KhachDaTra: number = 0;
   constructor() { }
 
   ngOnInit(): void {
     // console.log(this.invoice);
+    const invoiceData = this.invoice;
     const detail = this.invoice.detail;
+    this.TongTienHang = invoiceData.total_price;
+    this.KhachDaTra = invoiceData.total_payment;
     detail.forEach(element => {
-      console.log(element);
+      this.TongSoLuong = this.TongSoLuong + element?.amount;
     });
-    // @NGHIA
+
+    if (invoiceData.discount_type === 'vnd') {
+      this.GiamGiaHoaDon = invoiceData.discount;
+    } else {
+      this.GiamGiaHoaDon = this.TongTienHang * invoiceData.discount / 100;
+    }
   }
 
 }

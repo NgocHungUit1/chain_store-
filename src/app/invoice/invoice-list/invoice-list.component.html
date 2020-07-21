@@ -47,11 +47,11 @@
             </div>
           </div>
           <div class=" table-responsive">
-            <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="mat-elevation-z8">
+            <table mat-table multiTemplateDataRows [dataSource]="dataSource">
 
               <ng-container matColumnDef="#">
                 <th mat-header-cell *matHeaderCellDef> #</th>
-                <td mat-cell *matCellDef="let element; let i = index;"> {{ i + 1 }} </td>
+                <td mat-cell *matCellDef="let element; let i = index;"> {{ (page-1)*pageSize + element.stt }} </td>
               </ng-container>
 
               <ng-container matColumnDef="invoice_no">
@@ -70,18 +70,18 @@
               </ng-container>
 
               <ng-container matColumnDef="total_price">
-                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['total_price'] }}</th>
-                <td mat-cell *matCellDef="let element"> {{ element.total_price | number }}</td>
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{ columnsHeader['total_price'] }}</th>
+                <td mat-cell class="column-number" *matCellDef="let element"> {{ element.total_price | number }}</td>
               </ng-container>
 
               <ng-container matColumnDef="discount">
-                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['discount'] }}</th>
-                <td mat-cell *matCellDef="let element"> {{ element.discount }}</td>
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{ columnsHeader['discount'] }}</th>
+                <td mat-cell class="column-number" *matCellDef="let element"> {{ element.discount_price | number }}</td>
               </ng-container>
 
               <ng-container matColumnDef="payment">
-                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['payment'] }}</th>
-                <td mat-cell *matCellDef="let element"> {{ element.payment }}</td>
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{ columnsHeader['payment'] }}</th>
+                <td mat-cell class="column-number" *matCellDef="let element"> {{ element.total_payment | number }}</td>
               </ng-container>
 
 
@@ -102,7 +102,43 @@
                 </td>
               </ng-container>
 
+
+              <!-- Item second-header -->
+              <!-- '#', 'invoice_no', 'created_at', 'customer', 'total_price', 'discount', 'payment' -->
+              <ng-container matColumnDef="second_#">
+                <th mat-header-cell *matHeaderCellDef>  </th>
+              </ng-container>
+
+              <ng-container matColumnDef="second_invoice_no">
+                <th mat-header-cell *matHeaderCellDef>  </th>
+              </ng-container>
+
+              <ng-container matColumnDef="second_created_at">
+                <th mat-header-cell *matHeaderCellDef>  </th>
+              </ng-container>
+
+              <ng-container matColumnDef="second_customer">
+                <th mat-header-cell *matHeaderCellDef>  </th>
+              </ng-container>
+
+              <ng-container matColumnDef="second_total_price">
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef> {{ TongTienHang | number }} </th>
+              </ng-container>
+
+              <ng-container matColumnDef="second_discount">
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef> {{ GiamGia | number}} </th>
+              </ng-container>
+
+              <ng-container matColumnDef="second_payment">
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef> {{ KhachHangTra | number }} </th>
+              </ng-container>
+              <!--End Item second-header -->
+
+
               <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+              <tr mat-header-row *matHeaderRowDef="second_columnsToDisplay"
+                class="example-second-header-row">
+              </tr>
               <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" class="example-element-row"
                 [class.example-expanded-row]="expandedElement === element"
                 (click)="expandedElement = expandedElement === element ? null : element">

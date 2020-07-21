@@ -46,6 +46,11 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   apiFilter: InvoiceFilter;
   expandedElement: Invoice | null;
 
+  // second column 
+  TongTienHang: number = 0;
+  GiamGia: number = 0;
+  KhachHangTra: number = 0;
+
   columnsHeader = {
     '#': '#',
     'invoice_no': 'Mã đơn hàng',
@@ -59,6 +64,9 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   displayedColumns: string[] = ['#', 'invoice_no', 'created_at', 'customer', 'total_price', 'discount', 'payment'];
   columnsToDisplay: string[] = ['#', 'invoice_no', 'created_at', 'customer', 'total_price', 'discount', 'payment'];
   dataSource: Invoice[] = [];
+
+  // for second column
+  second_columnsToDisplay: string[] = ['second_#', 'second_invoice_no', 'second_created_at', 'second_customer', 'second_total_price', 'second_discount', 'second_payment'];
 
   buildFilterFromParams(): InvoiceFilter {
     function write<K extends keyof InvoiceFilter>(arg: InvoiceFilter, key: K, value: InvoiceFilter[K]): void {
@@ -81,8 +89,11 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   loadData(): void {
     this.isLoadingResults = true;
     this.service.getList(this.apiFilter).subscribe(res => {
-      var data = res.body;
+      let data = res.body;
+      let stt = 0;
       data.forEach(elementData => {
+        stt++; elementData.stt = stt; // tinh STT
+
         const date = new Date(1000 * elementData.created_at).toJSON().slice(0, 16);
         elementData.created_at = date.slice(8, 10) + '/'
           + date.slice(5, 7) + '/'
@@ -93,12 +104,37 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
         this.service.getDetail(elementData.id, elementData.price_book_id).subscribe(respon => {
           elementData.detail = respon;
         });
-        // console.log(elementData);
+        // tong tien khach hang da tra, tien giam gia
+        let total_payment = 0;
+        let discount_price = 0;
+        elementData.payment.forEach(ele => {
+          total_payment = total_payment + ele.total_price;
+
+
+        });
+        elementData.total_payment = total_payment;
+        // End - tong tien khach hang da tra, tien giam gia
+
+        if (elementData.discount_type === 'vnd') {
+          discount_price = elementData.discount;
+        } else {
+          discount_price = elementData.total_price * elementData.discount / 100;
+        }
+        elementData.discount_price = discount_price;
+
       });
       this.dataSource = data;
       this.reloadFilter(res);
-      const url = this.service.getStateUrl(this.apiFilter);
+      // const url = this.service.getStateUrl(this.apiFilter);
       this.isLoadingResults = false;
+    });
+
+    this.service.getSumaryInvoice().subscribe(res => {
+      // console.log(res['TongTienHang']);
+      this.TongTienHang = res['TongTienHang'];
+      this.GiamGia = res['GiamGia'];
+      this.KhachHangTra = res['KhachHangTra'];
+
     });
   }
 

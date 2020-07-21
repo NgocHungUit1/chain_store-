@@ -6,9 +6,16 @@
   border-bottom: 1px solid #eee;
   padding: 3px 0 10px;
 }
-.invoice-detail-info-field {
+
+.invoice-info .invoice-info-row .invoice-info-field-note {
   padding: 3px 0 10px;
 }
+
+.invoice-detail-info-field {
+  padding: 3px 23px 10px 0px;
+  text-align: end;
+}
+
 .invoice-info .invoice-info-row-last .invoice-info-field {
   border-bottom: 0px;
 }
@@ -29,4 +36,11 @@ table {
 .header-element-row {
   background-color: #dcf4fd;
   font-weight: 600;
+}
+
+.mat-column-total_price {
+   font-weight: 600;
+}
+.column-number-end {
+  text-align: end;
 }
