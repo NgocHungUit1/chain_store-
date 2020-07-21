@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { ListComponentBase } from '../../shared/base';
 import { MatDialog } from "@angular/material/dialog";
 import { NotifierService } from "angular-notifier";
@@ -9,7 +10,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { InvoiceFilter, Invoice } from '../invoice.model';
 import { InvoiceService } from '../invoice.service';
-import { element } from 'protractor';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { DatetimeDefaultFilterDialogComponent } from '../datetime-default-filter-dialog/datetime-default-filter-dialog.component';
+import { DatetimeChooseFilterDialogComponent } from '../datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
 
 @Component({
   selector: 'app-invoice-list',
@@ -29,7 +32,8 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     private service: InvoiceService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private notifySer: NotifierService
+    private notifySer: NotifierService,
+    private fb: FormBuilder
   ) {
     super();
   }
@@ -45,6 +49,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
 
   apiFilter: InvoiceFilter;
   expandedElement: Invoice | null;
+  timeFilter: FormGroup;
 
   // second column 
   TongTienHang: number = 0;
@@ -64,6 +69,18 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   displayedColumns: string[] = ['#', 'invoice_no', 'created_at', 'customer', 'total_price', 'discount', 'payment'];
   columnsToDisplay: string[] = ['#', 'invoice_no', 'created_at', 'customer', 'total_price', 'discount', 'payment'];
   dataSource: Invoice[] = [];
+
+
+  statusItems: any[] = [
+    {
+      'id': 'default',
+      'title': 'Mặc định'
+    },
+    {
+      'id': 'choose',
+      'title': 'Lựa chọn khác'
+    }
+  ];
 
   // for second column
   second_columnsToDisplay: string[] = ['second_#', 'second_invoice_no', 'second_created_at', 'second_customer', 'second_total_price', 'second_discount', 'second_payment'];
@@ -86,8 +103,17 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     return filter;
   }
 
+  buildFrom() {
+    this.timeFilter = this.fb.group({
+      typeTime: [
+        'default'
+      ],
+    });
+  }
+
   loadData(): void {
     this.isLoadingResults = true;
+    this.buildFrom();
     this.service.getList(this.apiFilter).subscribe(res => {
       let data = res.body;
       let stt = 0;
@@ -129,18 +155,71 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
       this.isLoadingResults = false;
     });
 
-    this.service.getSumaryInvoice().subscribe(res => {
-      // console.log(res['TongTienHang']);
-      this.TongTienHang = res['TongTienHang'];
-      this.GiamGia = res['GiamGia'];
-      this.KhachHangTra = res['KhachHangTra'];
-
+    // second header
+    this.service.getSumaryInvoice(this.apiFilter).subscribe(res => {
+      this.TongTienHang = res.body['TongTienHang'];
+      this.GiamGia = res.body['GiamGia'];
+      this.KhachHangTra = res.body['KhachHangTra'];
     });
   }
 
   ngOnInit(): void {
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    // console.log(filterValue);
+    this.apiFilter.invoice_no = filterValue;
+    this.loadData();
+  }
+
+  openTimeDefault() {
+    // console.log(this.timeFilter.controls['typeTime'].value);
+    const obj = {
+      // title: 'Sửa bảng giá',
+      // action: 'update',
+    };
+    const dialogRef = this.dialog.open(DatetimeDefaultFilterDialogComponent, {
+      data: obj,
+      width: '40%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // if (result !== false && result !== undefined) {
+      //   this.apiFilter = this.buildFilterFromParams();
+      //   this.loadData();
+      // }
+    });
+  }
+
+  openTimeChoose() {
+    const obj = {
+      // title: 'Sửa bảng giá',
+      // action: 'update',
+    };
+    const dialogRef = this.dialog.open(DatetimeChooseFilterDialogComponent, {
+      data: obj,
+      width: '40%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // if (result !== false && result !== undefined) {
+      //   this.apiFilter = this.buildFilterFromParams();
+      //   this.loadData();
+      // }
+    });
+  }
+
+  radioTimeChange(event: Event) {
+    // console.log(this.timeFilter.controls['typeTime'].value);
+    if (this.timeFilter.controls['typeTime'].value === 'choose') {
+      console.log("choose");
+      //@NGHIA
+    }
   }
 
 }

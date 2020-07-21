@@ -7,6 +7,29 @@
       <h3>Lọc và tìm kiếm</h3>
     </mat-toolbar>
 
+    <mat-card class="time-filter-info">
+      <mat-card-title class="title-time-filter">Thời gian</mat-card-title>
+      <mat-card-content>
+
+        <form [formGroup]="timeFilter">
+          <mat-radio-group (change)="radioTimeChange($event)" formControlName="typeTime">
+            <mat-radio-button  style="display: inline; "  value="default">Mặc định
+              <button mat-icon-button aria-label="add" (click)="openTimeDefault()">
+                <mat-icon>swap_vert</mat-icon>
+              </button>
+            </mat-radio-button>
+            <mat-radio-button  style="display: inline; "  value="choose">Lựa chọn khác
+              <button mat-icon-button aria-label="add" (click)="openTimeChoose()">
+                <mat-icon>date_range</mat-icon>
+              </button>
+            </mat-radio-button>
+            
+          </mat-radio-group>
+        </form>
+
+      </mat-card-content>
+    </mat-card>
+
   </mat-sidenav>
   <mat-sidenav-content>
     <mat-toolbar class="dv-header">
@@ -16,10 +39,23 @@
       <h3>
         Hóa đơn
       </h3>
+
+      <div class="select-product">
+        <mat-form-field>
+          <mat-label>Theo mã hóa đơn</mat-label>
+          <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
+          <button mat-icon-button matPrefix>
+            <mat-icon>search</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+
+
       <span fxFlex="1 1 0%"></span>
+
       <button mat-raised-button color="primary" style="margin-right: 10px">
         <mat-icon>add</mat-icon>
-        Thêm mới
+        Bán hàng
       </button>
 
       <div class="diva-column-select">
@@ -106,19 +142,19 @@
               <!-- Item second-header -->
               <!-- '#', 'invoice_no', 'created_at', 'customer', 'total_price', 'discount', 'payment' -->
               <ng-container matColumnDef="second_#">
-                <th mat-header-cell *matHeaderCellDef>  </th>
+                <th mat-header-cell *matHeaderCellDef> </th>
               </ng-container>
 
               <ng-container matColumnDef="second_invoice_no">
-                <th mat-header-cell *matHeaderCellDef>  </th>
+                <th mat-header-cell *matHeaderCellDef> </th>
               </ng-container>
 
               <ng-container matColumnDef="second_created_at">
-                <th mat-header-cell *matHeaderCellDef>  </th>
+                <th mat-header-cell *matHeaderCellDef> </th>
               </ng-container>
 
               <ng-container matColumnDef="second_customer">
-                <th mat-header-cell *matHeaderCellDef>  </th>
+                <th mat-header-cell *matHeaderCellDef> </th>
               </ng-container>
 
               <ng-container matColumnDef="second_total_price">
@@ -136,8 +172,7 @@
 
 
               <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-              <tr mat-header-row *matHeaderRowDef="second_columnsToDisplay"
-                class="example-second-header-row">
+              <tr mat-header-row *matHeaderRowDef="second_columnsToDisplay" class="example-second-header-row">
               </tr>
               <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" class="example-element-row"
                 [class.example-expanded-row]="expandedElement === element"

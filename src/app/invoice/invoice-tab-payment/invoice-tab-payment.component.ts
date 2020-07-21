@@ -9,7 +9,7 @@ export class InvoiceTabPaymentComponent implements OnInit {
 
   @Input() payment: object[];
 
-  displayedColumns: string[] = ['#', 'payment_no', 'payment_method', 'total_price', 'created_by'];
+  displayedColumns: string[] = ['#', 'payment_no', 'total_price', 'payment_method', 'created_by'];
 
   columnsHeader = {
     '#': '#',
@@ -19,6 +19,12 @@ export class InvoiceTabPaymentComponent implements OnInit {
     'created_by': 'Người tạo',
   };
 
+
+  typeMethods = {
+      'cash': 'Tiền mặt',
+      'card': 'Thẻ',
+      'transfer': 'Chuyển khoản',
+    };
   constructor() { }
 
   ngOnInit(): void {

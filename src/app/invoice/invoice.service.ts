@@ -80,9 +80,25 @@ export class InvoiceService {
     return this.http.post(url, { invoice_id: invoice_id, price_book_id: price_book_id });
   }
 
-  getSumaryInvoice() {
-    const url = environment.apiUrl + '/invoice/index-sumary';
-    return this.http.post(url, {});
+
+  getApiUrlSumaryInvoice(filter?: InvoiceFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/invoice/index-sumary?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
+  getSumaryInvoice(filter?: InvoiceFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrlSumaryInvoice(filter);
+    return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
   }
 }
 
