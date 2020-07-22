@@ -8,7 +8,7 @@ import { ActivatedRoute } from '@angular/router';
 import { MatTable } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { InvoiceFilter, Invoice } from '../invoice.model';
+import { InvoiceFilter, Invoice, DateFilter } from '../invoice.model';
 import { InvoiceService } from '../invoice.service';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DatetimeDefaultFilterDialogComponent } from '../datetime-default-filter-dialog/datetime-default-filter-dialog.component';
@@ -50,11 +50,16 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   apiFilter: InvoiceFilter;
   expandedElement: Invoice | null;
   timeFilter: FormGroup;
+  currentDateFilter: DateFilter;
 
   // second column 
-  TongTienHang: number = 0;
-  GiamGia: number = 0;
-  KhachHangTra: number = 0;
+  TongTienHang = 0;
+  GiamGia = 0;
+  KhachHangTra = 0;
+
+  // 
+  titleTimeDefault = 'Tháng này';
+  titleTimeChoose = 'Lựa chọn khác';
 
   columnsHeader = {
     '#': '#',
@@ -90,7 +95,9 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
       arg[key] = value;
     }
 
+    const objDateFilter = this.service.getDateFilter();
     const filter = new InvoiceFilter();
+
     const objectKeys = Object.keys(filter) as Array<keyof InvoiceFilter>;
 
     for (const attr of objectKeys) {
@@ -100,6 +107,10 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.expand = 'customer,payment,detail,priceBook,store,user';
+    filter.date_from = objDateFilter.date_from;
+    filter.date_to = objDateFilter.date_to;
+
+
     return filter;
   }
 
@@ -111,9 +122,23 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     });
   }
 
+  initDateFilter() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const first = new Date(year, month, 1);
+    const obj = new DateFilter();
+    // tháng này
+
+    obj.date_from = this.service.convertDateYYYYMMDD(first);
+    obj.date_to = this.service.convertDateYYYYMMDD(today);
+
+    this.currentDateFilter = obj;
+    this.service.setDateFilter(obj);
+  }
+
   loadData(): void {
     this.isLoadingResults = true;
-    this.buildFrom();
     this.service.getList(this.apiFilter).subscribe(res => {
       let data = res.body;
       let stt = 0;
@@ -136,7 +161,6 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
         elementData.payment.forEach(ele => {
           total_payment = total_payment + ele.total_price;
 
-
         });
         elementData.total_payment = total_payment;
         // End - tong tien khach hang da tra, tien giam gia
@@ -150,6 +174,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
 
       });
       this.dataSource = data;
+
       this.reloadFilter(res);
       // const url = this.service.getStateUrl(this.apiFilter);
       this.isLoadingResults = false;
@@ -164,22 +189,30 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   }
 
   ngOnInit(): void {
+    this.initDateFilter();
+    this.buildFrom();
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
+
+    this.service.subscribeDateFilter.subscribe(obj => {
+      if (JSON.stringify(this.currentDateFilter) !== JSON.stringify(obj)) {
+        this.currentDateFilter = obj;
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+      }
+    });
+
   }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    // console.log(filterValue);
-    this.apiFilter.invoice_no = filterValue;
+    this.apiFilter = this.buildFilterFromParams();
     this.loadData();
   }
 
   openTimeDefault() {
-    // console.log(this.timeFilter.controls['typeTime'].value);
     const obj = {
-      // title: 'Sửa bảng giá',
-      // action: 'update',
+
     };
     const dialogRef = this.dialog.open(DatetimeDefaultFilterDialogComponent, {
       data: obj,
@@ -188,17 +221,18 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      // if (result !== false && result !== undefined) {
-      //   this.apiFilter = this.buildFilterFromParams();
-      //   this.loadData();
-      // }
+      if (result?.title !== undefined) {
+        this.titleTimeDefault = result?.title;
+      }
+      this.timeFilter.patchValue({
+        typeTime: 'default',
+      });
     });
   }
 
   openTimeChoose() {
     const obj = {
-      // title: 'Sửa bảng giá',
-      // action: 'update',
+
     };
     const dialogRef = this.dialog.open(DatetimeChooseFilterDialogComponent, {
       data: obj,
@@ -207,19 +241,31 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      // if (result !== false && result !== undefined) {
-      //   this.apiFilter = this.buildFilterFromParams();
-      //   this.loadData();
-      // }
+
+      this.timeFilter.patchValue({
+        typeTime: 'choose',
+      });
+      const date = this.service.getDateFilter();
+      const date_from = new Date(date.date_from);
+      const date_to = new Date(date.date_to);
+      this.titleTimeChoose = this.convertDate(date_from) + " - " + this.convertDate(date_to);
     });
   }
 
   radioTimeChange(event: Event) {
-    // console.log(this.timeFilter.controls['typeTime'].value);
     if (this.timeFilter.controls['typeTime'].value === 'choose') {
-      console.log("choose");
-      //@NGHIA
+      const date = this.service.getDateFilter();
+      const date_from = new Date(date.date_from);
+      const date_to = new Date(date.date_to);
+      this.titleTimeChoose = this.convertDate(date_from) + " - " + this.convertDate(date_to);
+    } else {
+      this.titleTimeChoose = 'Lựa chọn khác';
     }
+  }
+
+  convertDate(date: Date) {
+    const month = date.getMonth() + 1;
+    return date.getDate() + '/' + month + '/' + date.getFullYear();
   }
 
 }

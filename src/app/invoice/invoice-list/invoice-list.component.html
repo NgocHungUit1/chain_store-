@@ -13,12 +13,12 @@
 
         <form [formGroup]="timeFilter">
           <mat-radio-group (change)="radioTimeChange($event)" formControlName="typeTime">
-            <mat-radio-button  style="display: inline; "  value="default">Mặc định
+            <mat-radio-button  style="display: inline; "  value="default">{{ titleTimeDefault }}
               <button mat-icon-button aria-label="add" (click)="openTimeDefault()">
                 <mat-icon>swap_vert</mat-icon>
               </button>
             </mat-radio-button>
-            <mat-radio-button  style="display: inline; "  value="choose">Lựa chọn khác
+            <mat-radio-button  style="display: inline; "  value="choose">{{ titleTimeChoose }}
               <button mat-icon-button aria-label="add" (click)="openTimeChoose()">
                 <mat-icon>date_range</mat-icon>
               </button>

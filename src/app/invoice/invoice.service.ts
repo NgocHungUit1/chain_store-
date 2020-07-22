@@ -2,12 +2,28 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Invoice, InvoiceFilter } from './invoice.model';
+import { DateFilter, Invoice, InvoiceFilter } from './invoice.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InvoiceService {
+
+  public dateFilter: BehaviorSubject<DateFilter> = new BehaviorSubject<DateFilter>(null);
+  subscribeDateFilter: Observable<DateFilter> = this.dateFilter.asObservable();
+
+  setDateFilter(obj: DateFilter) {
+    this.dateFilter.next(obj);
+  }
+
+  getDateFilter() {
+    return this.dateFilter.value;
+  }
+
+  convertDateYYYYMMDD(date: Date) {
+    const month = date.getMonth() + 1;
+    return date.getFullYear() + '-' + month + '-' + date.getDate();
+  }
 
   constructor(private http: HttpClient) {
   }

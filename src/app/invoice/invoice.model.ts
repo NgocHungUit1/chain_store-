@@ -35,7 +35,8 @@ export class Invoice {
   priceBook: PriceList;
   store: Store;
   payment: object[];
-  detail: InvoiceDetail[]; 
+  detail: InvoiceDetail[];
+  order_status: string;
   user: User;
   created_by: string;
   created_at: string;
@@ -54,9 +55,16 @@ export class InvoiceFilter extends ApiFilterBase {
   page = 1;
   pageSize = 15;
   sort = '';
+  date_from = '';
+  date_to = '';
 
   getModelSearch() {
     return 'InvoiceSearch';
   }
 
+}
+
+export class DateFilter {
+  date_from: string;
+  date_to: string;
 }

@@ -27,6 +27,12 @@ export class InvoiceTabInfoComponent implements OnInit {
   GiamGiaHoaDon: number = 0;
   KhachCanTra: number;
   KhachDaTra: number = 0;
+
+  orderStatus = {
+    'pending': 'Đang xử lý',
+    'done': 'Hoàn thành'
+  };
+  
   constructor() { }
 
   ngOnInit(): void {

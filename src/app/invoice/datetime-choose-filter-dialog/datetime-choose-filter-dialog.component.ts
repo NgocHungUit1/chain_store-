@@ -1,7 +1,9 @@
 import { Component, Inject, OnInit, Optional } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
+import { DateFilter } from '../invoice.model';
+import { InvoiceService } from '../invoice.service';
 
 @Component({
   selector: 'app-datetime-choose-filter-dialog',
@@ -15,6 +17,7 @@ export class DatetimeChooseFilterDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<DatetimeChooseFilterDialogComponent>,
     public notifySer: NotifierService,
+    public invoiceService: InvoiceService,
     private fb: FormBuilder,
     // @Optional() is used to prevent error if no data is passed
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
@@ -24,20 +27,25 @@ export class DatetimeChooseFilterDialogComponent implements OnInit {
 
 
   initForm() {
-    const today = new Date();
-    const todayISOstring = today.toISOString();
-    const year = today.getFullYear();
-    const month = today.getMonth();
-    const day = today.getDate();
-    const nextYear = new Date(year + 1, month, day);
-    const nextYearISOstring = nextYear.toISOString();
+    const date = this.invoiceService.getDateFilter();
+    const date_from = new Date(date.date_from);
+    const date_to = new Date(date.date_to);
+
     this.form = this.fb.group({
       date_from: [
-        todayISOstring
-      ], // todayISOstring
+        date_from.toISOString(),
+        Validators.compose([
+          Validators.required,
+          Validators.maxLength(32)
+        ])
+      ],
       date_to: [
-        nextYearISOstring
-      ], // nextYearISOstring
+        date_to.toISOString(),
+        Validators.compose([
+          Validators.required,
+          Validators.maxLength(32)
+        ])
+      ],
     });
   }
 
@@ -50,7 +58,28 @@ export class DatetimeChooseFilterDialogComponent implements OnInit {
   }
 
   submit() {
+    if (this.form.valid) {
+      const data = this.form.getRawValue();
+      const obj = new DateFilter();
+      let date_from;
+      let date_to;
+      if (data['date_from'] !== null) {
+        date_from = new Date(data['date_from']);
+      }
+      if (data['date_to'] !== null) {
+        date_to = new Date(data['date_to']);
+      }
+      // kiem tra date from lon hon date to
+      if (date_to - date_from < 0) {
+        date_from = date_to;
+      }
+      obj.date_from = this.invoiceService.convertDateYYYYMMDD(date_from);
+      obj.date_to = this.invoiceService.convertDateYYYYMMDD(date_to);
 
+      this.invoiceService.setDateFilter(obj);
+      this.dialogRef.close();
+    }
   }
+
 
 }
