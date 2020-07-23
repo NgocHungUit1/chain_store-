@@ -25,7 +25,29 @@ export class DiscountSiderBar {
     type: string;
 }
 
-export class PaymentSiderBar{
+export class PaymentSiderBar {
     number: number;
     type: string;
+}
+
+// Cau truc don hang
+
+export class ProductInfo {
+    product: Product;
+    amount: number;
+    common_price: number;
+}
+export class ItemInvoice {
+    invoice_name: string;
+    invoice_id: string;
+    active: string;
+    price_book_id: string;
+    customer_id: string;
+    listProduct: ProductInfo[];
+    discountSiderBar: DiscountSiderBar;
+    paymentSiderBar: PaymentSiderBar;
+}
+
+export class ListInvoice {
+    itemInvoice: ItemInvoice[];
 }

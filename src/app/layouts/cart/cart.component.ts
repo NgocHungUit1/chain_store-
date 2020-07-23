@@ -25,6 +25,7 @@ import { of } from 'rxjs/internal/observable/of';
 import { PriceListService } from '../../price-book/price-list.service';
 import { ProductService } from '../../product/product.service';
 import { OrderService } from '../../sale/order.service';
+import { ItemInvoice } from '../../sale/order.model';
 
 /** @title Responsive sidenav */
 @Component({
@@ -121,5 +122,11 @@ export class CartComponent implements OnDestroy {
     this.orderService.addProduct(product);
   }
 
+  addInvoice(){
+    const list = this.orderService.getListItemInvoice();
+    const obj = new ItemInvoice();
+    obj.invoice_name = 'Hóa đơn';
+    // obj.active
+  }
   // Mini sidebar
 }

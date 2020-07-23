@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { Order, Detail, DiscountSiderBar, PaymentSiderBar } from '../sale/order.model';
+import { Order, Detail, DiscountSiderBar, PaymentSiderBar, ItemInvoice } from '../sale/order.model';
 import { Product } from '../product/product.model';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
@@ -11,6 +11,17 @@ import { Customer } from '../customer/customer.model';
 })
 
 export class OrderService {
+
+  order_key_local = 'rs24_token_order_service';
+
+  public setListInvoice(data: string) {
+    localStorage.setItem(this.order_key_local, data);
+  }
+
+  public getListInvoice() {
+    return localStorage.getItem(this.order_key_local);
+  }
+
 
   // danh sach san pham , so luong, gia tien, ghi chu
   public ObjectOrder: BehaviorSubject<Object> = new BehaviorSubject<Object>(null);
@@ -39,6 +50,18 @@ export class OrderService {
   private paymentSiderBar: BehaviorSubject<PaymentSiderBar> = new BehaviorSubject<PaymentSiderBar>(null);
   subscribePaymentSiderBar: Observable<PaymentSiderBar> = this.paymentSiderBar.asObservable();
 
+  // danh sach hoa don
+  private listItemInvoice: BehaviorSubject<ItemInvoice[]> = new BehaviorSubject<ItemInvoice[]>(null);
+  subscribeListItemInvoice: Observable<ItemInvoice[]> = this.listItemInvoice.asObservable();
+
+
+  setListItemInvoice(obj: ItemInvoice[]) {
+    this.listItemInvoice.next(obj);
+  }
+
+  getListItemInvoice() {
+    return this.listItemInvoice.value;
+  }
   //
   resetDATA() {
     this.ObjectOrder.next(null);

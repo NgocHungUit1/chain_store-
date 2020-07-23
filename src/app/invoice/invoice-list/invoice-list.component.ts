@@ -207,6 +207,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.apiFilter = this.buildFilterFromParams();
+    this.apiFilter.invoice_no = filterValue;
     this.loadData();
   }
 
