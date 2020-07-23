@@ -1,1 +1,193 @@
-<p>invoice-tab-info works!</p>
+<div fxLayout="row wrap" class="m-b-20">
+    <!-- <div fxFlex="100">
+        <h3 style="color: #009688">{{ invoice.invoice_no }}</h3>
+    </div> -->
+    <div fxFlex="100">
+        <div fxLayout="row wrap">
+            <div fxFlex="70" class="invoice-info">
+                <div fxLayout="row wrap" class="invoice-info-row">
+                    <div fxFlex="48" class="invoice-info-field">
+                        <span class="invoice-field-label">Mã hóa đơn :</span> <strong>{{invoice.invoice_no}}</strong>
+                    </div>
+                    <div fxFlex="4"></div>
+                    <div fxFlex="48" class="invoice-info-field">
+                        <span class="invoice-field-label">Trạng thái :</span>
+                        <strong>{{ orderStatus[invoice.order_status] }}</strong>
+                    </div>
+                </div>
+
+                <div fxLayout="row wrap" class="invoice-info-row">
+                    <div fxFlex="48" class="invoice-info-field">
+                        <span class="invoice-field-label">Thời gian :</span> <strong>{{ invoice.created_at }}</strong>
+                    </div>
+                    <div fxFlex="4"></div>
+                    <div fxFlex="48" class="invoice-info-field">
+                        <span class="invoice-field-label">Chi nhánh :</span> <strong>{{ invoice.store?.name }}</strong>
+                    </div>
+                </div>
+
+                <div fxLayout="row wrap" class="invoice-info-row">
+                    <div fxFlex="48" class="invoice-info-field">
+                        <span class="invoice-field-label">Khách hàng :</span>
+                        <strong>{{ invoice.customer?.name }}</strong>
+                    </div>
+                    <div fxFlex="4"></div>
+                    <div fxFlex="48" class="invoice-info-field">
+                        <span class="invoice-field-label">Người bán :</span>
+                        <strong>{{ invoice.user?.username  }}</strong>
+                    </div>
+                </div>
+
+                <div fxLayout="row wrap" class="invoice-info-row">
+                    <div fxFlex="48" class="invoice-info-field">
+                        <span class="invoice-field-label">Bảng giá :</span>
+                        <strong>{{invoice.priceBook?.name }}</strong>
+                    </div>
+                    <div fxFlex="4"></div>
+                    <div fxFlex="48" class="invoice-info-field">
+                        <span class="invoice-field-label">Người tạo :</span>
+                        <strong>{{ invoice.user?.username }}</strong>
+                    </div>
+                </div>
+
+            </div>
+
+            <div fxFlex="30" class="invoice-info">
+                <div fxLayout="row wrap" class="invoice-info-row">
+                    <div class="invoice-info-field-note">
+                        <span class="invoice-field-label">Ghi chú :</span> <strong>{{invoice.note}}</strong>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div fxFlex="100">
+        <table mat-table [dataSource]="invoice.detail" class="">
+
+            <ng-container matColumnDef="product_no">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['product_no'] }} </th>
+                <td mat-cell *matCellDef="let element; let i = index;"> {{ element.product?.product_no }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="product_name">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['product_name'] }} </th>
+                <td mat-cell *matCellDef="let element"> {{ element.product?.product_name }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="common_price">
+                <th mat-header-cell class="column-number-end" *matHeaderCellDef> {{ columnsHeader['common_price'] }}
+                </th>
+                <td mat-cell class="column-number-end" *matCellDef="let element"> {{ element?.common_price | number }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="amount">
+                <th mat-header-cell class="column-number-end" *matHeaderCellDef> {{ columnsHeader['amount'] }} </th>
+                <td mat-cell class="column-number-end" *matCellDef="let element"> {{ element.amount }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="discount">
+                <th mat-header-cell class="column-number-end" *matHeaderCellDef> {{ columnsHeader['discount'] }} </th>
+                <td mat-cell class="column-number-end" *matCellDef="let element"> {{ element.discount }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="price">
+                <th mat-header-cell class="column-number-end" *matHeaderCellDef> {{ columnsHeader['price'] }} </th>
+                <td mat-cell class="column-number-end" *matCellDef="let element"> {{ element.price | number }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="total_price">
+                <th mat-header-cell class="column-number-end" *matHeaderCellDef> {{ columnsHeader['total_price'] }}
+                </th>
+                <td mat-cell class="column-number-end" *matCellDef="let element">
+                    {{ element.price * element.amount | number }} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns" class="header-element-row"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    </div>
+
+
+    <!-- tom tat don hang -->
+    <div fxFlex="100">
+        <div fxLayout="row wrap">
+            <div fxFlex="70" class="invoice-detail-info">
+
+            </div>
+
+            <div fxFlex="30">
+                <div fxLayout="row wrap" class="invoice-detail-info-row">
+                    <div fxFlex="48" class="invoice-detail-info-field">
+                        <span class="invoice-detail-field-label">Tổng số lượng :</span>
+                    </div>
+                    <div fxFlex="4"></div>
+                    <div fxFlex="48" class="invoice-detail-info-field">
+                        <strong>{{ TongSoLuong }}</strong>
+                    </div>
+                </div>
+                <div fxLayout="row wrap" class="invoice-detail-info-row">
+                    <div fxFlex="48" class="invoice-detail-info-field">
+                        <span class="invoice-detail-field-label">Tổng tiền hàng :</span>
+                    </div>
+                    <div fxFlex="4"></div>
+                    <div fxFlex="48" class="invoice-detail-info-field">
+                        <strong>{{ TongTienHang |number }}</strong>
+                    </div>
+                </div>
+                <div fxLayout="row wrap" class="invoice-detail-info-row">
+                    <div fxFlex="48" class="invoice-detail-info-field">
+                        <span class="invoice-field-label">Giảm giá hóa đơn {{ GiamGiaHoaDonText }} :</span>
+                    </div>
+                    <div fxFlex="4"></div>
+                    <div fxFlex="48" class="invoice-detail-info-field">
+                        <strong>{{ GiamGiaHoaDon | number }}</strong>
+                    </div>
+                </div>
+                <div fxLayout="row wrap" class="invoice-detail-info-row">
+                    <div fxFlex="48" class="invoice-detail-info-field">
+                        <span class="invoice-detail-field-label">Khách cần trả :</span>
+                    </div>
+                    <div fxFlex="4"></div>
+                    <div fxFlex="48" class="invoice-detail-info-field">
+                        <strong>{{ invoice?.total_price | number }}</strong>
+                    </div>
+                </div>
+                <div fxLayout="row wrap" class="invoice-detail-info-row">
+                    <div fxFlex="48" class="invoice-detail-info-field">
+                        <span class="invoice-detail-field-label">Khách đã trả :</span>
+                    </div>
+                    <div fxFlex="4"></div>
+                    <div fxFlex="48" class="invoice-detail-info-field">
+                        <strong>{{ KhachDaTra | number }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div fxLayout="row wrap">
+        <div fxFlex="100">
+            <button class="m-r-10" mat-raised-button color="primary">
+                <mat-icon>edit</mat-icon> Cập nhật
+            </button>
+            <button class="m-r-10" mat-raised-button color="accent">
+                <mat-icon>file_copy</mat-icon> Lưu
+            </button>
+            <button class="m-r-10" mat-raised-button color="info">
+                <mat-icon>print</mat-icon>In
+            </button>
+            <button class="m-r-10" mat-raised-button color="info">
+                <mat-icon>file_copy</mat-icon> Xuất file
+            </button>
+            <button class="m-r-10" mat-raised-button color="accent">
+                <mat-icon>file_copy</mat-icon> Sao chép
+            </button>
+            <button class="m-r-10" mat-raised-button color="warn" (click)='deleteInvoice(invoice)'>
+                <mat-icon>delete</mat-icon> Hủy bỏ
+            </button>
+        </div>
+    </div>
+</div>

@@ -12,6 +12,8 @@ import { InvoiceRoutes } from './invoice.routing';
 import { InvoiceListComponent } from './invoice-list/invoice-list.component';
 import { InvoiceTabInfoComponent } from './invoice-tab-info/invoice-tab-info.component';
 import { InvoiceTabPaymentComponent } from './invoice-tab-payment/invoice-tab-payment.component';
+import { DatetimeDefaultFilterDialogComponent } from './datetime-default-filter-dialog/datetime-default-filter-dialog.component';
+import { DatetimeChooseFilterDialogComponent } from './datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
 
 
 
@@ -19,7 +21,9 @@ import { InvoiceTabPaymentComponent } from './invoice-tab-payment/invoice-tab-pa
   declarations: [
     InvoiceListComponent,
     InvoiceTabInfoComponent,
-    InvoiceTabPaymentComponent],
+    InvoiceTabPaymentComponent,
+    DatetimeDefaultFilterDialogComponent,
+    DatetimeChooseFilterDialogComponent],
   imports: [
     CommonModule,
     // RouterModule.forChild(InvoiceRoutes),

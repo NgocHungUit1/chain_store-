@@ -319,7 +319,7 @@ export class SaleSiderbarOrderComponent implements OnInit {
       this.notifySer.notify('warning', 'Chưa chọn thanh toán !');
       return;
     }
-    if (this.sumPrice - this.numberDiscount >= this.customerPay) {
+    if (this.sumPrice - this.numberDiscount > this.customerPay) {
       this.notifySer.notify('warning', 'Thanh toán chưa đủ !');
       return;
     }
@@ -368,6 +368,7 @@ export class SaleSiderbarOrderComponent implements OnInit {
       },
       InvoiceDetail: invoiceDetail,
       PaymentMethod: paymentSiderBar.type,
+      PaymentPrice: this.sumPrice - this.numberDiscount, // tien thanh toan
     };
 
     this.orderService.saleOrder(dataInvoice).subscribe(res => {
