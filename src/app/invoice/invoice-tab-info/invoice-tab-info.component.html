@@ -33,7 +33,8 @@
                     </div>
                     <div fxFlex="4"></div>
                     <div fxFlex="48" class="invoice-info-field">
-                        <span class="invoice-field-label">Người bán :</span> <strong>{{ invoice.invoice_no }}</strong>
+                        <span class="invoice-field-label">Người bán :</span>
+                        <strong>{{ invoice.user?.username  }}</strong>
                     </div>
                 </div>
 
@@ -138,7 +139,7 @@
                 </div>
                 <div fxLayout="row wrap" class="invoice-detail-info-row">
                     <div fxFlex="48" class="invoice-detail-info-field">
-                        <span class="invoice-field-label">Giảm giá hóa đơn :</span>
+                        <span class="invoice-field-label">Giảm giá hóa đơn {{ GiamGiaHoaDonText }} :</span>
                     </div>
                     <div fxFlex="4"></div>
                     <div fxFlex="48" class="invoice-detail-info-field">
@@ -184,7 +185,7 @@
             <button class="m-r-10" mat-raised-button color="accent">
                 <mat-icon>file_copy</mat-icon> Sao chép
             </button>
-            <button class="m-r-10" mat-raised-button color="warn">
+            <button class="m-r-10" mat-raised-button color="warn" (click)='deleteInvoice(invoice)'>
                 <mat-icon>delete</mat-icon> Hủy bỏ
             </button>
         </div>

@@ -35,6 +35,7 @@ import { OverlayContainer } from "@angular/cdk/overlay";
 import { AngularImageViewerModule } from "angular-x-image-viewer";
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
+import { PopupDeleteDialogComponent } from './common/popup-delete-dialog/popup-delete-dialog.component';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -53,6 +54,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     AppSidebarComponent,
     AppBreadcrumbComponent,
     AppHeaderCartComponent,
+    PopupDeleteDialogComponent,
   ],
   imports: [
     BrowserModule,

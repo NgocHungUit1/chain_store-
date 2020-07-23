@@ -62,34 +62,65 @@ export class DatetimeDefaultFilterDialogComponent implements OnInit {
   btnTuanNay(): void {
     const today = new Date();
     const obj = new DateFilter();
-    const dau_tuan = this.getMonday(today);
+    const dau_tuan = this.getNearMonday(today);
     obj.date_from = this.invoiceService.convertDateYYYYMMDD(dau_tuan);
     obj.date_to = this.invoiceService.convertDateYYYYMMDD(today);
     this.invoiceService.setDateFilter(obj);
-    this.dialogRef.close({ 'title': 'Hôm này' });
+    this.dialogRef.close({ 'title': 'Tuần này' });
   }
 
   btnTuanTruoc(): void {
     const today = new Date();
     const obj = new DateFilter();
-    const dau_tuan = this.getMonday(today);
+    const dau_tuan_nay = this.getNearMonday(today);
+    const chu_nhat_tuan_truoc = this.getNearSunday(dau_tuan_nay);
+    const thu_hai_tuan_truoc = this.getNearMonday(chu_nhat_tuan_truoc);
+    // const dateChoose = new Date(2020, 6, 3);
 
-    console.log(this.getSunday(dau_tuan));
-
-    obj.date_from = this.invoiceService.convertDateYYYYMMDD(dau_tuan);
-    obj.date_to = this.invoiceService.convertDateYYYYMMDD(today);
-    // this.invoiceService.setDateFilter(obj);
-    // this.dialogRef.close({ 'title': 'Hôm này' });
+    obj.date_from = this.invoiceService.convertDateYYYYMMDD(thu_hai_tuan_truoc);
+    obj.date_to = this.invoiceService.convertDateYYYYMMDD(chu_nhat_tuan_truoc);
+    this.invoiceService.setDateFilter(obj);
+    this.dialogRef.close({ 'title': 'Tuần trước' });
   }
 
-  getMonday(d) {
+  btnThangNay(): void {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const first = new Date(year, month, 1);
+    const obj = new DateFilter();
+    // tháng này
+    obj.date_from = this.invoiceService.convertDateYYYYMMDD(first);
+    obj.date_to = this.invoiceService.convertDateYYYYMMDD(today);
+    this.invoiceService.setDateFilter(obj);
+    this.dialogRef.close({ 'title': 'Tháng này' });
+  }
+
+  btnThangTruoc(): void {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const first = new Date(year, month - 1, 1);
+    const end = new Date(year, month, 0);
+
+    const obj = new DateFilter();
+    // tháng này
+    obj.date_from = this.invoiceService.convertDateYYYYMMDD(first);
+    obj.date_to = this.invoiceService.convertDateYYYYMMDD(end);
+    this.invoiceService.setDateFilter(obj);
+    this.dialogRef.close({ 'title': 'Tháng trước' });
+  }
+
+  // out put ngay thu 2 gan nhat
+  getNearMonday(d) {
     d = new Date(d);
     const day = d.getDay(),
       diff = d.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
     return new Date(d.setDate(diff));
   }
 
-  getSunday(d) {  // @NGHIA
+  // output ngay chu nhat gan nhat
+  getNearSunday(d) {
     d = new Date(d);
     const day = d.getDay(),
       diff = d.getDate() - day - 1 + (day === 0 ? -6 : 1); // adjust when day is sunday

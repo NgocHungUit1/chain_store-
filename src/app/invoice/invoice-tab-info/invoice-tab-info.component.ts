@@ -1,5 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { NotifierService } from 'angular-notifier';
+import { PopupDeleteDialogComponent } from '../../common/popup-delete-dialog/popup-delete-dialog.component';
 import { Invoice } from '../invoice.model';
+import { InvoiceService } from '../invoice.service';
 
 @Component({
   selector: 'app-invoice-tab-info',
@@ -27,13 +31,17 @@ export class InvoiceTabInfoComponent implements OnInit {
   GiamGiaHoaDon: number = 0;
   KhachCanTra: number;
   KhachDaTra: number = 0;
-
+  GiamGiaHoaDonText = '';
   orderStatus = {
     'pending': 'Đang xử lý',
     'done': 'Hoàn thành'
   };
-  
-  constructor() { }
+
+  constructor(
+    private dialog: MatDialog,
+    public notifySer: NotifierService,
+    public invoiceService: InvoiceService,
+  ) { }
 
   ngOnInit(): void {
     // console.log(this.invoice);
@@ -49,7 +57,29 @@ export class InvoiceTabInfoComponent implements OnInit {
       this.GiamGiaHoaDon = invoiceData.discount;
     } else {
       this.GiamGiaHoaDon = this.TongTienHang * invoiceData.discount / 100;
+      this.GiamGiaHoaDonText = '(' + invoiceData.discount + '%)';
     }
+  }
+
+  deleteInvoice(invoice) {
+    const obj = {
+      action: 'Delete',
+      title: 'Xóa hàng hóa',
+      content: 'Bạn có chắc chắn muốn hủy hóa đơn ' + invoice.invoice_no + ' này không?',
+    };
+
+    const dialogRef = this.dialog.open(PopupDeleteDialogComponent, {
+      data: obj,
+      width: '30%',
+      minHeight: '80%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result.event === 'delete') {
+        this.invoiceService.delete(invoice.id).subscribe(res => {
+          this.notifySer.notify('success', 'Xóa hóa đơn thành công!');
+        });
+      }
+    });
   }
 
 }

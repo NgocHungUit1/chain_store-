@@ -224,6 +224,10 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
       if (result?.title !== undefined) {
         this.titleTimeDefault = result?.title;
       }
+      const date = this.service.getDateFilter();
+      const date_from = new Date(date.date_from);
+      const date_to = new Date(date.date_to);
+      this.titleTimeChoose = this.convertDate(date_from) + " - " + this.convertDate(date_to);
       this.timeFilter.patchValue({
         typeTime: 'default',
       });

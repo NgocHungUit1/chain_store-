@@ -107,7 +107,7 @@ export class ProductTabInfoComponent implements OnInit {
   }
 
   deleteMedicine(id) {
-    let obj = {
+    const obj = {
       action: 'Delete',
       title: 'Xóa thuốc',
       product_id: id,
@@ -118,7 +118,7 @@ export class ProductTabInfoComponent implements OnInit {
       minHeight: '80%',
     });
     dialogRef.afterClosed().subscribe(result => {
-      if (result.event == 'Delete') {
+      if (result.event === 'Delete') {
         // BUG
         this.product = null;
       }

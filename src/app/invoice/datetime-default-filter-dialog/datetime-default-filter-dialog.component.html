@@ -7,6 +7,7 @@
           <mat-list-item>
             <label>Theo ngày</label>
           </mat-list-item>
+          <mat-divider></mat-divider>
           <mat-list-item>
             <button mat-button (click)="btnHomNay()" tabindex="2">
               Hôm nay
@@ -28,6 +29,7 @@
           <mat-list-item>
             <label>Theo tuần</label>
           </mat-list-item>
+          <mat-divider></mat-divider>
           <mat-list-item>
             <button mat-button (click)="btnTuanNay()" tabindex="3">
               Tuần này
@@ -47,13 +49,14 @@
           <mat-list-item>
             <label>Theo tháng</label>
           </mat-list-item>
+          <mat-divider></mat-divider>
           <mat-list-item>
-            <button mat-button (click)="onNoClick()" tabindex="5">
+            <button mat-button (click)="btnThangNay()" tabindex="5">
               Tháng này
             </button>
           </mat-list-item>
           <mat-list-item>
-            <button mat-button (click)="onNoClick()" tabindex="6">
+            <button mat-button (click)="btnThangTruoc()" tabindex="6">
               Tháng trước
             </button>
           </mat-list-item>
