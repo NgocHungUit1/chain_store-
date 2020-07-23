@@ -64,6 +64,21 @@ export class MedicineService {
     const url = environment.apiUrl + '/medicine/autocomplete?term=' + term;
     return this.http.get<Medicine[]>(url);
   }
+
+  connect(id) {
+    const url = environment.apiUrl + '/medicine/connect?id=' + id;
+    return this.http.post(url, {});
+  }
+
+  disconnect(id) {
+    const url = environment.apiUrl + '/medicine/disconnect?id=' + id;
+    return this.http.post(url, {});
+  }
+
+  reconnect(id) {
+    const url = environment.apiUrl + '/medicine/connect?id=' + id + '&reconnect=1';
+    return this.http.post(url, {});
+  }
 }
 
 

@@ -121,6 +121,8 @@ export class WarehouseInfoTabComponent implements OnChanges {
     this.modelSer.reconnect(item.id).subscribe(res => {
       if (res['success']) {
         this.notifySer.notify('success', 'Cập nhật liên thông thành công.');
+      } else if (res['message'] !== undefined) {
+        this.notifySer.notify('error', res['message']);
       }
     });
   }
@@ -130,6 +132,8 @@ export class WarehouseInfoTabComponent implements OnChanges {
       if (res['success']) {
         item.national_pharmacy_no = res['national_pharmacy_no'];
         this.notifySer.notify('success', 'Liên thông thành công.');
+      } else if (res['message'] !== undefined) {
+        this.notifySer.notify('error', res['message']);
       }
     });
   }

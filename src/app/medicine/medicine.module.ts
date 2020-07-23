@@ -1,18 +1,19 @@
 import {NgModule} from '@angular/core';
-import {QuillModule} from "ngx-quill";
-import {DragulaModule} from "ng2-dragula";
-import {CommonModule} from "@angular/common";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {FlexLayoutModule} from "@angular/flex-layout";
-import {PerfectScrollbarModule} from "ngx-perfect-scrollbar";
-import {Ng2SearchPipeModule} from "ng2-search-filter";
-import {RouterModule} from "@angular/router";
-import {MedicineRoutes} from "./medicine.routing";
-import {MedicineListComponent} from "./medicine-list/medicine-list.component";
-import {DemoMaterialModule} from "../demo-material-module";
+import {QuillModule} from 'ngx-quill';
+import {DragulaModule} from 'ng2-dragula';
+import {CommonModule} from '@angular/common';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FlexLayoutModule} from '@angular/flex-layout';
+import {PerfectScrollbarModule} from 'ngx-perfect-scrollbar';
+import {Ng2SearchPipeModule} from 'ng2-search-filter';
+import {RouterModule} from '@angular/router';
+import {MedicineRoutes} from './medicine.routing';
+import {MedicineListComponent} from './medicine-list/medicine-list.component';
+import {DemoMaterialModule} from '../demo-material-module';
+import { MedicineFormDialogComponent } from './medicine-form-dialog/medicine-form-dialog.component';
 
 @NgModule({
-  declarations: [MedicineListComponent],
+  declarations: [MedicineListComponent, MedicineFormDialogComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(MedicineRoutes),
@@ -24,6 +25,9 @@ import {DemoMaterialModule} from "../demo-material-module";
     PerfectScrollbarModule,
     Ng2SearchPipeModule,
     DemoMaterialModule
+  ],
+  entryComponents: [
+    MedicineFormDialogComponent
   ]
 })
 export class MedicineModule {

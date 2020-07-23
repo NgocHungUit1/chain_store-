@@ -1,0 +1,90 @@
+<h1 mat-dialog-title *ngIf="!(this.modelId !== null && this.modelId !== undefined)" >Thêm thuốc cơ sở</h1>
+<h1 mat-dialog-title *ngIf="this.modelId !== null && this.modelId !== undefined">Cập nhật thuốc cơ sở</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <div fxLayout="row wrap">
+      <div fxFlex="50">
+        <div fxLayout="row wrap">
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Tên thuốc</mat-label>
+              <input matInput tabindex="1" formControlName="medicine_name">
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Số đăng ký</mat-label>
+              <input matInput tabindex="2" formControlName="registration_no">
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Hoạt chất chính</mat-label>
+              <input matInput tabindex="3" formControlName="main_active_substance">
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Hàm lượng</mat-label>
+              <textarea matInput tabindex="4" formControlName="content" rows="2"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <div fxFlex="2"></div>
+
+      <div fxFlex="48">
+        <div fxLayout="row wrap">
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Nhà sản xuất</mat-label>
+              <input matInput tabindex="5" formControlName="manufacturer">
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Nước sản xuất </mat-label>
+              <input matInput tabindex="6" formControlName="made_in">
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Đơn vị tính</mat-label>
+              <input matInput tabindex="7" formControlName="unit">
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Đóng gói</mat-label>
+              <textarea matInput tabindex="8" formControlName="packing" rows="2"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="9" (click)="submit()">
+    <mat-icon>save</mat-icon>
+    Lưu
+  </button>
+  <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="10" (click)="submit(true)">
+    <mat-icon>sync</mat-icon>
+    Lưu và liên thông
+  </button>
+  <button mat-button (click)="onNoClick()" tabindex="-1">
+    <mat-icon>cancel</mat-icon>
+    Bỏ qua
+  </button>
+</div>

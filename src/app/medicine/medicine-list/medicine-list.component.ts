@@ -1,11 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTable } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
-import {MedicineFilter, Medicine} from "../medicine.model";
-import {MatSort} from "@angular/material/sort";
-import {ListComponentBase} from "../../shared/base";
-import {MedicineService} from "../medicine.service";
-import {ActivatedRoute} from "@angular/router";
+import {MedicineFilter} from '../medicine.model';
+import {MatSort} from '@angular/material/sort';
+import {ListComponentBase} from '../../shared/base';
+import {MedicineService} from '../medicine.service';
+import {ActivatedRoute} from '@angular/router';
+import {NotifierService} from 'angular-notifier';
+import {MatDialog} from '@angular/material/dialog';
+import {MedicineFormDialogComponent} from '../medicine-form-dialog/medicine-form-dialog.component';
 
 @Component({
   templateUrl: './medicine-list.component.html',
@@ -14,8 +17,10 @@ import {ActivatedRoute} from "@angular/router";
 export class MedicineListComponent extends ListComponentBase implements OnInit {
 
   constructor(
-    private service: MedicineService,
-    private route: ActivatedRoute
+    private modelSer: MedicineService,
+    private notifySer: NotifierService,
+    private route: ActivatedRoute,
+    private dialog: MatDialog
   ) {
     super();
   }
@@ -35,10 +40,18 @@ export class MedicineListComponent extends ListComponentBase implements OnInit {
     'manufacturer': 'Nhà sản xuất',
     'made_in': 'Nơi sản xuất',
     'unit': 'Đơn vị',
+    'actions': '',
   };
 
-  displayedColumns: string[] = ['#', 'medicine_no', 'medicine_name', 'registration_no', 'main_active_substance', 'manufacturer', 'made_in', 'unit'];
-  columnsToDisplay: string[] = ['#', 'medicine_no', 'medicine_name', 'registration_no', 'main_active_substance', 'content', 'packing', 'manufacturer', 'made_in', 'unit'];
+  displayedColumns: string[] = [
+    '#', 'medicine_no',
+    'medicine_name', 'registration_no',
+    'main_active_substance', 'manufacturer', 'made_in', 'unit', 'actions'];
+  columnsToDisplay: string[] = [
+    '#', 'medicine_no', 'medicine_name',
+    'registration_no', 'main_active_substance', 'content', 'packing',
+    'manufacturer', 'made_in', 'unit', 'actions'
+  ];
   dataSource = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -67,10 +80,10 @@ export class MedicineListComponent extends ListComponentBase implements OnInit {
 
   loadData(): void {
     this.isLoadingResults = true;
-    this.service.getList(this.apiFilter).subscribe(res => {
+    this.modelSer.getList(this.apiFilter).subscribe(res => {
       this.dataSource = res.body;
       this.reloadFilter(res);
-      const url = this.service.getStateUrl(this.apiFilter);
+      const url = this.modelSer.getStateUrl(this.apiFilter);
       this.isLoadingResults = false;
     });
   }
@@ -78,5 +91,48 @@ export class MedicineListComponent extends ListComponentBase implements OnInit {
   ngOnInit() {
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
+  }
+
+  reconnect(item) {
+    this.modelSer.reconnect(item.id).subscribe(res => {
+      if (res['success']) {
+        this.notifySer.notify('success', 'Cập nhật liên thông thành công.');
+      }
+    });
+  }
+
+  connect(item) {
+    this.modelSer.connect(item.id).subscribe(res => {
+      if (res['success']) {
+        item.medicine_no = res['medicine_no'];
+        this.notifySer.notify('success', 'Liên thông thành công.');
+      }
+    });
+  }
+
+  disconnect(item) {
+    this.modelSer.disconnect(item.id).subscribe(res => {
+      if (res['success']) {
+        item.medicine_no = null;
+        this.notifySer.notify('success', 'Gỡ liên thông thành công.');
+      } else if (res['message'] !== undefined) {
+        this.notifySer.notify('error', res['message']);
+      }
+    });
+  }
+
+  openMedicineFormDialog(id = null) {
+    const dialogRef = this.dialog.open(MedicineFormDialogComponent, {
+      width: '50%',
+      data: {
+        id: id
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.loadData();
+      }
+    });
   }
 }
