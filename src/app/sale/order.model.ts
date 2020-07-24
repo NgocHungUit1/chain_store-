@@ -1,3 +1,4 @@
+import { Customer } from '../customer/customer.model';
 import { Product } from '../product/product.model';
 
 export class Detail {
@@ -33,16 +34,17 @@ export class PaymentSiderBar {
 // Cau truc don hang
 
 export class ProductInfo {
+    product_id: string;
     product: Product;
     amount: number;
     common_price: number;
 }
 export class ItemInvoice {
     invoice_name: string;
-    invoice_id: string;
-    active: string;
+    invoice_id: number;
+    active: boolean;
     price_book_id: string;
-    customer_id: string;
+    customer: Customer;
     listProduct: ProductInfo[];
     discountSiderBar: DiscountSiderBar;
     paymentSiderBar: PaymentSiderBar;

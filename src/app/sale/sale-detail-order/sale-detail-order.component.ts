@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { observable } from 'rxjs';
 import { PriceDetailOrderDialogComponent } from '../price-detail-order-dialog/price-detail-order-dialog.component';
 import { Product } from '../../product/product.model';
+import { ItemInvoice } from '../order.model';
 
 @Component({
   selector: 'app-sale-detail-order',
@@ -29,6 +30,83 @@ export class SaleDetailOrderComponent implements OnInit {
 
   loadData() {
 
+    this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
+
+      // console.log(ListInvoice);
+
+      const listItemInvoice = ListInvoice.itemInvoice;
+      let mItemInvoice = new ItemInvoice();
+      listItemInvoice.forEach(element => {
+        if (element.active === true) {
+          mItemInvoice = element;
+        }
+      });
+
+      if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
+
+      } else {
+        const listProduct = mItemInvoice.listProduct;
+        this.listProduct = [];
+        this.countProduct = 0;
+
+        listProduct.forEach(eProductInfo => {
+          this.listProduct.push(eProductInfo);
+          this.countProduct++;
+
+        });
+        this.listProduct.reverse();
+
+        // handel add common price
+        const priceBookID = mItemInvoice.price_book_id; //this.orderService.getPriceBookID();
+        // console.log(mItemInvoice);
+
+        const list = this.listProduct;
+        if (priceBookID !== null && Array.isArray(list)) {
+
+          const listProductChoose = list.map(obj => obj.product.id);
+          const common_id = priceBookID;
+          // // tien hanh xu ly add common vao list
+          this.priceListProductSer.getListProductCommon(common_id, listProductChoose).subscribe(resCommon => {
+            if (Array.isArray(resCommon)) {
+              const priceListProductCommonExist = resCommon;
+              // code group array by key
+              const group = priceListProductCommonExist.reduce((r, a) => {
+                r[a.product_id] = [...r[a.product_id] || [], a];
+                return r;
+              }, {});
+              // add common || null
+              // neu co gia chung se chon common_price 
+              this.listProduct.forEach(elementData => {
+
+                if (group[elementData.product.id] !== undefined) {
+                  elementData.common_price = group[elementData.product.id][0]['price'];
+                } else {
+                  elementData.common_price = elementData.product.sell_price;
+                }
+              });
+            }
+          });
+        }
+
+        let resultlistItemInvoice = [];
+        listItemInvoice.forEach(element => {
+          if (element.active === true) {
+            resultlistItemInvoice.push(mItemInvoice);
+          } else {
+            resultlistItemInvoice.push(element);
+          }
+        });
+
+        ListInvoice.itemInvoice = resultlistItemInvoice;
+        // console.log(ListInvoice);
+
+      }
+      // this.orderService.setListInvoiceLocalStorage(ListInvoice);
+
+    });
+
+
+    return;
     this.orderService.subscribeObjectOrder.subscribe(res => {
       if (res !== null && res['listProduct'] !== undefined) {
         const obj = res['listProduct'];
@@ -78,6 +156,8 @@ export class SaleDetailOrderComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    // this.orderService.addNewInvoice();
     this.isLoadingResults = false;
 
     this.orderService.subscribeLoadDetailPage.subscribe(action => {

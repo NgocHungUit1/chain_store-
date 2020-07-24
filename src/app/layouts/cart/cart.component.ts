@@ -123,10 +123,7 @@ export class CartComponent implements OnDestroy {
   }
 
   addInvoice(){
-    const list = this.orderService.getListItemInvoice();
-    const obj = new ItemInvoice();
-    obj.invoice_name = 'Hóa đơn';
-    // obj.active
+    
   }
   // Mini sidebar
 }

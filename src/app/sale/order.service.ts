@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { Order, Detail, DiscountSiderBar, PaymentSiderBar, ItemInvoice } from '../sale/order.model';
+import { Order, Detail, DiscountSiderBar, PaymentSiderBar, ItemInvoice, ListInvoice, ProductInfo } from '../sale/order.model';
 import { Product } from '../product/product.model';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
@@ -14,14 +14,64 @@ export class OrderService {
 
   order_key_local = 'rs24_token_order_service';
 
-  public setListInvoice(data: string) {
-    localStorage.setItem(this.order_key_local, data);
+  constructor(private http: HttpClient) {
+    this.getDataInvoiceActive();
   }
 
-  public getListInvoice() {
-    return localStorage.getItem(this.order_key_local);
+
+  public setListInvoiceLocalStorage(data: ListInvoice) {
+    this.ObjectListInvoice.next(data);
+    localStorage.setItem(this.order_key_local, JSON.stringify(data));
   }
 
+  public getListInvoiceLocalStorage() {
+    const listInvoice = JSON.parse(localStorage.getItem(this.order_key_local));
+    if (listInvoice == null) {
+      return new ListInvoice();
+    }
+    this.ObjectListInvoice.next(listInvoice);
+    return listInvoice;
+  }
+
+
+  public initListInvoice() {
+    const data = new ListInvoice();
+    const listItemInvoice: ItemInvoice[] = [];
+    const itemInvoice = new ItemInvoice();
+    itemInvoice.invoice_id = -1;
+    itemInvoice.invoice_name = 'Hóa đơn';
+    itemInvoice.active = true;
+    listItemInvoice.push(itemInvoice);
+    data.itemInvoice = listItemInvoice;
+    this.ObjectListInvoice.next(data);
+    this.setListInvoiceLocalStorage(data);
+  }
+
+  public addNewInvoice() {
+
+    const data = this.getListInvoiceLocalStorage();
+    const listItemInvoice = data.itemInvoice || [];
+    const itemInvoice = new ItemInvoice();
+    itemInvoice.invoice_id = -1;
+    itemInvoice.invoice_name = 'Hóa đơn';
+    itemInvoice.active = true;
+    listItemInvoice.push(itemInvoice);
+    data.itemInvoice = listItemInvoice;
+    this.setListInvoiceLocalStorage(data);
+  }
+
+  public getDataInvoiceActive() {
+    let listInvoice = this.getListInvoiceLocalStorage();
+    if (Object.keys(listInvoice).length === 0) {
+      this.initListInvoice();
+    }
+    listInvoice = this.getListInvoiceLocalStorage();
+    this.ObjectOrder.next(listInvoice);
+  }
+
+  // danh sach hoa don
+  public ObjectListInvoice: BehaviorSubject<ListInvoice> = new BehaviorSubject<ListInvoice>(null);
+  subscribeObjectListInvoice: Observable<ListInvoice> = this.ObjectListInvoice.asObservable();
 
   // danh sach san pham , so luong, gia tien, ghi chu
   public ObjectOrder: BehaviorSubject<Object> = new BehaviorSubject<Object>(null);
@@ -50,19 +100,7 @@ export class OrderService {
   private paymentSiderBar: BehaviorSubject<PaymentSiderBar> = new BehaviorSubject<PaymentSiderBar>(null);
   subscribePaymentSiderBar: Observable<PaymentSiderBar> = this.paymentSiderBar.asObservable();
 
-  // danh sach hoa don
-  private listItemInvoice: BehaviorSubject<ItemInvoice[]> = new BehaviorSubject<ItemInvoice[]>(null);
-  subscribeListItemInvoice: Observable<ItemInvoice[]> = this.listItemInvoice.asObservable();
 
-
-  setListItemInvoice(obj: ItemInvoice[]) {
-    this.listItemInvoice.next(obj);
-  }
-
-  getListItemInvoice() {
-    return this.listItemInvoice.value;
-  }
-  //
   resetDATA() {
     this.ObjectOrder.next(null);
     this.customer.next(null);
@@ -111,85 +149,222 @@ export class OrderService {
   }
 
   addProduct(object: Product) {
-    if (this.ObjectOrder.value === null) {
-      const listProduct = {};
-      const order = {};
-      listProduct[object.id] = { 'product': object, 'amount': 1 };
-      order['listProduct'] = listProduct;
-      this.ObjectOrder.next(order);
+    const ListInvoice = this.ObjectListInvoice.value;
+    const listItemInvoice = ListInvoice.itemInvoice;
+    let mItemInvoice = new ItemInvoice();
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        mItemInvoice = element;
+      }
+    });
+    if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
+      const listProduct: ProductInfo[] = [];
+      const mProductInfo = new ProductInfo();
+      mProductInfo.product_id = object.id;
+      mProductInfo.product = object;
+      mProductInfo.amount = 1;
+      listProduct.push(mProductInfo);
+      mItemInvoice.listProduct = listProduct;
     } else {
-      const order = this.ObjectOrder.value;
-      const listProduct = order['listProduct'];
-
-      if (listProduct[object.id] === undefined) {
-        // them san pham moi
-        listProduct[object.id] = { 'product': object, 'amount': 1 };
-        order['listProduct'] = listProduct;
-        this.ObjectOrder.next(order);
-      } else {
-        // them san pham da ton tai
-        listProduct[object.id] = { 'product': object, 'amount': listProduct[object.id]['amount'] + 1 };
-        order['listProduct'] = listProduct;
-        this.ObjectOrder.next(order);
+      const listProduct = mItemInvoice.listProduct;
+      // them san pham da ton tai
+      let newItem = 1;
+      listProduct.forEach(eProductInfo => {
+        if (eProductInfo.product_id === object.id) {
+          newItem = 0;
+          eProductInfo.amount = eProductInfo.amount + 1;
+        }
+      });
+      if (newItem === 1) {
+        const mProductInfo = new ProductInfo();
+        mProductInfo.product_id = object.id;
+        mProductInfo.product = object;
+        mProductInfo.amount = 1;
+        listProduct.push(mProductInfo);
       }
     }
+    this.setListInvoiceLocalStorage(ListInvoice);
+    //
+
+
+    // if (this.ObjectOrder.value === null) {
+    //   const listProduct = {};
+    //   const order = {};
+    //   listProduct[object.id] = { 'product': object, 'amount': 1 };
+    //   order['listProduct'] = listProduct;
+    //   this.ObjectOrder.next(order);
+    // } else {
+    //   const order = this.ObjectOrder.value;
+    //   const listProduct = order['listProduct'];
+
+    //   if (listProduct[object.id] === undefined) {
+    //     // them san pham moi
+    //     listProduct[object.id] = { 'product': object, 'amount': 1 };
+    //     order['listProduct'] = listProduct;
+    //     this.ObjectOrder.next(order);
+    //   } else {
+    //     // them san pham da ton tai
+    //     listProduct[object.id] = { 'product': object, 'amount': listProduct[object.id]['amount'] + 1 };
+    //     order['listProduct'] = listProduct;
+    //     this.ObjectOrder.next(order);
+    //   }
+    // }
 
   }
 
   deleteProduct(id: string) {
-    if (this.ObjectOrder.value !== null) {
-      const order = this.ObjectOrder.value;
-      delete order['listProduct'][id];
-      this.ObjectOrder.next(order);
+    let ListInvoice = this.ObjectListInvoice.value;
+    const listItemInvoice = ListInvoice.itemInvoice;
+    let mItemInvoice = new ItemInvoice();
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        mItemInvoice = element;
+      }
+    });
+    if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
+    } else {
+      const listProduct = mItemInvoice.listProduct;
+      const resultListProduct = [];
+      listProduct.forEach(eProductInfo => {
+        if (eProductInfo.product_id !== id) {
+          resultListProduct.push(eProductInfo);
+        }
+      });
+      mItemInvoice.listProduct = resultListProduct;
     }
+    this.setListInvoiceLocalStorage(ListInvoice);
   }
 
   upAmountProduct(id: string) {
-    if (this.ObjectOrder.value !== null) {
-      const order = this.ObjectOrder.value;
-      order['listProduct'][id]['amount']++;
-      this.ObjectOrder.next(order);
+    let ListInvoice = this.ObjectListInvoice.value;
+    const listItemInvoice = ListInvoice.itemInvoice;
+    let mItemInvoice = new ItemInvoice();
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        mItemInvoice = element;
+      }
+    });
+    if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
+    } else {
+      const listProduct = mItemInvoice.listProduct;
+      const resultListProduct = [];
+      listProduct.forEach(eProductInfo => {
+        if (eProductInfo.product_id === id) {
+          eProductInfo.amount++;
+        }
+        resultListProduct.push(eProductInfo);
+      });
+      mItemInvoice.listProduct = resultListProduct;
     }
+    this.setListInvoiceLocalStorage(ListInvoice);
   }
 
   downAmountProduct(id: string) {
-    if (this.ObjectOrder.value !== null) {
-      const order = this.ObjectOrder.value;
-      if (order['listProduct'][id]['amount'] <= 1) {
-        delete order['listProduct'][id];
-      } else {
-        order['listProduct'][id]['amount']--;
+    let ListInvoice = this.ObjectListInvoice.value;
+    const listItemInvoice = ListInvoice.itemInvoice;
+    let mItemInvoice = new ItemInvoice();
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        mItemInvoice = element;
       }
-      this.ObjectOrder.next(order);
+    });
+    if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
+    } else {
+      const listProduct = mItemInvoice.listProduct;
+      const resultListProduct = [];
+      listProduct.forEach(eProductInfo => {
+        if (eProductInfo.product_id === id) {
+          eProductInfo.amount--;
+          if (eProductInfo.amount > 0) {
+            resultListProduct.push(eProductInfo);
+          }
+        } else {
+          resultListProduct.push(eProductInfo);
+        }
+      });
+      mItemInvoice.listProduct = resultListProduct;
     }
+    this.setListInvoiceLocalStorage(ListInvoice);
   }
 
   updateNoteDetailOrder(id: string, note_detail_sale: string) {
-    const order = this.ObjectOrder.value;
-    order['listProduct'][id]['product']['note_detail_sale'] = note_detail_sale;
-    this.ObjectOrder.next(order);
+    let ListInvoice = this.ObjectListInvoice.value;
+    const listItemInvoice = ListInvoice.itemInvoice;
+    let mItemInvoice = new ItemInvoice();
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        mItemInvoice = element;
+      }
+    });
+    if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
+    } else {
+      const listProduct = mItemInvoice.listProduct;
+      const resultListProduct = [];
+      listProduct.forEach(eProductInfo => {
+        if (eProductInfo.product_id === id) {
+          eProductInfo.product.note_detail_sale = note_detail_sale;
+        }
+        resultListProduct.push(eProductInfo);
+      });
+      mItemInvoice.listProduct = resultListProduct;
+    }
+    this.setListInvoiceLocalStorage(ListInvoice);
+
   }
 
   updateProduct(id: string, product: Product) {
-    const order = this.ObjectOrder.value;
-    order['listProduct'][id]['product'] = product;
-    this.ObjectOrder.next(order);
+    let ListInvoice = this.ObjectListInvoice.value;
+    const listItemInvoice = ListInvoice.itemInvoice;
+    let mItemInvoice = new ItemInvoice();
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        mItemInvoice = element;
+      }
+    });
+    if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
+    } else {
+      const listProduct = mItemInvoice.listProduct;
+      const resultListProduct = [];
+      listProduct.forEach(eProductInfo => {
+        if (eProductInfo.product_id === id) {
+          eProductInfo.product = product;
+        }
+        resultListProduct.push(eProductInfo);
+      });
+      mItemInvoice.listProduct = resultListProduct;
+    }
+    this.setListInvoiceLocalStorage(ListInvoice);
   }
 
   inputAmountProduct(id: string, value: number) {
-    if (this.ObjectOrder.value !== null) {
-      const order = this.ObjectOrder.value;
-      if (value <= 0) {
-        delete order['listProduct'][id];
-      } else {
-        order['listProduct'][id]['amount'] = value;
+    let ListInvoice = this.ObjectListInvoice.value;
+    const listItemInvoice = ListInvoice.itemInvoice;
+    let mItemInvoice = new ItemInvoice();
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        mItemInvoice = element;
       }
-      this.ObjectOrder.next(order);
+    });
+    if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
+    } else {
+      const listProduct = mItemInvoice.listProduct;
+      const resultListProduct = [];
+      listProduct.forEach(eProductInfo => {
+        if (eProductInfo.product_id === id) {
+          if (value >= 0) {
+            eProductInfo.amount = value;
+            resultListProduct.push(eProductInfo);
+          }
+        } else {
+          resultListProduct.push(eProductInfo);
+        }
+      });
+      mItemInvoice.listProduct = resultListProduct;
     }
+    this.setListInvoiceLocalStorage(ListInvoice);
   }
 
-  constructor(private http: HttpClient) {
-  }
+
 
   saleOrder(data) {
     const url = environment.apiUrl + '/invoice/sale-order';

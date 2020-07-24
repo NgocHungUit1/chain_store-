@@ -16,6 +16,7 @@ import { SaleCustomerFormDialogComponent } from '../sale-customer-form-dialog/sa
 import { UserService } from '../user.service';
 import { User } from '../user.model';
 import { NotifierService } from 'angular-notifier';
+import { ItemInvoice, ListInvoice } from '../order.model';
 
 @Component({
   selector: 'app-sale-siderbar-order',
@@ -63,8 +64,16 @@ export class SaleSiderbarOrderComponent implements OnInit {
     });
   }
 
-  onSelectedCustomer(customer) {
-    this.orderService.addCustomer(customer);
+  onSelectedCustomer(customer) { // @nghia
+    // this.orderService.addCustomer(customer);
+    let listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        element.customer = customer;
+      }
+    });
+    this.orderService.setListInvoiceLocalStorage(listInvoice);
     this.selectCustomer.patchValue(customer.name);
   }
 
@@ -84,125 +93,259 @@ export class SaleSiderbarOrderComponent implements OnInit {
           this.form.patchValue({
             priceBookID: element.id,
           });
-          this.orderService.addPriceBookID(element.id);
+          // this.orderService.addPriceBookID(element.id);
+          //
+          // xu ly them price book id vao mac dinh
+          let listInvoice = this.orderService.getListInvoiceLocalStorage();
+          const listItemInvoice = listInvoice.itemInvoice;
+          listItemInvoice.forEach(ele => {
+            if (ele.active === true) {
+              ele.price_book_id = element.id;
+            }
+          });
+          this.orderService.setListInvoiceLocalStorage(listInvoice);
+          //
           this.priceListCommon = element;
         }
       });
     });
 
+    // NEW
+    this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
+      const listItemInvoice = ListInvoice.itemInvoice;
+      let mItemInvoice = new ItemInvoice();
+      listItemInvoice.forEach(element => {
+        if (element.active === true) {
+          mItemInvoice = element;
+        }
+      });
 
-    this.orderService.subscribeObjectOrder.subscribe(res => {
-      if (res !== null && res['listProduct'] !== undefined) {
-        const obj = res['listProduct'];
+      if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
+
+      } else {
+        const listProduct = mItemInvoice.listProduct;
         this.listProduct = [];
         this.countProduct = 0;
-        for (const prop of Object.keys(obj)) {
-          this.listProduct.push(obj[prop]);
+
+        listProduct.forEach(eProductInfo => {
+          this.listProduct.push(eProductInfo);
           this.countProduct++;
-        }
+
+        });
         this.listProduct.reverse();
-      }
 
-      // sum price khi khoi tao
-      const priceBookID = this.form.controls['priceBookID'].value;
-      const list = this.listProduct;
-      if (priceBookID !== null && Array.isArray(list)) {
+        // handel add common price
+        // sum price khi khoi tao
+        let priceBookID = this.form.controls['priceBookID'].value;
+        let list = this.listProduct;
+        if (priceBookID !== null && Array.isArray(list)) {
+          mItemInvoice.price_book_id = priceBookID;
 
-        const listProductChoose = list.map(obj => obj.product.id);
-        const common_id = priceBookID;
-        // // tien hanh xu ly add common vao list
-        this.priceListProductSer.getListProductCommon(common_id, listProductChoose).subscribe(resCommon => {
-          if (Array.isArray(resCommon)) {
-            const priceListProductCommonExist = resCommon;
-            // code group array by key
-            const group = priceListProductCommonExist.reduce((r, a) => {
-              r[a.product_id] = [...r[a.product_id] || [], a];
-              return r;
-            }, {});
-            // add common || null
-            // neu co gia chung se chon common_price 
-            this.sumPrice = 0;
-            this.listProduct.forEach(elementData => {
-              if (group[elementData.product.id] !== undefined) {
-                if (elementData.product.end_price === undefined) {
+          const listProductChoose = list.map(obj => obj.product.id);
+          const common_id = priceBookID;
+          // // tien hanh xu ly add common vao list
+          this.priceListProductSer.getListProductCommon(common_id, listProductChoose).subscribe(resCommon => {
+            if (Array.isArray(resCommon)) {
+              const priceListProductCommonExist = resCommon;
+              // code group array by key
+              const group = priceListProductCommonExist.reduce((r, a) => {
+                r[a.product_id] = [...r[a.product_id] || [], a];
+                return r;
+              }, {});
+              // add common || null
+              // neu co gia chung se chon common_price 
+              this.sumPrice = 0;
+              this.listProduct.forEach(elementData => {
+                if (group[elementData.product.id] !== undefined) {
+                  if (elementData.product.end_price === undefined) {
+                    this.sumPrice += group[elementData.product.id][0]['price'] * elementData.amount; // gia chung * so luong
+                  } else {
+                    this.sumPrice += elementData.product.end_price * elementData.amount; // gia chung * so luong
+                  }
+                } else {
+                  if (elementData.product.end_price === undefined) {
+                    this.sumPrice += elementData.product.sell_price * elementData.amount; // gia ban * so luong
+                  } else {
+                    this.sumPrice += elementData.product.end_price * elementData.amount; // gia ban * so luong
+                  }
+                }
+
+              });
+            }
+          });
+        }
+
+        // sum price
+
+        priceBookID = mItemInvoice.price_book_id;
+        list = this.listProduct;
+        if (priceBookID !== null && Array.isArray(list)) {
+
+          const listProductChoose = list.map(obj => obj.product.id);
+          const common_id = priceBookID;
+          // // tien hanh xu ly add common vao list
+          this.priceListProductSer.getListProductCommon(common_id, listProductChoose).subscribe(resCommon => {
+            if (Array.isArray(resCommon)) {
+              const priceListProductCommonExist = resCommon;
+              // code group array by key
+              const group = priceListProductCommonExist.reduce((r, a) => {
+                r[a.product_id] = [...r[a.product_id] || [], a];
+                return r;
+              }, {});
+              // add common || null
+              // neu co gia chung se chon common_price 
+              this.sumPrice = 0;
+              this.listProduct.forEach(elementData => {
+                if (group[elementData.product.id] !== undefined) {
                   this.sumPrice += group[elementData.product.id][0]['price'] * elementData.amount; // gia chung * so luong
                 } else {
-                  this.sumPrice += elementData.product.end_price * elementData.amount; // gia chung * so luong
-                }
-              } else {
-                if (elementData.product.end_price === undefined) {
                   this.sumPrice += elementData.product.sell_price * elementData.amount; // gia ban * so luong
-                } else {
-                  this.sumPrice += elementData.product.end_price * elementData.amount; // gia ban * so luong
                 }
-              }
-
-            });
+              });
+            }
+          });
+        }
+        // discount 
+        const discountSiderBar = mItemInvoice.discountSiderBar;
+        if (discountSiderBar !== undefined) {
+          if (discountSiderBar?.type === 'vnd') {
+            this.numberDiscount = discountSiderBar?.number;
+            this.discount_type = 'vnd';
+          } else {
+            this.numberDiscount = this.sumPrice * discountSiderBar?.number / 100;
+            this.discount_type = 'precent';
           }
-        });
+          this.discount = discountSiderBar?.number;
+        } else {
+          this.numberDiscount = 0;
+        }
+
+        // customerPay 
+        const paymentSiderBar = mItemInvoice.paymentSiderBar;
+
+        if (paymentSiderBar !== undefined) {
+          this.customerPay = paymentSiderBar?.number;
+        } else {
+          this.customerPay = 0;
+        }
+
       }
+      // this.setListInvoiceLocalStorage(ListInvoice);
 
     });
+
+    // this.orderService.subscribeObjectOrder.subscribe(res => {
+    //   if (res !== null && res['listProduct'] !== undefined) {
+    //     const obj = res['listProduct'];
+    //     this.listProduct = [];
+    //     this.countProduct = 0;
+    //     for (const prop of Object.keys(obj)) {
+    //       this.listProduct.push(obj[prop]);
+    //       this.countProduct++;
+    //     }
+    //     this.listProduct.reverse();
+    //   }
+
+    //   // sum price khi khoi tao
+    //   const priceBookID = this.form.controls['priceBookID'].value;
+    //   const list = this.listProduct;
+    //   if (priceBookID !== null && Array.isArray(list)) {
+
+    //     const listProductChoose = list.map(obj => obj.product.id);
+    //     const common_id = priceBookID;
+    //     // // tien hanh xu ly add common vao list
+    //     this.priceListProductSer.getListProductCommon(common_id, listProductChoose).subscribe(resCommon => {
+    //       if (Array.isArray(resCommon)) {
+    //         const priceListProductCommonExist = resCommon;
+    //         // code group array by key
+    //         const group = priceListProductCommonExist.reduce((r, a) => {
+    //           r[a.product_id] = [...r[a.product_id] || [], a];
+    //           return r;
+    //         }, {});
+    //         // add common || null
+    //         // neu co gia chung se chon common_price 
+    //         this.sumPrice = 0;
+    //         this.listProduct.forEach(elementData => {
+    //           if (group[elementData.product.id] !== undefined) {
+    //             if (elementData.product.end_price === undefined) {
+    //               this.sumPrice += group[elementData.product.id][0]['price'] * elementData.amount; // gia chung * so luong
+    //             } else {
+    //               this.sumPrice += elementData.product.end_price * elementData.amount; // gia chung * so luong
+    //             }
+    //           } else {
+    //             if (elementData.product.end_price === undefined) {
+    //               this.sumPrice += elementData.product.sell_price * elementData.amount; // gia ban * so luong
+    //             } else {
+    //               this.sumPrice += elementData.product.end_price * elementData.amount; // gia ban * so luong
+    //             }
+    //           }
+
+    //         });
+    //       }
+    //     });
+    //   }
+
+    // });
 
     // sum price
 
-    this.orderService.subscribePriceBookID.subscribe(pricebookID => {
+    // this.orderService.subscribePriceBookID.subscribe(pricebookID => {
 
-      const priceBookID = pricebookID;
-      const list = this.listProduct;
-      if (priceBookID !== null && Array.isArray(list)) {
+    //   const priceBookID = pricebookID;
+    //   const list = this.listProduct;
+    //   if (priceBookID !== null && Array.isArray(list)) {
 
-        const listProductChoose = list.map(obj => obj.product.id);
-        const common_id = priceBookID;
-        // // tien hanh xu ly add common vao list
-        this.priceListProductSer.getListProductCommon(common_id, listProductChoose).subscribe(resCommon => {
-          if (Array.isArray(resCommon)) {
-            const priceListProductCommonExist = resCommon;
-            // code group array by key
-            const group = priceListProductCommonExist.reduce((r, a) => {
-              r[a.product_id] = [...r[a.product_id] || [], a];
-              return r;
-            }, {});
-            // add common || null
-            // neu co gia chung se chon common_price 
-            this.sumPrice = 0;
-            this.listProduct.forEach(elementData => {
-              if (group[elementData.product.id] !== undefined) {
-                this.sumPrice += group[elementData.product.id][0]['price'] * elementData.amount; // gia chung * so luong
-              } else {
-                this.sumPrice += elementData.product.sell_price * elementData.amount; // gia ban * so luong
-              }
-            });
-          }
-        });
-      }
+    //     const listProductChoose = list.map(obj => obj.product.id);
+    //     const common_id = priceBookID;
+    //     // // tien hanh xu ly add common vao list
+    //     this.priceListProductSer.getListProductCommon(common_id, listProductChoose).subscribe(resCommon => {
+    //       if (Array.isArray(resCommon)) {
+    //         const priceListProductCommonExist = resCommon;
+    //         // code group array by key
+    //         const group = priceListProductCommonExist.reduce((r, a) => {
+    //           r[a.product_id] = [...r[a.product_id] || [], a];
+    //           return r;
+    //         }, {});
+    //         // add common || null
+    //         // neu co gia chung se chon common_price 
+    //         this.sumPrice = 0;
+    //         this.listProduct.forEach(elementData => {
+    //           if (group[elementData.product.id] !== undefined) {
+    //             this.sumPrice += group[elementData.product.id][0]['price'] * elementData.amount; // gia chung * so luong
+    //           } else {
+    //             this.sumPrice += elementData.product.sell_price * elementData.amount; // gia ban * so luong
+    //           }
+    //         });
+    //       }
+    //     });
+    //   }
 
-    });
+    // });
 
-    // discount 
-    this.orderService.subscribeDiscountSiderBar.subscribe(res => {
-      if (res !== null) {
-        if (res.type === 'vnd') {
-          this.numberDiscount = res.number;
-          this.discount_type = 'vnd';
-        } else {
-          this.numberDiscount = this.sumPrice * res.number / 100;
-          this.discount_type = 'precent';
-        }
-        this.discount = res.number;
-      } else {
-        this.numberDiscount = 0;
-      }
-    });
+    // // discount 
+    // this.orderService.subscribeDiscountSiderBar.subscribe(res => {
+    //   if (res !== null) {
+    //     if (res.type === 'vnd') {
+    //       this.numberDiscount = res.number;
+    //       this.discount_type = 'vnd';
+    //     } else {
+    //       this.numberDiscount = this.sumPrice * res.number / 100;
+    //       this.discount_type = 'precent';
+    //     }
+    //     this.discount = res.number;
+    //   } else {
+    //     this.numberDiscount = 0;
+    //   }
+    // });
 
     // customerPay
-    this.orderService.subscribePaymentSiderBar.subscribe(res => {
-      if (res !== null) {
-        this.customerPay = res.number;
-      } else {
-        this.customerPay = 0;
-      }
-    });
+    // this.orderService.subscribePaymentSiderBar.subscribe(res => {
+    //   if (res !== null) {
+    //     this.customerPay = res.number;
+    //   } else {
+    //     this.customerPay = 0;
+    //   }
+    // });
   }
 
   ngOnInit(): void {
@@ -267,8 +410,16 @@ export class SaleSiderbarOrderComponent implements OnInit {
     );
   }
 
-  choosePriceBook(event: any) {
-    this.orderService.addPriceBookID(this.form.controls['priceBookID'].value);
+  choosePriceBook(event: any) { // @nghia
+    let listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        element.price_book_id = this.form.controls['priceBookID'].value;
+      }
+    });
+    this.orderService.setListInvoiceLocalStorage(listInvoice);
+    // this.orderService.addPriceBookID(this.form.controls['priceBookID'].value);
   }
 
   openDiscountSiderBar() {
