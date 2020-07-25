@@ -45,9 +45,11 @@ export class ItemInvoice {
     active: boolean;
     price_book_id: string;
     customer: Customer;
+    user: any;
     listProduct: ProductInfo[];
     discountSiderBar: DiscountSiderBar;
     paymentSiderBar: PaymentSiderBar;
+    noteSiderBar: string;
 }
 
 export class ListInvoice {

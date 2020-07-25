@@ -32,8 +32,6 @@ export class SaleDetailOrderComponent implements OnInit {
 
     this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
 
-      // console.log(ListInvoice);
-
       const listItemInvoice = ListInvoice.itemInvoice;
       let mItemInvoice = new ItemInvoice();
       listItemInvoice.forEach(element => {
@@ -58,14 +56,12 @@ export class SaleDetailOrderComponent implements OnInit {
 
         // handel add common price
         const priceBookID = mItemInvoice.price_book_id; //this.orderService.getPriceBookID();
-        // console.log(mItemInvoice);
-
         const list = this.listProduct;
-        if (priceBookID !== null && Array.isArray(list)) {
 
+        if (priceBookID !== null && Array.isArray(list)) {
           const listProductChoose = list.map(obj => obj.product.id);
           const common_id = priceBookID;
-          // // tien hanh xu ly add common vao list
+          // // tien hanh xu ly add common vao list @nghia getListProductCommon
           this.priceListProductSer.getListProductCommon(common_id, listProductChoose).subscribe(resCommon => {
             if (Array.isArray(resCommon)) {
               const priceListProductCommonExist = resCommon;
@@ -88,70 +84,9 @@ export class SaleDetailOrderComponent implements OnInit {
           });
         }
 
-        let resultlistItemInvoice = [];
-        listItemInvoice.forEach(element => {
-          if (element.active === true) {
-            resultlistItemInvoice.push(mItemInvoice);
-          } else {
-            resultlistItemInvoice.push(element);
-          }
-        });
-
-        ListInvoice.itemInvoice = resultlistItemInvoice;
-        // console.log(ListInvoice);
-
-      }
-      // this.orderService.setListInvoiceLocalStorage(ListInvoice);
-
-    });
-
-
-    return;
-    this.orderService.subscribeObjectOrder.subscribe(res => {
-      if (res !== null && res['listProduct'] !== undefined) {
-        const obj = res['listProduct'];
-        this.listProduct = [];
-        this.countProduct = 0;
-        for (const prop of Object.keys(obj)) {
-          this.listProduct.push(obj[prop]);
-          this.countProduct++;
-        }
-        this.listProduct.reverse();
-
-
-        // handel add common price
-        const priceBookID = this.orderService.getPriceBookID();
-        const list = this.listProduct;
-
-        if (priceBookID !== null && Array.isArray(list)) {
-
-          const listProductChoose = list.map(obj => obj.product.id);
-          const common_id = priceBookID;
-          // // tien hanh xu ly add common vao list
-          this.priceListProductSer.getListProductCommon(common_id, listProductChoose).subscribe(resCommon => {
-            if (Array.isArray(resCommon)) {
-              const priceListProductCommonExist = resCommon;
-              // code group array by key
-              const group = priceListProductCommonExist.reduce((r, a) => {
-                r[a.product_id] = [...r[a.product_id] || [], a];
-                return r;
-              }, {});
-              // add common || null
-              // neu co gia chung se chon common_price 
-              this.listProduct.forEach(elementData => {
-                if (group[elementData.product.id] !== undefined) {
-                  elementData.common_price = group[elementData.product.id][0]['price'];
-                } else {
-                  elementData.common_price = elementData.product.sell_price;
-                }
-              });
-            }
-          });
-        }
       }
 
     });
-
 
   }
 
@@ -166,7 +101,29 @@ export class SaleDetailOrderComponent implements OnInit {
       }
     });
 
-    this.orderService.subscribePriceBookID.subscribe(priceBookID => {
+    // this.orderService.subscribePriceBookID.subscribe(priceBookID => {
+    //   if (priceBookID !== null) {
+    //     const one = new Promise<string>((resolve, reject) => {
+    //       this.isLoadingResults = true;
+    //       this.loadData();
+    //       resolve();
+    //     }).then(() => {
+    //       this.isLoadingResults = false;
+    //     });
+    //   }
+    // });
+
+    this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
+      const listItemInvoice = ListInvoice.itemInvoice;
+      let isNew = 0;
+      let priceBookID = null;
+      listItemInvoice.forEach(element => {
+        if (element.active === true && priceBookID !== element?.price_book_id) {
+          priceBookID = element?.price_book_id;
+          isNew = 1;
+        }
+      });
+
       if (priceBookID !== null) {
         const one = new Promise<string>((resolve, reject) => {
           this.isLoadingResults = true;
@@ -176,6 +133,7 @@ export class SaleDetailOrderComponent implements OnInit {
           this.isLoadingResults = false;
         });
       }
+
     });
 
   }

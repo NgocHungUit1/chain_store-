@@ -9,6 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ListComponentBase } from '../../shared/base';
 import { OrderService } from '../order.service';
 import { PriceListProductService } from '../../price-book/price-list-product.service';
+import { ItemInvoice } from '../order.model';
 
 @Component({
   selector: 'app-sale-list-product',
@@ -34,6 +35,7 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
 
   apiFilter: ProductFilter;
   dataSource: Product[] = [];
+  priceBookID: string = null;
 
   @ViewChild(MatTable, { static: true }) table: MatTable<any>;
   @ViewChild('selectColumn') selectColumn;
@@ -62,17 +64,13 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
 
   loadData(): void {
     this.isLoadingResults = true;
+
     this.productSer.getList(this.apiFilter).subscribe(res => {
       this.dataSource = res.body;
       const list = res.body;
-
-      const priceBookID = this.orderService.getPriceBookID();
-
-      if (priceBookID !== null && Array.isArray(list)) {
+      if (this.priceBookID !== null && Array.isArray(list)) {
         const listProductChoose = list.map(obj => obj.id);
-        // console.log(listProductChoose);
-
-        const common_id = priceBookID;
+        const common_id = this.priceBookID;
         // tien hanh xu ly add common vao list
         this.priceListProductSer.getListProductCommon(common_id, listProductChoose).subscribe(resCommon => {
           if (Array.isArray(resCommon)) {
@@ -94,20 +92,37 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
           }
         });
       }
-
       this.reloadFilter(res);
       const url = this.productSer.getStateUrl(this.apiFilter);
       this.isLoadingResults = false;
+
     });
   }
 
   ngOnInit(): void {
     this.apiFilter = this.buildFilterFromParams();
-    this.orderService.subscribePriceBookID.subscribe(priceBookID => {
-      if (priceBookID !== null) {
+
+    this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
+      const listItemInvoice = ListInvoice.itemInvoice;
+      let isNew = 0;
+      listItemInvoice.forEach(element => {
+        if (element.active === true && this.priceBookID !== element?.price_book_id) {
+          this.priceBookID = element?.price_book_id;
+          isNew = 1;
+        }
+      });
+
+      if (isNew === 1) {
         this.loadData();
       }
+
     });
+
+    // this.orderService.subscribePriceBookID.subscribe(priceBookID => {
+    //   if (priceBookID !== null) {
+    //     this.loadData();
+    //   }
+    // });
 
   }
 

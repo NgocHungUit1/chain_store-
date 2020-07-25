@@ -44,15 +44,17 @@ export class SaleMainComponent implements OnInit {
       this.isLoadingResults = action;
     });
 
-    const priceListFilter = new PriceListFilter();
-    this.priceListSer.getList(priceListFilter).subscribe(res => {
-      const priceLists = res.body;
-      priceLists.forEach((element, index) => {
-        if (element.is_default === 1) {
-          this.orderService.addPriceBookID(element.id);
-        }
-      });
-    });
+    //@NGHIA
+    // const priceListFilter = new PriceListFilter();
+    // this.priceListSer.getList(priceListFilter).subscribe(res => {
+    //   const priceLists = res.body;
+    //   priceLists.forEach((element, index) => {
+    //     if (element.is_default === 1) {
+    //       this.orderService.addPriceBookID(element.id);
+    //     }
+    //   });
+    // });
+    
 
     this.filteredProducts = this.selectProduct.valueChanges.pipe(
       startWith(''),

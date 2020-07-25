@@ -143,7 +143,7 @@
         <div class="order-note">
             <mat-form-field class="example-full-width">
                 <mat-label>Ghi chú</mat-label>
-                <textarea matInput placeholder="" formControlName="noteSiderBar"></textarea>
+                <textarea matInput placeholder="" formControlName="noteSiderBar" (keyup)="saveNoteSiderBar($event)"></textarea>
             </mat-form-field>
         </div>
         <button mat-button class="payment-button btn-success" (click)="payment()">
