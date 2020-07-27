@@ -355,34 +355,44 @@ export class SaleSiderbarOrderComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this.orderService.addCustomer(result);
       this.selectCustomer.patchValue(result.name);
     });
   }
   // ------------------------------------------------------ PAYMENT ----------------------------------------------------------//
   payment() {
-    const customer = this.orderService.getCustomer();
-    if (customer === null) {
+    let listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    let mItemInvoice = new ItemInvoice();
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        mItemInvoice = element;
+      }
+    });
+
+    const customer = mItemInvoice.customer;
+    if (mItemInvoice.customer === undefined) {
       this.notifySer.notify('warning', 'Chưa chọn khách hàng !');
       return;
     }
-    if (this.form.controls['userID'].value === null) {
+    if (mItemInvoice.user === undefined) {
       this.notifySer.notify('warning', 'Chưa chọn nhân viên !');
       return;
     }
-    if (this.customerPay === 0) {
+    if (mItemInvoice.paymentSiderBar?.number === undefined) {
       this.notifySer.notify('warning', 'Chưa chọn thanh toán !');
       return;
     }
-    if (this.sumPrice - this.numberDiscount > this.customerPay) {
+    if (this.sumPrice - mItemInvoice.discountSiderBar?.number > mItemInvoice.paymentSiderBar?.number) {
       this.notifySer.notify('warning', 'Thanh toán chưa đủ !');
       return;
     }
+    if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0 ) {
+      this.notifySer.notify('warning', 'Chưa chọn sản phẩm !');
+      return;
+    }
+    
     this.orderService.setLoadProduct(true);
-    const paymentSiderBar = this.orderService.getPaymentSiderBar();
-    // console.log(paymentSiderBar);
-    // return;
-
+    
     const list = this.listProduct;
     const invoiceDetail = [];
     list.forEach(element => {
@@ -422,9 +432,10 @@ export class SaleSiderbarOrderComponent implements OnInit {
         // created_by: this.form.controls['userID'].value, @NGHIA store id
       },
       InvoiceDetail: invoiceDetail,
-      PaymentMethod: paymentSiderBar.type,
+      PaymentMethod: mItemInvoice.paymentSiderBar?.type,
       PaymentPrice: this.sumPrice - this.numberDiscount, // tien thanh toan
     };
+
 
     this.orderService.saleOrder(dataInvoice).subscribe(res => {
       if (res === true) {
@@ -440,8 +451,7 @@ export class SaleSiderbarOrderComponent implements OnInit {
   }
 
   resetDataSiderBar() {
-    this.orderService.resetDATA(); //@nghia
-    this.orderService.addCustomer(null);
+    this.orderService.removeActive(); //@nghia
     this.selectCustomer.patchValue(null);
     this.selectUser.patchValue(null);
     this.form.patchValue({

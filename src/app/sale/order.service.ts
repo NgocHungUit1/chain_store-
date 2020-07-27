@@ -85,12 +85,12 @@ export class OrderService {
   subscribeLoadDetailPage: Observable<boolean> = this.loadDetailPage.asObservable();
 
   // chon bang
-  private priceBookID: BehaviorSubject<string> = new BehaviorSubject<string>(null);
-  subscribePriceBookID: Observable<string> = this.priceBookID.asObservable();
+  // private priceBookID: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+  // subscribePriceBookID: Observable<string> = this.priceBookID.asObservable();
 
-  // Luu thong tin khach hang
-  private customer: BehaviorSubject<Customer> = new BehaviorSubject<Customer>(null);
-  subscribeCustomer: Observable<Customer> = this.customer.asObservable();
+  // // Luu thong tin khach hang
+  // private customer: BehaviorSubject<Customer> = new BehaviorSubject<Customer>(null);
+  // subscribeCustomer: Observable<Customer> = this.customer.asObservable();
 
   // giam gia
   private discountSiderBar: BehaviorSubject<DiscountSiderBar> = new BehaviorSubject<DiscountSiderBar>(null);
@@ -101,16 +101,29 @@ export class OrderService {
   subscribePaymentSiderBar: Observable<PaymentSiderBar> = this.paymentSiderBar.asObservable();
 
 
-  resetDATA() {
-    this.ObjectOrder.next(null);
-    this.customer.next(null);
-    this.paymentSiderBar.next(null);
-    this.discountSiderBar.next(null);
+  removeActive() {
+    let listInvoice = this.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    const listNew: ItemInvoice[] = [];
+    listItemInvoice.forEach(element => {
+      if (element.active !== true) {
+        listNew.push(element);
+      }
+    });
+    listInvoice.itemInvoice = listNew;
+    if (listNew.length === 0) {
+      this.initListInvoice();
+    } else {
+      this.setListInvoiceLocalStorage(listInvoice);
+    }
+    // this.ObjectOrder.next(null);
+    // this.customer.next(null);
+    // this.paymentSiderBar.next(null);
+    // this.discountSiderBar.next(null);
   }
 
-  setPaymentSiderBar(obj: PaymentSiderBar) {
-    this.paymentSiderBar.next(obj);
-  }
+  //   this.paymentSiderBar.next(obj);
+  // }
 
   getPaymentSiderBar() {
     return this.paymentSiderBar.value;
@@ -124,13 +137,13 @@ export class OrderService {
     return this.discountSiderBar.value;
   }
 
-  addCustomer(customerObj: Customer) {
-    this.customer.next(customerObj);
-  }
+  // addCustomer(customerObj: Customer) {
+  //   this.customer.next(customerObj);
+  // }
 
-  getCustomer() {
-    return this.customer.value;
-  }
+  // getCustomer() {
+  //   return this.customer.value;
+  // }
 
   setLoadProduct(action: boolean) {
     this.loadPage.next(action);
@@ -140,13 +153,13 @@ export class OrderService {
     this.loadDetailPage.next(action);
   }
 
-  addPriceBookID(priceBookID: string) {
-    this.priceBookID.next(priceBookID);
-  }
+  // addPriceBookID(priceBookID: string) {
+  //   this.priceBookID.next(priceBookID);
+  // }
 
-  getPriceBookID() {
-    return this.priceBookID.value;
-  }
+  // getPriceBookID() {
+  //   return this.priceBookID.value;
+  // }
 
   addProduct(object: Product) {
     const ListInvoice = this.ObjectListInvoice.value;

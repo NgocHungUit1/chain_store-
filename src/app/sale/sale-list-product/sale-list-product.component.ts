@@ -118,12 +118,6 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
 
     });
 
-    // this.orderService.subscribePriceBookID.subscribe(priceBookID => {
-    //   if (priceBookID !== null) {
-    //     this.loadData();
-    //   }
-    // });
-
   }
 
   addProductToOrder(object) {
