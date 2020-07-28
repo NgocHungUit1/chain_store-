@@ -20,7 +20,6 @@ export class SaleDetailOrderComponent implements OnInit {
   listProduct: any = [];
   countProduct: number = 0;
   isLoadingResults = true;
-
   constructor(
     private orderService: OrderService,
     private route: ActivatedRoute,

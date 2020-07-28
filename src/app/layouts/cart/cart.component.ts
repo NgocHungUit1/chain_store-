@@ -34,6 +34,7 @@ import { ItemInvoice } from '../../sale/order.model';
   styleUrls: []
 })
 export class CartComponent implements OnDestroy {
+
   mobileQuery: MediaQueryList;
   dir = 'ltr';
   green: boolean = true;
@@ -52,6 +53,8 @@ export class CartComponent implements OnDestroy {
 
   selectProduct = new FormControl();
   public filteredProducts: Observable<Product[]>;
+  listmItemInvoice: ItemInvoice[] = [];
+
 
   constructor(
     changeDetectorRef: ChangeDetectorRef,
@@ -72,15 +75,14 @@ export class CartComponent implements OnDestroy {
   }
 
   ngOnInit(): void {
-    // const priceListFilter = new PriceListFilter();
-    // this.priceListSer.getList(priceListFilter).subscribe(res => {
-    //   const priceLists = res.body;
-    //   priceLists.forEach((element, index) => {
-    //     if (element.is_default === 1) {
-    //       this.orderService.addPriceBookID(element.id);
-    //     }
-    //   });
-    // });
+
+    this.orderService.subscribeObjectListInvoice.subscribe(listInvoice => {
+      const listItemInvoice = listInvoice.itemInvoice;
+      this.listmItemInvoice = [];
+      listItemInvoice.forEach(element => {
+        this.listmItemInvoice.push(element);
+      });
+    });
 
     this.filteredProducts = this.selectProduct.valueChanges.pipe(
       startWith(''),
@@ -122,8 +124,12 @@ export class CartComponent implements OnDestroy {
     this.orderService.addProduct(product);
   }
 
-  addInvoice(){
-    
+  addInvoice() {
+    this.orderService.addNewInvoice();
+  }
+
+  deleteInvoice(invoice_id: number) {
+    this.orderService.deleteInvoice(invoice_id);
   }
   // Mini sidebar
 }

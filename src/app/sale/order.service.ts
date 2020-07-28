@@ -48,15 +48,43 @@ export class OrderService {
   }
 
   public addNewInvoice() {
-
     const data = this.getListInvoiceLocalStorage();
     const listItemInvoice = data.itemInvoice || [];
+    let min_invoice_id = 0;
+    listItemInvoice.forEach(element => {
+      element.active = false;
+      if (element.invoice_id < min_invoice_id) {
+        min_invoice_id = element.invoice_id;
+      }
+    });
     const itemInvoice = new ItemInvoice();
-    itemInvoice.invoice_id = -1;
+    itemInvoice.invoice_id = min_invoice_id - 1;
     itemInvoice.invoice_name = 'Hóa đơn';
     itemInvoice.active = true;
     listItemInvoice.push(itemInvoice);
     data.itemInvoice = listItemInvoice;
+    this.setListInvoiceLocalStorage(data);
+  }
+
+  public deleteInvoice(invoice_id: number) {
+    const data = this.getListInvoiceLocalStorage();
+    const listItemInvoice = data.itemInvoice || [];
+    const aItemInvoice: ItemInvoice[] = [];
+    let acticeNull = 1;
+    listItemInvoice.forEach(element => {
+      if (element.invoice_id !== invoice_id) {
+        aItemInvoice.push(element);
+        if (element.active === true) {
+          acticeNull = 0;
+        }
+      }
+    });
+    if (acticeNull === 1) {
+      const lastItem: ItemInvoice = aItemInvoice.pop();
+      lastItem.active = true;
+      aItemInvoice.push(lastItem);
+    }
+    data.itemInvoice = aItemInvoice;
     this.setListInvoiceLocalStorage(data);
   }
 
@@ -116,14 +144,8 @@ export class OrderService {
     } else {
       this.setListInvoiceLocalStorage(listInvoice);
     }
-    // this.ObjectOrder.next(null);
-    // this.customer.next(null);
-    // this.paymentSiderBar.next(null);
-    // this.discountSiderBar.next(null);
-  }
 
-  //   this.paymentSiderBar.next(obj);
-  // }
+  }
 
   getPaymentSiderBar() {
     return this.paymentSiderBar.value;

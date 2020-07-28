@@ -58,12 +58,17 @@
         </div>
 
         <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
-            <mat-button-toggle value="bold">Bold
-                <mat-icon>delete</mat-icon>
+            <mat-button-toggle *ngFor="let mItemInvoice of listmItemInvoice " [value]="mItemInvoice">
+                {{ mItemInvoice?.invoice_name }}
+                <button mat-mini-fab color="warn" (click)="deleteInvoice(mItemInvoice?.invoice_id)">
+                    <mat-icon>delete</mat-icon>
+                </button>
             </mat-button-toggle>
-            <mat-button-toggle value="italic">Italic</mat-button-toggle>
-            <mat-button-toggle value="underline">Underline</mat-button-toggle>
-            <mat-button-toggle (click)="addInvoice()"><mat-icon>add</mat-icon></mat-button-toggle>
+            <!-- <mat-button-toggle value="italic">Italic</mat-button-toggle>
+            <mat-button-toggle value="underline">Underline</mat-button-toggle> -->
+            <mat-button-toggle (click)="addInvoice()">
+                <mat-icon>add</mat-icon>
+            </mat-button-toggle>
         </mat-button-toggle-group>
 
 
