@@ -49,8 +49,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   updateModelId = null;
 
   statuses = [
-    {id: '1', name: 'Hoàn thành'},
-    {id: '10', name: 'Lưu tạm'},
+    {id: '10', name: 'Hoàn thành'},
+    {id: '9', name: 'Lưu tạm'},
   ];
 
   parcels: object[] = [];

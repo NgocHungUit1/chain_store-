@@ -82,4 +82,36 @@ export class InvoiceTabInfoComponent implements OnInit {
     });
   }
 
+  reconnect(item) {
+    this.invoiceService.reconnect(item.id).subscribe(res => {
+      if (res['success'] === true) {
+        this.notifySer.notify('success', 'Cập nhật liên thông thành công.');
+      } else if (res['message'] !== undefined) {
+        this.notifySer.notify('error', res['message']);
+      }
+    });
+  }
+
+  connect(item) {
+    this.invoiceService.connect(item.id).subscribe(res => {
+      if (res['success'] === true) {
+        item.national_pharmacy_no = res['national_pharmacy_no'];
+        this.notifySer.notify('success', 'Liên thông thành công.');
+      } else if (res['message'] !== undefined) {
+        this.notifySer.notify('error', res['message']);
+      }
+    });
+  }
+
+  disconnect(item) {
+    this.invoiceService.disconnect(item.id).subscribe(res => {
+      if (res['success'] === true) {
+        item.national_pharmacy_no = null;
+        this.notifySer.notify('success', 'Gỡ liên thông thành công.');
+      } else if (res['message'] !== undefined) {
+        this.notifySer.notify('error', res['message']);
+      }
+    });
+  }
+
 }

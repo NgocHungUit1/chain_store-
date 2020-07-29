@@ -49,8 +49,8 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
   updateModelId = null;
   parcels: object[] = [];
   statuses = [
-    {id: '1', name: 'Hoàn thành'},
-    {id: '10', name: 'Lưu tạm'},
+    {id: '10', name: 'Hoàn thành'},
+    {id: '9', name: 'Lưu tạm'},
   ];
 
   columnsHeader = {

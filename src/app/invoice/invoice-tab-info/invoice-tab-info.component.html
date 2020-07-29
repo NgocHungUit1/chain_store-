@@ -185,9 +185,21 @@
             <button class="m-r-10" mat-raised-button color="accent">
                 <mat-icon>file_copy</mat-icon> Sao chép
             </button>
-            <button class="m-r-10" mat-raised-button color="warn" (click)='deleteInvoice(invoice)'>
-                <mat-icon>delete</mat-icon> Hủy bỏ
-            </button>
+          <button class="m-r-10" mat-raised-button color="accent" (click)="connect(invoice)" *ngIf="invoice.order_status === 'done' && invoice.national_pharmacy_no === null">
+            <mat-icon>open_in_full</mat-icon>
+            Liên thông
+          </button>
+          <button class="m-r-10" mat-raised-button color="accent" (click)="reconnect(invoice)" *ngIf="invoice.order_status === 'done' && invoice.national_pharmacy_no !== null">
+            <mat-icon>sync</mat-icon>
+            Cập nhật liên thông
+          </button>
+          <button class="m-r-10" mat-raised-button color="warn" (click)="disconnect(invoice)" *ngIf="invoice.order_status === 'done' && invoice.national_pharmacy_no !== null">
+            <mat-icon>close_fullscreen</mat-icon>
+            Gỡ liên thông
+          </button>
+          <button class="m-r-10" mat-raised-button color="warn" (click)='deleteInvoice(invoice)'>
+              <mat-icon>delete</mat-icon> Hủy bỏ
+          </button>
         </div>
     </div>
 </div>
