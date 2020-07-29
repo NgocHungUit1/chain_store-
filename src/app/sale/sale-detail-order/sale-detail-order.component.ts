@@ -20,12 +20,36 @@ export class SaleDetailOrderComponent implements OnInit {
   listProduct: any = [];
   countProduct: number = 0;
   isLoadingResults = true;
+
+  // De xu ly API getListProductCommon ko load nhieu lan
+  common_id_OLD: string;
+  listProductChoose_OLD: number[] = [];
+
   constructor(
     private orderService: OrderService,
     private route: ActivatedRoute,
     private priceListProductSer: PriceListProductService,
     private dialog: MatDialog,
   ) { }
+
+  // doan code nay rat kho hieu
+  // neu ton tai tuong tu truoc do se khong chay api
+  kiemTraLapLaiAPI(common_id, listProductChoose) {
+    //https://stackoverflow.com/questions/38498258/typescript-difference-between-two-arrays
+    const missing1 = this.listProductChoose_OLD.filter(item => listProductChoose.indexOf(item) < 0);
+    const missing2 = listProductChoose.filter(item => this.listProductChoose_OLD.indexOf(item) < 0);
+    console.log(this.listProductChoose_OLD + 'OLD');
+    console.log(listProductChoose);
+
+    if (this.common_id_OLD !== common_id || missing1.length !== 0 || missing2.length !== 0) {
+      this.common_id_OLD = common_id;
+      this.listProductChoose_OLD = listProductChoose;
+      return false;
+    } else {
+      return true;
+    }
+
+  }
 
   loadData() {
 
@@ -54,7 +78,7 @@ export class SaleDetailOrderComponent implements OnInit {
         });
         this.listProduct.reverse();
 
-        // handel add common price
+        // handle add common price
         const priceBookID = mItemInvoice.price_book_id; //this.orderService.getPriceBookID();
         const list = this.listProduct;
 
@@ -62,6 +86,10 @@ export class SaleDetailOrderComponent implements OnInit {
           const listProductChoose = list.map(obj => obj.product.id);
           const common_id = priceBookID;
           // // tien hanh xu ly add common vao list @nghia getListProductCommon
+
+          // if (this.kiemTraLapLaiAPI(common_id, listProductChoose) === false) {
+          // }
+
           this.priceListProductSer.getListProductCommon(common_id, listProductChoose).subscribe(resCommon => {
             if (Array.isArray(resCommon)) {
               const priceListProductCommonExist = resCommon;
@@ -71,7 +99,7 @@ export class SaleDetailOrderComponent implements OnInit {
                 return r;
               }, {});
               // add common || null
-              // neu co gia chung se chon common_price 
+              // neu co gia chung se chon common_price
               if (this.listProduct !== null) {
                 this.listProduct.forEach(elementData => {
                   if (group[elementData.product.id] !== undefined) {
@@ -84,6 +112,7 @@ export class SaleDetailOrderComponent implements OnInit {
 
             }
           });
+
         }
 
       }

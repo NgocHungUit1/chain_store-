@@ -18,6 +18,27 @@ export class OrderService {
     this.getDataInvoiceActive();
   }
 
+  public initListInvoice() {
+    const data = new ListInvoice();
+    const listItemInvoice: ItemInvoice[] = [];
+    const itemInvoice = new ItemInvoice();
+    itemInvoice.invoice_id = -1;
+    itemInvoice.invoice_name = 'Hóa đơn';
+    itemInvoice.active = true;
+    listItemInvoice.push(itemInvoice);
+    data.itemInvoice = listItemInvoice;
+    this.ObjectListInvoice.next(data);
+    this.setListInvoiceLocalStorage(data);
+  }
+
+  public getDataInvoiceActive() {
+    let listInvoice = this.getListInvoiceLocalStorage();
+    if (Object.keys(listInvoice).length === 0) {
+      this.initListInvoice();
+    }
+    listInvoice = this.getListInvoiceLocalStorage();
+    this.ObjectOrder.next(listInvoice);
+  }
 
   public setListInvoiceLocalStorage(data: ListInvoice) {
     this.ObjectListInvoice.next(data);
@@ -31,20 +52,6 @@ export class OrderService {
     }
     this.ObjectListInvoice.next(listInvoice);
     return listInvoice;
-  }
-
-
-  public initListInvoice() {
-    const data = new ListInvoice();
-    const listItemInvoice: ItemInvoice[] = [];
-    const itemInvoice = new ItemInvoice();
-    itemInvoice.invoice_id = -1;
-    itemInvoice.invoice_name = 'Hóa đơn';
-    itemInvoice.active = true;
-    listItemInvoice.push(itemInvoice);
-    data.itemInvoice = listItemInvoice;
-    this.ObjectListInvoice.next(data);
-    this.setListInvoiceLocalStorage(data);
   }
 
   public addNewInvoice() {
@@ -63,6 +70,7 @@ export class OrderService {
     itemInvoice.active = true;
     listItemInvoice.push(itemInvoice);
     data.itemInvoice = listItemInvoice;
+    this.setListInvoiceLocalStorage(data);
     this.setListInvoiceLocalStorage(data);
   }
 
@@ -88,14 +96,31 @@ export class OrderService {
     this.setListInvoiceLocalStorage(data);
   }
 
-  public getDataInvoiceActive() {
-    let listInvoice = this.getListInvoiceLocalStorage();
-    if (Object.keys(listInvoice).length === 0) {
-      this.initListInvoice();
-    }
-    listInvoice = this.getListInvoiceLocalStorage();
-    this.ObjectOrder.next(listInvoice);
+  public activeInvoice(invoice_id: number) {
+    const data = this.getListInvoiceLocalStorage();
+    const listItemInvoice = data.itemInvoice || [];
+    listItemInvoice.forEach(element => {
+      if (element.invoice_id !== invoice_id) {
+        element.active = false;
+      } else {
+        element.active = true;
+      }
+    });
+    data.itemInvoice = listItemInvoice;
+    this.setListInvoiceLocalStorage(data);
   }
+
+  public getInvoiceActive(): ItemInvoice {
+    const listInvoice = this.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        return element;
+      }
+    });
+    return null;
+  }
+
 
   // danh sach hoa don
   public ObjectListInvoice: BehaviorSubject<ListInvoice> = new BehaviorSubject<ListInvoice>(null);
@@ -175,14 +200,6 @@ export class OrderService {
     this.loadDetailPage.next(action);
   }
 
-  // addPriceBookID(priceBookID: string) {
-  //   this.priceBookID.next(priceBookID);
-  // }
-
-  // getPriceBookID() {
-  //   return this.priceBookID.value;
-  // }
-
   addProduct(object: Product) {
     const ListInvoice = this.ObjectListInvoice.value;
     const listItemInvoice = ListInvoice.itemInvoice;
@@ -219,32 +236,6 @@ export class OrderService {
       }
     }
     this.setListInvoiceLocalStorage(ListInvoice);
-    //
-
-
-    // if (this.ObjectOrder.value === null) {
-    //   const listProduct = {};
-    //   const order = {};
-    //   listProduct[object.id] = { 'product': object, 'amount': 1 };
-    //   order['listProduct'] = listProduct;
-    //   this.ObjectOrder.next(order);
-    // } else {
-    //   const order = this.ObjectOrder.value;
-    //   const listProduct = order['listProduct'];
-
-    //   if (listProduct[object.id] === undefined) {
-    //     // them san pham moi
-    //     listProduct[object.id] = { 'product': object, 'amount': 1 };
-    //     order['listProduct'] = listProduct;
-    //     this.ObjectOrder.next(order);
-    //   } else {
-    //     // them san pham da ton tai
-    //     listProduct[object.id] = { 'product': object, 'amount': listProduct[object.id]['amount'] + 1 };
-    //     order['listProduct'] = listProduct;
-    //     this.ObjectOrder.next(order);
-    //   }
-    // }
-
   }
 
   deleteProduct(id: string) {
@@ -399,10 +390,9 @@ export class OrderService {
     this.setListInvoiceLocalStorage(ListInvoice);
   }
 
-
-
   saleOrder(data) {
     const url = environment.apiUrl + '/invoice/sale-order';
     return this.http.post(url, data);
   }
+
 }

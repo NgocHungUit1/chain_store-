@@ -40,6 +40,7 @@ export class SaleSiderbarOrderComponent implements OnInit {
   form: FormGroup;
   selectCustomer = new FormControl();
   selectUser = new FormControl();
+  user: User = null;
 
 
   public filteredCustomers: Observable<Customer[]>;
@@ -54,6 +55,7 @@ export class SaleSiderbarOrderComponent implements OnInit {
     private dialog: MatDialog,
     private userService: UserService,
     private notifySer: NotifierService,
+
   ) { }
 
   initForm() {
@@ -96,7 +98,11 @@ export class SaleSiderbarOrderComponent implements OnInit {
     const listItemInvoice = listInvoice.itemInvoice;
     listItemInvoice.forEach(element => {
       if (element.active === true) {
-        element.user = user;
+        element.user = {
+          id: user?.id,
+          username: user?.username,
+          email: user?.email
+        };
       }
     });
     this.orderService.setListInvoiceLocalStorage(listInvoice);
@@ -106,15 +112,23 @@ export class SaleSiderbarOrderComponent implements OnInit {
     });
   }
 
+  loadUserLogin() {
+    this.userService.getUserLogin().subscribe(res => {
+      this.user = res;
+    });
+  }
+
   loadData() {
+    this.loadUserLogin();
+
     const priceListFilter = new PriceListFilter();
-    // lay PriceBook 
+    // lay PriceBook
     this.priceListSer.getList(priceListFilter).subscribe(res => {
       this.priceLists = res.body;
       this.priceLists.forEach((element, index) => {
         if (element.is_default === 1) {
           // xu ly them price book id vao mac dinh
-          let listInvoice = this.orderService.getListInvoiceLocalStorage();
+          const listInvoice = this.orderService.getListInvoiceLocalStorage();
           const listItemInvoice = listInvoice.itemInvoice;
           listItemInvoice.forEach(ele => {
             if (ele.active === true && ele.price_book_id === undefined) {
@@ -128,6 +142,7 @@ export class SaleSiderbarOrderComponent implements OnInit {
           this.priceListCommon = element;
         }
       });
+
     });
 
     // NEW
@@ -139,6 +154,15 @@ export class SaleSiderbarOrderComponent implements OnInit {
           mItemInvoice = element;
         }
       });
+
+      // user
+      if (mItemInvoice.user === undefined) {
+        mItemInvoice.user = this.user;
+        this.selectUser.patchValue(this.user?.username);
+        this.form.patchValue({
+          'userID': this.user?.id
+        });
+      }
 
       if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
       } else {
@@ -171,6 +195,7 @@ export class SaleSiderbarOrderComponent implements OnInit {
               }, {});
               // add common || null
               // neu co gia chung se chon common_price 
+              // end_price : la gia cua san pham dc add truc tiep
               this.sumPrice = 0;
               this.listProduct.forEach(elementData => {
                 if (group[elementData.product.id] !== undefined) {
@@ -186,41 +211,10 @@ export class SaleSiderbarOrderComponent implements OnInit {
                     this.sumPrice += elementData.product.end_price * elementData.amount; // gia ban * so luong
                   }
                 }
-
-              });
-            }
-          });
-        }
-
-        // sum price
-        priceBookID = mItemInvoice.price_book_id;
-        list = this.listProduct;
-        if (priceBookID !== null && Array.isArray(list)) {
-
-          const listProductChoose = list.map(obj => obj.product.id);
-          const common_id = priceBookID;
-          // // tien hanh xu ly add common vao list
-          this.priceListProductSer.getListProductCommon(common_id, listProductChoose).subscribe(resCommon => {
-            if (Array.isArray(resCommon)) {
-              const priceListProductCommonExist = resCommon;
-              // code group array by key
-              const group = priceListProductCommonExist.reduce((r, a) => {
-                r[a.product_id] = [...r[a.product_id] || [], a];
-                return r;
-              }, {});
-              // add common || null
-              // neu co gia chung se chon common_price 
-              this.sumPrice = 0;
-              this.listProduct.forEach(elementData => {
-                if (group[elementData.product.id] !== undefined) {
-                  this.sumPrice += group[elementData.product.id][0]['price'] * elementData.amount; // gia chung * so luong
-                } else {
-                  this.sumPrice += elementData.product.sell_price * elementData.amount; // gia ban * so luong
-                }
               });
             }
 
-            // discount 
+            // discount
             const discountSiderBar = mItemInvoice.discountSiderBar;
             if (discountSiderBar !== undefined) {
               if (discountSiderBar?.type === 'vnd') {
@@ -234,12 +228,11 @@ export class SaleSiderbarOrderComponent implements OnInit {
             } else {
               this.numberDiscount = 0;
             }
-
             // End Discount
           });
         }
 
-        // customerPay 
+        // customerPay
         const paymentSiderBar = mItemInvoice.paymentSiderBar;
         if (paymentSiderBar !== undefined) {
           this.customerPay = paymentSiderBar?.number;
@@ -386,13 +379,13 @@ export class SaleSiderbarOrderComponent implements OnInit {
       this.notifySer.notify('warning', 'Thanh toán chưa đủ !');
       return;
     }
-    if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0 ) {
+    if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
       this.notifySer.notify('warning', 'Chưa chọn sản phẩm !');
       return;
     }
-    
+
     this.orderService.setLoadProduct(true);
-    
+
     const list = this.listProduct;
     const invoiceDetail = [];
     list.forEach(element => {

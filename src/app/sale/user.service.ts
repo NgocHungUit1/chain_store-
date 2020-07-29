@@ -68,6 +68,11 @@ export class UserService {
         return this.http.get<User[]>(url);
     }
 
+    getUserLogin() {
+        const url = environment.apiUrl + '/user/login';
+        return this.http.get<User>(url);
+    }
+
 }
 
 

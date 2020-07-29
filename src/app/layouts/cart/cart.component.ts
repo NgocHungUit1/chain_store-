@@ -131,5 +131,9 @@ export class CartComponent implements OnDestroy {
   deleteInvoice(invoice_id: number) {
     this.orderService.deleteInvoice(invoice_id);
   }
+
+  activeInvoice(invoice_id: number) {
+    this.orderService.activeInvoice(invoice_id);
+  }
   // Mini sidebar
 }
