@@ -116,6 +116,21 @@ export class InvoiceService {
     const url = environment.apiUrl + this.getApiUrlSumaryInvoice(filter);
     return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
   }
+
+  connect(id) {
+    const url = environment.apiUrl + '/invoice/connect?id=' + id;
+    return this.http.post(url, {});
+  }
+
+  disconnect(id) {
+    const url = environment.apiUrl + '/invoice/disconnect?id=' + id;
+    return this.http.post(url, {});
+  }
+
+  reconnect(id) {
+    const url = environment.apiUrl + '/invoice/connect?id=' + id + '&reconnect=1';
+    return this.http.post(url, {});
+  }
 }
 
 

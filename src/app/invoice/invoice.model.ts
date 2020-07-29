@@ -41,6 +41,8 @@ export class Invoice {
   created_by: string;
   created_at: string;
   stt: number; // for view
+  status: number; // for view
+  national_pharmacy_no: string; // for view
 }
 
 export class InvoiceFilter extends ApiFilterBase {
@@ -57,6 +59,7 @@ export class InvoiceFilter extends ApiFilterBase {
   sort = '';
   date_from = '';
   date_to = '';
+  national_pharmacy_no = '';
 
   getModelSearch() {
     return 'InvoiceSearch';
