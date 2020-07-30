@@ -52,12 +52,12 @@ export class WarehouseService {
 
   update(id: string, pos: any) {
     const url = environment.apiUrl + '/warehouse/' + id;
-    return this.http.put(url, pos);
+    return this.http.put<Warehouse>(url, pos);
   }
 
   create(data) {
     const url = environment.apiUrl + '/warehouse';
-    return this.http.post(url, data);
+    return this.http.post<Warehouse>(url, data);
   }
 
   autocomplete(term: string) {

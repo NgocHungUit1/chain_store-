@@ -217,13 +217,17 @@
             </div>
             <div fxFlex="100">
               <div mat-dialog-actions align="end">
-                <button mat-raised-button color="accent" tabindex="10" [disabled]="this.form.invalid" (click)="submit(10)" style="margin-right: 10px">
+                <button *ngIf="updateModelId === null || (model !== null && model['status'] === 9)" mat-raised-button color="accent" fxFlex="45" tabindex="10" [disabled]="this.form.invalid" (click)="submit(9)" style="margin-right: 10px">
                   <mat-icon>save</mat-icon>
                   Lưu tạm
                 </button>
-                <button mat-raised-button color="primary" (click)="submit(1)" [disabled]="this.form.invalid" tabindex="11">
+                <button *ngIf="updateModelId === null || (model !== null && model['status'] === 9)" mat-raised-button color="primary" fxFlex="55" (click)="submit(10)" [disabled]="this.form.invalid" tabindex="11">
                   <mat-icon>check</mat-icon>
                   Hoàn thành
+                </button>
+                <button *ngIf="updateModelId !== null && model !== null && model['status'] === 10" mat-raised-button color="primary" fxFlex="100" (click)="submit(10)" [disabled]="this.form.invalid" tabindex="11">
+                  <mat-icon>check</mat-icon>
+                  Lưu
                 </button>
               </div>
             </div>
