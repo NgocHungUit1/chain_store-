@@ -164,6 +164,21 @@ export class SaleSiderbarOrderComponent implements OnInit {
         });
       }
 
+      // price_book_id
+      if (mItemInvoice.price_book_id !== undefined) {
+        this.form.patchValue({
+          priceBookID: mItemInvoice.price_book_id,
+        });
+      }
+
+      // customer
+      if (mItemInvoice.customer !== undefined) {
+        this.selectCustomer.patchValue(mItemInvoice.customer?.name);
+      } else {
+        this.selectCustomer.patchValue(null);
+      }
+
+
       if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
       } else {
         const listProduct = mItemInvoice.listProduct;
