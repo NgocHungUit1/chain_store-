@@ -178,16 +178,16 @@ export class SaleSiderbarOrderComponent implements OnInit {
         this.selectCustomer.patchValue(null);
       }
 
+      this.sumPrice = 0;
+      this.countProduct = 0;
 
       if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
       } else {
         const listProduct = mItemInvoice.listProduct;
         this.listProduct = [];
-        this.countProduct = 0;
         listProduct.forEach(eProductInfo => {
           this.listProduct.push(eProductInfo);
           this.countProduct++;
-
         });
         this.listProduct.reverse();
         // handel add common price
@@ -227,6 +227,7 @@ export class SaleSiderbarOrderComponent implements OnInit {
                   }
                 }
               });
+
             }
 
             // discount
@@ -255,7 +256,10 @@ export class SaleSiderbarOrderComponent implements OnInit {
           this.customerPay = 0;
         }
 
+
       }
+
+
 
     });
 

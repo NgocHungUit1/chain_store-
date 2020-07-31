@@ -88,12 +88,18 @@ export class OrderService {
       }
     });
     if (acticeNull === 1) {
-      const lastItem: ItemInvoice = aItemInvoice.pop();
+      let lastItem: ItemInvoice = aItemInvoice.pop();
+      if (lastItem === undefined) {
+        lastItem = new ItemInvoice();
+        lastItem.invoice_name = 'Hóa Đơn';
+        lastItem.invoice_id = -1;
+      }
       lastItem.active = true;
       aItemInvoice.push(lastItem);
     }
     data.itemInvoice = aItemInvoice;
     this.setListInvoiceLocalStorage(data);
+
   }
 
   public activeInvoice(invoice_id: number) {
@@ -393,6 +399,19 @@ export class OrderService {
   saleOrder(data) {
     const url = environment.apiUrl + '/invoice/sale-order';
     return this.http.post(url, data);
+  }
+
+  addItemInvoiceUpdate(mItemInvoice: ItemInvoice) {
+    // console.log(mItemInvoice);
+    let ListInvoice = this.ObjectListInvoice.value;
+    const listItemInvoice = ListInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      element.active = false;
+    });
+    listItemInvoice.push(mItemInvoice);
+    ListInvoice.itemInvoice = listItemInvoice;
+    this.setListInvoiceLocalStorage(ListInvoice);
+
   }
 
 }
