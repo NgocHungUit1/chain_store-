@@ -121,7 +121,7 @@ export class InvoiceTabInfoComponent implements OnInit {
   }
 
   updateInvoice(invoice) {
-    console.log(invoice);
+    // console.log(invoice);
     let mItemInvoice = new ItemInvoice();
     mItemInvoice.invoice_id = invoice.id;
     mItemInvoice.active = true;
@@ -146,7 +146,7 @@ export class InvoiceTabInfoComponent implements OnInit {
     detail.forEach(element => {
       let mProductInfo = new ProductInfo();
       mProductInfo.amount = element.amount;
-      mProductInfo.product_id = element.id;
+      mProductInfo.product_id = element.product?.id;
       mProductInfo.product = element.product;
       aProductInfo.push(mProductInfo);
     });

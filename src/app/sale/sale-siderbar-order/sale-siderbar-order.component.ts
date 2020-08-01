@@ -178,7 +178,6 @@ export class SaleSiderbarOrderComponent implements OnInit {
         this.selectCustomer.patchValue(null);
       }
 
-      this.sumPrice = 0;
       this.countProduct = 0;
 
       if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
@@ -214,12 +213,14 @@ export class SaleSiderbarOrderComponent implements OnInit {
               this.sumPrice = 0;
               this.listProduct.forEach(elementData => {
                 if (group[elementData.product.id] !== undefined) {
+                  elementData.common_price = group[elementData.product.id][0]['price'];
                   if (elementData.product.end_price === undefined) {
                     this.sumPrice += group[elementData.product.id][0]['price'] * elementData.amount; // gia chung * so luong
                   } else {
                     this.sumPrice += elementData.product.end_price * elementData.amount; // gia chung * so luong
                   }
                 } else {
+                  elementData.common_price = elementData.product.sell_price;
                   if (elementData.product.end_price === undefined) {
                     this.sumPrice += elementData.product.sell_price * elementData.amount; // gia ban * so luong
                   } else {
@@ -412,7 +413,7 @@ export class SaleSiderbarOrderComponent implements OnInit {
       let discount = 0;
       let discount_type = 'vnd';
       if (element.product.end_price === undefined) {
-        price = element.common_price;
+        price = (element.common_price !== undefined) ? element.common_price : element.product.sell_price;
       } else {
         price = element.product.end_price;
       }
@@ -435,6 +436,7 @@ export class SaleSiderbarOrderComponent implements OnInit {
 
     const dataInvoice = {
       Invoice: {
+        invoice_id: mItemInvoice.invoice_id,
         customer_id: customer?.id,
         total_price: this.sumPrice, // tong tien hang
         discount: this.discount,
@@ -448,18 +450,35 @@ export class SaleSiderbarOrderComponent implements OnInit {
       PaymentPrice: this.sumPrice - this.numberDiscount, // tien thanh toan
     };
 
+    // console.log(dataInvoice);
+    // return;
 
-    this.orderService.saleOrder(dataInvoice).subscribe(res => {
-      if (res === true) {
-        this.resetDataSiderBar();
-        this.loadData();
-        this.notifySer.notify('success', 'Lưu thành công !');
-      } else {
-        this.notifySer.notify('warning', 'Thất bại !');
-      }
-      this.orderService.setLoadProduct(false);
-      this.orderService.setLoadDetailPage(true);
-    });
+    if (mItemInvoice.invoice_id < 0) {
+      this.orderService.saleOrder(dataInvoice).subscribe(res => {
+        if (res === true) {
+          this.resetDataSiderBar();
+          this.loadData();
+          this.notifySer.notify('success', 'Lưu thành công !');
+        } else {
+          this.notifySer.notify('warning', 'Thất bại !');
+        }
+        this.orderService.setLoadProduct(false);
+        this.orderService.setLoadDetailPage(true);
+      });
+    } else {
+      this.orderService.updateOrder(dataInvoice).subscribe(res => {
+        if (res === true) {
+          this.resetDataSiderBar();
+          this.loadData();
+          this.notifySer.notify('success', 'Cập nhật đơn thành công !');
+        } else {
+          this.notifySer.notify('warning', 'Thất bại !');
+        }
+        this.orderService.setLoadProduct(false);
+        this.orderService.setLoadDetailPage(true);
+      });
+    }
+
   }
 
   resetDataSiderBar() {

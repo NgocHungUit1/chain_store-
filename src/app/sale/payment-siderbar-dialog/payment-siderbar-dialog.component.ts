@@ -58,9 +58,10 @@ export class PaymentSiderbarDialogComponent implements OnInit {
 
     let numberValue = 0;
     let typeValue = 'cash';
+
     if (paymentSiderBar !== null) {
-      numberValue = paymentSiderBar?.number;
-      typeValue = paymentSiderBar?.type;
+      numberValue = (paymentSiderBar?.number !== null) ? paymentSiderBar?.number : 0;
+      typeValue = (paymentSiderBar?.type !== null) ? paymentSiderBar?.type : 'cash';
     }
     this.form = this.fb.group({
       number: [
@@ -105,7 +106,4 @@ export class PaymentSiderbarDialogComponent implements OnInit {
     this.orderService.setListInvoiceLocalStorage(listInvoice);
   }
 
-  add() {
-
-  }
 }

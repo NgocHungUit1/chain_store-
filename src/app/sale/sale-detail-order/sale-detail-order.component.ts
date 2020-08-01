@@ -76,7 +76,6 @@ export class SaleDetailOrderComponent implements OnInit {
           this.countProduct++;
 
         });
-        this.listProduct.reverse();
 
         // handle add common price
         const priceBookID = mItemInvoice.price_book_id; //this.orderService.getPriceBookID();
@@ -86,9 +85,6 @@ export class SaleDetailOrderComponent implements OnInit {
           const listProductChoose = list.map(obj => obj.product.id);
           const common_id = priceBookID;
           // // tien hanh xu ly add common vao list @nghia getListProductCommon
-
-          // if (this.kiemTraLapLaiAPI(common_id, listProductChoose) === false) {
-          // }
 
           this.priceListProductSer.getListProductCommon(common_id, listProductChoose).subscribe(resCommon => {
             if (Array.isArray(resCommon)) {
@@ -112,10 +108,18 @@ export class SaleDetailOrderComponent implements OnInit {
 
             }
           });
-
         }
-
       }
+
+      // cap nhat gia
+      // listItemInvoice.forEach(element => {
+      //   if (element.active === true) {
+      //     element.listProduct = this.listProduct;
+      //   }
+      // });
+      // ListInvoice.itemInvoice = listItemInvoice;
+      // this.orderService.setListInvoiceLocalStorage(ListInvoice);
+      this.listProduct.reverse();
 
     });
 

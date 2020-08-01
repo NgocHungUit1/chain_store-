@@ -207,7 +207,7 @@ export class OrderService {
   }
 
   addProduct(object: Product) {
-    const ListInvoice = this.ObjectListInvoice.value;
+    const ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
     listItemInvoice.forEach(element => {
@@ -245,7 +245,7 @@ export class OrderService {
   }
 
   deleteProduct(id: string) {
-    let ListInvoice = this.ObjectListInvoice.value;
+    let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
     listItemInvoice.forEach(element => {
@@ -268,7 +268,7 @@ export class OrderService {
   }
 
   upAmountProduct(id: string) {
-    let ListInvoice = this.ObjectListInvoice.value;
+    let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
     listItemInvoice.forEach(element => {
@@ -292,7 +292,7 @@ export class OrderService {
   }
 
   downAmountProduct(id: string) {
-    let ListInvoice = this.ObjectListInvoice.value;
+    let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
     listItemInvoice.forEach(element => {
@@ -320,7 +320,7 @@ export class OrderService {
   }
 
   updateNoteDetailOrder(id: string, note_detail_sale: string) {
-    let ListInvoice = this.ObjectListInvoice.value;
+    let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
     listItemInvoice.forEach(element => {
@@ -345,7 +345,7 @@ export class OrderService {
   }
 
   updateProduct(id: string, product: Product) {
-    let ListInvoice = this.ObjectListInvoice.value;
+    let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
     listItemInvoice.forEach(element => {
@@ -369,7 +369,7 @@ export class OrderService {
   }
 
   inputAmountProduct(id: string, value: number) {
-    let ListInvoice = this.ObjectListInvoice.value;
+    let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
     listItemInvoice.forEach(element => {
@@ -401,9 +401,13 @@ export class OrderService {
     return this.http.post(url, data);
   }
 
+  updateOrder(data) {
+    const url = environment.apiUrl + '/invoice/update-order';
+    return this.http.post(url, data);
+  }
+
   addItemInvoiceUpdate(mItemInvoice: ItemInvoice) {
-    // console.log(mItemInvoice);
-    let ListInvoice = this.ObjectListInvoice.value;
+    let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     listItemInvoice.forEach(element => {
       element.active = false;
@@ -411,7 +415,6 @@ export class OrderService {
     listItemInvoice.push(mItemInvoice);
     ListInvoice.itemInvoice = listItemInvoice;
     this.setListInvoiceLocalStorage(ListInvoice);
-
   }
 
 }
