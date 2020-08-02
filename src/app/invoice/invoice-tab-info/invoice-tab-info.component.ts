@@ -30,12 +30,12 @@ export class InvoiceTabInfoComponent implements OnInit {
     'total_price': 'Thành tiền'
   };
 
-  TongSoLuong: number = 0;
-  TongTienHang: number = 0;
-  GiamGiaHoaDon: number = 0;
+  tongSoLuong: number = 0;
+  tongTienHang: number = 0;
+  giamGiaHoaDon: number = 0;
   KhachCanTra: number;
   KhachDaTra: number = 0;
-  GiamGiaHoaDonText = '';
+  giamGiaHoaDonText = '';
   orderStatus = {
     'pending': 'Đang xử lý',
     'done': 'Hoàn thành'
@@ -53,17 +53,17 @@ export class InvoiceTabInfoComponent implements OnInit {
     // console.log(this.invoice);
     const invoiceData = this.invoice;
     const detail = this.invoice.detail;
-    this.TongTienHang = invoiceData.total_price;
+    this.tongTienHang = invoiceData.total_price;
     this.KhachDaTra = invoiceData.total_payment;
     detail.forEach(element => {
-      this.TongSoLuong = this.TongSoLuong + element?.amount;
+      this.tongSoLuong = this.tongSoLuong + element?.amount;
     });
 
     if (invoiceData.discount_type === 'vnd') {
-      this.GiamGiaHoaDon = invoiceData.discount;
+      this.giamGiaHoaDon = invoiceData.discount;
     } else {
-      this.GiamGiaHoaDon = this.TongTienHang * invoiceData.discount / 100;
-      this.GiamGiaHoaDonText = '(' + invoiceData.discount + '%)';
+      this.giamGiaHoaDon = this.tongTienHang * invoiceData.discount / 100;
+      this.giamGiaHoaDonText = '(' + invoiceData.discount + '%)';
     }
   }
 

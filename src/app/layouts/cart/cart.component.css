@@ -1,8 +1,25 @@
-.invoice-label {
+.invoice-label-active {
   color: #ffffff;
   font-size: 17px;
 }
 
 .mat-tab {
   min-width: 50px !important;
+}
+
+.mat-tab-link {
+  /* color: white; */
+  font-size: 17px;
+  /* background: black; */
+}
+.mat-tab-label-active {
+  /* color: black; */
+  font-size: 17px;
+  background: white;
+  font-weight: 600;
+}
+
+.mat-tab-nav-bar {
+  max-width: 50%;
+  min-width: 50%;
 }

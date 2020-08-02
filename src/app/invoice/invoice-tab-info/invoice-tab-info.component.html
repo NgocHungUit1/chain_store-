@@ -125,7 +125,7 @@
                     </div>
                     <div fxFlex="4"></div>
                     <div fxFlex="48" class="invoice-detail-info-field">
-                        <strong>{{ TongSoLuong }}</strong>
+                        <strong>{{ tongSoLuong }}</strong>
                     </div>
                 </div>
                 <div fxLayout="row wrap" class="invoice-detail-info-row">
@@ -134,16 +134,16 @@
                     </div>
                     <div fxFlex="4"></div>
                     <div fxFlex="48" class="invoice-detail-info-field">
-                        <strong>{{ TongTienHang |number }}</strong>
+                        <strong>{{ tongTienHang |number }}</strong>
                     </div>
                 </div>
                 <div fxLayout="row wrap" class="invoice-detail-info-row">
                     <div fxFlex="48" class="invoice-detail-info-field">
-                        <span class="invoice-field-label">Giảm giá hóa đơn {{ GiamGiaHoaDonText }} :</span>
+                        <span class="invoice-field-label">Giảm giá hóa đơn {{ giamGiaHoaDonText }} :</span>
                     </div>
                     <div fxFlex="4"></div>
                     <div fxFlex="48" class="invoice-detail-info-field">
-                        <strong>{{ GiamGiaHoaDon | number }}</strong>
+                        <strong>{{ giamGiaHoaDon | number }}</strong>
                     </div>
                 </div>
                 <div fxLayout="row wrap" class="invoice-detail-info-row">
@@ -152,7 +152,7 @@
                     </div>
                     <div fxFlex="4"></div>
                     <div fxFlex="48" class="invoice-detail-info-field">
-                        <strong>{{ invoice?.total_price | number }}</strong>
+                        <strong>{{ invoice?.total_price - giamGiaHoaDon | number }}</strong>
                     </div>
                 </div>
                 <div fxLayout="row wrap" class="invoice-detail-info-row">
