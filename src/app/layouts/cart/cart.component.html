@@ -1,7 +1,7 @@
 <!-- ============================================================== -->
 <!-- Main wrapper - style you can find in pages.scss -->
 <!-- ============================================================== -->
-<div class="main-container" [dir]="dir"
+<div class="main-container cart" [dir]="dir"
   [ngClass]="{'minisidebar': minisidebar, 'boxed': boxed, 'danger': danger, 'blue': blue, 'green': green, 'dark': dark, 'sidebar-opened': sidebarOpened, 'sidebar-closed': !sidebarOpened }">
   <!-- ============================================================== -->
   <!-- Topbar - style you can find in header.scss -->
@@ -57,26 +57,23 @@
 
     <div class="list-invoice">
       <mat-tab-group scrollToCenter>
-        <mat-tab *ngFor="let mItemInvoice of listmItemInvoice" label="">
+        <mat-tab *ngFor="let mItemInvoice of listmItemInvoice" label="{{ mItemInvoice?.invoice_name }}">
           <ng-template class="tab-invoice" mat-tab-label>
             <button mat-button class="invoice-label" (click)="activeInvoice(mItemInvoice?.invoice_id)">
               <!-- {{ mItemInvoice?.invoice_name +' '+mItemInvoice?.invoice_id }} -->
               {{ mItemInvoice?.invoice_name }}
             </button>
             <button mat-icon-button class="invoice-label" (click)="deleteInvoice(mItemInvoice?.invoice_id)">
-              <mat-icon>delete</mat-icon>
+              <mat-icon>close</mat-icon>
             </button>
-          </ng-template>
-        </mat-tab>
-        <mat-tab>
-          <ng-template mat-tab-label>
-            <mat-button-toggle mat-icon-button (click)="addInvoice()">
-              <mat-icon>add</mat-icon>
-            </mat-button-toggle>
           </ng-template>
         </mat-tab>
       </mat-tab-group>
     </div>
+
+    <button mat-button mat-icon-button (click)="addInvoice()" class="btn-add-invoice-tab">
+      <mat-icon>add</mat-icon>
+    </button>
 
     <span fxFlex></span>
     <!-- ============================================================== -->

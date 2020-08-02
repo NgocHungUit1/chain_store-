@@ -30,8 +30,8 @@ import { ItemInvoice } from '../../sale/order.model';
 /** @title Responsive sidenav */
 @Component({
   selector: 'app-cart-layout',
-  templateUrl: 'cart.component.html',
-  styleUrls: ['./cart.component.component.css'],
+  templateUrl: './cart.component.html',
+  styleUrls: ['./cart.component.css'],
 })
 export class CartComponent implements OnDestroy {
 
