@@ -16,23 +16,25 @@ mat-grid-tile {
 }
 
 .product-image {
+  display: block;
+  align-content: center;
+  top: 5px;
   position: absolute;
-  left: 4px;
-  top: 8px
 }
 
 .content {
   position: absolute;
-  top: 8px;
-  left: 47px;
+  bottom: 5px;
+  padding: 0 5px;
 }
 
 .product-price {
-  position: absolute;
-  top: 40px;
   font-weight: 600;
   color: #3d933c;
-  margin-left: 10px;
+  text-align: left;
+  display: table;
+  vertical-align: bottom;
+  background-color: white;
 }
 
 .grid-custom:hover {
@@ -41,5 +43,5 @@ mat-grid-tile {
 }
 
 .product-name {
-  font-size: 15px;
+  font-size: 14px;
 }

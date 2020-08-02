@@ -143,21 +143,14 @@ export class OrderService {
   private loadDetailPage: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   subscribeLoadDetailPage: Observable<boolean> = this.loadDetailPage.asObservable();
 
-  // chon bang
-  // private priceBookID: BehaviorSubject<string> = new BehaviorSubject<string>(null);
-  // subscribePriceBookID: Observable<string> = this.priceBookID.asObservable();
-
-  // // Luu thong tin khach hang
-  // private customer: BehaviorSubject<Customer> = new BehaviorSubject<Customer>(null);
-  // subscribeCustomer: Observable<Customer> = this.customer.asObservable();
 
   // giam gia
-  private discountSiderBar: BehaviorSubject<DiscountSiderBar> = new BehaviorSubject<DiscountSiderBar>(null);
-  subscribeDiscountSiderBar: Observable<DiscountSiderBar> = this.discountSiderBar.asObservable();
+  // private discountSiderBar: BehaviorSubject<DiscountSiderBar> = new BehaviorSubject<DiscountSiderBar>(null);
+  // subscribeDiscountSiderBar: Observable<DiscountSiderBar> = this.discountSiderBar.asObservable();
 
   // luu thanh toan khach hang
-  private paymentSiderBar: BehaviorSubject<PaymentSiderBar> = new BehaviorSubject<PaymentSiderBar>(null);
-  subscribePaymentSiderBar: Observable<PaymentSiderBar> = this.paymentSiderBar.asObservable();
+  // private paymentSiderBar: BehaviorSubject<PaymentSiderBar> = new BehaviorSubject<PaymentSiderBar>(null);
+  // subscribePaymentSiderBar: Observable<PaymentSiderBar> = this.paymentSiderBar.asObservable();
 
 
   removeActive() {
@@ -178,17 +171,17 @@ export class OrderService {
 
   }
 
-  getPaymentSiderBar() {
-    return this.paymentSiderBar.value;
-  }
+  // getPaymentSiderBar() {
+  //   return this.paymentSiderBar.value;
+  // }
 
   //
-  setDiscountSiderBar(obj: DiscountSiderBar) {
-    this.discountSiderBar.next(obj);
-  }
-  getDiscountSiderBar() {
-    return this.discountSiderBar.value;
-  }
+  // setDiscountSiderBar(obj: DiscountSiderBar) {
+  //   this.discountSiderBar.next(obj);
+  // }
+  // getDiscountSiderBar() {
+  //   return this.discountSiderBar.value;
+  // }
 
   // addCustomer(customerObj: Customer) {
   //   this.customer.next(customerObj);

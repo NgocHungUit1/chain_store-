@@ -329,13 +329,15 @@ export class SaleSiderbarOrderComponent implements OnInit {
   }
 
   choosePriceBook(event: any) {
-    let listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const price_book_id = this.form.controls['priceBookID'].value;
+    const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     listItemInvoice.forEach(element => {
       if (element.active === true) {
-        element.price_book_id = this.form.controls['priceBookID'].value;
+        element.price_book_id = price_book_id;
       }
     });
+    listInvoice.itemInvoice = listItemInvoice;
     this.orderService.setListInvoiceLocalStorage(listInvoice);
   }
 

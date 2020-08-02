@@ -42,7 +42,6 @@ export class PaymentSiderbarDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // const paymentSiderBar = this.orderService.getPaymentSiderBar();
 
     let listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;

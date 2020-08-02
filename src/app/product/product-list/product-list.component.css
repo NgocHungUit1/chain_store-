@@ -59,3 +59,7 @@ tr.example-element-row:not(.example-expanded-row):active {
   font-weight: 700;
   background-color: #ebf5ea;
 }
+
+.column-number {
+  text-align: end;
+}

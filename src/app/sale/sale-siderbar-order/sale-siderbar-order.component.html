@@ -30,7 +30,7 @@
 
         <div class="customer-action">
             <div fxLayout="row wrap">
-                <div fxFlex="90">
+                <div fxFlex="80">
                     <mat-form-field>
                         <input class="input-search-customer" type="text" [formControl]="selectCustomer" matInput
                             [matAutocomplete]="chooseProduct" placeholder="Tìm khách hàng ">
@@ -46,7 +46,7 @@
                         </mat-autocomplete>
                     </mat-form-field>
                 </div>
-                <div fxFlex="10" style="min-width: 100px;">
+                <div fxFlex="auto" style="min-width: 100px;">
                     <button mat-button matPrefix>
                         <mat-icon (click)="openSaleCustomerFormDialogComponent()">add</mat-icon>
                     </button>

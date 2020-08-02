@@ -1,6 +1,7 @@
-.custom-search-customer{
+.custom-search-customer {
   padding-left: 10px;
 }
+
 .product-item {
   padding: 0 10px;
   border: 1px solid #ececec;
@@ -35,9 +36,13 @@
 }
 
 .row-amount {
-  /* position: relative; */
-  width: 110px;
   font-size: 20px;
+  min-width: 100px;
+  max-width: 160px;
+}
+
+.row-edit-price {
+  min-width: 100px;
 }
 
 .row-product-no {
@@ -49,6 +54,7 @@
 
 .row-product-name {
   font-size: 15px;
+  margin-top: 5px;
 }
 
 .row-icon-edit {
