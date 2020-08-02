@@ -88,8 +88,8 @@ export class WarehouseInfoTabComponent implements OnChanges {
   }
 
   finish() {
-    if (this.model.status === 10) {
-      this.modelSer.update(this.model.id, {status: 1}).subscribe(res => {
+    if (this.model.status === 9) {
+      this.modelSer.update(this.model.id, {status: 10}).subscribe(res => {
         const typeStr = res['type'] === 'import' ? 'nhập' : 'trả';
         this.model.status = res['status'];
         this.notifySer.notify('success', 'Hoàn thành đơn ' + typeStr + ' hàng');
@@ -98,14 +98,8 @@ export class WarehouseInfoTabComponent implements OnChanges {
   }
 
   reopen() {
-    if (this.model.status === 1) {
-      this.modelSer.update(this.model.id, {status: 10}).subscribe(res => {
-        const typeStr = res['type'] === 'import' ? 'nhập' : 'trả';
-        const routeStr = res['type'] === 'import' ? 'warehouse' : 'warehouse-return';
-        this.notifySer.notify('success', 'Mở lại đơn ' + typeStr + ' hàng');
-        this.router.navigate(['/transaction/' + routeStr + '/update/' + this.model.id]);
-      });
-    }
+    const routeStr = this.model.type === 'import' ? 'warehouse' : 'warehouse-return';
+    this.router.navigate(['/transaction/' + routeStr + '/update/' + this.model.id]);
   }
 
   delete() {

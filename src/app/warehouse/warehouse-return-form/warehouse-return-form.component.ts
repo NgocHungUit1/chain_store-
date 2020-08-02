@@ -47,6 +47,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
 
   apiFilter: WarehouseProductFilter;
   updateModelId = null;
+  model = null;
   parcels: object[] = [];
   statuses = [
     {id: '10', name: 'Hoàn thành'},
@@ -150,6 +151,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
         if (res['date'] !== null) {
           dateStr = new Date(res['date']).toISOString();
         }
+        this.model = res;
         this.form.patchValue({
           date: dateStr,
           no: res['no'],
@@ -272,10 +274,12 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
         delete data['date'];
         delete data['supplier'];
         this.mainService.update(this.updateModelId, data).subscribe(res => {
+          this.model = res;
           this.notifySer.notify('success', 'Lưu thành công.');
         });
       } else {
         this.mainService.create(data).subscribe(res => {
+          this.model = res;
           this.notifySer.notify('success', 'Lưu thành công.');
           this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
         });

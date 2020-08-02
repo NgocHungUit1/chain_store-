@@ -11,8 +11,8 @@
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
             <span class="product-field-label">Trạng thái:</span>
-            <label *ngIf="model.status == '10'" class="label label-warning">Lưu tạm</label>
-            <label *ngIf="model.status == '1'" class="label label-success">Hoàn thành</label>
+            <label *ngIf="model.status == '9'" class="label label-warning">Lưu tạm</label>
+            <label *ngIf="model.status == '10'" class="label label-success">Hoàn thành</label>
           </div>
         </div>
         <div fxLayout="row wrap" class="product-info-row">
@@ -155,15 +155,15 @@
     <div fxLayout="row wrap">
       <!-- kiem tra loai show form -->
       <div fxFlex="100" align="end">
-        <button class="m-r-10" mat-raised-button color="primary" (click)="reopen()" *ngIf="model.status === 1">
+        <button class="m-r-10" mat-raised-button color="primary" (click)="reopen()" *ngIf="model.status === 10">
           <mat-icon>undo</mat-icon>
           Mở lại
         </button>
-        <button class="m-r-10" mat-raised-button color="primary" (click)="finish()" *ngIf="model.status === 10">
+        <button class="m-r-10" mat-raised-button color="primary" (click)="finish()" *ngIf="model.status === 9">
           <mat-icon>check</mat-icon>
           Hoàn thành
         </button>
-        <button class="m-r-10" mat-raised-button color="accent" (click)="connect(model)" *ngIf="model.status === 1 && model.national_pharmacy_no === null">
+        <button class="m-r-10" mat-raised-button color="accent" (click)="connect(model)" *ngIf="model.status === 10 && model.national_pharmacy_no === null">
           <mat-icon>open_in_full</mat-icon>
           Liên thông
         </button>
@@ -179,7 +179,7 @@
           <!--<mat-icon>file_copy</mat-icon>-->
           <!--Sao chép-->
         <!--</button>-->
-        <button class="m-r-10" mat-raised-button color="danger" (click)="delete()" *ngIf="model.status === 10">
+        <button class="m-r-10" mat-raised-button color="danger" (click)="delete()" *ngIf="model.status === 1">
           <mat-icon>delete</mat-icon>
           Xóa
         </button>
