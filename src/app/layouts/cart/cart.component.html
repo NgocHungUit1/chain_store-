@@ -60,7 +60,8 @@
         <mat-tab *ngFor="let mItemInvoice of listmItemInvoice" label="">
           <ng-template class="tab-invoice" mat-tab-label>
             <button mat-button class="invoice-label" (click)="activeInvoice(mItemInvoice?.invoice_id)">
-              {{ mItemInvoice?.invoice_name +' '+mItemInvoice?.invoice_id }}
+              <!-- {{ mItemInvoice?.invoice_name +' '+mItemInvoice?.invoice_id }} -->
+              {{ mItemInvoice?.invoice_name }}
             </button>
             <button mat-icon-button class="invoice-label" (click)="deleteInvoice(mItemInvoice?.invoice_id)">
               <mat-icon>delete</mat-icon>

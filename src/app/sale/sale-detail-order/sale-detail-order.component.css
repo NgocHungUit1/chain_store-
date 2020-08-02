@@ -24,7 +24,8 @@
 .row-count-number {
   font-size: 15px;
   padding: 0 10px;
-  padding-top: 20px
+  padding-top: 20px;
+  min-width: 69px;
 }
 
 .row-product-note {
@@ -42,6 +43,8 @@
 .row-product-no {
   font-size: 15px;
   padding-top: 20px;
+  min-width: 100px;
+  padding-right: 5px;
 }
 
 .row-product-name {

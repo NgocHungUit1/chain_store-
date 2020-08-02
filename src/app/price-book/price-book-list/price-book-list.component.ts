@@ -240,7 +240,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     const dialogRef = this.dialog.open(CreatePriceListFormDialogComponent, {
       data: obj,
       width: '40%',
-      minHeight: '80%',
+      minWidth: '600px',
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -350,7 +350,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     const dialogRef = this.dialog.open(SetupCommonPriceDialogComponent, {
       data: data,
       width: '45%',
-      minHeight: '80%',
+      minWidth: '750px',
     });
 
     dialogRef.afterClosed().subscribe(result => {

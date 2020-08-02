@@ -364,11 +364,13 @@ export class SaleSiderbarOrderComponent implements OnInit {
   openSaleCustomerFormDialogComponent() {
     const dialogRef = this.dialog.open(SaleCustomerFormDialogComponent, {
       width: '40%',
-      minHeight: '80%',
+      minWidth: '750px',
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this.selectCustomer.patchValue(result.name);
+      if (result !== undefined) {
+        this.selectCustomer.patchValue(result?.name);
+      }
     });
   }
   // ------------------------------------------------------ PAYMENT ----------------------------------------------------------//
