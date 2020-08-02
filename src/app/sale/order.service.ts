@@ -144,15 +144,6 @@ export class OrderService {
   subscribeLoadDetailPage: Observable<boolean> = this.loadDetailPage.asObservable();
 
 
-  // giam gia
-  // private discountSiderBar: BehaviorSubject<DiscountSiderBar> = new BehaviorSubject<DiscountSiderBar>(null);
-  // subscribeDiscountSiderBar: Observable<DiscountSiderBar> = this.discountSiderBar.asObservable();
-
-  // luu thanh toan khach hang
-  // private paymentSiderBar: BehaviorSubject<PaymentSiderBar> = new BehaviorSubject<PaymentSiderBar>(null);
-  // subscribePaymentSiderBar: Observable<PaymentSiderBar> = this.paymentSiderBar.asObservable();
-
-
   removeActive() {
     let listInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
@@ -170,26 +161,6 @@ export class OrderService {
     }
 
   }
-
-  // getPaymentSiderBar() {
-  //   return this.paymentSiderBar.value;
-  // }
-
-  //
-  // setDiscountSiderBar(obj: DiscountSiderBar) {
-  //   this.discountSiderBar.next(obj);
-  // }
-  // getDiscountSiderBar() {
-  //   return this.discountSiderBar.value;
-  // }
-
-  // addCustomer(customerObj: Customer) {
-  //   this.customer.next(customerObj);
-  // }
-
-  // getCustomer() {
-  //   return this.customer.value;
-  // }
 
   setLoadProduct(action: boolean) {
     this.loadPage.next(action);
@@ -260,6 +231,9 @@ export class OrderService {
     this.setListInvoiceLocalStorage(ListInvoice);
   }
 
+  /*
+  Thay doi so luong san pham
+  */
   upAmountProduct(id: string) {
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
@@ -399,6 +373,10 @@ export class OrderService {
     return this.http.post(url, data);
   }
 
+  /**
+   * Add a invoice to update in to list cart
+   * @param mItemInvoice 
+   */
   addItemInvoiceUpdate(mItemInvoice: ItemInvoice) {
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
@@ -408,6 +386,15 @@ export class OrderService {
     listItemInvoice.push(mItemInvoice);
     ListInvoice.itemInvoice = listItemInvoice;
     this.setListInvoiceLocalStorage(ListInvoice);
+  }
+
+  /**
+   * API get data to print invoice
+   * @param id 
+   */
+  getDataInvoiceToPrint(invoice_id: number) {
+    const url = environment.apiUrl + '/invoice/get-data-invoice-print/';
+    return this.http.post(url, {invoice_id : invoice_id});
   }
 
 }

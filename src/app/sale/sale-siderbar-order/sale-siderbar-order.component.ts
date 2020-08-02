@@ -17,6 +17,7 @@ import { UserService } from '../user.service';
 import { User } from '../user.model';
 import { NotifierService } from 'angular-notifier';
 import { ItemInvoice, ListInvoice } from '../order.model';
+import { SalePrintInvoiceDialogComponent } from '../sale-print-invoice-dialog/sale-print-invoice-dialog.component';
 
 @Component({
   selector: 'app-sale-siderbar-order',
@@ -120,7 +121,6 @@ export class SaleSiderbarOrderComponent implements OnInit {
 
   loadData() {
     this.loadUserLogin();
-
     const priceListFilter = new PriceListFilter();
     // lay PriceBook
     this.priceListSer.getList(priceListFilter).subscribe(res => {
@@ -256,14 +256,9 @@ export class SaleSiderbarOrderComponent implements OnInit {
         } else {
           this.customerPay = 0;
         }
-
-
       }
 
-
-
     });
-
   }
 
   ngOnInit(): void {
@@ -375,8 +370,32 @@ export class SaleSiderbarOrderComponent implements OnInit {
       }
     });
   }
+  //----------------Print -------------//
+  printInvoice(invoice_id: number) {
+    // const printContent = document.getElementById("print");
+    // const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+    // WindowPrt.document.write(printContent.innerHTML);
+    // WindowPrt.document.close();
+    // WindowPrt.focus();
+    // WindowPrt.print();
+    // WindowPrt.close();
+    const obj = { invoice_id: invoice_id };
+    const dialogRef = this.dialog.open(SalePrintInvoiceDialogComponent, {
+      width: '40%',
+      minWidth: '750px',
+      data: obj
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+    });
+  }
   // ------------------------------------------------------ PAYMENT ----------------------------------------------------------//
   payment() {
+    this.printInvoice(4);
+    return;
+
+
     let listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
@@ -438,6 +457,9 @@ export class SaleSiderbarOrderComponent implements OnInit {
       });
     });
 
+    /**
+     * Gang du lieu data
+     */
     const dataInvoice = {
       Invoice: {
         invoice_id: mItemInvoice.invoice_id,
@@ -454,12 +476,12 @@ export class SaleSiderbarOrderComponent implements OnInit {
       PaymentPrice: this.sumPrice - this.numberDiscount, // tien thanh toan
     };
 
-    // console.log(dataInvoice);
-    // return;
-
+    /**
+     * Kiem tra invoice_id la don moi hay don cap nhat
+     */
     if (mItemInvoice.invoice_id < 0) {
       this.orderService.saleOrder(dataInvoice).subscribe(res => {
-        if (res === true) {
+        if (res !== false) {
           this.resetDataSiderBar();
           this.loadData();
           this.notifySer.notify('success', 'Lưu thành công !');
@@ -471,7 +493,7 @@ export class SaleSiderbarOrderComponent implements OnInit {
       });
     } else {
       this.orderService.updateOrder(dataInvoice).subscribe(res => {
-        if (res === true) {
+        if (res !== false) {
           this.resetDataSiderBar();
           this.loadData();
           this.notifySer.notify('success', 'Cập nhật đơn thành công !');

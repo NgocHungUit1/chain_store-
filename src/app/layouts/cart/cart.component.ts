@@ -56,7 +56,6 @@ export class CartComponent implements OnDestroy {
   listmItemInvoice: ItemInvoice[] = [];
 
   //
-  links = ['First', 'Second', 'Third'];
   activeLink = 0;
 
   constructor(
@@ -123,7 +122,6 @@ export class CartComponent implements OnDestroy {
 
 
   onSelectedProduct(product) {
-
     this.handlePriceListProduct(product);
     this.selectProduct.patchValue(null);
   }
