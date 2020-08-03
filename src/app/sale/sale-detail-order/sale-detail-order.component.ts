@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { observable } from 'rxjs';
 import { PriceDetailOrderDialogComponent } from '../price-detail-order-dialog/price-detail-order-dialog.component';
 import { Product } from '../../product/product.model';
+import { ItemInvoice } from '../order.model';
 
 @Component({
   selector: 'app-sale-detail-order',
@@ -20,6 +21,10 @@ export class SaleDetailOrderComponent implements OnInit {
   countProduct: number = 0;
   isLoadingResults = true;
 
+  // De xu ly API getListProductCommon ko load nhieu lan
+  common_id_OLD: string;
+  listProductChoose_OLD: number[] = [];
+
   constructor(
     private orderService: OrderService,
     private route: ActivatedRoute,
@@ -27,29 +32,60 @@ export class SaleDetailOrderComponent implements OnInit {
     private dialog: MatDialog,
   ) { }
 
+  // doan code nay rat kho hieu
+  // neu ton tai tuong tu truoc do se khong chay api
+  kiemTraLapLaiAPI(common_id, listProductChoose) {
+    //https://stackoverflow.com/questions/38498258/typescript-difference-between-two-arrays
+    const missing1 = this.listProductChoose_OLD.filter(item => listProductChoose.indexOf(item) < 0);
+    const missing2 = listProductChoose.filter(item => this.listProductChoose_OLD.indexOf(item) < 0);
+    console.log(this.listProductChoose_OLD + 'OLD');
+    console.log(listProductChoose);
+
+    if (this.common_id_OLD !== common_id || missing1.length !== 0 || missing2.length !== 0) {
+      this.common_id_OLD = common_id;
+      this.listProductChoose_OLD = listProductChoose;
+      return false;
+    } else {
+      return true;
+    }
+
+  }
+
   loadData() {
 
-    this.orderService.subscribeObjectOrder.subscribe(res => {
-      if (res !== null && res['listProduct'] !== undefined) {
-        const obj = res['listProduct'];
+    this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
+
+      const listItemInvoice = ListInvoice.itemInvoice;
+
+      let mItemInvoice = new ItemInvoice();
+      listItemInvoice.forEach(element => {
+        if (element.active === true) {
+          mItemInvoice = element;
+        }
+      });
+
+      if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
+        this.listProduct = [];
+      } else {
+        const listProduct = mItemInvoice.listProduct;
         this.listProduct = [];
         this.countProduct = 0;
-        for (const prop of Object.keys(obj)) {
-          this.listProduct.push(obj[prop]);
+
+        listProduct.forEach(eProductInfo => {
+          this.listProduct.push(eProductInfo);
           this.countProduct++;
-        }
-        this.listProduct.reverse();
 
+        });
 
-        // handel add common price
-        const priceBookID = this.orderService.getPriceBookID();
+        // handle add common price
+        const priceBookID = mItemInvoice.price_book_id; //this.orderService.getPriceBookID();
         const list = this.listProduct;
 
-        if (priceBookID !== null && Array.isArray(list)) {
-
+        if (priceBookID !== null && Array.isArray(list) && this.listProduct !== null) {
           const listProductChoose = list.map(obj => obj.product.id);
           const common_id = priceBookID;
-          // // tien hanh xu ly add common vao list
+          // // tien hanh xu ly add common vao list @nghia getListProductCommon
+
           this.priceListProductSer.getListProductCommon(common_id, listProductChoose).subscribe(resCommon => {
             if (Array.isArray(resCommon)) {
               const priceListProductCommonExist = resCommon;
@@ -59,25 +95,39 @@ export class SaleDetailOrderComponent implements OnInit {
                 return r;
               }, {});
               // add common || null
-              // neu co gia chung se chon common_price 
-              this.listProduct.forEach(elementData => {
-                if (group[elementData.product.id] !== undefined) {
-                  elementData.common_price = group[elementData.product.id][0]['price'];
-                } else {
-                  elementData.common_price = elementData.product.sell_price;
-                }
-              });
+              // neu co gia chung se chon common_price
+              if (this.listProduct !== null) {
+                this.listProduct.forEach(elementData => {
+                  if (group[elementData.product.id] !== undefined) {
+                    elementData.common_price = group[elementData.product.id][0]['price'];
+                  } else {
+                    elementData.common_price = elementData.product.sell_price;
+                  }
+                });
+              }
+
             }
           });
         }
       }
 
-    });
+      // cap nhat gia
+      // listItemInvoice.forEach(element => {
+      //   if (element.active === true) {
+      //     element.listProduct = this.listProduct;
+      //   }
+      // });
+      // ListInvoice.itemInvoice = listItemInvoice;
+      // this.orderService.setListInvoiceLocalStorage(ListInvoice);
+      this.listProduct.reverse();
 
+    });
 
   }
 
   ngOnInit(): void {
+
+    // this.orderService.addNewInvoice();
     this.isLoadingResults = false;
 
     this.orderService.subscribeLoadDetailPage.subscribe(action => {
@@ -86,7 +136,18 @@ export class SaleDetailOrderComponent implements OnInit {
       }
     });
 
-    this.orderService.subscribePriceBookID.subscribe(priceBookID => {
+
+    this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
+      const listItemInvoice = ListInvoice.itemInvoice;
+      let isNew = 0;
+      let priceBookID = null;
+      listItemInvoice.forEach(element => {
+        if (element.active === true && priceBookID !== element?.price_book_id) {
+          priceBookID = element?.price_book_id;
+          isNew = 1;
+        }
+      });
+
       if (priceBookID !== null) {
         const one = new Promise<string>((resolve, reject) => {
           this.isLoadingResults = true;
@@ -96,6 +157,7 @@ export class SaleDetailOrderComponent implements OnInit {
           this.isLoadingResults = false;
         });
       }
+
     });
 
   }

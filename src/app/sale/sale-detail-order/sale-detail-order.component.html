@@ -1,6 +1,6 @@
-<div class="table-loading-shade" *ngIf="isLoadingResults">
+<!-- <div class="table-loading-shade" *ngIf="isLoadingResults">
     <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
-</div>
+</div> -->
 <!-- <div fxLayout="row wrap" class="custom-search-customer">
     <app-search-product-sale></app-search-product-sale>
 </div> -->
@@ -17,7 +17,7 @@
                 {{ itemProduct.product?.product_no }}
             </span>
         </div>
-        <div fxFlex="45">
+        <div fxFlex="40">
             <span class="row-text row-product-name">
                 {{ itemProduct.product?.product_name }}
             </span>
@@ -31,7 +31,7 @@
                 </button>
             </span>
         </div>
-        <div fxFlex="10" class="row-amount">
+        <div fxFlex="auto" class="row-amount">
             <div fxLayout="row wrap">
                 <mat-form-field style=" font-size: 20px; text-align: center;">
                     <button matPrefix mat-icon-button class="row-button-edit-amount"
@@ -49,7 +49,7 @@
             </div>
         </div>
         <div fxFlex="2"></div>
-        <div fxFlex="12">
+        <div fxFlex="12" class="row-edit-price">
             <div fxLayout="row wrap">
                 <div fxFlex="100">
 
@@ -80,7 +80,7 @@
             </div>
 
         </div>
-        <div fxFlex="17" class="row-total-price">
+        <div fxFlex="auto" class="row-total-price">
             <span *ngIf="itemProduct.product?.end_price === undefined">
                 {{ itemProduct?.common_price * itemProduct.amount | number }}
             </span>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { OrderService } from '../order.service';
 import { MatDialogRef } from '@angular/material/dialog';
+import { ItemInvoice } from '../order.model';
 
 @Component({
   selector: 'app-payment-siderbar-dialog',
@@ -41,12 +42,25 @@ export class PaymentSiderbarDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const paymentSiderBar = this.orderService.getPaymentSiderBar();
-    var numberValue = 0;
-    var typeValue = 'cash';
+
+    let listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    let mItemInvoice = new ItemInvoice();
+
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        mItemInvoice = element;
+      }
+    });
+
+    const paymentSiderBar = mItemInvoice.paymentSiderBar;
+
+    let numberValue = 0;
+    let typeValue = 'cash';
+
     if (paymentSiderBar !== null) {
-      numberValue = paymentSiderBar?.number;
-      typeValue = paymentSiderBar?.type;
+      numberValue = (paymentSiderBar?.number !== null) ? paymentSiderBar?.number : 0;
+      typeValue = (paymentSiderBar?.type !== null) ? paymentSiderBar?.type : 'cash';
     }
     this.form = this.fb.group({
       number: [
@@ -62,16 +76,33 @@ export class PaymentSiderbarDialogComponent implements OnInit {
 
   submit() {
     const data = this.form.getRawValue();
-    this.orderService.setPaymentSiderBar({ number: data.number, type: data.type });
+    let listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        element.paymentSiderBar = {
+          number: data.number,
+          type: data.type
+        };
+      }
+    });
+    this.orderService.setListInvoiceLocalStorage(listInvoice);
     this.dialogRef.close();
   }
 
   updateEvent() {
     const data = this.form.getRawValue();
-    this.orderService.setPaymentSiderBar({ number: data.number, type: data.type });
+    let listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        element.paymentSiderBar = {
+          number: data.number,
+          type: data.type
+        };
+      }
+    });
+    this.orderService.setListInvoiceLocalStorage(listInvoice);
   }
 
-  add() {
-
-  }
 }

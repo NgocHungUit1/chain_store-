@@ -95,3 +95,9 @@ File: scss
 .warehouse-product-table .mat-form-field:hover .mat-form-field-prefix, .mat-table .mat-form-field:hover .mat-form-field-suffix {
   display: block;
 }
+.cart .mat-toolbar .mat-tab-header {
+  border-bottom: none;
+}
+.cart .mat-toolbar .mat-tab-labels .mat-tab-label {
+  padding: 0 5px;
+}

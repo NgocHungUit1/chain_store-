@@ -93,6 +93,27 @@ export class ProductService {
     return this.http.get<Product[]>(url);
   }
 
+  // list for cart 
+  getApiUrlCart(filter?: ProductFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/product/cart?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
+  getListCart(filter?: ProductFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrlCart(filter);
+    return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
+  }
+
 }
 
 

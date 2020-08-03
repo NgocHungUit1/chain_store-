@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { OrderService } from '../order.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { ItemInvoice } from '../order.model';
 
 @Component({
   selector: 'app-discount-siderbar-dialog',
@@ -34,9 +35,20 @@ export class DiscountSiderbarDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const discountSiderBar = this.orderService.getDiscountSiderBar();
-    var numberValue = 0;
-    var typeValue = 'vnd';
+
+    let listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    let mItemInvoice = new ItemInvoice();
+
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        mItemInvoice = element;
+      }
+    });
+
+    const discountSiderBar = mItemInvoice.discountSiderBar;
+    let numberValue = 0;
+    let typeValue = 'vnd';
     if (discountSiderBar !== null) {
       numberValue = discountSiderBar?.number;
       typeValue = discountSiderBar?.type;
@@ -55,7 +67,17 @@ export class DiscountSiderbarDialogComponent implements OnInit {
 
   submit() {
     const data = this.form.getRawValue();
-    this.orderService.setDiscountSiderBar({ number: data.number, type: data.type });
+    let listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        element.discountSiderBar = {
+          number: data.number,
+          type: data.type
+        };
+      }
+    });
+    this.orderService.setListInvoiceLocalStorage(listInvoice);
     this.dialogRef.close();
   }
 
@@ -67,6 +89,16 @@ export class DiscountSiderbarDialogComponent implements OnInit {
       });
       return;
     }
-    this.orderService.setDiscountSiderBar({ number: data.number, type: data.type });
+    let listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        element.discountSiderBar = {
+          number: data.number,
+          type: data.type
+        };
+      }
+    });
+    this.orderService.setListInvoiceLocalStorage(listInvoice);
   }
 }

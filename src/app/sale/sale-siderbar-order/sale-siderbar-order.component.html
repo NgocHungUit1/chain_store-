@@ -30,7 +30,7 @@
 
         <div class="customer-action">
             <div fxLayout="row wrap">
-                <div fxFlex="90">
+                <div fxFlex="70">
                     <mat-form-field>
                         <input class="input-search-customer" type="text" [formControl]="selectCustomer" matInput
                             [matAutocomplete]="chooseProduct" placeholder="Tìm khách hàng ">
@@ -46,7 +46,7 @@
                         </mat-autocomplete>
                     </mat-form-field>
                 </div>
-                <div fxFlex="10">
+                <div fxFlex="auto" >
                     <button mat-button matPrefix>
                         <mat-icon (click)="openSaleCustomerFormDialogComponent()">add</mat-icon>
                     </button>
@@ -143,7 +143,7 @@
         <div class="order-note">
             <mat-form-field class="example-full-width">
                 <mat-label>Ghi chú</mat-label>
-                <textarea matInput placeholder="" formControlName="noteSiderBar"></textarea>
+                <textarea matInput placeholder="" formControlName="noteSiderBar" (keyup)="saveNoteSiderBar($event)"></textarea>
             </mat-form-field>
         </div>
         <button mat-button class="payment-button btn-success" (click)="payment()">

@@ -125,7 +125,7 @@
                     </div>
                     <div fxFlex="4"></div>
                     <div fxFlex="48" class="invoice-detail-info-field">
-                        <strong>{{ TongSoLuong }}</strong>
+                        <strong>{{ tongSoLuong }}</strong>
                     </div>
                 </div>
                 <div fxLayout="row wrap" class="invoice-detail-info-row">
@@ -134,16 +134,16 @@
                     </div>
                     <div fxFlex="4"></div>
                     <div fxFlex="48" class="invoice-detail-info-field">
-                        <strong>{{ TongTienHang |number }}</strong>
+                        <strong>{{ tongTienHang |number }}</strong>
                     </div>
                 </div>
                 <div fxLayout="row wrap" class="invoice-detail-info-row">
                     <div fxFlex="48" class="invoice-detail-info-field">
-                        <span class="invoice-field-label">Giảm giá hóa đơn {{ GiamGiaHoaDonText }} :</span>
+                        <span class="invoice-field-label">Giảm giá hóa đơn {{ giamGiaHoaDonText }} :</span>
                     </div>
                     <div fxFlex="4"></div>
                     <div fxFlex="48" class="invoice-detail-info-field">
-                        <strong>{{ GiamGiaHoaDon | number }}</strong>
+                        <strong>{{ giamGiaHoaDon | number }}</strong>
                     </div>
                 </div>
                 <div fxLayout="row wrap" class="invoice-detail-info-row">
@@ -152,7 +152,7 @@
                     </div>
                     <div fxFlex="4"></div>
                     <div fxFlex="48" class="invoice-detail-info-field">
-                        <strong>{{ invoice?.total_price | number }}</strong>
+                        <strong>{{ invoice?.total_price - giamGiaHoaDon | number }}</strong>
                     </div>
                 </div>
                 <div fxLayout="row wrap" class="invoice-detail-info-row">
@@ -170,7 +170,7 @@
 
     <div fxLayout="row wrap">
         <div fxFlex="100">
-            <button class="m-r-10" mat-raised-button color="primary">
+            <button class="m-r-10" mat-raised-button color="primary" (click)="updateInvoice(invoice)">
                 <mat-icon>edit</mat-icon> Cập nhật
             </button>
             <button class="m-r-10" mat-raised-button color="accent">
@@ -185,21 +185,24 @@
             <button class="m-r-10" mat-raised-button color="accent">
                 <mat-icon>file_copy</mat-icon> Sao chép
             </button>
-          <button class="m-r-10" mat-raised-button color="accent" (click)="connect(invoice)" *ngIf="invoice.order_status === 'done' && invoice.national_pharmacy_no === null">
-            <mat-icon>open_in_full</mat-icon>
-            Liên thông
-          </button>
-          <button class="m-r-10" mat-raised-button color="accent" (click)="reconnect(invoice)" *ngIf="invoice.order_status === 'done' && invoice.national_pharmacy_no !== null">
-            <mat-icon>sync</mat-icon>
-            Cập nhật liên thông
-          </button>
-          <button class="m-r-10" mat-raised-button color="warn" (click)="disconnect(invoice)" *ngIf="invoice.order_status === 'done' && invoice.national_pharmacy_no !== null">
-            <mat-icon>close_fullscreen</mat-icon>
-            Gỡ liên thông
-          </button>
-          <button class="m-r-10" mat-raised-button color="warn" (click)='deleteInvoice(invoice)'>
-              <mat-icon>delete</mat-icon> Hủy bỏ
-          </button>
+            <button class="m-r-10" mat-raised-button color="accent" (click)="connect(invoice)"
+                *ngIf="invoice.order_status === 'done' && invoice.national_pharmacy_no === null">
+                <mat-icon>open_in_full</mat-icon>
+                Liên thông
+            </button>
+            <button class="m-r-10" mat-raised-button color="accent" (click)="reconnect(invoice)"
+                *ngIf="invoice.order_status === 'done' && invoice.national_pharmacy_no !== null">
+                <mat-icon>sync</mat-icon>
+                Cập nhật liên thông
+            </button>
+            <button class="m-r-10" mat-raised-button color="warn" (click)="disconnect(invoice)"
+                *ngIf="invoice.order_status === 'done' && invoice.national_pharmacy_no !== null">
+                <mat-icon>close_fullscreen</mat-icon>
+                Gỡ liên thông
+            </button>
+            <button class="m-r-10" mat-raised-button color="warn" (click)='deleteInvoice(invoice)'>
+                <mat-icon>delete</mat-icon> Hủy bỏ
+            </button>
         </div>
     </div>
 </div>

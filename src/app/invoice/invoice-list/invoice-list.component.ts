@@ -33,7 +33,8 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private notifySer: NotifierService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private router: Router
   ) {
     super();
   }
@@ -207,6 +208,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.apiFilter = this.buildFilterFromParams();
+    this.apiFilter.invoice_no = filterValue;
     this.loadData();
   }
 
@@ -270,6 +272,10 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   convertDate(date: Date) {
     const month = date.getMonth() + 1;
     return date.getDate() + '/' + month + '/' + date.getFullYear();
+  }
+
+  goToCartPage() {
+    this.router.navigate(['/sale']);
   }
 
 }

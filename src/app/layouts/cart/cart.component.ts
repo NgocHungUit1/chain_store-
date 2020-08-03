@@ -25,14 +25,16 @@ import { of } from 'rxjs/internal/observable/of';
 import { PriceListService } from '../../price-book/price-list.service';
 import { ProductService } from '../../product/product.service';
 import { OrderService } from '../../sale/order.service';
+import { ItemInvoice } from '../../sale/order.model';
 
 /** @title Responsive sidenav */
 @Component({
   selector: 'app-cart-layout',
-  templateUrl: 'cart.component.html',
-  styleUrls: []
+  templateUrl: './cart.component.html',
+  styleUrls: ['./cart.component.css'],
 })
 export class CartComponent implements OnDestroy {
+
   mobileQuery: MediaQueryList;
   dir = 'ltr';
   green: boolean = true;
@@ -51,6 +53,10 @@ export class CartComponent implements OnDestroy {
 
   selectProduct = new FormControl();
   public filteredProducts: Observable<Product[]>;
+  listmItemInvoice: ItemInvoice[] = [];
+
+  //
+  activeLink = 0;
 
   constructor(
     changeDetectorRef: ChangeDetectorRef,
@@ -71,13 +77,17 @@ export class CartComponent implements OnDestroy {
   }
 
   ngOnInit(): void {
-    const priceListFilter = new PriceListFilter();
-    this.priceListSer.getList(priceListFilter).subscribe(res => {
-      const priceLists = res.body;
-      priceLists.forEach((element, index) => {
-        if (element.is_default === 1) {
-          this.orderService.addPriceBookID(element.id);
+
+    this.orderService.subscribeObjectListInvoice.subscribe(listInvoice => {
+      const listItemInvoice = listInvoice.itemInvoice;
+      this.listmItemInvoice = [];
+      listItemInvoice.forEach(element => {
+        if(element.active === true){
+          this.activeLink = element.invoice_id;
         }
+
+        
+        this.listmItemInvoice.push(element);
       });
     });
 
@@ -112,7 +122,6 @@ export class CartComponent implements OnDestroy {
 
 
   onSelectedProduct(product) {
-
     this.handlePriceListProduct(product);
     this.selectProduct.patchValue(null);
   }
@@ -121,5 +130,19 @@ export class CartComponent implements OnDestroy {
     this.orderService.addProduct(product);
   }
 
+  addInvoice() {
+    this.orderService.addNewInvoice();
+  }
+
+  deleteInvoice(invoice_id: number) {
+    this.orderService.deleteInvoice(invoice_id);
+  }
+
+  activeInvoice(invoice_id: number) {
+    this.orderService.activeInvoice(invoice_id);
+  }
   // Mini sidebar
+
+  
+
 }

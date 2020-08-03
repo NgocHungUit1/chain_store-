@@ -27,10 +27,10 @@ export class Product {
   images: object[];
   common: object;  // use for sale page
   note_detail_sale: string; // use for sale page
-
   discount: string; // use for setup price detail
   discount_type: string; // use for setup price detail
   end_price: string; // use for setup price detail
+  stt: number; // for view
 }
 
 
@@ -48,6 +48,7 @@ export class ProductFilter extends ApiFilterBase {
   page = 1;
   pageSize = 15;
   sort = '';
+  price_book_id = '';
 
   getModelSearch() {
     return 'ProductSearch';

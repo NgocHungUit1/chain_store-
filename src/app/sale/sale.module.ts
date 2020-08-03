@@ -21,6 +21,7 @@ import { NoteDetailOrderDialogComponent } from './note-detail-order-dialog/note-
 import { PriceDetailOrderDialogComponent } from './price-detail-order-dialog/price-detail-order-dialog.component';
 import { SaleCustomerFormDialogComponent } from './sale-customer-form-dialog/sale-customer-form-dialog.component';
 import { SearchProductSaleComponent } from './search-product-sale/search-product-sale.component';
+import { SalePrintInvoiceDialogComponent } from './sale-print-invoice-dialog/sale-print-invoice-dialog.component';
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import { SearchProductSaleComponent } from './search-product-sale/search-product
     NoteDetailOrderDialogComponent,
     PriceDetailOrderDialogComponent,
     SaleCustomerFormDialogComponent,
-    SearchProductSaleComponent],
+    SearchProductSaleComponent,
+    SalePrintInvoiceDialogComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(SaleRoutes),
