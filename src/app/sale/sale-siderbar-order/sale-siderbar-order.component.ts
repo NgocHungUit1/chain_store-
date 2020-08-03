@@ -56,7 +56,6 @@ export class SaleSiderbarOrderComponent implements OnInit {
     private dialog: MatDialog,
     private userService: UserService,
     private notifySer: NotifierService,
-
   ) { }
 
   initForm() {
