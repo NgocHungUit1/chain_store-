@@ -392,8 +392,8 @@ export class SaleSiderbarOrderComponent implements OnInit {
   }
   // ------------------------------------------------------ PAYMENT ----------------------------------------------------------//
   payment() {
-    this.printInvoice(4);
-    return;
+    // this.printInvoice(4);
+    // return;
 
 
     let listInvoice = this.orderService.getListInvoiceLocalStorage();
