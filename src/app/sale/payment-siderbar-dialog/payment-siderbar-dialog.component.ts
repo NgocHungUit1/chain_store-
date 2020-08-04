@@ -78,16 +78,18 @@ export class PaymentSiderbarDialogComponent implements OnInit {
     const data = this.form.getRawValue();
     let listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
+    let activeiTemInvoice = new ItemInvoice();
     listItemInvoice.forEach(element => {
       if (element.active === true) {
         element.paymentSiderBar = {
           number: data.number,
           type: data.type
         };
+        activeiTemInvoice = element;
       }
     });
     this.orderService.setListInvoiceLocalStorage(listInvoice);
-    this.dialogRef.close();
+    this.dialogRef.close(activeiTemInvoice);
   }
 
   updateEvent() {

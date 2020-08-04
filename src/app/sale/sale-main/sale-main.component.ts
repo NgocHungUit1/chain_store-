@@ -1,13 +1,11 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { Observable } from 'rxjs';
 import { Product } from '../../product/product.model';
 import { OrderService } from '../order.service';
 import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
-import { ProductService } from '../../product/product.service';
 import { of } from 'rxjs/internal/observable/of';
 import { PriceList, PriceListFilter } from '../../price-book/price-list.model';
 import { PriceListService } from '../../price-book/price-list.service';
@@ -34,11 +32,9 @@ export class SaleMainComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private route: ActivatedRoute,
     private dialog: MatDialog,
     private notifySer: NotifierService,
     private orderService: OrderService,
-    private productSer: ProductService,
     private priceListSer: PriceListService,
     private priceListProductSer: PriceListProductService,
     private customerService: CustomerService,
@@ -84,116 +80,183 @@ export class SaleMainComponent implements OnInit {
     return fail;
   }
 
-  loadData() {
+  async loadData() {
+    let mItemInvoice = this.getNewItemInvoice();
 
+    await this.handleActiveUser(mItemInvoice);
+
+    await this.handleAddPriceBookExist(mItemInvoice);
+
+    await this.handleAddCustomerExist(mItemInvoice);
+
+    await this.handleDetailOrder(mItemInvoice);
+
+    await this.handleDiscountSiderBar(mItemInvoice);
+
+    await this.handlePaymentSiderBar(mItemInvoice);
+  }
+
+  getNewItemInvoice() {
+    let mItemInvoice = new ItemInvoice();
     this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
-
       const listItemInvoice = ListInvoice.itemInvoice;
-
-      let mItemInvoice = new ItemInvoice();
       listItemInvoice.forEach(element => {
         if (element.active === true) {
           mItemInvoice = element;
         }
       });
+    });
+    return mItemInvoice;
+  }
+  /**
+   * Active User
+   */
+  handleActiveUser(mItemInvoice) {
+    if (mItemInvoice.user === undefined) {
+      mItemInvoice.user = this.user;
+      this.selectUser.patchValue(this.user?.username);
+      this.form.patchValue({
+        'userID': this.user?.id
+      });
+    }
+  }
 
-      // user
-      if (mItemInvoice.user === undefined) {
-        mItemInvoice.user = this.user;
-        this.selectUser.patchValue(this.user?.username);
-        this.form.patchValue({
-          'userID': this.user?.id
-        });
-      }
-
-      // price_book_id
-      if (mItemInvoice.price_book_id !== undefined) {
-        this.form.patchValue({
-          priceBookID: mItemInvoice.price_book_id,
-        });
-      }
-
-      // customer
-      if (mItemInvoice.customer !== undefined) {
-        this.selectCustomer.patchValue(mItemInvoice.customer?.name);
-      } else {
-        this.selectCustomer.patchValue(null);
-      }
-
+  /**
+   *  Add price_book_id Exist
+   */
+  handleAddPriceBookExist(mItemInvoice) {
+    if (mItemInvoice.price_book_id !== undefined) {
+      this.form.patchValue({
+        priceBookID: mItemInvoice.price_book_id,
+      });
+    }
+  }
+  /**
+   * Add customer exist
+   */
+  handleAddCustomerExist(mItemInvoice) {
+    if (mItemInvoice.customer !== undefined) {
+      this.selectCustomer.patchValue(mItemInvoice.customer?.name);
+    } else {
+      this.selectCustomer.patchValue(null);
+    }
+  }
+  /**
+   * Xu ly cho detail order
+   */
+  handleDetailOrder(mItemInvoice) {
+    this.countProduct = 0;
+    if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
+      this.listProduct = [];
+    } else {
+      const listProductSubscribe = mItemInvoice.listProduct;
       this.countProduct = 0;
 
+      const listProductOLD = this.listProduct; // luu lai danh sach cu
+      this.listProduct = [];
 
-      if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
-        this.listProduct = [];
-      } else {
-        const listProduct = mItemInvoice.listProduct;
-        this.listProduct = [];
-        this.countProduct = 0;
+      listProductSubscribe.forEach(eProductInfo => {
+        this.listProduct.push(eProductInfo);
+        this.countProduct++;
+      });
 
-        listProduct.forEach(eProductInfo => {
-          this.listProduct.push(eProductInfo);
-          this.countProduct++;
+      // handle add common price
+      const priceBookID = mItemInvoice.price_book_id; //this.orderService.getPriceBookID();
+      const list = this.listProduct;
 
-        });
+      if (priceBookID !== null && Array.isArray(list) && this.listProduct !== null) {
+        const listProductChoose = list.map(obj => obj.product.id);
+        /**
+        * Truong hop:  thay doi vs sl , pricebook
+        */
+        if (this.compareEqualListProduct(listProductChoose) === 0 || this.common_idOld !== priceBookID) {
+          this.listProductChooseOld = listProductChoose;
+          this.common_idOld = priceBookID;
+          const common_id = priceBookID;
+          /**
+           * tien hanh xu ly add common_price vao list 
+           */
+          this.priceListProductSer.getListProductCommon(common_id, listProductChoose).subscribe(resCommon => {
+            if (Array.isArray(resCommon)) {
+              const priceListProductCommonExist = resCommon;
+              // 
 
-        // handle add common price
-        const priceBookID = mItemInvoice.price_book_id; //this.orderService.getPriceBookID();
-        const list = this.listProduct;
+              /**
+               * group = [ product_id] => [
+               *          id,price,price_list_id,product_id
+               *          ]
+               * code group array by key
+               */
+              const group = priceListProductCommonExist.reduce((r, a) => {
+                r[a.product_id] = [...r[a.product_id] || [], a];
+                return r;
+              }, {});
 
-        if (priceBookID !== null && Array.isArray(list) && this.listProduct !== null) {
-          const listProductChoose = list.map(obj => obj.product.id);
-          // || this.common_idOld !== priceBookID
-          if (this.compareEqualListProduct(listProductChoose) === 0 || this.common_idOld !== priceBookID) {
-            this.listProductChooseOld = listProductChoose;
-            this.common_idOld = priceBookID;
-            const common_id = priceBookID;
-            // // tien hanh xu ly add common vao list @nghia getListProductCommon
-
-            this.priceListProductSer.getListProductCommon(common_id, listProductChoose).subscribe(resCommon => {
-              if (Array.isArray(resCommon)) {
-                const priceListProductCommonExist = resCommon;
-                // code group array by key
-                const group = priceListProductCommonExist.reduce((r, a) => {
-                  r[a.product_id] = [...r[a.product_id] || [], a];
-                  return r;
-                }, {});
-                // add common || null
-                // neu co gia chung se chon common_price
-                this.sumPrice = 0;
-                if (this.listProduct !== null) {
-                  this.listProduct.forEach(elementData => {
-                    if (group[elementData.product.id] !== undefined) {
-                      elementData.common_price = group[elementData.product.id][0]['price'];
-                      if (elementData.product.end_price === undefined) {
-                        this.sumPrice += group[elementData.product.id][0]['price'] * elementData.amount; // gia chung * so luong
-                      } else {
-                        this.sumPrice += elementData.product.end_price * elementData.amount; // gia chung * so luong
-                      }
+              /**
+               * Tien hanh sumPrice , cap nhat common_price, neu khong co common_price se cho sell_price
+               */
+              this.sumPrice = 0;
+              if (this.listProduct !== null) {
+                this.listProduct.forEach(elementData => {
+                  if (group[elementData.product.id] !== undefined) {
+                    elementData.common_price = group[elementData.product.id][0]['price'];
+                    if (elementData.product.end_price === undefined) {
+                      this.sumPrice += group[elementData.product.id][0]['price'] * elementData.amount; // gia chung * so luong
                     } else {
-                      elementData.common_price = elementData.product.sell_price;
-                      if (elementData.product.end_price === undefined) {
-                        this.sumPrice += elementData.product.sell_price * elementData.amount; // gia ban * so luong
-                      } else {
-                        this.sumPrice += elementData.product.end_price * elementData.amount; // gia ban * so luong
-                      }
+                      this.sumPrice += elementData.product.end_price * elementData.amount; // gia chung * so luong
                     }
-                  });
-                } else {
-                  this.sumPrice = 0;
-                }
+                  } else {
+                    elementData.common_price = elementData.product.sell_price;
+                    if (elementData.product.end_price === undefined) {
+                      this.sumPrice += elementData.product.sell_price * elementData.amount; // gia ban * so luong
+                    } else {
+                      this.sumPrice += elementData.product.end_price * elementData.amount; // gia ban * so luong
+                    }
+                  }
+                });
+              } else {
+                this.sumPrice = 0;
+              }
 
+            }
+          });
+          this.listProduct.reverse();
+
+        } else {
+          /**
+          * Truong hop: khong thay doi vs sl , pricebook
+          * groupProductIdCommonPrice = [ product_id] => [
+          *          product_id, product[],common_price, amount
+          *          ]
+          */
+          const groupProductIdCommonPrice = listProductOLD.reduce((r, a) => {
+            r[a.product_id] = [...r[a.product_id] || [], a];
+            return r;
+          }, {});
+
+          /**
+           * Tien hanh sumPrice , cap nhat common_price, neu khong co common_price se cho sell_price
+           */
+          this.sumPrice = 0;
+          if (this.listProduct !== null) {
+            this.listProduct.forEach(elementData => {
+              if (groupProductIdCommonPrice[elementData.product.id] !== undefined) {
+                elementData.common_price = groupProductIdCommonPrice[elementData.product.id][0]['common_price'];
+                this.sumPrice += groupProductIdCommonPrice[elementData.product.id][0]['common_price'] * elementData.amount;
+              } else {
+                elementData.common_price = elementData.product.sell_price;
+                this.sumPrice += elementData.product.sell_price * elementData.amount;
               }
             });
+          } else {
+            this.sumPrice = 0;
           }
 
 
         }
+
       }
-
-      this.listProduct.reverse();
-
-    });
-
+    }
   }
 
   /**
@@ -466,9 +529,29 @@ export class SaleMainComponent implements OnInit {
       minHeight: '80%',
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      // this.loadData();
+    dialogRef.afterClosed().subscribe(mItemInvoiceActive => {
+      this.handleDiscountSiderBar(mItemInvoiceActive);
     });
+  }
+
+  /**
+   * Xu ly giam gia siderbar
+   */
+  handleDiscountSiderBar(mItemInvoice) {
+
+    const discountSiderBar = mItemInvoice.discountSiderBar;
+    if (discountSiderBar !== undefined) {
+      if (discountSiderBar?.type === 'vnd') {
+        this.numberDiscount = discountSiderBar?.number;
+        this.discount_type = 'vnd';
+      } else {
+        this.numberDiscount = this.sumPrice * discountSiderBar?.number / 100;
+        this.discount_type = 'precent';
+      }
+      this.discount = discountSiderBar?.number;
+    } else {
+      this.numberDiscount = 0;
+    }
   }
 
   openPaymentSiderBarDialog() {
@@ -477,9 +560,21 @@ export class SaleMainComponent implements OnInit {
       minHeight: '80%',
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      // this.loadData();
+    dialogRef.afterClosed().subscribe(mItemInvoiceActive => {
+      this.handlePaymentSiderBar(mItemInvoiceActive);
     });
+  }
+
+  /**
+   * Xu ly thanh toan siderbar
+   */
+  handlePaymentSiderBar(mItemInvoice) {
+    const paymentSiderBar = mItemInvoice.paymentSiderBar;
+    if (paymentSiderBar !== undefined) {
+      this.customerPay = paymentSiderBar?.number;
+    } else {
+      this.customerPay = 0;
+    }
   }
 
   openSaleCustomerFormDialogComponent() {
@@ -642,6 +737,9 @@ export class SaleMainComponent implements OnInit {
     this.countProduct = 0;
   }
 
+  /**
+   * Luu ghi chu o siderbar
+   */
   saveNoteSiderBar(event: Event) {
     const note = (event.target as HTMLInputElement).value;
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
