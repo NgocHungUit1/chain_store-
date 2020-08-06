@@ -124,7 +124,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       group_id: [null, Validators.required],
       placements: [[]],
       product_name: [null, Validators.required],
-      sell_price: [null],
+      sell_price: [null, Validators.required],
       original_price: [null],
       weight: [null],
       base_unit: [null],

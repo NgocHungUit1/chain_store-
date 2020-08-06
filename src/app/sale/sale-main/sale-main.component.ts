@@ -40,7 +40,6 @@ export class SaleMainComponent implements OnInit {
     private customerService: CustomerService,
     private userService: UserService,
   ) {
-    // super();
   }
 
   selectProduct = new FormControl();
@@ -57,7 +56,6 @@ export class SaleMainComponent implements OnInit {
   discount_type: string = 'vnd'; // use for payment
   customerPay: number = 0;
   priceLists: PriceList[] = [];
-  priceListCommon: PriceList;
   form: FormGroup;
   selectCustomer = new FormControl();
   selectUser = new FormControl();
@@ -83,7 +81,7 @@ export class SaleMainComponent implements OnInit {
   async loadData() {
     let mItemInvoice = this.getNewItemInvoice();
 
-    await this.handleActiveUser(mItemInvoice);
+
 
     await this.handleAddPriceBookExist(mItemInvoice);
 
@@ -111,14 +109,22 @@ export class SaleMainComponent implements OnInit {
   /**
    * Active User
    */
-  handleActiveUser(mItemInvoice) {
-    if (mItemInvoice.user === undefined) {
-      mItemInvoice.user = this.user;
-      this.selectUser.patchValue(this.user?.username);
-      this.form.patchValue({
-        'userID': this.user?.id
-      });
-    }
+  handleActiveUser() {
+    let listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        if (element.user === undefined) {
+          element.user = this.user;
+        }
+        this.selectUser.patchValue(element.user?.username);
+        this.form.patchValue({
+          'userID': element.user?.id
+        });
+
+      }
+    });
+    this.orderService.setListInvoiceLocalStorage(listInvoice);
   }
 
   /**
@@ -229,10 +235,10 @@ export class SaleMainComponent implements OnInit {
           *          product_id, product[],common_price, amount
           *          ]
           */
-          const groupProductIdCommonPrice = listProductOLD.reduce((r, a) => {
+          const groupProductIdCommonPrice = (listProductOLD !== null) ? listProductOLD.reduce((r, a) => {
             r[a.product_id] = [...r[a.product_id] || [], a];
             return r;
-          }, {});
+          }, {}) : [];
 
           /**
            * Tien hanh sumPrice , cap nhat common_price, neu khong co common_price se cho sell_price
@@ -263,16 +269,42 @@ export class SaleMainComponent implements OnInit {
   * Active user current
   */
   loadUserLogin() {
-    this.userService.getUserLogin().subscribe(res => {
-      this.user = res;
-    });
+    if (this.user === null) {
+      this.userService.getUserLogin().subscribe(res => {
+        this.user = res;
+      });
+    }
   }
 
-  ngOnInit(): void {
-    this.initFormSiderBar();
+  /**
+   * Form Sider Bar
+   */
+  async initFormSiderBar() {
+    let userID = null;
+    let priceBookID = null;
+    let noteSiderBar = null;
+    let listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        userID = element?.user?.id;
+        priceBookID = element?.price_book_id;
+        noteSiderBar = element.noteSiderBar;
+        this.selectUser.patchValue(element?.user?.username);
+        this.selectCustomer.patchValue(element?.customer?.name); // add name khach hang
+      }
+    });
+    this.form = this.fb.group({
+      userID: [userID],
+      priceBookID: [priceBookID],
+      noteSiderBar: [noteSiderBar]
+    });
 
-    this.isLoadingResults = false;
-    this.loadUserLogin();
+  }
+  /**
+   * 
+   */
+  loadPriceBookDefault() {
     const priceListFilter = new PriceListFilter();
     // lay PriceBook
     this.priceListSer.getList(priceListFilter).subscribe(res => {
@@ -291,39 +323,51 @@ export class SaleMainComponent implements OnInit {
             }
           });
           this.orderService.setListInvoiceLocalStorage(listInvoice);
-          this.priceListCommon = element;
         }
       });
     });
+  }
+
+  /**
+   * Init Component
+   */
+  ngOnInit(): void {
+    this.isLoadingResults = true;
+    this.initFormSiderBar();
+    this.loadUserLogin();
+    this.handleActiveUser();
+    this.loadPriceBookDefault();
 
     this.orderService.subscribeLoadDetailPage.subscribe(action => {
       if (action === true) {
         this.listProduct = null;
       }
     });
-
+    this.loadData();
     this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
-      const listItemInvoice = ListInvoice.itemInvoice;
-      let isNew = 0;
-      let priceBookID = null;
-      listItemInvoice.forEach(element => {
-        if (element.active === true && priceBookID !== element?.price_book_id) {
-          priceBookID = element?.price_book_id;
-          isNew = 1;
-        }
-      });
-
-      if (priceBookID !== null) {
-        const one = new Promise<string>((resolve, reject) => {
-          this.isLoadingResults = true;
-          this.loadData();
-          resolve();
-        }).then(() => {
-          this.isLoadingResults = false;
-        });
-      }
+      // const listItemInvoice = ListInvoice.itemInvoice;
+      // let isNew = 0;
+      // let priceBookID = null;
+      // listItemInvoice.forEach(element => {
+      //   if (element.active === true && priceBookID !== element?.price_book_id) {
+      //     priceBookID = element?.price_book_id;
+      //     isNew = 1;
+      //   }
+      // });
+      this.loadData();
 
     });
+    // if (priceBookID !== null) {
+    //   const one = new Promise<string>((resolve, reject) => {
+    //     this.isLoadingResults = true;
+
+    //     resolve();
+    //   }).then(() => {
+    //     
+    //   });
+    // }
+
+    this.isLoadingResults = false;
 
     /**
      * Tim kiem khach hang
@@ -428,29 +472,6 @@ export class SaleMainComponent implements OnInit {
   * *******************************************  SALE SIDER BAR ORDER *******************************************
   */
 
-
-  initFormSiderBar() {
-    let userID = null;
-    let priceBookID = null;
-    let noteSiderBar = null;
-    let listInvoice = this.orderService.getListInvoiceLocalStorage();
-    const listItemInvoice = listInvoice.itemInvoice;
-    listItemInvoice.forEach(element => {
-      if (element.active === true) {
-        userID = element?.user?.id;
-        priceBookID = element?.price_book_id;
-        noteSiderBar = element.noteSiderBar;
-        this.selectUser.patchValue(element?.user?.username);
-        this.selectCustomer.patchValue(element?.customer?.name); // add name khach hang
-      }
-    });
-    this.form = this.fb.group({
-      userID: [userID],
-      priceBookID: [priceBookID],
-      noteSiderBar: [noteSiderBar]
-    });
-
-  }
 
   onSelectedCustomer(customer) {
     let listInvoice = this.orderService.getListInvoiceLocalStorage();
@@ -598,16 +619,60 @@ export class SaleMainComponent implements OnInit {
     // WindowPrt.focus();
     // WindowPrt.print();
     // WindowPrt.close();
-    const obj = { invoice_id: invoice_id };
-    const dialogRef = this.dialog.open(SalePrintInvoiceDialogComponent, {
-      width: '40%',
-      minWidth: '750px',
-      data: obj
+
+    // const obj = { invoice_id: invoice_id };
+    // const dialogRef = this.dialog.open(SalePrintInvoiceDialogComponent, {
+    //   width: '40%',
+    //   minWidth: '750px',
+    //   data: obj
+    // });
+
+    // dialogRef.afterClosed().subscribe(result => {
+    // });
+
+    this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
+      console.log(res);
+      let printContent = "<style>table {" +
+        "font-family: arial, sans-serif;" +
+        "border-collapse: collapse;" +
+        "width: 100%;" +
+        "}" +
+        "td, th {" +
+        "border: 1px solid #dddddd;" +
+        "text-align: left;" +
+        "padding: 8px;" +
+        "}</style>" +
+        "<p style='text-align:center; font-weight:600;'>HÓA ĐƠN BÁN HÀNG</p>" +
+        "<p style='text-align:center; font-weight:600;'>Số HĐ: " + res?.invoice_no + "</p>" +
+        "<p style=''>Khách hàng: " + res?.customer?.name + "</p>" +
+        "<p style=''>SĐT: " + res?.customer?.phone + "</p>" +
+        "<p style=''>Địa chỉ: </p>" +
+        "<p style=''> : </p>" +
+        "<table>" +
+        "<tr>" +
+        "<th>Đơn giá</th>" +
+        "<th>Số lượng</th>" +
+        "<th style='text-align:right;'>Thành tiền</th>" +
+        "</tr>" +
+        "<tr>" +
+        "<td></td>" +
+        "<td></td>" +
+        "<td></td>" +
+        "</tr>" +
+        "</table>";
+
+
+
+      const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+
+      WindowPrt.document.write(printContent);
+      WindowPrt.document.close();
+      WindowPrt.focus();
+
+      // WindowPrt.print();
+      // WindowPrt.close();
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-
-    });
   }
   // ------------------------------------------------------ PAYMENT ----------------------------------------------------------//
   payment() {
@@ -702,8 +767,8 @@ export class SaleMainComponent implements OnInit {
       this.orderService.saleOrder(dataInvoice).subscribe(res => {
         if (res !== false) {
           this.resetDataSiderBar();
-          this.loadData();
           this.notifySer.notify('success', 'Lưu thành công !');
+          this.loadData();
         } else {
           this.notifySer.notify('warning', 'Thất bại !');
         }
@@ -726,15 +791,16 @@ export class SaleMainComponent implements OnInit {
 
   }
 
-  resetDataSiderBar() {
-    this.orderService.removeActive(); //@nghia
-    this.selectCustomer.patchValue(null);
-    this.selectUser.patchValue(null);
-    this.form.patchValue({
+  async resetDataSiderBar() {
+    await this.orderService.removeActive(); //@nghia
+    await this.selectCustomer.patchValue(null);
+    await this.selectUser.patchValue(null);
+    await this.form.patchValue({
       'userID': [null]
     });
     this.sumPrice = 0;
     this.countProduct = 0;
+    this.listProduct = [];
   }
 
   /**

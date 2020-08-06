@@ -139,12 +139,14 @@ export class OrderService {
   private loadPage: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   subscribeLoadPage: Observable<boolean> = this.loadPage.asObservable();
 
-  // load detail
+  /**
+   * Action True to load detail Cart
+   */
   private loadDetailPage: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   subscribeLoadDetailPage: Observable<boolean> = this.loadDetailPage.asObservable();
 
 
-  removeActive() {
+  removeActive() {  
     let listInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     const listNew: ItemInvoice[] = [];
@@ -157,6 +159,9 @@ export class OrderService {
     if (listNew.length === 0) {
       this.initListInvoice();
     } else {
+      let lastItemInvoice = listNew[listNew.length - 1];
+      lastItemInvoice.active = true;
+      listNew[listNew.length - 1] = lastItemInvoice;
       this.setListInvoiceLocalStorage(listInvoice);
     }
 
