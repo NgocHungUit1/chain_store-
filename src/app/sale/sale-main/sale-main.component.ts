@@ -21,6 +21,7 @@ import { DiscountSiderbarDialogComponent } from '../discount-siderbar-dialog/dis
 import { CustomerService } from '../../customer/customer.service';
 import { UserService } from '../user.service';
 import { User } from '../user.model';
+import { element } from 'protractor';
 
 @Component({
   selector: 'app-sale-main',
@@ -631,35 +632,48 @@ export class SaleMainComponent implements OnInit {
     // });
 
     this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
-      console.log(res);
-      let printContent = "<style>table {" +
-        "font-family: arial, sans-serif;" +
-        "border-collapse: collapse;" +
-        "width: 100%;" +
-        "}" +
-        "td, th {" +
-        "border: 1px solid #dddddd;" +
-        "text-align: left;" +
-        "padding: 8px;" +
-        "}</style>" +
-        "<p style='text-align:center; font-weight:600;'>HÓA ĐƠN BÁN HÀNG</p>" +
-        "<p style='text-align:center; font-weight:600;'>Số HĐ: " + res?.invoice_no + "</p>" +
-        "<p style=''>Khách hàng: " + res?.customer?.name + "</p>" +
-        "<p style=''>SĐT: " + res?.customer?.phone + "</p>" +
-        "<p style=''>Địa chỉ: </p>" +
-        "<p style=''> : </p>" +
-        "<table>" +
-        "<tr>" +
-        "<th>Đơn giá</th>" +
-        "<th>Số lượng</th>" +
-        "<th style='text-align:right;'>Thành tiền</th>" +
-        "</tr>" +
-        "<tr>" +
-        "<td></td>" +
-        "<td></td>" +
-        "<td></td>" +
-        "</tr>" +
-        "</table>";
+      // console.log(res);
+      // let printContent = "";
+      let printContent = '<style>table {' +
+        // 'font-family: arial, sans-serif;' +
+        'border-collapse: collapse;' +
+        'width: 100%;' +
+        '}' +
+        'td, th {' +
+        'border: 1px solid #dddddd;' +
+        'text-align: left;' +
+        'padding: 8px;' +
+        '}</style>' +
+        '<p style="text-align:center;">Địa chỉ : ' + res?.store?.name + '</p>' +
+        '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
+        '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +
+        '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
+        '<p style="">Khách hàng: ' + res?.customer?.name + '</p>' +
+        '<p style="">SĐT: ' + res?.customer?.phone + '</p>' +
+        '<p style="">Địa chỉ: ' + res?.customer?.address + '</p>' +
+        '<table>' +
+        '<tr>' +
+        '<th>Đơn giá</th>' +
+        '<th>Số lượng</th>' +
+        '<th style="text-align:right;">Thành tiền</th>' +
+        '</tr>';
+      // '<tr>' +
+      // '<td></td>' +
+      // '<td></td>' +
+      // '<td></td>' +
+      // '</tr>' +
+      const detail = res.detail;
+      // console.log(detail);
+
+      detail.forEach(element => {
+        printContent += '<tr>' +
+          '<td>' + element.product?.product_name + '</td>' +
+          '<td>' + element.amount + '</td>' +
+          '<td>' + element.price + '</td>' +
+          '</tr>';
+      });
+      printContent += '</table>';
+
 
 
 
@@ -676,8 +690,8 @@ export class SaleMainComponent implements OnInit {
   }
   // ------------------------------------------------------ PAYMENT ----------------------------------------------------------//
   payment() {
-    // this.printInvoice(4);
-    // return;
+    this.printInvoice(4);
+    return;
 
 
     let listInvoice = this.orderService.getListInvoiceLocalStorage();

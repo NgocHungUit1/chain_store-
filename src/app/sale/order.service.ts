@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { Order, Detail, DiscountSiderBar, PaymentSiderBar, ItemInvoice, ListInvoice, ProductInfo } from '../sale/order.model';
+import { Order, Detail, DiscountSiderBar, PaymentSiderBar, ItemInvoice, ListInvoice, ProductInfo, resInvoicePrint } from '../sale/order.model';
 import { Product } from '../product/product.model';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
@@ -146,7 +146,7 @@ export class OrderService {
   subscribeLoadDetailPage: Observable<boolean> = this.loadDetailPage.asObservable();
 
 
-  removeActive() {  
+  removeActive() {
     let listInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     const listNew: ItemInvoice[] = [];
@@ -399,7 +399,8 @@ export class OrderService {
    */
   getDataInvoiceToPrint(invoice_id: number) {
     const url = environment.apiUrl + '/invoice/get-data-invoice-print/';
-    return this.http.post(url, {invoice_id : invoice_id});
+    return this.http.post<resInvoicePrint>(url, { invoice_id: invoice_id });
   }
 
 }
+

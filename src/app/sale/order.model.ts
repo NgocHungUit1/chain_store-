@@ -55,3 +55,21 @@ export class ItemInvoice {
 export class ListInvoice {
     itemInvoice: ItemInvoice[];
 }
+
+export class itemDetail {
+    amount: string;
+    price: number;
+    product: Product;
+}
+
+export class resInvoicePrint {
+    invoice_name: string;
+    invoice_no: string;
+    active: boolean;
+    price_book_id: string;
+    customer: Customer;
+    created_at: string;
+    store: any;
+    detail: itemDetail[];
+}
+
