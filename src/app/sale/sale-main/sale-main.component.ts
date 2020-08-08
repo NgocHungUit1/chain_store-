@@ -613,11 +613,12 @@ export class SaleMainComponent implements OnInit {
       }
     });
   }
-  //----------------Print -------------//
+  /** 
+   * Print
+   */
   printInvoice(invoice_id: number) {
-
     this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
-      let address = (res?.customer?.address !== null) ? res?.customer?.address : '';
+      const address = (res?.customer?.address !== null) ? res?.customer?.address : '';
       let printContent = '<title>' + res?.invoice_no + '</title>';
       printContent += '<style>table {' +
         // 'font-family: arial, sans-serif;' +
@@ -656,7 +657,6 @@ export class SaleMainComponent implements OnInit {
           '<td style="text-align:right;">' + element.total + '</td>' +
           '</tr>';
       });
-      // printContent += '</table>';
 
       /**
        * Tong tien hang
@@ -674,7 +674,6 @@ export class SaleMainComponent implements OnInit {
         '<td style="text-align:right; font-weight:600;">' + res.total + '</td>' +
         '</tr>';
       printContent += '</table>';
-
       printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
       printContent += '</section>';
 
@@ -762,7 +761,6 @@ export class SaleMainComponent implements OnInit {
         discount_type: this.discount_type,
         note: this.form.controls['noteSiderBar'].value,
         price_book_id: this.form.controls['priceBookID'].value,
-        // created_by: this.form.controls['userID'].value, @NGHIA store id
       },
       InvoiceDetail: invoiceDetail,
       PaymentMethod: mItemInvoice.paymentSiderBar?.type,
@@ -808,7 +806,7 @@ export class SaleMainComponent implements OnInit {
   }
 
   async resetDataSiderBar() {
-    await this.orderService.removeActive(); //@nghia
+    await this.orderService.removeActive(); 
     await this.selectCustomer.patchValue(null);
     await this.selectUser.patchValue(null);
     await this.form.patchValue({
@@ -834,7 +832,6 @@ export class SaleMainComponent implements OnInit {
     this.orderService.setListInvoiceLocalStorage(listInvoice);
   }
 
-
   /**
    *  Tu dong in hoa don
    * @param e 
@@ -842,7 +839,5 @@ export class SaleMainComponent implements OnInit {
   onChangeSlideToggle(e: any) {
     this.autoPrint = e.checked;
   }
-  /**
-  * ******************************************* END SALE SIDER BAR ORDER 
-  */
+  
 }

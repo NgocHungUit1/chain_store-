@@ -13,6 +13,7 @@ import { InvoiceService } from '../invoice.service';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DatetimeDefaultFilterDialogComponent } from '../datetime-default-filter-dialog/datetime-default-filter-dialog.component';
 import { DatetimeChooseFilterDialogComponent } from '../datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-invoice-list',
@@ -52,6 +53,9 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   expandedElement: Invoice | null;
   timeFilter: FormGroup;
   currentDateFilter: DateFilter;
+
+  searchInvoiceForm = new FormControl();
+
 
   // second column 
   TongTienHang = 0;
@@ -199,6 +203,14 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
       if (JSON.stringify(this.currentDateFilter) !== JSON.stringify(obj)) {
         this.currentDateFilter = obj;
         this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+      }
+    });
+
+    this.searchInvoiceForm.valueChanges.pipe(debounceTime(800)).subscribe(res => {
+      if (res !== '') {
+        this.apiFilter = this.buildFilterFromParams();
+        this.apiFilter.invoice_no = res;
         this.loadData();
       }
     });
