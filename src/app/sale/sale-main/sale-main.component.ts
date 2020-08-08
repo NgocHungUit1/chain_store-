@@ -67,7 +67,7 @@ export class SaleMainComponent implements OnInit {
   // 
   listProductChooseOld: number[] = [];
   common_idOld: string;
-  
+
   autoPrint: boolean = true;
 
   /**
@@ -118,12 +118,8 @@ export class SaleMainComponent implements OnInit {
     const listItemInvoice = listInvoice.itemInvoice;
     listItemInvoice.forEach(element => {
       if (element.active === true) {
-
         if (element.user === undefined || element.user === null) {
           element.user = this.user;
-          console.warn(element.user);
-          console.warn(this.user);
-
         }
         this.selectUser.patchValue(element.user?.username);
         this.form.patchValue({
@@ -452,7 +448,7 @@ export class SaleMainComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      // this.loadData();
+      this.loadData();
     });
   }
 
@@ -821,12 +817,12 @@ export class SaleMainComponent implements OnInit {
     this.orderService.setListInvoiceLocalStorage(listInvoice);
   }
 
-  
+
   /**
    *  Tu dong in hoa don
    * @param e 
    */
-  onChangeSlideToggle(e: any){
+  onChangeSlideToggle(e: any) {
     // console.log(e.checked);
     this.autoPrint = e.checked;
   }

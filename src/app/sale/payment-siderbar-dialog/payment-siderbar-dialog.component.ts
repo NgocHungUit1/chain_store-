@@ -58,10 +58,12 @@ export class PaymentSiderbarDialogComponent implements OnInit {
     let numberValue = 0;
     let typeValue = 'cash';
 
-    if (paymentSiderBar !== null) {
+    if (paymentSiderBar !== null && paymentSiderBar !== undefined) {
       numberValue = (paymentSiderBar?.number !== null) ? paymentSiderBar?.number : 0;
       typeValue = (paymentSiderBar?.type !== null) ? paymentSiderBar?.type : 'cash';
     }
+    // console.log(paymentSiderBar);
+    
     this.form = this.fb.group({
       number: [
         numberValue,
