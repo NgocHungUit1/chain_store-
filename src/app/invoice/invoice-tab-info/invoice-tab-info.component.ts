@@ -138,17 +138,18 @@ export class InvoiceTabInfoComponent implements OnInit {
       number: invoice.discount,
       type: invoice.discount_type
     };
-    // mItemInvoice.paymentSiderBar = { //@Nghia
-    //   number: invoice.discount,
-    //   type: invoice.discount_type
-    // };
+
     let aProductInfo: ProductInfo[] = [];
     const detail = invoice.detail || [];
+
     detail.forEach(element => {
+
       let mProductInfo = new ProductInfo();
       mProductInfo.amount = element.amount;
       mProductInfo.product_id = element.product?.id;
       mProductInfo.product = element.product;
+      mProductInfo.product.end_price = element.price;
+      mProductInfo.common_price = element.price;
       aProductInfo.push(mProductInfo);
     });
     mItemInvoice.listProduct = aProductInfo;

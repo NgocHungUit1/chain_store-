@@ -128,8 +128,6 @@ export class SaleMainComponent implements OnInit {
 
       }
     });
-    console.log(this.selectUser.value);
-
     this.orderService.setListInvoiceLocalStorage(listInvoice);
   }
 
@@ -249,21 +247,32 @@ export class SaleMainComponent implements OnInit {
           /**
            * Tien hanh sumPrice , cap nhat common_price, neu khong co common_price se cho sell_price
            */
+
           this.sumPrice = 0;
           if (this.listProduct !== null) {
             this.listProduct.forEach(elementData => {
               if (groupProductIdCommonPrice[elementData.product.id] !== undefined) {
-                elementData.common_price = groupProductIdCommonPrice[elementData.product.id][0]['common_price'];
-                this.sumPrice += groupProductIdCommonPrice[elementData.product.id][0]['common_price'] * elementData.amount;
+                if (elementData.product.end_price !== undefined) {
+                  elementData.common_price = elementData.product.end_price;
+                  this.sumPrice += elementData.product.end_price * elementData.amount;
+                } else {
+                  elementData.common_price = groupProductIdCommonPrice[elementData.product.id][0]['common_price'];
+                  this.sumPrice += groupProductIdCommonPrice[elementData.product.id][0]['common_price'] * elementData.amount;
+                }
               } else {
-                elementData.common_price = elementData.product.sell_price;
-                this.sumPrice += elementData.product.sell_price * elementData.amount;
+                if (elementData.product.end_price !== undefined) {
+                  elementData.common_price = elementData.product.end_price;
+                  this.sumPrice += elementData.product.end_price * elementData.amount;
+                } else {
+                  elementData.common_price = elementData.product.sell_price;
+                  this.sumPrice += elementData.product.sell_price * elementData.amount;
+                }
+
               }
             });
           } else {
             this.sumPrice = 0;
           }
-
 
         }
 
@@ -308,8 +317,9 @@ export class SaleMainComponent implements OnInit {
     });
 
   }
+
   /**
-   * 
+   * Lay danh sach bang gia
    */
   loadPriceBookDefault() {
     const priceListFilter = new PriceListFilter();
@@ -448,7 +458,7 @@ export class SaleMainComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this.loadData();
+
     });
   }
 
@@ -540,7 +550,9 @@ export class SaleMainComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(mItemInvoiceActive => {
-      this.handleDiscountSiderBar(mItemInvoiceActive);
+      if (mItemInvoiceActive !== undefined) {
+        this.handleDiscountSiderBar(mItemInvoiceActive);
+      }
     });
   }
 
@@ -571,7 +583,9 @@ export class SaleMainComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(mItemInvoiceActive => {
-      this.handlePaymentSiderBar(mItemInvoiceActive);
+      if (mItemInvoiceActive !== undefined) {
+        this.handlePaymentSiderBar(mItemInvoiceActive);
+      }
     });
   }
 
@@ -764,25 +778,28 @@ export class SaleMainComponent implements OnInit {
           if (typeof res === 'number' && this.autoPrint === true) {
             this.printInvoice(res);
           }
-
           this.resetDataSiderBar();
           this.notifySer.notify('success', 'Lưu thành công !');
-          this.loadData();
         } else {
           this.notifySer.notify('warning', 'Thất bại !');
         }
+        this.loadData();
+
         this.orderService.setLoadProduct(false);
         this.orderService.setLoadDetailPage(true);
       });
     } else {
       this.orderService.updateOrder(dataInvoice).subscribe(res => {
         if (res !== false) {
+          if (typeof res === 'number' && this.autoPrint === true) {
+            this.printInvoice(res);
+          }
           this.resetDataSiderBar();
-          this.loadData();
           this.notifySer.notify('success', 'Cập nhật đơn thành công !');
         } else {
           this.notifySer.notify('warning', 'Thất bại !');
         }
+        this.loadData();
         this.orderService.setLoadProduct(false);
         this.orderService.setLoadDetailPage(true);
       });
@@ -823,7 +840,6 @@ export class SaleMainComponent implements OnInit {
    * @param e 
    */
   onChangeSlideToggle(e: any) {
-    // console.log(e.checked);
     this.autoPrint = e.checked;
   }
   /**
