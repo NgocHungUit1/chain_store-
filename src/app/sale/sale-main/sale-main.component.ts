@@ -678,7 +678,7 @@ export class SaleMainComponent implements OnInit {
       printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
       printContent += '</section>';
 
-      const WindowPrt = window.open('', 'HD1', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+      const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
       WindowPrt.document.write(printContent);
       WindowPrt.document.close();
       WindowPrt.focus();
