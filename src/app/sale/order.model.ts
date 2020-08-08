@@ -59,6 +59,7 @@ export class ListInvoice {
 export class itemDetail {
     amount: string;
     price: number;
+    total: number;
     product: Product;
 }
 
@@ -71,5 +72,8 @@ export class resInvoicePrint {
     created_at: string;
     store: any;
     detail: itemDetail[];
+    total: string;
+    total_price: string; // tong tien hang
+    discount: string;
 }
 

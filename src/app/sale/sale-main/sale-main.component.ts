@@ -14,7 +14,6 @@ import { PriceDetailOrderDialogComponent } from '../price-detail-order-dialog/pr
 import { PriceListProductService } from '../../price-book/price-list-product.service';
 import { ItemInvoice } from '../order.model';
 import { Customer } from '../../customer/customer.model';
-import { SalePrintInvoiceDialogComponent } from '../sale-print-invoice-dialog/sale-print-invoice-dialog.component';
 import { SaleCustomerFormDialogComponent } from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
 import { PaymentSiderbarDialogComponent } from '../payment-siderbar-dialog/payment-siderbar-dialog.component';
 import { DiscountSiderbarDialogComponent } from '../discount-siderbar-dialog/discount-siderbar-dialog.component';
@@ -82,8 +81,6 @@ export class SaleMainComponent implements OnInit {
   async loadData() {
     let mItemInvoice = this.getNewItemInvoice();
 
-
-
     await this.handleAddPriceBookExist(mItemInvoice);
 
     await this.handleAddCustomerExist(mItemInvoice);
@@ -115,8 +112,12 @@ export class SaleMainComponent implements OnInit {
     const listItemInvoice = listInvoice.itemInvoice;
     listItemInvoice.forEach(element => {
       if (element.active === true) {
-        if (element.user === undefined) {
+
+        if (element.user === undefined || element.user === null) {
           element.user = this.user;
+          console.warn(element.user);
+          console.warn(this.user);
+
         }
         this.selectUser.patchValue(element.user?.username);
         this.form.patchValue({
@@ -125,6 +126,8 @@ export class SaleMainComponent implements OnInit {
 
       }
     });
+    console.log(this.selectUser.value);
+
     this.orderService.setListInvoiceLocalStorage(listInvoice);
   }
 
@@ -270,10 +273,11 @@ export class SaleMainComponent implements OnInit {
   * Active user current
   */
   loadUserLogin() {
-    if (this.user === null) {
+    if (this.user == null) {
       this.userService.getUserLogin().subscribe(res => {
         this.user = res;
       });
+      this.handleActiveUser();
     }
   }
 
@@ -613,28 +617,11 @@ export class SaleMainComponent implements OnInit {
   }
   //----------------Print -------------//
   printInvoice(invoice_id: number) {
-    // const printContent = document.getElementById("print");
-    // const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
-    // WindowPrt.document.write(printContent.innerHTML);
-    // WindowPrt.document.close();
-    // WindowPrt.focus();
-    // WindowPrt.print();
-    // WindowPrt.close();
-
-    // const obj = { invoice_id: invoice_id };
-    // const dialogRef = this.dialog.open(SalePrintInvoiceDialogComponent, {
-    //   width: '40%',
-    //   minWidth: '750px',
-    //   data: obj
-    // });
-
-    // dialogRef.afterClosed().subscribe(result => {
-    // });
 
     this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
-      // console.log(res);
-      // let printContent = "";
-      let printContent = '<style>table {' +
+      let address = (res?.customer?.address !== null) ? res?.customer?.address : '';
+      let printContent = '<title>' + res?.invoice_no + '</title>';
+      printContent += '<style>table {' +
         // 'font-family: arial, sans-serif;' +
         'border-collapse: collapse;' +
         'width: 100%;' +
@@ -644,56 +631,66 @@ export class SaleMainComponent implements OnInit {
         'text-align: left;' +
         'padding: 8px;' +
         '}</style>' +
+        '<section style="padding: 10px;">' +
         '<p style="text-align:center;">Địa chỉ : ' + res?.store?.name + '</p>' +
         '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +
         '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
         '<p style="">Khách hàng: ' + res?.customer?.name + '</p>' +
         '<p style="">SĐT: ' + res?.customer?.phone + '</p>' +
-        '<p style="">Địa chỉ: ' + res?.customer?.address + '</p>' +
+        '<p style="">Địa chỉ: ' + address + '</p>' +
         '<table>' +
         '<tr>' +
         '<th>Đơn giá</th>' +
-        '<th>Số lượng</th>' +
-        '<th style="text-align:right;">Thành tiền</th>' +
+        '<th style="text-align:center;">Số lượng</th>' +
+        '<th style="text-align:center;">Thành tiền</th>' +
         '</tr>';
-      // '<tr>' +
-      // '<td></td>' +
-      // '<td></td>' +
-      // '<td></td>' +
-      // '</tr>' +
-      const detail = res.detail;
-      // console.log(detail);
 
+      const detail = res.detail;
+
+      /**
+       * Chi tiet don hang
+       */
       detail.forEach(element => {
         printContent += '<tr>' +
-          '<td>' + element.product?.product_name + '</td>' +
-          '<td>' + element.amount + '</td>' +
-          '<td>' + element.price + '</td>' +
+          '<td>' + element.product?.product_name + '<br>' + element.price + '</td>' +
+          '<td style="text-align:center;">' + element.amount + '</td>' +
+          '<td style="text-align:right;">' + element.total + '</td>' +
           '</tr>';
       });
+      // printContent += '</table>';
+
+      /**
+       * Tong tien hang
+       */
+      printContent += '<tr>' +
+        '<td style="text-align:right; font-weight:600;" colspan="2">Tổng tiền hàng :</td>' +
+        '<td style="text-align:right; font-weight:600;">' + res.total_price + '</td>' +
+        '</tr>';
+      printContent += '<tr>' +
+        '<td style="text-align:right; font-weight:600;" colspan="2">Chiết khấu :</td>' +
+        '<td style="text-align:right; font-weight:600;">' + res.discount + '</td>' +
+        '</tr>';
+      printContent += '<tr>' +
+        '<td style="text-align:right; font-weight:600;" colspan="2">Tổng thanh toán :</td>' +
+        '<td style="text-align:right; font-weight:600;">' + res.total + '</td>' +
+        '</tr>';
       printContent += '</table>';
 
+      printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
+      printContent += '</section>';
 
-
-
-      const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
-
+      const WindowPrt = window.open('', 'HD1', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
       WindowPrt.document.write(printContent);
       WindowPrt.document.close();
       WindowPrt.focus();
-
-      // WindowPrt.print();
-      // WindowPrt.close();
+      WindowPrt.print();
+      WindowPrt.close();
     });
 
   }
   // ------------------------------------------------------ PAYMENT ----------------------------------------------------------//
   payment() {
-    this.printInvoice(4);
-    return;
-
-
     let listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
@@ -780,6 +777,11 @@ export class SaleMainComponent implements OnInit {
     if (mItemInvoice.invoice_id < 0) {
       this.orderService.saleOrder(dataInvoice).subscribe(res => {
         if (res !== false) {
+          if (typeof res === 'number') {
+            this.printInvoice(res);
+          }
+
+
           this.resetDataSiderBar();
           this.notifySer.notify('success', 'Lưu thành công !');
           this.loadData();
