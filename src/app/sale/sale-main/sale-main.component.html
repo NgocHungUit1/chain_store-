@@ -277,6 +277,9 @@
                                 (keyup)="saveNoteSiderBar($event)"></textarea>
                         </mat-form-field>
                     </div>
+                    <span mat-menu-item>
+                        <mat-slide-toggle checked="true" (change)="onChangeSlideToggle($event)">Tự động in hóa đơn</mat-slide-toggle>
+                    </span>
                     <button mat-button class="payment-button btn-success" (click)="payment()">
                         <span>Thanh toán</span>
                     </button>

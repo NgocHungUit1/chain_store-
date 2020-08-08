@@ -67,7 +67,13 @@ export class SaleMainComponent implements OnInit {
   // 
   listProductChooseOld: number[] = [];
   common_idOld: string;
+  
+  autoPrint: boolean = true;
 
+  /**
+   *  So sanh danh sach cu
+   * @param listProductChoose 
+   */
   compareEqualListProduct(listProductChoose) {
     let fail = 1;
     listProductChoose.forEach((value, index) => {
@@ -348,29 +354,11 @@ export class SaleMainComponent implements OnInit {
         this.listProduct = null;
       }
     });
-    this.loadData();
+    // this.loadData();
     this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
-      // const listItemInvoice = ListInvoice.itemInvoice;
-      // let isNew = 0;
-      // let priceBookID = null;
-      // listItemInvoice.forEach(element => {
-      //   if (element.active === true && priceBookID !== element?.price_book_id) {
-      //     priceBookID = element?.price_book_id;
-      //     isNew = 1;
-      //   }
-      // });
       this.loadData();
 
     });
-    // if (priceBookID !== null) {
-    //   const one = new Promise<string>((resolve, reject) => {
-    //     this.isLoadingResults = true;
-
-    //     resolve();
-    //   }).then(() => {
-    //     
-    //   });
-    // }
 
     this.isLoadingResults = false;
 
@@ -777,10 +765,9 @@ export class SaleMainComponent implements OnInit {
     if (mItemInvoice.invoice_id < 0) {
       this.orderService.saleOrder(dataInvoice).subscribe(res => {
         if (res !== false) {
-          if (typeof res === 'number') {
+          if (typeof res === 'number' && this.autoPrint === true) {
             this.printInvoice(res);
           }
-
 
           this.resetDataSiderBar();
           this.notifySer.notify('success', 'Lưu thành công !');
@@ -834,6 +821,15 @@ export class SaleMainComponent implements OnInit {
     this.orderService.setListInvoiceLocalStorage(listInvoice);
   }
 
+  
+  /**
+   *  Tu dong in hoa don
+   * @param e 
+   */
+  onChangeSlideToggle(e: any){
+    // console.log(e.checked);
+    this.autoPrint = e.checked;
+  }
   /**
   * ******************************************* END SALE SIDER BAR ORDER 
   */

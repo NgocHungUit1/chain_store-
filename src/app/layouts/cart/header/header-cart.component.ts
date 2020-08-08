@@ -94,8 +94,4 @@ export class AppHeaderCartComponent {
     });
   }
 
-  //@NGHIA
-  onChangeSlideToggle(e: any){
-    console.log(e.checked);
-  }
 }
