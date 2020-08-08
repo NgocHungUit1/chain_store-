@@ -40,3 +40,178 @@ html .page-wrapper .page-content {
   margin-top: 2px;
   display: block;
 }
+
+/* ---------------------------------------------------- sale detail order ----------------------------------------------- */
+
+.custom-search-customer {
+  padding-left: 10px;
+}
+
+.product-item {
+  padding: 0 10px;
+  border: 1px solid #ececec;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+.product-item:hover {
+  background-color: #ececec;
+}
+
+.row-item {
+  position: relative;
+}
+
+.row-text {
+  padding-top: 10px;
+  position: absolute;
+}
+
+.row-count-number {
+  font-size: 15px;
+  padding: 0 10px;
+  padding-top: 20px;
+  min-width: 69px;
+}
+
+.row-product-note {
+  padding-top: 20px;
+  position: absolute;
+  color: #666666;
+}
+
+.row-amount {
+  font-size: 20px;
+  min-width: 100px;
+  max-width: 160px;
+}
+
+.row-edit-price {
+  min-width: 100px;
+}
+
+.row-product-no {
+  font-size: 15px;
+  padding-top: 20px;
+  min-width: 100px;
+  padding-right: 5px;
+}
+
+.row-product-name {
+  font-size: 15px;
+  margin-top: 5px;
+}
+
+.row-icon-edit {
+  font-size: 15px;
+}
+
+.row-icon-edit-price {
+  font-size: 20px;
+}
+
+.row-total-price {
+  padding-top: 28px;
+  font-size: 20px;
+  text-align: right;
+  font-weight: 600;
+}
+
+
+/* ---------------------------------------------------- sale sider bar order ----------------------------------------------- */
+
+.main-sale-siderbar-order {
+  margin: 12px
+}
+
+.payment-button {
+  width: 100%;
+  height: 67px;
+  background-color: #56ad51 !important;
+  bottom: 0px;
+  margin-bottom: 10px;
+}
+
+.payment-button span {
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffff;
+}
+
+.order-detail {
+  margin-top: 18px;
+}
+
+.price-product-text {
+  font-size: 15px;
+  text-align: left;
+}
+
+.label-text {
+  font-size: 15px;
+  text-align: left;
+  padding-top: 18px;
+}
+
+.price-product-number {
+  font-size: 18px;
+  text-align: right;
+}
+
+
+.support-content {
+  font-size: 11px;
+  color: #666666;
+  margin: 10px;
+}
+
+.support-content .mat-icon {
+  font-size: 11px;
+  align-items: center;
+}
+
+.pricebook-action {
+  padding-bottom: 20px;
+}
+
+.price-discount-text {
+  font-size: 15px;
+  text-align: left;
+  padding-top: 25px;
+}
+
+.customer-pay-text {
+  font-size: 15px;
+  text-align: left;
+  padding-top: 25px;
+}
+
+.customer-need-text {
+  font-weight: 600;
+}
+
+.customer-need-number {
+  padding-top: 18px;
+  color: #56ad51;
+  font-size: 20px;
+  text-align: right;
+  font-weight: 600;
+}
+
+.customer-pay-number {
+  font-size: 18px;
+}
+
+.excess-cash-number {
+  padding-top: 18px;
+  font-size: 18px;
+  text-align: right;
+}
+
+.price-discount-number {
+  font-size: 18px;
+}
+
+.order-note {
+  padding-top: 18px;
+}

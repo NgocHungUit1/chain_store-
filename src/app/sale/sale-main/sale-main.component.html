@@ -1,4 +1,3 @@
-
 <div class="table-loading-shade" *ngIf="isLoadingResults">
     <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
 </div>
@@ -8,7 +7,110 @@
     <div fxFlex="74">
         <div class="container-main-sale">
             <div class="product-cart">
-                <app-sale-detail-order></app-sale-detail-order>
+
+
+
+                <!----------------------------------------- SALE-DETAIL-ORDER ---------------------------------------->
+
+
+                <div *ngFor="let itemProduct of listProduct; let i = index" class="product-item">
+                    <div fxLayout="row wrap" class="row-item">
+                        <div fxFlex="7" class="row-count-number">
+                            <span>{{  countProduct-i  }}</span>
+                            <button mat-icon-button (click)="deleleProduct(itemProduct)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+                        <div fxFlex="7" class="row-product-no">
+                            <span>
+                                {{ itemProduct.product?.product_no }}
+                            </span>
+                        </div>
+                        <div fxFlex="40">
+                            <span class="row-text row-product-name">
+                                {{ itemProduct.product?.product_name }}
+                            </span>
+                            <span class="row-product-note">
+                                <span *ngIf="itemProduct.product?.note_detail_sale === undefined">Ghi chú liều
+                                    dùng</span>
+                                <span
+                                    *ngIf="itemProduct.product?.note_detail_sale">{{ itemProduct.product?.note_detail_sale }}</span>
+                                <button mat-icon-button>
+                                    <mat-icon class="row-icon-edit"
+                                        (click)="openNoteDetailOrderDialog(itemProduct.product?.id, itemProduct.product?.note_detail_sale)">
+                                        edit</mat-icon>
+                                </button>
+                            </span>
+                        </div>
+                        <div fxFlex="auto" class="row-amount">
+                            <div fxLayout="row wrap">
+                                <mat-form-field style=" font-size: 20px; text-align: center;">
+                                    <button matPrefix mat-icon-button class="row-button-edit-amount"
+                                        (click)="upAmountProduct(itemProduct.product?.id)">
+                                        <mat-icon>keyboard_arrow_up</mat-icon>
+                                    </button>
+                                    <input matInput type="number" tabindex="3" min="0" class="row-amount-number"
+                                        (input)="inputAmountProduct(itemProduct.product?.id,$event.target.value)"
+                                        value="{{ itemProduct.amount }}">
+                                    <button matSuffix mat-icon-button class="row-button-edit-amount"
+                                        (click)="downAmountProduct(itemProduct.product?.id)">
+                                        <mat-icon>keyboard_arrow_down</mat-icon>
+                                    </button>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div fxFlex="2"></div>
+                        <div fxFlex="12" class="row-edit-price">
+                            <div fxLayout="row wrap">
+                                <div fxFlex="100">
+
+                                    <mat-form-field style=" font-size: 20px; text-align: right;"
+                                        *ngIf="itemProduct.product?.end_price === undefined">
+                                        <input matInput type="text" value="{{  itemProduct?.common_price | number }}"
+                                            disabled="true" style="color:black">
+                                        <button mat-icon-button matPrefix>
+                                            <mat-icon class="row-icon-edit-price"
+                                                (click)="openPriceDetailOrderDialog(itemProduct.product,itemProduct.common_price)">
+                                                edit</mat-icon>
+                                        </button>
+                                    </mat-form-field>
+
+                                    <mat-form-field style=" font-size: 20px; text-align: right;"
+                                        *ngIf="itemProduct.product?.end_price !== undefined">
+                                        <input matInput type="text"
+                                            value="{{  itemProduct.product?.end_price | number }}" disabled="true"
+                                            style="color:black">
+                                        <button mat-icon-button matPrefix>
+                                            <mat-icon class="row-icon-edit-price"
+                                                (click)="openPriceDetailOrderDialog(itemProduct.product,itemProduct.common_price)">
+                                                edit</mat-icon>
+                                        </button>
+                                    </mat-form-field>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div fxFlex="auto" class="row-total-price">
+                            <span *ngIf="itemProduct.product?.end_price === undefined">
+                                {{ itemProduct?.common_price * itemProduct.amount | number }}
+                            </span>
+
+                            <span *ngIf="itemProduct.product?.end_price !== undefined">
+                                {{ itemProduct.product?.end_price * itemProduct.amount | number }}
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!--------------------------------------- END SALE-DETAIL-ORDER ------------------------------------------>
+
+
+
+                <!-- <app-sale-detail-order></app-sale-detail-order> -->
             </div>
             <app-sale-list-product></app-sale-list-product>
 
@@ -17,7 +119,182 @@
     <div fxFlex="0.5"></div>
     <div fxFlex="25">
         <div class="container-action-sale">
-            <app-sale-siderbar-order></app-sale-siderbar-order>
+            <!-- <app-sale-siderbar-order></app-sale-siderbar-order> -->
+            <!---------------------------------------  SALE-SIDER-BAR-ORDER ------------------------------------------>
+
+
+
+            <div class="main-sale-siderbar-order">
+                <form [formGroup]="form">
+
+                    <div class="user-action">
+                        <div fxLayout="row wrap">
+                            <div fxFlex="60">
+                                <mat-form-field>
+                                    <input class="input-search-user" type="text" [formControl]="selectUser" matInput
+                                        [matAutocomplete]="chooseUser" placeholder="Tìm nhân viên ">
+                                    <button mat-button matPrefix>
+                                        <mat-icon>search</mat-icon>
+                                    </button>
+                                    <mat-autocomplete #chooseUser="matAutocomplete"
+                                        (optionSelected)="onSelectedUser($event.option.value)">
+                                        <mat-option *ngFor="let user of filteredUsers | async" [value]="user">
+                                            <span>{{user.username}}</span> |
+                                            <small>email: {{user.email}}</small>
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </mat-form-field>
+                            </div>
+                            <div fxFlex="2"></div>
+                            <div fxFlex="38">
+                                <mat-form-field>
+                                    <input matInput value="{{ today | date:'medium' }}" disabled>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="customer-action">
+                        <div fxLayout="row wrap">
+                            <div fxFlex="70">
+                                <mat-form-field>
+                                    <input class="input-search-customer" type="text" [formControl]="selectCustomer"
+                                        matInput [matAutocomplete]="chooseProduct" placeholder="Tìm khách hàng ">
+                                    <button mat-button matPrefix>
+                                        <mat-icon>search</mat-icon>
+                                    </button>
+                                    <mat-autocomplete #chooseProduct="matAutocomplete"
+                                        (optionSelected)="onSelectedCustomer($event.option.value)">
+                                        <mat-option *ngFor="let customer of filteredCustomers | async"
+                                            [value]="customer">
+                                            <span>{{customer.name}}</span> |
+                                            <small>phone: {{customer.phone}}</small>
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </mat-form-field>
+                            </div>
+                            <div fxFlex="auto">
+                                <button mat-button matPrefix>
+                                    <mat-icon (click)="openSaleCustomerFormDialogComponent()">add</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pricebook-action">
+                        <mat-form-field>
+                            <button mat-button matPrefix>
+                                <mat-icon>bookmark_border</mat-icon>
+                            </button>
+                            <mat-select placeholder="Chọn bảng giá" (selectionChange)="choosePriceBook($event)"
+                                formControlName="priceBookID">
+                                <mat-option *ngFor="let priceList of priceLists" [value]="priceList.id">
+                                    {{ priceList.name }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <label class="mat-h2"> Hóa đơn </label>
+                    <mat-divider></mat-divider>
+                    <div class="order-detail">
+                        <div fxLayout="row wrap" class="price-product">
+                            <div fxFlex="50" class="price-product-text ">
+                                <span matBadge="{{ countProduct }}" matBadgeOverlap="false">Tổng tiền hàng </span>
+                            </div>
+                            <div fxFlex="50" class="price-product-number">
+                                <input matInput type="text" value="{{ sumPrice | number}}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="order-discount">
+                        <div fxLayout="row wrap" class="price-discount">
+                            <div fxFlex="50" class="price-discount-text ">
+                                <span>Giảm giá </span>
+                            </div>
+                            <div fxFlex="50" class="price-discount-number">
+                                <mat-form-field style="text-align: right">
+                                    <button mat-icon-button matPrefix>
+                                        <mat-icon class="row-edit-price-discount-number"
+                                            (click)="openDiscountSiderBar()">edit
+                                        </mat-icon>
+                                    </button>
+                                    <input matInput type="text" value="{{ numberDiscount | number}}" [disabled]="true"
+                                        style="color:black">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="customer-need">
+                        <div fxLayout="row wrap" class="customer-need">
+                            <div fxFlex="50" class="customer-need-text label-text">
+                                <span>Khách cần trả</span>
+                            </div>
+                            <div fxFlex="50" class="customer-need-number">
+                                <input matInput type="text" value="{{ sumPrice - numberDiscount | number}}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="customer-pay">
+                        <div fxLayout="row wrap" class="customer-pay">
+                            <div fxFlex="50" class="customer-pay-text ">
+                                <span>Khách thanh toán</span>
+                            </div>
+                            <div fxFlex="50" class="customer-pay-number">
+                                <mat-form-field style="text-align: right">
+                                    <button mat-icon-button matPrefix>
+                                        <mat-icon class="row-edit-customer-pay-number"
+                                            (click)="openPaymentSiderBarDialog()">
+                                            credit_card</mat-icon>
+                                    </button>
+                                    <input matInput type="text" value="{{ customerPay | number}}" [disabled]="true"
+                                        style="color:black">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="excess-cash">
+                        <div fxLayout="row wrap" class="excess-cash">
+                            <div fxFlex="50" class="cexcess-cash-text label-text">
+                                <span>Tiền thừa trả khách</span>
+                            </div>
+                            <div fxFlex="50" class="excess-cash-number">
+                                <input matInput type="text" *ngIf="customerPay - sumPrice + numberDiscount > 0"
+                                    value="{{ customerPay - sumPrice + numberDiscount | number}}">
+                                <input matInput type="text" *ngIf="customerPay - sumPrice + numberDiscount <= 0"
+                                    value="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="order-note">
+                        <mat-form-field class="example-full-width">
+                            <mat-label>Ghi chú</mat-label>
+                            <textarea matInput placeholder="" formControlName="noteSiderBar"
+                                (keyup)="saveNoteSiderBar($event)"></textarea>
+                        </mat-form-field>
+                    </div>
+                    <span mat-menu-item>
+                        <mat-slide-toggle checked="true" (change)="onChangeSlideToggle($event)">Tự động in hóa đơn</mat-slide-toggle>
+                    </span>
+                    <button mat-button class="payment-button btn-success" (click)="payment()">
+                        <span>Thanh toán</span>
+                    </button>
+
+                    <span class="support-content">
+                        <mat-icon>phone</mat-icon> Hỗ trợ khách hàng 1900 6522
+                    </span>
+
+                </form>
+
+            </div>
+
+
+
+            <!--------------------------------------- END SALE-SIDER-BAR-ORDER ------------------------------------------>
         </div>
 
     </div>

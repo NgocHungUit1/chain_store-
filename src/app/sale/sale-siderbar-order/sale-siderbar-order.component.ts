@@ -17,7 +17,6 @@ import { UserService } from '../user.service';
 import { User } from '../user.model';
 import { NotifierService } from 'angular-notifier';
 import { ItemInvoice, ListInvoice } from '../order.model';
-import { SalePrintInvoiceDialogComponent } from '../sale-print-invoice-dialog/sale-print-invoice-dialog.component';
 
 @Component({
   selector: 'app-sale-siderbar-order',
@@ -56,7 +55,6 @@ export class SaleSiderbarOrderComponent implements OnInit {
     private dialog: MatDialog,
     private userService: UserService,
     private notifySer: NotifierService,
-
   ) { }
 
   initForm() {
@@ -379,16 +377,16 @@ export class SaleSiderbarOrderComponent implements OnInit {
     // WindowPrt.focus();
     // WindowPrt.print();
     // WindowPrt.close();
-    const obj = { invoice_id: invoice_id };
-    const dialogRef = this.dialog.open(SalePrintInvoiceDialogComponent, {
-      width: '40%',
-      minWidth: '750px',
-      data: obj
-    });
+    // const obj = { invoice_id: invoice_id };
+    // const dialogRef = this.dialog.open(SalePrintInvoiceDialogComponent, {
+    //   width: '40%',
+    //   minWidth: '750px',
+    //   data: obj
+    // });
 
-    dialogRef.afterClosed().subscribe(result => {
+    // dialogRef.afterClosed().subscribe(result => {
 
-    });
+    // });
   }
   // ------------------------------------------------------ PAYMENT ----------------------------------------------------------//
   payment() {

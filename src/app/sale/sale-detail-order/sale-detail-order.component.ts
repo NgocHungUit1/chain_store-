@@ -32,24 +32,7 @@ export class SaleDetailOrderComponent implements OnInit {
     private dialog: MatDialog,
   ) { }
 
-  // doan code nay rat kho hieu
-  // neu ton tai tuong tu truoc do se khong chay api
-  kiemTraLapLaiAPI(common_id, listProductChoose) {
-    //https://stackoverflow.com/questions/38498258/typescript-difference-between-two-arrays
-    const missing1 = this.listProductChoose_OLD.filter(item => listProductChoose.indexOf(item) < 0);
-    const missing2 = listProductChoose.filter(item => this.listProductChoose_OLD.indexOf(item) < 0);
-    console.log(this.listProductChoose_OLD + 'OLD');
-    console.log(listProductChoose);
 
-    if (this.common_id_OLD !== common_id || missing1.length !== 0 || missing2.length !== 0) {
-      this.common_id_OLD = common_id;
-      this.listProductChoose_OLD = listProductChoose;
-      return false;
-    } else {
-      return true;
-    }
-
-  }
 
   loadData() {
 
@@ -111,14 +94,6 @@ export class SaleDetailOrderComponent implements OnInit {
         }
       }
 
-      // cap nhat gia
-      // listItemInvoice.forEach(element => {
-      //   if (element.active === true) {
-      //     element.listProduct = this.listProduct;
-      //   }
-      // });
-      // ListInvoice.itemInvoice = listItemInvoice;
-      // this.orderService.setListInvoiceLocalStorage(ListInvoice);
       this.listProduct.reverse();
 
     });

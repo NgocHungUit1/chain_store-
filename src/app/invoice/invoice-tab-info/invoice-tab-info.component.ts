@@ -8,6 +8,7 @@ import { ItemInvoice, ProductInfo } from '../../sale/order.model';
 import { OrderService } from '../../sale/order.service';
 import { Invoice } from '../invoice.model';
 import { InvoiceService } from '../invoice.service';
+import { SaleMainComponent } from '../../sale/sale-main/sale-main.component';
 
 @Component({
   selector: 'app-invoice-tab-info',
@@ -153,6 +154,83 @@ export class InvoiceTabInfoComponent implements OnInit {
     mItemInvoice.listProduct = aProductInfo;
     this.orderService.addItemInvoiceUpdate(mItemInvoice);
     this.router.navigate(['/sale']);
+  }
+
+  actionPrintInvoice(invoice) {
+    this.printInvoice(invoice.id);
+  }
+
+  printInvoice(invoice_id: number) {
+
+    this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
+      let address = (res?.customer?.address !== null) ? res?.customer?.address : '';
+      let printContent = '<title>' + res?.invoice_no + '</title>';
+      printContent += '<style>table {' +
+        // 'font-family: arial, sans-serif;' +
+        'border-collapse: collapse;' +
+        'width: 100%;' +
+        '}' +
+        'td, th {' +
+        'border: 1px solid #dddddd;' +
+        'text-align: left;' +
+        'padding: 8px;' +
+        '}</style>' +
+        '<section style="padding: 10px;">' +
+        '<p style="text-align:center;">Địa chỉ : ' + res?.store?.name + '</p>' +
+        '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
+        '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +
+        '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
+        '<p style="">Khách hàng: ' + res?.customer?.name + '</p>' +
+        '<p style="">SĐT: ' + res?.customer?.phone + '</p>' +
+        '<p style="">Địa chỉ: ' + address + '</p>' +
+        '<table>' +
+        '<tr>' +
+        '<th>Đơn giá</th>' +
+        '<th style="text-align:center;">Số lượng</th>' +
+        '<th style="text-align:center;">Thành tiền</th>' +
+        '</tr>';
+
+      const detail = res.detail;
+
+      /**
+       * Chi tiet don hang
+       */
+      detail.forEach(element => {
+        printContent += '<tr>' +
+          '<td>' + element.product?.product_name + '<br>' + element.price + '</td>' +
+          '<td style="text-align:center;">' + element.amount + '</td>' +
+          '<td style="text-align:right;">' + element.total + '</td>' +
+          '</tr>';
+      });
+
+      /**
+       * Tong tien hang
+       */
+      printContent += '<tr>' +
+        '<td style="text-align:right; font-weight:600;" colspan="2">Tổng tiền hàng :</td>' +
+        '<td style="text-align:right; font-weight:600;">' + res.total_price + '</td>' +
+        '</tr>';
+      printContent += '<tr>' +
+        '<td style="text-align:right; font-weight:600;" colspan="2">Chiết khấu :</td>' +
+        '<td style="text-align:right; font-weight:600;">' + res.discount + '</td>' +
+        '</tr>';
+      printContent += '<tr>' +
+        '<td style="text-align:right; font-weight:600;" colspan="2">Tổng thanh toán :</td>' +
+        '<td style="text-align:right; font-weight:600;">' + res.total + '</td>' +
+        '</tr>';
+      printContent += '</table>';
+
+      printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
+      printContent += '</section>';
+
+      const WindowPrt = window.open('', 'HD1', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+      WindowPrt.document.write(printContent);
+      WindowPrt.document.close();
+      WindowPrt.focus();
+      WindowPrt.print();
+      WindowPrt.close();
+    });
+
   }
 
 }

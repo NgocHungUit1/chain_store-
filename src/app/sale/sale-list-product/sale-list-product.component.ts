@@ -77,34 +77,7 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
 
     this.productSer.getListCart(this.apiFilter).subscribe(res => {
       this.dataSource = res.body;
-      // const list = res.body;
-      // if (this.priceBookID !== null && Array.isArray(list)) {
-      //   const listProductChoose = list.map(obj => obj.id);
-      //   const common_id = this.priceBookID;
-        // tien hanh xu ly add common vao list
-
-
-        // this.priceListProductSer.getListProductCommon(common_id, listProductChoose).subscribe(resCommon => {
-        //   if (Array.isArray(resCommon)) {
-        //     const priceListProductCommonExist = resCommon;
-        //     this.dataSource = res.body;
-        //     // code group array by key
-        //     const group = priceListProductCommonExist.reduce((r, a) => {
-        //       r[a.product_id] = [...r[a.product_id] || [], a];
-        //       return r;
-        //     }, {});
-        //     // add common || null
-        //     this.dataSource.forEach(elementData => {
-        //       if (group[elementData.id] !== undefined) {
-        //         elementData.common = group[elementData.id][0];
-        //       } else {
-        //         elementData.common = null;
-        //       }
-        //     });
-        //   }
-        // });
-      // }
-      // console.log(this.dataSource); // @nghia
+      
 
       this.reloadFilter(res);
       const url = this.productSer.getStateUrl(this.apiFilter);
@@ -119,7 +92,6 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
     this.loadData();
     this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
       const listItemInvoice = ListInvoice.itemInvoice;
-      let isNew = 0;
       listItemInvoice.forEach(element => {
         if (element.active === true && this.priceBookID !== element?.price_book_id) {
           this.priceBookID = element?.price_book_id;

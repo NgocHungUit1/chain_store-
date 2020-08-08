@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { Order, Detail, DiscountSiderBar, PaymentSiderBar, ItemInvoice, ListInvoice, ProductInfo } from '../sale/order.model';
+import { Order, Detail, DiscountSiderBar, PaymentSiderBar, ItemInvoice, ListInvoice, ProductInfo, resInvoicePrint } from '../sale/order.model';
 import { Product } from '../product/product.model';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
@@ -139,7 +139,9 @@ export class OrderService {
   private loadPage: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   subscribeLoadPage: Observable<boolean> = this.loadPage.asObservable();
 
-  // load detail
+  /**
+   * Action True to load detail Cart
+   */
   private loadDetailPage: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   subscribeLoadDetailPage: Observable<boolean> = this.loadDetailPage.asObservable();
 
@@ -157,6 +159,9 @@ export class OrderService {
     if (listNew.length === 0) {
       this.initListInvoice();
     } else {
+      let lastItemInvoice = listNew[listNew.length - 1];
+      lastItemInvoice.active = true;
+      listNew[listNew.length - 1] = lastItemInvoice;
       this.setListInvoiceLocalStorage(listInvoice);
     }
 
@@ -394,7 +399,8 @@ export class OrderService {
    */
   getDataInvoiceToPrint(invoice_id: number) {
     const url = environment.apiUrl + '/invoice/get-data-invoice-print/';
-    return this.http.post(url, {invoice_id : invoice_id});
+    return this.http.post<resInvoicePrint>(url, { invoice_id: invoice_id });
   }
 
 }
+

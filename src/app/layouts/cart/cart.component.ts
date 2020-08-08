@@ -85,8 +85,6 @@ export class CartComponent implements OnDestroy {
         if(element.active === true){
           this.activeLink = element.invoice_id;
         }
-
-        
         this.listmItemInvoice.push(element);
       });
     });
