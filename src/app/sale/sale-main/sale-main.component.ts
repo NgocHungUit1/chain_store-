@@ -806,11 +806,11 @@ export class SaleMainComponent implements OnInit {
 
   async resetDataSiderBar() {
     await this.orderService.removeActive();
-    await this.selectCustomer.patchValue(null);
-    await this.selectUser.patchValue(null);
-    await this.form.patchValue({
-      'userID': [null]
-    });
+    await this.selectCustomer.patchValue('');
+    // await this.selectUser.patchValue(null);
+    // await this.form.patchValue({
+    //   'userID': [null]
+    // });
     this.sumPrice = 0;
     this.countProduct = 0;
     this.listProduct = [];
