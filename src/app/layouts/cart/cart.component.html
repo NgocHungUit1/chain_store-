@@ -84,16 +84,16 @@
       <a mat-tab-link *ngFor="let mItemInvoice of listmItemInvoice" (click)="activeLink = mItemInvoice.invoice_id"
         [active]="activeLink == mItemInvoice.invoice_id" (click)="activeInvoice(mItemInvoice?.invoice_id)" mat-primary>
         <span *ngIf="mItemInvoice?.invoice_id > 0">{{ mItemInvoice.invoice_name }}</span>
-        <span *ngIf="mItemInvoice?.invoice_id < 0">{{ mItemInvoice.invoice_name+' '+(mItemInvoice?.invoice_id*-1) }}</span>
-
+        <span
+          *ngIf="mItemInvoice?.invoice_id < 0">{{ mItemInvoice.invoice_name+' '+(mItemInvoice?.invoice_id*-1) }}</span>
         <button mat-icon-button (click)="deleteInvoice(mItemInvoice?.invoice_id)">
           <mat-icon>close</mat-icon>
         </button>
       </a>
-      <button mat-button mat-icon-button (click)="addInvoice()" class="btn-add-invoice-tab">
-        <mat-icon>add</mat-icon>
-      </button>
     </nav>
+    <button mat-button mat-icon-button (click)="addInvoice()" class="btn-add-invoice-tab">
+      <mat-icon>add</mat-icon>
+    </button>
 
 
     <span fxFlex></span>

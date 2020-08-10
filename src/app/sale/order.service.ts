@@ -368,6 +368,10 @@ export class OrderService {
     this.setListInvoiceLocalStorage(ListInvoice);
   }
 
+  /**
+   * API post sale order to the Invoice
+   * @param data 
+   */
   saleOrder(data) {
     const url = environment.apiUrl + '/invoice/sale-order';
     return this.http.post(url, data);

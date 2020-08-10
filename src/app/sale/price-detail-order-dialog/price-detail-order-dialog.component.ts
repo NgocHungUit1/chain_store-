@@ -14,7 +14,7 @@ export class PriceDetailOrderDialogComponent implements OnInit {
   local_data: any;
   product: Product;
   common_price: any;
-
+  commonPriceDetailOrderText: string;
   constructor(
     public dialogRef: MatDialogRef<PriceDetailOrderDialogComponent>,
     private orderService: OrderService,
@@ -56,6 +56,7 @@ export class PriceDetailOrderDialogComponent implements OnInit {
     if (this.product.end_price) {
       endPrice = this.product.end_price;
     }
+    this.commonPriceDetailOrderText = this.common_price;
     this.form = this.fb.group({
       commonPriceDetailOrder: [
         this.common_price,

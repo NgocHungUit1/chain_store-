@@ -49,7 +49,7 @@ export class DiscountSiderbarDialogComponent implements OnInit {
     const discountSiderBar = mItemInvoice.discountSiderBar;
     let numberValue = 0;
     let typeValue = 'vnd';
-    if (discountSiderBar !== null) {
+    if (discountSiderBar !== null && discountSiderBar !== undefined) {
       numberValue = discountSiderBar?.number;
       typeValue = discountSiderBar?.type;
     }

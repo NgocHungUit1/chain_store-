@@ -3,7 +3,9 @@
         <div fxLayout="row wrap">
             <mat-form-field>
                 <mat-label>Đơn giá</mat-label>
-                <input matInput type="number" tabindex="1" formControlName="commonPriceDetailOrder">
+                <!-- <input matInput type="text" tabindex="1" formControlName="commonPriceDetailOrder" value="{{ commonPriceDetailOrderText | number }}"> -->
+                <input matInput type="text" value="{{ commonPriceDetailOrderText | number }}" disabled="true"
+                            style="color:black">
             </mat-form-field>
         </div>
 

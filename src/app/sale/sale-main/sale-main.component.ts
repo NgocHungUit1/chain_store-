@@ -67,7 +67,7 @@ export class SaleMainComponent implements OnInit {
   // 
   listProductChooseOld: number[] = [];
   common_idOld: string;
-  
+
   autoPrint: boolean = true;
 
   /**
@@ -118,12 +118,8 @@ export class SaleMainComponent implements OnInit {
     const listItemInvoice = listInvoice.itemInvoice;
     listItemInvoice.forEach(element => {
       if (element.active === true) {
-
         if (element.user === undefined || element.user === null) {
           element.user = this.user;
-          console.warn(element.user);
-          console.warn(this.user);
-
         }
         this.selectUser.patchValue(element.user?.username);
         this.form.patchValue({
@@ -132,8 +128,6 @@ export class SaleMainComponent implements OnInit {
 
       }
     });
-    console.log(this.selectUser.value);
-
     this.orderService.setListInvoiceLocalStorage(listInvoice);
   }
 
@@ -253,21 +247,32 @@ export class SaleMainComponent implements OnInit {
           /**
            * Tien hanh sumPrice , cap nhat common_price, neu khong co common_price se cho sell_price
            */
+
           this.sumPrice = 0;
           if (this.listProduct !== null) {
             this.listProduct.forEach(elementData => {
               if (groupProductIdCommonPrice[elementData.product.id] !== undefined) {
-                elementData.common_price = groupProductIdCommonPrice[elementData.product.id][0]['common_price'];
-                this.sumPrice += groupProductIdCommonPrice[elementData.product.id][0]['common_price'] * elementData.amount;
+                if (elementData.product.end_price !== undefined) {
+                  elementData.common_price = elementData.product.end_price;
+                  this.sumPrice += elementData.product.end_price * elementData.amount;
+                } else {
+                  elementData.common_price = groupProductIdCommonPrice[elementData.product.id][0]['common_price'];
+                  this.sumPrice += groupProductIdCommonPrice[elementData.product.id][0]['common_price'] * elementData.amount;
+                }
               } else {
-                elementData.common_price = elementData.product.sell_price;
-                this.sumPrice += elementData.product.sell_price * elementData.amount;
+                if (elementData.product.end_price !== undefined) {
+                  elementData.common_price = elementData.product.end_price;
+                  this.sumPrice += elementData.product.end_price * elementData.amount;
+                } else {
+                  elementData.common_price = elementData.product.sell_price;
+                  this.sumPrice += elementData.product.sell_price * elementData.amount;
+                }
+
               }
             });
           } else {
             this.sumPrice = 0;
           }
-
 
         }
 
@@ -312,8 +317,9 @@ export class SaleMainComponent implements OnInit {
     });
 
   }
+
   /**
-   * 
+   * Lay danh sach bang gia
    */
   loadPriceBookDefault() {
     const priceListFilter = new PriceListFilter();
@@ -452,7 +458,7 @@ export class SaleMainComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      // this.loadData();
+
     });
   }
 
@@ -544,7 +550,9 @@ export class SaleMainComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(mItemInvoiceActive => {
-      this.handleDiscountSiderBar(mItemInvoiceActive);
+      if (mItemInvoiceActive !== undefined) {
+        this.handleDiscountSiderBar(mItemInvoiceActive);
+      }
     });
   }
 
@@ -575,7 +583,9 @@ export class SaleMainComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(mItemInvoiceActive => {
-      this.handlePaymentSiderBar(mItemInvoiceActive);
+      if (mItemInvoiceActive !== undefined) {
+        this.handlePaymentSiderBar(mItemInvoiceActive);
+      }
     });
   }
 
@@ -603,11 +613,12 @@ export class SaleMainComponent implements OnInit {
       }
     });
   }
-  //----------------Print -------------//
+  /** 
+   * Print
+   */
   printInvoice(invoice_id: number) {
-
     this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
-      let address = (res?.customer?.address !== null) ? res?.customer?.address : '';
+      const address = (res?.customer?.address !== null) ? res?.customer?.address : '';
       let printContent = '<title>' + res?.invoice_no + '</title>';
       printContent += '<style>table {' +
         // 'font-family: arial, sans-serif;' +
@@ -646,7 +657,6 @@ export class SaleMainComponent implements OnInit {
           '<td style="text-align:right;">' + element.total + '</td>' +
           '</tr>';
       });
-      // printContent += '</table>';
 
       /**
        * Tong tien hang
@@ -664,11 +674,10 @@ export class SaleMainComponent implements OnInit {
         '<td style="text-align:right; font-weight:600;">' + res.total + '</td>' +
         '</tr>';
       printContent += '</table>';
-
       printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
       printContent += '</section>';
 
-      const WindowPrt = window.open('', 'HD1', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+      const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
       WindowPrt.document.write(printContent);
       WindowPrt.document.close();
       WindowPrt.focus();
@@ -752,7 +761,6 @@ export class SaleMainComponent implements OnInit {
         discount_type: this.discount_type,
         note: this.form.controls['noteSiderBar'].value,
         price_book_id: this.form.controls['priceBookID'].value,
-        // created_by: this.form.controls['userID'].value, @NGHIA store id
       },
       InvoiceDetail: invoiceDetail,
       PaymentMethod: mItemInvoice.paymentSiderBar?.type,
@@ -768,25 +776,28 @@ export class SaleMainComponent implements OnInit {
           if (typeof res === 'number' && this.autoPrint === true) {
             this.printInvoice(res);
           }
-
           this.resetDataSiderBar();
           this.notifySer.notify('success', 'Lưu thành công !');
-          this.loadData();
         } else {
           this.notifySer.notify('warning', 'Thất bại !');
         }
+        this.loadData();
+
         this.orderService.setLoadProduct(false);
         this.orderService.setLoadDetailPage(true);
       });
     } else {
       this.orderService.updateOrder(dataInvoice).subscribe(res => {
         if (res !== false) {
+          if (typeof res === 'number' && this.autoPrint === true) {
+            this.printInvoice(res);
+          }
           this.resetDataSiderBar();
-          this.loadData();
           this.notifySer.notify('success', 'Cập nhật đơn thành công !');
         } else {
           this.notifySer.notify('warning', 'Thất bại !');
         }
+        this.loadData();
         this.orderService.setLoadProduct(false);
         this.orderService.setLoadDetailPage(true);
       });
@@ -795,7 +806,7 @@ export class SaleMainComponent implements OnInit {
   }
 
   async resetDataSiderBar() {
-    await this.orderService.removeActive(); //@nghia
+    await this.orderService.removeActive(); 
     await this.selectCustomer.patchValue(null);
     await this.selectUser.patchValue(null);
     await this.form.patchValue({
@@ -821,16 +832,12 @@ export class SaleMainComponent implements OnInit {
     this.orderService.setListInvoiceLocalStorage(listInvoice);
   }
 
-  
   /**
    *  Tu dong in hoa don
    * @param e 
    */
-  onChangeSlideToggle(e: any){
-    // console.log(e.checked);
+  onChangeSlideToggle(e: any) {
     this.autoPrint = e.checked;
   }
-  /**
-  * ******************************************* END SALE SIDER BAR ORDER 
-  */
+  
 }

@@ -11,6 +11,10 @@ import { MatDialog } from "@angular/material/dialog";
 import { NotifierService } from "angular-notifier";
 import { animate, state, style, transition, trigger } from "@angular/animations";
 import { ProductMerchandiseFormDialogComponent } from '../product-merchandise-form-dialog/product-merchandise-form-dialog.component';
+import { FormControl } from '@angular/forms';
+import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
+import { of } from 'rxjs/internal/observable/of';
+
 
 @Component({
   selector: 'app-product-list',
@@ -67,6 +71,8 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
   isLoadingResults = true;
   isRateLimitReached = false;
 
+  searchProductForm = new FormControl();
+
   buildFilterFromParams(): ProductFilter {
     function write<K extends keyof ProductFilter>(arg: ProductFilter, key: K, value: ProductFilter[K]): void {
       arg[key] = value;
@@ -91,13 +97,14 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
       this.dataSource = res.body;
       let stt = 0;
       this.dataSource.forEach(elementData => {
-        stt++; elementData.stt = stt; 
+        stt++; elementData.stt = stt;
       });
       this.reloadFilter(res);
       const url = this.service.getStateUrl(this.apiFilter);
       this.isLoadingResults = false;
     });
   }
+
 
   ngOnInit() {
     this.apiFilter = this.buildFilterFromParams();
@@ -106,6 +113,15 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     this.service.subscribeLoadProduct.subscribe(action => {
       if (action === true) {
         this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+        this.service.setLoadProduct(false);
+      }
+    });
+
+    this.searchProductForm.valueChanges.pipe(debounceTime(800)).subscribe(res => {
+      if (res !== '') {
+        this.apiFilter = this.buildFilterFromParams();
+        this.apiFilter.product_no = res;
         this.loadData();
         this.service.setLoadProduct(false);
       }
@@ -143,5 +159,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
       this.loadData();
     });
   }
+
+
 
 }

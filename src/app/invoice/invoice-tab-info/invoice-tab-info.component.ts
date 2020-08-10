@@ -138,17 +138,17 @@ export class InvoiceTabInfoComponent implements OnInit {
       number: invoice.discount,
       type: invoice.discount_type
     };
-    // mItemInvoice.paymentSiderBar = { //@Nghia
-    //   number: invoice.discount,
-    //   type: invoice.discount_type
-    // };
+
     let aProductInfo: ProductInfo[] = [];
     const detail = invoice.detail || [];
+
     detail.forEach(element => {
-      let mProductInfo = new ProductInfo();
+      const mProductInfo = new ProductInfo();
       mProductInfo.amount = element.amount;
       mProductInfo.product_id = element.product?.id;
       mProductInfo.product = element.product;
+      mProductInfo.product.end_price = element.price;
+      mProductInfo.common_price = element.price;
       aProductInfo.push(mProductInfo);
     });
     mItemInvoice.listProduct = aProductInfo;
@@ -163,7 +163,7 @@ export class InvoiceTabInfoComponent implements OnInit {
   printInvoice(invoice_id: number) {
 
     this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
-      let address = (res?.customer?.address !== null) ? res?.customer?.address : '';
+      const address = (res?.customer?.address !== null) ? res?.customer?.address : '';
       let printContent = '<title>' + res?.invoice_no + '</title>';
       printContent += '<style>table {' +
         // 'font-family: arial, sans-serif;' +
@@ -223,7 +223,7 @@ export class InvoiceTabInfoComponent implements OnInit {
       printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
       printContent += '</section>';
 
-      const WindowPrt = window.open('', 'HD1', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+      const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
       WindowPrt.document.write(printContent);
       WindowPrt.document.close();
       WindowPrt.focus();
