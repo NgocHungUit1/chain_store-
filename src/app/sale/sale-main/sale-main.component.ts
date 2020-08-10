@@ -145,10 +145,9 @@ export class SaleMainComponent implements OnInit {
    * Add customer exist
    */
   handleAddCustomerExist(mItemInvoice) {
-    if (mItemInvoice.customer !== undefined) {
-      this.selectCustomer.patchValue(mItemInvoice.customer?.name);
-    } else {
-      this.selectCustomer.patchValue(null);
+    this.selectCustomer.patchValue('');
+    if (mItemInvoice?.customer?.name !== undefined) {
+      this.selectCustomer.patchValue(mItemInvoice?.customer?.name);
     }
   }
   /**
@@ -806,7 +805,7 @@ export class SaleMainComponent implements OnInit {
   }
 
   async resetDataSiderBar() {
-    await this.orderService.removeActive(); 
+    await this.orderService.removeActive();
     await this.selectCustomer.patchValue(null);
     await this.selectUser.patchValue(null);
     await this.form.patchValue({
@@ -839,5 +838,5 @@ export class SaleMainComponent implements OnInit {
   onChangeSlideToggle(e: any) {
     this.autoPrint = e.checked;
   }
-  
+
 }
