@@ -156,10 +156,6 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
           + date.slice(0, 4) + ' '
           + date.slice(11, 16);
 
-        // cap nhat chi tiet san pham , bang gia chung
-        this.service.getDetail(elementData.id, elementData.price_book_id).subscribe(respon => {
-          elementData.detail = respon;
-        });
         // tong tien khach hang da tra, tien giam gia
         let total_payment = 0;
         let discount_price = 0;

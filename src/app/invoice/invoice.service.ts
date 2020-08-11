@@ -61,10 +61,6 @@ export class InvoiceService {
     return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
   }
 
-  // getDetail(id: string, expand: string = '') {
-  //   const url = environment.apiUrl + '/invoice/' + id + '?expand=' + expand;
-  //   return this.http.get<object>(url);
-  // }
 
   public getInvoices(id: string, expand: string = ''): Observable<Invoice> {
     const url = environment.apiUrl + '/invoice/' + id + '?expand=' + expand;
@@ -95,7 +91,6 @@ export class InvoiceService {
     const url = environment.apiUrl + '/invoice/detail';
     return this.http.post(url, { invoice_id: invoice_id, price_book_id: price_book_id });
   }
-
 
   getApiUrlSumaryInvoice(filter?: InvoiceFilter) {
     if (!filter.page) {
