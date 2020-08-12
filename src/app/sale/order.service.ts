@@ -389,11 +389,17 @@ export class OrderService {
   addItemInvoiceUpdate(mItemInvoice: ItemInvoice) {
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
+    const listNew: ItemInvoice[] = [];
+
     listItemInvoice.forEach(element => {
       element.active = false;
+      if (element.invoice_id !== mItemInvoice.invoice_id) {
+        listNew.push(element);
+      }
     });
-    listItemInvoice.push(mItemInvoice);
-    ListInvoice.itemInvoice = listItemInvoice;
+    listNew.push(mItemInvoice);
+
+    ListInvoice.itemInvoice = listNew;
     this.setListInvoiceLocalStorage(ListInvoice);
   }
 

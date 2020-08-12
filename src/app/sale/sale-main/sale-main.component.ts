@@ -358,11 +358,9 @@ export class SaleMainComponent implements OnInit {
     this.userService.getUserLogin().subscribe(res => {
       this.user = res;
       this.handleActiveUser();
+      this.loadPriceBookDefault();
     });
-    /**
-     * Load list Price Book
-     */
-    this.loadPriceBookDefault();
+    
     this.orderService.subscribeLoadDetailPage.subscribe(action => {
       if (action === true) {
         this.listProduct = null;
