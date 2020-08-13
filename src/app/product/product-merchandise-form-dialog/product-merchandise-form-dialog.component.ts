@@ -42,7 +42,6 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
     product_no: 'Mã hàng',
     barcode: 'Mã vạch',
     product_type: 'Loại hàng',
-    store_id: 'Cửa hàng',
     shortcut: 'Tên viết tắt',
     using_id: 'Đường dùng',
     group_id: 'Nhóm hàng',
@@ -95,13 +94,12 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
   }
 
 
-  initForm(){
+  initForm() {
     this.form = this.fb.group({
       // name : [null, Validators.required],
       product_no: [null, Validators.required],
       barcode: [null],
       product_type: ['merchandise'],
-      store_id: [1],
       shortcut: [null],
       using_id: [-1],
       group_id: [null, Validators.required],
@@ -250,7 +248,6 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
           this.dialogRef.close({event: this.action, data: product});
         } else if (action === 'SaveAndMore') {
           this.form.reset({
-            store_id: 1,
             product_type: 'merchandise'
           });
           this.selectedFiles = [];
@@ -298,12 +295,11 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
         placements.push(pPlacement.id)
       });
 
-      if(copy == null){
+      if (copy == null) {
         this.form.patchValue({
           product_no: product['product_no'],
           barcode: product['barcode'],
           product_type: product['product_type'],
-          store_id: product['store_id'],
           shortcut: product['shortcut'],
           using_id: product['using_id'],
           group_id: product['group_id'],
@@ -325,7 +321,6 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
           product_no: '',
           barcode: product['barcode'],
           product_type: product['product_type'],
-          store_id: product['store_id'],
           shortcut: product['shortcut'],
           using_id: product['using_id'],
           group_id: product['group_id'],

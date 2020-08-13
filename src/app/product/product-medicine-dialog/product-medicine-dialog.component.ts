@@ -52,7 +52,6 @@ export class ProductMedicineDialogComponent implements OnInit {
     product_no: 'Mã hàng',
     barcode: 'Mã vạch',
     product_type: 'Loại hàng',
-    store_id: 'Cửa hàng',
     shortcut: 'Tên viết tắt',
     using_id: 'Đường dùng',
     group_id: 'Nhóm hàng',
@@ -118,7 +117,6 @@ export class ProductMedicineDialogComponent implements OnInit {
       ],
       barcode: [null],
       product_type: ['medicine'],
-      store_id: [1],
       shortcut: [null],
       using_id: [null, Validators.required],
       group_id: [null, Validators.required],
@@ -213,7 +211,6 @@ export class ProductMedicineDialogComponent implements OnInit {
           product_no: product['product_no'],
           barcode: product['barcode'],
           product_type: product['product_type'],
-          store_id: product['store_id'],
           shortcut: product['shortcut'],
           using_id: product['using_id'],
           group_id: product['group_id'],
@@ -235,7 +232,6 @@ export class ProductMedicineDialogComponent implements OnInit {
           product_no: '',
           barcode: product['barcode'],
           product_type: product['product_type'],
-          store_id: product['store_id'],
           shortcut: product['shortcut'],
           using_id: product['using_id'],
           group_id: product['group_id'],
@@ -350,7 +346,6 @@ export class ProductMedicineDialogComponent implements OnInit {
           this.dialogRef.close({ event: this.action, data: product });
         } else if (action === 'SaveAndMore') {
           this.form.reset({
-            store_id: 1,
             product_type: 'medicine'
           });
           this.selectedFiles = [];
