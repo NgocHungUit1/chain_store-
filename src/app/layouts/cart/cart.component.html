@@ -79,8 +79,7 @@
       <mat-icon>add</mat-icon>
     </button> -->
 
-
-    <nav mat-tab-nav-bar mat-align-tabs="start">
+    <nav mat-tab-nav-bar >
       <a mat-tab-link *ngFor="let mItemInvoice of listmItemInvoice" (click)="activeLink = mItemInvoice.invoice_id"
         [active]="activeLink == mItemInvoice.invoice_id" (click)="activeInvoice(mItemInvoice?.invoice_id)" mat-primary>
         <span *ngIf="mItemInvoice?.invoice_id > 0">{{ mItemInvoice.invoice_name }}</span>

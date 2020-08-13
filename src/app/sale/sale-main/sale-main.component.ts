@@ -21,6 +21,7 @@ import { CustomerService } from '../../customer/customer.service';
 import { UserService } from '../user.service';
 import { User } from '../user.model';
 import { element } from 'protractor';
+import { log } from 'console';
 
 @Component({
   selector: 'app-sale-main',
@@ -40,6 +41,7 @@ export class SaleMainComponent implements OnInit {
     private customerService: CustomerService,
     private userService: UserService,
   ) {
+
   }
 
   selectProduct = new FormControl();
@@ -118,17 +120,18 @@ export class SaleMainComponent implements OnInit {
     const listItemInvoice = listInvoice.itemInvoice;
     listItemInvoice.forEach(element => {
       if (element.active === true) {
+
         if (element.user === undefined || element.user === null) {
           element.user = this.user;
+          this.orderService.setListInvoiceLocalStorage(listInvoice);
+
         }
         this.selectUser.patchValue(element.user?.username);
         this.form.patchValue({
           'userID': element.user?.id
         });
-
       }
     });
-    this.orderService.setListInvoiceLocalStorage(listInvoice);
   }
 
   /**
@@ -287,7 +290,6 @@ export class SaleMainComponent implements OnInit {
       this.userService.getUserLogin().subscribe(res => {
         this.user = res;
       });
-      this.handleActiveUser();
     }
   }
 
@@ -350,21 +352,23 @@ export class SaleMainComponent implements OnInit {
   ngOnInit(): void {
     this.isLoadingResults = true;
     this.initFormSiderBar();
-    this.loadUserLogin();
-    this.handleActiveUser();
-    this.loadPriceBookDefault();
-
+    /**
+     * Load user login
+     */
+    this.userService.getUserLogin().subscribe(res => {
+      this.user = res;
+      this.handleActiveUser();
+      this.loadPriceBookDefault();
+    });
+    
     this.orderService.subscribeLoadDetailPage.subscribe(action => {
       if (action === true) {
         this.listProduct = null;
       }
     });
-    // this.loadData();
     this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
       this.loadData();
-
     });
-
     this.isLoadingResults = false;
 
     /**
