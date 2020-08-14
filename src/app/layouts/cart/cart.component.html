@@ -49,7 +49,10 @@
         <mat-autocomplete #chooseProduct="matAutocomplete" (optionSelected)="onSelectedProduct($event.option.value)">
           <mat-option *ngFor="let product of filteredProducts | async" [value]="product">
             <img class="example-option-img " aria-hidden [src]="product.default_image" height="25">
-            <span class="m-l-10">{{product.product_name}}</span>
+            <span class="m-l-10"
+              *ngIf="product.base_unit !== null">{{ product.product_name +' - '+ product.base_unit }} - {{ product.sell_price | number }}</span>
+            <span class="m-l-10" *ngIf="product.base_unit == null">{{ product.product_name }}</span>
+
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
@@ -79,7 +82,7 @@
       <mat-icon>add</mat-icon>
     </button> -->
 
-    <nav mat-tab-nav-bar >
+    <nav mat-tab-nav-bar>
       <a mat-tab-link *ngFor="let mItemInvoice of listmItemInvoice" (click)="activeLink = mItemInvoice.invoice_id"
         [active]="activeLink == mItemInvoice.invoice_id" (click)="activeInvoice(mItemInvoice?.invoice_id)" mat-primary>
         <span *ngIf="mItemInvoice?.invoice_id > 0">{{ mItemInvoice.invoice_name }}</span>

@@ -82,7 +82,7 @@ export class CartComponent implements OnDestroy {
       const listItemInvoice = listInvoice.itemInvoice;
       this.listmItemInvoice = [];
       listItemInvoice.forEach(element => {
-        if(element.active === true){
+        if (element.active === true) {
           this.activeLink = element.invoice_id;
         }
         this.listmItemInvoice.push(element);
@@ -108,9 +108,12 @@ export class CartComponent implements OnDestroy {
   }
 
   lookupProduct(value: string): Observable<Product[]> {
-    return this.productSer.autocomplete(value).pipe(
+    return this.productSer.autocompleteUnits(value).pipe(
+      debounceTime(300),
       // map the item property of the github results as our return object
-      map(results => results),
+      map(results => {
+        return results;
+      }),
       // catch errors
       catchError(_ => {
         return of(null);
@@ -141,6 +144,6 @@ export class CartComponent implements OnDestroy {
   }
   // Mini sidebar
 
-  
+
 
 }
