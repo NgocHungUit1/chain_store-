@@ -27,8 +27,11 @@
                             </span>
                         </div>
                         <div fxFlex="40">
-                            <span class="row-text row-product-name">
+                            <span class="row-text row-product-name" *ngIf="itemProduct.product?.base_unit == null">
                                 {{ itemProduct.product?.product_name }}
+                            </span>
+                            <span class="row-text row-product-name" *ngIf="itemProduct.product?.base_unit !== null">
+                                {{ itemProduct.product?.product_name+' - '+itemProduct.product?.base_unit }}
                             </span>
                             <span class="row-product-note">
                                 <span *ngIf="itemProduct.product?.note_detail_sale === undefined">Ghi chú liều
@@ -46,14 +49,14 @@
                             <div fxLayout="row wrap">
                                 <mat-form-field style=" font-size: 20px; text-align: center;">
                                     <button matPrefix mat-icon-button class="row-button-edit-amount"
-                                        (click)="upAmountProduct(itemProduct.product?.id)">
+                                        (click)="upAmountProduct(itemProduct.product)">
                                         <mat-icon>keyboard_arrow_up</mat-icon>
                                     </button>
                                     <input matInput type="number" tabindex="3" min="0" class="row-amount-number"
                                         (input)="inputAmountProduct(itemProduct.product?.id,$event.target.value)"
                                         value="{{ itemProduct.amount }}">
                                     <button matSuffix mat-icon-button class="row-button-edit-amount"
-                                        (click)="downAmountProduct(itemProduct.product?.id)">
+                                        (click)="downAmountProduct(itemProduct.product)">
                                         <mat-icon>keyboard_arrow_down</mat-icon>
                                     </button>
                                 </mat-form-field>

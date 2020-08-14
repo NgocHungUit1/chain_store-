@@ -196,11 +196,19 @@ export class InvoiceTabInfoComponent implements OnInit {
        * Chi tiet don hang
        */
       detail.forEach(element => {
-        printContent += '<tr>' +
-          '<td>' + element.product?.product_name + '<br>' + element.price + '</td>' +
-          '<td style="text-align:center;">' + element.amount + '</td>' +
-          '<td style="text-align:right;">' + element.total + '</td>' +
-          '</tr>';
+        if (element?.base_unit == null) {
+          printContent += '<tr>' +
+            '<td>' + element.product?.product_name + '<br>' + element.price + '</td>' +
+            '<td style="text-align:center;">' + element.amount + '</td>' +
+            '<td style="text-align:right;">' + element.total + '</td>' +
+            '</tr>';
+        } else {
+          printContent += '<tr>' +
+            '<td>' + element.product?.product_name + ' - ' + element?.base_unit + '<br>' + element.price + '</td>' +
+            '<td style="text-align:center;">' + element.amount + '</td>' +
+            '<td style="text-align:right;">' + element.total + '</td>' +
+            '</tr>';
+        }
       });
 
       /**

@@ -31,6 +31,8 @@ export class Product {
   discount_type: string; // use for setup price detail
   end_price: string; // use for setup price detail
   stt: number; // for view
+  product_unit_id: number; // for unit
+  product_unit_value: number; //for unit
 }
 
 

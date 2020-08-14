@@ -38,6 +38,9 @@ export class ProductInfo {
     product: Product;
     amount: number;
     common_price: number;
+    product_unit_id: number;
+    product_unit_value: number;
+    base_unit: string;
 }
 export class ItemInvoice {
     invoice_name: string;
@@ -61,6 +64,9 @@ export class itemDetail {
     price: number;
     total: number;
     product: Product;
+    product_unit_id: number;
+    product_unit_value: number;
+    base_unit: string;
 }
 
 export class resInvoicePrint {

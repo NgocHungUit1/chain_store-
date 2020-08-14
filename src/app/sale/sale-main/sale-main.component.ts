@@ -360,7 +360,7 @@ export class SaleMainComponent implements OnInit {
       this.handleActiveUser();
       this.loadPriceBookDefault();
     });
-    
+
     this.orderService.subscribeLoadDetailPage.subscribe(action => {
       if (action === true) {
         this.listProduct = null;
@@ -417,12 +417,12 @@ export class SaleMainComponent implements OnInit {
    */
 
   deleleProduct(itemProduct) {
-    const id = itemProduct?.product?.id;
-    this.orderService.deleteProduct(id);
+    const product = itemProduct?.product;
+    this.orderService.deleteProduct(product);
   }
 
-  upAmountProduct(product_id) {
-    this.orderService.upAmountProduct(product_id);
+  upAmountProduct(product: Product) {
+    this.orderService.upAmountProduct(product);
   }
 
   downAmountProduct(product_id) {
@@ -467,10 +467,6 @@ export class SaleMainComponent implements OnInit {
 
   /**
    * ******************************************* END SALE DETAIL ORDER *******************************************
-   */
-
-
-  /**
   * *******************************************  SALE SIDER BAR ORDER *******************************************
   */
 
@@ -654,11 +650,19 @@ export class SaleMainComponent implements OnInit {
        * Chi tiet don hang
        */
       detail.forEach(element => {
-        printContent += '<tr>' +
-          '<td>' + element.product?.product_name + '<br>' + element.price + '</td>' +
-          '<td style="text-align:center;">' + element.amount + '</td>' +
-          '<td style="text-align:right;">' + element.total + '</td>' +
-          '</tr>';
+        if (element?.base_unit == null) {
+          printContent += '<tr>' +
+            '<td>' + element.product?.product_name + '<br>' + element.price + '</td>' +
+            '<td style="text-align:center;">' + element.amount + '</td>' +
+            '<td style="text-align:right;">' + element.total + '</td>' +
+            '</tr>';
+        } else {
+          printContent += '<tr>' +
+            '<td>' + element.product?.product_name + ' - ' + element?.base_unit + '<br>' + element.price + '</td>' +
+            '<td style="text-align:center;">' + element.amount + '</td>' +
+            '<td style="text-align:right;">' + element.total + '</td>' +
+            '</tr>';
+        }
       });
 
       /**
@@ -749,6 +753,9 @@ export class SaleMainComponent implements OnInit {
         note: element.product?.note_detail_sale,
         discount: discount,
         discount_type: discount_type,
+        product_unit_id: element.product?.product_unit_id,
+        product_unit_value: element.product?.product_unit_value,
+        base_unit: element.product?.base_unit,
       });
     });
 

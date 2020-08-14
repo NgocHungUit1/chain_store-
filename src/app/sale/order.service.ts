@@ -189,6 +189,9 @@ export class OrderService {
       const mProductInfo = new ProductInfo();
       mProductInfo.product_id = object.id;
       mProductInfo.product = object;
+      mProductInfo.product_unit_id = object.product_unit_id;
+      mProductInfo.product_unit_value = object.product_unit_value;
+      mProductInfo.base_unit = object.base_unit;
       mProductInfo.amount = 1;
       listProduct.push(mProductInfo);
       mItemInvoice.listProduct = listProduct;
@@ -197,7 +200,7 @@ export class OrderService {
       // them san pham da ton tai
       let newItem = 1;
       listProduct.forEach(eProductInfo => {
-        if (eProductInfo.product_id === object.id) {
+        if (eProductInfo.product_id === object.id && eProductInfo.product_unit_id === object.product_unit_id) {
           newItem = 0;
           eProductInfo.amount = eProductInfo.amount + 1;
         }
@@ -206,6 +209,9 @@ export class OrderService {
         const mProductInfo = new ProductInfo();
         mProductInfo.product_id = object.id;
         mProductInfo.product = object;
+        mProductInfo.product_unit_id = object.product_unit_id;
+        mProductInfo.product_unit_value = object.product_unit_value;
+        mProductInfo.base_unit = object.base_unit;
         mProductInfo.amount = 1;
         listProduct.push(mProductInfo);
       }
@@ -213,7 +219,7 @@ export class OrderService {
     this.setListInvoiceLocalStorage(ListInvoice);
   }
 
-  deleteProduct(id: string) {
+  deleteProduct(product: Product) {
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
@@ -227,10 +233,18 @@ export class OrderService {
       const listProduct = mItemInvoice.listProduct;
       const resultListProduct = [];
       listProduct.forEach(eProductInfo => {
-        if (eProductInfo.product_id !== id) {
+        if (eProductInfo.product_id !== product.id) {
           resultListProduct.push(eProductInfo);
+        } else {
+          if (eProductInfo.product_unit_id == undefined && product.product_unit_id !== undefined) {
+            resultListProduct.push(eProductInfo);
+          }
+          if (eProductInfo.product_unit_id !== undefined && product.product_unit_id !== undefined && eProductInfo.product_unit_id !== product.product_unit_id) {
+            resultListProduct.push(eProductInfo);
+          }
         }
       });
+
       mItemInvoice.listProduct = resultListProduct;
     }
     this.setListInvoiceLocalStorage(ListInvoice);
@@ -239,7 +253,7 @@ export class OrderService {
   /*
   Thay doi so luong san pham
   */
-  upAmountProduct(id: string) {
+  upAmountProduct(product: Product) {
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
@@ -253,7 +267,7 @@ export class OrderService {
       const listProduct = mItemInvoice.listProduct;
       const resultListProduct = [];
       listProduct.forEach(eProductInfo => {
-        if (eProductInfo.product_id === id) {
+        if (eProductInfo.product_id === product.id && eProductInfo.product_unit_id == product.product_unit_id) {
           eProductInfo.amount++;
         }
         resultListProduct.push(eProductInfo);
@@ -263,7 +277,7 @@ export class OrderService {
     this.setListInvoiceLocalStorage(ListInvoice);
   }
 
-  downAmountProduct(id: string) {
+  downAmountProduct(product: Product) {
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
@@ -277,7 +291,8 @@ export class OrderService {
       const listProduct = mItemInvoice.listProduct;
       const resultListProduct = [];
       listProduct.forEach(eProductInfo => {
-        if (eProductInfo.product_id === id) {
+        if (eProductInfo.product_id === product.id && eProductInfo.product_unit_id == product.product_unit_id) {
+
           eProductInfo.amount--;
           if (eProductInfo.amount > 0) {
             resultListProduct.push(eProductInfo);
@@ -317,6 +332,8 @@ export class OrderService {
   }
 
   updateProduct(id: string, product: Product) {
+    console.log(product);
+
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
@@ -331,7 +348,13 @@ export class OrderService {
       const resultListProduct = [];
       listProduct.forEach(eProductInfo => {
         if (eProductInfo.product_id === id) {
-          eProductInfo.product = product;
+          if (product.product_unit_id == undefined) {
+            eProductInfo.product = product;
+          } else {
+            if (eProductInfo.product_unit_id === product.product_unit_id && product.product_unit_id !== undefined) {
+              eProductInfo.product = product;
+            }
+          }
         }
         resultListProduct.push(eProductInfo);
       });
