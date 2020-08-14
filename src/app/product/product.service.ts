@@ -92,6 +92,15 @@ export class ProductService {
     const url = environment.apiUrl + '/product/autocomplete?term=' + term;
     return this.http.get<Product[]>(url);
   }
+  
+  /**
+   * Search Autocomplete With Units
+   * @param term 
+   */
+  autocompleteUnits(term: string) {
+    const url = environment.apiUrl + '/product/autocomplete-units?term=' + term;
+    return this.http.get<Product[]>(url);
+  }
 
   // list for cart 
   getApiUrlCart(filter?: ProductFilter) {
