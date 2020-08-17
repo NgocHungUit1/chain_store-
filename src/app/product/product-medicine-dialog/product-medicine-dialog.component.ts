@@ -112,7 +112,7 @@ export class ProductMedicineDialogComponent implements OnInit {
         Validators.compose([
           Validators.required,
           Validators.minLength(5),
-          Validators.maxLength(10)
+          Validators.maxLength(32)
         ])
       ],
       barcode: [null],

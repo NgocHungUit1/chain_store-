@@ -64,8 +64,12 @@ export class PriceListService {
         const url = environment.apiUrl + '/price-list/exist';
         return this.http.post(url, { data: data });
     }
+
+    /**
+     * Update all product to PriceBook
+     */
+    updateAll(price_book_id) {
+        const url = environment.apiUrl + '/price-list/update-all/';
+        return this.http.post(url, { price_book_id: price_book_id });
+    }
 }
-
-
-
-

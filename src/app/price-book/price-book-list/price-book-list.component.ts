@@ -258,6 +258,16 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     });
   }
 
+  updateAllProduct() {
+    const priceListID = this.priceListForm.controls['priceLists'].value;
+    this.priceListSer.updateAll(priceListID).subscribe(res => {
+      if (res === true) {
+        this.loadData();
+      }
+    });
+
+  }
+
   updatePriceListFormDialog() {
     const obj = {
       title: 'Sửa bảng giá',
@@ -342,11 +352,11 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     });
   }
 
-  dialogSetUpCommonPrice(data, pageTotalCount,element_common_price) {
+  dialogSetUpCommonPrice(data, pageTotalCount, element_common_price) {
     data.pageTotalCount = pageTotalCount;
     data.price_list_common_id = this.priceListCommon.id;
     data.element_common_price = element_common_price;
-    
+
     const dialogRef = this.dialog.open(SetupCommonPriceDialogComponent, {
       data: data,
       width: '45%',

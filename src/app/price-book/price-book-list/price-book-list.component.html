@@ -1,6 +1,6 @@
 <mat-sidenav-container>
 
-  <mat-sidenav  #sidenav class="left-sidebar" mode="side" opened>
+  <mat-sidenav #sidenav class="left-sidebar" mode="side" opened>
     <mat-toolbar class="dv-header">
       <button mat-icon-button>
         <mat-icon>filter_list</mat-icon>
@@ -61,6 +61,14 @@
         </mat-form-field>
       </div>
       <span fxFlex="1 1 0%"></span>
+      <button mat-raised-button color="primary" (click)="updateAllProduct()" style="margin-right: 10px">
+        <mat-icon>add</mat-icon>
+        Thêm tất cả sản phẩm
+      </button>
+      <button style="margin-left: 10px" mat-raised-button color="primary" (click)="loadData()">
+        <mat-icon>refresh</mat-icon>
+        Làm mới
+      </button>
     </mat-toolbar>
 
     <div fxLayout="row wrap">
@@ -92,12 +100,14 @@
 
               <ng-container matColumnDef="original_price">
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['original_price']}}</th>
-                <td mat-cell class="column-number" *matCellDef="let element"> {{ element.product?.original_price | number }}</td>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  {{ element.product?.original_price | number }}</td>
               </ng-container>
 
               <ng-container matColumnDef="sell_price">
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['sell_price']}}</th>
-                <td mat-cell class="column-number" *matCellDef="let element"> {{ element.product?.sell_price | number }}</td>
+                <td mat-cell class="column-number" *matCellDef="let element"> {{ element.product?.sell_price | number }}
+                </td>
               </ng-container>
 
               <ng-container matColumnDef="price">
@@ -108,7 +118,8 @@
                   </button>
                 </th>
                 <td mat-cell class="column-number" *matCellDef="let element">
-                  <button mat-icon-button (click)="dialogSetUpCommonPrice(element,pageTotalCount, element?.common?.price)">
+                  <button mat-icon-button
+                    (click)="dialogSetUpCommonPrice(element,pageTotalCount, element?.common?.price)">
                     <mat-icon>edit</mat-icon>
                   </button>
                   <mat-form-field class="input-price">

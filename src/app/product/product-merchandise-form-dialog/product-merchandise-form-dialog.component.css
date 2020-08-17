@@ -4,6 +4,7 @@
   z-index: 1;
   padding-left: 0px;
 }
+
 .product-upload-image li {
   background-color: #fff;
   border: 1px dashed #ccc;
@@ -16,9 +17,11 @@
   list-style: none;
   display: none;
 }
+
 .product-upload-image li.show {
   display: block;
 }
+
 .product-upload-image li label img {
   position: absolute;
   top: 0;
@@ -28,6 +31,7 @@
   object-fit: contain;
   z-index: 0;
 }
+
 .product-upload-image li label {
   margin-bottom: 0;
   width: 100%;
@@ -36,6 +40,7 @@
   border-radius: 5px;
   display: none;
 }
+
 .product-upload-image li label .add-image-text {
   background-color: transparent;
   border: none;
@@ -45,17 +50,20 @@
   line-height: 78px;
   height: 78px;
   font-weight: 400;
-  color: #999!important;
+  color: #999 !important;
   padding: 0;
   text-align: center;
   z-index: 1;
 }
+
 .product-upload-image li label:hover .add-image-text {
   opacity: 1;
 }
+
 .product-upload-image li.show label {
   display: block;
 }
+
 .add-image-text {
   white-space: nowrap;
   position: relative;
@@ -65,10 +73,12 @@
   border-radius: 5px;
   vertical-align: middle;
 }
+
 .add-image-text:hover {
   cursor: pointer;
   color: red;
 }
+
 .product-upload-image li .delete-image {
   position: absolute;
   top: -8px;
@@ -78,24 +88,29 @@
   border-radius: 50%;
   display: none;
 }
+
 .product-upload-image li:hover .delete-image {
   display: block;
   background-color: inherit;
 }
+
 .product-upload-image li:hover .delete-image .mat-icon {
   color: red;
 }
+
 .product-upload-image li.selected-image {
   margin: 0 12px 0 0;
   width: calc((100% - 60px)/ 5);
   height: 80px;
 }
+
 .product-upload-image li.selected-image img {
   width: 100%;
   height: 100%;
   vertical-align: middle;
   border-radius: 3px;
 }
+
 .mat-typography {
   font: 400 11px/9px Arial, Helvetica, sans-serif;
 }
@@ -104,4 +119,8 @@
   margin-top: 2px;
   height: 18px;
   font-weight: 600;
+}
+
+input {
+  font-size: 16px;
 }
