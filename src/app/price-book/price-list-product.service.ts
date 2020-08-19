@@ -65,9 +65,16 @@ export class PriceListProductService {
         return this.http.post(url, { product_id: product_id, price_list_id: price_list_id });
     }
 
+    /**
+     * Chua dung method delete duoc
+     * dung tam method post
+     */
     delete(id: string) {
-        const url = environment.apiUrl + '/price-list-product/delete/' + id;
-        return this.http.delete(url);
+        // const url = environment.apiUrl + '/price-list-product/delete/' + id;
+        // return this.http.delete(url);
+
+        const url = environment.apiUrl + '/price-list-product/post-delete';
+        return this.http.post(url, { id: id });
     }
 
     updatePriceAll(price_list_id: string, price_list_common_id: string, data: any) {
