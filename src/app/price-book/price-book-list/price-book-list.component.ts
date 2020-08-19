@@ -268,6 +268,20 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
 
   }
 
+  exportExcel() {
+    const priceListID = this.priceListForm.controls['priceLists'].value;
+    this.priceListSer.exportExcel(priceListID).subscribe(res => {
+      // window.open(res);
+
+      console.log(res);
+
+      if (res === true) {
+        // this.loadData();
+      }
+    });
+
+  }
+
   updatePriceListFormDialog() {
     const obj = {
       title: 'Sửa bảng giá',

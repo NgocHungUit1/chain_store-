@@ -72,4 +72,14 @@ export class PriceListService {
         const url = environment.apiUrl + '/price-list/update-all/';
         return this.http.post(url, { price_book_id: price_book_id });
     }
+
+    /**
+     * Export Excel
+     */
+    exportExcel(price_book_id) {
+        const url = environment.apiUrl + '/price-list/export?price_book_id=' + price_book_id;
+        // return this.http.post(url, { price_book_id: price_book_id });
+        // const url = environment.apiUrl + '/product/autocomplete?term=' + term;
+        return this.http.get(url);
+    }
 }

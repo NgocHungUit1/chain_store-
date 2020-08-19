@@ -123,6 +123,11 @@ export class ProductService {
     return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
   }
 
+  getCountProduct() {
+    const url = environment.apiUrl + '/product/count';
+    return this.http.get<number>(url);
+  }
+
 }
 
 

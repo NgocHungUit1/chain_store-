@@ -110,9 +110,9 @@ export class ProductMedicineDialogComponent implements OnInit {
       product_no: [
         null,
         Validators.compose([
-          Validators.required,
+          // Validators.required,
           Validators.minLength(5),
-          Validators.maxLength(32)
+          Validators.maxLength(20)
         ])
       ],
       barcode: [null],
@@ -286,13 +286,28 @@ export class ProductMedicineDialogComponent implements OnInit {
     if (this.form.valid) {
       this.loading = true;
       const data = this.form.getRawValue();
+      // console.log(data.product_no);
+      // debugger;
       if (this.product_id === null) {
         // Create New
-        this.productSer.create(data).subscribe(product => {
-          this.notifySer.notify('success', 'Thêm thuốc thành công!');
-          this.uploadImage(product, action);
-          this.dialogRef.close({ event: action, data: product });
-        });
+        if (data.product_no == null) {
+          this.productSer.getCountProduct().subscribe(count => {
+            data.product_no = 'SP' + count;
+            this.productSer.create(data).subscribe(product => {
+              this.notifySer.notify('success', 'Thêm thuốc thành công!');
+              this.uploadImage(product, action);
+              this.dialogRef.close({ event: action, data: product });
+            });
+          });
+
+        } else {
+          this.productSer.create(data).subscribe(product => {
+            this.notifySer.notify('success', 'Thêm thuốc thành công!');
+            this.uploadImage(product, action);
+            this.dialogRef.close({ event: action, data: product });
+          });
+        }
+
       } else if (this.product_id !== null) {
         // UPDATE
         this.productSer.update(this.product_id, data).subscribe(product => {
