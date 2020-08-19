@@ -61,6 +61,7 @@
         "rxjs-compat": "^6.5.4",
         "rxjs-tslint": "^0.1.8",
         "tslib": "^1.10.0",
+        "xlsx": "^0.16.6",
         "zone.js": "~0.10.2"
     },
     "devDependencies": {

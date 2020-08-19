@@ -268,6 +268,9 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
 
   }
 
+  /** 
+   * https://levelup.gitconnected.com/export-data-to-excel-sheet-in-angular-8-7a8e0342643d
+   */
   exportExcel() {
     const priceListID = this.priceListForm.controls['priceLists'].value;
     this.priceListSer.exportExcel(priceListID).subscribe(res => {
