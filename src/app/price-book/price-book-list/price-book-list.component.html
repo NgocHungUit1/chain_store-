@@ -75,6 +75,31 @@
       </button>
     </mat-toolbar>
 
+    <div style="display: none;" #epltable>
+      <table class="table table-bordered">
+        <thead class="thead-dark">
+          <tr>
+            <th>#</th>
+            <th>Mã hàng</th>
+            <th>Tên hàng</th>
+            <th>Giá vốn</th>
+            <th>Giá bán</th>
+            <th>Giá chung</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of dataExports">
+            <td>{{item.stt}}</td>
+            <td>{{item.product_no}}</td>
+            <td>{{item.product_name}}</td>
+            <td>{{item.original_price  }}</td>
+            <td>{{item.sell_price }}</td>
+            <td>{{item.price }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <div fxLayout="row wrap">
       <div fxFlex="100">
         <div class="table-container">

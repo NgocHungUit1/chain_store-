@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
@@ -18,12 +18,8 @@ import { Observable } from 'rxjs/index';
 import { ProductService } from '../../product/product.service';
 import { of } from 'rxjs/internal/observable/of';
 import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
-import { exit } from 'process';
-import { element } from 'protractor';
-import { resolve } from 'dns';
-import { rejects } from 'assert';
 import { SetupCommonPriceDialogComponent } from '../setup-common-price-dialog/setup-common-price-dialog.component';
-
+import * as xlsx from 'xlsx';
 
 @Component({
   selector: 'app-price-book-list',
@@ -38,6 +34,8 @@ import { SetupCommonPriceDialogComponent } from '../setup-common-price-dialog/se
   ]
 })
 export class PriceBookListComponent extends ListComponentBase implements OnInit {
+
+  @ViewChild('epltable', { static: false }) epltable: ElementRef;
 
   public priceListForm: FormGroup;
   public priceLists: PriceList[] = [];
@@ -95,7 +93,8 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
   isLoadingResults = false;
   isRateLimitReached = false;
 
-
+  dataExports: Object[];
+  namePriceListChoose: string;
 
   buildFilterFromParams(): PriceListProductFilter {
     function write<K extends keyof PriceListProductFilter>(arg: PriceListProductFilter, key: K, value: PriceListProductFilter[K]): void {
@@ -218,6 +217,14 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
         }
       })
     );
+
+    this.priceListForm.valueChanges.subscribe(res => {
+      this.priceLists.forEach(element => {
+        if (element.id == res.priceLists) {
+          this.namePriceListChoose = element.name;
+        }
+      });
+    });
   }
 
   lookupProduct(value: string): Observable<Product[]> {
@@ -272,17 +279,32 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
    * https://levelup.gitconnected.com/export-data-to-excel-sheet-in-angular-8-7a8e0342643d
    */
   exportExcel() {
+
     const priceListID = this.priceListForm.controls['priceLists'].value;
     this.priceListSer.exportExcel(priceListID).subscribe(res => {
-      // window.open(res);
-
-      console.log(res);
-
-      if (res === true) {
-        // this.loadData();
-      }
+      this.handleExcel(res);
     });
+  }
 
+  /**
+   * chua tim dc cach xu ly tot hon
+   */
+  async handleExcel(res) {
+    await this.setDataExports(res)
+    setTimeout(() => { this.downloadExcel() }, 800);
+    // await this.downloadExcel();
+  }
+
+  setDataExports(res) {
+    this.dataExports = res;
+    return true;
+  }
+
+  downloadExcel() {
+    const ws: xlsx.WorkSheet = xlsx.utils.table_to_sheet(this.epltable.nativeElement);
+    const wb: xlsx.WorkBook = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(wb, ws, 'Bảng giá');
+    xlsx.writeFile(wb, this.namePriceListChoose + '.xlsx');
   }
 
   updatePriceListFormDialog() {
