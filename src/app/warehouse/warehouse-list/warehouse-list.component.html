@@ -81,7 +81,7 @@
                   </span>
                   <span *ngIf="element.discount_type === 'percent' ">
                     {{ '('+element.discount_amount + '%)'}}
-                    {{ element.total_price * element.discount_amount /100 | number }}
+                    {{ element.total_price * element.discount_amount /100 | number:'1.0-0' }}
                   </span>
                 </td>
               </ng-container>
