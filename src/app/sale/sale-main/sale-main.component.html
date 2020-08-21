@@ -21,18 +21,22 @@
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
-            <div fxFlex="auto" class="row-product-no">
+            <div fxFlex="14" class="row-product-no">
               <span>
                 {{ itemProduct.product?.product_no }}
               </span>
             </div>
-            <div fxFlex="40">
-              <span class="row-text row-product-name" *ngIf="itemProduct.product?.base_unit == null">
-                {{ itemProduct.product?.product_name }}
+            <div fxFlex="auto">
+              <span class="row-text row-product-name" title="{{ itemProduct.product?.product_name }}">
+                
+                <span *ngIf="itemProduct.product?.product_name.length > 45">{{ itemProduct.product?.product_name | slice:0:45 }} ...</span>
+                <span *ngIf="itemProduct.product?.product_name.length <= 45">{{ itemProduct.product?.product_name }}</span>
+
+                <span *ngIf="itemProduct.product?.base_unit !== null">{{ itemProduct.product?.base_unit }}</span>
               </span>
-              <span class="row-text row-product-name" *ngIf="itemProduct.product?.base_unit !== null">
+              <!-- <span class="row-text row-product-name" *ngIf="itemProduct.product?.base_unit !== null">
                 {{ itemProduct.product?.product_name+' - '+itemProduct.product?.base_unit }}
-              </span>
+              </span> -->
               <span class="row-product-note">
                 <span *ngIf="itemProduct.product?.note_detail_sale === undefined">Ghi chú liều
                   dùng</span>
@@ -62,7 +66,7 @@
               </div>
             </div>
             <div fxFlex="2"></div>
-            <div fxFlex="12" class="row-edit-price">
+            <div fxFlex="13" class="row-edit-price">
               <div fxLayout="row wrap">
                 <div fxFlex="100">
 
@@ -93,7 +97,7 @@
               </div>
 
             </div>
-            <div fxFlex="auto" class="row-total-price">
+            <div fxFlex="12" class="row-total-price">
               <span *ngIf="itemProduct.product?.end_price === undefined">
                 {{ itemProduct?.common_price * itemProduct.amount | number }}
               </span>

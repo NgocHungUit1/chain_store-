@@ -1,23 +1,24 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {MatTable, MatTableDataSource} from '@angular/material/table';
-import {MatSort} from '@angular/material/sort';
-import {MatPaginator} from '@angular/material/paginator';
-import {NotifierService} from 'angular-notifier';
-import {MatDialog} from '@angular/material/dialog';
-import {ListComponentBase} from '../../shared/base';
-import {WarehouseProductService} from '../warehouse-product.service';
-import {Warehouse, WarehouseProduct, WarehouseProductFilter} from '../warehouse.model';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Observable} from 'rxjs/index';
-import {Supplier} from '../../supplier/supplier.model';
-import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
-import {of} from 'rxjs/internal/observable/of';
-import {SupplierService} from '../../supplier/supplier.service';
-import {WarehouseService} from '../warehouse.service';
-import {Product} from '../../product/product.model';
-import {ProductService} from '../../product/product.service';
-import {WarehouseParcelFormDialogComponent} from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
+import { MatPaginator } from '@angular/material/paginator';
+import { NotifierService } from 'angular-notifier';
+import { MatDialog } from '@angular/material/dialog';
+import { ListComponentBase } from '../../shared/base';
+import { WarehouseProductService } from '../warehouse-product.service';
+import { Warehouse, WarehouseProduct, WarehouseProductFilter } from '../warehouse.model';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Observable } from 'rxjs/index';
+import { Supplier } from '../../supplier/supplier.model';
+import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
+import { of } from 'rxjs/internal/observable/of';
+import { SupplierService } from '../../supplier/supplier.service';
+import { WarehouseService } from '../warehouse.service';
+import { Product } from '../../product/product.model';
+import { ProductService } from '../../product/product.service';
+import { WarehouseParcelFormDialogComponent } from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
+import { WarehouseDiscountDialogComponent } from '../warehouse-discount-dialog/warehouse-discount-dialog.component';
 
 @Component({
   selector: 'app-warehouse-import-form',
@@ -50,8 +51,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   model: Warehouse = null;
 
   statuses = [
-    {id: '10', name: 'Hoàn thành'},
-    {id: '9', name: 'Lưu tạm'},
+    { id: '10', name: 'Hoàn thành' },
+    { id: '9', name: 'Lưu tạm' },
   ];
 
   parcels: object[] = [];
@@ -107,6 +108,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       total_price: [null],
       total_amount: [null],
       discount_amount: [null],
+      discount_type: [null],
       paid_amount: [null],
       remain_amount: [null],
       note: [null],
@@ -154,17 +156,19 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           dateStr = new Date(res['date']).toISOString();
         }
         this.model = res;
+
         this.form.patchValue({
           date: dateStr,
           no: res['no'],
           supplier: res['supplier'],
           status: res['status'] + '',
-          quantity: res['total_quantity'],
-          total_price: res['total_price'],
-          total_amount: res['total_amount'],
-          discount_amount: res['discount_amount'],
-          paid_amount: res['paid_amount'],
-          remain_amount: res['remain_amount'],
+          quantity: Number(res['total_quantity']),
+          total_price: (res['total_price'] !== undefined) ? Number(res['total_price']) : 0,
+          total_amount: Number(res['total_amount']),
+          discount_amount: (res['discount_amount'] !== undefined) ? Number(res['discount_amount']) : 0,
+          discount_type: (res['discount_type'] !== undefined) ? res['discount_type'] : 'price',
+          paid_amount: Number(res['paid_amount']),
+          remain_amount: Number(res['remain_amount']),
           note: res['note'],
         });
         this.form.controls['date'].disable();
@@ -219,9 +223,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         warehouseProduct.product_id = item.product_id;
         warehouseProduct.product = item.product;
         warehouseProduct.quantity = item.quantity;
-        warehouseProduct.price = item.price;
-        warehouseProduct.discount = item.discount;
-        warehouseProduct.amount = item.amount;
+        warehouseProduct.price = (item.price !== null) ? item.price : 0;
+        warehouseProduct.discount = (item.discount !== null) ? item.discount : 0;
+        warehouseProduct.discount_type = item.discount_type;
+        warehouseProduct.amount = (item.amount !== null) ? item.amount : 0;
         warehouseProduct.product_unit_id = item.product_unit_id;
         warehouseProduct.productUnits = item.productUnits !== undefined ? item.productUnits : [];
         warehouseProduct.product_parcels = item.productParcels !== undefined ? item.productParcels : [];
@@ -294,9 +299,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       warehouseProduct.product_id = product.id;
       warehouseProduct.product = product;
       warehouseProduct.quantity = 1;
-      warehouseProduct.price = product.original_price;
+      warehouseProduct.price = (product.original_price !== null) ? product.original_price : 0;
       warehouseProduct.discount = 0;
-      warehouseProduct.amount = product.original_price;
+      warehouseProduct.discount_type = 'price';
+      warehouseProduct.amount = (product.original_price !== null) ? product.original_price : 0;
       warehouseProduct.productUnits = res['productUnits'];
       warehouseProduct.product_parcels = [];
 
@@ -316,25 +322,38 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   recalculateItem(i) {
     if (this.data[i] !== undefined) {
-      this.data[i]['amount'] = (this.data[i]['price'] - this.data[i]['discount']) * this.data[i]['quantity'];
+      if (this.data[i]['discount_type'] === 'price') {
+        this.data[i]['amount'] = Math.round((this.data[i]['price'] - this.data[i]['discount']) * this.data[i]['quantity']);
+      } else {
+        this.data[i]['amount'] = Math.round((this.data[i]['price'] - (this.data[i]['price'] * this.data[i]['discount']) / 100) * this.data[i]['quantity']);
+      }
       this.recalculateWarehouse();
     }
   }
 
   recalculateWarehouse() {
-    let quantity = 0;
-    let price = 0;
-    let remainAmount = 0;
-    let totalAmount = 0;
+    let quantity: number = 0;
+    let price: number = 0;
+    let remainAmount: number = 0;
+    let totalAmount: number = 0;
     const paidAmount = this.form.controls['paid_amount'].value;
     const discount = this.form.controls['discount_amount'].value;
+    const discount_type = this.form.controls['discount_type'].value;
+
 
     this.data.forEach(item => {
-      quantity = quantity + item['quantity'];
-      price = price + (item['quantity'] * (item['price'] - item['discount']));
+      quantity = Number(quantity) + item['quantity'];
+      price = Number(price) + (Number(item['quantity']) * (Number(item['price']) - Number(item['discount'])));
     });
-    remainAmount = paidAmount - (price - discount);
-    totalAmount = price - discount;
+    // Tinh vao cong no
+    if (discount_type === 'price') {
+      remainAmount = Number(paidAmount) - (Number(price) - Number(discount));
+      totalAmount = Number(price) - Number(discount);
+    } else {
+      remainAmount = Math.round(Number(paidAmount) - (Number(price) - Number(price) * Number(discount) / 100));
+      totalAmount = Math.round(Number(price) - Number(price) * Number(discount) / 100);
+    }
+
     this.form.patchValue({
       quantity: quantity,
       total_price: price,
@@ -382,7 +401,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   changeQuantity(index, value) {
-    this.data[index]['quantity'] = this.data[index]['quantity'] + value;
+    this.data[index]['quantity'] = Number(this.data[index]['quantity']) + Number(value);
     if (this.data[index]['product_parcels'].length === 1) {
       this.data[index]['product_parcels'][0]['quantity'] = this.data[index]['quantity'];
     }
@@ -397,6 +416,50 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     this.data[index]['quantity'] = quantity;
     this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
     this.recalculateWarehouse();
+  }
+
+  openDiscountDialogWarehouse() {
+    const dialogRef = this.dialog.open(WarehouseDiscountDialogComponent, {
+      width: '30%',
+      minHeight: '80%',
+      data: {
+        discount_amount: this.form.controls['discount_amount'].value,
+        discount_type: this.form.controls['discount_type'].value,
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== null) {
+        this.form.patchValue({
+          discount_amount: result.number,
+          discount_type: result.type,
+        });
+        this.recalculateWarehouse();
+      }
+    });
+  }
+
+  openDiscountDialogWarehouseProduct(i) {
+    if (this.data[i] !== undefined) {
+
+      const dialogRef = this.dialog.open(WarehouseDiscountDialogComponent, {
+        width: '30%',
+        minHeight: '80%',
+        data: {
+          discount_amount: this.data[i]['discount'],
+          discount_type: this.data[i]['discount_type'],
+        }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result !== null) {
+          this.data[i]['discount'] = result.number;
+          this.data[i]['discount_type'] = result.type;
+          this.recalculateItem(i);
+        }
+      });
+    }
+
   }
 
 }

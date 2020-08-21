@@ -7,9 +7,12 @@
 .mat-column-unit {
   flex: 1 1 0%;
 }
-.mat-column-main_active_substance, .mat-column-content {
+
+.mat-column-main_active_substance,
+.mat-column-content {
   flex: 2 1 0%;
 }
+
 table {
   width: 100%;
 }
@@ -57,7 +60,12 @@ tr.example-element-row:not(.example-expanded-row):active {
 .example-element-description-attribution {
   opacity: 0.5;
 }
+
 .example-expanded-row {
   font-weight: 700;
   background-color: #ebf5ea;
+}
+
+.column-right-text {
+  text-align: right;
 }

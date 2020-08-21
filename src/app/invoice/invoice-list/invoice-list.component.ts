@@ -166,7 +166,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
         elementData.total_payment = total_payment;
         // End - tong tien khach hang da tra, tien giam gia
 
-        if (elementData.discount_type === 'vnd') {
+        if (elementData.discount_type === 'price') {
           discount_price = elementData.discount;
         } else {
           discount_price = elementData.total_price * elementData.discount / 100;

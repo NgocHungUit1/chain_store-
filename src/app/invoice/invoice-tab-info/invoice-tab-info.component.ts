@@ -60,7 +60,7 @@ export class InvoiceTabInfoComponent implements OnInit {
       this.tongSoLuong = this.tongSoLuong + element?.amount;
     });
 
-    if (invoiceData.discount_type === 'vnd') {
+    if (invoiceData.discount_type === 'price') {
       this.giamGiaHoaDon = invoiceData.discount;
     } else {
       this.giamGiaHoaDon = this.tongTienHang * invoiceData.discount / 100;
@@ -153,6 +153,7 @@ export class InvoiceTabInfoComponent implements OnInit {
     });
     mItemInvoice.listProduct = aProductInfo;
     this.orderService.addItemInvoiceUpdate(mItemInvoice);
+    // debugger;
     this.router.navigate(['/sale']);
   }
 

@@ -19,7 +19,7 @@ export class DiscountSiderbarDialogComponent implements OnInit {
 
   typeItems: any[] = [
     {
-      'id': 'vnd',
+      'id': 'price',
       'title': 'VNĐ'
     },
     {
@@ -48,7 +48,7 @@ export class DiscountSiderbarDialogComponent implements OnInit {
 
     const discountSiderBar = mItemInvoice.discountSiderBar;
     let numberValue = 0;
-    let typeValue = 'vnd';
+    let typeValue = 'price';
     if (discountSiderBar !== null && discountSiderBar !== undefined) {
       numberValue = discountSiderBar?.number;
       typeValue = discountSiderBar?.type;

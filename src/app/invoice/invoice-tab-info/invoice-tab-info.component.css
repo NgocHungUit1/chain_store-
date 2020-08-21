@@ -39,8 +39,9 @@ table {
 }
 
 .mat-column-total_price {
-   font-weight: 600;
+  font-weight: 600;
 }
+
 .column-number-end {
   text-align: end;
 }

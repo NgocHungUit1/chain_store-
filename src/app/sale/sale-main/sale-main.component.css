@@ -78,12 +78,13 @@ html .page-wrapper .page-content {
   padding-top: 20px;
   position: absolute;
   color: #666666;
+  /* max-width: 45px; */
 }
 
 .row-amount {
   font-size: 20px;
   min-width: 100px;
-  max-width: 160px;
+  max-width: 150px;
 }
 
 .row-edit-price {
@@ -93,7 +94,9 @@ html .page-wrapper .page-content {
 .row-product-no {
   font-size: 15px;
   padding-top: 20px;
-  min-width: 100px;
+  /* min-width: 100px; */
+  /* max-width: 150px; */
+  /* width: 150px; */
   padding-right: 5px;
 }
 

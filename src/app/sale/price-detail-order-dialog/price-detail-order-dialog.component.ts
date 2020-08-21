@@ -29,7 +29,7 @@ export class PriceDetailOrderDialogComponent implements OnInit {
 
   typeItems: any[] = [
     {
-      'id': 'vnd',
+      'id': 'price',
       'title': 'VNĐ'
     },
     {
@@ -44,7 +44,7 @@ export class PriceDetailOrderDialogComponent implements OnInit {
 
 
   ngOnInit(): void {
-    var discountType = 'vnd';
+    var discountType = 'price';
     var discountPrice = '0';
     var endPrice = this.common_price;
     if (this.product.discount_type) {
@@ -95,7 +95,7 @@ export class PriceDetailOrderDialogComponent implements OnInit {
       });
       return;
     }
-    if (data.discountTypePriceDetailOrder === 'vnd') {
+    if (data.discountTypePriceDetailOrder === 'price') {
       const endPrice = parseInt(this.common_price) - parseInt(data.discountPriceDetailOrder);
       this.form.patchValue({
         endPriceDetailOrder: endPrice,
@@ -107,7 +107,7 @@ export class PriceDetailOrderDialogComponent implements OnInit {
   onEndPriceChange() {
     this.form.patchValue({
       discountPriceDetailOrder: 0,
-      discountTypePriceDetailOrder: 'vnd'
+      discountTypePriceDetailOrder: 'price'
     });
 
   }

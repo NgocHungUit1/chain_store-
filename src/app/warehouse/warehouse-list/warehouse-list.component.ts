@@ -1,14 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTable } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
-import {MatSort} from '@angular/material/sort';
-import {ListComponentBase} from '../../shared/base';
-import {ActivatedRoute} from '@angular/router';
-import {MatDialog} from '@angular/material/dialog';
-import {animate, state, style, transition, trigger} from '@angular/animations';
-import {NotifierService} from 'angular-notifier';
-import {WarehouseService} from '../warehouse.service';
-import {Warehouse, WarehouseFilter} from '../warehouse.model';
+import { MatSort } from '@angular/material/sort';
+import { ListComponentBase } from '../../shared/base';
+import { ActivatedRoute } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { NotifierService } from 'angular-notifier';
+import { WarehouseService } from '../warehouse.service';
+import { Warehouse, WarehouseFilter } from '../warehouse.model';
 
 @Component({
   templateUrl: './warehouse-list.component.html',

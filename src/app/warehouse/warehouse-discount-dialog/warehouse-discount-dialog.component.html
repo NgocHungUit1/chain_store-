@@ -1,0 +1,28 @@
+<h1 mat-dialog-title>Giảm giá</h1>
+<div mat-dialog-content>
+    <form [formGroup]="form">
+        <div fxLayout="row wrap">
+            <div fxFlex="50">
+                <mat-form-field style="text-align: right; font-size: 16px">
+                    <input matInput type="number" tabindex="1" formControlName="number" min="0">
+                </mat-form-field>
+            </div>
+            <div fxFlex="50" class="form-radio-field">
+                <mat-radio-group tabindex="2" formControlName="type">
+                    <mat-radio-button *ngFor=" let typeItem of typeItems" [value]="typeItem.id" >
+                        {{typeItem.title}}
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
+        </div>
+
+    </form>
+</div>
+<div mat-dialog-actions>
+    <button mat-raised-button color="primary" tabindex="3" (click)="submit()">
+        <mat-icon>save</mat-icon>Lưu
+    </button>
+    <button mat-button (click)="onNoClick()" tabindex="-1">
+        <mat-icon>cancel</mat-icon>Bỏ qua
+    </button>
+</div>
