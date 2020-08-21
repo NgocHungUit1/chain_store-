@@ -15,6 +15,7 @@ import { WarehouseReturnFormComponent } from './warehouse-return-form/warehouse-
 import { WarehouseImportFormComponent } from './warehouse-import-form/warehouse-import-form.component';
 import { WarehouseInfoTabComponent } from './warehouse-info-tab/warehouse-info-tab.component';
 import { WarehouseParcelFormDialogComponent } from './warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
+import { WarehouseDiscountDialogComponent } from './warehouse-discount-dialog/warehouse-discount-dialog.component';
 
 
 @NgModule({
@@ -24,7 +25,8 @@ import { WarehouseParcelFormDialogComponent } from './warehouse-parcel-form-dial
     WarehouseInfoTabComponent,
     WarehouseReturnListComponent,
     WarehouseReturnFormComponent,
-    WarehouseParcelFormDialogComponent
+    WarehouseParcelFormDialogComponent,
+    WarehouseDiscountDialogComponent
   ],
   imports: [
     CommonModule,

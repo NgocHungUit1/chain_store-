@@ -8,6 +8,7 @@ export class Warehouse {
   no: string;
   supplier_id: number;
   discount_amount: number;
+  discount_type: string;
   total_price: number;
   total_amount: number;
   paid_amount: number;
@@ -53,6 +54,7 @@ export class WarehouseProduct {
   quantity: number;
   price: number;
   discount: number;
+  discount_type: string;
   amount: number;
   note: string;
   productUnits: object[];

@@ -7,8 +7,8 @@
       <h3>Nhập hàng</h3>
       <div class="select-product">
         <mat-form-field>
-          <input type="text" [formControl]="selectProduct" matInput
-                 [matAutocomplete]="chooseProduct" placeholder="Tìm hàng hóa theo mã hoặc tên">
+          <input type="text" [formControl]="selectProduct" matInput [matAutocomplete]="chooseProduct"
+            placeholder="Tìm hàng hóa theo mã hoặc tên">
           <button mat-icon-button matPrefix>
             <mat-icon>search</mat-icon>
           </button>
@@ -47,14 +47,22 @@
 
               <ng-container matColumnDef="product_name">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_name']}}</th>
-                <td mat-cell *matCellDef="let element"> {{ element.product.product_name }}</td>
+                <td mat-cell *matCellDef="let element" title="{{ element.product.product_name }}">
+
+                  <p *ngIf="element.product.product_name.length > 45">{{ element.product.product_name | slice:0:45 }}
+                    ...
+                  </p>
+                  <p *ngIf="element.product.product_name.length <= 45">{{ element.product.product_name }}</p>
+
+                </td>
               </ng-container>
 
               <ng-container matColumnDef="product_parcel">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_parcel']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index">
                   <mat-form-field class="parcel-field">
-                    <mat-select multiple [(ngModel)]="data[i]['product_parcels']" (selectionChange)="onParcelSelectedChange(i, $event.value)">
+                    <mat-select multiple [(ngModel)]="data[i]['product_parcels']"
+                      (selectionChange)="onParcelSelectedChange(i, $event.value)">
                       <mat-option *ngFor="let parcel of parcels" [value]="parcel">
                         {{parcel['parcel_no']}} - {{parcel['expiration_date']}} - SL: {{parcel['quantity']}}
                       </mat-option>
@@ -70,7 +78,8 @@
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_unit_id']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index">
                   <mat-form-field *ngIf="element.productUnits.length">
-                    <mat-select matInput [(ngModel)]="data[i]['product_unit_id']" (selectionChange)="onUnitChange(i, $event)">
+                    <mat-select matInput [(ngModel)]="data[i]['product_unit_id']"
+                      (selectionChange)="onUnitChange(i, $event)">
                       <mat-option *ngFor="let unit of element.productUnits" [value]="unit.id">{{unit.name}}</mat-option>
                     </mat-select>
                   </mat-form-field>
@@ -81,11 +90,14 @@
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['quantity']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index">
                   <mat-form-field>
-                    <input matInput class="quantity-input" [value]="element['quantity']" (change)="recalculateItem(i)" [(ngModel)]="data[i]['quantity']" [disabled]="data[i]['product_parcels'].length > 1">
-                    <button mat-icon-button matPrefix (click)="changeQuantity(i, -1)" [disabled]="element['quantity'] === 1 || data[i]['product_parcels'].length > 1">
+                    <input matInput class="quantity-input" [value]="element['quantity']" (change)="recalculateItem(i)"
+                      [(ngModel)]="data[i]['quantity']" [disabled]="data[i]['product_parcels'].length > 1">
+                    <button mat-icon-button matPrefix (click)="changeQuantity(i, -1)"
+                      [disabled]="element['quantity'] === 1 || data[i]['product_parcels'].length > 1">
                       <mat-icon>indeterminate_check_box</mat-icon>
                     </button>
-                    <button mat-icon-button matSuffix (click)="changeQuantity(i, 1);" [disabled]="data[i]['product_parcels'].length > 1">
+                    <button mat-icon-button matSuffix (click)="changeQuantity(i, 1);"
+                      [disabled]="data[i]['product_parcels'].length > 1">
                       <mat-icon>add_box</mat-icon>
                     </button>
                   </mat-form-field>
@@ -96,7 +108,8 @@
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['price']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index">
                   <mat-form-field>
-                    <input matInput class="price-input" [value]="element['price']" (change)="recalculateItem(i)" [(ngModel)]="data[i]['price']" >
+                    <input matInput class="price-input" [value]="element['price']" (change)="recalculateItem(i)"
+                      [(ngModel)]="data[i]['price']">
                   </mat-form-field>
                 </td>
               </ng-container>
@@ -104,8 +117,21 @@
               <ng-container matColumnDef="discount">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['discount']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index">
-                  <mat-form-field>
-                    <input matInput class="discount-input" [value]="element['discount']" (change)="recalculateItem(i)" [(ngModel)]="data[i]['discount']" >
+
+                  <mat-form-field *ngIf="element['discount_type'] == 'price'">
+                    <!-- <input matInput class="discount-input" [value]="element['discount']" (change)="recalculateItem(i)"
+                      [(ngModel)]="data[i]['discount']" > -->
+                    <input matInput class="discount-input" [(ngModel)]="data[i]['discount']"
+                      value="{{ element['discount'] | number }}" (click)="openDiscountDialogWarehouseProduct(i);"
+                      readonly>
+                  </mat-form-field>
+
+                  <mat-form-field *ngIf="element['discount_type'] == 'percent'">
+                    <input matInput class="discount-input" [(ngModel)]="data[i]['discount']"
+                      value="{{ (element['price']*element['discount']/100) | number }}"
+                      (click)="openDiscountDialogWarehouseProduct(i);"
+                      title="{{ (element['price']*element['discount']/100) | number }} {{ '('+element['discount']+'%)' }}"
+                      readonly>
                   </mat-form-field>
                 </td>
               </ng-container>
@@ -120,7 +146,9 @@
               <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef></th>
                 <td mat-cell *matCellDef="let element; let i = index">
-                  <button mat-icon-button (click)="removeProduct(i)"><mat-icon>delete</mat-icon> </button>
+                  <button mat-icon-button (click)="removeProduct(i)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
                 </td>
               </ng-container>
 
@@ -140,7 +168,7 @@
             <div fxFlex="60">
               <mat-form-field>
                 <input matInput [matDatepicker]="date_picker" [formControl]="form.controls['date']"
-                       placeholder="Ngày nhập">
+                  placeholder="Ngày nhập">
                 <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>
                 <mat-datepicker #date_picker></mat-datepicker>
               </mat-form-field>
@@ -156,12 +184,12 @@
             <div fxFlex="100">
               <mat-form-field>
                 <input type="text" matInput [formControl]="form.controls['supplier']" placeholder="Nhà cung cấp"
-                       [matAutocomplete]="auto">
+                  [matAutocomplete]="auto">
                 <button mat-icon-button matPrefix>
                   <mat-icon>search</mat-icon>
                 </button>
                 <button mat-icon-button matSuffix (click)="this.form.patchValue({supplier: null});"
-                        *ngIf="this.form.controls['supplier'].value && this.updateModelId === null">
+                  *ngIf="this.form.controls['supplier'].value && this.updateModelId === null">
                   <mat-icon>delete</mat-icon>
                 </button>
                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySupplier">
@@ -182,19 +210,32 @@
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Số lượng</mat-label>
-                <input matInput tabindex="4" formControlName="quantity" readonly="readonly">
+                <input matInput tabindex="4" formControlName="quantity" value="{{ form.get('quantity').value | number}}"
+                  readonly="readonly">
               </mat-form-field>
             </div>
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Tổng tiền hàng</mat-label>
-                <input matInput tabindex="5" formControlName="total_price" readonly>
+                <input matInput tabindex="5" formControlName="total_price"
+                  value="{{ form.get('total_price').value | number}}" readonly>
               </mat-form-field>
             </div>
             <div fxFlex="100">
-              <mat-form-field>
+              <!-- 2 truong hop  -->
+              <mat-form-field *ngIf="form.get('discount_type').value == 'price'">
                 <mat-label>Giảm giá</mat-label>
-                <input matInput tabindex="6" formControlName="discount_amount" (change)="recalculateWarehouse();">
+                <!-- <input matInput tabindex="6" formControlName="discount_amount" (change)="recalculateWarehouse();"> -->
+                <input matInput tabindex="6" value="{{ form.get('discount_amount').value | number }}"
+                  (click)="openDiscountDialogWarehouse();">
+
+              </mat-form-field>
+
+              <mat-form-field *ngIf="form.get('discount_type').value == 'percent'">
+                <mat-label>Giảm giá</mat-label>
+                <input matInput tabindex="6"
+                  value="{{ (form.get('total_price').value * form.get('discount_amount').value / 100) | number:'1.0-0' }} {{ '(' + form.get('discount_amount').value + '%)' }}"
+                  (click)="openDiscountDialogWarehouse();">
               </mat-form-field>
             </div>
             <div fxFlex="100">
@@ -206,7 +247,8 @@
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Tính vào công nợ</mat-label>
-                <input matInput tabindex="8" formControlName="remain_amount" readonly>
+                <input matInput tabindex="8" formControlName="remain_amount"
+                  value="{{ form.get('remain_amount').value | number}}" readonly>
               </mat-form-field>
             </div>
             <div fxFlex="100">
@@ -217,15 +259,18 @@
             </div>
             <div fxFlex="100">
               <div mat-dialog-actions align="end">
-                <button *ngIf="updateModelId === null || (model !== null && model['status'] === 9)" mat-raised-button color="accent" fxFlex="45" tabindex="10" [disabled]="this.form.invalid" (click)="submit(9)">
+                <button *ngIf="updateModelId === null || (model !== null && model['status'] === 9)" mat-raised-button
+                  color="accent" fxFlex="45" tabindex="10" [disabled]="this.form.invalid" (click)="submit(9)">
                   <mat-icon>save</mat-icon>
                   Lưu tạm
                 </button>
-                <button *ngIf="updateModelId === null || (model !== null && model['status'] === 9)" mat-raised-button color="primary" fxFlex="55" (click)="submit(10)" [disabled]="this.form.invalid" tabindex="11">
+                <button *ngIf="updateModelId === null || (model !== null && model['status'] === 9)" mat-raised-button
+                  color="primary" fxFlex="55" (click)="submit(10)" [disabled]="this.form.invalid" tabindex="11">
                   <mat-icon>check</mat-icon>
                   Hoàn thành
                 </button>
-                <button *ngIf="updateModelId !== null && model !== null && model['status'] === 10" mat-raised-button color="primary" fxFlex="100" (click)="submit(10)" [disabled]="this.form.invalid" tabindex="11">
+                <button *ngIf="updateModelId !== null && model !== null && model['status'] === 10" mat-raised-button
+                  color="primary" fxFlex="100" (click)="submit(10)" [disabled]="this.form.invalid" tabindex="11">
                   <mat-icon>check</mat-icon>
                   Lưu
                 </button>

@@ -42,7 +42,7 @@ export class SetupCommonPriceDialogComponent implements OnInit {
   ];
   typeItems: any[] = [
     {
-      'id': 'vnd',
+      'id': 'price',
       'title': 'VNĐ'
     },
     {
@@ -73,7 +73,7 @@ export class SetupCommonPriceDialogComponent implements OnInit {
     this.form = this.fb.group({
       choose: ['sell'],
       calculation: ['plus'],
-      type: ['vnd'],
+      type: ['price'],
       numberInput: [0],
       allow_all: [0],
       element_common_price: this.element_common_price
@@ -118,7 +118,7 @@ export class SetupCommonPriceDialogComponent implements OnInit {
       }
     }
 
-    if (data.type === 'vnd') {
+    if (data.type === 'price') {
       result = a + calculation * b;
     } else {
       result = a + calculation * b * a / 100;
@@ -155,7 +155,7 @@ export class SetupCommonPriceDialogComponent implements OnInit {
           }
         }
 
-        if (data.type === 'vnd') {
+        if (data.type === 'price') {
           result = a + calculation * b;
         } else {
           result = a + calculation * b * a / 100;

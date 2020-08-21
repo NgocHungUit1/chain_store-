@@ -55,7 +55,7 @@ export class SaleMainComponent implements OnInit {
   sumPrice: number = 0;
   numberDiscount: number = 0; // use for view
   discount: number = 0; // use for payment
-  discount_type: string = 'vnd'; // use for payment
+  discount_type: string = 'price'; // use for payment
   customerPay: number = 0;
   priceLists: PriceList[] = [];
   form: FormGroup;
@@ -562,9 +562,9 @@ export class SaleMainComponent implements OnInit {
 
     const discountSiderBar = mItemInvoice.discountSiderBar;
     if (discountSiderBar !== undefined) {
-      if (discountSiderBar?.type === 'vnd') {
+      if (discountSiderBar?.type === 'price') {
         this.numberDiscount = discountSiderBar?.number;
-        this.discount_type = 'vnd';
+        this.discount_type = 'price';
       } else {
         this.numberDiscount = this.sumPrice * discountSiderBar?.number / 100;
         this.discount_type = 'precent';
@@ -733,7 +733,7 @@ export class SaleMainComponent implements OnInit {
     list.forEach(element => {
       let price = 0;
       let discount = 0;
-      let discount_type = 'vnd';
+      let discount_type = 'price';
       if (element.product.end_price === undefined) {
         price = (element.common_price !== undefined) ? element.common_price : element.product.sell_price;
       } else {
