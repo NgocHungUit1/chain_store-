@@ -65,6 +65,15 @@
             </div>
 
             <div fxLayout="row wrap">
+              <div fxFlex="30">
+                <mat-form-field>
+                  <input type="text" matInput [formControl]="form.controls['base_unit']"
+                    placeholder="Đơn vị cơ bản">
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div fxLayout="row wrap">
               <div fxFlex="90">
                 <mat-form-field>
                   <mat-select placeholder="Vị trí" multiple [formControl]="form.controls['placements']">
@@ -153,15 +162,6 @@
                     </mat-expansion-panel-header>
 
 
-                    <div fxLayout="row wrap">
-                      <div fxFlex="30">
-                        <mat-form-field>
-                          <input type="text" matInput [formControl]="form.controls['base_unit']"
-                            placeholder="Đơn vị cơ bản">
-                        </mat-form-field>
-                      </div>
-                    </div>
-
                     <div fxLayout="row wrap" *ngIf="units.length > 0">
                       <div fxFlex="100">
                         <ng-container formArrayName="units">
@@ -212,6 +212,7 @@
 
                     <div fxLayout="row wrap">
                       <div fxFlex="100">
+                        <p *ngIf="form.controls['base_unit'].value == null">Chưa nhập đơn vị cơ bản </p>
                         <button mat-raised-button (click)="addUnit();" [disabled]="!form.controls['base_unit'].value">
                           <mat-icon>add</mat-icon>
                           Thêm đơn vị

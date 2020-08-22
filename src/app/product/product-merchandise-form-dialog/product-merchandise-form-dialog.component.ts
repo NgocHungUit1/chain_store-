@@ -1,18 +1,18 @@
-import { Component,Optional ,Inject, OnInit } from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
-import {Observable} from 'rxjs';
-import {NotifierService} from "angular-notifier";
-import {ProductService} from "../product.service";
-import {GroupService} from "../group.service";
-import {Group, GroupFilter} from "../group.model";
-import {PlacementService} from "../placement.service";
-import {PlacementFilter} from "../placement.model";
-import {ProductGroupFormDialogComponent} from "../product-group-form-dialog/product-group-form-dialog.component";
-import {ProductPlacementFormDialogComponent} from "../product-placement-form-dialog/product-placement-form-dialog.component";
+import { Component, Optional, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
+import { Observable } from 'rxjs';
+import { NotifierService } from "angular-notifier";
+import { ProductService } from "../product.service";
+import { GroupService } from "../group.service";
+import { Group, GroupFilter } from "../group.model";
+import { PlacementService } from "../placement.service";
+import { PlacementFilter } from "../placement.model";
+import { ProductGroupFormDialogComponent } from "../product-group-form-dialog/product-group-form-dialog.component";
+import { ProductPlacementFormDialogComponent } from "../product-placement-form-dialog/product-placement-form-dialog.component";
 
 class ImageSnippet {
-  constructor(public src: string, public file: File, public id: string) {}
+  constructor(public src: string, public file: File, public id: string) { }
 }
 
 
@@ -65,11 +65,11 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
   };
 
   imageButtons = [
-    {isShow: true},
-    {isShow: true},
-    {isShow: true},
-    {isShow: true},
-    {isShow: true},
+    { isShow: true },
+    { isShow: true },
+    { isShow: true },
+    { isShow: true },
+    { isShow: true },
   ];
 
   selectedFiles: ImageSnippet[] = [];
@@ -86,18 +86,21 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
     private placementSer: PlacementService,
     private dialog: MatDialog,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
-      this.local_data = {...data};
-      this.action = this.local_data.action;
-      this.title = this.local_data.title;
-      this.copy_product_id = this.local_data.copy_product_id;
-      this.product_id = this.local_data.product_id;
+    this.local_data = { ...data };
+    this.action = this.local_data.action;
+    this.title = this.local_data.title;
+    this.copy_product_id = this.local_data.copy_product_id;
+    this.product_id = this.local_data.product_id;
   }
 
 
   initForm() {
     this.form = this.fb.group({
       // name : [null, Validators.required],
-      product_no: [null, Validators.required],
+      product_no: [
+        null,
+        // Validators.required
+      ],
       barcode: [null],
       product_type: ['merchandise'],
       shortcut: [null],
@@ -110,7 +113,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       weight: [null],
       base_unit: [null],
       medicine_id: [null],
-      quantity_of_stock : [null],
+      quantity_of_stock: [null],
       // Medicine
       // medicine: this.fb.group({
       //   registration_no: [null, Validators.required],
@@ -145,19 +148,19 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
 
     this.initForm();
 
-    if (this.product_id !== null ) {
+    if (this.product_id !== null) {
       const id = this.product_id !== null ? this.product_id : this.copy_product_id;
-      this.loadProduct(id,null);
+      this.loadProduct(id, null);
     }
 
-    if(this.copy_product_id !== null){
+    if (this.copy_product_id !== null) {
       const id = this.product_id !== null ? this.product_id : this.copy_product_id;
       this.loadProduct(id, true);
     }
   }
 
   closeDialog() {
-    this.dialogRef.close({event: 'Cancel'});
+    this.dialogRef.close({ event: 'Cancel' });
   }
 
   removeUnit(i) {
@@ -188,17 +191,29 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
 
       if (this.product_id === null) {
         // Create New
-        this.productSer.create(data).subscribe(product => {
-          this.notifySer.notify('success', 'Thêm hàng hóa thành công!');
-          this.uploadImage(product, action);
-          this.dialogRef.close({event: action, data: product});
-        });
+        if (data.product_no == null) {
+          this.productSer.getCountProduct().subscribe(count => {
+            data.product_no = 'HH' + count;
+            this.productSer.create(data).subscribe(product => {
+              this.notifySer.notify('success', 'Thêm hàng hóa thành công!');
+              this.uploadImage(product, action);
+              this.dialogRef.close({ event: action, data: product });
+            });
+          });
+        } else {
+          this.productSer.create(data).subscribe(product => {
+            this.notifySer.notify('success', 'Thêm hàng hóa thành công!');
+            this.uploadImage(product, action);
+            this.dialogRef.close({ event: action, data: product });
+          });
+        }
+
       } else if (this.product_id !== null) {
         // UPDATE
         this.productSer.update(this.product_id, data).subscribe(product => {
           this.notifySer.notify('success', 'Cập nhật hàng hóa thành công!');
           this.uploadImage(product, action);
-          this.dialogRef.close({event: action, data: product});
+          this.dialogRef.close({ event: action, data: product });
         });
       }
 
@@ -245,7 +260,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
           this.notifySer.notify('error', 'Không thể tải hình ảnh!');
         }
         if (action === 'Save') {
-          this.dialogRef.close({event: this.action, data: product});
+          this.dialogRef.close({ event: this.action, data: product });
         } else if (action === 'SaveAndMore') {
           this.form.reset({
             product_type: 'merchandise'
@@ -264,7 +279,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       });
     } else {
       this.loading = false;
-      this.dialogRef.close({event: this.action, data: product});
+      this.dialogRef.close({ event: this.action, data: product });
     }
   }
 
@@ -316,7 +331,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
           description: product['description'],
           note: product['note'],
         });
-      }else{
+      } else {
         this.form.patchValue({
           product_no: '',
           barcode: product['barcode'],
@@ -366,7 +381,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result !== false && result !== undefined) {
         this.groups.push(result);
-        this.form.patchValue({group_id: result.id});
+        this.form.patchValue({ group_id: result.id });
       }
     });
   }
@@ -381,7 +396,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
         let curSelects = this.form.controls['placements'].value;
         curSelects.push(result.id);
 
-        this.form.patchValue({placements: curSelects});
+        this.form.patchValue({ placements: curSelects });
       }
     });
   }
