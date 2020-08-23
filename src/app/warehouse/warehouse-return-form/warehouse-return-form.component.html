@@ -153,7 +153,7 @@
                 <input matInput tabindex="2" formControlName="no">
               </mat-form-field>
             </div>
-            <div fxFlex="100">
+            <div fxFlex="90">
               <mat-form-field>
                 <input type="text" matInput [formControl]="form.controls['supplier']" placeholder="Nhà cung cấp"
                        [matAutocomplete]="auto">
@@ -171,6 +171,11 @@
                 </mat-autocomplete>
               </mat-form-field>
             </div>
+            <div fxFlex="10">
+              <button mat-button aria-label="add" (click)="openSupplierFormDialog()">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Trạng thái</mat-label>
@@ -187,7 +192,7 @@
             </div>
             <div fxFlex="100">
               <mat-form-field>
-                <mat-label>Tổng tiền hàng cần trả</mat-label>
+                <mat-label>Tổng tiền hàng cần thu</mat-label>
                 <input matInput tabindex="5" formControlName="total_price" readonly>
               </mat-form-field>
             </div>
@@ -216,20 +221,18 @@
               </mat-form-field>
             </div>
             <div fxFlex="100">
-              <div mat-dialog-actions align="end">
-                <button *ngIf="updateModelId === null || (model !== null && model['status'] === 9)" mat-raised-button color="accent" fxFlex="45" tabindex="10" [disabled]="this.form.invalid" (click)="submit(9)">
-                  <mat-icon>save</mat-icon>
-                  Lưu tạm
-                </button>
-                <button *ngIf="updateModelId === null || (model !== null && model['status'] === 9)" mat-raised-button color="primary" fxFlex="55" (click)="submit(10)" [disabled]="this.form.invalid" tabindex="11">
-                  <mat-icon>check</mat-icon>
-                  Hoàn thành
-                </button>
-                <button *ngIf="updateModelId !== null && model !== null && model['status'] === 10" mat-raised-button color="primary" fxFlex="100" (click)="submit(10)" [disabled]="this.form.invalid" tabindex="11">
-                  <mat-icon>check</mat-icon>
-                  Lưu
-                </button>
-              </div>
+              <button *ngIf="updateModelId === null || (model !== null && model['status'] === 9)" mat-raised-button color="accent" fxFlex="45" tabindex="10" [disabled]="this.form.invalid" (click)="submit(9)">
+                <mat-icon>save</mat-icon>
+                Lưu tạm
+              </button>
+              <button *ngIf="updateModelId === null || (model !== null && model['status'] === 9)" mat-raised-button color="primary" fxFlex="55" (click)="submit(10)" [disabled]="this.form.invalid" tabindex="11">
+                <mat-icon>check</mat-icon>
+                Hoàn thành
+              </button>
+              <button *ngIf="updateModelId !== null && model !== null && model['status'] === 10" mat-raised-button color="primary" fxFlex="100" (click)="submit(10)" [disabled]="this.form.invalid" tabindex="11">
+                <mat-icon>check</mat-icon>
+                Lưu
+              </button>
             </div>
           </div>
         </form>
