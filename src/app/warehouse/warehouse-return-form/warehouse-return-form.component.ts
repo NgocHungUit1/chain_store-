@@ -18,6 +18,7 @@ import {WarehouseService} from '../warehouse.service';
 import {Product} from '../../product/product.model';
 import {ProductService} from '../../product/product.service';
 import {WarehouseParcelFormDialogComponent} from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
+import {SupplierFormDialogComponent} from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
 
 @Component({
   selector: 'app-warehouse-return-form',
@@ -387,6 +388,17 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
     this.data[index]['quantity'] = quantity;
     this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
     this.recalculateWarehouse();
+  }
+
+  openSupplierFormDialog() {
+    const dialogRef = this.dialog.open(SupplierFormDialogComponent, {
+      width: '50%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.form.patchValue({'supplier': result});
+    });
   }
 
 }
