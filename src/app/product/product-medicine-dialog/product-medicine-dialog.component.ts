@@ -290,9 +290,9 @@ export class ProductMedicineDialogComponent implements OnInit {
       // debugger;
       if (this.product_id === null) {
         // Create New
-        if (data.product_no == null) {
-          this.productSer.getCountProduct().subscribe(count => {
-            data.product_no = 'SP' + count;
+        if (data.product_no === null || data.product_no === "") {
+          this.productSer.getRenderProductNo().subscribe(product_no => {
+            data.product_no = 'SP' + product_no;
             this.productSer.create(data).subscribe(product => {
               this.notifySer.notify('success', 'Thêm thuốc thành công!');
               this.uploadImage(product, action);
@@ -301,6 +301,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           });
 
         } else {
+          
           this.productSer.create(data).subscribe(product => {
             this.notifySer.notify('success', 'Thêm thuốc thành công!');
             this.uploadImage(product, action);

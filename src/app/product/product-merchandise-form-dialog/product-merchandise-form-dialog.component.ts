@@ -191,9 +191,9 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
 
       if (this.product_id === null) {
         // Create New
-        if (data.product_no == null) {
-          this.productSer.getCountProduct().subscribe(count => {
-            data.product_no = 'HH' + count;
+        if (data.product_no === null || data.product_no === "") {
+          this.productSer.getRenderProductNo().subscribe(product_no => {
+            data.product_no = 'HH' + product_no;
             this.productSer.create(data).subscribe(product => {
               this.notifySer.notify('success', 'Thêm hàng hóa thành công!');
               this.uploadImage(product, action);

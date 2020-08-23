@@ -105,7 +105,6 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     });
   }
 
-
   ngOnInit() {
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
@@ -159,7 +158,5 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
       this.loadData();
     });
   }
-
-
 
 }

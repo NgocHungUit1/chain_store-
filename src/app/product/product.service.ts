@@ -84,15 +84,18 @@ export class ProductService {
   }
 
   delete(id: string) {
-    const url = environment.apiUrl + '/product/delete/' + id;
-    return this.http.delete(url);
+    // const url = environment.apiUrl + '/product/delete/' + id;
+    // return this.http.delete(url);
+
+    const url = environment.apiUrl + '/product/delete-product';
+    return this.http.post(url, { product_id: id });
   }
 
   autocomplete(term: string) {
     const url = environment.apiUrl + '/product/autocomplete?term=' + term;
     return this.http.get<Product[]>(url);
   }
-  
+
   /**
    * Search Autocomplete With Units
    * @param term 
@@ -128,6 +131,10 @@ export class ProductService {
     return this.http.get<number>(url);
   }
 
+  getRenderProductNo() {
+    const url = environment.apiUrl + '/product/render-product-no';
+    return this.http.get<string>(url);
+  }
 }
 
 

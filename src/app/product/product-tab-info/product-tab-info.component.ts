@@ -57,8 +57,13 @@ export class ProductTabInfoComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result.event !== 'Cancel') {
+      if (result.event == 'Update') {
         this.loadProduct(result.data.id);
+      }
+
+      if (obj.action == 'Copy') { 
+        debugger;
+        this.productSer.setLoadProduct(false);
       }
     });
   }

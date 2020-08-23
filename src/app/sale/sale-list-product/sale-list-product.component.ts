@@ -68,7 +68,7 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.price_book_id = itemInvoice?.price_book_id;
-    filter.expand = 'medicine,productPlacements,group,images,common';
+    filter.expand = 'medicine,productPlacements,group,images,common,productUnits';
     return filter;
   }
 

@@ -32,7 +32,7 @@
                 <span *ngIf="itemProduct.product?.product_name.length > 45">{{ itemProduct.product?.product_name | slice:0:45 }} ...</span>
                 <span *ngIf="itemProduct.product?.product_name.length <= 45">{{ itemProduct.product?.product_name }}</span>
 
-                <span *ngIf="itemProduct.product?.base_unit !== null">{{ itemProduct.product?.base_unit }}</span>
+                <span *ngIf="itemProduct.product?.base_unit !== null"> - {{ itemProduct.product?.base_unit }}</span>
               </span>
               <!-- <span class="row-text row-product-name" *ngIf="itemProduct.product?.base_unit !== null">
                 {{ itemProduct.product?.product_name+' - '+itemProduct.product?.base_unit }}
@@ -48,6 +48,11 @@
                 </button>
               </span>
             </div>
+            <!-- <div fxFlex="10" class="row-product-base-unit">
+              <span>
+                {{ itemProduct.product?.product_no }}
+              </span>
+            </div> -->
             <div fxFlex="auto" class="row-amount">
               <div fxLayout="row wrap">
                 <mat-form-field style=" font-size: 20px; text-align: center;">
