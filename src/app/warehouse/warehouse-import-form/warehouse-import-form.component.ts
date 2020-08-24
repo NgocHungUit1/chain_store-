@@ -19,7 +19,7 @@ import { Product } from '../../product/product.model';
 import { ProductService } from '../../product/product.service';
 import { WarehouseParcelFormDialogComponent } from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
 import { WarehouseDiscountDialogComponent } from '../warehouse-discount-dialog/warehouse-discount-dialog.component';
-import {SupplierFormDialogComponent} from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
+import { SupplierFormDialogComponent } from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
 
 @Component({
   selector: 'app-warehouse-import-form',
@@ -182,7 +182,14 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
         this.loadData();
       });
+    } else {
+      this.mainService.getRenderWarehouseNo().subscribe(res => {
+        this.form.patchValue({
+          no: 'PM0' + res,
+        });
+      });
     }
+
   }
 
   displaySupplier(supplier?: Supplier): string | undefined {
@@ -470,7 +477,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this.form.patchValue({'supplier': result});
+      this.form.patchValue({ 'supplier': result });
     });
   }
 

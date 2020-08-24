@@ -94,6 +94,11 @@ export class WarehouseService {
     const url = environment.apiUrl + '/warehouse/connect?id=' + id + '&reconnect=1';
     return this.http.post(url, {});
   }
+
+  getRenderWarehouseNo() {
+    const url = environment.apiUrl + '/warehouse/render-warehouse-no';
+    return this.http.get<string>(url);
+  }
 }
 
 
