@@ -85,4 +85,9 @@ export class CustomerService {
     const url = environment.apiUrl + '/customer/delete-customer';
     return this.http.post(url, { customer_id: id });
   }
+
+  getNameStore() {
+    const url = environment.apiUrl + '/customer/name-store';
+    return this.http.get<string>(url);
+  }
 }

@@ -16,6 +16,7 @@ import { AppHeaderComponent } from './header/header.component';
 import { AppSidebarComponent } from './sidebar/sidebar.component';
 import { AppBreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
+import { CustomerService } from '../../customer/customer.service';
 
 /** @title Responsive sidenav */
 @Component({
@@ -44,7 +45,8 @@ export class FullComponent implements OnDestroy {
     changeDetectorRef: ChangeDetectorRef,
     media: MediaMatcher,
     public menuItems: MenuItems,
-    public router: Router
+    public router: Router,
+    public customerService: CustomerService,
   ) {
     this.mobileQuery = media.matchMedia('(min-width: 768px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -55,5 +57,12 @@ export class FullComponent implements OnDestroy {
     this.mobileQuery.removeListener(this._mobileQueryListener);
   }
 
+  name_store: string = "Admin";
   // Mini sidebar
+  ngOnInit(): void {
+    this.customerService.getNameStore().subscribe(name => {
+      this.name_store = name;
+    });
+
+  }
 }
