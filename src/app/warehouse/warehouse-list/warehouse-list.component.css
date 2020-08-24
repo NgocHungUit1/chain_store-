@@ -69,3 +69,7 @@ tr.example-element-row:not(.example-expanded-row):active {
 .column-right-text {
   text-align: right;
 }
+
+.column-center-text {
+  text-align: center;
+}

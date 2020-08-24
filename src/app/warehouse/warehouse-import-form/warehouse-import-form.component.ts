@@ -166,12 +166,16 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           quantity: Number(res['total_quantity']),
           total_price: (res['total_price'] !== undefined) ? Number(res['total_price']) : 0,
           total_amount: Number(res['total_amount']),
-          discount_amount: (res['discount_amount'] !== undefined) ? Number(res['discount_amount']) : 0,
-          discount_type: (res['discount_type'] !== undefined) ? res['discount_type'] : 'price',
+          discount_amount: (res['discount_amount'] !== undefined && res['discount_amount'] !== null) ? Number(res['discount_amount']) : 0,
+          discount_type: (res['discount_type'] !== undefined && res['discount_type'] !== null) ? res['discount_type'] : 'price',
           paid_amount: Number(res['paid_amount']),
           remain_amount: Number(res['remain_amount']),
           note: res['note'],
         });
+
+        // console.log(res['discount_amount']);
+
+
         this.form.controls['date'].disable();
         this.form.controls['supplier'].disable();
         this.form.controls['no'].disable();
@@ -186,6 +190,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       this.mainService.getRenderWarehouseNo().subscribe(res => {
         this.form.patchValue({
           no: 'PM0' + res,
+          total_price: 0,
+          discount_amount: 0,
+          discount_type: 'price'
         });
       });
     }
@@ -233,7 +240,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         warehouseProduct.quantity = item.quantity;
         warehouseProduct.price = (item.price !== null) ? item.price : 0;
         warehouseProduct.discount = (item.discount !== null) ? item.discount : 0;
-        warehouseProduct.discount_type = item.discount_type;
+        warehouseProduct.discount_type = (item.discount_type !== null) ? item.discount_type : 'price';
         warehouseProduct.amount = (item.amount !== null) ? item.amount : 0;
         warehouseProduct.product_unit_id = item.product_unit_id;
         warehouseProduct.productUnits = item.productUnits !== undefined ? item.productUnits : [];
