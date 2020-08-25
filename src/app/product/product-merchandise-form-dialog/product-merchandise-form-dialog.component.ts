@@ -74,9 +74,6 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
 
   selectedFiles: ImageSnippet[] = [];
 
-
-
-
   constructor(
     public dialogRef: MatDialogRef<ProductMerchandiseFormDialogComponent>,
     private fb: FormBuilder,
@@ -111,7 +108,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       sell_price: [null, Validators.required],
       original_price: [null],
       weight: [null],
-      base_unit: [null],
+      base_unit: [null, Validators.required],
       medicine_id: [null],
       quantity_of_stock: [null],
       // Medicine
@@ -157,6 +154,14 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       const id = this.product_id !== null ? this.product_id : this.copy_product_id;
       this.loadProduct(id, true);
     }
+
+    this.productSer.getRenderProductNo().subscribe(product_no => {
+      if (this.form.controls['product_no'].value === null) {
+        this.form.patchValue({
+          product_no: 'HH' + product_no
+        });
+      }
+    });
   }
 
   closeDialog() {
@@ -352,19 +357,26 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
           description: product['description'],
           note: product['note'],
         });
+        this.productSer.getRenderProductNo().subscribe(product_no => {
+          this.form.patchValue({
+            product_no: 'HH' + product_no
+          });
+        });
       }
 
 
       product['productUnits'].forEach(pUnit => {
-        const group = new FormGroup({
-          unit_name: new FormControl(pUnit['name'], Validators.required),
-          unit_value: new FormControl(pUnit['value'], Validators.required),
-          unit_price: new FormControl(pUnit['sell_price'], Validators.required),
-          unit_no: new FormControl(pUnit['no']),
-          id: new FormControl(pUnit['id'])
-        });
+        if (pUnit['is_base'] !== 1) {
+          const group = new FormGroup({
+            unit_name: new FormControl(pUnit['name'], Validators.required),
+            unit_value: new FormControl(pUnit['value'], Validators.required),
+            unit_price: new FormControl(pUnit['sell_price'], Validators.required),
+            unit_no: new FormControl(pUnit['no']),
+            id: new FormControl(pUnit['id'])
+          });
+          this.units.push(group);
+        }
 
-        this.units.push(group);
       });
 
       product['images'].forEach((pImage, index) => {
