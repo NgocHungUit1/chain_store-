@@ -253,7 +253,7 @@ export class OrderService {
   /*
   Thay doi so luong san pham
   */
-  upAmountProduct(product: Product) {
+  upAmountProduct(product: Product, i: any) {
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
@@ -264,20 +264,14 @@ export class OrderService {
     });
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
     } else {
-      const listProduct = mItemInvoice.listProduct;
-      const resultListProduct = [];
-      listProduct.forEach(eProductInfo => {
-        if (eProductInfo.product_id === product.id && eProductInfo.product_unit_id == product.product_unit_id) {
-          eProductInfo.amount++;
-        }
-        resultListProduct.push(eProductInfo);
-      });
-      mItemInvoice.listProduct = resultListProduct;
+      let listProduct = mItemInvoice.listProduct;
+      listProduct[i]['amount'] = listProduct[i]['amount'] + 1;
+      mItemInvoice.listProduct = listProduct;
     }
     this.setListInvoiceLocalStorage(ListInvoice);
   }
 
-  downAmountProduct(product: Product) {
+  downAmountProduct(product: Product, i: any) {
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
@@ -288,20 +282,24 @@ export class OrderService {
     });
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
     } else {
-      const listProduct = mItemInvoice.listProduct;
-      const resultListProduct = [];
-      listProduct.forEach(eProductInfo => {
-        if (eProductInfo.product_id === product.id && eProductInfo.product_unit_id == product.product_unit_id) {
+      let listProduct = mItemInvoice.listProduct;
+      // const resultListProduct = [];
+      // listProduct.forEach(eProductInfo => {
+      //   if (eProductInfo.product_id === product.id && eProductInfo.product_unit_id == product.product_unit_id) {
 
-          eProductInfo.amount--;
-          if (eProductInfo.amount > 0) {
-            resultListProduct.push(eProductInfo);
-          }
-        } else {
-          resultListProduct.push(eProductInfo);
-        }
-      });
-      mItemInvoice.listProduct = resultListProduct;
+      //     eProductInfo.amount--;
+      //     if (eProductInfo.amount > 0) {
+      //       resultListProduct.push(eProductInfo);
+      //     }
+      //   } else {
+      //     resultListProduct.push(eProductInfo);
+      //   }
+      // });
+      listProduct[i]['amount'] = listProduct[i]['amount'] - 1;
+      if (listProduct[i]['amount'] <= 0) {
+        delete listProduct[i];
+      }
+      mItemInvoice.listProduct = listProduct;
     }
     this.setListInvoiceLocalStorage(ListInvoice);
   }

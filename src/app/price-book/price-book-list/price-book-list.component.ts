@@ -74,6 +74,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     'product_name': 'Tên hàng',
     'original_price': 'Giá vốn',
     'sell_price': 'Giá bán',
+    'base_unit': 'Đơn vị',
     'actions': 'X',
     'price': 'Giá chung',
     'common': 'Giá chung',
@@ -84,7 +85,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     'merchandise': 'Hàng hóa',
   };
 
-  displayedColumns: string[] = ['actions', '#', 'product_no', 'product_name', 'original_price', 'sell_price', 'price'];
+  displayedColumns: string[] = ['actions', '#', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'price'];
   // columnsToDisplay: string[] = ['#', 'product_no', 'product_name', 'original_price', 'sell_price', 'actions', 'price', 'price'];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -114,7 +115,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'product,pricelistproduct';
+    filter.expand = 'product,pricelistproduct,productUnit';
     return filter;
   }
 
@@ -123,10 +124,10 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
       const list = this.priceLists;
       const result = list.filter(item => item.id === value);
       this.priceListChoose = result[0];
-      this.displayedColumns = ['actions', '#', 'product_no', 'product_name', 'original_price', 'sell_price', 'common', 'price'];
+      this.displayedColumns = ['actions', '#', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'common', 'price'];
     } else {
       this.priceListChoose = null;
-      this.displayedColumns = ['actions', '#', 'product_no', 'product_name', 'original_price', 'sell_price', 'price'];
+      this.displayedColumns = ['actions', '#', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'price'];
     }
   }
 
@@ -142,22 +143,25 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
       // truong hop khong phai bang gia chung
       const list = res.body;
       if (this.priceListChoose !== null && Array.isArray(list)) {
-        const listProductChoose = list.map(obj => obj.product_id);
+        // console.log(list);
+        
+        const listProductUnitIdChoose = list.map(obj => obj.product_unit_id);
         const common_id = this.priceListCommon.id;
         // tien hanh xu ly add common vao list
-        this.priceListProductSer.getListProductCommon(common_id, listProductChoose).subscribe(resCommon => {
+        this.priceListProductSer.getListProductCommon(common_id, listProductUnitIdChoose).subscribe(resCommon => {
           if (Array.isArray(resCommon)) {
             this.priceListProductCommonExist = resCommon;
             this.data = res.body;
+            // debugger;
             // code group array by key
             const group = this.priceListProductCommonExist.reduce((r, a) => {
-              r[a.product_id] = [...r[a.product_id] || [], a];
+              r[a.product_unit_id] = [...r[a.product_unit_id] || [], a];
               return r;
             }, {});
             // add common || null
             this.data.forEach(elementData => {
-              if (group[elementData.product_id] !== undefined) {
-                elementData.common = group[elementData.product_id][0];
+              if (group[elementData.product_unit_id] !== undefined) {
+                elementData.common = group[elementData.product_unit_id][0];
               } else {
                 elementData.common = null;
               }
@@ -228,7 +232,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
   }
 
   lookupProduct(value: string): Observable<Product[]> {
-    return this.productSer.autocomplete(value).pipe(
+    return this.productSer.autocompleteUnits(value).pipe(
       // map the item property of the github results as our return object
       map(results => results),
       // catch errors
@@ -354,12 +358,13 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
   }
 
   handlePriceListProduct(product: any, priceListID: any) {
-    this.priceListProductSer.exist(product.id, priceListID).subscribe(result => {
+    this.priceListProductSer.exist(product.id, product.product_unit_id, priceListID).subscribe(result => {
       if (result === false) {
         const mPriceListProduct = new PriceListProduct();
         mPriceListProduct.product_id = product.id;
         mPriceListProduct.price_list_id = priceListID;
         mPriceListProduct.price = product.sell_price;
+        mPriceListProduct.product_unit_id = product.product_unit_id;
 
         this.priceListProductSer.create(mPriceListProduct).subscribe(mPriceListProduct => {
           this.notifySer.notify('success', 'Thêm thành công!');
@@ -413,7 +418,8 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     const mPriceListProduct = new PriceListProduct();
     mPriceListProduct.product_id = element.product_id;
     mPriceListProduct.price_list_id = this.priceListCommon.id;
-    mPriceListProduct.price = element.product.sell_price;
+    mPriceListProduct.price = element.productUnit?.sell_price;
+    mPriceListProduct.product_unit_id = element.productUnit?.id;
 
     this.priceListProductSer.create(mPriceListProduct).subscribe(mPriceListProduct => {
       this.notifySer.notify('success', 'Thêm vào bảng giá chung thành công!');

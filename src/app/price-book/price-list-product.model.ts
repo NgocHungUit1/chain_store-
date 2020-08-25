@@ -6,12 +6,14 @@ export class PriceListProductCommon {
   price_list_id: string;
   product_id: string;
   price: string;
+  product_unit_id: string;
 }
 
 export class PriceListProduct {
   id: string;
   price_list_id: string;
   product_id: string;
+  product_unit_id: string;
   product: Product;
   price: string;
   common: any;

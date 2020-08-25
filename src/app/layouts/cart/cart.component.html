@@ -50,7 +50,8 @@
           <mat-option *ngFor="let product of filteredProducts | async" [value]="product">
             <img class="example-option-img " aria-hidden [src]="product.default_image" height="25">
             <span class="m-l-10"
-              *ngIf="product.base_unit !== null">{{ product.product_name +' - '+ product.base_unit }} - {{ product.sell_price | number }}</span>
+              *ngIf="product.base_unit !== null">{{ product.product_no+' | '+product.product_name +' - '+ product.base_unit }}
+              - Giá : {{ product.sell_price | number }}</span>
             <span class="m-l-10" *ngIf="product.base_unit == null">{{ product.product_name }}</span>
 
           </mat-option>

@@ -171,6 +171,8 @@ export class SaleMainComponent implements OnInit {
         this.listProduct.push(eProductInfo);
         this.countProduct++;
       });
+      
+      // debugger;
 
       // handle add common price
       const priceBookID = mItemInvoice.price_book_id; //this.orderService.getPriceBookID();
@@ -178,6 +180,7 @@ export class SaleMainComponent implements OnInit {
 
       if (priceBookID !== null && Array.isArray(list) && this.listProduct !== null) {
         const listProductChoose = list.map(obj => obj.product.id);
+        // debugger;
         /**
         * Truong hop:  thay doi vs sl , pricebook
         */
@@ -421,12 +424,12 @@ export class SaleMainComponent implements OnInit {
     this.orderService.deleteProduct(product);
   }
 
-  upAmountProduct(product: Product) {
-    this.orderService.upAmountProduct(product);
+  upAmountProduct(product: Product, i: any) {
+    this.orderService.upAmountProduct(product, i);
   }
 
-  downAmountProduct(product_id) {
-    this.orderService.downAmountProduct(product_id);
+  downAmountProduct(product_id, i: any) {
+    this.orderService.downAmountProduct(product_id, i);
   }
 
   inputAmountProduct(product_id, value) {
@@ -848,6 +851,27 @@ export class SaleMainComponent implements OnInit {
    */
   onChangeSlideToggle(e: any) {
     this.autoPrint = e.checked;
+  }
+
+  onChangeProductUnit(e: any, itemProduct, i) {
+    // console.log(i);
+    // console.log(e.value);
+    // console.log(itemProduct?.product?.productUnits);
+    let units = itemProduct?.product?.productUnits;
+    let item = units.find(element => element.id == e.value);
+    // console.log(item);
+
+    let listProduct = this.listProduct;
+    listProduct[i]['product_unit_id'] = item['id'];
+    listProduct[i]['product_unit_value'] = item['value'];
+    listProduct[i]['product']['sell_price'] = item['price'];
+    listProduct[i]['product']['end_price'] = item['price'];
+    listProduct[i]['product']['product_no'] = item['no'];
+    listProduct[i]['common_price'] = item['price'];
+    // console.log(listProduct[i]);
+
+    this.listProduct = listProduct;
+
   }
 
 }

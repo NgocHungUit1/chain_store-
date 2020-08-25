@@ -8,10 +8,7 @@
     <div class="container-main-sale">
       <div class="product-cart">
 
-
-
         <!----------------------------------------- SALE-DETAIL-ORDER ---------------------------------------->
-
 
         <div *ngFor="let itemProduct of listProduct; let i = index" class="product-item">
           <div fxLayout="row wrap" class="row-item">
@@ -23,48 +20,61 @@
             </div>
             <div fxFlex="14" class="row-product-no">
               <span>
-                {{ itemProduct.product?.product_no }}
+                {{ itemProduct?.product?.product_no }}
               </span>
             </div>
             <div fxFlex="auto">
-              <span class="row-text row-product-name" title="{{ itemProduct.product?.product_name }}">
-                
-                <span *ngIf="itemProduct.product?.product_name.length > 45">{{ itemProduct.product?.product_name | slice:0:45 }} ...</span>
-                <span *ngIf="itemProduct.product?.product_name.length <= 45">{{ itemProduct.product?.product_name }}</span>
+              <span class="row-text row-product-name" title="{{ itemProduct?.product?.product_name }}">
 
-                <span *ngIf="itemProduct.product?.base_unit !== null"> - {{ itemProduct.product?.base_unit }}</span>
+                <span
+                  *ngIf="itemProduct?.product?.product_name.length > 45">{{ itemProduct?.product?.product_name | slice:0:45 }}
+                  ...</span>
+                <span
+                  *ngIf="itemProduct?.product?.product_name.length <= 45">{{ itemProduct.product?.product_name }}</span>
+
+                <!-- <span *ngIf="itemProduct.product?.base_unit !== null"> - {{ itemProduct.product?.base_unit }}</span> -->
               </span>
               <!-- <span class="row-text row-product-name" *ngIf="itemProduct.product?.base_unit !== null">
                 {{ itemProduct.product?.product_name+' - '+itemProduct.product?.base_unit }}
               </span> -->
               <span class="row-product-note">
-                <span *ngIf="itemProduct.product?.note_detail_sale === undefined">Ghi chú liều
+                <span *ngIf="itemProduct?.product?.note_detail_sale === undefined">Ghi chú liều
                   dùng</span>
-                <span *ngIf="itemProduct.product?.note_detail_sale">{{ itemProduct.product?.note_detail_sale }}</span>
+                <span *ngIf="itemProduct?.product?.note_detail_sale">{{ itemProduct?.product?.note_detail_sale }}</span>
                 <button mat-icon-button>
                   <mat-icon class="row-icon-edit"
-                    (click)="openNoteDetailOrderDialog(itemProduct.product?.id, itemProduct.product?.note_detail_sale)">
+                    (click)="openNoteDetailOrderDialog(itemProduct?.product?.id, itemProduct?.product?.note_detail_sale)">
                     edit</mat-icon>
                 </button>
               </span>
             </div>
-            <!-- <div fxFlex="10" class="row-product-base-unit">
-              <span>
-                {{ itemProduct.product?.product_no }}
-              </span>
-            </div> -->
+
+            <div fxFlex="10" class="row-product-base-unit">
+              <div fxLayout="row wrap">
+                <mat-form-field appearance="fill">
+                  <mat-label>Đơn vị</mat-label>
+                  <mat-select [(value)]="itemProduct.product_unit_id"
+                    (selectionChange)="onChangeProductUnit($event,itemProduct,i)">
+                    <mat-option *ngFor="let unit of itemProduct.product?.productUnits" [value]="unit.id">
+                      {{ unit.name }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+
             <div fxFlex="auto" class="row-amount">
               <div fxLayout="row wrap">
                 <mat-form-field style=" font-size: 20px; text-align: center;">
                   <button matPrefix mat-icon-button class="row-button-edit-amount"
-                    (click)="upAmountProduct(itemProduct.product)">
+                    (click)="upAmountProduct(itemProduct.product,i)">
                     <mat-icon>keyboard_arrow_up</mat-icon>
                   </button>
                   <input matInput type="number" tabindex="3" min="0" class="row-amount-number"
                     (input)="inputAmountProduct(itemProduct.product?.id,$event.target.value)"
                     value="{{ itemProduct.amount }}">
                   <button matSuffix mat-icon-button class="row-button-edit-amount"
-                    (click)="downAmountProduct(itemProduct.product)">
+                    (click)="downAmountProduct(itemProduct.product,i)">
                     <mat-icon>keyboard_arrow_down</mat-icon>
                   </button>
                 </mat-form-field>
@@ -111,16 +121,12 @@
                 {{ itemProduct.product?.end_price * itemProduct.amount | number }}
               </span>
             </div>
-
           </div>
 
         </div>
 
         <!--------------------------------------- END SALE-DETAIL-ORDER ------------------------------------------>
 
-
-
-        <!-- <app-sale-detail-order></app-sale-detail-order> -->
       </div>
       <app-sale-list-product></app-sale-list-product>
 

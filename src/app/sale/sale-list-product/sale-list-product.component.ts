@@ -10,6 +10,8 @@ import { ListComponentBase } from '../../shared/base';
 import { OrderService } from '../order.service';
 import { PriceListProductService } from '../../price-book/price-list-product.service';
 import { ItemInvoice } from '../order.model';
+import { element } from 'protractor';
+import { NotifierService } from 'angular-notifier';
 
 @Component({
   selector: 'app-sale-list-product',
@@ -25,7 +27,7 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
     private route: ActivatedRoute,
     private productSer: ProductService,
     private priceListProductSer: PriceListProductService,
-
+    private notifySer: NotifierService,
   ) {
     super();
   }
@@ -77,7 +79,7 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
 
     this.productSer.getListCart(this.apiFilter).subscribe(res => {
       this.dataSource = res.body;
-      
+
 
       this.reloadFilter(res);
       const url = this.productSer.getStateUrl(this.apiFilter);
@@ -105,6 +107,16 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
   }
 
   addProductToOrder(object) {
-    this.orderService.addProduct(object);
+    let product = object;
+    let units = object.productUnits;
+    let unit = units.find(element => element.is_base == 1);
+    product.product_unit_id = unit?.id;
+    product.product_unit_value = unit?.value;
+    product.base_unit = unit?.name;
+    if (unit == undefined) {
+      this.notifySer.notify('warning', 'Vui lòng cập nhật đơn vị sản phẩm !');
+    } else {
+      this.orderService.addProduct(product);
+    }
   }
 }

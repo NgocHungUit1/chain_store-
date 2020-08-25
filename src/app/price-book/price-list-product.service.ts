@@ -60,9 +60,13 @@ export class PriceListProductService {
         return this.http.post(url, data);
     }
 
-    exist(product_id: string, price_list_id: string) {
+    exist(product_id: string, product_unit_id: string, price_list_id: string) {
         const url = environment.apiUrl + '/price-list-product/exist';
-        return this.http.post(url, { product_id: product_id, price_list_id: price_list_id });
+        return this.http.post(url, {
+            product_id: product_id,
+            product_unit_id: product_unit_id,
+            price_list_id: price_list_id
+        });
     }
 
     /**
@@ -86,9 +90,9 @@ export class PriceListProductService {
         });
     }
 
-    getListProductCommon(common_id: string, list_product_choose: string[]) {
+    getListProductCommon(common_id: string, list_product_unit_choose: string[]) {
         const url = environment.apiUrl + '/price-list-product/get-list-product-common';
-        return this.http.post(url, { common_id: common_id, list_product_choose: list_product_choose });
+        return this.http.post(url, { common_id: common_id, list_product_unit_choose: list_product_unit_choose });
     }
 }
 
