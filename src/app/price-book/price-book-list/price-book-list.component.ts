@@ -144,7 +144,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
       const list = res.body;
       if (this.priceListChoose !== null && Array.isArray(list)) {
         // console.log(list);
-        
+
         const listProductUnitIdChoose = list.map(obj => obj.product_unit_id);
         const common_id = this.priceListCommon.id;
         // tien hanh xu ly add common vao list
@@ -232,7 +232,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
   }
 
   lookupProduct(value: string): Observable<Product[]> {
-    return this.productSer.autocompleteUnits(value).pipe(
+    return this.productSer.autocomplete(value).pipe(
       // map the item property of the github results as our return object
       map(results => results),
       // catch errors
@@ -358,24 +358,28 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
   }
 
   handlePriceListProduct(product: any, priceListID: any) {
-    this.priceListProductSer.exist(product.id, product.product_unit_id, priceListID).subscribe(result => {
-      if (result === false) {
-        const mPriceListProduct = new PriceListProduct();
-        mPriceListProduct.product_id = product.id;
-        mPriceListProduct.price_list_id = priceListID;
-        mPriceListProduct.price = product.sell_price;
-        mPriceListProduct.product_unit_id = product.product_unit_id;
+    let units = product?.productUnits;
+    units.forEach(element => {
+      this.priceListProductSer.exist(product.id, element.id, priceListID).subscribe(result => {
+        if (result === false) {
+          const mPriceListProduct = new PriceListProduct();
+          mPriceListProduct.product_id = product.id;
+          mPriceListProduct.price_list_id = priceListID;
+          mPriceListProduct.price = product.sell_price;
+          mPriceListProduct.product_unit_id = element.id;
 
-        this.priceListProductSer.create(mPriceListProduct).subscribe(mPriceListProduct => {
-          this.notifySer.notify('success', 'Thêm thành công!');
-          this.apiFilter = this.buildFilterFromParams();
-          this.loadData();
-        });
+          this.priceListProductSer.create(mPriceListProduct).subscribe(mPriceListProduct => {
+            this.notifySer.notify('success', 'Thêm thành công!');
+            this.apiFilter = this.buildFilterFromParams();
+            this.loadData();
+          });
 
-      } else {
-        this.notifySer.notify('warning', 'Đã tồn tại !');
-      }
+        } else {
+          this.notifySer.notify('warning', 'Đã tồn tại !');
+        }
+      });
     });
+
   }
 
   removeProduct(id) {

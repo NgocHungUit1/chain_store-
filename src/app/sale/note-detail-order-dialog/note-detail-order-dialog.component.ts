@@ -12,6 +12,8 @@ export class NoteDetailOrderDialogComponent implements OnInit {
 
   local_data: any;
   id: string;
+  i: string;
+  product_unit_id: string;
   note_detail_sale: string;
   constructor(
     public dialogRef: MatDialogRef<NoteDetailOrderDialogComponent>,
@@ -19,7 +21,8 @@ export class NoteDetailOrderDialogComponent implements OnInit {
     private fb: FormBuilder,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
     this.local_data = { ...data };
-    this.id = this.local_data.id;
+    this.i = this.local_data.i;
+    this.product_unit_id = this.local_data.product_unit_id;
     this.note_detail_sale = this.local_data.note_detail_sale;
   }
 
@@ -43,7 +46,7 @@ export class NoteDetailOrderDialogComponent implements OnInit {
   }
 
   submit() {
-    this.orderService.updateNoteDetailOrder(this.id, this.form.controls['noteDetailOrder'].value);
+    this.orderService.updateNoteDetailOrder(this.i, this.form.controls['noteDetailOrder'].value);
     this.dialogRef.close();
   }
 

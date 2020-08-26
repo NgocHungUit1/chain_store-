@@ -67,19 +67,19 @@ export class SaleMainComponent implements OnInit {
   public filteredUsers: Observable<User[]>;
 
   // 
-  listProductChooseOld: number[] = [];
+  listProductUnitIdChooseOld: number[] = [];
   common_idOld: string;
 
   autoPrint: boolean = true;
 
   /**
    *  So sanh danh sach cu
-   * @param listProductChoose 
+   * @param listProductUnitIdChoose 
    */
-  compareEqualListProduct(listProductChoose) {
+  compareEqualListProduct(listProductUnitIdChoose) {
     let fail = 1;
-    listProductChoose.forEach((value, index) => {
-      if (this.listProductChooseOld[index] === undefined || this.listProductChooseOld[index] !== value) {
+    listProductUnitIdChoose.forEach((value, index) => {
+      if (this.listProductUnitIdChooseOld[index] === undefined || this.listProductUnitIdChooseOld[index] !== value) {
         fail = 0;
       }
     });
@@ -171,7 +171,7 @@ export class SaleMainComponent implements OnInit {
         this.listProduct.push(eProductInfo);
         this.countProduct++;
       });
-      
+
       // debugger;
 
       // handle add common price
@@ -179,19 +179,20 @@ export class SaleMainComponent implements OnInit {
       const list = this.listProduct;
 
       if (priceBookID !== null && Array.isArray(list) && this.listProduct !== null) {
-        const listProductChoose = list.map(obj => obj.product.id);
+        const listProductUnitIdChoose = list.map(obj => obj.product_unit_id);
+        // debugger;
         // debugger;
         /**
         * Truong hop:  thay doi vs sl , pricebook
         */
-        if (this.compareEqualListProduct(listProductChoose) === 0 || this.common_idOld !== priceBookID) {
-          this.listProductChooseOld = listProductChoose;
+        if (this.compareEqualListProduct(listProductUnitIdChoose) === 0 || this.common_idOld !== priceBookID) {
+          this.listProductUnitIdChooseOld = listProductUnitIdChoose;
           this.common_idOld = priceBookID;
           const common_id = priceBookID;
           /**
            * tien hanh xu ly add common_price vao list 
            */
-          this.priceListProductSer.getListProductCommon(common_id, listProductChoose).subscribe(resCommon => {
+          this.priceListProductSer.getListProductCommon(common_id, listProductUnitIdChoose).subscribe(resCommon => {
             if (Array.isArray(resCommon)) {
               const priceListProductCommonExist = resCommon;
               // 
@@ -203,7 +204,7 @@ export class SaleMainComponent implements OnInit {
                * code group array by key
                */
               const group = priceListProductCommonExist.reduce((r, a) => {
-                r[a.product_id] = [...r[a.product_id] || [], a];
+                r[a.product_unit_id] = [...r[a.product_unit_id] || [], a];
                 return r;
               }, {});
 
@@ -213,10 +214,11 @@ export class SaleMainComponent implements OnInit {
               this.sumPrice = 0;
               if (this.listProduct !== null) {
                 this.listProduct.forEach(elementData => {
-                  if (group[elementData.product.id] !== undefined) {
-                    elementData.common_price = group[elementData.product.id][0]['price'];
+                  // debugger;
+                  if (group[elementData.product_unit_id] !== undefined) {
+                    elementData.common_price = group[elementData.product_unit_id][0]['price'];
                     if (elementData.product.end_price === undefined) {
-                      this.sumPrice += group[elementData.product.id][0]['price'] * elementData.amount; // gia chung * so luong
+                      this.sumPrice += group[elementData.product_unit_id][0]['price'] * elementData.amount; // gia chung * so luong
                     } else {
                       this.sumPrice += elementData.product.end_price * elementData.amount; // gia chung * so luong
                     }
@@ -256,13 +258,13 @@ export class SaleMainComponent implements OnInit {
           this.sumPrice = 0;
           if (this.listProduct !== null) {
             this.listProduct.forEach(elementData => {
-              if (groupProductIdCommonPrice[elementData.product.id] !== undefined) {
+              if (groupProductIdCommonPrice[elementData.product_unit_id] !== undefined) {
                 if (elementData.product.end_price !== undefined) {
                   elementData.common_price = elementData.product.end_price;
                   this.sumPrice += elementData.product.end_price * elementData.amount;
                 } else {
-                  elementData.common_price = groupProductIdCommonPrice[elementData.product.id][0]['common_price'];
-                  this.sumPrice += groupProductIdCommonPrice[elementData.product.id][0]['common_price'] * elementData.amount;
+                  elementData.common_price = groupProductIdCommonPrice[elementData.product_unit_id][0]['common_price'];
+                  this.sumPrice += groupProductIdCommonPrice[elementData.product_unit_id][0]['common_price'] * elementData.amount;
                 }
               } else {
                 if (elementData.product.end_price !== undefined) {
@@ -419,9 +421,8 @@ export class SaleMainComponent implements OnInit {
    * ********************************************** SALE DETAIL ORDER ***********************************************
    */
 
-  deleleProduct(itemProduct) {
-    const product = itemProduct?.product;
-    this.orderService.deleteProduct(product);
+  deleleProduct(i: any) {
+    this.orderService.deleteProduct(i);
   }
 
   upAmountProduct(product: Product, i: any) {
@@ -436,9 +437,10 @@ export class SaleMainComponent implements OnInit {
     this.orderService.inputAmountProduct(product_id, value);
   }
 
-  openNoteDetailOrderDialog(id: string, note_detail_sale: string) {
+  openNoteDetailOrderDialog(i: any, product_unit_id: string, note_detail_sale: string) {
     const obj = {
-      id: id,
+      i: i,
+      product_unit_id: product_unit_id,
       note_detail_sale: note_detail_sale
     };
     const dialogRef = this.dialog.open(NoteDetailOrderDialogComponent, {
@@ -452,11 +454,13 @@ export class SaleMainComponent implements OnInit {
     });
   }
 
-  openPriceDetailOrderDialog(product: Product, common_price: string) {
+  openPriceDetailOrderDialog(i: any, product: Product, common_price: string) {
     const obj = {
+      i: i,
       product: product,
       common_price: common_price
     };
+
     const dialogRef = this.dialog.open(PriceDetailOrderDialogComponent, {
       data: obj,
       width: '30%',
@@ -756,9 +760,9 @@ export class SaleMainComponent implements OnInit {
         note: element.product?.note_detail_sale,
         discount: discount,
         discount_type: discount_type,
-        product_unit_id: element.product?.product_unit_id,
-        product_unit_value: element.product?.product_unit_value,
-        base_unit: element.product?.base_unit,
+        product_unit_id: element.product_unit_id,
+        product_unit_value: element.product_unit_value,
+        base_unit: element.base_unit,
       });
     });
 
@@ -779,6 +783,9 @@ export class SaleMainComponent implements OnInit {
       PaymentMethod: mItemInvoice.paymentSiderBar?.type,
       PaymentPrice: this.sumPrice - this.numberDiscount, // tien thanh toan
     };
+
+    // debugger;
+    // return;
 
     /**
      * Kiem tra invoice_id la don moi hay don cap nhat
@@ -853,24 +860,26 @@ export class SaleMainComponent implements OnInit {
     this.autoPrint = e.checked;
   }
 
-  onChangeProductUnit(e: any, itemProduct, i) {
-    // console.log(i);
-    // console.log(e.value);
-    // console.log(itemProduct?.product?.productUnits);
+  onChangeProductUnit(e: any, itemProduct, i: any) {
     let units = itemProduct?.product?.productUnits;
     let item = units.find(element => element.id == e.value);
-    // console.log(item);
 
     let listProduct = this.listProduct;
     listProduct[i]['product_unit_id'] = item['id'];
     listProduct[i]['product_unit_value'] = item['value'];
-    listProduct[i]['product']['sell_price'] = item['price'];
-    listProduct[i]['product']['end_price'] = item['price'];
+    listProduct[i]['product']['sell_price'] = item['sell_price'];
     listProduct[i]['product']['product_no'] = item['no'];
     listProduct[i]['common_price'] = item['price'];
-    // console.log(listProduct[i]);
 
     this.listProduct = listProduct;
+    const listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        element.listProduct = listProduct;
+      }
+    });
+    this.orderService.setListInvoiceLocalStorage(listInvoice);
 
   }
 

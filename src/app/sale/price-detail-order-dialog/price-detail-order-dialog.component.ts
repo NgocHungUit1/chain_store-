@@ -12,6 +12,7 @@ import { Product } from '../../product/product.model';
 export class PriceDetailOrderDialogComponent implements OnInit {
 
   local_data: any;
+  i: any;
   product: Product;
   common_price: any;
   commonPriceDetailOrderText: string;
@@ -21,6 +22,7 @@ export class PriceDetailOrderDialogComponent implements OnInit {
     private fb: FormBuilder,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
     this.local_data = { ...data };
+    this.i = this.local_data.i;
     this.product = this.local_data.product;
     this.common_price = this.local_data.common_price;
   }
@@ -44,6 +46,7 @@ export class PriceDetailOrderDialogComponent implements OnInit {
 
 
   ngOnInit(): void {
+    
     var discountType = 'price';
     var discountPrice = '0';
     var endPrice = this.common_price;
@@ -76,7 +79,7 @@ export class PriceDetailOrderDialogComponent implements OnInit {
     product.discount_type = this.form.controls['discountTypePriceDetailOrder'].value;
     product.discount = this.form.controls['discountPriceDetailOrder'].value;
     product.end_price = this.form.controls['endPriceDetailOrder'].value;
-    this.orderService.updateProduct(product.id, product);
+    this.orderService.updateProduct(this.i, product);
     this.dialogRef.close();
   }
 

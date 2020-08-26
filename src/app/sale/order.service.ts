@@ -179,11 +179,8 @@ export class OrderService {
     const ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
-    listItemInvoice.forEach(element => {
-      if (element.active === true) {
-        mItemInvoice = element;
-      }
-    });
+
+    mItemInvoice = listItemInvoice.find(element => element.active === true);
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
       const listProduct: ProductInfo[] = [];
       const mProductInfo = new ProductInfo();
@@ -219,32 +216,22 @@ export class OrderService {
     this.setListInvoiceLocalStorage(ListInvoice);
   }
 
-  deleteProduct(product: Product) {
+  deleteProduct(i: any) {
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
-    listItemInvoice.forEach(element => {
-      if (element.active === true) {
-        mItemInvoice = element;
-      }
-    });
+
+    mItemInvoice = listItemInvoice.find(element => element.active === true);
+
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
     } else {
-      const listProduct = mItemInvoice.listProduct;
+      let listProduct = mItemInvoice.listProduct;
       const resultListProduct = [];
-      listProduct.forEach(eProductInfo => {
-        if (eProductInfo.product_id !== product.id) {
+      listProduct.forEach((eProductInfo, index) => {
+        if (i !== index) {
           resultListProduct.push(eProductInfo);
-        } else {
-          if (eProductInfo.product_unit_id == undefined && product.product_unit_id !== undefined) {
-            resultListProduct.push(eProductInfo);
-          }
-          if (eProductInfo.product_unit_id !== undefined && product.product_unit_id !== undefined && eProductInfo.product_unit_id !== product.product_unit_id) {
-            resultListProduct.push(eProductInfo);
-          }
         }
       });
-
       mItemInvoice.listProduct = resultListProduct;
     }
     this.setListInvoiceLocalStorage(ListInvoice);
@@ -257,15 +244,13 @@ export class OrderService {
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
-    listItemInvoice.forEach(element => {
-      if (element.active === true) {
-        mItemInvoice = element;
-      }
-    });
+
+    mItemInvoice = listItemInvoice.find(element => element.active === true);
+
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
     } else {
       let listProduct = mItemInvoice.listProduct;
-      listProduct[i]['amount'] = listProduct[i]['amount'] + 1;
+      listProduct[i]['amount'] = Number(listProduct[i]['amount']) + 1;
       mItemInvoice.listProduct = listProduct;
     }
     this.setListInvoiceLocalStorage(ListInvoice);
@@ -275,6 +260,41 @@ export class OrderService {
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
+
+    mItemInvoice = listItemInvoice.find(element => element.active === true);
+
+    if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
+    } else {
+      let listProduct = mItemInvoice.listProduct;
+
+      listProduct[i]['amount'] = Number(listProduct[i]['amount']) - 1;
+      if (Number(listProduct[i]['amount']) <= 0) {
+        delete listProduct[i];
+      }
+      mItemInvoice.listProduct = listProduct;
+    }
+    this.setListInvoiceLocalStorage(ListInvoice);
+  }
+
+  updateNoteDetailOrder(i: any, note_detail_sale: string) {
+    let ListInvoice = this.getListInvoiceLocalStorage();
+    const listItemInvoice = ListInvoice.itemInvoice;
+    let mItemInvoice = new ItemInvoice();
+    mItemInvoice = listItemInvoice.find(element => element.active === true);
+    if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
+    } else {
+      let listProduct = mItemInvoice.listProduct;
+      listProduct[i]['product']['note_detail_sale'] = note_detail_sale;
+      mItemInvoice.listProduct = listProduct;
+    }
+    this.setListInvoiceLocalStorage(ListInvoice);
+
+  }
+
+  updateProduct(i: any, product: Product) {
+    let ListInvoice = this.getListInvoiceLocalStorage();
+    const listItemInvoice = ListInvoice.itemInvoice;
+    let mItemInvoice = new ItemInvoice();
     listItemInvoice.forEach(element => {
       if (element.active === true) {
         mItemInvoice = element;
@@ -283,108 +303,25 @@ export class OrderService {
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
     } else {
       let listProduct = mItemInvoice.listProduct;
-      // const resultListProduct = [];
-      // listProduct.forEach(eProductInfo => {
-      //   if (eProductInfo.product_id === product.id && eProductInfo.product_unit_id == product.product_unit_id) {
-
-      //     eProductInfo.amount--;
-      //     if (eProductInfo.amount > 0) {
-      //       resultListProduct.push(eProductInfo);
-      //     }
-      //   } else {
-      //     resultListProduct.push(eProductInfo);
-      //   }
-      // });
-      listProduct[i]['amount'] = listProduct[i]['amount'] - 1;
-      if (listProduct[i]['amount'] <= 0) {
-        delete listProduct[i];
-      }
+      listProduct[i]['product'] = product;
       mItemInvoice.listProduct = listProduct;
     }
     this.setListInvoiceLocalStorage(ListInvoice);
   }
 
-  updateNoteDetailOrder(id: string, note_detail_sale: string) {
+  inputAmountProduct(i: any, value: number) {
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
-    listItemInvoice.forEach(element => {
-      if (element.active === true) {
-        mItemInvoice = element;
-      }
-    });
+
+    mItemInvoice = listItemInvoice.find(element => element.active === true);
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
     } else {
-      const listProduct = mItemInvoice.listProduct;
-      const resultListProduct = [];
-      listProduct.forEach(eProductInfo => {
-        if (eProductInfo.product_id === id) {
-          eProductInfo.product.note_detail_sale = note_detail_sale;
-        }
-        resultListProduct.push(eProductInfo);
-      });
-      mItemInvoice.listProduct = resultListProduct;
-    }
-    this.setListInvoiceLocalStorage(ListInvoice);
-
-  }
-
-  updateProduct(id: string, product: Product) {
-    console.log(product);
-
-    let ListInvoice = this.getListInvoiceLocalStorage();
-    const listItemInvoice = ListInvoice.itemInvoice;
-    let mItemInvoice = new ItemInvoice();
-    listItemInvoice.forEach(element => {
-      if (element.active === true) {
-        mItemInvoice = element;
+      let listProduct = mItemInvoice.listProduct;
+      if (value >= 0) {
+        listProduct[i]['amount'] = Number(value);
       }
-    });
-    if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
-    } else {
-      const listProduct = mItemInvoice.listProduct;
-      const resultListProduct = [];
-      listProduct.forEach(eProductInfo => {
-        if (eProductInfo.product_id === id) {
-          if (product.product_unit_id == undefined) {
-            eProductInfo.product = product;
-          } else {
-            if (eProductInfo.product_unit_id === product.product_unit_id && product.product_unit_id !== undefined) {
-              eProductInfo.product = product;
-            }
-          }
-        }
-        resultListProduct.push(eProductInfo);
-      });
-      mItemInvoice.listProduct = resultListProduct;
-    }
-    this.setListInvoiceLocalStorage(ListInvoice);
-  }
-
-  inputAmountProduct(id: string, value: number) {
-    let ListInvoice = this.getListInvoiceLocalStorage();
-    const listItemInvoice = ListInvoice.itemInvoice;
-    let mItemInvoice = new ItemInvoice();
-    listItemInvoice.forEach(element => {
-      if (element.active === true) {
-        mItemInvoice = element;
-      }
-    });
-    if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
-    } else {
-      const listProduct = mItemInvoice.listProduct;
-      const resultListProduct = [];
-      listProduct.forEach(eProductInfo => {
-        if (eProductInfo.product_id === id) {
-          if (value >= 0) {
-            eProductInfo.amount = value;
-            resultListProduct.push(eProductInfo);
-          }
-        } else {
-          resultListProduct.push(eProductInfo);
-        }
-      });
-      mItemInvoice.listProduct = resultListProduct;
+      mItemInvoice.listProduct = listProduct;
     }
     this.setListInvoiceLocalStorage(ListInvoice);
   }

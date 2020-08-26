@@ -14,7 +14,7 @@
           <div fxLayout="row wrap" class="row-item">
             <div fxFlex="7" class="row-count-number">
               <span>{{  countProduct-i  }}</span>
-              <button mat-icon-button (click)="deleleProduct(itemProduct)">
+              <button mat-icon-button (click)="deleleProduct(i)">
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
@@ -43,7 +43,7 @@
                 <span *ngIf="itemProduct?.product?.note_detail_sale">{{ itemProduct?.product?.note_detail_sale }}</span>
                 <button mat-icon-button>
                   <mat-icon class="row-icon-edit"
-                    (click)="openNoteDetailOrderDialog(itemProduct?.product?.id, itemProduct?.product?.note_detail_sale)">
+                    (click)="openNoteDetailOrderDialog(i,itemProduct?.product_unit_id,itemProduct?.product?.note_detail_sale)">
                     edit</mat-icon>
                 </button>
               </span>
@@ -71,8 +71,7 @@
                     <mat-icon>keyboard_arrow_up</mat-icon>
                   </button>
                   <input matInput type="number" tabindex="3" min="0" class="row-amount-number"
-                    (input)="inputAmountProduct(itemProduct.product?.id,$event.target.value)"
-                    value="{{ itemProduct.amount }}">
+                    (input)="inputAmountProduct(i,$event.target.value)" value="{{ itemProduct.amount }}">
                   <button matSuffix mat-icon-button class="row-button-edit-amount"
                     (click)="downAmountProduct(itemProduct.product,i)">
                     <mat-icon>keyboard_arrow_down</mat-icon>
@@ -91,7 +90,7 @@
                       style="color:black">
                     <button mat-icon-button matPrefix>
                       <mat-icon class="row-icon-edit-price"
-                        (click)="openPriceDetailOrderDialog(itemProduct.product,itemProduct.common_price)">
+                        (click)="openPriceDetailOrderDialog(i,itemProduct.product,itemProduct.common_price)">
                         edit</mat-icon>
                     </button>
                   </mat-form-field>
@@ -102,7 +101,7 @@
                       style="color:black">
                     <button mat-icon-button matPrefix>
                       <mat-icon class="row-icon-edit-price"
-                        (click)="openPriceDetailOrderDialog(itemProduct.product,itemProduct.common_price)">
+                        (click)="openPriceDetailOrderDialog(i,itemProduct.product,itemProduct.common_price)">
                         edit</mat-icon>
                     </button>
                   </mat-form-field>

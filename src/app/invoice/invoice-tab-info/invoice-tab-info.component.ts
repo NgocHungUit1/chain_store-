@@ -149,6 +149,9 @@ export class InvoiceTabInfoComponent implements OnInit {
       mProductInfo.product = element.product;
       mProductInfo.product.end_price = element.price;
       mProductInfo.common_price = element.price;
+      mProductInfo.product_unit_id = element.product_unit_id;
+      mProductInfo.product_unit_value = element.product_unit_value;
+      mProductInfo.base_unit = element.base_unit;
       aProductInfo.push(mProductInfo);
     });
     mItemInvoice.listProduct = aProductInfo;
