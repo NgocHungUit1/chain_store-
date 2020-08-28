@@ -25,6 +25,7 @@ export class OrderService {
     itemInvoice.invoice_id = -1;
     itemInvoice.invoice_name = 'Hóa đơn';
     itemInvoice.active = true;
+    itemInvoice.is_return = false;
     listItemInvoice.push(itemInvoice);
     data.itemInvoice = listItemInvoice;
     this.ObjectListInvoice.next(data);
@@ -68,6 +69,7 @@ export class OrderService {
     itemInvoice.invoice_id = min_invoice_id - 1;
     itemInvoice.invoice_name = 'Hóa đơn';
     itemInvoice.active = true;
+    itemInvoice.is_return = false;
     listItemInvoice.push(itemInvoice);
     data.itemInvoice = listItemInvoice;
     this.setListInvoiceLocalStorage(data);

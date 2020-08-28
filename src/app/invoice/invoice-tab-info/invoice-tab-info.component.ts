@@ -126,6 +126,7 @@ export class InvoiceTabInfoComponent implements OnInit {
     let mItemInvoice = new ItemInvoice();
     mItemInvoice.invoice_id = invoice.id;
     mItemInvoice.active = true;
+    mItemInvoice.is_return = false;
     mItemInvoice.invoice_name = 'Cập nhật ' + invoice.invoice_no;
     mItemInvoice.price_book_id = invoice.price_book_id;
     mItemInvoice.customer = invoice.customer;
@@ -143,14 +144,19 @@ export class InvoiceTabInfoComponent implements OnInit {
     const detail = invoice.detail || [];
 
     detail.forEach(element => {
+      let units = element?.product?.productUnits;
+      let item = units.find(element => element.is_base == 1);
+
       const mProductInfo = new ProductInfo();
       mProductInfo.amount = element.amount;
       mProductInfo.product_id = element.product?.id;
       mProductInfo.product = element.product;
       mProductInfo.product.end_price = element.price;
       mProductInfo.common_price = element.price;
-      mProductInfo.product_unit_id = element.product_unit_id;
-      mProductInfo.product_unit_value = element.product_unit_value;
+      // mProductInfo.product_unit_id = element.product_unit_id;
+      // mProductInfo.product_unit_value = element.product_unit_value;
+      mProductInfo.product_unit_id = item['id'];
+      mProductInfo.product_unit_value = item['value'];
       mProductInfo.base_unit = element.base_unit;
       aProductInfo.push(mProductInfo);
     });
@@ -243,6 +249,62 @@ export class InvoiceTabInfoComponent implements OnInit {
       WindowPrt.close();
     });
 
+  }
+
+  /**
+   * Tra hang
+   * @param invoice 
+   */
+  returnInvoice(invoice) {
+    // console.log(invoice);
+    // return;
+    let mItemInvoice = new ItemInvoice();
+    mItemInvoice.invoice_id = invoice.id;
+    mItemInvoice.active = true;
+    mItemInvoice.is_return = true;
+    mItemInvoice.invoice_name = 'Trả hàng ' + invoice.invoice_no;
+    mItemInvoice.price_book_id = invoice.price_book_id;
+    mItemInvoice.customer = invoice.customer;
+    mItemInvoice.user = {
+      id: invoice.user.id,
+      email: invoice.user.email,
+      username: invoice.user.username
+    };
+    mItemInvoice.discountSiderBar = {
+      number: invoice.discount,
+      type: invoice.discount_type
+    };
+
+    let aProductInfo: ProductInfo[] = [];
+    const detail = invoice.detail || [];
+
+    detail.forEach(element => {
+
+      let units = element?.product?.productUnits;
+      let item = units.find(element => element.is_base == 1);
+
+      const mProductInfo = new ProductInfo();
+      mProductInfo.amount = 0;
+      mProductInfo.product_id = element.product?.id;
+      mProductInfo.product = element.product;
+      mProductInfo.product.end_price = element.price;
+      mProductInfo.common_price = element.price;
+      // mProductInfo.product_unit_id = element.product_unit_id;
+      // mProductInfo.product_unit_value = element.product_unit_value;
+      mProductInfo.product_unit_id = item['id'];
+      mProductInfo.product_unit_value = item['value'];
+
+      mProductInfo.base_unit = element.base_unit;
+      mProductInfo.is_return = true;
+      mProductInfo.max_amount_return = element.amount;
+
+      aProductInfo.push(mProductInfo);
+    });
+
+    mItemInvoice.listProduct = aProductInfo;
+    this.orderService.addItemInvoiceUpdate(mItemInvoice);
+    // debugger;
+    this.router.navigate(['/sale']);
   }
 
 }

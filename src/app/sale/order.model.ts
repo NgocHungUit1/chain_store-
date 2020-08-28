@@ -41,6 +41,9 @@ export class ProductInfo {
     product_unit_id: number;
     product_unit_value: number;
     base_unit: string;
+
+    is_return: boolean;
+    max_amount_return: number;
 }
 export class ItemInvoice {
     invoice_name: string;
@@ -53,6 +56,7 @@ export class ItemInvoice {
     discountSiderBar: DiscountSiderBar;
     paymentSiderBar: PaymentSiderBar;
     noteSiderBar: string;
+    is_return: boolean;
 }
 
 export class ListInvoice {
