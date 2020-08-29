@@ -55,7 +55,8 @@
                   <mat-label>Đơn vị</mat-label>
                   <mat-select [(value)]="itemProduct.product_unit_id"
                     (selectionChange)="onChangeProductUnit($event,itemProduct,i)">
-                    <mat-option *ngFor="let unit of itemProduct.product?.productUnits" [value]="unit.id">
+                    <mat-option *ngFor="let unit of itemProduct.product?.productUnits" [value]="unit.id"
+                      [disabled]="localItemInvoice?.is_return == true">
                       {{ unit.name }}
                     </mat-option>
                   </mat-select>
@@ -64,20 +65,47 @@
             </div>
 
             <div fxFlex="auto" class="row-amount">
-              <div fxLayout="row wrap">
-                <mat-form-field style=" font-size: 20px; text-align: center;">
-                  <button matPrefix mat-icon-button class="row-button-edit-amount"
-                    (click)="upAmountProduct(itemProduct.product,i)">
-                    <mat-icon>keyboard_arrow_up</mat-icon>
-                  </button>
-                  <input matInput type="number" tabindex="3" min="0" class="row-amount-number"
-                    (input)="inputAmountProduct(i,$event.target.value)" value="{{ itemProduct.amount }}">
-                  <button matSuffix mat-icon-button class="row-button-edit-amount"
-                    (click)="downAmountProduct(itemProduct.product,i)">
-                    <mat-icon>keyboard_arrow_down</mat-icon>
-                  </button>
-                </mat-form-field>
+
+              <div *ngIf="localItemInvoice.is_return !== true; else changeAmount">
+
+                <div fxLayout="row wrap">
+                  <mat-form-field style=" font-size: 20px; text-align: center;">
+                    <button matPrefix mat-icon-button class="row-button-edit-amount"
+                      (click)="upAmountProduct(itemProduct.product,i)">
+                      <mat-icon>keyboard_arrow_up</mat-icon>
+                    </button>
+                    <input matInput type="number" tabindex="3" min="0" class="row-amount-number"
+                      (input)="inputAmountProduct(i,$event.target.value)" value="{{ itemProduct.amount }}">
+                    <button matSuffix mat-icon-button class="row-button-edit-amount"
+                      (click)="downAmountProduct(itemProduct.product,i)">
+                      <mat-icon>keyboard_arrow_down</mat-icon>
+                    </button>
+                  </mat-form-field>
+                </div>
+
               </div>
+              <ng-template #changeAmount>
+
+                <!-- change amount on return -->
+                <div fxLayout="row wrap">
+                  <mat-form-field style=" font-size: 20px; text-align: center;">
+                    <button matPrefix mat-icon-button class="row-button-edit-amount"
+                      (click)="upAmountProductReturn(itemProduct.product,i)">
+                      <mat-icon>keyboard_arrow_up</mat-icon>
+                    </button>
+                    <input matInput type="number" tabindex="3" min="0" max="{{ itemProduct?.max_amount_return }}"
+                      class="row-amount-number" (input)="inputAmountProductReturn(i,$event.target.value)"
+                      value="{{ itemProduct?.amount }}">
+                    <button matSuffix mat-icon-button class="row-button-edit-amount"
+                      (click)="downAmountProduct(itemProduct.product,i)">
+                      <mat-icon>keyboard_arrow_down</mat-icon>
+                    </button>
+                  </mat-form-field>
+                  <span class="amount-cell-sub" >/{{ itemProduct?.max_amount_return }}</span>
+                </div>
+
+              </ng-template>
+
             </div>
             <div fxFlex="2"></div>
             <div fxFlex="13" class="row-edit-price">
@@ -145,9 +173,11 @@
           <div class="user-action">
             <div fxLayout="row wrap">
               <div fxFlex="60">
+
                 <mat-form-field>
                   <input class="input-search-user" type="text" [formControl]="selectUser" matInput
-                    [matAutocomplete]="chooseUser" placeholder="Tìm nhân viên ">
+                    [matAutocomplete]="chooseUser" placeholder="Tìm nhân viên "
+                    [readonly]="localItemInvoice?.is_return == true">
                   <button mat-button matPrefix>
                     <mat-icon>search</mat-icon>
                   </button>
@@ -159,6 +189,7 @@
                     </mat-option>
                   </mat-autocomplete>
                 </mat-form-field>
+
               </div>
               <div fxFlex="2"></div>
               <div fxFlex="38">
@@ -174,7 +205,8 @@
               <div fxFlex="70">
                 <mat-form-field>
                   <input class="input-search-customer" type="text" [formControl]="selectCustomer" matInput
-                    [matAutocomplete]="chooseProduct" placeholder="Tìm khách hàng ">
+                    [matAutocomplete]="chooseProduct" placeholder="Tìm khách hàng "
+                    [readonly]="localItemInvoice?.is_return == true">
                   <button mat-button matPrefix>
                     <mat-icon>search</mat-icon>
                   </button>
@@ -188,9 +220,11 @@
                 </mat-form-field>
               </div>
               <div fxFlex="auto">
-                <button mat-button matPrefix>
-                  <mat-icon (click)="openSaleCustomerFormDialogComponent()">add</mat-icon>
-                </button>
+                <div *ngIf="localItemInvoice?.is_return !== true">
+                  <button mat-button matPrefix>
+                    <mat-icon (click)="openSaleCustomerFormDialogComponent()">add</mat-icon>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -202,18 +236,31 @@
               </button>
               <mat-select placeholder="Chọn bảng giá" (selectionChange)="choosePriceBook($event)"
                 formControlName="priceBookID">
-                <mat-option *ngFor="let priceList of priceLists" [value]="priceList.id">
+                <mat-option *ngFor="let priceList of priceLists" [value]="priceList.id"
+                  [disabled]="localItemInvoice?.is_return == true">
                   {{ priceList.name }}
                 </mat-option>
               </mat-select>
             </mat-form-field>
           </div>
-          <label class="mat-h2"> Hóa đơn </label>
+
+          <div *ngIf="localItemInvoice?.is_return !== true; else titleHoaDon">
+            <label class="mat-h2"> Hóa đơn </label>
+          </div>
+          <ng-template #titleHoaDon>
+            <label class="mat-h2"> Trả hàng </label>
+          </ng-template>
+
           <mat-divider></mat-divider>
           <div class="order-detail">
             <div fxLayout="row wrap" class="price-product">
               <div fxFlex="50" class="price-product-text ">
-                <span matBadge="{{ countProduct }}" matBadgeOverlap="false">Tổng tiền hàng </span>
+                <div *ngIf="localItemInvoice?.is_return !== true; else tongTienHang">
+                  <span matBadge="{{ countProduct }}" matBadgeOverlap="false">Tổng tiền hàng </span>
+                </div>
+                <ng-template #tongTienHang>
+                  <span matBadge="{{ countProduct }}" matBadgeOverlap="false">Tổng tiền hàng trả </span>
+                </ng-template>
               </div>
               <div fxFlex="50" class="price-product-number">
                 <input matInput type="text" value="{{ sumPrice | number}}">
@@ -240,14 +287,30 @@
           </div>
 
           <div class="customer-need">
-            <div fxLayout="row wrap" class="customer-need">
-              <div fxFlex="50" class="customer-need-text label-text">
-                <span>Khách cần trả</span>
-              </div>
-              <div fxFlex="50" class="customer-need-number">
-                <input matInput type="text" value="{{ sumPrice - numberDiscount | number}}">
+
+            <div *ngIf="localItemInvoice?.is_return !== true; else khachCanTra">
+              <div fxLayout="row wrap" class="customer-need">
+                <div fxFlex="50" class="customer-need-text label-text">
+                  <span>Khách cần trả</span>
+                </div>
+                <div fxFlex="50" class="customer-need-number">
+                  <input matInput type="text" value="{{ sumPrice - numberDiscount | number}}">
+                </div>
               </div>
             </div>
+            <ng-template #khachCanTra>
+              <div fxLayout="row wrap" class="customer-need">
+                <div fxFlex="50" class="customer-need-text label-text">
+                  <span>Cần trả khách</span>
+                </div>
+                <div fxFlex="50" class="customer-need-number">
+                  <input matInput type="text" *ngIf="(sumPrice - numberDiscount) <= 0"
+                    value="{{ (sumPrice - numberDiscount)*-1 | number}}">
+                </div>
+              </div>
+            </ng-template>
+
+
           </div>
 
           <div class="customer-pay">
@@ -267,17 +330,24 @@
             </div>
           </div>
 
+
           <div class="excess-cash">
-            <div fxLayout="row wrap" class="excess-cash">
-              <div fxFlex="50" class="cexcess-cash-text label-text">
-                <span>Tiền thừa trả khách</span>
-              </div>
-              <div fxFlex="50" class="excess-cash-number">
-                <input matInput type="text" *ngIf="customerPay - sumPrice + numberDiscount > 0"
-                  value="{{ customerPay - sumPrice + numberDiscount | number}}">
-                <input matInput type="text" *ngIf="customerPay - sumPrice + numberDiscount <= 0" value="0">
+            <div *ngIf="localItemInvoice?.is_return !== true; else tienThuaTraKhach">
+              <div fxLayout="row wrap" class="excess-cash">
+                <div fxFlex="50" class="cexcess-cash-text label-text">
+                  <span>Tiền thừa trả khách</span>
+                </div>
+                <div fxFlex="50" class="excess-cash-number">
+                  <input matInput type="text" *ngIf="customerPay - sumPrice + numberDiscount > 0"
+                    value="{{ customerPay - sumPrice + numberDiscount | number}}">
+                  <input matInput type="text" *ngIf="customerPay - sumPrice + numberDiscount <= 0" value="0">
+                </div>
               </div>
             </div>
+            <ng-template #tienThuaTraKhach>
+
+            </ng-template>
+
           </div>
 
           <div class="order-note">

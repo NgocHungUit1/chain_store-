@@ -4,23 +4,47 @@
     (page)="onMatPageChange($event)" [pageIndex]="page - 1" showFirstLastButtons></mat-paginator>
 
   <mat-grid-list cols="8" rowHeight="110px">
-    <mat-grid-tile *ngFor="let object of dataSource" class="grid-custom" (click)="addProductToOrder(object)"
-      title="{{ object.product_name }}">
-      <div class="product-image">
-        <img class="example-option-img" aria-hidden [src]="object.default_image" style="max-width: 70px;">
-      </div>
-      <div class="content">
 
-        <span class="product-price" *ngIf="object?.common?.price">
-          {{  object?.common?.price  | number }}
-        </span>
-        <span class="product-price" *ngIf="object?.common?.price === null">
-          {{  object.sell_price  | number }}
-        </span>
-        <span class="product-name">
-          {{ object.product_name | slice:0:35 }}
-        </span>
-      </div>
-    </mat-grid-tile>
+    <div *ngIf="localItemInvoice?.is_return !== true; else girdItem">
+      <mat-grid-tile *ngFor="let object of dataSource" class="grid-custom" (click)="addProductToOrder(object)"
+        title="{{ object.product_name }}">
+        <div class="product-image">
+          <img class="example-option-img" aria-hidden [src]="object.default_image" style="max-width: 70px;">
+        </div>
+        <div class="content">
+
+          <span class="product-price" *ngIf="object?.common?.price">
+            {{  object?.common?.price  | number }}
+          </span>
+          <span class="product-price" *ngIf="object?.common?.price === null">
+            {{  object.sell_price  | number }}
+          </span>
+          <span class="product-name">
+            {{ object.product_name | slice:0:35 }}
+          </span>
+        </div>
+      </mat-grid-tile>
+    </div>
+    <ng-template #girdItem>
+      <mat-grid-tile *ngFor="let object of dataSource" class="grid-custom" title="{{ object.product_name }}">
+        <div class="product-image">
+          <img class="example-option-img" aria-hidden [src]="object.default_image" style="max-width: 70px;">
+        </div>
+        <div class="content">
+
+          <span class="product-price" *ngIf="object?.common?.price">
+            {{  object?.common?.price  | number }}
+          </span>
+          <span class="product-price" *ngIf="object?.common?.price === null">
+            {{  object.sell_price  | number }}
+          </span>
+          <span class="product-name">
+            {{ object.product_name | slice:0:35 }}
+          </span>
+        </div>
+      </mat-grid-tile>
+    </ng-template>
+
+
   </mat-grid-list>
 </div>

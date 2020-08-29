@@ -38,6 +38,8 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
   apiFilter: ProductFilter;
   dataSource: Product[] = [];
   priceBookID: string = null;
+  localItemInvoice: ItemInvoice;
+
 
   @ViewChild(MatTable, { static: true }) table: MatTable<any>;
   @ViewChild('selectColumn') selectColumn;
@@ -89,7 +91,7 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
   }
 
   ngOnInit(): void {
-
+    let mItemInvoice = new ItemInvoice();
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
     this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
@@ -101,9 +103,23 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
           this.loadData();
         }
       });
+      this.localItemInvoice = this.getNewItemInvoice();
 
     });
 
+  }
+
+  getNewItemInvoice() {
+    let mItemInvoice = new ItemInvoice();
+    this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
+      const listItemInvoice = ListInvoice.itemInvoice;
+      listItemInvoice.forEach(element => {
+        if (element.active === true) {
+          mItemInvoice = element;
+        }
+      });
+    });
+    return mItemInvoice;
   }
 
   addProductToOrder(object) {

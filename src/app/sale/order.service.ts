@@ -258,6 +258,25 @@ export class OrderService {
     this.setListInvoiceLocalStorage(ListInvoice);
   }
 
+  upAmountProductReturn(product: Product, i: any) {
+    let ListInvoice = this.getListInvoiceLocalStorage();
+    const listItemInvoice = ListInvoice.itemInvoice;
+    let mItemInvoice = new ItemInvoice();
+
+    mItemInvoice = listItemInvoice.find(element => element.active === true);
+
+    if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
+    } else {
+      let listProduct = mItemInvoice.listProduct;
+      if (listProduct[i]['amount'] < listProduct[i]['max_amount_return']) {
+        listProduct[i]['amount'] = Number(listProduct[i]['amount']) + 1;
+      }
+
+      mItemInvoice.listProduct = listProduct;
+    }
+    this.setListInvoiceLocalStorage(ListInvoice);
+  }
+
   downAmountProduct(product: Product, i: any) {
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
@@ -268,12 +287,14 @@ export class OrderService {
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
     } else {
       let listProduct = mItemInvoice.listProduct;
-
+      let result = [];
       listProduct[i]['amount'] = Number(listProduct[i]['amount']) - 1;
-      if (Number(listProduct[i]['amount']) <= 0) {
-        delete listProduct[i];
-      }
-      mItemInvoice.listProduct = listProduct;
+      listProduct.forEach(eProduct => {
+        if (eProduct.amount > 0) {
+          result.push(eProduct);
+        }
+      });
+      mItemInvoice.listProduct = result;
     }
     this.setListInvoiceLocalStorage(ListInvoice);
   }
@@ -321,6 +342,23 @@ export class OrderService {
     } else {
       let listProduct = mItemInvoice.listProduct;
       if (value >= 0) {
+        listProduct[i]['amount'] = Number(value);
+      }
+      mItemInvoice.listProduct = listProduct;
+    }
+    this.setListInvoiceLocalStorage(ListInvoice);
+  }
+
+  inputAmountProductReturn(i: any, value: number) {
+    let ListInvoice = this.getListInvoiceLocalStorage();
+    const listItemInvoice = ListInvoice.itemInvoice;
+    let mItemInvoice = new ItemInvoice();
+
+    mItemInvoice = listItemInvoice.find(element => element.active === true);
+    if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
+    } else {
+      let listProduct = mItemInvoice.listProduct;
+      if (value >= 0 && value <= listProduct[i]['max_amount_return']) {
         listProduct[i]['amount'] = Number(value);
       }
       mItemInvoice.listProduct = listProduct;

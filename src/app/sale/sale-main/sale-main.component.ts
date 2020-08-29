@@ -62,6 +62,7 @@ export class SaleMainComponent implements OnInit {
   selectCustomer = new FormControl();
   selectUser = new FormControl();
   user: User = null;
+  localItemInvoice: ItemInvoice;
 
   public filteredCustomers: Observable<Customer[]>;
   public filteredUsers: Observable<User[]>;
@@ -98,6 +99,8 @@ export class SaleMainComponent implements OnInit {
     await this.handleDiscountSiderBar(mItemInvoice);
 
     await this.handlePaymentSiderBar(mItemInvoice);
+
+    this.localItemInvoice = mItemInvoice;
   }
 
   getNewItemInvoice() {
@@ -429,12 +432,20 @@ export class SaleMainComponent implements OnInit {
     this.orderService.upAmountProduct(product, i);
   }
 
+  upAmountProductReturn(product: Product, i: any) {
+    this.orderService.upAmountProductReturn(product, i);
+  }
+
   downAmountProduct(product_id, i: any) {
     this.orderService.downAmountProduct(product_id, i);
   }
 
   inputAmountProduct(product_id, value) {
     this.orderService.inputAmountProduct(product_id, value);
+  }
+
+  inputAmountProductReturn(product_id, value) {
+    this.orderService.inputAmountProductReturn(product_id, value);
   }
 
   openNoteDetailOrderDialog(i: any, product_unit_id: string, note_detail_sale: string) {

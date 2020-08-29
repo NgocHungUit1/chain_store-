@@ -223,3 +223,12 @@ html .page-wrapper .page-content {
 .order-note {
   padding-top: 18px;
 }
+
+.amount-cell-sub {
+  margin-top: -24px;
+  font-size: 19px;
+  text-align: right;
+  display: inline-block;
+  width: 100%;
+  margin-right: 17px;
+}
