@@ -147,6 +147,7 @@ export class ProductMedicineDialogComponent implements OnInit {
 
   ngOnInit() {
     const groupFilter = new GroupFilter();
+    groupFilter.pageSize = 50;
     // groupFilter.store_id = 1;
     this.groupSer.getList(groupFilter).subscribe(res => {
       this.groups = res.body;
@@ -154,17 +155,20 @@ export class ProductMedicineDialogComponent implements OnInit {
 
     const usingFilter = new UsingFilter();
     // usingFilter.store_id = 1;
+    usingFilter.pageSize = 50;
     this.usingSer.getList(usingFilter).subscribe(res => {
       this.usings = res.body;
     });
 
     const placementFilter = new PlacementFilter();
     // placementFilter.store_id = 1;
+    placementFilter.pageSize = 50;
     this.placementSer.getList(placementFilter).subscribe(res => {
       this.placements = res.body;
     });
 
     const manufacturerFilter = new ManufacturerFilter();
+    manufacturerFilter.pageSize = 500;
     this.manufacturerSer.getList(manufacturerFilter).subscribe(res => {
       this.manufacturers = res.body;
     });
