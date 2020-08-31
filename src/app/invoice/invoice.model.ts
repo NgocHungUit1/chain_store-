@@ -1,7 +1,6 @@
 import { Customer } from "../customer/customer.model";
 import { ApiFilterBase } from "../shared/base";
 import { PriceList } from "../price-book/price-list.model";
-import { ObjectLiteralElement } from "typescript";
 
 export class User {
   username: string;

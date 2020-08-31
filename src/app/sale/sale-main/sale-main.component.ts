@@ -631,7 +631,7 @@ export class SaleMainComponent implements OnInit {
     });
   }
   /** 
-   * Print
+   * Print Invoice
    */
   printInvoice(invoice_id: number) {
     this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
@@ -651,6 +651,88 @@ export class SaleMainComponent implements OnInit {
         '<p style="text-align:center;">Địa chỉ : ' + res?.store?.name + '</p>' +
         '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +
+        '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
+        '<p style="">Khách hàng: ' + res?.customer?.name + '</p>' +
+        '<p style="">SĐT: ' + res?.customer?.phone + '</p>' +
+        '<p style="">Địa chỉ: ' + address + '</p>' +
+        '<table>' +
+        '<tr>' +
+        '<th>Đơn giá</th>' +
+        '<th style="text-align:center;">Số lượng</th>' +
+        '<th style="text-align:center;">Thành tiền</th>' +
+        '</tr>';
+
+      const detail = res.detail;
+
+      /**
+       * Chi tiet don hang
+       */
+      detail.forEach(element => {
+        if (element?.base_unit == null) {
+          printContent += '<tr>' +
+            '<td>' + element.product?.product_name + '<br>' + element.price + '</td>' +
+            '<td style="text-align:center;">' + element.amount + '</td>' +
+            '<td style="text-align:right;">' + element.total + '</td>' +
+            '</tr>';
+        } else {
+          printContent += '<tr>' +
+            '<td>' + element.product?.product_name + ' - ' + element?.base_unit + '<br>' + element.price + '</td>' +
+            '<td style="text-align:center;">' + element.amount + '</td>' +
+            '<td style="text-align:right;">' + element.total + '</td>' +
+            '</tr>';
+        }
+      });
+
+      /**
+       * Tong tien hang
+       */
+      printContent += '<tr>' +
+        '<td style="text-align:right; font-weight:600;" colspan="2">Tổng tiền hàng :</td>' +
+        '<td style="text-align:right; font-weight:600;">' + res.total_price + '</td>' +
+        '</tr>';
+      printContent += '<tr>' +
+        '<td style="text-align:right; font-weight:600;" colspan="2">Chiết khấu :</td>' +
+        '<td style="text-align:right; font-weight:600;">' + res.discount + '</td>' +
+        '</tr>';
+      printContent += '<tr>' +
+        '<td style="text-align:right; font-weight:600;" colspan="2">Tổng thanh toán :</td>' +
+        '<td style="text-align:right; font-weight:600;">' + res.total + '</td>' +
+        '</tr>';
+      printContent += '</table>';
+      printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
+      printContent += '</section>';
+
+      const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+      WindowPrt.document.write(printContent);
+      WindowPrt.document.close();
+      WindowPrt.focus();
+      WindowPrt.print();
+      WindowPrt.close();
+    });
+
+  }
+
+  /** 
+   * Print Returns
+   */
+  printReturns(returns_id: number) {
+    this.orderService.getDataReturnsToPrint(returns_id).subscribe(res => {
+      const address = (res?.customer?.address !== null) ? res?.customer?.address : '';
+      let printContent = '<title>' + res?.return_no + '</title>';
+      printContent += '<style>table {' +
+        // 'font-family: arial, sans-serif;' +
+        'border-collapse: collapse;' +
+        'width: 100%;' +
+        '}' +
+        'td, th {' +
+        'border: 1px solid #dddddd;' +
+        'text-align: left;' +
+        'padding: 8px;' +
+        '}</style>' +
+        '<section style="padding: 10px;">' +
+        '<p style="text-align:center;">Địa chỉ : ' + res?.store?.name + '</p>' +
+        '<p style="text-align:center; font-weight:600;">HÓA ĐƠN TRẢ HÀNG</p>' +
+        '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.return_no + '</p>' +
         '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
         '<p style="">Khách hàng: ' + res?.customer?.name + '</p>' +
         '<p style="">SĐT: ' + res?.customer?.phone + '</p>' +
@@ -795,9 +877,6 @@ export class SaleMainComponent implements OnInit {
       PaymentPrice: this.sumPrice - this.numberDiscount, // tien thanh toan
     };
 
-    // debugger;
-    // return;
-
     /**
      * Kiem tra invoice_id la don moi hay don cap nhat
      */
@@ -835,6 +914,127 @@ export class SaleMainComponent implements OnInit {
     }
 
   }
+
+  /**
+   * Tra hang
+   */
+  returns() {
+    let listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    let mItemInvoice = new ItemInvoice();
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        mItemInvoice = element;
+      }
+    });
+
+    const customer = mItemInvoice.customer;
+    if (mItemInvoice.customer === undefined) {
+      this.notifySer.notify('warning', 'Chưa chọn khách hàng !');
+      return;
+    }
+    if (mItemInvoice.user === undefined) {
+      this.notifySer.notify('warning', 'Chưa chọn nhân viên !');
+      return;
+    }
+    // if (mItemInvoice.paymentSiderBar?.number === undefined) {
+    //   this.notifySer.notify('warning', 'Chưa chọn thanh toán !');
+    //   return;
+    // }
+    // if (this.sumPrice - mItemInvoice.discountSiderBar?.number > mItemInvoice.paymentSiderBar?.number) {
+    //   this.notifySer.notify('warning', 'Thanh toán chưa đủ !');
+    //   return;
+    // }
+    if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
+      this.notifySer.notify('warning', 'Chưa chọn sản phẩm !');
+      return;
+    }
+
+    let listCheckReturn = mItemInvoice.listProduct;
+    let amountCheckReturn = 0;
+    listCheckReturn.forEach(element => {
+      amountCheckReturn += element.amount;
+    });
+    if (amountCheckReturn <= 0) {
+      this.notifySer.notify('warning', 'Chưa chọn số lượng trả hàng !');
+      return;
+    }
+
+    this.orderService.setLoadProduct(true);
+
+    const list = this.listProduct;
+    const returnsDetail = [];
+    list.forEach(element => {
+      let price = 0;
+      let discount = 0;
+      let discount_type = 'price';
+      if (element.product.end_price === undefined) {
+        price = (element.common_price !== undefined) ? element.common_price : element.product.sell_price;
+      } else {
+        price = element.product.end_price;
+      }
+      if (element.product?.discount_type === 'percent') {
+        discount_type = element.product?.discount_type;
+      }
+
+      if (element.product?.discount !== undefined) {
+        discount = element.product?.discount;
+      }
+
+      if (element.amount > 0) {
+        returnsDetail.push({
+          product_id: element.product.id,
+          amount: element.amount,
+          price: price,
+          note: element.product?.note_detail_sale,
+          discount: discount,
+          discount_type: discount_type,
+          product_unit_id: element.product_unit_id,
+          product_unit_value: element.product_unit_value,
+          base_unit: element.base_unit,
+        });
+      }
+
+    });
+
+    /**
+     * Gang du lieu data
+     */
+    const dataReturn = {
+      Returns: {
+        invoice_id: mItemInvoice.invoice_id,
+        customer_id: customer?.id,
+        total_price: this.sumPrice, // tong tien hang
+        discount: this.discount,
+        discount_type: this.discount_type,
+        note: this.form.controls['noteSiderBar'].value,
+        price_book_id: this.form.controls['priceBookID'].value,
+      },
+      ReturnsDetail: returnsDetail,
+      // PaymentMethod: mItemInvoice.paymentSiderBar?.type,
+      PaymentPrice: this.sumPrice - this.numberDiscount, // tien thanh toan
+    };
+
+    this.orderService.returnsOrder(dataReturn).subscribe(res => {
+      if (res !== false) {
+        if (typeof res === 'number' && this.autoPrint === true) {
+          this.printReturns(res);
+          // console.warn(res);
+          // return;
+        }
+        this.resetDataSiderBar();
+        this.notifySer.notify('success', 'Trả hàng thành công !');
+      } else {
+        this.notifySer.notify('warning', 'Thất bại !');
+      }
+      this.loadData();
+
+      this.orderService.setLoadProduct(false);
+      this.orderService.setLoadDetailPage(true);
+    });
+
+  }
+
 
   async resetDataSiderBar() {
     await this.orderService.removeActive();

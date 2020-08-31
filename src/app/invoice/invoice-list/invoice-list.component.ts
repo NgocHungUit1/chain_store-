@@ -70,14 +70,15 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     '#': '#',
     'invoice_no': 'Mã đơn hàng',
     'created_at': 'Thời gian',
+    'returns': 'Mã trả hàng',
     'customer': 'Khách hàng',
     'total_price': 'Tổng tiền hàng',
     'discount': 'Giảm giá',
     'payment': 'Khách đã trả',
   };
 
-  displayedColumns: string[] = ['#', 'invoice_no', 'created_at', 'customer', 'total_price', 'discount', 'payment'];
-  columnsToDisplay: string[] = ['#', 'invoice_no', 'created_at', 'customer', 'total_price', 'discount', 'payment'];
+  displayedColumns: string[] = ['#', 'invoice_no', 'created_at', 'returns', 'customer', 'total_price', 'discount', 'payment'];
+  columnsToDisplay: string[] = ['#', 'invoice_no', 'created_at', 'returns', 'customer', 'total_price', 'discount', 'payment'];
   dataSource: Invoice[] = [];
 
 
@@ -93,7 +94,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   ];
 
   // for second column
-  second_columnsToDisplay: string[] = ['second_#', 'second_invoice_no', 'second_created_at', 'second_customer', 'second_total_price', 'second_discount', 'second_payment'];
+  second_columnsToDisplay: string[] = ['second_#', 'second_invoice_no', 'second_created_at', 'second_returns', 'second_customer', 'second_total_price', 'second_discount', 'second_payment'];
 
   buildFilterFromParams(): InvoiceFilter {
     function write<K extends keyof InvoiceFilter>(arg: InvoiceFilter, key: K, value: InvoiceFilter[K]): void {
@@ -111,7 +112,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'customer,payment,detail,priceBook,store,user';
+    filter.expand = 'customer,payment,detail,priceBook,store,user,returns';
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
 

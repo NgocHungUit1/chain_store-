@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { Order, Detail, DiscountSiderBar, PaymentSiderBar, ItemInvoice, ListInvoice, ProductInfo, resInvoicePrint } from '../sale/order.model';
+import { Order, Detail, DiscountSiderBar, PaymentSiderBar, ItemInvoice, ListInvoice, ProductInfo, resInvoicePrint, resReturnsPrint } from '../sale/order.model';
 import { Product } from '../product/product.model';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
@@ -375,6 +375,16 @@ export class OrderService {
     return this.http.post(url, data);
   }
 
+
+  /**
+   * API post returns order to the Invoice
+   * @param data 
+   */
+  returnsOrder(data) {
+    const url = environment.apiUrl + '/invoice/returns-order';
+    return this.http.post(url, data);
+  }
+
   updateOrder(data) {
     const url = environment.apiUrl + '/invoice/update-order';
     return this.http.post(url, data);
@@ -403,11 +413,20 @@ export class OrderService {
 
   /**
    * API get data to print invoice
-   * @param id 
+   * @param invoice_id 
    */
   getDataInvoiceToPrint(invoice_id: number) {
     const url = environment.apiUrl + '/invoice/get-data-invoice-print/';
     return this.http.post<resInvoicePrint>(url, { invoice_id: invoice_id });
+  }
+
+  /**
+   * API get data to print returns
+   * @param returns_id 
+   */
+  getDataReturnsToPrint(returns_id: number) {
+    const url = environment.apiUrl + '/invoice/get-data-returns-print/';
+    return this.http.post<resReturnsPrint>(url, { returns_id: returns_id });
   }
 
 }

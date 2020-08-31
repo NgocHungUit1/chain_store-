@@ -87,3 +87,17 @@ export class resInvoicePrint {
     discount: string;
 }
 
+export class resReturnsPrint {
+    return_name: string;
+    return_no: string;
+    active: boolean;
+    price_book_id: string;
+    customer: Customer;
+    created_at: string;
+    store: any;
+    detail: itemDetail[];
+    total: string;
+    total_price: string; // tong tien hang
+    discount: string;
+}
+

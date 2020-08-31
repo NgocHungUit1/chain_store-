@@ -123,6 +123,11 @@ export class InvoiceTabInfoComponent implements OnInit {
 
   updateInvoice(invoice) {
     // console.log(invoice);
+    if (invoice['returns'].length > 0) {
+      this.notifySer.notify('warning', 'Hóa đơn đã có trả hàng, không thể mở phiếu để cập nhật !');
+      return;
+
+    }
     let mItemInvoice = new ItemInvoice();
     mItemInvoice.invoice_id = invoice.id;
     mItemInvoice.active = true;

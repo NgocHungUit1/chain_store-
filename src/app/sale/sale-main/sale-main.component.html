@@ -361,9 +361,18 @@
             <mat-slide-toggle checked="true" (change)="onChangeSlideToggle($event)">Tự động in hóa đơn
             </mat-slide-toggle>
           </span>
-          <button mat-button class="payment-button btn-success" (click)="payment()">
-            <span>Thanh toán</span>
-          </button>
+          
+
+          <div *ngIf="localItemInvoice?.is_return !== true; else buttonThanhToan">
+            <button mat-button class="payment-button btn-success" (click)="payment()">
+              <span>Thanh toán</span>
+            </button>
+          </div>
+          <ng-template #buttonThanhToan>
+            <button mat-button class="payment-button btn-success" (click)="returns()">
+              <span>Trả hàng</span>
+            </button>
+          </ng-template>
 
           <span class="support-content">
             <mat-icon>phone</mat-icon> Hỗ trợ khách hàng 0979 883 765
