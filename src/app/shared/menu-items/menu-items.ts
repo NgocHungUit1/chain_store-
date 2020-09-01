@@ -65,7 +65,7 @@ const MENUITEMS = [
     // badge: [{type: 'red', value: '17'}],
     children: [
       { state: 'invoice', name: 'Hóa đơn', type: 'link', icon: 'receipt' },
-      { state: 'return', name: 'Trả hàng', type: 'link', icon: 'keyboard_return' },
+      { state: 'returns', name: 'Trả hàng', type: 'link', icon: 'keyboard_return' },
       { state: 'warehouse', name: 'Nhập hàng', type: 'link', icon: 'local_grocery_store' },
       { state: 'warehouse-return', name: 'Trả hàng nhập', type: 'link', 'icon': 'assignment_return' },
       { state: 'move', name: 'Chuyển hàng', type: 'link', icon: 'local_shipping' },

@@ -4,6 +4,7 @@ import { WarehouseReturnListComponent } from './warehouse-return-list/warehouse-
 import { WarehouseReturnFormComponent } from './warehouse-return-form/warehouse-return-form.component';
 import { WarehouseImportFormComponent } from './warehouse-import-form/warehouse-import-form.component';
 import { InvoiceListComponent } from '../invoice/invoice-list/invoice-list.component';
+import { ReturnsListComponent } from '../returns/returns-list/returns-list.component';
 
 
 export const WarehouseRoutes: Routes = [
@@ -37,6 +38,10 @@ export const WarehouseRoutes: Routes = [
       {
         path: 'invoice',
         component: InvoiceListComponent
+      },
+      {
+        path: 'returns',
+        component: ReturnsListComponent
       },
     ]
   }

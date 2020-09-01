@@ -33,6 +33,10 @@ export const AppRoutes: Routes = [
       {
         path: 'invoice',
         loadChildren: () => import('./invoice/invoice.module').then(m => m.InvoiceModule)
+      },
+      {
+        path: 'returns',
+        loadChildren: () => import('./returns/returns.module').then(m => m.ReturnsModule)
       }
       // {
       //     path: 'material',
