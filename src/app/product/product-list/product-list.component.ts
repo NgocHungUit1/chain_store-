@@ -14,6 +14,7 @@ import { ProductMerchandiseFormDialogComponent } from '../product-merchandise-fo
 import { FormControl } from '@angular/forms';
 import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/internal/observable/of';
+import {ProductUploadDialogComponent} from '../product-upload-dialog/product-upload-dialog.component';
 
 
 @Component({
@@ -159,4 +160,14 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     });
   }
 
+  openUploadDialog() {
+    const dialogRef = this.dialog.open(ProductUploadDialogComponent, {
+      width: '30%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadData();
+      }
+    });
+  }
 }

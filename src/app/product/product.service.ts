@@ -3,6 +3,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Product, ProductFilter } from './product.model';
+import {AuthService} from '../authentication/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,7 @@ export class ProductService {
     this.loadProduct.next(action);
   }
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private auth: AuthService) {
   }
 
   getApiUrl(filter?: ProductFilter) {
@@ -98,14 +99,14 @@ export class ProductService {
 
   /**
    * Search Autocomplete With Units
-   * @param term 
+   * @param term
    */
   autocompleteUnits(term: string) {
     const url = environment.apiUrl + '/product/autocomplete-units?term=' + term;
     return this.http.get<Product[]>(url);
   }
 
-  // list for cart 
+  // list for cart
   getApiUrlCart(filter?: ProductFilter) {
     if (!filter.page) {
       filter.page = 1;
@@ -134,6 +135,18 @@ export class ProductService {
   getRenderProductNo() {
     const url = environment.apiUrl + '/product/render-product-no';
     return this.http.get<string>(url);
+  }
+
+  getDownloadTemplateLink() {
+    const _token = this.auth.getToken();
+
+    const url = environment.apiUrl + '/product/download-template?token=' + _token;
+    return url;
+  }
+
+  upload(data) {
+    const url = environment.apiUrl + '/product/upload';
+    return this.http.post(url, data);
   }
 }
 
