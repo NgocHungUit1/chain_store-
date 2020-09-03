@@ -59,7 +59,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
     '#': '#',
     'product_no': 'Mã hàng',
     'product_name': 'Tên hàng',
-    'product_parcel': 'Lô',
+    // 'product_parcel': 'Lô',
     'product_unit_id': 'Đơn vị',
     'quantity': 'Số lượng',
     'price': 'Đơn giá',
@@ -72,7 +72,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
     '#',
     'product_no',
     'product_name',
-    'product_parcel',
+    // 'product_parcel',
     'product_unit_id',
     'quantity',
     'price',
@@ -220,7 +220,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
         warehouseProduct.quantity = item.quantity;
         warehouseProduct.price = item.price;
         warehouseProduct.discount = item.discount;
-        warehouseProduct.amount = item.amount;
+        warehouseProduct.amount = Number(item.amount);
 
         warehouseProduct.product_unit_id = item.product_unit_id;
         warehouseProduct.productUnits = item.productUnits !== undefined ? item.productUnits : [];
@@ -316,7 +316,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
 
   recalculateItem(i) {
     if (this.data[i] !== undefined) {
-      this.data[i]['amount'] = (this.data[i]['price'] - this.data[i]['discount']) * this.data[i]['quantity'];
+      this.data[i]['amount'] = (Number(this.data[i]['price']) - Number(this.data[i]['discount'])) * Number(this.data[i]['quantity']);
       this.recalculateWarehouse();
     }
   }
@@ -330,8 +330,8 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
     const discount = this.form.controls['discount_amount'].value;
 
     this.data.forEach(item => {
-      quantity = quantity + item['quantity'];
-      price = price + (item['quantity'] * (item['price'] - item['discount']));
+      quantity = Number(quantity) + Number(item['quantity']);
+      price = price + (Number(item['quantity']) * (Number(item['price']) - Number(item['discount'])));
     });
     remainAmount = paidAmount - (price - discount);
     totalAmount = price - discount;
@@ -373,7 +373,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
   }
 
   changeQuantity(index, value) {
-    this.data[index]['quantity'] = this.data[index]['quantity'] + value;
+    this.data[index]['quantity'] = Number(this.data[index]['quantity']) + Number(value);
     if (this.data[index]['product_parcels'].length === 1) {
       this.data[index]['product_parcels'][0]['quantity'] = this.data[index]['quantity'];
     }

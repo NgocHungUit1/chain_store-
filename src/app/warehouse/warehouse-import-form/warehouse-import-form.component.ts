@@ -62,7 +62,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     '#': '#',
     'product_no': 'Mã hàng',
     'product_name': 'Tên hàng',
-    'product_parcel': 'Lô',
+    // 'product_parcel': 'Lô',
     'product_unit_id': 'Đơn vị',
     'quantity': 'Số lượng',
     'price': 'Đơn giá',
@@ -75,7 +75,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     '#',
     'product_no',
     'product_name',
-    'product_parcel',
+    // 'product_parcel',
     'product_unit_id',
     'quantity',
     'price',
@@ -310,6 +310,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   onSelectedProduct(product) {
     this.productSer.getDetail(product.id, 'productUnits').subscribe(res => {
+      console.log(product);
+      
       const warehouseProduct = new WarehouseProduct();
       warehouseProduct.product_id = product.id;
       warehouseProduct.product = product;
@@ -324,7 +326,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       if (res['productUnits'].length > 0) {
         res['productUnits'].sort((a, b) => (a.value > b.value) ? 1 : -1);
         warehouseProduct.product_unit_id = res['productUnits'][0]['id'];
-        warehouseProduct.price = res['productUnits'][0]['sell_price'];
+        warehouseProduct.price = res['productUnits'][0]['original_price'];
       }
 
       const newData = this.data.concat([warehouseProduct]);
