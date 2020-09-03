@@ -429,5 +429,13 @@ export class OrderService {
     return this.http.post<resReturnsPrint>(url, { returns_id: returns_id });
   }
 
+  /**
+   * Get info Returns
+   */
+  getReturns(invoice_id : number){
+    const url = environment.apiUrl + '/invoice/get-returns/';
+    return this.http.post<any[]>(url, { invoice_id: invoice_id });
+  }
+
 }
 

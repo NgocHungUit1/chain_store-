@@ -261,55 +261,95 @@ export class InvoiceTabInfoComponent implements OnInit {
    * @param invoice 
    */
   returnInvoice(invoice) {
-    // console.log(invoice);
-    // return;
-    let mItemInvoice = new ItemInvoice();
-    mItemInvoice.invoice_id = invoice.id;
-    mItemInvoice.active = true;
-    mItemInvoice.is_return = true;
-    mItemInvoice.invoice_name = 'Trả hàng ' + invoice.invoice_no;
-    mItemInvoice.price_book_id = invoice.price_book_id;
-    mItemInvoice.customer = invoice.customer;
-    mItemInvoice.user = {
-      id: invoice.user.id,
-      email: invoice.user.email,
-      username: invoice.user.username
-    };
-    mItemInvoice.discountSiderBar = {
-      number: invoice.discount,
-      type: invoice.discount_type
-    };
+    this.orderService.getReturns(invoice.id).subscribe(resultReturn => {
 
-    let aProductInfo: ProductInfo[] = [];
-    const detail = invoice.detail || [];
+      // return;
+      let mItemInvoice = new ItemInvoice();
+      mItemInvoice.invoice_id = invoice.id;
+      mItemInvoice.active = true;
+      mItemInvoice.is_return = true;
+      mItemInvoice.invoice_name = 'Trả hàng ' + invoice.invoice_no;
+      mItemInvoice.price_book_id = invoice.price_book_id;
+      mItemInvoice.customer = invoice.customer;
+      mItemInvoice.user = {
+        id: invoice.user.id,
+        email: invoice.user.email,
+        username: invoice.user.username
+      };
+      mItemInvoice.discountSiderBar = {
+        number: invoice.discount,
+        type: invoice.discount_type
+      };
 
-    detail.forEach(element => {
+      let aProductInfo: ProductInfo[] = [];
+      const detail = invoice.detail || [];
 
-      let units = element?.product?.productUnits;
-      let item = units.find(element => element.is_base == 1);
+      if (resultReturn !== undefined && resultReturn !== null) {
+        detail.forEach(element => {
 
-      const mProductInfo = new ProductInfo();
-      mProductInfo.amount = 0;
-      mProductInfo.product_id = element.product?.id;
-      mProductInfo.product = element.product;
-      mProductInfo.product.end_price = element.price;
-      mProductInfo.common_price = element.price;
-      // mProductInfo.product_unit_id = element.product_unit_id;
-      // mProductInfo.product_unit_value = element.product_unit_value;
-      mProductInfo.product_unit_id = item['id'];
-      mProductInfo.product_unit_value = item['value'];
+          let units = element?.product?.productUnits;
+          let item = units.find(element => element.is_base == 1);
+          const mProductInfo = new ProductInfo();
+          if (resultReturn[item['id']] !== undefined) {
+            mProductInfo.amount = 0;
+            mProductInfo.product_id = element.product?.id;
+            mProductInfo.product = element.product;
+            mProductInfo.product.end_price = element.price;
+            mProductInfo.common_price = element.price;
+            mProductInfo.product_unit_id = item['id'];
+            mProductInfo.product_unit_value = item['value'];
+            mProductInfo.base_unit = element.base_unit;
+            mProductInfo.is_return = true;
+            mProductInfo.max_amount_return = element.amount - resultReturn[item['id']];
+          } else {
+            mProductInfo.amount = 0;
+            mProductInfo.product_id = element.product?.id;
+            mProductInfo.product = element.product;
+            mProductInfo.product.end_price = element.price;
+            mProductInfo.common_price = element.price;
+            mProductInfo.product_unit_id = item['id'];
+            mProductInfo.product_unit_value = item['value'];
+            mProductInfo.base_unit = element.base_unit;
+            mProductInfo.is_return = true;
+            mProductInfo.max_amount_return = element.amount;
+          }
 
-      mProductInfo.base_unit = element.base_unit;
-      mProductInfo.is_return = true;
-      mProductInfo.max_amount_return = element.amount;
+          if (mProductInfo.max_amount_return > 0) {
+            aProductInfo.push(mProductInfo);
+          }
+        });
+      } else {
+        detail.forEach(element => {
+          let units = element?.product?.productUnits;
+          let item = units.find(element => element.is_base == 1);
+          const mProductInfo = new ProductInfo();
+          mProductInfo.amount = 0;
+          mProductInfo.product_id = element.product?.id;
+          mProductInfo.product = element.product;
+          mProductInfo.product.end_price = element.price;
+          mProductInfo.common_price = element.price;
+          mProductInfo.product_unit_id = item['id'];
+          mProductInfo.product_unit_value = item['value'];
+          mProductInfo.base_unit = element.base_unit;
+          mProductInfo.is_return = true;
+          mProductInfo.max_amount_return = element.amount;
+          aProductInfo.push(mProductInfo);
+        });
+      }
 
-      aProductInfo.push(mProductInfo);
-    });
+      if (aProductInfo.length !== 0) {
+        mItemInvoice.listProduct = aProductInfo;
+        this.orderService.addItemInvoiceUpdate(mItemInvoice);
+        // debugger;
+        this.router.navigate(['/sale']);
 
-    mItemInvoice.listProduct = aProductInfo;
-    this.orderService.addItemInvoiceUpdate(mItemInvoice);
-    // debugger;
-    this.router.navigate(['/sale']);
+      }else{
+        this.notifySer.notify('warning', 'Đã trả hết hàng.');
+        
+      }
+
+    }); // getReturns list
+
   }
 
 }

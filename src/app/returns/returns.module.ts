@@ -9,11 +9,13 @@ import { QuillModule } from 'ngx-quill';
 import { DemoMaterialModule } from '../demo-material-module';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { ReturnsListComponent } from './returns-list/returns-list.component';
+import { ReturnsTabInfoComponent } from './returns-tab-info/returns-tab-info.component';
 
 
 @NgModule({
   declarations: [
-    ReturnsListComponent],
+    ReturnsListComponent,
+    ReturnsTabInfoComponent],
   imports: [
     CommonModule,
     // RouterModule.forChild(InvoiceRoutes),

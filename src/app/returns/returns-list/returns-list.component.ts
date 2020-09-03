@@ -57,11 +57,11 @@ export class ReturnsListComponent extends ListComponentBase implements OnInit {
     'created_at': 'Thời gian',
     'customer': 'Khách hàng',
     'total_price': 'Tổng tiền hàng',
-    'discount': 'Giảm giá',
+    // 'discount': 'Giảm giá',
   };
 
-  displayedColumns: string[] = ['#', 'return_no', 'created_at', 'customer', 'total_price', 'discount'];
-  columnsToDisplay: string[] = ['#', 'return_no', 'created_at', 'customer', 'total_price', 'discount'];
+  displayedColumns: string[] = ['#', 'return_no', 'created_at', 'customer', 'total_price'];
+  columnsToDisplay: string[] = ['#', 'return_no', 'created_at', 'customer', 'total_price'];
   dataSource: Returns[] = [];
 
   buildFilterFromParams(): ReturnsFilter {
@@ -78,7 +78,7 @@ export class ReturnsListComponent extends ListComponentBase implements OnInit {
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'customer,payment,detail,priceBook,store,user,returns';
+    filter.expand = 'customer,priceBook,store,user,detailInfo';
 
     return filter;
   }
