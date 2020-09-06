@@ -322,7 +322,8 @@ export class SaleMainComponent implements OnInit {
     this.form = this.fb.group({
       userID: [userID],
       priceBookID: [priceBookID],
-      noteSiderBar: [noteSiderBar]
+      noteSiderBar: [noteSiderBar],
+      customerPay: [0]
     });
 
   }
@@ -612,9 +613,15 @@ export class SaleMainComponent implements OnInit {
   handlePaymentSiderBar(mItemInvoice) {
     const paymentSiderBar = mItemInvoice.paymentSiderBar;
     if (paymentSiderBar !== undefined) {
-      this.customerPay = paymentSiderBar?.number;
+      // this.customerPay = paymentSiderBar?.number;
+      this.form.patchValue({
+        customerPay : paymentSiderBar?.number
+      });
     } else {
-      this.customerPay = 0;
+      // this.form.patchValue({
+      //   customerPay : 0
+      // });
+      // this.customerPay = 0;
     }
   }
 
@@ -813,14 +820,19 @@ export class SaleMainComponent implements OnInit {
       this.notifySer.notify('warning', 'Chưa chọn nhân viên !');
       return;
     }
-    if (mItemInvoice.paymentSiderBar?.number === undefined) {
-      this.notifySer.notify('warning', 'Chưa chọn thanh toán !');
-      return;
-    }
-    if (this.sumPrice - mItemInvoice.discountSiderBar?.number > mItemInvoice.paymentSiderBar?.number) {
+    // console.log(Number(this.form.controls['customerPay'].value));
+    
+    // if (mItemInvoice.paymentSiderBar?.number === undefined) {
+    //   this.notifySer.notify('warning', 'Chưa chọn thanh toán !');
+    //   return;
+    // }
+    // console.log(Number(mItemInvoice.discountSiderBar?.number));
+    
+    if (this.sumPrice - this.numberDiscount > Number(this.form.controls['customerPay'].value)) {
       this.notifySer.notify('warning', 'Thanh toán chưa đủ !');
       return;
     }
+    // debugger;
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
       this.notifySer.notify('warning', 'Chưa chọn sản phẩm !');
       return;
@@ -873,7 +885,7 @@ export class SaleMainComponent implements OnInit {
         price_book_id: this.form.controls['priceBookID'].value,
       },
       InvoiceDetail: invoiceDetail,
-      PaymentMethod: mItemInvoice.paymentSiderBar?.type,
+      PaymentMethod: 'cash', //mItemInvoice.paymentSiderBar?.type,
       PaymentPrice: this.sumPrice - this.numberDiscount, // tien thanh toan
     };
 
@@ -937,14 +949,7 @@ export class SaleMainComponent implements OnInit {
       this.notifySer.notify('warning', 'Chưa chọn nhân viên !');
       return;
     }
-    // if (mItemInvoice.paymentSiderBar?.number === undefined) {
-    //   this.notifySer.notify('warning', 'Chưa chọn thanh toán !');
-    //   return;
-    // }
-    // if (this.sumPrice - mItemInvoice.discountSiderBar?.number > mItemInvoice.paymentSiderBar?.number) {
-    //   this.notifySer.notify('warning', 'Thanh toán chưa đủ !');
-    //   return;
-    // }
+    
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
       this.notifySer.notify('warning', 'Chưa chọn sản phẩm !');
       return;

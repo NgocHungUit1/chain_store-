@@ -321,10 +321,14 @@
               <div fxFlex="50" class="customer-pay-number">
                 <mat-form-field style="text-align: right">
                   <button mat-icon-button matPrefix>
-                    <mat-icon class="row-edit-customer-pay-number" (click)="openPaymentSiderBarDialog()">
-                      credit_card</mat-icon>
+                    <!-- <mat-icon class="row-edit-customer-pay-number" (click)="openPaymentSiderBarDialog()">
+                      credit_card</mat-icon> -->
+                      <mat-icon class="row-edit-customer-pay-number">
+                        credit_card</mat-icon>
                   </button>
-                  <input matInput type="text" value="{{ customerPay | number}}" [disabled]="true" style="color:black">
+                  <!-- <input matInput type="text" value="{{ customerPay | number}}" [disabled]="true" style="color:black"> -->
+                  <input matInput type="text" style="color:black" formControlName="customerPay">
+
                 </mat-form-field>
               </div>
             </div>
