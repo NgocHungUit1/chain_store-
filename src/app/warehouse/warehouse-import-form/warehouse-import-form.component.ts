@@ -189,7 +189,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     } else {
       this.mainService.getRenderWarehouseNo().subscribe(res => {
         this.form.patchValue({
-          no: 'PM0' + res,
+          no: 'PN0' + res,
           total_price: 0,
           discount_amount: 0,
           discount_type: 'price'

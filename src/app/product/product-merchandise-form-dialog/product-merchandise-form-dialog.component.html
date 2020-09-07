@@ -50,8 +50,8 @@
             </div>
             <div fxLayout="row wrap">
               <div fxFlex="100">
-                <mat-form-field>
-                  <input type="number" matInput [formControl]="form.controls['original_price']" placeholder="Giá vốn">
+                <mat-form-field >
+                  <input type="text" matInput [formControl]="form.controls['original_price']" (keyup)="inputformatNumber($event)" placeholder="Giá vốn">
                 </mat-form-field>
               </div>
             </div>
@@ -59,7 +59,7 @@
             <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field>
-                  <input type="number" matInput [formControl]="form.controls['sell_price']" placeholder="Giá bán">
+                  <input type="text" matInput [formControl]="form.controls['sell_price']" (keyup)="inputformatNumber($event)" placeholder="Giá bán">
                 </mat-form-field>
               </div>
             </div>

@@ -1,24 +1,24 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {MatTable, MatTableDataSource} from '@angular/material/table';
-import {MatSort} from '@angular/material/sort';
-import {MatPaginator} from '@angular/material/paginator';
-import {NotifierService} from 'angular-notifier';
-import {MatDialog} from '@angular/material/dialog';
-import {ListComponentBase} from '../../shared/base';
-import {WarehouseProductService} from '../warehouse-product.service';
-import {WarehouseProduct, WarehouseProductFilter} from '../warehouse.model';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Observable} from 'rxjs/index';
-import {Supplier} from '../../supplier/supplier.model';
-import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
-import {of} from 'rxjs/internal/observable/of';
-import {SupplierService} from '../../supplier/supplier.service';
-import {WarehouseService} from '../warehouse.service';
-import {Product} from '../../product/product.model';
-import {ProductService} from '../../product/product.service';
-import {WarehouseParcelFormDialogComponent} from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
-import {SupplierFormDialogComponent} from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
+import { MatPaginator } from '@angular/material/paginator';
+import { NotifierService } from 'angular-notifier';
+import { MatDialog } from '@angular/material/dialog';
+import { ListComponentBase } from '../../shared/base';
+import { WarehouseProductService } from '../warehouse-product.service';
+import { WarehouseProduct, WarehouseProductFilter } from '../warehouse.model';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Observable } from 'rxjs/index';
+import { Supplier } from '../../supplier/supplier.model';
+import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
+import { of } from 'rxjs/internal/observable/of';
+import { SupplierService } from '../../supplier/supplier.service';
+import { WarehouseService } from '../warehouse.service';
+import { Product } from '../../product/product.model';
+import { ProductService } from '../../product/product.service';
+import { WarehouseParcelFormDialogComponent } from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
+import { SupplierFormDialogComponent } from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
 
 @Component({
   selector: 'app-warehouse-return-form',
@@ -51,8 +51,8 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
   model = null;
   parcels: object[] = [];
   statuses = [
-    {id: '10', name: 'Hoàn thành'},
-    {id: '9', name: 'Lưu tạm'},
+    { id: '10', name: 'Hoàn thành' },
+    { id: '9', name: 'Lưu tạm' },
   ];
 
   columnsHeader = {
@@ -175,6 +175,15 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
         this.form.controls['remain_amount'].disable();
 
         this.loadData();
+      });
+    } else {
+      this.mainService.getRenderWarehouseNo().subscribe(res => {
+        this.form.patchValue({
+          no: 'PT0' + res,
+          total_price: 0,
+          discount_amount: 0,
+          discount_type: 'price'
+        });
       });
     }
   }
@@ -397,7 +406,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this.form.patchValue({'supplier': result});
+      this.form.patchValue({ 'supplier': result });
     });
   }
 

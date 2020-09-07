@@ -10,6 +10,7 @@ import { PlacementService } from "../placement.service";
 import { PlacementFilter } from "../placement.model";
 import { ProductGroupFormDialogComponent } from "../product-group-form-dialog/product-group-form-dialog.component";
 import { ProductPlacementFormDialogComponent } from "../product-placement-form-dialog/product-placement-form-dialog.component";
+import * as numeral from 'numeral';
 
 class ImageSnippet {
   constructor(public src: string, public file: File, public id: string) { }
@@ -194,6 +195,9 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       this.loading = true;
       const data = this.form.getRawValue();
 
+      data.original_price = numeral(data.original_price).value();
+      data.sell_price = numeral(data.sell_price).value();
+      
       if (this.product_id === null) {
         // Create New
         if (data.product_no === null || data.product_no === "") {
@@ -458,6 +462,14 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
         unit_no: productNo + '-' + index
       });
     }
+  }
+
+  /**
+   * Format input number
+   * @Nghia 
+   */
+  inputformatNumber(event: any) {
+    event.target.value = numeral(event.target.value).format('0,0');
   }
 
 

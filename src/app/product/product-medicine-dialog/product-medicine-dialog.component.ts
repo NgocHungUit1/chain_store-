@@ -20,6 +20,7 @@ import { of } from 'rxjs/internal/observable/of';
 import { ManufacturerService } from '../manufacturer.service';
 import { ManufacturerFilter } from '../manufacturer.model';
 import { ProductManufacturerFormDialogComponent } from '../product-manufacturer-form-dialog/product-manufacturer-form-dialog.component';
+import * as numeral from 'numeral';
 
 
 class ImageSnippet {
@@ -310,8 +311,10 @@ export class ProductMedicineDialogComponent implements OnInit {
     if (this.form.valid) {
       this.loading = true;
       const data = this.form.getRawValue();
-      // console.log(data.product_no);
-      // debugger;
+
+      data.original_price = numeral(data.original_price).value();
+      data.sell_price = numeral(data.sell_price).value();
+      
       if (this.product_id === null) {
         // Create New
         if (data.product_no === null || data.product_no === "") {
@@ -569,6 +572,14 @@ export class ProductMedicineDialogComponent implements OnInit {
         unit_no: productNo + '-' + index
       });
     }
+  }
+
+  /**
+ * Format input number
+ * @Nghia 
+ */
+  inputformatNumber(event: any) {
+    event.target.value = numeral(event.target.value).format('0,0');
   }
 
 }

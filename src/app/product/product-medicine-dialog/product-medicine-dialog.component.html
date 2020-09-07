@@ -138,10 +138,10 @@
           <div fxFlex.gt-sm="2%" fxFlex="100"></div>
           <div fxFlex.gt-sm="40%" fxFlex="100">
             <mat-form-field>
-              <input type="number" matInput [formControl]="form.controls['original_price']" placeholder="Giá vốn">
+              <input type="text" matInput  [formControl]="form.controls['original_price']" (keyup)="inputformatNumber($event)" placeholder="Giá vốn">
             </mat-form-field>
             <mat-form-field>
-              <input type="number" matInput [formControl]="form.controls['sell_price']" placeholder="Giá bán">
+              <input type="text" matInput  [formControl]="form.controls['sell_price']" (keyup)="inputformatNumber($event)" placeholder="Giá bán">
             </mat-form-field>
 
             <mat-form-field>
