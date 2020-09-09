@@ -20,8 +20,7 @@ import { DiscountSiderbarDialogComponent } from '../discount-siderbar-dialog/dis
 import { CustomerService } from '../../customer/customer.service';
 import { UserService } from '../user.service';
 import { User } from '../user.model';
-import { element } from 'protractor';
-import { log } from 'console';
+import * as numeral from 'numeral';
 
 @Component({
   selector: 'app-sale-main',
@@ -151,7 +150,7 @@ export class SaleMainComponent implements OnInit {
    * Add customer exist
    */
   handleAddCustomerExist(mItemInvoice) {
-    this.selectCustomer.patchValue('');
+    this.selectCustomer.patchValue('Khách lẻ');
     if (mItemInvoice?.customer?.name !== undefined) {
       this.selectCustomer.patchValue(mItemInvoice?.customer?.name);
     }
@@ -615,7 +614,7 @@ export class SaleMainComponent implements OnInit {
     if (paymentSiderBar !== undefined) {
       // this.customerPay = paymentSiderBar?.number;
       this.form.patchValue({
-        customerPay : paymentSiderBar?.number
+        customerPay: paymentSiderBar?.number
       });
     } else {
       // this.form.patchValue({
@@ -642,7 +641,9 @@ export class SaleMainComponent implements OnInit {
    */
   printInvoice(invoice_id: number) {
     this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
-      const address = (res?.customer?.address !== null) ? res?.customer?.address : '';
+      const address = (res?.customer?.address !== null && res?.customer?.address !== undefined) ? res?.customer?.address : '';
+      const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
+      const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
       let printContent = '<title>' + res?.invoice_no + '</title>';
       printContent += '<style>table {' +
         // 'font-family: arial, sans-serif;' +
@@ -659,8 +660,8 @@ export class SaleMainComponent implements OnInit {
         '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +
         '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
-        '<p style="">Khách hàng: ' + res?.customer?.name + '</p>' +
-        '<p style="">SĐT: ' + res?.customer?.phone + '</p>' +
+        '<p style="">Khách hàng: ' + customer_name + '</p>' +
+        '<p style="">SĐT: ' + customer_phone + '</p>' +
         '<p style="">Địa chỉ: ' + address + '</p>' +
         '<table>' +
         '<tr>' +
@@ -724,7 +725,9 @@ export class SaleMainComponent implements OnInit {
    */
   printReturns(returns_id: number) {
     this.orderService.getDataReturnsToPrint(returns_id).subscribe(res => {
-      const address = (res?.customer?.address !== null) ? res?.customer?.address : '';
+      const address = (res?.customer?.address !== null && res?.customer?.address !== undefined) ? res?.customer?.address : '';
+      const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
+      const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
       let printContent = '<title>' + res?.return_no + '</title>';
       printContent += '<style>table {' +
         // 'font-family: arial, sans-serif;' +
@@ -741,8 +744,8 @@ export class SaleMainComponent implements OnInit {
         '<p style="text-align:center; font-weight:600;">HÓA ĐƠN TRẢ HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.return_no + '</p>' +
         '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
-        '<p style="">Khách hàng: ' + res?.customer?.name + '</p>' +
-        '<p style="">SĐT: ' + res?.customer?.phone + '</p>' +
+        '<p style="">Khách hàng: ' + customer_name + '</p>' +
+        '<p style="">SĐT: ' + customer_phone + '</p>' +
         '<p style="">Địa chỉ: ' + address + '</p>' +
         '<table>' +
         '<tr>' +
@@ -812,23 +815,23 @@ export class SaleMainComponent implements OnInit {
     });
 
     const customer = mItemInvoice.customer;
-    if (mItemInvoice.customer === undefined) {
-      this.notifySer.notify('warning', 'Chưa chọn khách hàng !');
-      return;
-    }
+    // if (mItemInvoice.customer === undefined) {
+    //   this.notifySer.notify('warning', 'Chưa chọn khách hàng !');
+    //   return;
+    // }
     if (mItemInvoice.user === undefined) {
       this.notifySer.notify('warning', 'Chưa chọn nhân viên !');
       return;
     }
     // console.log(Number(this.form.controls['customerPay'].value));
-    
+
     // if (mItemInvoice.paymentSiderBar?.number === undefined) {
     //   this.notifySer.notify('warning', 'Chưa chọn thanh toán !');
     //   return;
     // }
     // console.log(Number(mItemInvoice.discountSiderBar?.number));
-    
-    if (this.sumPrice - this.numberDiscount > Number(this.form.controls['customerPay'].value)) {
+
+    if (this.sumPrice - this.numberDiscount > numeral(this.form.controls['customerPay'].value).value()) {
       this.notifySer.notify('warning', 'Thanh toán chưa đủ !');
       return;
     }
@@ -941,15 +944,16 @@ export class SaleMainComponent implements OnInit {
     });
 
     const customer = mItemInvoice.customer;
-    if (mItemInvoice.customer === undefined) {
-      this.notifySer.notify('warning', 'Chưa chọn khách hàng !');
-      return;
-    }
+    // if (mItemInvoice.customer === undefined) {
+    //   this.notifySer.notify('warning', 'Chưa chọn khách hàng !');
+    //   return;
+    // }
+
     if (mItemInvoice.user === undefined) {
       this.notifySer.notify('warning', 'Chưa chọn nhân viên !');
       return;
     }
-    
+
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
       this.notifySer.notify('warning', 'Chưa chọn sản phẩm !');
       return;
@@ -1043,7 +1047,7 @@ export class SaleMainComponent implements OnInit {
 
   async resetDataSiderBar() {
     await this.orderService.removeActive();
-    await this.selectCustomer.patchValue('');
+    await this.selectCustomer.patchValue('Khách lẻ');
     // await this.selectUser.patchValue(null);
     // await this.form.patchValue({
     //   'userID': [null]
@@ -1097,6 +1101,14 @@ export class SaleMainComponent implements OnInit {
     });
     this.orderService.setListInvoiceLocalStorage(listInvoice);
 
+  }
+
+  /**
+    * Format input number
+    * @Nghia 
+    */
+  inputformatNumber(event: any) {
+    event.target.value = numeral(event.target.value).format('0,0');
   }
 
 }

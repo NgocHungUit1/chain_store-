@@ -111,7 +111,12 @@
 
               <ng-container matColumnDef="customer">
                 <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['customer'] }}</th>
-                <td mat-cell *matCellDef="let element"> {{ element.customer?.name }}</td>
+                <td mat-cell *matCellDef="let element">
+                  <span *ngIf="element.customer !== null; else khachle">{{ element.customer?.name }}</span>
+                  <ng-template #khachle>
+                    <span>Khách lẻ</span>
+                  </ng-template>
+                </td>
               </ng-container>
 
               <ng-container matColumnDef="total_price">
@@ -168,7 +173,7 @@
               <ng-container matColumnDef="second_returns">
                 <th mat-header-cell *matHeaderCellDef> </th>
               </ng-container>
-              
+
               <ng-container matColumnDef="second_customer">
                 <th mat-header-cell *matHeaderCellDef> </th>
               </ng-container>

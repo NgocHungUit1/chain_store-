@@ -327,7 +327,7 @@
                         credit_card</mat-icon>
                   </button>
                   <!-- <input matInput type="text" value="{{ customerPay | number}}" [disabled]="true" style="color:black"> -->
-                  <input matInput type="text" style="color:black" formControlName="customerPay">
+                  <input matInput type="text" style="color:black" formControlName="customerPay" (keyup)="inputformatNumber($event)">
 
                 </mat-form-field>
               </div>
