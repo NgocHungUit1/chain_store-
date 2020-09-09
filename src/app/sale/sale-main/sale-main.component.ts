@@ -56,6 +56,7 @@ export class SaleMainComponent implements OnInit {
   discount: number = 0; // use for payment
   discount_type: string = 'price'; // use for payment
   customerPay: number = 0;
+  tienThuaTraKhach: number = 0;
   priceLists: PriceList[] = [];
   form: FormGroup;
   selectCustomer = new FormControl();
@@ -1109,6 +1110,7 @@ export class SaleMainComponent implements OnInit {
     */
   inputformatNumber(event: any) {
     event.target.value = numeral(event.target.value).format('0,0');
+    this.tienThuaTraKhach = numeral(this.form.controls['customerPay'].value).value() - this.sumPrice + this.numberDiscount;
   }
 
 }

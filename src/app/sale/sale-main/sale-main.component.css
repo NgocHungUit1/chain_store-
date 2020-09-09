@@ -229,3 +229,7 @@ html .page-wrapper .page-content {
   width: 100%;
   margin-right: 17px;
 }
+
+.input-search {
+  font-size: 15px;
+}
