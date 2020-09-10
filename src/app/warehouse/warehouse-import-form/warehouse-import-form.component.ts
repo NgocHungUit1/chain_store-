@@ -311,7 +311,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   onSelectedProduct(product) {
     this.productSer.getDetail(product.id, 'productUnits').subscribe(res => {
       console.log(product);
-      
+
       const warehouseProduct = new WarehouseProduct();
       warehouseProduct.product_id = product.id;
       warehouseProduct.product = product;
@@ -342,7 +342,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       if (this.data[i]['discount_type'] === 'price') {
         this.data[i]['amount'] = Math.round((this.data[i]['price'] - this.data[i]['discount']) * this.data[i]['quantity']);
       } else {
-        this.data[i]['amount'] = Math.round((this.data[i]['price'] - (this.data[i]['price'] * this.data[i]['discount']) / 100) * this.data[i]['quantity']);
+        this.data[i]['amount'] =
+          Math.round((this.data[i]['price'] - (this.data[i]['price'] * this.data[i]['discount']) / 100) * this.data[i]['quantity']);
       }
       this.recalculateWarehouse();
     }
@@ -392,7 +393,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   onUnitChange(index, select) {
     if (this.data[index] !== undefined) {
       const unit = this.data[index]['productUnits'].find(element => element['id'] === select.value);
-      this.data[index]['price'] = unit['sell_price'];
+      this.data[index]['price'] = unit['original_price'];
       this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
       this.recalculateWarehouse();
     }

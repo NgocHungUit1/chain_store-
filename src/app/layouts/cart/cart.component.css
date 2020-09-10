@@ -28,3 +28,8 @@
 .select-product {
   min-width: 320px;
 }
+@media (min-width: 768px) {
+  .navbar-header {
+      width: 70px;
+  }
+}

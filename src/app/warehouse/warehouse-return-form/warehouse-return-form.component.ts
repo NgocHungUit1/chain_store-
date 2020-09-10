@@ -312,7 +312,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
       if (res['productUnits'].length > 0) {
         res['productUnits'].sort((a, b) => (a.value > b.value) ? 1 : -1);
         warehouseProduct.product_unit_id = res['productUnits'][0]['id'];
-        warehouseProduct.price = res['productUnits'][0]['sell_price'];
+        warehouseProduct.price = res['productUnits'][0]['original_price'];
       }
 
       const newData = this.data.concat([warehouseProduct]);
