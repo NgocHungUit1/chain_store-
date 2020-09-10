@@ -4,7 +4,7 @@
         <div fxLayout="row wrap">
             <div fxFlex="50">
                 <mat-form-field style="text-align: right">
-                    <input matInput type="number" tabindex="1" formControlName="number">
+                    <input matInput type="text" (keyup)="inputformatNumber($event)" tabindex="1" formControlName="number">
                 </mat-form-field>
             </div>
             <div fxFlex="50" class="form-radio-field">

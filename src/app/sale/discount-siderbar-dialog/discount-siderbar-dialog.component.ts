@@ -3,6 +3,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { OrderService } from '../order.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ItemInvoice } from '../order.model';
+import * as numeral from 'numeral';
 
 @Component({
   selector: 'app-discount-siderbar-dialog',
@@ -73,7 +74,7 @@ export class DiscountSiderbarDialogComponent implements OnInit {
     listItemInvoice.forEach(element => {
       if (element.active === true) {
         element.discountSiderBar = {
-          number: data.number,
+          number: numeral(data.number).value(),
           type: data.type
         };
         activeiTemInvoice = element;
@@ -85,7 +86,7 @@ export class DiscountSiderbarDialogComponent implements OnInit {
 
   updateEvent() {
     const data = this.form.getRawValue();
-    if (data.type === 'percent' && data.number > 100) {
+    if (data.type === 'percent' && numeral(data.number).value() > 100) {
       this.form.patchValue({
         number: 100,
       });
@@ -96,11 +97,19 @@ export class DiscountSiderbarDialogComponent implements OnInit {
     listItemInvoice.forEach(element => {
       if (element.active === true) {
         element.discountSiderBar = {
-          number: data.number,
+          number: numeral(data.number).value(),
           type: data.type
         };
       }
     });
     this.orderService.setListInvoiceLocalStorage(listInvoice);
+  }
+
+  /**
+    * Format input number
+    * @Nghia 
+    */
+  inputformatNumber(event: any) {
+    event.target.value = numeral(event.target.value).format('0,0');
   }
 }

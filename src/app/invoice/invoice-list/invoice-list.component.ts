@@ -139,6 +139,10 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     obj.date_from = this.service.convertDateYYYYMMDD(first);
     obj.date_to = this.service.convertDateYYYYMMDD(today);
 
+    const date_from = new Date(obj.date_from);
+    const date_to = new Date(obj.date_to);
+    this.titleTimeChoose = this.convertDate(date_from) + " - " + this.convertDate(date_to);
+
     this.currentDateFilter = obj;
     this.service.setDateFilter(obj);
   }
