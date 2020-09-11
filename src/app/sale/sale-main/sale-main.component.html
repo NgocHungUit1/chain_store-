@@ -217,6 +217,9 @@
                       <small>phone: {{customer.phone}}</small>
                     </mat-option>
                   </mat-autocomplete>
+                  <button mat-icon-button matSuffix (click)="this.selectCustomer.patchValue('');">
+                    <mat-icon>delete</mat-icon>
+                  </button>
                 </mat-form-field>
               </div>
               <div fxFlex="auto">
