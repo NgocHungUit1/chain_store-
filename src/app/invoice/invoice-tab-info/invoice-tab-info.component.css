@@ -45,3 +45,9 @@ table {
 .column-number-end {
   text-align: end;
 }
+
+.slide-toggle-in-so-lo {
+  position: relative;
+  top: 75%;
+  left: 120px;
+}

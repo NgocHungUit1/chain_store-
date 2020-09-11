@@ -42,6 +42,8 @@ export class InvoiceTabInfoComponent implements OnInit {
     'done': 'Hoàn thành'
   };
 
+  autoPrintInSoLo: boolean = false;
+
   constructor(
     private dialog: MatDialog,
     public notifySer: NotifierService,
@@ -171,14 +173,26 @@ export class InvoiceTabInfoComponent implements OnInit {
     this.router.navigate(['/sale']);
   }
 
+  /**
+   * In so lo
+   * @param e
+   */
+  onChangeSlideToggleInSoLo(e: any) {
+    this.autoPrintInSoLo = e.checked;
+  }
+
   actionPrintInvoice(invoice) {
     this.printInvoice(invoice.id);
   }
 
+  /**
+   * Print Invoice
+   */
   printInvoice(invoice_id: number) {
-
     this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
-      const address = (res?.customer?.address !== null) ? res?.customer?.address : '';
+      const address = (res?.customer?.address !== null && res?.customer?.address !== undefined) ? res?.customer?.address : '';
+      const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
+      const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
       let printContent = '<title>' + res?.invoice_no + '</title>';
       printContent += '<style>table {' +
         // 'font-family: arial, sans-serif;' +
@@ -195,14 +209,19 @@ export class InvoiceTabInfoComponent implements OnInit {
         '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +
         '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
-        '<p style="">Khách hàng: ' + res?.customer?.name + '</p>' +
-        '<p style="">SĐT: ' + res?.customer?.phone + '</p>' +
+        '<p style="">Khách hàng: ' + customer_name + '</p>' +
+        '<p style="">SĐT: ' + customer_phone + '</p>' +
         '<p style="">Địa chỉ: ' + address + '</p>' +
         '<table>' +
         '<tr>' +
         '<th>Đơn giá</th>' +
-        '<th style="text-align:center;">Số lượng</th>' +
-        '<th style="text-align:center;">Thành tiền</th>' +
+        '<th style="text-align:center;">Số lượng</th>';
+
+      if (this.autoPrintInSoLo == true) {
+        printContent += '<th style="text-align:left;">Số lô</th>';
+      }
+
+      printContent += '<th style="text-align:center;">Thành tiền</th>' +
         '</tr>';
 
       const detail = res.detail;
@@ -214,14 +233,20 @@ export class InvoiceTabInfoComponent implements OnInit {
         if (element?.base_unit == null) {
           printContent += '<tr>' +
             '<td>' + element.product?.product_name + '<br>' + element.price + '</td>' +
-            '<td style="text-align:center;">' + element.amount + '</td>' +
-            '<td style="text-align:right;">' + element.total + '</td>' +
+            '<td style="text-align:center;">' + element.amount + '</td>';
+          if (this.autoPrintInSoLo == true) {
+            printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
+          }
+          printContent += '<td style="text-align:right;">' + element.total + '</td>' +
             '</tr>';
         } else {
           printContent += '<tr>' +
             '<td>' + element.product?.product_name + ' - ' + element?.base_unit + '<br>' + element.price + '</td>' +
-            '<td style="text-align:center;">' + element.amount + '</td>' +
-            '<td style="text-align:right;">' + element.total + '</td>' +
+            '<td style="text-align:center;">' + element.amount + '</td>';
+          if (this.autoPrintInSoLo == true) {
+            printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
+          }
+          printContent += '<td style="text-align:right;">' + element.total + '</td>' +
             '</tr>';
         }
       });
@@ -229,20 +254,23 @@ export class InvoiceTabInfoComponent implements OnInit {
       /**
        * Tong tien hang
        */
+      let colspan = 2;
+      if (this.autoPrintInSoLo == true) {
+        colspan = 3;
+      }
       printContent += '<tr>' +
-        '<td style="text-align:right; font-weight:600;" colspan="2">Tổng tiền hàng :</td>' +
+        '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng tiền hàng :</td>' +
         '<td style="text-align:right; font-weight:600;">' + res.total_price + '</td>' +
         '</tr>';
       printContent += '<tr>' +
-        '<td style="text-align:right; font-weight:600;" colspan="2">Chiết khấu :</td>' +
+        '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Chiết khấu :</td>' +
         '<td style="text-align:right; font-weight:600;">' + res.discount + '</td>' +
         '</tr>';
       printContent += '<tr>' +
-        '<td style="text-align:right; font-weight:600;" colspan="2">Tổng thanh toán :</td>' +
+        '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng thanh toán :</td>' +
         '<td style="text-align:right; font-weight:600;">' + res.total + '</td>' +
         '</tr>';
       printContent += '</table>';
-
       printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
       printContent += '</section>';
 
@@ -258,7 +286,7 @@ export class InvoiceTabInfoComponent implements OnInit {
 
   /**
    * Tra hang
-   * @param invoice 
+   * @param invoice
    */
   returnInvoice(invoice) {
     this.orderService.getReturns(invoice.id).subscribe(resultReturn => {
@@ -345,7 +373,7 @@ export class InvoiceTabInfoComponent implements OnInit {
 
       }else{
         this.notifySer.notify('warning', 'Đã trả hết hàng.');
-        
+
       }
 
     }); // getReturns list

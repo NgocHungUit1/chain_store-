@@ -1,25 +1,25 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormBuilder, FormGroup } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { NotifierService } from 'angular-notifier';
-import { Observable } from 'rxjs';
-import { Product } from '../../product/product.model';
-import { OrderService } from '../order.service';
-import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
-import { of } from 'rxjs/internal/observable/of';
-import { PriceList, PriceListFilter } from '../../price-book/price-list.model';
-import { PriceListService } from '../../price-book/price-list.service';
-import { NoteDetailOrderDialogComponent } from '../note-detail-order-dialog/note-detail-order-dialog.component';
-import { PriceDetailOrderDialogComponent } from '../price-detail-order-dialog/price-detail-order-dialog.component';
-import { PriceListProductService } from '../../price-book/price-list-product.service';
-import { ItemInvoice } from '../order.model';
-import { Customer } from '../../customer/customer.model';
-import { SaleCustomerFormDialogComponent } from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
-import { PaymentSiderbarDialogComponent } from '../payment-siderbar-dialog/payment-siderbar-dialog.component';
-import { DiscountSiderbarDialogComponent } from '../discount-siderbar-dialog/discount-siderbar-dialog.component';
-import { CustomerService } from '../../customer/customer.service';
-import { UserService } from '../user.service';
-import { User } from '../user.model';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {FormControl, FormBuilder, FormGroup} from '@angular/forms';
+import {MatDialog} from '@angular/material/dialog';
+import {NotifierService} from 'angular-notifier';
+import {Observable} from 'rxjs';
+import {Product} from '../../product/product.model';
+import {OrderService} from '../order.service';
+import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
+import {of} from 'rxjs/internal/observable/of';
+import {PriceList, PriceListFilter} from '../../price-book/price-list.model';
+import {PriceListService} from '../../price-book/price-list.service';
+import {NoteDetailOrderDialogComponent} from '../note-detail-order-dialog/note-detail-order-dialog.component';
+import {PriceDetailOrderDialogComponent} from '../price-detail-order-dialog/price-detail-order-dialog.component';
+import {PriceListProductService} from '../../price-book/price-list-product.service';
+import {ItemInvoice} from '../order.model';
+import {Customer} from '../../customer/customer.model';
+import {SaleCustomerFormDialogComponent} from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
+import {PaymentSiderbarDialogComponent} from '../payment-siderbar-dialog/payment-siderbar-dialog.component';
+import {DiscountSiderbarDialogComponent} from '../discount-siderbar-dialog/discount-siderbar-dialog.component';
+import {CustomerService} from '../../customer/customer.service';
+import {UserService} from '../user.service';
+import {User} from '../user.model';
 import * as numeral from 'numeral';
 
 @Component({
@@ -67,15 +67,16 @@ export class SaleMainComponent implements OnInit {
   public filteredCustomers: Observable<Customer[]>;
   public filteredUsers: Observable<User[]>;
 
-  // 
+  //
   listProductUnitIdChooseOld: number[] = [];
   common_idOld: string;
 
   autoPrint: boolean = true;
+  autoPrintInSoLo: boolean = false;
 
   /**
    *  So sanh danh sach cu
-   * @param listProductUnitIdChoose 
+   * @param listProductUnitIdChoose
    */
   compareEqualListProduct(listProductUnitIdChoose) {
     let fail = 1;
@@ -115,6 +116,7 @@ export class SaleMainComponent implements OnInit {
     });
     return mItemInvoice;
   }
+
   /**
    * Active User
    */
@@ -147,6 +149,7 @@ export class SaleMainComponent implements OnInit {
       });
     }
   }
+
   /**
    * Add customer exist
    */
@@ -156,6 +159,7 @@ export class SaleMainComponent implements OnInit {
       this.selectCustomer.patchValue(mItemInvoice?.customer?.name);
     }
   }
+
   /**
    * Xu ly cho detail order
    */
@@ -186,19 +190,19 @@ export class SaleMainComponent implements OnInit {
         // debugger;
         // debugger;
         /**
-        * Truong hop:  thay doi vs sl , pricebook
-        */
+         * Truong hop:  thay doi vs sl , pricebook
+         */
         if (this.compareEqualListProduct(listProductUnitIdChoose) === 0 || this.common_idOld !== priceBookID) {
           this.listProductUnitIdChooseOld = listProductUnitIdChoose;
           this.common_idOld = priceBookID;
           const common_id = priceBookID;
           /**
-           * tien hanh xu ly add common_price vao list 
+           * tien hanh xu ly add common_price vao list
            */
           this.priceListProductSer.getListProductCommon(common_id, listProductUnitIdChoose).subscribe(resCommon => {
             if (Array.isArray(resCommon)) {
               const priceListProductCommonExist = resCommon;
-              // 
+              //
 
               /**
                * group = [ product_id] => [
@@ -244,11 +248,11 @@ export class SaleMainComponent implements OnInit {
 
         } else {
           /**
-          * Truong hop: khong thay doi vs sl , pricebook
-          * groupProductIdCommonPrice = [ product_id] => [
-          *          product_id, product[],common_price, amount
-          *          ]
-          */
+           * Truong hop: khong thay doi vs sl , pricebook
+           * groupProductIdCommonPrice = [ product_id] => [
+           *          product_id, product[],common_price, amount
+           *          ]
+           */
           const groupProductIdCommonPrice = (listProductOLD !== null) ? listProductOLD.reduce((r, a) => {
             r[a.product_id] = [...r[a.product_id] || [], a];
             return r;
@@ -291,8 +295,8 @@ export class SaleMainComponent implements OnInit {
   }
 
   /**
-  * Active user current
-  */
+   * Active user current
+   */
   loadUserLogin() {
     if (this.user == null) {
       this.userService.getUserLogin().subscribe(res => {
@@ -486,8 +490,8 @@ export class SaleMainComponent implements OnInit {
 
   /**
    * ******************************************* END SALE DETAIL ORDER *******************************************
-  * *******************************************  SALE SIDER BAR ORDER *******************************************
-  */
+   * *******************************************  SALE SIDER BAR ORDER *******************************************
+   */
 
 
   onSelectedCustomer(customer) {
@@ -520,7 +524,6 @@ export class SaleMainComponent implements OnInit {
       'userID': user?.id
     });
   }
-
 
 
   lookupCustomer(value: string): Observable<Customer[]> {
@@ -637,7 +640,8 @@ export class SaleMainComponent implements OnInit {
       }
     });
   }
-  /** 
+
+  /**
    * Print Invoice
    */
   printInvoice(invoice_id: number) {
@@ -667,8 +671,13 @@ export class SaleMainComponent implements OnInit {
         '<table>' +
         '<tr>' +
         '<th>Đơn giá</th>' +
-        '<th style="text-align:center;">Số lượng</th>' +
-        '<th style="text-align:center;">Thành tiền</th>' +
+        '<th style="text-align:center;">Số lượng</th>';
+
+      if (this.autoPrintInSoLo == true) {
+        printContent += '<th style="text-align:left;">Số lô</th>';
+      }
+
+      printContent += '<th style="text-align:center;">Thành tiền</th>' +
         '</tr>';
 
       const detail = res.detail;
@@ -680,14 +689,20 @@ export class SaleMainComponent implements OnInit {
         if (element?.base_unit == null) {
           printContent += '<tr>' +
             '<td>' + element.product?.product_name + '<br>' + element.price + '</td>' +
-            '<td style="text-align:center;">' + element.amount + '</td>' +
-            '<td style="text-align:right;">' + element.total + '</td>' +
+            '<td style="text-align:center;">' + element.amount + '</td>';
+          if (this.autoPrintInSoLo == true) {
+            printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
+          }
+          printContent += '<td style="text-align:right;">' + element.total + '</td>' +
             '</tr>';
         } else {
           printContent += '<tr>' +
             '<td>' + element.product?.product_name + ' - ' + element?.base_unit + '<br>' + element.price + '</td>' +
-            '<td style="text-align:center;">' + element.amount + '</td>' +
-            '<td style="text-align:right;">' + element.total + '</td>' +
+            '<td style="text-align:center;">' + element.amount + '</td>';
+          if (this.autoPrintInSoLo == true) {
+            printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
+          }
+          printContent += '<td style="text-align:right;">' + element.total + '</td>' +
             '</tr>';
         }
       });
@@ -695,16 +710,20 @@ export class SaleMainComponent implements OnInit {
       /**
        * Tong tien hang
        */
+      let colspan = 2;
+      if (this.autoPrintInSoLo == true) {
+        colspan = 3;
+      }
       printContent += '<tr>' +
-        '<td style="text-align:right; font-weight:600;" colspan="2">Tổng tiền hàng :</td>' +
+        '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng tiền hàng :</td>' +
         '<td style="text-align:right; font-weight:600;">' + res.total_price + '</td>' +
         '</tr>';
       printContent += '<tr>' +
-        '<td style="text-align:right; font-weight:600;" colspan="2">Chiết khấu :</td>' +
+        '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Chiết khấu :</td>' +
         '<td style="text-align:right; font-weight:600;">' + res.discount + '</td>' +
         '</tr>';
       printContent += '<tr>' +
-        '<td style="text-align:right; font-weight:600;" colspan="2">Tổng thanh toán :</td>' +
+        '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng thanh toán :</td>' +
         '<td style="text-align:right; font-weight:600;">' + res.total + '</td>' +
         '</tr>';
       printContent += '</table>';
@@ -721,7 +740,7 @@ export class SaleMainComponent implements OnInit {
 
   }
 
-  /** 
+  /**
    * Print Returns
    */
   printReturns(returns_id: number) {
@@ -804,6 +823,7 @@ export class SaleMainComponent implements OnInit {
     });
 
   }
+
   // ------------------------------------------------------ PAYMENT ----------------------------------------------------------//
   payment() {
     let listInvoice = this.orderService.getListInvoiceLocalStorage();
@@ -1075,10 +1095,18 @@ export class SaleMainComponent implements OnInit {
 
   /**
    *  Tu dong in hoa don
-   * @param e 
+   * @param e
    */
-  onChangeSlideToggle(e: any) {
+  onChangeSlideToggleTuDongInHoaDon(e: any) {
     this.autoPrint = e.checked;
+  }
+
+  /**
+   * In so lo
+   * @param e
+   */
+  onChangeSlideToggleInSoLo(e: any) {
+    this.autoPrintInSoLo = e.checked;
   }
 
   onChangeProductUnit(e: any, itemProduct, i: any) {
@@ -1105,9 +1133,9 @@ export class SaleMainComponent implements OnInit {
   }
 
   /**
-    * Format input number
-    * @Nghia 
-    */
+   * Format input number
+   * @Nghia
+   */
   inputformatNumber(event: any) {
     event.target.value = numeral(event.target.value).format('0,0');
     this.tienThuaTraKhach = numeral(this.form.controls['customerPay'].value).value() - this.sumPrice + this.numberDiscount;

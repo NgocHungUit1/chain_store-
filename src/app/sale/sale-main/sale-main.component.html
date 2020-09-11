@@ -13,7 +13,7 @@
         <div *ngFor="let itemProduct of listProduct; let i = index" class="product-item">
           <div fxLayout="row wrap" class="row-item">
             <div fxFlex="7" class="row-count-number">
-              <span>{{  countProduct-i  }}</span>
+              <span>{{  countProduct - i  }}</span>
               <button mat-icon-button (click)="deleleProduct(i)">
                 <mat-icon>delete</mat-icon>
               </button>
@@ -43,7 +43,7 @@
                 <span *ngIf="itemProduct?.product?.note_detail_sale">{{ itemProduct?.product?.note_detail_sale }}</span>
                 <button mat-icon-button>
                   <mat-icon class="row-icon-edit"
-                    (click)="openNoteDetailOrderDialog(i,itemProduct?.product_unit_id,itemProduct?.product?.note_detail_sale)">
+                            (click)="openNoteDetailOrderDialog(i,itemProduct?.product_unit_id,itemProduct?.product?.note_detail_sale)">
                     edit</mat-icon>
                 </button>
               </span>
@@ -54,9 +54,9 @@
                 <mat-form-field appearance="fill">
                   <mat-label>Đơn vị</mat-label>
                   <mat-select [(value)]="itemProduct.product_unit_id"
-                    (selectionChange)="onChangeProductUnit($event,itemProduct,i)">
+                              (selectionChange)="onChangeProductUnit($event,itemProduct,i)">
                     <mat-option *ngFor="let unit of itemProduct.product?.productUnits" [value]="unit.id"
-                      [disabled]="localItemInvoice?.is_return == true">
+                                [disabled]="localItemInvoice?.is_return == true">
                       {{ unit.name }}
                     </mat-option>
                   </mat-select>
@@ -71,13 +71,13 @@
                 <div fxLayout="row wrap">
                   <mat-form-field style=" font-size: 20px; text-align: center;">
                     <button matPrefix mat-icon-button class="row-button-edit-amount"
-                      (click)="upAmountProduct(itemProduct.product,i)">
+                            (click)="upAmountProduct(itemProduct.product,i)">
                       <mat-icon>keyboard_arrow_up</mat-icon>
                     </button>
                     <input matInput type="number" tabindex="3" min="0" class="row-amount-number"
-                      (input)="inputAmountProduct(i,$event.target.value)" value="{{ itemProduct.amount }}">
+                           (input)="inputAmountProduct(i,$event.target.value)" value="{{ itemProduct.amount }}">
                     <button matSuffix mat-icon-button class="row-button-edit-amount"
-                      (click)="downAmountProduct(itemProduct.product,i)">
+                            (click)="downAmountProduct(itemProduct.product,i)">
                       <mat-icon>keyboard_arrow_down</mat-icon>
                     </button>
                   </mat-form-field>
@@ -90,14 +90,14 @@
                 <div fxLayout="row wrap">
                   <mat-form-field style=" font-size: 20px; text-align: center;">
                     <button matPrefix mat-icon-button class="row-button-edit-amount"
-                      (click)="upAmountProductReturn(itemProduct.product,i)">
+                            (click)="upAmountProductReturn(itemProduct.product,i)">
                       <mat-icon>keyboard_arrow_up</mat-icon>
                     </button>
                     <input matInput type="number" tabindex="3" min="0" max="{{ itemProduct?.max_amount_return }}"
-                      class="row-amount-number" (input)="inputAmountProductReturn(i,$event.target.value)"
-                      value="{{ itemProduct?.amount }}">
+                           class="row-amount-number" (input)="inputAmountProductReturn(i,$event.target.value)"
+                           value="{{ itemProduct?.amount }}">
                     <button matSuffix mat-icon-button class="row-button-edit-amount"
-                      (click)="downAmountProduct(itemProduct.product,i)">
+                            (click)="downAmountProduct(itemProduct.product,i)">
                       <mat-icon>keyboard_arrow_down</mat-icon>
                     </button>
                   </mat-form-field>
@@ -113,24 +113,26 @@
                 <div fxFlex="100">
 
                   <mat-form-field style=" font-size: 20px; text-align: right;"
-                    *ngIf="itemProduct.product?.end_price === undefined">
+                                  *ngIf="itemProduct.product?.end_price === undefined">
                     <input matInput type="text" value="{{  itemProduct?.common_price | number }}" disabled="true"
-                      style="color:black">
+                           style="color:black">
                     <button mat-icon-button matPrefix>
                       <mat-icon class="row-icon-edit-price"
-                        (click)="openPriceDetailOrderDialog(i,itemProduct.product,itemProduct.common_price)">
-                        edit</mat-icon>
+                                (click)="openPriceDetailOrderDialog(i,itemProduct.product,itemProduct.common_price)">
+                        edit
+                      </mat-icon>
                     </button>
                   </mat-form-field>
 
                   <mat-form-field style=" font-size: 20px; text-align: right;"
-                    *ngIf="itemProduct.product?.end_price !== undefined">
+                                  *ngIf="itemProduct.product?.end_price !== undefined">
                     <input matInput type="text" value="{{  itemProduct.product?.end_price | number }}" disabled="true"
-                      style="color:black">
+                           style="color:black">
                     <button mat-icon-button matPrefix>
                       <mat-icon class="row-icon-edit-price"
-                        (click)="openPriceDetailOrderDialog(i,itemProduct.product,itemProduct.common_price)">
-                        edit</mat-icon>
+                                (click)="openPriceDetailOrderDialog(i,itemProduct.product,itemProduct.common_price)">
+                        edit
+                      </mat-icon>
                     </button>
                   </mat-form-field>
 
@@ -166,7 +168,6 @@
       <!---------------------------------------  SALE-SIDER-BAR-ORDER ------------------------------------------>
 
 
-
       <div class="main-sale-siderbar-order">
         <form [formGroup]="form">
 
@@ -176,13 +177,13 @@
 
                 <mat-form-field>
                   <input class="input-search-user input-search" type="text" [formControl]="selectUser" matInput
-                    [matAutocomplete]="chooseUser" placeholder="Tìm nhân viên "
-                    [readonly]="localItemInvoice?.is_return == true">
+                         [matAutocomplete]="chooseUser" placeholder="Tìm nhân viên "
+                         [readonly]="localItemInvoice?.is_return == true">
                   <button mat-button matPrefix>
                     <mat-icon>search</mat-icon>
                   </button>
                   <mat-autocomplete #chooseUser="matAutocomplete"
-                    (optionSelected)="onSelectedUser($event.option.value)">
+                                    (optionSelected)="onSelectedUser($event.option.value)">
                     <mat-option *ngFor="let user of filteredUsers | async" [value]="user">
                       <span>{{user.username}}</span> |
                       <small>email: {{user.email}}</small>
@@ -205,13 +206,13 @@
               <div fxFlex="70">
                 <mat-form-field>
                   <input class="input-search-customer input-search" type="text" [formControl]="selectCustomer" matInput
-                    [matAutocomplete]="chooseProduct" placeholder="Tìm khách hàng "
-                    [readonly]="localItemInvoice?.is_return == true">
+                         [matAutocomplete]="chooseProduct" placeholder="Tìm khách hàng "
+                         [readonly]="localItemInvoice?.is_return == true">
                   <button mat-button matPrefix>
                     <mat-icon>search</mat-icon>
                   </button>
                   <mat-autocomplete #chooseProduct="matAutocomplete"
-                    (optionSelected)="onSelectedCustomer($event.option.value)">
+                                    (optionSelected)="onSelectedCustomer($event.option.value)">
                     <mat-option *ngFor="let customer of filteredCustomers | async" [value]="customer">
                       <span>{{customer.name}}</span> |
                       <small>phone: {{customer.phone}}</small>
@@ -238,9 +239,9 @@
                 <mat-icon>bookmark_border</mat-icon>
               </button>
               <mat-select class="input-search" placeholder="Chọn bảng giá" (selectionChange)="choosePriceBook($event)"
-                formControlName="priceBookID">
+                          formControlName="priceBookID">
                 <mat-option *ngFor="let priceList of priceLists" [value]="priceList.id"
-                  [disabled]="localItemInvoice?.is_return == true">
+                            [disabled]="localItemInvoice?.is_return == true">
                   {{ priceList.name }}
                 </mat-option>
               </mat-select>
@@ -283,7 +284,7 @@
                     </mat-icon>
                   </button>
                   <input matInput type="text" value="{{ numberDiscount | number}}" [disabled]="true"
-                    style="color:black">
+                         style="color:black">
                 </mat-form-field>
               </div>
             </div>
@@ -308,7 +309,7 @@
                 </div>
                 <div fxFlex="50" class="customer-need-number">
                   <input matInput type="text" *ngIf="(sumPrice - numberDiscount) <= 0"
-                    value="{{ (sumPrice - numberDiscount)*-1 | number}}">
+                         value="{{ (sumPrice - numberDiscount)*-1 | number}}">
                 </div>
               </div>
             </ng-template>
@@ -327,11 +328,12 @@
                     <!-- <mat-icon class="row-edit-customer-pay-number" (click)="openPaymentSiderBarDialog()">
                       credit_card</mat-icon> -->
                     <mat-icon class="row-edit-customer-pay-number">
-                      credit_card</mat-icon>
+                      credit_card
+                    </mat-icon>
                   </button>
                   <!-- <input matInput type="text" value="{{ customerPay | number}}" [disabled]="true" style="color:black"> -->
                   <input matInput type="text" style="color:black" formControlName="customerPay"
-                    (keyup)="inputformatNumber($event)">
+                         (keyup)="inputformatNumber($event)">
 
                 </mat-form-field>
               </div>
@@ -369,11 +371,13 @@
             <mat-form-field class="example-full-width">
               <mat-label>Ghi chú</mat-label>
               <textarea matInput placeholder="" formControlName="noteSiderBar"
-                (keyup)="saveNoteSiderBar($event)"></textarea>
+                        (keyup)="saveNoteSiderBar($event)"></textarea>
             </mat-form-field>
           </div>
           <span mat-menu-item>
-            <mat-slide-toggle checked="true" (change)="onChangeSlideToggle($event)">Tự động in hóa đơn
+            <mat-slide-toggle checked="true" (change)="onChangeSlideToggleTuDongInHoaDon($event)">Tự động in hóa đơn
+            </mat-slide-toggle>
+            <mat-slide-toggle style="margin-left: 15px; " checked="false" (change)="onChangeSlideToggleInSoLo($event)"> In số lô
             </mat-slide-toggle>
           </span>
 
@@ -396,7 +400,6 @@
         </form>
 
       </div>
-
 
 
       <!--------------------------------------- END SALE-SIDER-BAR-ORDER ------------------------------------------>
