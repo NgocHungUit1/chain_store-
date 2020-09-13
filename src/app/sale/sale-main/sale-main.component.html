@@ -12,13 +12,9 @@
 
         <div *ngFor="let itemProduct of listProduct; let i = index" class="product-item">
           <div fxLayout="row wrap" class="row-item">
-            <div fxFlex="7" class="row-count-number">
-              <span>{{  countProduct - i  }}</span>
-              <button mat-icon-button (click)="deleleProduct(i)">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
+
             <div fxFlex="14" class="row-product-no">
+              <span style="padding-right: 10px">{{  countProduct - i  }}</span>
               <span>
                 {{ itemProduct?.product?.product_no }}
               </span>
@@ -149,6 +145,12 @@
               <span *ngIf="itemProduct.product?.end_price !== undefined">
                 {{ itemProduct.product?.end_price * itemProduct.amount | number }}
               </span>
+            </div>
+            <div fxFlex="6" class="row-count-number">
+
+              <button mat-icon-button (click)="deleleProduct(i)">
+                <mat-icon>delete</mat-icon>
+              </button>
             </div>
           </div>
 

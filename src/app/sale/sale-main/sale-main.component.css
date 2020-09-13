@@ -68,7 +68,8 @@ html .page-wrapper .page-content {
   font-size: 15px;
   padding: 0 10px;
   padding-top: 20px;
-  min-width: 69px;
+  min-width: 60px;
+  text-align: right;
 }
 
 .row-product-note {
