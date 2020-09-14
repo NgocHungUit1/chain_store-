@@ -58,7 +58,7 @@ export class InvoiceService {
 
   getList(filter?: InvoiceFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrl(filter);
-    return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
 
@@ -89,7 +89,7 @@ export class InvoiceService {
 
   getDetail(invoice_id: string, price_book_id: string) {
     const url = environment.apiUrl + '/invoice/detail';
-    return this.http.post(url, { invoice_id: invoice_id, price_book_id: price_book_id });
+    return this.http.post(url, {invoice_id: invoice_id, price_book_id: price_book_id});
   }
 
   getApiUrlSumaryInvoice(filter?: InvoiceFilter) {
@@ -109,7 +109,7 @@ export class InvoiceService {
 
   getSumaryInvoice(filter?: InvoiceFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrlSumaryInvoice(filter);
-    return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
   connect(id) {
@@ -125,6 +125,11 @@ export class InvoiceService {
   reconnect(id) {
     const url = environment.apiUrl + '/invoice/connect?id=' + id + '&reconnect=1';
     return this.http.post(url, {});
+  }
+
+  payTheDebt(id) {
+    const url = environment.apiUrl + '/invoice/pay-the-debt';
+    return this.http.post<boolean>(url, {invoice_id: id});
   }
 }
 

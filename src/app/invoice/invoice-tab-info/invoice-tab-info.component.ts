@@ -50,7 +50,8 @@ export class InvoiceTabInfoComponent implements OnInit {
     public invoiceService: InvoiceService,
     private orderService: OrderService,
     private router: Router
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
     // console.log(this.invoice);
@@ -268,8 +269,14 @@ export class InvoiceTabInfoComponent implements OnInit {
         '</tr>';
       printContent += '<tr>' +
         '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng thanh toán :</td>' +
-        '<td style="text-align:right; font-weight:600;">' + res.total + '</td>' +
+        '<td style="text-align:right; font-weight:600;">' + res.sum_payment + '</td>' +
         '</tr>';
+      if (res.debt !== null) {
+        printContent += '<tr>' +
+          '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Còn nợ :</td>' +
+          '<td style="text-align:right; font-weight:600;">' + res.debt + '</td>' +
+          '</tr>';
+      }
       printContent += '</table>';
       printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
       printContent += '</section>';
@@ -371,13 +378,27 @@ export class InvoiceTabInfoComponent implements OnInit {
         // debugger;
         this.router.navigate(['/sale']);
 
-      }else{
+      } else {
         this.notifySer.notify('warning', 'Đã trả hết hàng.');
 
       }
 
     }); // getReturns list
 
+  }
+
+  /**
+   * Thanh toan no
+   * @param invoice
+   */
+  payTheDebt(invoice) {
+    this.invoiceService.payTheDebt(invoice.id).subscribe(res => {
+      if (res === true) {
+        this.notifySer.notify('success', 'Thanh toán nợ thành công.');
+      } else {
+        this.notifySer.notify('error', 'Thanh toán không thành công.');
+      }
+    });
   }
 
 }

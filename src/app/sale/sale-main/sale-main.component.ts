@@ -57,6 +57,7 @@ export class SaleMainComponent implements OnInit {
   discount_type: string = 'price'; // use for payment
   customerPay: number = 0;
   tienThuaTraKhach: number = 0;
+  tienKhachNo: number = 0;
   priceLists: PriceList[] = [];
   form: FormGroup;
   selectCustomer = new FormControl();
@@ -724,8 +725,14 @@ export class SaleMainComponent implements OnInit {
         '</tr>';
       printContent += '<tr>' +
         '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng thanh toán :</td>' +
-        '<td style="text-align:right; font-weight:600;">' + res.total + '</td>' +
+        '<td style="text-align:right; font-weight:600;">' + res.sum_payment + '</td>' +
         '</tr>';
+      if (res.debt !== null) {
+        printContent += '<tr>' +
+          '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Còn nợ :</td>' +
+          '<td style="text-align:right; font-weight:600;">' + res.debt + '</td>' +
+          '</tr>';
+      }
       printContent += '</table>';
       printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
       printContent += '</section>';
@@ -846,17 +853,11 @@ export class SaleMainComponent implements OnInit {
     }
     // console.log(Number(this.form.controls['customerPay'].value));
 
-    // if (mItemInvoice.paymentSiderBar?.number === undefined) {
-    //   this.notifySer.notify('warning', 'Chưa chọn thanh toán !');
+    // if (this.sumPrice - this.numberDiscount > numeral(this.form.controls['customerPay'].value).value()) {
+    //   this.notifySer.notify('warning', 'Thanh toán chưa đủ !');
     //   return;
     // }
-    // console.log(Number(mItemInvoice.discountSiderBar?.number));
 
-    if (this.sumPrice - this.numberDiscount > numeral(this.form.controls['customerPay'].value).value()) {
-      this.notifySer.notify('warning', 'Thanh toán chưa đủ !');
-      return;
-    }
-    // debugger;
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
       this.notifySer.notify('warning', 'Chưa chọn sản phẩm !');
       return;
@@ -911,6 +912,7 @@ export class SaleMainComponent implements OnInit {
       InvoiceDetail: invoiceDetail,
       PaymentMethod: 'cash', //mItemInvoice.paymentSiderBar?.type,
       PaymentPrice: this.sumPrice - this.numberDiscount, // tien thanh toan
+      KhachNo: this.tienKhachNo,
     };
 
     /**
@@ -1139,6 +1141,7 @@ export class SaleMainComponent implements OnInit {
   inputformatNumber(event: any) {
     event.target.value = numeral(event.target.value).format('0,0');
     this.tienThuaTraKhach = numeral(this.form.controls['customerPay'].value).value() - this.sumPrice + this.numberDiscount;
+    this.tienKhachNo = this.sumPrice - this.numberDiscount - numeral(this.form.controls['customerPay'].value).value();
   }
 
 }

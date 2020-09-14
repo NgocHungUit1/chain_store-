@@ -327,16 +327,12 @@
               <div fxFlex="50" class="customer-pay-number">
                 <mat-form-field style="text-align: right">
                   <button mat-icon-button matPrefix>
-                    <!-- <mat-icon class="row-edit-customer-pay-number" (click)="openPaymentSiderBarDialog()">
-                      credit_card</mat-icon> -->
                     <mat-icon class="row-edit-customer-pay-number">
                       credit_card
                     </mat-icon>
                   </button>
-                  <!-- <input matInput type="text" value="{{ customerPay | number}}" [disabled]="true" style="color:black"> -->
                   <input matInput type="text" style="color:black" formControlName="customerPay"
                          (keyup)="inputformatNumber($event)">
-
                 </mat-form-field>
               </div>
             </div>
@@ -347,19 +343,29 @@
             <div *ngIf="localItemInvoice?.is_return !== true; else is_return_tienThuaTraKhach">
               <div fxLayout="row wrap" class="excess-cash">
                 <div fxFlex="50" class="cexcess-cash-text label-text">
-                  <span>Tiền thừa trả khách</span>
+                  <span *ngIf=" tienThuaTraKhach > 0; else textTienThuaTraKhach">
+                    Tiền thừa trả khách
+                  </span>
+                  <ng-template #textTienThuaTraKhach>
+                    <span >
+                      Nợ
+                    </span>
+                  </ng-template>
                 </div>
                 <div fxFlex="50" class="excess-cash-number">
                   <!-- <input matInput type="text" *ngIf="customerPay - sumPrice + numberDiscount > 0"
                     value="{{ customerPay - sumPrice + numberDiscount | number}}">
                   <input matInput type="text" *ngIf="customerPay - sumPrice + numberDiscount <= 0" value="{{ customerPay }}"> -->
-
+                  <!--                  *ngIf=" tienThuaTraKhach > 0; else templateTienThuaTraKhach-->
                   <span *ngIf=" tienThuaTraKhach > 0; else templateTienThuaTraKhach">
                     {{ tienThuaTraKhach | number }}
                   </span>
                   <ng-template #templateTienThuaTraKhach>
-                    <span>0</span>
+                    <span>
+                      {{   tienKhachNo | number}}
+                    </span>
                   </ng-template>
+
                 </div>
               </div>
             </div>
