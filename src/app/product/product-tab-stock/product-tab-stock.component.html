@@ -1,1 +1,35 @@
-<p>product-tab-stock works!</p>
+<table mat-table [dataSource]="units" class="mat-elevation-z8">
+
+  <ng-container matColumnDef="#">
+    <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['#'] }} </th>
+    <td mat-cell *matCellDef="let element; let i = index;"> {{ i + 1 }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="no">
+    <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['no'] }} </th>
+    <td mat-cell *matCellDef="let element"> {{ element.no }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['name'] }} </th>
+    <td mat-cell *matCellDef="let element"> {{element.name }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="value">
+    <th mat-header-cell class="column-number" *matHeaderCellDef> {{ columnsHeader['value'] }} </th>
+    <td mat-cell class="column-number" *matCellDef="let element"> {{ element.value | number }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="sell_price">
+    <th mat-header-cell class="column-number" *matHeaderCellDef> {{ columnsHeader['sell_price'] }} </th>
+    <td mat-cell class="column-number" *matCellDef="let element"> {{ element.sell_price | number }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="quantity_of_stock">
+    <th mat-header-cell class="column-number" *matHeaderCellDef> {{ columnsHeader['quantity_of_stock'] }} </th>
+    <td mat-cell class="column-number bold-text" *matCellDef="let element"> {{ element.quantity_of_stock | number }} </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns" class="header-element-row"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

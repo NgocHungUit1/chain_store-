@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-product-tab-stock',
@@ -7,7 +7,22 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProductTabStockComponent implements OnInit {
 
-  constructor() { }
+  @Input() units: object[];
+
+  displayedColumns: string[] = ['#', 'no', 'name', 'value', 'sell_price', 'quantity_of_stock'];
+
+  columnsHeader = {
+    '#': '#',
+    'no': 'Mã',
+    'name': 'Đơn vị',
+    'value': 'Giá trị quy đổi',
+    'sell_price': 'Gía bán',
+    'quantity_of_stock': 'Tồn kho'
+  };
+
+
+  constructor() {
+  }
 
   ngOnInit(): void {
   }
