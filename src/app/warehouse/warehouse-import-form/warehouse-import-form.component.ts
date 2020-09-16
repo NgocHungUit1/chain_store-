@@ -42,7 +42,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     super();
   }
 
-  @ViewChild(MatTable, { static: true }) table: MatTable<any>;
+  @ViewChild(MatTable, {static: true}) table: MatTable<any>;
   @ViewChild('selectColumn') selectColumn;
 
   selectProduct = new FormControl();
@@ -52,8 +52,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   model: Warehouse = null;
 
   statuses = [
-    { id: '10', name: 'Hoàn thành' },
-    { id: '9', name: 'Lưu tạm' },
+    {id: '10', name: 'Hoàn thành'},
+    {id: '9', name: 'Lưu tạm'},
   ];
 
   parcels: object[] = [];
@@ -310,8 +310,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   onSelectedProduct(product) {
     this.productSer.getDetail(product.id, 'productUnits').subscribe(res => {
-      console.log(product);
-
       const warehouseProduct = new WarehouseProduct();
       warehouseProduct.product_id = product.id;
       warehouseProduct.product = product;
@@ -401,7 +399,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   openParcelFormDialog(index) {
     const dialogRef = this.dialog.open(WarehouseParcelFormDialogComponent, {
-      width: '20%'
+      width: '20%',
+      data: {parcels: this.parcels}
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result !== false && result !== undefined) {
@@ -487,7 +486,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this.form.patchValue({ 'supplier': result });
+      this.form.patchValue({'supplier': result});
     });
   }
 
