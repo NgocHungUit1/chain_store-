@@ -21,6 +21,7 @@ import { ManufacturerService } from '../manufacturer.service';
 import { ManufacturerFilter } from '../manufacturer.model';
 import { ProductManufacturerFormDialogComponent } from '../product-manufacturer-form-dialog/product-manufacturer-form-dialog.component';
 import * as numeral from 'numeral';
+import { log } from 'util';
 
 
 class ImageSnippet {
@@ -42,6 +43,7 @@ export class ProductMedicineDialogComponent implements OnInit {
   copy_product_id: string;
   public form: FormGroup;
   loading = false;
+  made_in_old: string;
 
   groups: Group[] = [];
   usings = [];
@@ -83,8 +85,31 @@ export class ProductMedicineDialogComponent implements OnInit {
     {isShow: true},
     {isShow: true},
   ];
-  // optionsMadeIn: string[] = ['One', 'Two', 'Three'];
-  // filteredOptionsMadeIn: Observable<string[]>;
+  optionsMadeIn: string[] = ['Trung Quốc', 'Ấn Độ', 'Mỹ', 'Indonesia', 'Braxin', 'Pakistan', 'Nigeria',
+    'Bangladesh', 'Mexico', 'Nhật Bản', 'Ethiopia', 'Philippines', 'Việt Nam',
+    'Cộng hòa Dân chủ Congo', 'Nước Đức', 'Iran', 'Thổ Nhĩ Kì', 'Thái Lan', 'Nước Anh', 'Nước Pháp', 'Nước Ý',
+    'Tanzania', 'Nam Phi', 'Myanmar', 'Nam Triều Tiên', 'Kenya', 'Colombia', 'Tây Ban Nha', 'Argentina', 'Uganda',
+    'Ukraine', 'Algeria', 'Sudan', 'Iraq', 'Ba Lan', 'Canada', 'Afghanistan', 'Morocco', 'Ả Rập Xê Út', 'Peru', 'Venezuela',
+    'Uzbekistan', 'Malaysia', 'Angola', 'Mozambique', 'Nepal', 'Ghana', 'Yemen', 'Madagascar', 'Bắc Triều Tiên',
+    'Côte dIvoire', 'Châu Úc', 'Cameroon', 'Niger', 'Sri Lanka', 'Burkina Faso', 'Rumani', 'Malawi', 'Mali', 'Kazakhstan',
+    'Syria', 'Chile', 'Zambia', 'Guatemala', 'nước Hà Lan', 'Zimbabwe', 'Ecuador', 'Senegal', 'Campuchia', 'Chad', 'Somalia',
+    'Guinea', 'phía nam Sudan', 'Rwanda', 'Tunisia', 'nước Bỉ', 'Cuba', 'Benin', 'Burundi', 'Bolivia', 'Hy Lạp', 'Haiti',
+    'Cộng hòa Dominica', 'Cộng hòa Séc', 'Bồ Đào Nha', 'Thụy Điển', 'Azerbaijan', 'Jordan', 'Hungary',
+    'các Tiểu Vương Quốc Ả Rập Thống Nhất',
+    'Belarus', 'Honduras', 'Tajikistan', 'Serbia', 'Áo', 'Thụy sĩ', 'Israel', 'Papua New Guinea', 'Đi', 'Sierra Leone',
+    'Bungari', 'Lào', 'Paraguay', 'Libya', 'El Salvador', 'Nicaragua', 'Kyrgyzstan', 'Lebanon', 'Turkmenistan', 'Singapore',
+    'Đan mạch', 'Phần Lan', 'Slovakia', 'Congo', 'Na Uy', 'Eritrea', 'Nhà nước Palestine', 'Costa Rica', 'Liberia',
+    'Oman', 'Ireland', 'New Zealand', 'Cộng hòa trung phi', 'Mauritania', 'Kuwait', 'Croatia', 'Panama', 'Moldova',
+    'Georgia', 'Bosnia & Herzegovina', 'Uruguay', 'Mông Cổ', 'Albania', 'Armenia', 'Jamaica', 'Lithuania', 'Qatar',
+    'Namibia', 'Botswana', 'Lesotho',
+    'Gambia', 'TFYR Macedonia',
+    'Slovenia', 'Gabon', 'Latvia', 'Guinea - Bissau', 'Bahrain', 'Swaziland', 'Trinidad và Tobago', 'Đông Timor',
+    'Equatorial Guinea', 'Estonia',
+    'Mauritius', 'Síp', 'Djibouti', 'Fiji', 'Comoros', 'Bhutan', 'Guyana', 'Montenegro', 'Quần đảo Solomon', 'Luxembourg',
+    'Suriname', 'Cabo Verde',
+    'Maldives', 'Brunei', 'Malta', 'Bahamas', 'Belize', 'Iceland', 'Barbados', 'Vanuatu', 'Sao Tome & Principe', 'Samoa',
+    'Saint Lucia', 'Kiribati'];
+  filteredOptionsMadeIn: Observable<string[]>;
 
 
   selectedFiles: ImageSnippet[] = [];
@@ -214,11 +239,22 @@ export class ProductMedicineDialogComponent implements OnInit {
         }
       })
     );
-    // this.filteredOptionsMadeIn = this.form.controls['medicine'].valueChanges
-    //   .pipe(
-    //     startWith(''),
-    //     map(value => this._filterMadeIn(value))
-    //   );
+
+    // tim kiem quoc gia
+    this.filteredOptionsMadeIn = this.form.controls['medicine'].valueChanges
+      .pipe(
+        startWith(''),
+        map(value =>
+          this._filterMadeIn(value)
+        ));
+  }
+
+  public _filterMadeIn(value: any): string[] {
+    if (value.made_in !== this.made_in_old) {
+      this.made_in_old = value.made_in;
+      return this.optionsMadeIn.filter(option => option.toLowerCase().includes(value.made_in));
+    }
+    return [];
   }
 
   loadProduct(id, copy: any = null) {
@@ -598,10 +634,5 @@ export class ProductMedicineDialogComponent implements OnInit {
     event.target.value = numeral(event.target.value).format('0,0');
   }
 
-  // private _filterMadeIn(value: string): string[] {
-  //   const filterValue = value.toLowerCase();
-  //
-  //   return this.optionsMadeIn.filter(option => option.toLowerCase().includes(filterValue));
-  // }
 
 }
