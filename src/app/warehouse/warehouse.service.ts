@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Warehouse, WarehouseFilter } from './warehouse.model';
+import { resWarehousePrint, Warehouse, WarehouseFilter } from './warehouse.model';
+import { resInvoicePrint } from '../sale/order.model';
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +43,7 @@ export class WarehouseService {
 
   getList(filter?: WarehouseFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrl(filter);
-    return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
   getDetail(id: string, expand: string = '') {
@@ -98,6 +99,15 @@ export class WarehouseService {
   getRenderWarehouseNo() {
     const url = environment.apiUrl + '/warehouse/render-warehouse-no';
     return this.http.get<string>(url);
+  }
+
+  /**
+   * Get data warehouse to print
+   * @param id
+   */
+  getDataWarehouseToPrint(id: string) {
+    const url = environment.apiUrl + '/warehouse/get-data-warehouse-print/';
+    return this.http.post<resWarehousePrint>(url, {id: id});
   }
 }
 

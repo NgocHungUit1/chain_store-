@@ -133,7 +133,7 @@
           <div fxFlex="50" class="product-info-field">
             <span *ngIf="model.discount_type === 'price' ">{{ model.discount_amount | currency : 'VND' : ''}}</span>
             <span *ngIf="model.discount_type === 'percent' ">
-              {{ model.total_price * model.discount_amount /100 | number }}  {{ '('+model.discount_amount + '%)'}} 
+              {{ model.total_price * model.discount_amount /100 | number }}  {{ '('+model.discount_amount + '%)'}}
             </span>
 
           </div>
@@ -161,8 +161,15 @@
   </div>
   <div fxFlex="100">
     <div fxLayout="row wrap">
+
       <!-- kiem tra loai show form -->
       <div fxFlex="100" align="end">
+
+        <button class="m-r-10" mat-raised-button color="info" (click)="buttonPrintWarehouse(model)">
+          <mat-icon>print</mat-icon>
+          In đơn nhập
+        </button>
+
         <button class="m-r-10" mat-raised-button color="primary" (click)="reopen()" *ngIf="model.status === 10">
           <mat-icon>undo</mat-icon>
           Mở lại

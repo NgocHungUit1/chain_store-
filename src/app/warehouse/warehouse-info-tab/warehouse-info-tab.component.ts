@@ -1,11 +1,11 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
-import {Warehouse, WarehouseProduct, WarehouseProductFilter} from '../warehouse.model';
-import {WarehouseService} from '../warehouse.service';
-import {MatTableDataSource} from '@angular/material/table';
-import {WarehouseProductService} from '../warehouse-product.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import { Warehouse, WarehouseProduct, WarehouseProductFilter } from '../warehouse.model';
+import { WarehouseService } from '../warehouse.service';
+import { MatTableDataSource } from '@angular/material/table';
+import { WarehouseProductService } from '../warehouse-product.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-warehouse-info-tab',
@@ -50,7 +50,8 @@ export class WarehouseInfoTabComponent implements OnChanges {
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog
-  ) { }
+  ) {
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.expandedElement) {
@@ -140,6 +141,49 @@ export class WarehouseInfoTabComponent implements OnChanges {
       } else if (res['message'] !== undefined) {
         this.notifySer.notify('error', res['message']);
       }
+    });
+  }
+
+  /**
+   * In don nhap hang
+   * @param model
+   */
+  buttonPrintWarehouse(model) {
+    this.printWarehouse(model.id);
+  }
+
+  /**
+   * Main handel print
+   * @param id
+   */
+  printWarehouse(id: string) {
+    this.modelSer.getDataWarehouseToPrint(id).subscribe(res => {
+      let printContent = '<title>' + + '</title>';
+      printContent += '<style>table {' +
+        // 'font-family: arial, sans-serif;' +
+        'border-collapse: collapse;' +
+        'width: 100%;' +
+        '}' +
+        'td, th {' +
+        'border: 1px solid #dddddd;' +
+        'text-align: left;' +
+        'padding: 8px;' +
+        '}</style>' +
+        '<section style="padding: 10px;">' +
+        '<table>';
+
+      printContent += '</table>';
+      printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
+      printContent += '</section>';
+
+      const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+      WindowPrt.document.write(printContent);
+      WindowPrt.document.close();
+      WindowPrt.focus();
+      WindowPrt.print();
+      WindowPrt.close();
+
+
     });
   }
 
