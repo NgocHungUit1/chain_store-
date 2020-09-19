@@ -24,7 +24,8 @@ import * as numeral from 'numeral';
 
 
 class ImageSnippet {
-  constructor(public src: string, public file: File, public id: string) { }
+  constructor(public src: string, public file: File, public id: string) {
+  }
 }
 
 @Component({
@@ -76,12 +77,15 @@ export class ProductMedicineDialogComponent implements OnInit {
   };
 
   imageButtons = [
-    { isShow: true },
-    { isShow: true },
-    { isShow: true },
-    { isShow: true },
-    { isShow: true },
+    {isShow: true},
+    {isShow: true},
+    {isShow: true},
+    {isShow: true},
+    {isShow: true},
   ];
+  // optionsMadeIn: string[] = ['One', 'Two', 'Three'];
+  // filteredOptionsMadeIn: Observable<string[]>;
+
 
   selectedFiles: ImageSnippet[] = [];
 
@@ -99,7 +103,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     // @Optional() is used to prevent error if no data is passed
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
     // console.log(data);
-    this.local_data = { ...data };
+    this.local_data = {...data};
     this.action = this.local_data.action;
     this.title = this.local_data.title;
     this.copy_product_id = this.local_data.copy_product_id;
@@ -210,15 +214,23 @@ export class ProductMedicineDialogComponent implements OnInit {
         }
       })
     );
+    // this.filteredOptionsMadeIn = this.form.controls['medicine'].valueChanges
+    //   .pipe(
+    //     startWith(''),
+    //     map(value => this._filterMadeIn(value))
+    //   );
   }
 
   loadProduct(id, copy: any = null) {
     this.productSer.getDetail(id, 'medicine,images,productPlacements,productUnits').subscribe(product => {
       const placements = [];
       product['productPlacements'].forEach(pPlacement => {
-        placements.push(pPlacement.id)
+        placements.push(pPlacement.id);
       });
-
+      // debugger;
+      let medicine = product['medicine'];
+      medicine.made_in = product['made_in'];
+      medicine.manufacturer = product['manufacturer'];
       if (copy == null) {
         this.form.patchValue({
           product_no: product['product_no'],
@@ -233,7 +245,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           weight: product['weight'],
           base_unit: product['base_unit'],
           medicine_id: product['medicine_id'],
-          medicine: product['medicine'],
+          medicine: medicine, // product['medicine'],
           placements: placements,
           min_quantity: product['min_quantity'],
           max_quantity: product['max_quantity'],
@@ -255,7 +267,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           weight: product['weight'],
           base_unit: product['base_unit'],
           medicine_id: product['medicine_id'],
-          medicine: product['medicine'],
+          medicine: medicine,//product['medicine'],
           placements: placements,
           min_quantity: product['min_quantity'],
           max_quantity: product['max_quantity'],
@@ -311,19 +323,20 @@ export class ProductMedicineDialogComponent implements OnInit {
     if (this.form.valid) {
       this.loading = true;
       const data = this.form.getRawValue();
-
+      data.manufacturer = data.medicine.manufacturer;
+      data.made_in = data.medicine.made_in;
       data.original_price = numeral(data.original_price).value();
       data.sell_price = numeral(data.sell_price).value();
-      
+
       if (this.product_id === null) {
         // Create New
-        if (data.product_no === null || data.product_no === "") {
+        if (data.product_no === null || data.product_no === '') {
           this.productSer.getRenderProductNo().subscribe(product_no => {
             data.product_no = 'SP' + product_no;
             this.productSer.create(data).subscribe(product => {
               this.notifySer.notify('success', 'Thêm thuốc thành công!');
               this.uploadImage(product, action);
-              this.dialogRef.close({ event: action, data: product });
+              this.dialogRef.close({event: action, data: product});
             });
           });
 
@@ -332,7 +345,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           this.productSer.create(data).subscribe(product => {
             this.notifySer.notify('success', 'Thêm thuốc thành công!');
             this.uploadImage(product, action);
-            this.dialogRef.close({ event: action, data: product });
+            this.dialogRef.close({event: action, data: product});
           });
         }
 
@@ -341,7 +354,7 @@ export class ProductMedicineDialogComponent implements OnInit {
         this.productSer.update(this.product_id, data).subscribe(product => {
           this.notifySer.notify('success', 'Cập nhật thuốc thành công!');
           this.uploadImage(product, action);
-          this.dialogRef.close({ event: action, data: product });
+          this.dialogRef.close({event: action, data: product});
         });
       }
     } else {
@@ -386,7 +399,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           this.notifySer.notify('error', 'Không thể tải hình ảnh!');
         }
         if (action === 'Save') {
-          this.dialogRef.close({ event: this.action, data: product });
+          this.dialogRef.close({event: this.action, data: product});
         } else if (action === 'SaveAndMore') {
           this.form.reset({
             product_type: 'medicine'
@@ -405,7 +418,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       });
     } else {
       this.loading = false;
-      this.dialogRef.close({ event: this.action, data: product });
+      this.dialogRef.close({event: this.action, data: product});
     }
   }
 
@@ -433,7 +446,7 @@ export class ProductMedicineDialogComponent implements OnInit {
 
       if (result !== false && result !== undefined) {
         this.groups.push(result);
-        this.form.patchValue({ group_id: result.id });
+        this.form.patchValue({group_id: result.id});
       }
     });
   }
@@ -444,7 +457,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result !== false && result !== undefined) {
         this.usings.push(result);
-        this.form.patchValue({ using_id: result.id });
+        this.form.patchValue({using_id: result.id});
       }
     });
   }
@@ -459,27 +472,30 @@ export class ProductMedicineDialogComponent implements OnInit {
         const curSelects = this.form.controls['placements'].value;
         curSelects.push(result.id);
 
-        this.form.patchValue({ placements: curSelects });
+        this.form.patchValue({placements: curSelects});
       }
     });
   }
 
   openManufacturerFormDialog() {
-    const dialogRef = this.dialog.open(ProductManufacturerFormDialogComponent, {});
+    const dialogRef = this.dialog.open(ProductManufacturerFormDialogComponent, {
+      width: '30%',
+      minHeight: '60%',
+    });
     dialogRef.afterClosed().subscribe(result => {
       if (result !== false && result !== undefined) {
         this.manufacturers.push(result);
-        this.form.patchValue({ medicine: { manufacturer: result.id } });
+        this.form.patchValue({medicine: {manufacturer: result.id}});
       }
     });
   }
 
   doAction() {
-    this.dialogRef.close({ event: this.action, data: this.local_data });
+    this.dialogRef.close({event: this.action, data: this.local_data});
   }
 
   closeDialog() {
-    this.dialogRef.close({ event: 'Cancel' });
+    this.dialogRef.close({event: 'Cancel'});
   }
 
   removeUnit(i) {
@@ -575,11 +591,17 @@ export class ProductMedicineDialogComponent implements OnInit {
   }
 
   /**
- * Format input number
- * @Nghia 
- */
+   * Format input number
+   * @Nghia
+   */
   inputformatNumber(event: any) {
     event.target.value = numeral(event.target.value).format('0,0');
   }
+
+  // private _filterMadeIn(value: string): string[] {
+  //   const filterValue = value.toLowerCase();
+  //
+  //   return this.optionsMadeIn.filter(option => option.toLowerCase().includes(filterValue));
+  // }
 
 }
