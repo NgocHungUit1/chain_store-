@@ -244,7 +244,7 @@ export class InvoiceTabInfoComponent implements OnInit {
           printContent += '<tr>' +
             '<td>' + element.product?.product_name + ' - ' + element?.base_unit + '<br>' + element.price + '</td>' +
             '<td style="text-align:center;">' + element.amount + '</td>';
-          if (this.autoPrintInSoLo == true) {
+          if (this.autoPrintInSoLo === true) {
             printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
           }
           printContent += '<td style="text-align:right;">' + element.total + '</td>' +
@@ -256,7 +256,7 @@ export class InvoiceTabInfoComponent implements OnInit {
        * Tong tien hang
        */
       let colspan = 2;
-      if (this.autoPrintInSoLo == true) {
+      if (this.autoPrintInSoLo === true) {
         colspan = 3;
       }
       printContent += '<tr>' +

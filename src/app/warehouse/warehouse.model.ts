@@ -101,5 +101,8 @@ export class resWarehousePrint {
   supplier: Supplier;
   created_by: number;
   created_user: User;
+  store: any;
+  date: string;
+  warehoureItems: any;
 }
 
