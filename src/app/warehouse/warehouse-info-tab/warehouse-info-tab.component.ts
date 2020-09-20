@@ -80,7 +80,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.warehouse_id = this.model.id;
-    filter.expand = 'product';
+    filter.expand = 'product,productUnit,productParcelsForView,discountText';
     return filter;
   }
 
