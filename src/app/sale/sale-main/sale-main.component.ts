@@ -552,7 +552,16 @@ export class SaleMainComponent implements OnInit {
     );
   }
 
+  /**
+   * Chay 2 lan de ko bi trash
+   * @param event
+   */
   choosePriceBook(event: any) {
+    this.actionChoosePriceBook();
+    this.actionChoosePriceBook();
+  }
+
+  actionChoosePriceBook() {
     console.log(this.form.controls['priceBookID'].value);
     const price_book_id = this.form.controls['priceBookID'].value;
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
