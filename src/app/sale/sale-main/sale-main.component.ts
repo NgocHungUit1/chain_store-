@@ -75,6 +75,8 @@ export class SaleMainComponent implements OnInit {
   autoPrint: boolean = true;
   autoPrintInSoLo: boolean = false;
 
+  changePriceBook: boolean = false;
+
   /**
    *  So sanh danh sach cu
    * @param listProductUnitIdChoose
@@ -192,8 +194,10 @@ export class SaleMainComponent implements OnInit {
         // debugger;
         /**
          * Truong hop:  thay doi vs sl , pricebook
+         *
+         * this.common_idOld !== priceBookID
          */
-        if (this.compareEqualListProduct(listProductUnitIdChoose) === 0 || this.common_idOld !== priceBookID) {
+        if (this.compareEqualListProduct(listProductUnitIdChoose) === 0 || this.changePriceBook == true) {
           this.listProductUnitIdChooseOld = listProductUnitIdChoose;
           this.common_idOld = priceBookID;
           const common_id = priceBookID;
@@ -204,7 +208,7 @@ export class SaleMainComponent implements OnInit {
             if (Array.isArray(resCommon)) {
               const priceListProductCommonExist = resCommon;
               //
-
+// debugger;
               /**
                * group = [ product_id] => [
                *          id,price,price_list_id,product_id
@@ -246,7 +250,7 @@ export class SaleMainComponent implements OnInit {
             }
           });
           this.listProduct.reverse();
-
+          this.changePriceBook = false;
         } else {
           /**
            * Truong hop: khong thay doi vs sl , pricebook
@@ -557,12 +561,23 @@ export class SaleMainComponent implements OnInit {
    * @param event
    */
   choosePriceBook(event: any) {
-    this.actionChoosePriceBook();
-    this.actionChoosePriceBook();
+    this.changePriceBook = true;
+    // this.actionChoosePriceBook();
+    // this.actionChoosePriceBook();
+    const price_book_id = this.form.controls['priceBookID'].value;
+    const listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        element.price_book_id = price_book_id;
+      }
+    });
+    listInvoice.itemInvoice = listItemInvoice;
+    this.orderService.setListInvoiceLocalStorage(listInvoice);
   }
 
   actionChoosePriceBook() {
-    console.log(this.form.controls['priceBookID'].value);
+    // console.log(this.form.controls['priceBookID'].value);
     const price_book_id = this.form.controls['priceBookID'].value;
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
