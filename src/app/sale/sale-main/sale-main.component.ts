@@ -243,6 +243,7 @@ export class SaleMainComponent implements OnInit {
                     }
                   }
                 });
+                // console.log(this.listProduct);
               } else {
                 this.sumPrice = 0;
               }
@@ -562,18 +563,9 @@ export class SaleMainComponent implements OnInit {
    */
   choosePriceBook(event: any) {
     this.changePriceBook = true;
-    // this.actionChoosePriceBook();
-    // this.actionChoosePriceBook();
-    const price_book_id = this.form.controls['priceBookID'].value;
-    const listInvoice = this.orderService.getListInvoiceLocalStorage();
-    const listItemInvoice = listInvoice.itemInvoice;
-    listItemInvoice.forEach(element => {
-      if (element.active === true) {
-        element.price_book_id = price_book_id;
-      }
-    });
-    listInvoice.itemInvoice = listItemInvoice;
-    this.orderService.setListInvoiceLocalStorage(listInvoice);
+    this.actionChoosePriceBook();
+    this.changePriceBook = true;
+    this.actionChoosePriceBook();
   }
 
   actionChoosePriceBook() {
