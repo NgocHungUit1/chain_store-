@@ -553,6 +553,7 @@ export class SaleMainComponent implements OnInit {
   }
 
   choosePriceBook(event: any) {
+    console.log(this.form.controls['priceBookID'].value);
     const price_book_id = this.form.controls['priceBookID'].value;
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;

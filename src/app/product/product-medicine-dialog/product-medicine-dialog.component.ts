@@ -163,7 +163,7 @@ export class ProductMedicineDialogComponent implements OnInit {
         main_active_substance: [null, Validators.required],
         content: [null, Validators.required],
         packing: [null, Validators.required],
-        manufacturer: [null, Validators.required],
+        manufacturer: [null],
         made_in: [null]
       }),
 

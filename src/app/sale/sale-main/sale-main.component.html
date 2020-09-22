@@ -242,7 +242,7 @@
               </button>
               <mat-select class="input-search" placeholder="Chọn bảng giá" (selectionChange)="choosePriceBook($event)"
                           formControlName="priceBookID">
-                <mat-option *ngFor="let priceList of priceLists" [value]="priceList.id"
+                <mat-option *ngFor="let priceList of priceLists " [value]="priceList.id"
                             [disabled]="localItemInvoice?.is_return == true">
                   {{ priceList.name }}
                 </mat-option>
@@ -362,7 +362,7 @@
                   </span>
                   <ng-template #templateTienThuaTraKhach>
                     <span>
-                      {{   tienKhachNo | number}}
+                      {{   tienKhachNo | number }}
                     </span>
                   </ng-template>
 
