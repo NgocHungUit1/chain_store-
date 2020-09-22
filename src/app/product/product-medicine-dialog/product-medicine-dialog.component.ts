@@ -364,6 +364,9 @@ export class ProductMedicineDialogComponent implements OnInit {
       data.original_price = numeral(data.original_price).value();
       data.sell_price = numeral(data.sell_price).value();
 
+      if (typeof data.manufacturer === 'string') {
+        data.manufacturer = null;
+      }
       if (this.product_id === null) {
         // Create New
         if (data.product_no === null || data.product_no === '') {
