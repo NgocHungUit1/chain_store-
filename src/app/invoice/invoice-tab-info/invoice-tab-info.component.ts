@@ -86,7 +86,11 @@ export class InvoiceTabInfoComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result.event === 'delete') {
         this.invoiceService.delete(invoice.id).subscribe(res => {
-          this.notifySer.notify('success', 'Xóa hóa đơn thành công!');
+          // console.log(res);
+          if (res === true) {
+            this.notifySer.notify('success', 'Xóa hóa đơn thành công!');
+            this.invoiceService.setLoadInvoice(true);
+          }
         });
       }
     });
