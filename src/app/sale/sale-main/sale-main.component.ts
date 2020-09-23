@@ -243,7 +243,7 @@ export class SaleMainComponent implements OnInit {
                     }
                   }
                 });
-                // console.log(this.listProduct);
+                console.log(this.listProduct);
               } else {
                 this.sumPrice = 0;
               }
