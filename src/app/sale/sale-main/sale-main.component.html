@@ -109,7 +109,7 @@
                 <div fxFlex="100">
 
                   <mat-form-field style=" font-size: 20px; text-align: right;"
-                                  *ngIf="itemProduct.product?.end_price === undefined">
+                                  *ngIf="itemProduct.product?.end_price == undefined">
                     <input matInput type="text" value="{{  itemProduct?.common_price | number }}" disabled="true"
                            style="color:black">
                     <button mat-icon-button matPrefix>
@@ -138,7 +138,7 @@
 
             </div>
             <div fxFlex="12" class="row-total-price">
-              <span *ngIf="itemProduct.product?.end_price === undefined">
+              <span *ngIf="itemProduct.product?.end_price == undefined">
                 {{ itemProduct?.common_price * itemProduct.amount | number }}
               </span>
 

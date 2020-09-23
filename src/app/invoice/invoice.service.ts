@@ -12,6 +12,14 @@ export class InvoiceService {
   public dateFilter: BehaviorSubject<DateFilter> = new BehaviorSubject<DateFilter>(null);
   subscribeDateFilter: Observable<DateFilter> = this.dateFilter.asObservable();
 
+  private loadInvoice: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  subscribeLoadInvoice: Observable<boolean> = this.loadInvoice.asObservable();
+
+  setLoadInvoice(action: boolean) {
+    this.loadInvoice.next(action);
+  }
+
+
   setDateFilter(obj: DateFilter) {
     this.dateFilter.next(obj);
   }
@@ -78,8 +86,10 @@ export class InvoiceService {
   }
 
   delete(id: string) {
-    const url = environment.apiUrl + '/invoice/delete/' + id;
-    return this.http.delete(url);
+    // const url = environment.apiUrl + '/invoice/delete/' + id;
+    // return this.http.delete(url);
+    const url = environment.apiUrl + '/invoice/delete-invoice';
+    return this.http.post(url, {invoice_id: id});
   }
 
   autocomplete(term: string) {

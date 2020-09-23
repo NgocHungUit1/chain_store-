@@ -227,6 +227,14 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
       }
     });
 
+    this.service.subscribeLoadInvoice.subscribe(action => {
+      if (action === true) {
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+        this.service.setLoadInvoice(false);
+      }
+    });
+
   }
 
   applyFilter(event: Event) {
