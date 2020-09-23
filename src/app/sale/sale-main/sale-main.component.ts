@@ -888,6 +888,7 @@ export class SaleMainComponent implements OnInit {
     }
 
     const list = this.listProduct;
+    let needReturn = 0;
     list.forEach(element => {
       let product_unit_id = element.product_unit_id;
       let units = element.product.productUnits;
@@ -895,10 +896,13 @@ export class SaleMainComponent implements OnInit {
       // console.log(product_unit);
       if (element.amount > product_unit.quantity_of_stock) {
         this.notifySer.notify('warning', 'Không đủ số lượng tồn kho sản phẩm ' + element.product.product_name);
-        return;
+        needReturn = 1;
       }
       // console.log(product_unit);
     });
+    if (needReturn === 1){
+      return;
+    }
 
     this.orderService.setLoadProduct(true);
     const invoiceDetail = [];
