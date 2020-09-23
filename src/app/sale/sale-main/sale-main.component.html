@@ -45,7 +45,7 @@
               </span>
             </div>
 
-            <div fxFlex="10" class="row-product-base-unit">
+            <div fxFlex="14" class="row-product-base-unit">
               <div fxLayout="row wrap">
                 <mat-form-field appearance="fill">
                   <mat-label>Đơn vị</mat-label>
@@ -53,7 +53,7 @@
                               (selectionChange)="onChangeProductUnit($event,itemProduct,i)">
                     <mat-option *ngFor="let unit of itemProduct.product?.productUnits" [value]="unit.id"
                                 [disabled]="localItemInvoice?.is_return == true">
-                      {{ unit.name }}
+                      {{ unit.name }} - Tồn: {{ unit.quantity_of_stock }}
                     </mat-option>
                   </mat-select>
                 </mat-form-field>

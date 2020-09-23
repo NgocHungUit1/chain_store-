@@ -101,6 +101,7 @@ html .page-wrapper .page-content {
 .row-product-base-unit {
   padding-top: 12px;
   padding-right: 5px;
+  min-width: 80px;
 }
 
 .row-product-name {

@@ -887,9 +887,20 @@ export class SaleMainComponent implements OnInit {
       return;
     }
 
-    this.orderService.setLoadProduct(true);
-
     const list = this.listProduct;
+    list.forEach(element => {
+      let product_unit_id = element.product_unit_id;
+      let units = element.product.productUnits;
+      let product_unit = units.find(ele => ele.id === product_unit_id);
+      // console.log(product_unit);
+      if (element.amount > product_unit.quantity_of_stock) {
+        this.notifySer.notify('warning', 'Không đủ số lượng tồn kho sản phẩm ' + element.product.product_name);
+        return;
+      }
+      // console.log(product_unit);
+    });
+
+    this.orderService.setLoadProduct(true);
     const invoiceDetail = [];
     list.forEach(element => {
       let price = 0;
