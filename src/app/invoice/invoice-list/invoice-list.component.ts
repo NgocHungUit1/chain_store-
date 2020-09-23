@@ -75,10 +75,17 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     'total_price': 'Tổng tiền hàng',
     'discount': 'Giảm giá',
     'payment': 'Khách đã trả',
+    'national_pharmacy_no': 'Mã phiếu dược quốc gia',
   };
 
-  displayedColumns: string[] = ['#', 'invoice_no', 'created_at', 'returns', 'customer', 'total_price', 'discount', 'payment'];
-  columnsToDisplay: string[] = ['#', 'invoice_no', 'created_at', 'returns', 'customer', 'total_price', 'discount', 'payment'];
+  displayedColumns: string[] = [
+    '#', 'invoice_no', 'created_at', 'returns', 'customer', 'national_pharmacy_no', 'total_price',
+    'discount', 'payment'
+  ];
+  columnsToDisplay: string[] = [
+    '#', 'invoice_no', 'created_at', 'returns', 'customer', 'national_pharmacy_no', 'total_price',
+    'discount', 'payment'
+  ];
   dataSource: Invoice[] = [];
 
 
@@ -94,7 +101,10 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   ];
 
   // for second column
-  second_columnsToDisplay: string[] = ['second_#', 'second_invoice_no', 'second_created_at', 'second_returns', 'second_customer', 'second_total_price', 'second_discount', 'second_payment'];
+  second_columnsToDisplay: string[] = [
+    'second_#', 'second_invoice_no', 'second_created_at', 'second_returns', 'second_customer', 'second_national_no',
+    'second_total_price', 'second_discount', 'second_payment'
+  ];
 
   buildFilterFromParams(): InvoiceFilter {
     function write<K extends keyof InvoiceFilter>(arg: InvoiceFilter, key: K, value: InvoiceFilter[K]): void {
