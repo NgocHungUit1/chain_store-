@@ -9,6 +9,8 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { NotifierService } from 'angular-notifier';
 import { WarehouseService } from '../warehouse.service';
 import { Warehouse, WarehouseFilter } from '../warehouse.model';
+import { ProductUploadDialogComponent } from '../../product/product-upload-dialog/product-upload-dialog.component';
+import { WarehouseUploadDialogComponent } from '../warehouse-upload-dialog/warehouse-upload-dialog.component';
 
 @Component({
   templateUrl: './warehouse-list.component.html',
@@ -110,5 +112,16 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
   ngOnInit() {
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
+  }
+
+  openUploadDialog() {
+    const dialogRef = this.dialog.open(WarehouseUploadDialogComponent, {
+      width: '30%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadData();
+      }
+    });
   }
 }

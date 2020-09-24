@@ -15,6 +15,10 @@
       </button>
       <h3>Danh sách Nhập hàng</h3>
       <span fxFlex="1 1 0%"></span>
+      <button mat-raised-button color="accent" (click)="openUploadDialog();" style="margin-right: 10px">
+        <mat-icon>cloud_upload</mat-icon>
+        Tải lên từ Excel
+      </button>
       <button mat-raised-button color="primary" routerLink="/transaction/warehouse/create" style="margin-right: 10px">
         <mat-icon>add</mat-icon>
         Nhập hàng

@@ -4,13 +4,14 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { resWarehousePrint, Warehouse, WarehouseFilter } from './warehouse.model';
 import { resInvoicePrint } from '../sale/order.model';
+import { AuthService } from '../authentication/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WarehouseService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private auth: AuthService) {
   }
 
   getApiUrl(filter?: WarehouseFilter) {
@@ -108,6 +109,20 @@ export class WarehouseService {
   getDataWarehouseToPrint(id: string) {
     const url = environment.apiUrl + '/warehouse/get-data-warehouse-print/';
     return this.http.post<resWarehousePrint>(url, {id: id});
+  }
+
+  /**
+   * Use on Invoice Import Excel
+   */
+  getDownloadTemplateLink() {
+    const _token = this.auth.getToken();
+    const url = environment.apiUrl + '/warehouse/download-template?token=' + _token;
+    return url;
+  }
+
+  upload(data) {
+    const url = environment.apiUrl + '/warehouse/upload';
+    return this.http.post(url, data);
   }
 }
 
