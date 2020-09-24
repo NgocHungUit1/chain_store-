@@ -72,6 +72,11 @@ export class InvoiceTabInfoComponent implements OnInit {
   }
 
   deleteInvoice(invoice) {
+    if (invoice['returns'].length > 0) {
+      this.notifySer.notify('warning', 'Hóa đơn đã có trả hàng, không thể hủy đơn !');
+      return;
+    }
+
     const obj = {
       action: 'Delete',
       title: 'Xóa hàng hóa',
@@ -133,7 +138,6 @@ export class InvoiceTabInfoComponent implements OnInit {
     if (invoice['returns'].length > 0) {
       this.notifySer.notify('warning', 'Hóa đơn đã có trả hàng, không thể mở phiếu để cập nhật !');
       return;
-
     }
     let mItemInvoice = new ItemInvoice();
     mItemInvoice.invoice_id = invoice.id;
