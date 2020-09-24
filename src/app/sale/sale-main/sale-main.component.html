@@ -108,9 +108,8 @@
               <div fxLayout="row wrap">
                 <div fxFlex="100">
 
-                  <mat-form-field style=" font-size: 20px; text-align: right;"
-                                  *ngIf="itemProduct.product?.end_price == undefined">
-                    <input matInput type="text" value="{{  itemProduct?.common_price | number }}" disabled="true"
+                  <mat-form-field style=" font-size: 20px; text-align: right;" >
+                    <input matInput type="text" value="{{  itemProduct | showPrice | number }}" disabled="true"
                            style="color:black">
                     <button mat-icon-button matPrefix>
                       <mat-icon class="row-icon-edit-price"
@@ -120,17 +119,30 @@
                     </button>
                   </mat-form-field>
 
-                  <mat-form-field style=" font-size: 20px; text-align: right;"
-                                  *ngIf="itemProduct.product?.end_price !== undefined">
-                    <input matInput type="text" value="{{  itemProduct.product?.end_price | number }}" disabled="true"
-                           style="color:black">
-                    <button mat-icon-button matPrefix>
-                      <mat-icon class="row-icon-edit-price"
-                                (click)="openPriceDetailOrderDialog(i,itemProduct.product,itemProduct.common_price)">
-                        edit
-                      </mat-icon>
-                    </button>
-                  </mat-form-field>
+
+<!--                  <mat-form-field style=" font-size: 20px; text-align: right;"-->
+<!--                                  *ngIf="itemProduct.product?.end_price == undefined">-->
+<!--                    <input matInput type="text" value="{{  itemProduct?.common_price | number }}" disabled="true"-->
+<!--                           style="color:black">-->
+<!--                    <button mat-icon-button matPrefix>-->
+<!--                      <mat-icon class="row-icon-edit-price"-->
+<!--                                (click)="openPriceDetailOrderDialog(i,itemProduct.product,itemProduct.common_price)">-->
+<!--                        edit-->
+<!--                      </mat-icon>-->
+<!--                    </button>-->
+<!--                  </mat-form-field>-->
+
+<!--                  <mat-form-field style=" font-size: 20px; text-align: right;"-->
+<!--                                  *ngIf="itemProduct.product?.end_price !== undefined">-->
+<!--                    <input matInput type="text" value="{{  itemProduct.product?.end_price | number }}" disabled="true"-->
+<!--                           style="color:black">-->
+<!--                    <button mat-icon-button matPrefix>-->
+<!--                      <mat-icon class="row-icon-edit-price"-->
+<!--                                (click)="openPriceDetailOrderDialog(i,itemProduct.product,itemProduct.common_price)">-->
+<!--                        edit-->
+<!--                      </mat-icon>-->
+<!--                    </button>-->
+<!--                  </mat-form-field>-->
 
                 </div>
 
@@ -138,13 +150,18 @@
 
             </div>
             <div fxFlex="12" class="row-total-price">
-              <span *ngIf="itemProduct.product?.end_price == undefined">
-                {{ itemProduct?.common_price * itemProduct.amount | number }}
+
+              <span >
+                {{ itemProduct | totalPrice | number }}
               </span>
 
-              <span *ngIf="itemProduct.product?.end_price !== undefined">
-                {{ itemProduct.product?.end_price * itemProduct.amount | number }}
-              </span>
+<!--              <span *ngIf="itemProduct.product?.end_price == undefined">-->
+<!--                {{ itemProduct?.common_price * itemProduct.amount | number }}-->
+<!--              </span>-->
+
+<!--              <span *ngIf="itemProduct.product?.end_price !== undefined">-->
+<!--                {{ itemProduct.product?.end_price * itemProduct.amount | number }}-->
+<!--              </span>-->
             </div>
             <div fxFlex="6" class="row-count-number">
 

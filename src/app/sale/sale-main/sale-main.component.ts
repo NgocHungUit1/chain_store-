@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Pipe, PipeTransform, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
@@ -247,7 +247,7 @@ export class SaleMainComponent implements OnInit {
                 /*
                 bug
                  */
-                console.log(this.listProduct);
+                // console.log(this.listProduct);
                 let list = this.listProduct;
                 this.listProduct = [];
                 this.listProduct = list;
@@ -1184,3 +1184,5 @@ export class SaleMainComponent implements OnInit {
   }
 
 }
+
+
