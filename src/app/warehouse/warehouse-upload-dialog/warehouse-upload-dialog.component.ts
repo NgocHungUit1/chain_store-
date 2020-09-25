@@ -23,7 +23,8 @@ export class WarehouseUploadDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<WarehouseUploadDialogComponent>,
     public notifierSer: NotifierService,
     @Inject(MAT_DIALOG_DATA) public data: any,
-  ) { }
+  ) {
+  }
 
   ngOnInit() {
     this.templateLink = this.mainSer.getDownloadTemplateLink();
@@ -41,6 +42,11 @@ export class WarehouseUploadDialogComponent implements OnInit {
         this.dialogRef.close(true);
       } else {
         this.notifierSer.notify('error', 'Tải dữ liệu không thành công!');
+      }
+      if (uploadRes['errors']) {
+        uploadRes['errors'].forEach(error => {
+          this.notifierSer.notify('error', error);
+        });
       }
     }, error1 => {
       this.submitted = false;

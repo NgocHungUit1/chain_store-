@@ -360,7 +360,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
     this.data.forEach(item => {
       quantity = Number(quantity) + item['quantity'];
-      price = Number(price) + (Number(item['quantity']) * (Number(item['price']) - Number(item['discount'])));
+      if (item['discount_type'] === 'price') {
+        price = Number(price) + Number(item['quantity']) * ((Number(item['price'] - Number(item['discount']))));
+      } else {
+        let money = Number(item['quantity']) * Number(item['price']) * (1 - (Number(item['discount']) / 100));
+        price = Number(price) + money;
+      }
     });
     // Tinh vao cong no
     if (discount_type === 'price') {
