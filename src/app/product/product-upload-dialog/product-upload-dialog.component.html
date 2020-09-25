@@ -1,6 +1,11 @@
 <h1 mat-dialog-title>Tải dữ liệu</h1>
 <form (submit)="submit($event)">
   <mat-dialog-content>
+    <div fxLayout="row wrap" *ngIf="submitted">
+      <div fxFlex="100" class="m-b-10">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </div>
+    </div>
     <div fxLayout="row wrap">
 
       <div fxFlex="100" class="m-b-10">
