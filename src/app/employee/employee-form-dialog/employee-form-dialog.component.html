@@ -1,195 +1,195 @@
-<h1 mat-dialog-title *ngIf="!(this.employee_id !== null && this.employee_id !== undefined)">Thêm khách hàng</h1>
-<h1 mat-dialog-title *ngIf="this.employee_id !== null && this.employee_id !== undefined">Cập nhật khách hàng</h1>
+<h1 mat-dialog-title *ngIf="!(this.employee_id !== null && this.employee_id !== undefined)">Thêm nhân viên</h1>
+<h1 mat-dialog-title *ngIf="this.employee_id !== null && this.employee_id !== undefined">Cập nhật nhân viên</h1>
 <div mat-dialog-content>
   <form [formGroup]="form">
-    <div fxLayout="row wrap">
-      <div fxFlex="18">
-        <label class="image-upload-container btn btn-bwm">
-          <span>Select Image</span>
-          <input #imageInput
-                 type="file"
-                 accept="image/*"
-                 (change)="processFile(imageInput)">
-        </label>
-
-
-        <div *ngIf="selectedFile" class="img-preview-container">
-
-          <div class="img-preview{{selectedFile.status === 'fail' ? '-error' : ''}}"
-               [ngStyle]="{'background-image': 'url('+ selectedFile.src + ')'}">
+    <div fxLayout="row">
+      <div fxLayout="row wrap">
+        <div class="image-profile">
+          <div class="image-container">
+            <img [src]="url ? url: '/assets/images/image_profile.png'" class=""> <br/>
+            <input #imageInput
+                   type="file"
+                   accept="image/*"
+                   (change)="processFile(imageInput)" class="select-profile-picture"
+                   #fileInput>
+            <span class="message">Chọn ảnh đại điện</span>
           </div>
 
-          <div *ngIf="selectedFile.pending" class="img-loading-overlay">
-            <div class="img-spinning-circle"></div>
+          <div class="btn-select">
+            <button (click)="fileInput.click()">Chọn ảnh</button>
           </div>
-
+          <div *ngIf="selectedFile">
+            <div *ngIf="selectedFile.status === 'ok'" class="alert alert-success"> Image Uploaded Succesfuly!</div>
+            <div *ngIf="selectedFile.status === 'fail'" class="alert alert-danger"> Image Upload Failed!</div>
+          </div>
         </div>
       </div>
+      <div fxLayout="row wrap">
+        <div fxFlex="4"></div>
 
-      <div fxFlex="2"></div>
+        <div fxFlex="46">
+          <div fxLayout="row wrap">
 
-      <div fxFlex="38">
-        <div fxLayout="row wrap">
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Tên nhân viên</mat-label>
+                <input matInput tabindex="1" formControlName="name">
+              </mat-form-field>
+            </div>
 
-          <div fxFlex="100">
-            <mat-form-field>
-              <mat-label>Tên nhân viên</mat-label>
-              <input matInput tabindex="1" formControlName="name">
-            </mat-form-field>
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Số điện thoại</mat-label>
+                <input matInput tabindex="2" formControlName="phone_number">
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Email</mat-label>
+                <input matInput tabindex="3" formControlName="email">
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Facebook</mat-label>
+                <input matInput tabindex="4" formControlName="facebook">
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Số CMND</mat-label>
+                <input matInput tabindex="5" formControlName="id_card">
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Ngày sinh</mat-label>
+                <input matInput tabindex="6" [matDatepicker]="birth_date" formControlName="birth_date">
+                <mat-datepicker-toggle matSuffix [for]="birth_date"></mat-datepicker-toggle>
+                <mat-datepicker #birth_date></mat-datepicker>
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100" class="form-radio-field">
+              <mat-label>Giới tính</mat-label>
+              <mat-radio-group tabindex="7" formControlName="sex">
+                <mat-radio-button *ngFor="let sexItem of sexItems" [value]="sexItem.id">
+                  {{sexItem.title}}
+                </mat-radio-button>
+              </mat-radio-group>
+            </div>
+
+
           </div>
-
-
-          <div fxFlex="100">
-            <mat-form-field>
-              <mat-label>Số điện thoại</mat-label>
-              <input matInput tabindex="2" formControlName="phone_number">
-            </mat-form-field>
-          </div>
-
-          <div fxFlex="100">
-            <mat-form-field>
-              <mat-label>Email</mat-label>
-              <input matInput tabindex="3" formControlName="email">
-            </mat-form-field>
-          </div>
-
-          <div fxFlex="100">
-            <mat-form-field>
-              <mat-label>Facebook</mat-label>
-              <input matInput tabindex="4" formControlName="facebook">
-            </mat-form-field>
-          </div>
-
-          <div fxFlex="100">
-            <mat-form-field>
-              <mat-label>Số CMND</mat-label>
-              <input matInput tabindex="5" formControlName="id_card">
-            </mat-form-field>
-          </div>
-
-          <div fxFlex="100">
-            <mat-form-field>
-              <mat-label>Ngày sinh</mat-label>
-              <input matInput tabindex="6" [matDatepicker]="birth_date" formControlName="birth_date">
-              <mat-datepicker-toggle matSuffix [for]="birth_date"></mat-datepicker-toggle>
-              <mat-datepicker #birth_date></mat-datepicker>
-            </mat-form-field>
-          </div>
-
-          <div fxFlex="100" class="form-radio-field">
-            <mat-label>Giới tính</mat-label>
-            <mat-radio-group tabindex="7" formControlName="sex">
-              <mat-radio-button *ngFor="let sexItem of sexItems" [value]="sexItem.id">
-                {{sexItem.title}}
-              </mat-radio-button>
-            </mat-radio-group>
-          </div>
-
-
         </div>
-      </div>
 
 
-      <div fxFlex="4"></div>
+        <div fxFlex="4"></div>
 
-      <div fxFlex="38">
-        <div fxLayout="row wrap">
+        <div fxFlex="46">
+          <div fxLayout="row wrap">
 
-          <div fxFlex="100">
-            <div fxLayout="row wrap">
-              <div fxFlex="90">
-                <mat-form-field>
-                  <mat-select (selectionChange)="updateForm($event.value)" tabindex="8" formControlName="user_id"
-                              placeholder="Người dùng hệ thống">
-                    <mat-option *ngFor="let user of users" [value]="user.id">
-                      {{user.username}}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-              <div fxFlex="10">
-                <button mat-button aria-label="add" (click)="openUserFormDialog()">
-                  <mat-icon>add</mat-icon>
-                </button>
+            <div fxFlex="100">
+              <div fxLayout="row wrap">
+                <div fxFlex="90">
+                  <mat-form-field>
+                    <mat-select (selectionChange)="updateForm($event.value)" tabindex="8" formControlName="user_id"
+                                placeholder="Người dùng hệ thống">
+                      <mat-option *ngFor="let user of users" [value]="user.id">
+                        {{user.username}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div fxFlex="10">
+                  <button mat-button aria-label="add" (click)="openUserFormDialog()">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div fxFlex="100">
-            <mat-form-field>
-              <mat-label>Địa chỉ</mat-label>
-              <textarea matInput tabindex="9" formControlName="address" rows="2"></textarea>
-            </mat-form-field>
-          </div>
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Địa chỉ</mat-label>
+                <textarea matInput tabindex="9" formControlName="address" rows="2"></textarea>
+              </mat-form-field>
+            </div>
 
-          <div fxFlex="100">
-            <mat-form-field>
-              <input matInput placeholder="Tỉnh/Thành phố" tabindex="10" aria-label="Tỉnh/Thành phố"
-                     [matAutocomplete]="province" formControlName="province">
-              <button mat-icon-button matPrefix>
-                <mat-icon>search</mat-icon>
-              </button>
-              <button mat-icon-button matSuffix (click)="this.form.patchValue({province: null});"
-                      *ngIf="this.form.controls['province'].value">
-                <mat-icon>delete</mat-icon>
-              </button>
-              <mat-autocomplete #province="matAutocomplete" [displayWith]="displayLocation"
-                                (optionSelected)='onProvinceChange($event.option.value)'>
-                <mat-option *ngFor="let province of filteredProvinces | async" [value]="province">
-                  <span>{{province.name}}</span>
-                </mat-option>
-              </mat-autocomplete>
-            </mat-form-field>
-          </div>
-          <div fxFlex="100">
-            <mat-form-field>
-              <input matInput placeholder="Quận/Huyện" tabindex="11" aria-label="Quận/Huyện"
-                     [matAutocomplete]="district"
-                     formControlName="district">
-              <button mat-icon-button matPrefix>
-                <mat-icon>search</mat-icon>
-              </button>
-              <button mat-icon-button matSuffix (click)="this.form.patchValue({district: null});"
-                      *ngIf="this.form.controls['district'].value">
-                <mat-icon>delete</mat-icon>
-              </button>
-              <mat-autocomplete #district="matAutocomplete" [displayWith]="displayLocation"
-                                (optionSelected)='onDistrictChange($event.option.value)'>
-                <mat-option *ngFor="let district of filteredDistricts | async" [value]="district">
-                  <span>{{district.name}}</span>
-                </mat-option>
-              </mat-autocomplete>
-            </mat-form-field>
-          </div>
-          <div fxFlex="100">
-            <mat-form-field>
-              <input matInput placeholder="Phường/Xã" tabindex="12" aria-label="Phường/Xã" [matAutocomplete]="ward"
-                     formControlName="ward">
-              <button mat-icon-button matPrefix>
-                <mat-icon>search</mat-icon>
-              </button>
-              <button mat-icon-button matSuffix (click)="this.form.patchValue({ward: null});"
-                      *ngIf="this.form.controls['ward'].value">
-                <mat-icon>delete</mat-icon>
-              </button>
-              <mat-autocomplete #ward="matAutocomplete" [displayWith]="displayLocation">
-                <mat-option *ngFor="let ward of filteredWards | async" [value]="ward">
-                  <span>{{ward.name}}</span>
-                </mat-option>
-              </mat-autocomplete>
-            </mat-form-field>
-          </div>
+            <div fxFlex="100">
+              <mat-form-field>
+                <input matInput placeholder="Tỉnh/Thành phố" tabindex="10" aria-label="Tỉnh/Thành phố"
+                       [matAutocomplete]="province" formControlName="province">
+                <button mat-icon-button matPrefix>
+                  <mat-icon>search</mat-icon>
+                </button>
+                <button mat-icon-button matSuffix (click)="this.form.patchValue({province: null});"
+                        *ngIf="this.form.controls['province'].value">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <mat-autocomplete #province="matAutocomplete" [displayWith]="displayLocation"
+                                  (optionSelected)='onProvinceChange($event.option.value)'>
+                  <mat-option *ngFor="let province of filteredProvinces | async" [value]="province">
+                    <span>{{province.name}}</span>
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
+            <div fxFlex="100">
+              <mat-form-field>
+                <input matInput placeholder="Quận/Huyện" tabindex="11" aria-label="Quận/Huyện"
+                       [matAutocomplete]="district"
+                       formControlName="district">
+                <button mat-icon-button matPrefix>
+                  <mat-icon>search</mat-icon>
+                </button>
+                <button mat-icon-button matSuffix (click)="this.form.patchValue({district: null});"
+                        *ngIf="this.form.controls['district'].value">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <mat-autocomplete #district="matAutocomplete" [displayWith]="displayLocation"
+                                  (optionSelected)='onDistrictChange($event.option.value)'>
+                  <mat-option *ngFor="let district of filteredDistricts | async" [value]="district">
+                    <span>{{district.name}}</span>
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
+            <div fxFlex="100">
+              <mat-form-field>
+                <input matInput placeholder="Phường/Xã" tabindex="12" aria-label="Phường/Xã" [matAutocomplete]="ward"
+                       formControlName="ward">
+                <button mat-icon-button matPrefix>
+                  <mat-icon>search</mat-icon>
+                </button>
+                <button mat-icon-button matSuffix (click)="this.form.patchValue({ward: null});"
+                        *ngIf="this.form.controls['ward'].value">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <mat-autocomplete #ward="matAutocomplete" [displayWith]="displayLocation">
+                  <mat-option *ngFor="let ward of filteredWards | async" [value]="ward">
+                    <span>{{ward.name}}</span>
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
 
-          <div fxFlex="100">
-            <mat-form-field>
-              <mat-label>Ghi chú</mat-label>
-              <textarea matInput tabindex="13" formControlName="note" rows="2"></textarea>
-            </mat-form-field>
-          </div>
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Ghi chú</mat-label>
+                <textarea matInput tabindex="13" formControlName="note" rows="2"></textarea>
+              </mat-form-field>
+            </div>
 
+          </div>
         </div>
-      </div>
 
+      </div>
     </div>
 
   </form>

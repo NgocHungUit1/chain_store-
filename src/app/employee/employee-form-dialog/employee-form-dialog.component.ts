@@ -41,6 +41,7 @@ export class EmployeeFormDialogComponent implements OnInit {
   users: any;
 
   selectedFile: ImageSnippet;
+  url = '';
 
   sexItems: any[] = [
     {
@@ -298,13 +299,25 @@ export class EmployeeFormDialogComponent implements OnInit {
     });
   }
 
+  onSuccess() {
+    this.selectedFile.pending = false;
+    this.selectedFile.status = 'ok';
+  }
+
+  onError() {
+    this.selectedFile.pending = false;
+    this.selectedFile.status = 'fail';
+    this.selectedFile.src = '';
+  }
+
   processFile(imageInput: any) {
     const file: File = imageInput.files[0];
     const reader = new FileReader();
 
     reader.addEventListener('load', (event: any) => {
-
       this.selectedFile = new ImageSnippet(event.target.result, file);
+      this.onSuccess();
+      this.url = event.target.result;
       // this.selectedFile.pending = true;
       // this.imageService.uploadImage(this.selectedFile.file).subscribe(
       //   (res) => {
@@ -314,9 +327,9 @@ export class EmployeeFormDialogComponent implements OnInit {
       //     this.onError();
       //   })
     });
+    if (file) {
+      reader.readAsDataURL(file);
+    }
 
-    reader.readAsDataURL(file);
   }
-
-
 }
