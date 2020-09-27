@@ -22,3 +22,7 @@
 .table-container tr.mat-header-row {
   height: 30px;
 }
+
+.column-left {
+  text-align: end;
+}

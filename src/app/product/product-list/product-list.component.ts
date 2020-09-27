@@ -1,20 +1,20 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator } from "@angular/material/paginator";
-import { MatTable } from "@angular/material/table";
-import { MatSort } from "@angular/material/sort";
-import { Product, ProductFilter } from "../product.model";
-import { ActivatedRoute } from "@angular/router";
-import { ProductService } from "../product.service";
-import { ListComponentBase } from "../../shared/base";
-import { ProductMedicineDialogComponent } from "../product-medicine-dialog/product-medicine-dialog.component";
-import { MatDialog } from "@angular/material/dialog";
-import { NotifierService } from "angular-notifier";
-import { animate, state, style, transition, trigger } from "@angular/animations";
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTable } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
+import { Product, ProductFilter } from '../product.model';
+import { ActivatedRoute } from '@angular/router';
+import { ProductService } from '../product.service';
+import { ListComponentBase } from '../../shared/base';
+import { ProductMedicineDialogComponent } from '../product-medicine-dialog/product-medicine-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { NotifierService } from 'angular-notifier';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ProductMerchandiseFormDialogComponent } from '../product-merchandise-form-dialog/product-merchandise-form-dialog.component';
 import { FormControl } from '@angular/forms';
 import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/internal/observable/of';
-import {ProductUploadDialogComponent} from '../product-upload-dialog/product-upload-dialog.component';
+import { ProductUploadDialogComponent } from '../product-upload-dialog/product-upload-dialog.component';
 
 
 @Component({
@@ -23,8 +23,8 @@ import {ProductUploadDialogComponent} from '../product-upload-dialog/product-upl
   styleUrls: ['./product-list.component.css'],
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ]
@@ -40,7 +40,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     super();
   }
 
-  @ViewChild(MatTable, { static: true }) table: MatTable<any>;
+  @ViewChild(MatTable, {static: true}) table: MatTable<any>;
   @ViewChild('selectColumn') selectColumn;
 
   apiFilter: ProductFilter;
@@ -52,9 +52,9 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     'product_no': 'Mã hàng',
     'product_name': 'Tên hàng',
     'shortcut': 'Tên ngắn',
-    'original_price': 'Giá gốc',
+    'original_price': 'Giá vốn',
     'sell_price': 'Giá bán',
-    'quantity_of_stock': 'Tồn kho'
+    // 'quantity_of_stock': 'Tồn kho'
   };
 
   productTypeLable = {
@@ -62,8 +62,8 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     'merchandise': 'Hàng hóa',
   };
 
-  displayedColumns: string[] = ['#', 'product_type', 'product_no', 'product_name', 'shortcut', 'original_price', 'sell_price', 'quantity_of_stock'];
-  columnsToDisplay: string[] = ['#', 'product_type', 'product_no', 'product_name', 'shortcut', 'original_price', 'sell_price', 'quantity_of_stock'];
+  displayedColumns: string[] = ['#', 'product_type', 'product_no', 'product_name', 'shortcut', 'original_price', 'sell_price'];
+  columnsToDisplay: string[] = ['#', 'product_type', 'product_no', 'product_name', 'shortcut', 'original_price', 'sell_price'];
   dataSource: Product[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -88,7 +88,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'medicine,productPlacements,group,images';
+    filter.expand = 'medicine,productUnits,productPlacements,group,images';
     return filter;
   }
 
@@ -98,7 +98,8 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
       this.dataSource = res.body;
       let stt = 0;
       this.dataSource.forEach(elementData => {
-        stt++; elementData.stt = stt;
+        stt++;
+        elementData.stt = stt;
       });
       this.reloadFilter(res);
       const url = this.service.getStateUrl(this.apiFilter);

@@ -1,7 +1,7 @@
-import {ApiFilterBase} from '../shared/base';
-import {Product} from '../product/product.model';
-import {Supplier} from '../supplier/supplier.model';
-import {User} from '../user/user.model';
+import { ApiFilterBase } from '../shared/base';
+import { Product } from '../product/product.model';
+import { Supplier } from '../supplier/supplier.model';
+import { User } from '../user/user.model';
 
 export class Warehouse {
   id: string;
@@ -80,3 +80,29 @@ export class WarehouseProductFilter extends ApiFilterBase {
   }
 
 }
+
+
+export class resWarehousePrint {
+  id: string;
+  no: string;
+  supplier_id: number;
+  discount_amount: number;
+  discount_type: string;
+  total_price: number;
+  total_amount: number;
+  paid_amount: number;
+  total_quantity: number;
+  product_count: number;
+  note: string;
+  status: number;
+  type: string;
+  remain_amount: string;
+  national_pharmacy_no: string;
+  supplier: Supplier;
+  created_by: number;
+  created_user: User;
+  store: any;
+  date: string;
+  warehoureItems: any;
+}
+

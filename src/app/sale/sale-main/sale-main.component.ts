@@ -57,6 +57,7 @@ export class SaleMainComponent implements OnInit {
   discount_type: string = 'price'; // use for payment
   customerPay: number = 0;
   tienThuaTraKhach: number = 0;
+  tienKhachNo: number = 0;
   priceLists: PriceList[] = [];
   form: FormGroup;
   selectCustomer = new FormControl();
@@ -73,6 +74,8 @@ export class SaleMainComponent implements OnInit {
 
   autoPrint: boolean = true;
   autoPrintInSoLo: boolean = false;
+
+  changePriceBook: boolean = false;
 
   /**
    *  So sanh danh sach cu
@@ -191,8 +194,10 @@ export class SaleMainComponent implements OnInit {
         // debugger;
         /**
          * Truong hop:  thay doi vs sl , pricebook
+         *
+         * this.common_idOld !== priceBookID
          */
-        if (this.compareEqualListProduct(listProductUnitIdChoose) === 0 || this.common_idOld !== priceBookID) {
+        if (this.compareEqualListProduct(listProductUnitIdChoose) === 0 || this.changePriceBook == true) {
           this.listProductUnitIdChooseOld = listProductUnitIdChoose;
           this.common_idOld = priceBookID;
           const common_id = priceBookID;
@@ -203,7 +208,7 @@ export class SaleMainComponent implements OnInit {
             if (Array.isArray(resCommon)) {
               const priceListProductCommonExist = resCommon;
               //
-
+// debugger;
               /**
                * group = [ product_id] => [
                *          id,price,price_list_id,product_id
@@ -238,6 +243,14 @@ export class SaleMainComponent implements OnInit {
                     }
                   }
                 });
+
+                /*
+                bug
+                 */
+                // console.log(this.listProduct);
+                let list = this.listProduct;
+                this.listProduct = [];
+                this.listProduct = list;
               } else {
                 this.sumPrice = 0;
               }
@@ -245,7 +258,7 @@ export class SaleMainComponent implements OnInit {
             }
           });
           this.listProduct.reverse();
-
+          this.changePriceBook = false;
         } else {
           /**
            * Truong hop: khong thay doi vs sl , pricebook
@@ -551,7 +564,19 @@ export class SaleMainComponent implements OnInit {
     );
   }
 
+  /**
+   * Chay 2 lan de ko bi trash
+   * @param event
+   */
   choosePriceBook(event: any) {
+    this.changePriceBook = true;
+    this.actionChoosePriceBook();
+    this.changePriceBook = true;
+    this.actionChoosePriceBook();
+  }
+
+  actionChoosePriceBook() {
+    // console.log(this.form.controls['priceBookID'].value);
     const price_book_id = this.form.controls['priceBookID'].value;
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
@@ -724,8 +749,14 @@ export class SaleMainComponent implements OnInit {
         '</tr>';
       printContent += '<tr>' +
         '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng thanh toán :</td>' +
-        '<td style="text-align:right; font-weight:600;">' + res.total + '</td>' +
+        '<td style="text-align:right; font-weight:600;">' + res.sum_payment + '</td>' +
         '</tr>';
+      if (res.debt !== null) {
+        printContent += '<tr>' +
+          '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Còn nợ :</td>' +
+          '<td style="text-align:right; font-weight:600;">' + res.debt + '</td>' +
+          '</tr>';
+      }
       printContent += '</table>';
       printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
       printContent += '</section>';
@@ -846,25 +877,34 @@ export class SaleMainComponent implements OnInit {
     }
     // console.log(Number(this.form.controls['customerPay'].value));
 
-    // if (mItemInvoice.paymentSiderBar?.number === undefined) {
-    //   this.notifySer.notify('warning', 'Chưa chọn thanh toán !');
+    // if (this.sumPrice - this.numberDiscount > numeral(this.form.controls['customerPay'].value).value()) {
+    //   this.notifySer.notify('warning', 'Thanh toán chưa đủ !');
     //   return;
     // }
-    // console.log(Number(mItemInvoice.discountSiderBar?.number));
 
-    if (this.sumPrice - this.numberDiscount > numeral(this.form.controls['customerPay'].value).value()) {
-      this.notifySer.notify('warning', 'Thanh toán chưa đủ !');
-      return;
-    }
-    // debugger;
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
       this.notifySer.notify('warning', 'Chưa chọn sản phẩm !');
       return;
     }
 
-    this.orderService.setLoadProduct(true);
-
     const list = this.listProduct;
+    let needReturn = 0;
+    list.forEach(element => {
+      let product_unit_id = element.product_unit_id;
+      let units = element.product.productUnits;
+      let product_unit = units.find(ele => ele.id === product_unit_id);
+      // console.log(product_unit);
+      if (element.amount > product_unit.quantity_of_stock) {
+        this.notifySer.notify('warning', 'Không đủ số lượng tồn kho sản phẩm ' + element.product.product_name);
+        needReturn = 1;
+      }
+      // console.log(product_unit);
+    });
+    if (needReturn === 1){
+      return;
+    }
+
+    this.orderService.setLoadProduct(true);
     const invoiceDetail = [];
     list.forEach(element => {
       let price = 0;
@@ -911,6 +951,7 @@ export class SaleMainComponent implements OnInit {
       InvoiceDetail: invoiceDetail,
       PaymentMethod: 'cash', //mItemInvoice.paymentSiderBar?.type,
       PaymentPrice: this.sumPrice - this.numberDiscount, // tien thanh toan
+      KhachNo: this.tienKhachNo,
     };
 
     /**
@@ -1139,6 +1180,9 @@ export class SaleMainComponent implements OnInit {
   inputformatNumber(event: any) {
     event.target.value = numeral(event.target.value).format('0,0');
     this.tienThuaTraKhach = numeral(this.form.controls['customerPay'].value).value() - this.sumPrice + this.numberDiscount;
+    this.tienKhachNo = this.sumPrice - this.numberDiscount - numeral(this.form.controls['customerPay'].value).value();
   }
 
 }
+
+

@@ -42,7 +42,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     super();
   }
 
-  @ViewChild(MatTable, { static: true }) table: MatTable<any>;
+  @ViewChild(MatTable, {static: true}) table: MatTable<any>;
   @ViewChild('selectColumn') selectColumn;
 
   selectProduct = new FormControl();
@@ -52,8 +52,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   model: Warehouse = null;
 
   statuses = [
-    { id: '10', name: 'Hoàn thành' },
-    { id: '9', name: 'Lưu tạm' },
+    {id: '10', name: 'Hoàn thành'},
+    {id: '9', name: 'Lưu tạm'},
   ];
 
   parcels: object[] = [];
@@ -291,6 +291,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       }
       data['items'] = this.data;
       data['status'] = status;
+
       if (this.updateModelId !== null) {
         delete data['date'];
         delete data['supplier'];
@@ -310,8 +311,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   onSelectedProduct(product) {
     this.productSer.getDetail(product.id, 'productUnits').subscribe(res => {
-      console.log(product);
-
       const warehouseProduct = new WarehouseProduct();
       warehouseProduct.product_id = product.id;
       warehouseProduct.product = product;
@@ -361,7 +360,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
     this.data.forEach(item => {
       quantity = Number(quantity) + item['quantity'];
-      price = Number(price) + (Number(item['quantity']) * (Number(item['price']) - Number(item['discount'])));
+      if (item['discount_type'] === 'price') {
+        price = Number(price) + Number(item['quantity']) * ((Number(item['price'] - Number(item['discount']))));
+      } else {
+        let money = Number(item['quantity']) * Number(item['price']) * (1 - (Number(item['discount']) / 100));
+        price = Number(price) + money;
+      }
     });
     // Tinh vao cong no
     if (discount_type === 'price') {
@@ -401,7 +405,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   openParcelFormDialog(index) {
     const dialogRef = this.dialog.open(WarehouseParcelFormDialogComponent, {
-      width: '20%'
+      width: '20%',
+      data: {parcels: this.parcels}
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result !== false && result !== undefined) {
@@ -487,7 +492,119 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this.form.patchValue({ 'supplier': result });
+      this.form.patchValue({'supplier': result});
+    });
+  }
+
+  /**
+   * In don nhap hang
+   * @param model
+   */
+  buttonPrintWarehouse(model) {
+    this.printWarehouse(model.id);
+  }
+
+  /**
+   * Main handel print
+   * @param id
+   */
+  printWarehouse(id: string) {
+    this.mainService.getDataWarehouseToPrint(id).subscribe(res => {
+
+      let printContent = '<title>' + res.no + '</title>';
+      printContent += '<style>table {' +
+        // 'font-family: arial, sans-serif;' +
+        'border-collapse: collapse;' +
+        'width: 100%;' +
+        '}' +
+        'td, th {' +
+        'border: 1px solid #dddddd;' +
+        'text-align: left;' +
+        'padding: 8px;' +
+        '}</style>' +
+        '<section style="padding: -5px;">' +
+        '<p style="text-align:center;">Địa chỉ : ' + res?.store?.name + '</p>' +
+        '<p style="text-align:center; font-weight:600;">HÓA ĐƠN NHẬP HÀNG</p>' +
+        '<p style="text-align:center; font-weight:600;">Mã phiếu nhập: ' + res?.no + '</p> ' +
+        '<p style="text-align:left;">Ngày nhập: ' + res?.date + ' </p>' +
+        '<p style="text-align:left;">Người nhập: ' + res?.created_by + ' </p>' +
+        // '<p style="text-align:left;">Nhà cung cấp: ' + res?.supplier?.name + ' </p>' +
+        // '<p style="text-align:left;">Trạng thái : ' + res?.status + ' </p>' +
+        // '<p style="text-align:left;">Số lượng : ' + res?.total_quantity + ' </p>' +
+        // '<p style="text-align:left;">Tổng tiền hàng : ' + res?.total_price + ' </p>' +
+        // '<p style="text-align:left;">Giảm giá : ' + res?.discount_amount + ' </p>' +
+        // '<p style="text-align:left;">Tiền trả nhà cung cấp : ' + res?.paid_amount + ' </p>' +
+        // '<p style="text-align:left;">Tính vào công nợ : ' + res?.remain_amount + ' </p>' +
+        // '<p style="text-align:left;">Ghi chú : ' + res?.note + ' </p>' +
+        '<table>' +
+        '<tr>' +
+        '<td style="font-weight: 600;"> Nhà cung cấp </td>' +
+        '<td>' + res?.supplier?.name + '</td>' +
+        '<td style="font-weight: 600;"> Tổng tiền hàng </td>' +
+        '<td style="text-align:right;">' + res?.total_price + '</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td style="font-weight: 600;">Trạng thái </td>' +
+        '<td>' + res?.status + '</td>' +
+        '<td style="font-weight: 600;">Giảm giá </td>' +
+        '<td style="text-align:right;">' + res?.discount_amount + '</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td style="font-weight: 600;">Số lượng</td>' +
+        '<td style="text-align:right;">' + res?.total_quantity + '</td>' +
+        '<td style="font-weight: 600;">Tiền trả nhà cung cấp </td>' +
+        '<td style="text-align:right;">' + res?.paid_amount + '</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td style="font-weight: 600;">Ghi chú</td>' +
+        '<td>' + res?.note + '</td>' +
+        '<td style="font-weight: 600;">Tính vào công nợ </td>' +
+        '<td style="text-align:right;">' + res?.remain_amount + '</td>' +
+        '</tr>' +
+        '</table>';
+
+      printContent += '<p style="text-align:left;">Chi tiết nhập hàng :</p>';
+
+      const detail = res.warehoureItems;
+      printContent += '<table>';
+      printContent += '<tr style="text-align:center; font-size: 13px">';
+      printContent += '<th>' + 'Mã hàng' + '</th>';
+      printContent += '<th>' + 'Tên hàng' + '</th>';
+      printContent += '<th>' + 'Số lượng' + '</th>';
+      printContent += '<th>' + 'Đơn gía' + '</th>';
+      printContent += '<th>' + 'Giảm giá' + '</th>';
+      printContent += '<th>' + 'Thành tiền' + '</th>';
+      printContent += '</tr>';
+
+      detail.forEach(element => {
+        printContent += '<tr>';
+        printContent += '<td style="text-align:left;">' + element?.product?.product_no + '</td>';
+        printContent += '<td style="text-align:left;">' + element?.product?.product_name + '<br>' +
+          'Đơn vị : ' + element?.product_unit?.name + '<br>';
+        const parcels = element.parcels;
+        if (parcels[0] !== undefined) {
+          printContent += 'Lô: ' + parcels[0]['parcel_no'] + '-';
+          printContent += parcels[0]['expiration_date'] + '-SL:';
+          printContent += parcels[0]['quantity'];
+        }
+        printContent += '</td>';
+        printContent += '<td style="text-align:right;">' + element.quantity + '</td>';
+        printContent += '<td style="text-align:right;">' + element.price + '</td>';
+        printContent += '<td style="text-align:right;">' + element.discount + '</td>';
+        printContent += '<td style="text-align:right;">' + element.amount + '</td>';
+        printContent += '</tr>';
+      });
+      printContent += '</table>';
+
+      printContent += '<p style="text-align:center;font-style: italic;" >---</p>';
+      printContent += '</section>';
+
+      const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+      WindowPrt.document.write(printContent);
+      WindowPrt.document.close();
+      WindowPrt.focus();
+      WindowPrt.print();
+      WindowPrt.close();
     });
   }
 

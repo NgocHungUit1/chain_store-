@@ -118,7 +118,8 @@
   <div fxFlex="100">
     <div fxLayout="row wrap">
       <div fxFlex="70" class="invoice-detail-info">
-        <mat-slide-toggle class="slide-toggle-in-so-lo" checked="false" (change)="onChangeSlideToggleInSoLo($event)"> In số lô
+        <mat-slide-toggle class="slide-toggle-in-so-lo" checked="false" (change)="onChangeSlideToggleInSoLo($event)"> In
+          số lô
         </mat-slide-toggle>
       </div>
 
@@ -168,6 +169,18 @@
             <strong>{{ KhachDaTra | number }}</strong>
           </div>
         </div>
+
+        <div fxLayout="row wrap" class="invoice-detail-info-row"
+             *ngIf="invoice?.total_price - giamGiaHoaDon - KhachDaTra > 0">
+          <div fxFlex="48" class="invoice-detail-info-field">
+            <span class="invoice-detail-field-label">Còn nợ :</span>
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="invoice-detail-info-field">
+            <strong>{{ invoice?.total_price - giamGiaHoaDon - KhachDaTra | number }}</strong>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -216,6 +229,12 @@
       <button class="m-r-10" mat-raised-button color="warn" (click)='deleteInvoice(invoice)'>
         <mat-icon>delete</mat-icon>
         Hủy bỏ
+      </button>
+
+      <button class="m-r-10" mat-raised-button color="primary" (click)='payTheDebt(invoice)'
+              *ngIf="invoice?.total_price - giamGiaHoaDon - KhachDaTra > 0">
+        <mat-icon>payment</mat-icon>
+        Thanh toán nợ
       </button>
     </div>
   </div>

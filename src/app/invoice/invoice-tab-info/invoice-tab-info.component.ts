@@ -50,7 +50,8 @@ export class InvoiceTabInfoComponent implements OnInit {
     public invoiceService: InvoiceService,
     private orderService: OrderService,
     private router: Router
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
     // console.log(this.invoice);
@@ -71,6 +72,11 @@ export class InvoiceTabInfoComponent implements OnInit {
   }
 
   deleteInvoice(invoice) {
+    if (invoice['returns'].length > 0) {
+      this.notifySer.notify('warning', 'Hóa đơn đã có trả hàng, không thể hủy đơn !');
+      return;
+    }
+
     const obj = {
       action: 'Delete',
       title: 'Xóa hàng hóa',
@@ -85,7 +91,11 @@ export class InvoiceTabInfoComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result.event === 'delete') {
         this.invoiceService.delete(invoice.id).subscribe(res => {
-          this.notifySer.notify('success', 'Xóa hóa đơn thành công!');
+          // console.log(res);
+          if (res === true) {
+            this.notifySer.notify('success', 'Xóa hóa đơn thành công!');
+            this.invoiceService.setLoadInvoice(true);
+          }
         });
       }
     });
@@ -128,7 +138,6 @@ export class InvoiceTabInfoComponent implements OnInit {
     if (invoice['returns'].length > 0) {
       this.notifySer.notify('warning', 'Hóa đơn đã có trả hàng, không thể mở phiếu để cập nhật !');
       return;
-
     }
     let mItemInvoice = new ItemInvoice();
     mItemInvoice.invoice_id = invoice.id;
@@ -243,7 +252,7 @@ export class InvoiceTabInfoComponent implements OnInit {
           printContent += '<tr>' +
             '<td>' + element.product?.product_name + ' - ' + element?.base_unit + '<br>' + element.price + '</td>' +
             '<td style="text-align:center;">' + element.amount + '</td>';
-          if (this.autoPrintInSoLo == true) {
+          if (this.autoPrintInSoLo === true) {
             printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
           }
           printContent += '<td style="text-align:right;">' + element.total + '</td>' +
@@ -255,7 +264,7 @@ export class InvoiceTabInfoComponent implements OnInit {
        * Tong tien hang
        */
       let colspan = 2;
-      if (this.autoPrintInSoLo == true) {
+      if (this.autoPrintInSoLo === true) {
         colspan = 3;
       }
       printContent += '<tr>' +
@@ -268,8 +277,14 @@ export class InvoiceTabInfoComponent implements OnInit {
         '</tr>';
       printContent += '<tr>' +
         '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng thanh toán :</td>' +
-        '<td style="text-align:right; font-weight:600;">' + res.total + '</td>' +
+        '<td style="text-align:right; font-weight:600;">' + res.sum_payment + '</td>' +
         '</tr>';
+      if (res.debt !== null) {
+        printContent += '<tr>' +
+          '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Còn nợ :</td>' +
+          '<td style="text-align:right; font-weight:600;">' + res.debt + '</td>' +
+          '</tr>';
+      }
       printContent += '</table>';
       printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
       printContent += '</section>';
@@ -371,13 +386,27 @@ export class InvoiceTabInfoComponent implements OnInit {
         // debugger;
         this.router.navigate(['/sale']);
 
-      }else{
+      } else {
         this.notifySer.notify('warning', 'Đã trả hết hàng.');
 
       }
 
     }); // getReturns list
 
+  }
+
+  /**
+   * Thanh toan no
+   * @param invoice
+   */
+  payTheDebt(invoice) {
+    this.invoiceService.payTheDebt(invoice.id).subscribe(res => {
+      if (res === true) {
+        this.notifySer.notify('success', 'Thanh toán nợ thành công.');
+      } else {
+        this.notifySer.notify('error', 'Thanh toán không thành công.');
+      }
+    });
   }
 
 }

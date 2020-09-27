@@ -1,13 +1,13 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-import { QuillModule } from "ngx-quill";
-import { DragulaModule } from "ng2-dragula";
+import { QuillModule } from 'ngx-quill';
+import { DragulaModule } from 'ng2-dragula';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { FlexLayoutModule } from "@angular/flex-layout";
-import { PerfectScrollbarModule } from "ngx-perfect-scrollbar";
-import { Ng2SearchPipeModule } from "ng2-search-filter";
-import { DemoMaterialModule } from "../demo-material-module";
-import { AngularImageViewerModule } from "angular-x-image-viewer";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
+import { Ng2SearchPipeModule } from 'ng2-search-filter';
+import { DemoMaterialModule } from '../demo-material-module';
+import { AngularImageViewerModule } from 'angular-x-image-viewer';
 
 import { SaleMainComponent } from './sale-main/sale-main.component';
 import { RouterModule } from '@angular/router';
@@ -19,6 +19,7 @@ import { PaymentSiderbarDialogComponent } from './payment-siderbar-dialog/paymen
 import { NoteDetailOrderDialogComponent } from './note-detail-order-dialog/note-detail-order-dialog.component';
 import { PriceDetailOrderDialogComponent } from './price-detail-order-dialog/price-detail-order-dialog.component';
 import { SaleCustomerFormDialogComponent } from './sale-customer-form-dialog/sale-customer-form-dialog.component';
+import { ShowPricePipe, TotalPricePipe } from './cart.pipe';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,9 @@ import { SaleCustomerFormDialogComponent } from './sale-customer-form-dialog/sal
     PaymentSiderbarDialogComponent,
     NoteDetailOrderDialogComponent,
     PriceDetailOrderDialogComponent,
-    SaleCustomerFormDialogComponent],
+    SaleCustomerFormDialogComponent,
+    ShowPricePipe,
+    TotalPricePipe],
   imports: [
     CommonModule,
     RouterModule.forChild(SaleRoutes),
@@ -45,4 +48,5 @@ import { SaleCustomerFormDialogComponent } from './sale-customer-form-dialog/sal
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class SaleModule { }
+export class SaleModule {
+}

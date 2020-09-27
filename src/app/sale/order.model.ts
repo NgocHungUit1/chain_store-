@@ -88,6 +88,8 @@ export class resInvoicePrint {
   total: string;
   total_price: string; // tong tien hang
   discount: string;
+  sum_payment: string; // tong thanh tona
+  debt: string; // no
 }
 
 export class resReturnsPrint {

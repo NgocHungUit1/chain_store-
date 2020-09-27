@@ -61,8 +61,8 @@ export class ProductTabInfoComponent implements OnInit {
         this.loadProduct(result.data.id);
       }
 
-      if (obj.action == 'Copy') { 
-        debugger;
+      if (obj.action == 'Copy') {
+        // debugger;
         this.productSer.setLoadProduct(false);
       }
     });

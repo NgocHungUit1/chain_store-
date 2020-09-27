@@ -21,10 +21,12 @@ import { ManufacturerService } from '../manufacturer.service';
 import { ManufacturerFilter } from '../manufacturer.model';
 import { ProductManufacturerFormDialogComponent } from '../product-manufacturer-form-dialog/product-manufacturer-form-dialog.component';
 import * as numeral from 'numeral';
+import { log } from 'util';
 
 
 class ImageSnippet {
-  constructor(public src: string, public file: File, public id: string) { }
+  constructor(public src: string, public file: File, public id: string) {
+  }
 }
 
 @Component({
@@ -41,6 +43,7 @@ export class ProductMedicineDialogComponent implements OnInit {
   copy_product_id: string;
   public form: FormGroup;
   loading = false;
+  made_in_old: string;
 
   groups: Group[] = [];
   usings = [];
@@ -76,12 +79,38 @@ export class ProductMedicineDialogComponent implements OnInit {
   };
 
   imageButtons = [
-    { isShow: true },
-    { isShow: true },
-    { isShow: true },
-    { isShow: true },
-    { isShow: true },
+    {isShow: true},
+    {isShow: true},
+    {isShow: true},
+    {isShow: true},
+    {isShow: true},
   ];
+  optionsMadeIn: string[] = ['Trung Quốc', 'Ấn Độ', 'Mỹ', 'Indonesia', 'Braxin', 'Pakistan', 'Nigeria',
+    'Bangladesh', 'Mexico', 'Nhật Bản', 'Ethiopia', 'Philippines', 'Việt Nam',
+    'Cộng hòa Dân chủ Congo', 'Nước Đức', 'Iran', 'Thổ Nhĩ Kì', 'Thái Lan', 'Nước Anh', 'Nước Pháp', 'Nước Ý',
+    'Tanzania', 'Nam Phi', 'Myanmar', 'Nam Triều Tiên', 'Kenya', 'Colombia', 'Tây Ban Nha', 'Argentina', 'Uganda',
+    'Ukraine', 'Algeria', 'Sudan', 'Iraq', 'Ba Lan', 'Canada', 'Afghanistan', 'Morocco', 'Ả Rập Xê Út', 'Peru', 'Venezuela',
+    'Uzbekistan', 'Malaysia', 'Angola', 'Mozambique', 'Nepal', 'Ghana', 'Yemen', 'Madagascar', 'Bắc Triều Tiên',
+    'Côte dIvoire', 'Châu Úc', 'Cameroon', 'Niger', 'Sri Lanka', 'Burkina Faso', 'Rumani', 'Malawi', 'Mali', 'Kazakhstan',
+    'Syria', 'Chile', 'Zambia', 'Guatemala', 'nước Hà Lan', 'Zimbabwe', 'Ecuador', 'Senegal', 'Campuchia', 'Chad', 'Somalia',
+    'Guinea', 'phía nam Sudan', 'Rwanda', 'Tunisia', 'nước Bỉ', 'Cuba', 'Benin', 'Burundi', 'Bolivia', 'Hy Lạp', 'Haiti',
+    'Cộng hòa Dominica', 'Cộng hòa Séc', 'Bồ Đào Nha', 'Thụy Điển', 'Azerbaijan', 'Jordan', 'Hungary',
+    'các Tiểu Vương Quốc Ả Rập Thống Nhất',
+    'Belarus', 'Honduras', 'Tajikistan', 'Serbia', 'Áo', 'Thụy sĩ', 'Israel', 'Papua New Guinea', 'Đi', 'Sierra Leone',
+    'Bungari', 'Lào', 'Paraguay', 'Libya', 'El Salvador', 'Nicaragua', 'Kyrgyzstan', 'Lebanon', 'Turkmenistan', 'Singapore',
+    'Đan mạch', 'Phần Lan', 'Slovakia', 'Congo', 'Na Uy', 'Eritrea', 'Nhà nước Palestine', 'Costa Rica', 'Liberia',
+    'Oman', 'Ireland', 'New Zealand', 'Cộng hòa trung phi', 'Mauritania', 'Kuwait', 'Croatia', 'Panama', 'Moldova',
+    'Georgia', 'Bosnia & Herzegovina', 'Uruguay', 'Mông Cổ', 'Albania', 'Armenia', 'Jamaica', 'Lithuania', 'Qatar',
+    'Namibia', 'Botswana', 'Lesotho',
+    'Gambia', 'TFYR Macedonia',
+    'Slovenia', 'Gabon', 'Latvia', 'Guinea - Bissau', 'Bahrain', 'Swaziland', 'Trinidad và Tobago', 'Đông Timor',
+    'Equatorial Guinea', 'Estonia',
+    'Mauritius', 'Síp', 'Djibouti', 'Fiji', 'Comoros', 'Bhutan', 'Guyana', 'Montenegro', 'Quần đảo Solomon', 'Luxembourg',
+    'Suriname', 'Cabo Verde',
+    'Maldives', 'Brunei', 'Malta', 'Bahamas', 'Belize', 'Iceland', 'Barbados', 'Vanuatu', 'Sao Tome & Principe', 'Samoa',
+    'Saint Lucia', 'Kiribati'];
+  filteredOptionsMadeIn: Observable<string[]>;
+
 
   selectedFiles: ImageSnippet[] = [];
 
@@ -99,7 +128,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     // @Optional() is used to prevent error if no data is passed
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
     // console.log(data);
-    this.local_data = { ...data };
+    this.local_data = {...data};
     this.action = this.local_data.action;
     this.title = this.local_data.title;
     this.copy_product_id = this.local_data.copy_product_id;
@@ -134,7 +163,7 @@ export class ProductMedicineDialogComponent implements OnInit {
         main_active_substance: [null, Validators.required],
         content: [null, Validators.required],
         packing: [null, Validators.required],
-        manufacturer: [null, Validators.required],
+        manufacturer: [null],
         made_in: [null]
       }),
 
@@ -210,15 +239,34 @@ export class ProductMedicineDialogComponent implements OnInit {
         }
       })
     );
+
+    // tim kiem quoc gia
+    this.filteredOptionsMadeIn = this.form.controls['medicine'].valueChanges
+      .pipe(
+        startWith(''),
+        map(value =>
+          this._filterMadeIn(value)
+        ));
+  }
+
+  public _filterMadeIn(value: any): string[] {
+    if (value.made_in !== this.made_in_old) {
+      this.made_in_old = value.made_in;
+      return this.optionsMadeIn.filter(option => option.toLowerCase().includes(value.made_in));
+    }
+    return [];
   }
 
   loadProduct(id, copy: any = null) {
     this.productSer.getDetail(id, 'medicine,images,productPlacements,productUnits').subscribe(product => {
       const placements = [];
       product['productPlacements'].forEach(pPlacement => {
-        placements.push(pPlacement.id)
+        placements.push(pPlacement.id);
       });
-
+      // debugger;
+      let medicine = product['medicine'];
+      medicine.made_in = product['made_in'];
+      medicine.manufacturer = product['manufacturer'];
       if (copy == null) {
         this.form.patchValue({
           product_no: product['product_no'],
@@ -233,7 +281,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           weight: product['weight'],
           base_unit: product['base_unit'],
           medicine_id: product['medicine_id'],
-          medicine: product['medicine'],
+          medicine: medicine, // product['medicine'],
           placements: placements,
           min_quantity: product['min_quantity'],
           max_quantity: product['max_quantity'],
@@ -255,7 +303,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           weight: product['weight'],
           base_unit: product['base_unit'],
           medicine_id: product['medicine_id'],
-          medicine: product['medicine'],
+          medicine: medicine,//product['medicine'],
           placements: placements,
           min_quantity: product['min_quantity'],
           max_quantity: product['max_quantity'],
@@ -311,19 +359,23 @@ export class ProductMedicineDialogComponent implements OnInit {
     if (this.form.valid) {
       this.loading = true;
       const data = this.form.getRawValue();
-
+      data.manufacturer = data.medicine.manufacturer;
+      data.made_in = data.medicine.made_in;
       data.original_price = numeral(data.original_price).value();
       data.sell_price = numeral(data.sell_price).value();
-      
+
+      if (typeof data.manufacturer === 'string') {
+        data.manufacturer = null;
+      }
       if (this.product_id === null) {
         // Create New
-        if (data.product_no === null || data.product_no === "") {
+        if (data.product_no === null || data.product_no === '') {
           this.productSer.getRenderProductNo().subscribe(product_no => {
             data.product_no = 'SP' + product_no;
             this.productSer.create(data).subscribe(product => {
               this.notifySer.notify('success', 'Thêm thuốc thành công!');
               this.uploadImage(product, action);
-              this.dialogRef.close({ event: action, data: product });
+              this.dialogRef.close({event: action, data: product});
             });
           });
 
@@ -332,7 +384,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           this.productSer.create(data).subscribe(product => {
             this.notifySer.notify('success', 'Thêm thuốc thành công!');
             this.uploadImage(product, action);
-            this.dialogRef.close({ event: action, data: product });
+            this.dialogRef.close({event: action, data: product});
           });
         }
 
@@ -341,7 +393,7 @@ export class ProductMedicineDialogComponent implements OnInit {
         this.productSer.update(this.product_id, data).subscribe(product => {
           this.notifySer.notify('success', 'Cập nhật thuốc thành công!');
           this.uploadImage(product, action);
-          this.dialogRef.close({ event: action, data: product });
+          this.dialogRef.close({event: action, data: product});
         });
       }
     } else {
@@ -386,7 +438,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           this.notifySer.notify('error', 'Không thể tải hình ảnh!');
         }
         if (action === 'Save') {
-          this.dialogRef.close({ event: this.action, data: product });
+          this.dialogRef.close({event: this.action, data: product});
         } else if (action === 'SaveAndMore') {
           this.form.reset({
             product_type: 'medicine'
@@ -405,7 +457,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       });
     } else {
       this.loading = false;
-      this.dialogRef.close({ event: this.action, data: product });
+      this.dialogRef.close({event: this.action, data: product});
     }
   }
 
@@ -433,7 +485,7 @@ export class ProductMedicineDialogComponent implements OnInit {
 
       if (result !== false && result !== undefined) {
         this.groups.push(result);
-        this.form.patchValue({ group_id: result.id });
+        this.form.patchValue({group_id: result.id});
       }
     });
   }
@@ -444,7 +496,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result !== false && result !== undefined) {
         this.usings.push(result);
-        this.form.patchValue({ using_id: result.id });
+        this.form.patchValue({using_id: result.id});
       }
     });
   }
@@ -459,27 +511,30 @@ export class ProductMedicineDialogComponent implements OnInit {
         const curSelects = this.form.controls['placements'].value;
         curSelects.push(result.id);
 
-        this.form.patchValue({ placements: curSelects });
+        this.form.patchValue({placements: curSelects});
       }
     });
   }
 
   openManufacturerFormDialog() {
-    const dialogRef = this.dialog.open(ProductManufacturerFormDialogComponent, {});
+    const dialogRef = this.dialog.open(ProductManufacturerFormDialogComponent, {
+      width: '30%',
+      minHeight: '60%',
+    });
     dialogRef.afterClosed().subscribe(result => {
       if (result !== false && result !== undefined) {
         this.manufacturers.push(result);
-        this.form.patchValue({ medicine: { manufacturer: result.id } });
+        this.form.patchValue({medicine: {manufacturer: result.id}});
       }
     });
   }
 
   doAction() {
-    this.dialogRef.close({ event: this.action, data: this.local_data });
+    this.dialogRef.close({event: this.action, data: this.local_data});
   }
 
   closeDialog() {
-    this.dialogRef.close({ event: 'Cancel' });
+    this.dialogRef.close({event: 'Cancel'});
   }
 
   removeUnit(i) {
@@ -575,11 +630,12 @@ export class ProductMedicineDialogComponent implements OnInit {
   }
 
   /**
- * Format input number
- * @Nghia 
- */
+   * Format input number
+   * @Nghia
+   */
   inputformatNumber(event: any) {
     event.target.value = numeral(event.target.value).format('0,0');
   }
+
 
 }

@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ListComponentBase } from '../../shared/base';
-import { MatDialog } from "@angular/material/dialog";
-import { NotifierService } from "angular-notifier";
-import { animate, state, style, transition, trigger } from "@angular/animations";
+import { MatDialog } from '@angular/material/dialog';
+import { NotifierService } from 'angular-notifier';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ActivatedRoute } from '@angular/router';
 import { MatTable } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -21,8 +21,8 @@ import { debounceTime } from 'rxjs/operators';
   styleUrls: ['./invoice-list.component.css'],
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ]
@@ -40,7 +40,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     super();
   }
 
-  @ViewChild(MatTable, { static: true }) table: MatTable<any>;
+  @ViewChild(MatTable, {static: true}) table: MatTable<any>;
   @ViewChild('selectColumn') selectColumn;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -57,12 +57,12 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   searchInvoiceForm = new FormControl();
 
 
-  // second column 
+  // second column
   TongTienHang = 0;
   GiamGia = 0;
   KhachHangTra = 0;
 
-  // 
+  //
   titleTimeDefault = 'Tháng này';
   titleTimeChoose = 'Lựa chọn khác';
 
@@ -75,10 +75,17 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     'total_price': 'Tổng tiền hàng',
     'discount': 'Giảm giá',
     'payment': 'Khách đã trả',
+    'national_pharmacy_no': 'Mã phiếu dược quốc gia',
   };
 
-  displayedColumns: string[] = ['#', 'invoice_no', 'created_at', 'returns', 'customer', 'total_price', 'discount', 'payment'];
-  columnsToDisplay: string[] = ['#', 'invoice_no', 'created_at', 'returns', 'customer', 'total_price', 'discount', 'payment'];
+  displayedColumns: string[] = [
+    '#', 'invoice_no', 'created_at', 'returns', 'customer', 'national_pharmacy_no', 'total_price',
+    'discount', 'payment'
+  ];
+  columnsToDisplay: string[] = [
+    '#', 'invoice_no', 'created_at', 'returns', 'customer', 'national_pharmacy_no', 'total_price',
+    'discount', 'payment'
+  ];
   dataSource: Invoice[] = [];
 
 
@@ -94,7 +101,10 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   ];
 
   // for second column
-  second_columnsToDisplay: string[] = ['second_#', 'second_invoice_no', 'second_created_at', 'second_returns', 'second_customer', 'second_total_price', 'second_discount', 'second_payment'];
+  second_columnsToDisplay: string[] = [
+    'second_#', 'second_invoice_no', 'second_created_at', 'second_returns', 'second_customer', 'second_national_no',
+    'second_total_price', 'second_discount', 'second_payment'
+  ];
 
   buildFilterFromParams(): InvoiceFilter {
     function write<K extends keyof InvoiceFilter>(arg: InvoiceFilter, key: K, value: InvoiceFilter[K]): void {
@@ -112,7 +122,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'customer,payment,detail,priceBook,store,user,returns';
+    filter.expand = 'customer,payment,detail,priceBook,store,user,returns,paymentInfo';
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
 
@@ -141,7 +151,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
 
     const date_from = new Date(obj.date_from);
     const date_to = new Date(obj.date_to);
-    this.titleTimeChoose = this.convertDate(date_from) + " - " + this.convertDate(date_to);
+    this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
 
     this.currentDateFilter = obj;
     this.service.setDateFilter(obj);
@@ -153,7 +163,8 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
       let data = res.body;
       let stt = 0;
       data.forEach(elementData => {
-        stt++; elementData.stt = stt; // tinh STT
+        stt++;
+        elementData.stt = stt; // tinh STT
 
         const date = new Date(1000 * elementData.created_at).toJSON().slice(0, 16);
         elementData.created_at = date.slice(8, 10) + '/'
@@ -216,6 +227,14 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
       }
     });
 
+    this.service.subscribeLoadInvoice.subscribe(action => {
+      if (action === true) {
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+        this.service.setLoadInvoice(false);
+      }
+    });
+
   }
 
   applyFilter(event: Event) {
@@ -226,9 +245,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   }
 
   openTimeDefault() {
-    const obj = {
-
-    };
+    const obj = {};
     const dialogRef = this.dialog.open(DatetimeDefaultFilterDialogComponent, {
       data: obj,
       width: '40%',
@@ -242,7 +259,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
       const date = this.service.getDateFilter();
       const date_from = new Date(date.date_from);
       const date_to = new Date(date.date_to);
-      this.titleTimeChoose = this.convertDate(date_from) + " - " + this.convertDate(date_to);
+      this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
       this.timeFilter.patchValue({
         typeTime: 'default',
       });
@@ -250,9 +267,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   }
 
   openTimeChoose() {
-    const obj = {
-
-    };
+    const obj = {};
     const dialogRef = this.dialog.open(DatetimeChooseFilterDialogComponent, {
       data: obj,
       width: '40%',
@@ -267,7 +282,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
       const date = this.service.getDateFilter();
       const date_from = new Date(date.date_from);
       const date_to = new Date(date.date_to);
-      this.titleTimeChoose = this.convertDate(date_from) + " - " + this.convertDate(date_to);
+      this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
     });
   }
 
@@ -276,7 +291,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
       const date = this.service.getDateFilter();
       const date_from = new Date(date.date_from);
       const date_to = new Date(date.date_to);
-      this.titleTimeChoose = this.convertDate(date_from) + " - " + this.convertDate(date_to);
+      this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
     } else {
       this.titleTimeChoose = 'Lựa chọn khác';
     }
