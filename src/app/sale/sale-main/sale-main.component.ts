@@ -18,8 +18,8 @@ import {SaleCustomerFormDialogComponent} from '../sale-customer-form-dialog/sale
 import {PaymentSiderbarDialogComponent} from '../payment-siderbar-dialog/payment-siderbar-dialog.component';
 import {DiscountSiderbarDialogComponent} from '../discount-siderbar-dialog/discount-siderbar-dialog.component';
 import {CustomerService} from '../../customer/customer.service';
-import {UserService} from '../user.service';
-import {User} from '../user.model';
+import {UserService} from '../../user/user.service';
+import {User} from '../../user/user.model';
 import * as numeral from 'numeral';
 
 @Component({

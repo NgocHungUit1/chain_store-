@@ -1,0 +1,56 @@
+<div fxLayout="row wrap" *ngIf="user !== null" class="m-b-20">
+  <div fxFlex="100">
+    <div fxLayout="row wrap">
+      <div fxFlex="100" class="user-info">
+
+        <div fxLayout="row wrap" class="user-info-row">
+          <div fxFlex="48" class="user-info-field">
+            <span class="user-field-label">Tên đăng nhập:</span> <strong>{{user.username}}</strong>
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="user-info-field">
+            <span class="user-field-label">Trạng thái:</span>
+            <label *ngIf="user.status == '9'" class="label label-warning">Ngưng hoạt động</label>
+            <label *ngIf="user.status == '10'" class="label label-success">Hoạt động</label>
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" class="user-info-row">
+          <div fxFlex="48" class="user-info-field">
+            <span class="user-field-label">Số điện thoại:</span> {{user.phone_number}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="user-info-field">
+            <span class="user-field-label">Vai trò:</span> {{user?.storeRole?.name ? user?.storeRole?.name : 'Admin'}}
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="user-info-row">
+          <div fxFlex="48" class="user-info-field">
+            <span class="user-field-label">Email:</span> {{user?.email}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="user-info-field">
+            <span class="user-field-label">Nhân viên:</span> {{user?.employee?.name}}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <div fxFlex="100" align="end">
+    <button class="m-r-10" mat-raised-button color="primary" (click)="openUserFormDialog(this.user.id)">
+      <mat-icon>edit</mat-icon> Cập nhật
+    </button>
+    <button class="m-r-10" mat-raised-button color="accent" (click)="activate()" *ngIf="this.user.status == '9'">
+      <mat-icon>lock_open</mat-icon> Kích hoạt
+    </button>
+    <button class="m-r-10" mat-raised-button color="accent" (click)="lock()" *ngIf="this.user.status == '10'">
+      <mat-icon>lock</mat-icon> Ngừng hoạt động
+    </button>
+    <button class="m-r-10" mat-raised-button color="warn" (click)="openDeleteUser(this.user.id)">
+      <mat-icon>delete</mat-icon> Xóa
+    </button>
+  </div>
+</div>

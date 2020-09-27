@@ -88,6 +88,16 @@ const MENUITEMS = [
     type: 'link',
     icon: 'shopping_basket',
   },
+  {
+    state: 'partner',
+    name: 'Nhân viên',
+    type: 'sub',
+    icon: 'assignment_ind',
+    children: [
+      { state: 'user', name: 'Tài khoản', type: 'link', icon: 'person' },
+      { state: 'employee', name: 'Nhân viên', type: 'link', icon: 'assignment_ind' },
+    ]
+  },
   // {
   //     state: 'material',
   //     name: 'Ui',

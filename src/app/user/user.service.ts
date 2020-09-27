@@ -9,6 +9,12 @@ import { User, UserFilter } from './user.model';
 })
 export class UserService {
 
+    private loadUser: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    subscribeLoadUser: Observable<boolean> = this.loadUser.asObservable();
+
+    setLoadUser(action: boolean) {
+      this.loadUser.next(action);
+    }
 
     constructor(private http: HttpClient) {
     }
@@ -46,10 +52,8 @@ export class UserService {
         return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
     }
 
-
-    public getUsers(id: string, expand: string = ''): Observable<User> {
-        const url = environment.apiUrl + '/user/' + id + '?expand=' + expand;
-        // return this.http.get<object>(url);
+    public getUser(id: string): Observable<User> {
+        const url = environment.apiUrl + '/user/' + id;
         return this.http.get<User>(url);
     }
 
@@ -63,7 +67,12 @@ export class UserService {
         return this.http.post(url, data);
     }
 
-    autocomplete(term: string) {
+    delete(id: string) {
+      const url = environment.apiUrl + '/user/' + id;
+      return this.http.delete(url);
+    }
+
+  autocomplete(term: string) {
         const url = environment.apiUrl + '/user/autocomplete?term=' + term;
         return this.http.get<User[]>(url);
     }
@@ -71,6 +80,21 @@ export class UserService {
     getUserLogin() {
         const url = environment.apiUrl + '/user/login';
         return this.http.get<User>(url);
+    }
+
+    getStoreRoleList() {
+      const url = environment.apiUrl + '/user/store-role-list';
+      return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
+    }
+
+    activate(id) {
+      const url = environment.apiUrl + '/user/activate?id=' + id;
+      return this.http.post(url, {});
+    }
+
+    lock(id) {
+      const url = environment.apiUrl + '/user/lock?id=' + id;
+      return this.http.post(url, {});
     }
 
 }
