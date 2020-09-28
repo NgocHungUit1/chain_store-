@@ -177,7 +177,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
 
         this.form.controls['date'].disable();
-        this.form.controls['supplier'].disable();
+        // this.form.controls['supplier'].disable();
         this.form.controls['no'].disable();
         this.form.controls['status'].disable();
         this.form.controls['quantity'].disable();
@@ -200,7 +200,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   displaySupplier(supplier?: Supplier): string | undefined {
-    return supplier ? supplier.name : undefined;
+    return (supplier === undefined || supplier === null) ? undefined : supplier.name;
   }
 
   lookup(value: string): Observable<Supplier[]> {

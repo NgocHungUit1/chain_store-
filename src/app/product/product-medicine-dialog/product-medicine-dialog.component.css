@@ -118,3 +118,8 @@
 input {
   font-size: 16px;
 }
+
+.mat-radio-button ~ .mat-radio-button {
+  padding-top : 10px;
+  margin-left: 16px;
+}

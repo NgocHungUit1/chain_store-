@@ -137,14 +137,39 @@
           </div>
           <div fxFlex.gt-sm="2%" fxFlex="100"></div>
           <div fxFlex.gt-sm="40%" fxFlex="100">
-            <mat-form-field>
-              <input type="text" matInput [formControl]="form.controls['original_price']"
-                     (keyup)="inputformatNumber($event)" placeholder="Giá vốn">
-            </mat-form-field>
-            <mat-form-field>
-              <input type="text" matInput [formControl]="form.controls['sell_price']"
-                     (keyup)="inputformatNumber($event)" placeholder="Giá bán">
-            </mat-form-field>
+
+            <div fxLayout="row wrap">
+              <mat-form-field>
+                <input type="text" matInput [formControl]="form.controls['original_price']"
+                       (keyup)="inputformatNumber($event)" placeholder="Giá vốn">
+              </mat-form-field>
+            </div>
+            <div fxLayout="row wrap">
+<!--              <div *ngIf="form.get('sell_price').value === 'percent' " fxFlex="30">-->
+<!--                <mat-form-field>-->
+<!--                  <input type="text" matInput -->
+<!--                         (keyup)="inputformatNumber($event)" placeholder="Phần trăm">-->
+<!--                </mat-form-field>-->
+<!--              </div>-->
+              <div fxFlex="100">
+                <mat-form-field>
+                  <input type="text" matInput [formControl]="form.controls['sell_price']"
+                         (keyup)="inputformatNumber($event)" placeholder="Giá bán">
+                </mat-form-field>
+              </div>
+<!--              <div fxFlex="30">-->
+<!--                <mat-radio-group [formControl]="form.controls['typeSellPrice']"-->
+<!--                                 (change)="chooseTypeSellPrice()"-->
+<!--                                 aria-label="Select an option">-->
+<!--                  <mat-radio-button value="price">-->
+<!--                    VNĐ-->
+<!--                  </mat-radio-button>-->
+<!--                  <mat-radio-button value="percent">-->
+<!--                    %-->
+<!--                  </mat-radio-button>-->
+<!--                </mat-radio-group>-->
+<!--              </div>-->
+            </div>
 
             <mat-form-field>
               <input type="text" matInput [formControl]="form.controls['base_unit']" placeholder="Đơn vị cơ bản">
