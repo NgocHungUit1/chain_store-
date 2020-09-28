@@ -1150,9 +1150,9 @@ export class SaleMainComponent implements OnInit {
     this.autoPrintInSoLo = e.checked;
   }
 
-  onChangeProductUnit(e: any, itemProduct, i: any) {
+  onChangeProductUnit(e: any, itemProduct, i: number) {
     let units = itemProduct?.product?.productUnits;
-    let item = units.find(element => element.id == e.value);
+    let item = units.find(element => element.id === e.value);
 
     let listProduct = this.listProduct;
     listProduct[i]['product_unit_id'] = item['id'];

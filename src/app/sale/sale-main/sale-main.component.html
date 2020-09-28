@@ -52,7 +52,7 @@
                   <mat-select [(value)]="itemProduct.product_unit_id"
                               (selectionChange)="onChangeProductUnit($event,itemProduct,i)">
                     <mat-option *ngFor="let unit of itemProduct.product?.productUnits" [value]="unit.id"
-                                [disabled]="localItemInvoice?.is_return == true">
+                                [disabled]="localItemInvoice?.is_return == true" >
                       {{ unit.name }} - Tồn: {{ unit.quantity_of_stock }}
                     </mat-option>
                   </mat-select>
