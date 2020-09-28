@@ -31,7 +31,7 @@ export class EmployeeTabInfoComponent implements OnInit {
   }
 
   loadEmployee(id) {
-    this.employeeService.getDetail(id, 'province,district,ward,user').subscribe(res => {
+    this.employeeService.getDetail(id).subscribe(res => {
       this.employee = res;
     });
   }

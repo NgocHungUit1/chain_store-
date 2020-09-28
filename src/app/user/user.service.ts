@@ -82,11 +82,6 @@ export class UserService {
         return this.http.get<User>(url);
     }
 
-    getStoreRoleList() {
-      const url = environment.apiUrl + '/user/store-role-list';
-      return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
-    }
-
     activate(id) {
       const url = environment.apiUrl + '/user/activate?id=' + id;
       return this.http.post(url, {});

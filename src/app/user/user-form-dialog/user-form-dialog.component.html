@@ -64,21 +64,6 @@
             <div fxLayout="row wrap">
               <div fxFlex="48">
                 <mat-form-field>
-                  <mat-select placeholder="Vai trò" [formControl]="form.controls['store_role_id']">
-                    <mat-option *ngFor="let role of storeRoles" [value]="role.id">
-                      {{role.name}}
-                    </mat-option>
-                  </mat-select>
-
-                  <mat-error *ngIf="form.controls['store_role_id'].hasError('required')">Vui lòng chọn vai trò
-                  </mat-error>
-                </mat-form-field>
-              </div>
-
-              <div fxFlex="4"></div>
-
-              <div fxFlex="48">
-                <mat-form-field>
                   <mat-select placeholder="Trạng thái" [formControl]="form.controls['status']">
                     <mat-option *ngFor="let item of statusItems" [value]="item.id">
                       {{item.title}}
@@ -88,6 +73,8 @@
                   <mat-error *ngIf="form.controls['status'].hasError('required')">Vui lòng chọn trạng thái</mat-error>
                 </mat-form-field>
               </div>
+
+              <div fxFlex="52"></div>
             </div>
           </div>
 

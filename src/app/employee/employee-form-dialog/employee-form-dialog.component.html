@@ -114,6 +114,19 @@
               </div>
             </div>
 
+            <div fxFlex="50">
+              <mat-form-field>
+                <mat-select placeholder="Vai trò" [formControl]="form.controls['store_role_id']">
+                  <mat-option *ngFor="let role of storeRoles" [value]="role.id">
+                    {{role.name}}
+                  </mat-option>
+                </mat-select>
+
+                <mat-error *ngIf="form.controls['store_role_id'].hasError('required')">Vui lòng chọn vai trò
+                </mat-error>
+              </mat-form-field>
+            </div>
+
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Địa chỉ</mat-label>

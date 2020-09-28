@@ -52,8 +52,8 @@ export class EmployeeService {
     return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
   }
 
-  getDetail(id: string, expand: string) {
-    const url = environment.apiUrl + '/employee/' + id + '?expand=' + expand;
+  getDetail(id: string) {
+    const url = environment.apiUrl + '/employee/' + id;
     return this.http.get<Employee>(url);
   }
 
@@ -70,5 +70,10 @@ export class EmployeeService {
   delete(id: string) {
     const url = environment.apiUrl + '/employee/' + id;
     return this.http.delete(url);
+  }
+
+  getStoreRoleList() {
+    const url = environment.apiUrl + '/employee/store-role-list';
+    return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
   }
 }

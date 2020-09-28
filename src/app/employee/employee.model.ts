@@ -18,6 +18,7 @@ export class Employee {
   district: Location;
   ward: Location;
   user: User;
+  storeRole: any;
 }
 
 

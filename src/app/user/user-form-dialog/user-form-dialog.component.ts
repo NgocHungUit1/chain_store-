@@ -15,7 +15,6 @@ export class UserFormDialogComponent implements OnInit {
   loading = false;
   local_data: any;
   user_id: string;
-  storeRoles: any;
   checkChangePassword = false;
 
   statusItems: any[] = [
@@ -41,7 +40,6 @@ export class UserFormDialogComponent implements OnInit {
     if (this.local_data.user_id) {
       this.user_id = this.local_data.user_id;
     }
-
   }
 
   onNoClick(): void {
@@ -67,10 +65,6 @@ export class UserFormDialogComponent implements OnInit {
       email: [null, Validators.compose([
         Validators.required, Validators.maxLength(100), Validators.email
       ])],
-      store_role_id: [null,
-        Validators.compose([
-          Validators.required, Validators.maxLength(5)
-        ])],
       status: [10, Validators.compose([
         Validators.required, Validators.maxLength(3)
       ])],
@@ -88,7 +82,6 @@ export class UserFormDialogComponent implements OnInit {
   ngOnInit(): void {
 
     this.initForm();
-    this.getStoreRoleList();
     if (this.user_id !== null && this.user_id !== undefined) {
       this.loadUser(this.user_id);
     }
@@ -102,15 +95,7 @@ export class UserFormDialogComponent implements OnInit {
         phone_number: user['phone_number'],
         email: user['email'],
         status: user['status'],
-        store_role_id: user['store_role_id'],
-        employee: user['employee'],
       });
-    });
-  }
-
-  getStoreRoleList() {
-    this.userService.getStoreRoleList().subscribe(res => {
-      this.storeRoles = res.body;
     });
   }
 

@@ -59,15 +59,18 @@
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Ghi chú:</span> {{employee.note}}
+            <span class="user-field-label">Vai trò:</span> {{employee?.storeRole?.name ? employee?.storeRole?.name : 'Admin'}}
           </div>
+
         </div>
         <div fxLayout="row wrap" class="product-info-row product-info-row-last">
           <div fxFlex="48" class="product-info-field">
             <span class="product-field-label">Giới tính:{{ sexHeader[employee.sex] }}</span>
           </div>
           <div fxFlex="4"></div>
-
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Ghi chú:</span> {{employee.note}}
+          </div>
         </div>
       </div>
 

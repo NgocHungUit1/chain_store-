@@ -36,6 +36,7 @@ export class EmployeeFormDialogComponent implements OnInit {
   filteredWards: Observable<any[]>;
   local_data: any;
   employee_id: string;
+  storeRoles: any;
 
   userFilter: UserFilter = new UserFilter();
   users: any;
@@ -92,6 +93,10 @@ export class EmployeeFormDialogComponent implements OnInit {
         Validators.required,
         Validators.maxLength(40)
       ])],
+      store_role_id: [null, Validators.compose([
+        Validators.required,
+        Validators.maxLength(40)
+      ])],
       phone_number: [null, Validators.compose([
         Validators.maxLength(20)
       ])],
@@ -115,6 +120,8 @@ export class EmployeeFormDialogComponent implements OnInit {
   ngOnInit(): void {
 
     this.initForm();
+
+    this.getStoreRoleList();
 
     this.getListUser();
 
@@ -145,7 +152,6 @@ export class EmployeeFormDialogComponent implements OnInit {
     if (this.employee_id !== null && this.employee_id !== undefined) {
       this.userFilter.employee_id = this.employee_id;
     }
-    this.userFilter.notEmployee = 1;
     this.userFilter.pageSize = 100;
     this.userService.getList(this.userFilter).subscribe(res => {
       this.users = res.body;
@@ -162,7 +168,7 @@ export class EmployeeFormDialogComponent implements OnInit {
   }
 
   loadEmployee(id) {
-    this.employeeService.getDetail(id, 'province,district,ward').subscribe(employee => {
+    this.employeeService.getDetail(id).subscribe(employee => {
       let birthDate = null;
       if (employee['birth_date'] !== null) {
         birthDate = new Date(employee['birth_date']).toISOString();
@@ -181,7 +187,8 @@ export class EmployeeFormDialogComponent implements OnInit {
         note: employee['note'],
         facebook: employee['facebook'],
         birth_date: birthDate,
-        sex: employee['sex']
+        sex: employee['sex'],
+        store_role_id: employee['storeRole']['id']
       });
 
       if (employee['province_id'] !== null) {
@@ -225,6 +232,12 @@ export class EmployeeFormDialogComponent implements OnInit {
 
   displayLocation(location?: Location): string | undefined {
     return location ? location.name : undefined;
+  }
+
+  getStoreRoleList() {
+    this.employeeService.getStoreRoleList().subscribe(res => {
+      this.storeRoles = res.body;
+    });
   }
 
   submit() {
