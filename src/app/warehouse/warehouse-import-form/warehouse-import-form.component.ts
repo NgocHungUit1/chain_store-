@@ -397,7 +397,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   onUnitChange(index, select) {
     if (this.data[index] !== undefined) {
       const unit = this.data[index]['productUnits'].find(element => element['id'] === select.value);
-      this.data[index]['price'] = unit['original_price'];
+      this.data[index]['price'] = (unit['original_price'] !== 0) ? unit['original_price'] : unit['sell_price']; //unit['original_price'];
       this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
       this.recalculateWarehouse();
     }
