@@ -76,14 +76,14 @@ export class CustomerTabInfoComponent implements OnInit {
 
   lock() {
     this.customerSer.lock(this.customer.id).subscribe(x => {
-      this.customer.status = '10';
+      this.customer.status = '9';
       this.notifyService.notify('success', 'Đã khóa thành công!');
     });
   }
 
   activate() {
     this.customerSer.activate(this.customer.id).subscribe(x => {
-      this.customer.status = '1';
+      this.customer.status = '10';
       this.notifyService.notify('success', 'Đã kích hoạt thành công!');
     });
   }

@@ -29,7 +29,10 @@
         <div fxLayout="row wrap" class="invoice-info-row">
           <div fxFlex="48" class="invoice-info-field">
             <span class="invoice-field-label">Khách hàng :</span>
-            <strong>{{ invoice.customer?.name }}</strong>
+            <strong *ngIf="invoice.customer !== null; else khachle">{{ invoice.customer?.name }}</strong>
+            <ng-template #khachle>
+              <strong>Khách lẻ</strong>
+            </ng-template>
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="invoice-info-field">

@@ -80,8 +80,18 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
     this.isLoadingResults = true;
 
     this.productSer.getListCart(this.apiFilter).subscribe(res => {
-      this.dataSource = res.body;
-
+      const data = res.body;
+      // tslint:disable-next-line:no-shadowed-variable
+      data.forEach(element => {
+        // console.log(element);
+        const productUnits = element.productUnits;
+        let quantity_of_stock = 0;
+        productUnits.forEach(unit => {
+          quantity_of_stock = unit.quantity_of_stock;
+        });
+        element.quantity_of_stock = quantity_of_stock;
+      });
+      this.dataSource = data;
 
       this.reloadFilter(res);
       const url = this.productSer.getStateUrl(this.apiFilter);
@@ -96,6 +106,7 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
     this.loadData();
     this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
       const listItemInvoice = ListInvoice.itemInvoice;
+      // console.log(listItemInvoice);
       listItemInvoice.forEach(element => {
         if (element.active === true && this.priceBookID !== element?.price_book_id) {
           this.priceBookID = element?.price_book_id;
@@ -123,7 +134,7 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
   }
 
   addProductToOrder(object) {
-    let product = object;
+    const product = object;
     let units = object.productUnits;
     let unitOne = units.find(element => element.quantity_of_stock > 0);
     units = units.filter(element => element.quantity_of_stock > 0);
@@ -138,6 +149,11 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
     product.base_unit = unitOne?.name;
     product.product_no = unitOne?.no;
     product.sell_price = unitOne?.sell_price;
+
+    if (product.quantity_of_stock === 0) {
+      this.notifySer.notify('warning', product.product_name + ' có tồn kho là 0 !');
+      return;
+    }
 
     this.orderService.addProduct(product);
     // if (units == undefined) {

@@ -3,7 +3,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Product, ProductFilter } from './product.model';
-import {AuthService} from '../authentication/auth.service';
+import { AuthService } from '../authentication/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -50,7 +50,7 @@ export class ProductService {
 
   getList(filter?: ProductFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrl(filter);
-    return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
   getDetail(id: string, expand: string = '') {
@@ -81,7 +81,7 @@ export class ProductService {
 
   removeImage(id: string, imageId: string) {
     const url = environment.apiUrl + '/product/remove-image';
-    return this.http.post(url, { product_id: id, image_id: id });
+    return this.http.post(url, {product_id: id, image_id: id});
   }
 
   delete(id: string) {
@@ -89,7 +89,7 @@ export class ProductService {
     // return this.http.delete(url);
 
     const url = environment.apiUrl + '/product/delete-product';
-    return this.http.post(url, { product_id: id });
+    return this.http.post(url, {product_id: id});
   }
 
   autocomplete(term: string) {
@@ -124,7 +124,7 @@ export class ProductService {
 
   getListCart(filter?: ProductFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrlCart(filter);
-    return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
   getCountProduct() {
@@ -147,6 +147,16 @@ export class ProductService {
   upload(data) {
     const url = environment.apiUrl + '/product/upload';
     return this.http.post(url, data);
+  }
+
+  activate(id) {
+    const url = environment.apiUrl + '/product/activate?id=' + id;
+    return this.http.post(url, {});
+  }
+
+  lock(id) {
+    const url = environment.apiUrl + '/product/lock?id=' + id;
+    return this.http.post(url, {});
   }
 }
 

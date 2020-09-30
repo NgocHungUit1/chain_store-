@@ -1,13 +1,13 @@
 <div class="container-list-product">
 
   <mat-paginator #paginator [length]="pageTotalCount" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
-    (page)="onMatPageChange($event)" [pageIndex]="page - 1" showFirstLastButtons></mat-paginator>
+                 (page)="onMatPageChange($event)" [pageIndex]="page - 1" showFirstLastButtons></mat-paginator>
 
-  <mat-grid-list cols="8" rowHeight="110px">
+  <mat-grid-list cols="7" rowHeight="110px">
 
     <div *ngIf="localItemInvoice?.is_return !== true; else girdItem">
       <mat-grid-tile *ngFor="let object of dataSource" class="grid-custom" (click)="addProductToOrder(object)"
-        title="{{ object.product_name }}">
+                     title="{{ object.product_name }}">
         <div class="product-image">
           <img class="example-option-img" aria-hidden [src]="object.default_image" style="max-width: 70px;">
         </div>
@@ -19,9 +19,17 @@
           <span class="product-price" *ngIf="object?.common?.price === null">
             {{  object.sell_price  | number }}
           </span>
-          <span class="product-name">
-            {{ object.product_name | slice:0:35 }}
+          <span class="product-name" *ngIf="object.product_name.length > 35">
+            {{ object.product_name | slice:0:35 }} ..
           </span>
+          <span class="product-name" *ngIf="object.product_name.length <= 35">
+            {{ object.product_name }}
+          </span>
+
+          <span>
+            - slt : {{ object.quantity_of_stock }}
+          </span>
+
         </div>
       </mat-grid-tile>
     </div>
