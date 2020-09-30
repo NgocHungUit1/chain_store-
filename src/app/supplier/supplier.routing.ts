@@ -12,7 +12,15 @@ export const SupplierRoutes: Routes = [
       {
         path: 'customer',
         loadChildren: () => import('../customer/customer.module').then(m => m.CustomerModule)
-      }
+      },
+      {
+        path: 'employee',
+        loadChildren: () => import('../employee/employee.module').then(m => m.EmployeeModule)
+      },
+      {
+        path: 'user',
+        loadChildren: () => import('../user/user.module').then(m => m.UserModule)
+      },
     ]
   }
 ];

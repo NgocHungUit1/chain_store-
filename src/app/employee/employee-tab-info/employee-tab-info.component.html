@@ -1,0 +1,89 @@
+<div fxLayout="row wrap" *ngIf="employee !== null" class="m-b-20">
+  <div fxFlex="100">
+    <h3 style="color: #009688">{{employee.name}}</h3>
+  </div>
+  <div fxFlex="100">
+    <div fxLayout="row wrap">
+      <div fxFlex="100" class="product-info">
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Tên nhân viên:</span> {{employee.name}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Người dùng hệ thống:</span> {{employee?.user?.username}}
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Số CMND:</span> {{employee.id_card}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Địa chỉ:</span> {{employee.address}}
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Số điện thoại:</span> {{employee.phone_number}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Tỉnh/Thành phố:</span> <span
+            *ngIf="employee.province">{{employee.province.name}}</span>
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Email:</span> {{employee.email}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Quận/Huyện:</span> <span
+            *ngIf="employee.district">{{employee.district.name}}</span>
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Facebook:</span> {{employee.facebook}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Phường/Xã:</span> <span
+            *ngIf="employee.ward">{{employee.ward.name}}</span>
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Ngày sinh:</span> {{employee.birth_date}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="user-field-label">Vai trò:</span> {{employee?.storeRole?.name ? employee?.storeRole?.name : 'Admin'}}
+          </div>
+
+        </div>
+        <div fxLayout="row wrap" class="product-info-row product-info-row-last">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Giới tính:{{ sexHeader[employee.sex] }}</span>
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Ghi chú:</span> {{employee.note}}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div fxFlex="100" align="end">
+    <button class="m-r-10" mat-raised-button color="primary" (click)="openEmployeeFormDialog(this.employee.id)">
+      <mat-icon>edit</mat-icon>
+      Cập nhật
+    </button>
+    <button class="m-r-10" mat-raised-button color="warn" (click)="openDeleteEmployee(this.employee.id)">
+      <mat-icon>delete</mat-icon>
+      Xóa
+    </button>
+  </div>
+</div>

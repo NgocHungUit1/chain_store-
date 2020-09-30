@@ -13,8 +13,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { DiscountSiderbarDialogComponent } from '../discount-siderbar-dialog/discount-siderbar-dialog.component';
 import { PaymentSiderbarDialogComponent } from '../payment-siderbar-dialog/payment-siderbar-dialog.component';
 import { SaleCustomerFormDialogComponent } from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
-import { UserService } from '../user.service';
-import { User } from '../user.model';
+import { UserService } from '../../user/user.service';
+import { User } from '../../user/user.model';
 import { NotifierService } from 'angular-notifier';
 import { ItemInvoice, ListInvoice } from '../order.model';
 
@@ -206,7 +206,7 @@ export class SaleSiderbarOrderComponent implements OnInit {
                 return r;
               }, {});
               // add common || null
-              // neu co gia chung se chon common_price 
+              // neu co gia chung se chon common_price
               // end_price : la gia cua san pham dc add truc tiep
               this.sumPrice = 0;
               this.listProduct.forEach(elementData => {

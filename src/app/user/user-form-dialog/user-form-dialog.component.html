@@ -1,0 +1,97 @@
+<h1 mat-dialog-title *ngIf="!(this.user_id !== null && this.user_id !== undefined)">Thêm nhân viên</h1>
+<h1 mat-dialog-title *ngIf="this.user_id !== null && this.user_id !== undefined">Cập nhật nhân viên</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <div fxLayout="row wrap">
+      <div fxFlex="100">
+        <div fxLayout="row wrap">
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Tên đăng nhập</mat-label>
+              <input matInput tabindex="1" formControlName="username">
+              <mat-error *ngIf="form.controls['username'].hasError('required')">Tên tài khoản không được bỏ trống
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div *ngIf="this.user_id !== null && this.user_id !== undefined" fxFlex="100" style="margin-bottom: 10px;">
+            <mat-slide-toggle [checked]="checkChangePassword" (change)="updatePassword()">
+              Cập nhật mật khẩu
+            </mat-slide-toggle>
+          </div>
+          <div
+            *ngIf="this.user_id === null || this.user_id === undefined || (this.user_id !== null && this.user_id !== undefined && this.checkChangePassword)"
+            fxFlex="100">
+            <mat-form-field>
+              <mat-label>Mật khẩu</mat-label>
+              <input matInput type="password" tabindex="2" formControlName="password">
+              <mat-error *ngIf="form.controls['password'].hasError('required')">Mật khẩu không được bỏ trống</mat-error>
+              <mat-error *ngIf="form.controls['password'].hasError('minlength')">Mật khẩu tối thiểu 6 ký tự</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div
+            *ngIf="this.user_id === null || this.user_id === undefined || (this.user_id !== null && this.user_id !== undefined && this.checkChangePassword)"
+            fxFlex="100">
+            <mat-form-field>
+              <mat-label>Nhập lại mật khẩu</mat-label>
+              <input matInput type="password" tabindex="3" formControlName="password_confirm">
+              <mat-error *ngIf="form.hasError('passwordNotMatch')">
+                Mật khẩu xác nhận không đúng
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Email</mat-label>
+              <input matInput tabindex="4" formControlName="email">
+              <mat-error *ngIf="form.controls['email'].hasError('required')">Email không được bỏ trống</mat-error>
+              <mat-error *ngIf="form.controls['email'].hasError('email')">Email không đúng định dạng</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Số điện thoại</mat-label>
+              <input matInput tabindex="5" formControlName="phone_number">
+              <mat-error *ngIf="form.controls['phone_number'].hasError('required')">Số điện thoại không được bỏ trống
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <div fxLayout="row wrap">
+              <div fxFlex="48">
+                <mat-form-field>
+                  <mat-select placeholder="Trạng thái" [formControl]="form.controls['status']">
+                    <mat-option *ngFor="let item of statusItems" [value]="item.id">
+                      {{item.title}}
+                    </mat-option>
+                  </mat-select>
+
+                  <mat-error *ngIf="form.controls['status'].hasError('required')">Vui lòng chọn trạng thái</mat-error>
+                </mat-form-field>
+              </div>
+
+              <div fxFlex="52"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="7" (click)="submit()">
+    <mat-icon>save</mat-icon>
+    Lưu
+  </button>
+  <button mat-button (click)="onNoClick()" tabindex="-1">
+    <mat-icon>cancel</mat-icon>
+    Bỏ qua
+  </button>
+</div>
