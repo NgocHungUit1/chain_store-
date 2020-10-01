@@ -51,10 +51,10 @@ const MENUITEMS = [
     icon: 'web_asset',
     // badge: [{type: 'red', value: '17'}],
     children: [
-      { state: 'medicine', name: 'Danh mục thuốc', type: 'link', icon: 'list' },
-      { state: 'product', name: 'Sản phẩm', type: 'link', icon: 'local_pharmacy' },
-      { state: 'price-book', name: 'Thiết lập giá', type: 'link', icon: 'loyalty' },
-      { state: 'stock-take', name: 'Kiểm kho', type: 'link', icon: 'check_circle_outline' },
+      {state: 'medicine', name: 'Danh mục thuốc', type: 'link', icon: 'list'},
+      {state: 'product', name: 'Sản phẩm', type: 'link', icon: 'local_pharmacy'},
+      {state: 'price-book', name: 'Thiết lập giá', type: 'link', icon: 'loyalty'},
+      {state: 'stock-take', name: 'Kiểm kho', type: 'link', icon: 'check_circle_outline'},
     ]
   },
   {
@@ -64,11 +64,11 @@ const MENUITEMS = [
     icon: 'sync_alt',
     // badge: [{type: 'red', value: '17'}],
     children: [
-      { state: 'invoice', name: 'Hóa đơn', type: 'link', icon: 'receipt' },
-      { state: 'returns', name: 'Trả hàng', type: 'link', icon: 'keyboard_return' },
-      { state: 'warehouse', name: 'Nhập hàng', type: 'link', icon: 'local_grocery_store' },
-      { state: 'warehouse-return', name: 'Trả hàng nhập', type: 'link', 'icon': 'assignment_return' },
-      { state: 'move', name: 'Chuyển hàng', type: 'link', icon: 'local_shipping' },
+      {state: 'invoice', name: 'Hóa đơn', type: 'link', icon: 'receipt'},
+      {state: 'returns', name: 'Trả hàng', type: 'link', icon: 'keyboard_return'},
+      {state: 'warehouse', name: 'Nhập hàng', type: 'link', icon: 'local_grocery_store'},
+      {state: 'warehouse-return', name: 'Trả hàng nhập', type: 'link', 'icon': 'assignment_return'},
+      {state: 'move', name: 'Chuyển hàng', type: 'link', icon: 'local_shipping'},
     ]
   },
   {
@@ -78,8 +78,8 @@ const MENUITEMS = [
     icon: 'contacts',
     // badge: [{type: 'red', value: '17'}],
     children: [
-      { state: 'customer', name: 'Khách hàng', type: 'link', icon: 'person' },
-      { state: 'supplier', name: 'Nhà cung cấp', type: 'link', icon: 'people' },
+      {state: 'customer', name: 'Khách hàng', type: 'link', icon: 'person'},
+      {state: 'supplier', name: 'Nhà cung cấp', type: 'link', icon: 'people'},
     ]
   },
   {
@@ -94,8 +94,18 @@ const MENUITEMS = [
     type: 'sub',
     icon: 'assignment_ind',
     children: [
-      { state: 'user', name: 'Tài khoản', type: 'link', icon: 'person' },
-      { state: 'employee', name: 'Nhân viên', type: 'link', icon: 'assignment_ind' },
+      {state: 'user', name: 'Tài khoản', type: 'link', icon: 'person'},
+      {state: 'employee', name: 'Nhân viên', type: 'link', icon: 'assignment_ind'},
+    ]
+  },
+  {
+    state: 'report',
+    name: 'Báo cáo',
+    type: 'sub',
+    icon: 'bar_chart',
+    children: [
+      {state: 'day-report', name: 'Cuối ngày', type: 'link', icon: 'pie_chart'},
+      {state: 'sale-report', name: 'Bán hàng', type: 'link', icon: 'table_chart'},
     ]
   },
   // {

@@ -37,6 +37,10 @@ export const AppRoutes: Routes = [
       {
         path: 'returns',
         loadChildren: () => import('./returns/returns.module').then(m => m.ReturnsModule)
+      },
+      {
+        path: 'report',
+        loadChildren: () => import('./report/report.module').then(m => m.ReportModule)
       }
       // {
       //     path: 'material',
