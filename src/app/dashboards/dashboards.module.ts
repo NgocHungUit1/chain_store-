@@ -11,6 +11,7 @@ import { NgApexchartsModule } from "ng-apexcharts";
 
 import { Dashboard1Component } from './dashboard1/dashboard1.component';
 import { Dashboard2Component } from './dashboard2/dashboard2.component';
+import { DashboardMainComponent } from './dashboard-main/dashboard-main.component';
 @NgModule({
     imports: [
         CommonModule,
@@ -21,6 +22,6 @@ import { Dashboard2Component } from './dashboard2/dashboard2.component';
         NgApexchartsModule,
         RouterModule.forChild(DashboardsRoutes)
     ],
-    declarations: [Dashboard1Component, Dashboard2Component]
+    declarations: [Dashboard1Component, Dashboard2Component, DashboardMainComponent]
 })
 export class DashboardsModule { }
