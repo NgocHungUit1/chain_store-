@@ -18,6 +18,8 @@ import {
   ApexNonAxisChartSeries,
   ApexResponsive
 } from 'ng-apexcharts';
+import { DashboardService } from '../dashboard.service';
+import { DataDashBoard } from '../dashboard.model';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -33,31 +35,6 @@ export type ChartOptions = {
   grid: ApexGrid;
 };
 
-export type VisitorChartOptions = {
-  series: ApexNonAxisChartSeries;
-  chart: ApexChart;
-  responsive: ApexResponsive[];
-  labels: any;
-  tooltip: ApexTooltip;
-  legend: ApexLegend;
-  colors: string[];
-  stroke: any;
-  dataLabels: ApexDataLabels;
-  plotOptions: ApexPlotOptions;
-};
-
-export type newsletterchartOptions = {
-  series: ApexAxisChartSeries;
-  chart: ApexChart;
-  xaxis: ApexXAxis;
-  stroke: any;
-  tooltip: ApexTooltip;
-  dataLabels: ApexDataLabels;
-  legend: ApexLegend;
-  colors: string[];
-  markers: any;
-  grid: ApexGrid;
-};
 
 declare var require: any;
 
@@ -76,19 +53,24 @@ export interface Chart {
   templateUrl: './dashboard-main.component.html',
   styleUrls: ['./dashboard-main.component.css']
 })
-export class DashboardMainComponent {
+export class DashboardMainComponent implements OnInit {
+
 
   // Barchart
   @ViewChild('chart') chart: ChartComponent;
   public chartOptions: Partial<ChartOptions>;
 
-  @ViewChild('visitor-chart') chart2: ChartComponent;
-  public VisitorChartOptions: Partial<VisitorChartOptions>;
+  // @ViewChild('visitor-chart') chart2: ChartComponent;
+  // public VisitorChartOptions: Partial<VisitorChartOptions>;
+  //
+  // @ViewChild('newsletter-chart') chart3: ChartComponent;
+  // public newsletterchartOptions: Partial<newsletterchartOptions>;
 
-  @ViewChild('newsletter-chart') chart3: ChartComponent;
-  public newsletterchartOptions: Partial<newsletterchartOptions>;
 
-  constructor() {
+  constructor(
+    private serviceDashBoard: DashboardService,
+  ) {
+    // super();
     this.chartOptions = {
       series: [
         {
@@ -149,157 +131,20 @@ export class DashboardMainComponent {
         },
       }
     };
-    this.VisitorChartOptions = {
-      series: [45, 15, 27, 18],
-      chart: {
-        type: 'donut',
-        height: 290
-      },
-      plotOptions: {
-        pie: {
-          donut: {
-            size: '80px'
-          }
-        }
-      },
-      tooltip: {
-        fillSeriesColor: false,
-      },
-      dataLabels: {
-        enabled: false,
-      },
-      stroke: {
-        width: 0
-      },
-      legend: {
-        show: false,
-      },
-      labels: ['Mobile', 'Tablet', 'Desktop', 'Other'],
-      colors: ['#1e88e5', '#26c6da', '#745af2', '#eceff1'],
-      responsive: [
-        {
-          breakpoint: 480,
-          options: {
-            chart: {
-              width: 200
-            }
-          }
-        }
-      ]
-    };
-    this.newsletterchartOptions = {
-      series: [
-        {
-          name: 'Clicked',
-          data: [0, 5000, 15000, 8000, 15000, 9000, 30000, 0]
-        },
-        {
-          name: 'Sent',
-          data: [0, 3000, 5000, 2000, 8000, 1000, 5000, 0]
-        }
-      ],
-      chart: {
-        height: 290,
-        type: 'area'
-      },
-      dataLabels: {
-        enabled: false
-      },
-      markers: {
-        size: 3,
-      },
-      stroke: {
-        curve: 'smooth',
-        width: '2'
-      },
-      colors: ['#26c6da', '#1e88e5'],
-      legend: {
-        show: false,
-      },
-      grid: {
-        borderColor: 'rgba(0,0,0,.2)',
-        strokeDashArray: 3,
-        yaxis: {
-          lines: {
-            show: true
-          }
-        },
-        xaxis: {
-          lines: {
-            show: true
-          }
-        },
-      },
-      xaxis: {
-        type: 'category',
-        categories: [
-          '1',
-          '2',
-          '3',
-          '4',
-          '5',
-          '6',
-          '7',
-          '8'
-        ]
-      },
-      tooltip: {
-        x: {
-          format: 'dd/MM/yy HH:mm'
-        }
-      }
-    };
+
   }
 
-  // This is for the line chart
-  // Line chart
-  lineChart1: Chart = {
-    type: 'Line',
-    data: data['LineWithArea'],
-    options: {
-      low: 0,
-      height: 360,
-      high: 35000,
-      showArea: true,
-      fullWidth: true
-    }
-  };
+  public dataDashBoard: DataDashBoard;
 
-  // Timeline
-  mytimelines: any[] = [
-    {
-      from: 'Nirav joshi',
-      time: '(5 minute ago)',
-      image: 'assets/images/users/1.jpg',
-      attachment: 'assets/images/big/img2.jpg',
-      content:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero.'
-    },
-    {
-      from: 'Sunil joshi',
-      time: '(3 minute ago)',
-      image: 'assets/images/users/2.jpg',
-      content:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero.',
-      buttons: 'primary'
-    },
-    {
-      from: 'Vishal Bhatt',
-      time: '(1 minute ago)',
-      image: 'assets/images/users/3.jpg',
-      attachment: 'assets/images/big/img1.jpg',
-      content:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero.'
-    },
-    {
-      from: 'Dhiren Adesara',
-      time: '(1 minute ago)',
-      image: 'assets/images/users/4.jpg',
-      content:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero.',
-      buttons: 'warn'
-    }
-  ];
+  ngOnInit(): void {
+
+    this.serviceDashBoard.getDataDashBoard().subscribe(res => {
+      console.log(res);
+      this.dataDashBoard = res;
+    });
+    // throw new Error("Method not implemented.");
+  }
+
 
   // bar chart
   public barChartData: Array<any> = [
@@ -353,5 +198,6 @@ export class DashboardMainComponent {
   ];
   public barChartLegend = false;
   public barChartType = 'bar';
+
 
 }

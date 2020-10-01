@@ -35,7 +35,7 @@ const MENUITEMS = [
     icon: 'av_timer'
   },
   {
-    state: 'dashboard1',
+    state: 'dashboard',
     name: 'Tổng quan',
     type: 'link',
     icon: 'av_timer',
