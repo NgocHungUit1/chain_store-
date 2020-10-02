@@ -3,7 +3,13 @@ export class mItem {
   sum: number;
 }
 
+export class mMonth {
+  after: number;
+  now: number;
+}
+
 export class DataDashBoard {
   invoice: mItem;
   returns: mItem;
+  month: mMonth;
 }
