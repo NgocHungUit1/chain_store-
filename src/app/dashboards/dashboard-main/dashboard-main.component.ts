@@ -20,6 +20,7 @@ import {
 } from 'ng-apexcharts';
 import { DashboardService } from '../dashboard.service';
 import { DataDashBoard } from '../dashboard.model';
+import { DateFilter } from '../../invoice/invoice.model';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -138,11 +139,34 @@ export class DashboardMainComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.serviceDashBoard.getDataDashBoard().subscribe(res => {
-      console.log(res);
+
+    this.initDashBoard();
+    // throw new Error("Method not implemented.");
+  }
+
+  initDashBoard() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const first = new Date(year, month, 1);
+    const date_from = new Date(this.convertDateYYYYMMDD(first));
+    const date_to = new Date(this.convertDateYYYYMMDD(today));
+    const from = this.convertDate(date_from, '-');
+    const to = this.convertDate(date_to, '-');
+    this.serviceDashBoard.getDataDashBoard(from, to).subscribe(res => {
+      // console.log(res);
       this.dataDashBoard = res;
     });
-    // throw new Error("Method not implemented.");
+  }
+
+  convertDateYYYYMMDD(date: Date) {
+    const month = date.getMonth() + 1;
+    return date.getFullYear() + '-' + month + '-' + date.getDate();
+  }
+
+  convertDate(date: Date, _alia = '/') {
+    const month = date.getMonth() + 1;
+    return date.getDate() + _alia + month + _alia + date.getFullYear();
   }
 
 

@@ -16,8 +16,8 @@
         <div class="d-flex no-block align-items-center">
           <div class="stats">
             <h3 class="text-white m-0">Doanh thu thuần</h3>
-            <h6 class="text-white m-t-0">{{ dataDashBoard.invoice.count }} hóa đơn</h6>
-            <h1 class="text-white m-0">{{ dataDashBoard.invoice.sum | number }}</h1>
+            <h6 class="text-white m-t-0">{{ dataDashBoard?.invoice?.count }} hóa đơn</h6>
+            <h1 class="text-white m-0">{{ dataDashBoard?.invoice?.sum | number }}</h1>
           </div>
           <div class="ml-auto" style="height: 84px; width: 100px">
             <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels"
@@ -38,8 +38,8 @@
         <div class="d-flex no-block align-items-center">
           <div class="stats">
             <h3 class="text-white m-0">Trả hàng </h3>
-            <h6 class="text-white m-t-0">{{ dataDashBoard.returns.count }} phiếu</h6>
-            <h1 class="text-white m-0">{{ dataDashBoard.returns.sum | number }}</h1>
+            <h6 class="text-white m-t-0">{{ dataDashBoard?.returns?.count }} phiếu</h6>
+            <h1 class="text-white m-0">{{ dataDashBoard?.returns?.sum | number }}</h1>
           </div>
           <div class="ml-auto" style="height: 84px; width: 100px">
             <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels"
@@ -61,7 +61,7 @@
           <div class="stats">
             <h3 class="text-white m-0">So với cùng kỳ tháng trước</h3>
             <h6 class="text-white m-t-0">&nbsp;</h6>
-            <h1 class="text-white m-0">{{ (dataDashBoard.month.now / dataDashBoard.month.after) * 100 | number}}%</h1>
+            <h1 class="text-white m-0">{{ (dataDashBoard?.month?.now / dataDashBoard?.month?.after) * 100 | number}}%</h1>
           </div>
           <div class="ml-auto" style="height: 84px; width: 100px">
             <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels"

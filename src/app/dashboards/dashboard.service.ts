@@ -11,8 +11,8 @@ export class DashboardService {
   constructor(private http: HttpClient) {
   }
 
-  getDataDashBoard() {
+  getDataDashBoard(from: string, to: string) {
     const url = environment.apiUrl + '/report/dash-board';
-    return this.http.get<any>(url);
+    return this.http.post<any>(url, {from: from, to: to});
   }
 }
