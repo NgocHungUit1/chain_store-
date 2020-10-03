@@ -85,9 +85,9 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
       data.forEach(element => {
         // console.log(element);
         const productUnits = element.productUnits;
-        let quantity_of_stock = 0;
+        let quantity_of_stock = '';
         productUnits.forEach(unit => {
-          quantity_of_stock = unit.quantity_of_stock;
+          quantity_of_stock += unit.name + '-' + unit.quantity_of_stock + ' ';
         });
         element.quantity_of_stock = quantity_of_stock;
       });
