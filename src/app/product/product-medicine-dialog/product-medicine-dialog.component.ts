@@ -269,7 +269,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       let medicine = product['medicine'];
       medicine.made_in = product['made_in'];
       medicine.manufacturer = product['manufacturer'];
-      if (copy == null) {
+      if (copy === null) {
         this.form.patchValue({
           product_no: product['product_no'],
           barcode: product['barcode'],
