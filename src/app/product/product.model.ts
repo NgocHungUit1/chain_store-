@@ -65,6 +65,7 @@ export class ProductFilter extends ApiFilterBase {
   pageSize = 15;
   sort = '';
   price_book_id = '';
+  keyword = '';
 
   getModelSearch() {
     return 'ProductSearch';

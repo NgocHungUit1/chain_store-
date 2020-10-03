@@ -123,7 +123,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     this.searchProductForm.valueChanges.pipe(debounceTime(800)).subscribe(res => {
       if (res !== '') {
         this.apiFilter = this.buildFilterFromParams();
-        this.apiFilter.product_no = res;
+        this.apiFilter.keyword = res;
         this.loadData();
         this.service.setLoadProduct(false);
       }
