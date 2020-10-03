@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit, Optional} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {Observable} from 'rxjs/Observable';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {NotifierService} from 'angular-notifier';
@@ -11,22 +11,6 @@ import {UserService} from '../user.service';
   styleUrls: ['./user-form-dialog.component.css']
 })
 export class UserFormDialogComponent implements OnInit {
-  form: FormGroup;
-  loading = false;
-  local_data: any;
-  user_id: string;
-  checkChangePassword = false;
-
-  statusItems: any[] = [
-    {
-      'id': 9,
-      'title': 'Tạm khóa'
-    },
-    {
-      'id': 10,
-      'title': 'Đang hoạt động'
-    }
-  ];
 
   constructor(
     public dialogRef: MatDialogRef<UserFormDialogComponent>,
@@ -41,6 +25,25 @@ export class UserFormDialogComponent implements OnInit {
       this.user_id = this.local_data.user_id;
     }
   }
+  form: FormGroup;
+  loading = false;
+  local_data: any;
+  user_id: string;
+  checkChangePassword = false;
+  storeRoles: any;
+
+  statusItems: any[] = [
+    {
+      'id': 9,
+      'title': 'Tạm khóa'
+    },
+    {
+      'id': 10,
+      'title': 'Đang hoạt động'
+    }
+  ];
+
+
 
   onNoClick(): void {
     this.dialogRef.close();
@@ -54,10 +57,11 @@ export class UserFormDialogComponent implements OnInit {
         ])
       ],
       password: [null, this.user_id ?
-        [Validators.minLength(6), Validators.maxLength(32)] : [Validators.minLength(6), Validators.required, Validators.maxLength(32)]
+        [Validators.minLength(6), Validators.maxLength(32)] :
+        [Validators.minLength(6), Validators.required, Validators.maxLength(32)]
       ],
       password_confirm: [null, this.user_id ?
-        [Validators.maxLength(32)] : [Validators.required, Validators.maxLength(32)]
+      null : [Validators.required]
       ],
       phone_number: [null, Validators.compose([
         Validators.required, Validators.maxLength(20)
@@ -68,20 +72,36 @@ export class UserFormDialogComponent implements OnInit {
       status: [10, Validators.compose([
         Validators.required, Validators.maxLength(3)
       ])],
-    }, {
-      validator: this.checkPasswordConfirm
-    });
+      store_role_id: [null, Validators.compose([
+        Validators.required,
+        Validators.maxLength(40)
+      ])],
+    }, {validators: this.checkPasswordConfirm});
   }
 
   checkPasswordConfirm(group: FormGroup) {
     const password = group.get('password').value;
     const passwordConfirm = group.get('password_confirm').value;
+    if (passwordConfirm != null) {
+      if (password === passwordConfirm) {
+        group.controls['password_confirm'].setErrors(
+          null
+        );
+      } else {
+        group.controls['password_confirm'].setErrors(
+          {passwordNotMatch: true}
+        );
+      }
+    }
     return password === passwordConfirm ? null : {passwordNotMatch: true};
   }
 
   ngOnInit(): void {
 
     this.initForm();
+
+    this.getStoreRoleList();
+
     if (this.user_id !== null && this.user_id !== undefined) {
       this.loadUser(this.user_id);
     }
@@ -95,6 +115,7 @@ export class UserFormDialogComponent implements OnInit {
         phone_number: user['phone_number'],
         email: user['email'],
         status: user['status'],
+        store_role_id: user['storeRole'] ?  user['storeRole']['id'] : null,
       });
     });
   }
@@ -107,11 +128,37 @@ export class UserFormDialogComponent implements OnInit {
         this.userService.update(this.user_id, data).subscribe(res => {
           this.notifySer.notify('success', 'Cập nhật tài khoản thành công!');
           this.dialogRef.close(res);
+        }, (error) => {
+          if (error.status === 422) {
+            this.ajaxValidate(error);
+          }
         });
       } else {
         this.userService.create(data).subscribe(res => {
           this.notifySer.notify('success', 'Thêm tài khoản thành công!');
           this.dialogRef.close(res);
+        }, (error) => {
+          if (error.status === 422) {
+            this.ajaxValidate(error);
+          }
+        });
+      }
+    }
+  }
+
+  public ajaxValidate(error) {
+    if (error.error) {
+      if (this.form instanceof FormGroup) {
+        const _fields = this.form.controls;
+        Object.keys(_fields).forEach(key => {
+          const errorField = error.error.find(x => x.field === key);
+          if (errorField) {
+            this.form.controls[key].setErrors({
+              ajaxValidator: {
+                value: errorField.message,
+              }
+            });
+          }
         });
       }
     }
@@ -119,6 +166,12 @@ export class UserFormDialogComponent implements OnInit {
 
   updatePassword() {
     this.checkChangePassword = !this.checkChangePassword;
+  }
+
+  getStoreRoleList() {
+    this.userService.getStoreRoleList().subscribe(res => {
+      this.storeRoles = res.body;
+    });
   }
 
 }

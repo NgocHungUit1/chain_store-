@@ -36,7 +36,6 @@ export class EmployeeFormDialogComponent implements OnInit {
   filteredWards: Observable<any[]>;
   local_data: any;
   employee_id: string;
-  storeRoles: any;
 
   userFilter: UserFilter = new UserFilter();
   users: any;
@@ -93,10 +92,6 @@ export class EmployeeFormDialogComponent implements OnInit {
         Validators.required,
         Validators.maxLength(40)
       ])],
-      store_role_id: [null, Validators.compose([
-        Validators.required,
-        Validators.maxLength(40)
-      ])],
       phone_number: [null, Validators.compose([
         Validators.maxLength(20)
       ])],
@@ -120,8 +115,6 @@ export class EmployeeFormDialogComponent implements OnInit {
   ngOnInit(): void {
 
     this.initForm();
-
-    this.getStoreRoleList();
 
     this.getListUser();
 
@@ -153,6 +146,7 @@ export class EmployeeFormDialogComponent implements OnInit {
       this.userFilter.employee_id = this.employee_id;
     }
     this.userFilter.pageSize = 100;
+    this.userFilter.not_employee = 1;
     this.userService.getList(this.userFilter).subscribe(res => {
       this.users = res.body;
     });
@@ -188,7 +182,6 @@ export class EmployeeFormDialogComponent implements OnInit {
         facebook: employee['facebook'],
         birth_date: birthDate,
         sex: employee['sex'],
-        store_role_id: employee['storeRole']['id']
       });
 
       if (employee['province_id'] !== null) {
@@ -233,13 +226,6 @@ export class EmployeeFormDialogComponent implements OnInit {
   displayLocation(location?: Location): string | undefined {
     return location ? location.name : undefined;
   }
-
-  getStoreRoleList() {
-    this.employeeService.getStoreRoleList().subscribe(res => {
-      this.storeRoles = res.body;
-    });
-  }
-
   submit() {
     if (this.form.valid) {
       const data = this.form.getRawValue();
@@ -262,11 +248,19 @@ export class EmployeeFormDialogComponent implements OnInit {
         this.employeeService.update(this.employee_id, data).subscribe(res => {
           this.notifySer.notify('success', 'Cập nhật nhân viên thành công!');
           this.dialogRef.close(res);
+        }, (error) => {
+          if (error.status === 422) {
+            this.ajaxValidate(error);
+          }
         });
       } else {
         this.employeeService.create(data).subscribe(res => {
           this.notifySer.notify('success', 'Thêm nhân viên thành công!');
           this.dialogRef.close(res);
+        }, (error) => {
+          if (error.status === 422) {
+            this.ajaxValidate(error);
+          }
         });
       }
     }
@@ -311,6 +305,25 @@ export class EmployeeFormDialogComponent implements OnInit {
       }
     });
   }
+
+  public ajaxValidate(error) {
+    if (error.error) {
+      if (this.form instanceof FormGroup) {
+        const _fields = this.form.controls;
+        Object.keys(_fields).forEach(key => {
+          const errorField = error.error.find(x => x.field === key);
+          if (errorField) {
+            this.form.controls[key].setErrors({
+              ajaxValidator: {
+                value: errorField.message,
+              }
+            });
+          }
+        });
+      }
+    }
+  }
+
 
   onSuccess() {
     this.selectedFile.pending = false;

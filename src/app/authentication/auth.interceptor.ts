@@ -53,7 +53,9 @@ export class AuthInterceptor implements HttpInterceptor {
         // localStorage.removeItem('auth_token');
         // return of (this.router.navigate(['auth/login']));
         return of (this.router.navigate(['authentication/403']));
-
+      case 422:
+        this.notify.notify('error', err.statusText);
+        return throwError(err);
       default:
         console.log(err);
         this.notify.notify('error', err.statusText);
