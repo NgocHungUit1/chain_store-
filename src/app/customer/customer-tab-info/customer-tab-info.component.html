@@ -21,18 +21,18 @@
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
             <span class="product-field-label">Tỉnh/Thành phố:</span> <span
-              *ngIf="customer.province">{{customer.province.name}}</span>
+            *ngIf="customer.province">{{customer.province.name}}</span>
           </div>
         </div>
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
             <span class="product-field-label">Quận/Huyện:</span> <span
-              *ngIf="customer.district">{{customer.district.name}}</span>
+            *ngIf="customer.district">{{customer.district.name}}</span>
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
             <span class="product-field-label">Phường/Xã:</span> <span
-              *ngIf="customer.ward">{{customer.ward.name}}</span>
+            *ngIf="customer.ward">{{customer.ward.name}}</span>
           </div>
         </div>
         <div fxLayout="row wrap" class="product-info-row">
@@ -91,16 +91,20 @@
   </div>
   <div fxFlex="100" align="end">
     <button class="m-r-10" mat-raised-button color="primary" (click)="openCustomerFormDialog(this.customer.id, null)">
-      <mat-icon>edit</mat-icon> Cập nhật
+      <mat-icon>edit</mat-icon>
+      Cập nhật
     </button>
-    <button class="m-r-10" mat-raised-button color="accent" (click)="lock()" *ngIf="this.customer.status == '1'">
-      <mat-icon>lock</mat-icon> Ngừng hoạt động
+    <button class="m-r-10" mat-raised-button color="accent" (click)="lock()" *ngIf="this.customer.status == '9'">
+      <mat-icon>lock</mat-icon>
+      Ngừng hoạt động
     </button>
     <button class="m-r-10" mat-raised-button color="accent" (click)="activate()" *ngIf="this.customer.status == '10'">
-      <mat-icon>lock_open</mat-icon> Kích hoạt
+      <mat-icon>lock_open</mat-icon>
+      Kích hoạt
     </button>
     <button class="m-r-10" mat-raised-button color="warn" (click)="openDeleteCustomer(this.customer.id)">
-      <mat-icon>delete</mat-icon> Xóa
+      <mat-icon>delete</mat-icon>
+      Xóa
     </button>
   </div>
 </div>

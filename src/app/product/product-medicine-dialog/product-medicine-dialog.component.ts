@@ -22,6 +22,7 @@ import { ManufacturerFilter } from '../manufacturer.model';
 import { ProductManufacturerFormDialogComponent } from '../product-manufacturer-form-dialog/product-manufacturer-form-dialog.component';
 import * as numeral from 'numeral';
 import { log } from 'util';
+import { loadConfigurationFromPath } from 'tslint/lib/configuration';
 
 
 class ImageSnippet {
@@ -157,6 +158,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       weight: [null],
       base_unit: [null, Validators.required],
       medicine_id: [null],
+      typeSellPrice: ['price'], // update for customer
       // Medicine
       medicine: this.fb.group({
         registration_no: [null, Validators.required],
@@ -267,7 +269,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       let medicine = product['medicine'];
       medicine.made_in = product['made_in'];
       medicine.manufacturer = product['manufacturer'];
-      if (copy == null) {
+      if (copy === null) {
         this.form.patchValue({
           product_no: product['product_no'],
           barcode: product['barcode'],
@@ -637,5 +639,8 @@ export class ProductMedicineDialogComponent implements OnInit {
     event.target.value = numeral(event.target.value).format('0,0');
   }
 
+  chooseTypeSellPrice() {
+    console.log(this.form.controls['typeSellPrice'].value);
+  }
 
 }

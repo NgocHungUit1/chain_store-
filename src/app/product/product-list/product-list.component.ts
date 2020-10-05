@@ -54,6 +54,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     'shortcut': 'Tên ngắn',
     'original_price': 'Giá vốn',
     'sell_price': 'Giá bán',
+    'status': 'Trạng thái',
     // 'quantity_of_stock': 'Tồn kho'
   };
 
@@ -62,8 +63,8 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     'merchandise': 'Hàng hóa',
   };
 
-  displayedColumns: string[] = ['#', 'product_type', 'product_no', 'product_name', 'shortcut', 'original_price', 'sell_price'];
-  columnsToDisplay: string[] = ['#', 'product_type', 'product_no', 'product_name', 'shortcut', 'original_price', 'sell_price'];
+  displayedColumns: string[] = ['#', 'product_type', 'product_no', 'product_name', 'shortcut', 'original_price', 'sell_price', 'status'];
+  columnsToDisplay: string[] = ['#', 'product_type', 'product_no', 'product_name', 'shortcut', 'original_price', 'sell_price', 'status'];
   dataSource: Product[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -122,7 +123,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     this.searchProductForm.valueChanges.pipe(debounceTime(800)).subscribe(res => {
       if (res !== '') {
         this.apiFilter = this.buildFilterFromParams();
-        this.apiFilter.product_no = res;
+        this.apiFilter.keyword = res;
         this.loadData();
         this.service.setLoadProduct(false);
       }

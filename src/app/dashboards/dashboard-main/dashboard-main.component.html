@@ -1,0 +1,122 @@
+<div class="page-breadcrumb p-t-20 p-l-30 p-r-30">
+  <div fxLayout="row wrap">
+    <h4 class="page-title text-themecolor m-0"> Kết quả bán hàng trong ngày</h4>
+  </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- Chart boxes -->
+<!-- ============================================================== -->
+<div fxLayout="row wrap">
+  <!-- column -->
+  <div fxFlex.gt-sm="33.33" fxFlex.gt-xs="100" fxFlex="100">
+    <mat-card class="bg-info">
+      <mat-card-content>
+        <!-- column -->
+        <div class="d-flex no-block align-items-center">
+          <div class="stats">
+            <h3 class="text-white m-0">Doanh thu thuần</h3>
+            <h6 class="text-white m-t-0">{{ dataDashBoard?.invoice?.count }} hóa đơn</h6>
+            <h1 class="text-white m-0">{{ dataDashBoard?.invoice?.sum | number }}</h1>
+          </div>
+          <div class="ml-auto" style="height: 84px; width: 100px">
+            <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels"
+                    [options]="barChartOptions" [colors]="barChartColors" [legend]="barChartLegend"
+                    [chartType]="barChartType">
+            </canvas>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <!-- column -->
+  <!-- column -->
+  <div fxFlex.gt-sm="33.33" fxFlex.gt-xs="100" fxFlex="100">
+    <mat-card class="bg-purple">
+      <mat-card-content>
+        <!-- column -->
+        <div class="d-flex no-block align-items-center">
+          <div class="stats">
+            <h3 class="text-white m-0">Trả hàng </h3>
+            <h6 class="text-white m-t-0">{{ dataDashBoard?.returns?.count }} phiếu</h6>
+            <h1 class="text-white m-0">{{ dataDashBoard?.returns?.sum | number }}</h1>
+          </div>
+          <div class="ml-auto" style="height: 84px; width: 100px">
+            <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels"
+                    [options]="barChartOptions" [colors]="barChartColors" [legend]="barChartLegend"
+                    [chartType]="barChartType">
+            </canvas>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <!-- column -->
+  <!-- column -->
+  <div fxFlex.gt-sm="33.33" fxFlex.gt-xs="100" fxFlex="100">
+    <mat-card class="bg-success">
+      <mat-card-content>
+        <!-- column -->
+        <div class="d-flex no-block align-items-center">
+          <div class="stats">
+            <h3 class="text-white m-0">So với cùng kỳ tháng trước</h3>
+            <h6 class="text-white m-t-0">&nbsp;</h6>
+            <h1 class="text-white m-0">{{ (dataDashBoard?.month?.now / dataDashBoard?.month?.after) * 100 | number}}%</h1>
+          </div>
+          <div class="ml-auto" style="height: 84px; width: 100px">
+            <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels"
+                    [options]="barChartOptions" [colors]="barChartColors" [legend]="barChartLegend"
+                    [chartType]="barChartType">
+            </canvas>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <!-- column -->
+
+  <!-- column -->
+</div>
+
+<!-- ============================================================== -->
+<!-- Charts -->
+<!-- ============================================================== -->
+<div fxLayout="row wrap">
+  <!-- Column-->
+  <div fxFlex="100">
+    <mat-card>
+      <mat-card-content>
+        <mat-card-title>Sales Overview</mat-card-title>
+        <mat-card-subtitle>Ample Admin Vs Material Admin</mat-card-subtitle>
+        <div id="chart">
+          <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart"
+                     [dataLabels]="chartOptions.dataLabels" [plotOptions]="chartOptions.plotOptions"
+                     [yaxis]="chartOptions.yaxis" [legend]="chartOptions.legend" [fill]="chartOptions.fill"
+                     [stroke]="chartOptions.stroke" [tooltip]="chartOptions.tooltip" [xaxis]="chartOptions.xaxis"
+                     [grid]="chartOptions.grid">
+          </apx-chart>
+        </div>
+        <!-- <div class="barchrt" style="height:360px;">
+            <x-chartist class="" [data]="barChart1.data" [type]="barChart1.type" [options]="barChart1.options"
+                [responsiveOptions]="barChart1.responsiveOptions" [events]="barChart1.events"> </x-chartist>
+        </div> -->
+        <ul class="list-inline text-center">
+          <li>
+            <h6 class="text-muted text-info m-0">
+              <i class="fa fa-circle font-10 m-r-10 "></i>Ample</h6>
+          </li>
+          <li>
+            <h6 class="text-muted  text-success  m-0">
+              <i class="fa fa-circle font-10 m-r-10"></i>Pixel</h6>
+          </li>
+        </ul>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <!-- Column-->
+</div>
+
+<!-- ============================================================== -->
+<!-- Image and chart -->
+<!-- ============================================================== -->
+

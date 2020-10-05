@@ -98,6 +98,12 @@ html .page-wrapper .page-content {
   padding-right: 5px;
 }
 
+.span-product-no {
+  font-size: 15px;
+  color: black;
+  padding-right: 4px;
+}
+
 .row-product-base-unit {
   padding-top: 12px;
   padding-right: 5px;

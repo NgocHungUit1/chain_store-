@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatPaginator } from "@angular/material/paginator";
-import { MatTable } from "@angular/material/table";
-import { MatSort } from "@angular/material/sort";
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTable } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { ProductService } from '../../product/product.service';
 import { ProductFilter, Product } from '../../product/product.model';
@@ -41,7 +41,7 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
   localItemInvoice: ItemInvoice;
 
 
-  @ViewChild(MatTable, { static: true }) table: MatTable<any>;
+  @ViewChild(MatTable, {static: true}) table: MatTable<any>;
   @ViewChild('selectColumn') selectColumn;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -52,7 +52,7 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
       arg[key] = value;
     }
 
-    // 
+    //
     let itemInvoice: ItemInvoice = null;
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
@@ -80,8 +80,18 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
     this.isLoadingResults = true;
 
     this.productSer.getListCart(this.apiFilter).subscribe(res => {
-      this.dataSource = res.body;
-
+      const data = res.body;
+      // tslint:disable-next-line:no-shadowed-variable
+      data.forEach(element => {
+        // console.log(element);
+        const productUnits = element.productUnits;
+        let quantity_of_stock = '';
+        productUnits.forEach(unit => {
+          quantity_of_stock += unit.name + '-' + unit.quantity_of_stock + ' ';
+        });
+        element.quantity_of_stock = quantity_of_stock;
+      });
+      this.dataSource = data;
 
       this.reloadFilter(res);
       const url = this.productSer.getStateUrl(this.apiFilter);
@@ -96,6 +106,7 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
     this.loadData();
     this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
       const listItemInvoice = ListInvoice.itemInvoice;
+      // console.log(listItemInvoice);
       listItemInvoice.forEach(element => {
         if (element.active === true && this.priceBookID !== element?.price_book_id) {
           this.priceBookID = element?.price_book_id;
@@ -123,16 +134,32 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
   }
 
   addProductToOrder(object) {
-    let product = object;
+    const product = object;
     let units = object.productUnits;
-    let unit = units.find(element => element.is_base == 1);
-    product.product_unit_id = unit?.id;
-    product.product_unit_value = unit?.value;
-    product.base_unit = unit?.name;
-    if (unit == undefined) {
-      this.notifySer.notify('warning', 'Vui lòng cập nhật đơn vị sản phẩm !');
-    } else {
-      this.orderService.addProduct(product);
+    let unitOne = units.find(element => element.quantity_of_stock > 0);
+    units = units.filter(element => element.quantity_of_stock > 0);
+    if (unitOne == undefined) {
+      this.notifySer.notify('warning', 'Sản phẩm hết hàng trong kho !');
+      return;
     }
+    object.productUnits = units;
+
+    product.product_unit_id = unitOne?.id;
+    product.product_unit_value = unitOne?.value;
+    product.base_unit = unitOne?.name;
+    product.product_no = unitOne?.no;
+    product.sell_price = unitOne?.sell_price;
+
+    if (product.quantity_of_stock === 0) {
+      this.notifySer.notify('warning', product.product_name + ' có tồn kho là 0 !');
+      return;
+    }
+
+    this.orderService.addProduct(product);
+    // if (units == undefined) {
+    //   this.notifySer.notify('warning', 'Vui lòng cập nhật đơn vị sản phẩm !');
+    // } else {
+    //   this.orderService.addProduct(product);
+    // }
   }
 }

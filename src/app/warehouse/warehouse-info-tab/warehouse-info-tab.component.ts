@@ -158,10 +158,8 @@ export class WarehouseInfoTabComponent implements OnChanges {
    */
   printWarehouse(id: string) {
     this.modelSer.getDataWarehouseToPrint(id).subscribe(res => {
-
       let printContent = '<title>' + res.no + '</title>';
       printContent += '<style>table {' +
-        // 'font-family: arial, sans-serif;' +
         'border-collapse: collapse;' +
         'width: 100%;' +
         '}' +
@@ -176,14 +174,6 @@ export class WarehouseInfoTabComponent implements OnChanges {
         '<p style="text-align:center; font-weight:600;">Mã phiếu nhập: ' + res?.no + '</p> ' +
         '<p style="text-align:left;">Ngày nhập: ' + res?.date + ' </p>' +
         '<p style="text-align:left;">Người nhập: ' + res?.created_by + ' </p>' +
-        // '<p style="text-align:left;">Nhà cung cấp: ' + res?.supplier?.name + ' </p>' +
-        // '<p style="text-align:left;">Trạng thái : ' + res?.status + ' </p>' +
-        // '<p style="text-align:left;">Số lượng : ' + res?.total_quantity + ' </p>' +
-        // '<p style="text-align:left;">Tổng tiền hàng : ' + res?.total_price + ' </p>' +
-        // '<p style="text-align:left;">Giảm giá : ' + res?.discount_amount + ' </p>' +
-        // '<p style="text-align:left;">Tiền trả nhà cung cấp : ' + res?.paid_amount + ' </p>' +
-        // '<p style="text-align:left;">Tính vào công nợ : ' + res?.remain_amount + ' </p>' +
-        // '<p style="text-align:left;">Ghi chú : ' + res?.note + ' </p>' +
         '<table>' +
         '<tr>' +
         '<td style="font-weight: 600;"> Nhà cung cấp </td>' +
@@ -218,7 +208,6 @@ export class WarehouseInfoTabComponent implements OnChanges {
       printContent += '<tr style="text-align:center; font-size: 13px">';
       printContent += '<th>' + 'Mã hàng' + '</th>';
       printContent += '<th>' + 'Tên hàng' + '</th>';
-      printContent += '<th>' + 'Số lượng' + '</th>';
       printContent += '<th>' + 'Đơn gía' + '</th>';
       printContent += '<th>' + 'Giảm giá' + '</th>';
       printContent += '<th>' + 'Thành tiền' + '</th>';
@@ -228,7 +217,8 @@ export class WarehouseInfoTabComponent implements OnChanges {
         printContent += '<tr>';
         printContent += '<td style="text-align:left;">' + element?.product?.product_no + '</td>';
         printContent += '<td style="text-align:left;">' + element?.product?.product_name + '<br>' +
-          'Đơn vị : ' + element?.product_unit?.name + '<br>';
+          'Đơn vị : ' + element?.product_unit?.name + '<br>' +
+          'Số lượng : ' + element.quantity + '<br>';
         const parcels = element.parcels;
         if (parcels[0] !== undefined) {
           printContent += 'Lô: ' + parcels[0]['parcel_no'] + '-';
@@ -236,7 +226,6 @@ export class WarehouseInfoTabComponent implements OnChanges {
           printContent += parcels[0]['quantity'];
         }
         printContent += '</td>';
-        printContent += '<td style="text-align:right;">' + element.quantity + '</td>';
         printContent += '<td style="text-align:right;">' + element.price + '</td>';
         printContent += '<td style="text-align:right;">' + element.discount + '</td>';
         printContent += '<td style="text-align:right;">' + element.amount + '</td>';

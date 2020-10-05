@@ -73,7 +73,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   displayedColumns: string[] = [];
   columnsToDisplay: string[] = [
     '#',
-    'product_no',
+    // 'product_no',
     'product_name',
     // 'product_parcel',
     'product_unit_id',
@@ -177,7 +177,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
 
         this.form.controls['date'].disable();
-        this.form.controls['supplier'].disable();
+        // this.form.controls['supplier'].disable();
         this.form.controls['no'].disable();
         this.form.controls['status'].disable();
         this.form.controls['quantity'].disable();
@@ -200,7 +200,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   displaySupplier(supplier?: Supplier): string | undefined {
-    return supplier ? supplier.name : undefined;
+    return (supplier === undefined || supplier === null) ? undefined : supplier.name;
   }
 
   lookup(value: string): Observable<Supplier[]> {
@@ -394,10 +394,17 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
   }
 
+  /**
+   * - Nhập hàng đơn vị giá đơn vị  = giá vôn đơn vị cơ bản * số lượng quy đổi
+   * @param index
+   * @param select
+   */
   onUnitChange(index, select) {
     if (this.data[index] !== undefined) {
       const unit = this.data[index]['productUnits'].find(element => element['id'] === select.value);
-      this.data[index]['price'] = unit['original_price'];
+      const unitBase = this.data[index]['productUnits'].find(element => element['is_base'] === 1);
+      this.data[index]['price'] = unitBase['original_price'] * unit['value'];
+      // this.data[index]['price'] = (unit['original_price'] !== 0) ? unit['original_price'] : unit['sell_price']; //unit['original_price'];
       this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
       this.recalculateWarehouse();
     }
@@ -513,7 +520,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
       let printContent = '<title>' + res.no + '</title>';
       printContent += '<style>table {' +
-        // 'font-family: arial, sans-serif;' +
         'border-collapse: collapse;' +
         'width: 100%;' +
         '}' +
@@ -528,14 +534,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         '<p style="text-align:center; font-weight:600;">Mã phiếu nhập: ' + res?.no + '</p> ' +
         '<p style="text-align:left;">Ngày nhập: ' + res?.date + ' </p>' +
         '<p style="text-align:left;">Người nhập: ' + res?.created_by + ' </p>' +
-        // '<p style="text-align:left;">Nhà cung cấp: ' + res?.supplier?.name + ' </p>' +
-        // '<p style="text-align:left;">Trạng thái : ' + res?.status + ' </p>' +
-        // '<p style="text-align:left;">Số lượng : ' + res?.total_quantity + ' </p>' +
-        // '<p style="text-align:left;">Tổng tiền hàng : ' + res?.total_price + ' </p>' +
-        // '<p style="text-align:left;">Giảm giá : ' + res?.discount_amount + ' </p>' +
-        // '<p style="text-align:left;">Tiền trả nhà cung cấp : ' + res?.paid_amount + ' </p>' +
-        // '<p style="text-align:left;">Tính vào công nợ : ' + res?.remain_amount + ' </p>' +
-        // '<p style="text-align:left;">Ghi chú : ' + res?.note + ' </p>' +
         '<table>' +
         '<tr>' +
         '<td style="font-weight: 600;"> Nhà cung cấp </td>' +
@@ -570,7 +568,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       printContent += '<tr style="text-align:center; font-size: 13px">';
       printContent += '<th>' + 'Mã hàng' + '</th>';
       printContent += '<th>' + 'Tên hàng' + '</th>';
-      printContent += '<th>' + 'Số lượng' + '</th>';
       printContent += '<th>' + 'Đơn gía' + '</th>';
       printContent += '<th>' + 'Giảm giá' + '</th>';
       printContent += '<th>' + 'Thành tiền' + '</th>';
@@ -580,7 +577,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         printContent += '<tr>';
         printContent += '<td style="text-align:left;">' + element?.product?.product_no + '</td>';
         printContent += '<td style="text-align:left;">' + element?.product?.product_name + '<br>' +
-          'Đơn vị : ' + element?.product_unit?.name + '<br>';
+          'Đơn vị : ' + element?.product_unit?.name + '<br>' +
+          'Số lượng : ' + element.quantity + '<br>';
         const parcels = element.parcels;
         if (parcels[0] !== undefined) {
           printContent += 'Lô: ' + parcels[0]['parcel_no'] + '-';
@@ -588,7 +586,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           printContent += parcels[0]['quantity'];
         }
         printContent += '</td>';
-        printContent += '<td style="text-align:right;">' + element.quantity + '</td>';
         printContent += '<td style="text-align:right;">' + element.price + '</td>';
         printContent += '<td style="text-align:right;">' + element.discount + '</td>';
         printContent += '<td style="text-align:right;">' + element.amount + '</td>';

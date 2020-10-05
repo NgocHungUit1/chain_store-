@@ -11,11 +11,11 @@ export const AppRoutes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'dashboard1',
+        redirectTo: 'dashboard',
         pathMatch: 'full'
       },
       {
-        path: 'dashboard1',
+        path: 'dashboard',
         loadChildren: () => import('./dashboards/dashboards.module').then(m => m.DashboardsModule)
       },
       {
@@ -37,6 +37,10 @@ export const AppRoutes: Routes = [
       {
         path: 'returns',
         loadChildren: () => import('./returns/returns.module').then(m => m.ReturnsModule)
+      },
+      {
+        path: 'report',
+        loadChildren: () => import('./report/report.module').then(m => m.ReportModule)
       }
       // {
       //     path: 'material',

@@ -1,7 +1,21 @@
-import { ApiFilterBase } from "../shared/base";
-import { Medicine } from "../medicine/medicine.model";
-import { Group } from "./group.model";
-import { Placement } from "./placement.model";
+import { ApiFilterBase } from '../shared/base';
+import { Medicine } from '../medicine/medicine.model';
+import { Group } from './group.model';
+import { Placement } from './placement.model';
+
+export class ProductUnit {
+  id: number;
+  product_id: number;
+  name: string;
+  value: number;
+  sell_price: number;
+  no: string;
+  is_base: string;
+  original_price: number;
+  quantity_of_stock: number;
+  latest_parcel_no: string;
+  latest_parcel_exp_date: string;
+}
 
 export class Product {
   id: string;
@@ -23,7 +37,7 @@ export class Product {
   medicine: Medicine;
   group: Group;
   productPlacements: Placement[];
-  productUnits: object[];
+  productUnits: ProductUnit[];
   images: object[];
   common: object;  // use for sale page
   note_detail_sale: string; // use for sale page
@@ -51,6 +65,7 @@ export class ProductFilter extends ApiFilterBase {
   pageSize = 15;
   sort = '';
   price_book_id = '';
+  keyword = '';
 
   getModelSearch() {
     return 'ProductSearch';

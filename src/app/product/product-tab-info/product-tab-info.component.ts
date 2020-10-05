@@ -130,4 +130,18 @@ export class ProductTabInfoComponent implements OnInit {
     });
   }
 
+  lock() {
+    this.productSer.lock(this.product.id).subscribe(x => {
+      this.product.status = '9';
+      this.notifySer.notify('success', 'Đã tạm ngừng thành công!');
+    });
+  }
+
+  activate() {
+    this.productSer.activate(this.product.id).subscribe(x => {
+      this.product.status = '10';
+      this.notifySer.notify('success', 'Đã kích hoạt thành công!');
+    });
+  }
+
 }

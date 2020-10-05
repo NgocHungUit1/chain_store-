@@ -29,7 +29,10 @@
         <div fxLayout="row wrap" class="invoice-info-row">
           <div fxFlex="48" class="invoice-info-field">
             <span class="invoice-field-label">Khách hàng :</span>
-            <strong>{{ invoice.customer?.name }}</strong>
+            <strong *ngIf="invoice.customer !== null; else khachle">{{ invoice.customer?.name }}</strong>
+            <ng-template #khachle>
+              <strong>Khách lẻ</strong>
+            </ng-template>
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="invoice-info-field">
@@ -68,7 +71,15 @@
 
       <ng-container matColumnDef="product_no">
         <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['product_no'] }} </th>
-        <td mat-cell *matCellDef="let element; let i = index;"> {{ element.product?.product_no }} </td>
+        <td mat-cell *matCellDef="let element; let i = index;">
+          {{ element.product?.product_no }}
+          <button mat-raised-button="" color="accent"
+                  (click)="connectItem(element?.medicine)"
+                  *ngIf="element?.medicine !== null && element?.medicine?.medicine_no === null">
+            <mat-icon>open_in_full</mat-icon>
+            Liên thông
+          </button>
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="product_name">
