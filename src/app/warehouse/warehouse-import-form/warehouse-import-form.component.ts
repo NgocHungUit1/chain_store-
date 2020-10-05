@@ -73,7 +73,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   displayedColumns: string[] = [];
   columnsToDisplay: string[] = [
     '#',
-    'product_no',
+    // 'product_no',
     'product_name',
     // 'product_parcel',
     'product_unit_id',
