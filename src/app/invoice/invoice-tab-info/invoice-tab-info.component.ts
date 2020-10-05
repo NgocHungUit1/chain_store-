@@ -9,6 +9,7 @@ import { OrderService } from '../../sale/order.service';
 import { Invoice } from '../invoice.model';
 import { InvoiceService } from '../invoice.service';
 import { SaleMainComponent } from '../../sale/sale-main/sale-main.component';
+import { MedicineService } from '../../medicine/medicine.service';
 
 @Component({
   selector: 'app-invoice-tab-info',
@@ -49,7 +50,8 @@ export class InvoiceTabInfoComponent implements OnInit {
     public notifySer: NotifierService,
     public invoiceService: InvoiceService,
     private orderService: OrderService,
-    private router: Router
+    private router: Router,
+    private medicineService: MedicineService,
   ) {
   }
 
@@ -405,6 +407,19 @@ export class InvoiceTabInfoComponent implements OnInit {
         this.notifySer.notify('success', 'Thanh toán nợ thành công.');
       } else {
         this.notifySer.notify('error', 'Thanh toán không thành công.');
+      }
+    });
+  }
+
+  /**
+   * Lien thong san pham
+   * @param item
+   */
+  connectItem(item) {
+    this.medicineService.connect(item.id).subscribe(res => {
+      if (res['success']) {
+        item.medicine_no = res['medicine_no'];
+        this.notifySer.notify('success', 'Liên thông thành công.');
       }
     });
   }

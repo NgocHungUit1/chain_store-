@@ -119,7 +119,8 @@
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['price']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index">
                   <mat-form-field>
-                    <input matInput class="price-input" [value]="element['price']" (change)="recalculateItem(i)"
+                    <input matInput class="price-input" [value]="element['price']"
+                           (change)="recalculateItem(i)"
                            [(ngModel)]="data[i]['price']">
                   </mat-form-field>
                 </td>
@@ -292,7 +293,7 @@
             </div>
 
             <div fxFlex="100" style="padding-top: 10px">
-              <button  *ngIf="updateModelId !== null && model !== null "
+              <button *ngIf="updateModelId !== null && model !== null "
                       mat-raised-button color="info" fxFlex="100" [disabled]="this.form.invalid"
                       (click)="buttonPrintWarehouse(model)">
                 <mat-icon>print</mat-icon>
