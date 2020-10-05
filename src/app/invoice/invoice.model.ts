@@ -1,6 +1,6 @@
-import { Customer } from "../customer/customer.model";
-import { ApiFilterBase } from "../shared/base";
-import { PriceList } from "../price-book/price-list.model";
+import { Customer } from '../customer/customer.model';
+import { ApiFilterBase } from '../shared/base';
+import { PriceList } from '../price-book/price-list.model';
 
 export class User {
   username: string;
@@ -59,6 +59,7 @@ export class InvoiceFilter extends ApiFilterBase {
   date_from = '';
   date_to = '';
   national_pharmacy_no = '';
+  order_status = '';
 
   getModelSearch() {
     return 'InvoiceSearch';
