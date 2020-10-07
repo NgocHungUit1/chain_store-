@@ -1,1 +1,67 @@
-<p>sale-report-main works!</p>
+<mat-sidenav-container>
+  <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true">
+    <mat-toolbar class="dv-header">
+      <button mat-icon-button>
+        <mat-icon>filter_list</mat-icon>
+      </button>
+      <h3>Lọc và tìm kiếm</h3>
+    </mat-toolbar>
+
+    <mat-card class="time-filter-info">
+      <mat-card-title class="title-time-filter">Thời gian</mat-card-title>
+      <mat-card-content>
+
+
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="time-filter-info">
+      <mat-card-title class="title-time-filter">Trạng thái</mat-card-title>
+      <mat-card-content>
+
+
+      </mat-card-content>
+    </mat-card>
+
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar class="dv-header">
+      <button mat-icon-button (click)="leftside.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <h3>
+        Báo cáo
+      </h3>
+
+      <div class="select-product">
+      </div>
+
+
+      <span fxFlex="1 1 0%"></span>
+
+      <button mat-raised-button color="primary"  style="margin-right: 10px">
+        <mat-icon>cloud_download</mat-icon>
+        Xuất Excel
+      </button>
+
+
+      <button style="margin-left: 10px" mat-raised-button color="primary" >
+        <mat-icon>refresh</mat-icon>
+        Làm mới
+      </button>
+    </mat-toolbar>
+    <div fxLayout="row wrap">
+      <div fxFlex="100">
+        <mat-card>
+          <mat-card-content>
+            <mat-card-title>Bar Sales Chart</mat-card-title>
+            <mat-card-subtitle>This is the simple example of bar chart</mat-card-subtitle>
+            <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions" [legend]="barChartLegend"
+                    [chartType]="barChartType" (chartHover)="chartHovered($event)" [colors]="barChartColors" (chartClick)="chartClicked($event)">
+            </canvas>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
