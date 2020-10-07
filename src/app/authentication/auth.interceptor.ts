@@ -52,7 +52,8 @@ export class AuthInterceptor implements HttpInterceptor {
       case 403:
         // localStorage.removeItem('auth_token');
         // return of (this.router.navigate(['auth/login']));
-        return of (this.router.navigate(['authentication/403']));
+        this.notify.notify('error', 'Bạn không có quyền truy cập tính năng này.');
+        return of (this.router.navigate(['/']));
       case 422:
         this.notify.notify('error', err.statusText);
         return throwError(err);
