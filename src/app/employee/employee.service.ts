@@ -71,9 +71,4 @@ export class EmployeeService {
     const url = environment.apiUrl + '/employee/' + id;
     return this.http.delete(url);
   }
-
-  getStoreRoleList() {
-    const url = environment.apiUrl + '/employee/store-role-list';
-    return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
-  }
 }

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
+import {Observable, BehaviorSubject, of, throwError} from 'rxjs';
 import { environment } from '../../environments/environment';
 import { User, UserFilter } from './user.model';
+import {catchError, map} from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -59,12 +60,24 @@ export class UserService {
 
     update(id: string, pos: any) {
         const url = environment.apiUrl + '/user/' + id;
-        return this.http.put(url, pos);
+        return this.http.put(url, pos).pipe(
+          map(results => {
+            return results;
+          }),
+          // catch errors
+          catchError(err => throwError(err))
+        );
     }
 
     create(data) {
         const url = environment.apiUrl + '/user';
-        return this.http.post(url, data);
+        return this.http.post(url, data).pipe(
+          map(results => {
+            return results;
+          }),
+          // catch errors
+          catchError(err => throwError(err))
+        );
     }
 
     delete(id: string) {
@@ -91,6 +104,11 @@ export class UserService {
       const url = environment.apiUrl + '/user/lock?id=' + id;
       return this.http.post(url, {});
     }
+
+  getStoreRoleList() {
+    const url = environment.apiUrl + '/user/store-role-list';
+    return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
+  }
 
 }
 

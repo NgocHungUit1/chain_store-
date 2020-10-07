@@ -7,6 +7,7 @@ export class User {
   email: string;
   status: string;
   employee: any;
+  storeRole: any;
 }
 
 
@@ -17,6 +18,8 @@ export class UserFilter extends ApiFilterBase {
   phone_number = '';
   status = '';
   employee_id = '';
+  store_role_id = '';
+  not_employee = 0;
   page = 1;
   pageSize = 15;
   sort = '';
