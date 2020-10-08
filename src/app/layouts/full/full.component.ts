@@ -63,6 +63,6 @@ export class FullComponent implements OnDestroy {
     this.customerService.getNameStore().subscribe(name => {
       this.name_store = name;
     });
-
+    this.menuItems.refreshMenuItem();
   }
 }
