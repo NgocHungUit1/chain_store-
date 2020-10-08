@@ -1,4 +1,8 @@
 import { Injectable } from '@angular/core';
+import {of} from 'rxjs';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {Route, Router} from '@angular/router';
+import {environment} from '../../../environments/environment';
 
 export interface BadgeItem {
   type: string;
@@ -15,6 +19,7 @@ export interface ChildrenItems {
   name: string;
   type?: string;
   icon?: string;
+  roles?: string[];
 }
 
 export interface Menu {
@@ -25,6 +30,7 @@ export interface Menu {
   badge?: BadgeItem[];
   saperator?: Saperator[];
   children?: ChildrenItems[];
+  roles?: string[];
 }
 
 const MENUITEMS = [
@@ -39,6 +45,7 @@ const MENUITEMS = [
     name: 'Tổng quan',
     type: 'link',
     icon: 'av_timer',
+    roles: ['ADMIN', 'WAREHOUSE', 'SALE']
     // children: [
     //     { state: 'dashboard1', name: 'Dashboard 1', type: 'link' },
     //     { state: 'dashboard2', name: 'Dashboard 2', type: 'link' }
@@ -49,12 +56,13 @@ const MENUITEMS = [
     name: 'Hàng hóa',
     type: 'sub',
     icon: 'web_asset',
+    roles: ['ADMIN', 'WAREHOUSE', 'SALE'],
     // badge: [{type: 'red', value: '17'}],
     children: [
-      {state: 'medicine', name: 'Danh mục thuốc', type: 'link', icon: 'list'},
-      {state: 'product', name: 'Sản phẩm', type: 'link', icon: 'local_pharmacy'},
-      {state: 'price-book', name: 'Thiết lập giá', type: 'link', icon: 'loyalty'},
-      {state: 'stock-take', name: 'Kiểm kho', type: 'link', icon: 'check_circle_outline'},
+      {state: 'medicine', name: 'Danh mục thuốc', type: 'link', icon: 'list',  roles: ['ADMIN', 'WAREHOUSE', 'SALE']},
+      {state: 'product', name: 'Sản phẩm', type: 'link', icon: 'local_pharmacy',  roles: ['ADMIN', 'WAREHOUSE']},
+      {state: 'price-book', name: 'Thiết lập giá', type: 'link', icon: 'loyalty',  roles: ['ADMIN', 'WAREHOUSE']},
+      {state: 'stock-take', name: 'Kiểm kho', type: 'link', icon: 'check_circle_outline', roles: ['ADMIN', 'WAREHOUSE']},
     ]
   },
   {
@@ -62,13 +70,14 @@ const MENUITEMS = [
     name: 'Giao dịch',
     type: 'sub',
     icon: 'sync_alt',
+    roles: ['ADMIN', 'WAREHOUSE', 'SALE'],
     // badge: [{type: 'red', value: '17'}],
     children: [
-      {state: 'invoice', name: 'Hóa đơn', type: 'link', icon: 'receipt'},
-      {state: 'returns', name: 'Trả hàng', type: 'link', icon: 'keyboard_return'},
-      {state: 'warehouse', name: 'Nhập hàng', type: 'link', icon: 'local_grocery_store'},
-      {state: 'warehouse-return', name: 'Trả hàng nhập', type: 'link', 'icon': 'assignment_return'},
-      {state: 'move', name: 'Chuyển hàng', type: 'link', icon: 'local_shipping'},
+      {state: 'invoice', name: 'Hóa đơn', type: 'link', icon: 'receipt', roles: ['ADMIN', 'SALE']},
+      {state: 'returns', name: 'Trả hàng', type: 'link', icon: 'keyboard_return',  roles: ['ADMIN', 'SALE']},
+      {state: 'warehouse', name: 'Nhập hàng', type: 'link', icon: 'local_grocery_store', roles: ['ADMIN', 'WAREHOUSE']},
+      {state: 'warehouse-return', name: 'Trả hàng nhập', type: 'link', 'icon': 'assignment_return', roles: ['ADMIN', 'WAREHOUSE']},
+      {state: 'move', name: 'Chuyển hàng', type: 'link', icon: 'local_shipping', roles: ['ADMIN', 'WAREHOUSE']},
     ]
   },
   {
@@ -76,10 +85,11 @@ const MENUITEMS = [
     name: 'Đối tác',
     type: 'sub',
     icon: 'contacts',
+    roles: ['ADMIN', 'WAREHOUSE', 'SALE'],
     // badge: [{type: 'red', value: '17'}],
     children: [
-      {state: 'customer', name: 'Khách hàng', type: 'link', icon: 'person'},
-      {state: 'supplier', name: 'Nhà cung cấp', type: 'link', icon: 'people'},
+      {state: 'customer', name: 'Khách hàng', type: 'link', icon: 'person', roles: ['ADMIN', 'SALE']},
+      {state: 'supplier', name: 'Nhà cung cấp', type: 'link', icon: 'people', roles: ['ADMIN', 'WAREHOUSE']},
     ]
   },
   {
@@ -87,15 +97,17 @@ const MENUITEMS = [
     name: 'Bán hàng',
     type: 'link',
     icon: 'shopping_basket',
+    roles: ['ADMIN', 'SALE'],
   },
   {
     state: 'partner',
     name: 'Nhân viên',
     type: 'sub',
     icon: 'assignment_ind',
+    roles: ['ADMIN'],
     children: [
-      {state: 'user', name: 'Tài khoản', type: 'link', icon: 'person'},
-      {state: 'employee', name: 'Nhân viên', type: 'link', icon: 'assignment_ind'},
+      {state: 'user', name: 'Tài khoản', type: 'link', icon: 'person', roles: ['ADMIN']},
+      {state: 'employee', name: 'Nhân viên', type: 'link', icon: 'assignment_ind', roles: ['ADMIN']},
     ]
   },
   {
@@ -103,9 +115,10 @@ const MENUITEMS = [
     name: 'Báo cáo',
     type: 'sub',
     icon: 'bar_chart',
+    roles: ['ADMIN'],
     children: [
-      {state: 'day-report', name: 'Cuối ngày', type: 'link', icon: 'pie_chart'},
-      {state: 'sale-report', name: 'Bán hàng', type: 'link', icon: 'table_chart'},
+      {state: 'day-report', name: 'Cuối ngày', type: 'link', icon: 'pie_chart', roles: ['ADMIN']},
+      {state: 'sale-report', name: 'Bán hàng', type: 'link', icon: 'table_chart', roles: ['ADMIN']},
     ]
   },
   // {
@@ -289,7 +302,63 @@ const MENUITEMS = [
 
 @Injectable()
 export class MenuItems {
-  getMenuitem(): Menu[] {
-    return MENUITEMS;
+  menuItems = [];
+
+  private static _generateUrl() {
+    return environment.apiUrl + '/user/roles';
   }
+
+  private static _hasRole(userRoles, menuRoles) {
+    if (userRoles && userRoles.indexOf('*') >= 0) {
+      return true;
+    }
+    if (menuRoles && menuRoles.indexOf('*') >= 0) {
+      return true;
+    }
+    if (!menuRoles || !userRoles) {
+      return false;
+    }
+
+    return userRoles.filter(item => menuRoles.indexOf(item) >= 0).length > 0;
+  }
+
+
+  constructor(
+    private httpClient: HttpClient,
+    private router: Router,
+  ) {
+  }
+
+  public refreshMenuItem() {
+    const requestUrl = MenuItems._generateUrl();
+    this.menuItems = [];
+
+    return this.httpClient.get<any>(requestUrl).subscribe(res => {
+      const roles: string[] = res.roles;
+      const self = this;
+      MENUITEMS.forEach(function (menu: Menu, index, array) {
+        const _menu = menu;
+        if (menu.type === 'sub') {
+          const _children = [];
+          const children = menu.children;
+          children.forEach(function (child: ChildrenItems, _index, _array) {
+            if (MenuItems._hasRole(roles, child.roles)) {
+              _children.push(child);
+            }
+          });
+          _menu.children = _children;
+        }
+        if (MenuItems._hasRole(roles, menu.roles)) {
+          self.menuItems.push(_menu);
+        }
+      });
+      });
+  }
+
+  getMenuitem(): Menu[] {
+    return this.menuItems;
+  }
+  // getMenuitem(): Menu[] {
+  //   return MENUITEMS;
+  // }
 }
