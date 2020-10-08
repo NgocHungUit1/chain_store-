@@ -54,8 +54,8 @@
       <div fxFlex="100">
         <mat-card>
           <mat-card-content>
-            <mat-card-title>Bar Sales Chart</mat-card-title>
-            <mat-card-subtitle>This is the simple example of bar chart</mat-card-subtitle>
+            <mat-card-title style="text-align: center">Lợi nhuận tháng trước</mat-card-title>
+            <mat-card-subtitle></mat-card-subtitle>
             <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions" [legend]="barChartLegend"
                     [chartType]="barChartType" (chartHover)="chartHovered($event)" [colors]="barChartColors" (chartClick)="chartClicked($event)">
             </canvas>

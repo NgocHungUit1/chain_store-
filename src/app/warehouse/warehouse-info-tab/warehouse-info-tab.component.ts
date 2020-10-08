@@ -35,7 +35,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
     'price',
     'discount',
     'amount',
-    'actions'
+    // 'actions'
   ];
 
   apiFilter: WarehouseProductFilter;
@@ -77,7 +77,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
 
     const filter = new WarehouseProductFilter();
     filter.page = this.route.snapshot.queryParams['page'];
-    filter.pageSize = this.route.snapshot.queryParams['pageSize'];
+    filter.pageSize = 50;//this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.warehouse_id = this.model.id;
     filter.expand = 'product,productUnit,productParcelsForView,discountText';

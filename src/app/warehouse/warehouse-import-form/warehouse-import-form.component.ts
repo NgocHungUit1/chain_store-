@@ -271,7 +271,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       write(filter, attr, this.route.snapshot.queryParams['WarehouseProductSearch[' + attr + ']']);
     }
     filter.page = this.route.snapshot.queryParams['page'];
-    filter.pageSize = this.route.snapshot.queryParams['pageSize'];
+    filter.pageSize = 50;//this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.expand = 'product,productParcels,productUnits';
     if (this.updateModelId !== null) {

@@ -17,8 +17,8 @@ import { WarehouseUploadDialogComponent } from '../warehouse-upload-dialog/wareh
   styleUrls: ['./warehouse-list.component.css'],
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ]
@@ -34,7 +34,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     super();
   }
 
-  @ViewChild(MatTable, { static: true }) table: MatTable<any>;
+  @ViewChild(MatTable, {static: true}) table: MatTable<any>;
 
   apiFilter: WarehouseFilter;
 
@@ -42,7 +42,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     '#': '#',
     'national_pharmacy_no': 'Mã phiếu dược quốc gia',
     'date': 'Ngày nhập',
-    'supplier_id': 'Tên đối tác',
+    'supplier_id': 'Nhà cung cấp',
     'total_amount': 'Tổng tiền',
     'discount_amount': 'Giảm giá',
     'paid_amount': 'Đã trả',
@@ -116,7 +116,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
 
   openUploadDialog() {
     const dialogRef = this.dialog.open(WarehouseUploadDialogComponent, {
-      width: '30%',
+      width: '40%',
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
