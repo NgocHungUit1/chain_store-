@@ -11,17 +11,25 @@
       <mat-card-title class="title-time-filter">Thời gian</mat-card-title>
       <mat-card-content>
 
+        <form [formGroup]="timeFilter">
+          <mat-radio-group (change)="radioTimeChange($event)" formControlName="typeTime">
+            <mat-radio-button style="display: inline; " value="default">{{ titleTimeDefault }}
+              <button mat-icon-button aria-label="add" (click)="openTimeDefault()">
+                <mat-icon>swap_vert</mat-icon>
+              </button>
+            </mat-radio-button>
+            <mat-radio-button style="display: inline; " value="choose">{{ titleTimeChoose }}
+              <button mat-icon-button aria-label="add" (click)="openTimeChoose()">
+                <mat-icon>date_range</mat-icon>
+              </button>
+            </mat-radio-button>
+
+          </mat-radio-group>
+        </form>
 
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="time-filter-info">
-      <mat-card-title class="title-time-filter">Trạng thái</mat-card-title>
-      <mat-card-content>
-
-
-      </mat-card-content>
-    </mat-card>
 
   </mat-sidenav>
   <mat-sidenav-content>
@@ -33,34 +41,47 @@
         Báo cáo
       </h3>
 
-      <div class="select-product">
-      </div>
+<!--      <div class="select-product">-->
+<!--      </div>-->
 
 
       <span fxFlex="1 1 0%"></span>
 
-      <button mat-raised-button color="primary"  style="margin-right: 10px">
-        <mat-icon>cloud_download</mat-icon>
-        Xuất Excel
-      </button>
+      <!--      <button mat-raised-button color="primary"  style="margin-right: 10px">-->
+      <!--        <mat-icon>cloud_download</mat-icon>-->
+      <!--        Xuất Excel-->
+      <!--      </button>-->
 
 
-      <button style="margin-left: 10px" mat-raised-button color="primary" >
+      <button style="margin-left: 10px" mat-raised-button color="primary" (click)="buildView()">
         <mat-icon>refresh</mat-icon>
         Làm mới
       </button>
     </mat-toolbar>
     <div fxLayout="row wrap">
       <div fxFlex="100">
-        <mat-card>
-          <mat-card-content>
-            <mat-card-title style="text-align: center">Lợi nhuận tháng trước</mat-card-title>
-            <mat-card-subtitle></mat-card-subtitle>
-            <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions" [legend]="barChartLegend"
-                    [chartType]="barChartType" (chartHover)="chartHovered($event)" [colors]="barChartColors" (chartClick)="chartClicked($event)">
-            </canvas>
-          </mat-card-content>
-        </mat-card>
+        <div class="table-container">
+          <div class="table-loading-shade" *ngIf="isLoadingResults || isRateLimitReached">
+            <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+            <div class="table-rate-limit-reached" *ngIf="isRateLimitReached">
+              GitHub's API rate limit has been reached. It will be reset in one minute.
+            </div>
+          </div>
+
+          <div class=" table-responsive">
+            <mat-card>
+              <mat-card-content>
+                <mat-card-title style="text-align: center">Lợi nhuận </mat-card-title>
+                <mat-card-subtitle></mat-card-subtitle>
+                <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions"
+                        [legend]="barChartLegend"
+                        [chartType]="barChartType" (chartHover)="chartHovered($event)" [colors]="barChartColors"
+                        (chartClick)="chartClicked($event)">
+                </canvas>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
       </div>
     </div>
   </mat-sidenav-content>

@@ -10,8 +10,8 @@ export class SaleReportService {
   constructor(private http: HttpClient) {
   }
 
-  getDataBarChart() {
+  getDataBarChart(date_from: string, date_to: string) {
     const url = environment.apiUrl + '/report/data-bar-chart';
-    return this.http.post<any>(url, {});
+    return this.http.post<any>(url, {from: date_from, to: date_to});
   }
 }

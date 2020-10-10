@@ -224,6 +224,9 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
         this.apiFilter = this.buildFilterFromParams();
         this.apiFilter.invoice_no = res;
         this.loadData();
+      } else {
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
       }
     });
 

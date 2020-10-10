@@ -1,14 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTable } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
-import {MedicineFilter} from '../medicine.model';
-import {MatSort} from '@angular/material/sort';
-import {ListComponentBase} from '../../shared/base';
-import {MedicineService} from '../medicine.service';
-import {ActivatedRoute} from '@angular/router';
-import {NotifierService} from 'angular-notifier';
-import {MatDialog} from '@angular/material/dialog';
-import {MedicineFormDialogComponent} from '../medicine-form-dialog/medicine-form-dialog.component';
+import { MedicineFilter } from '../medicine.model';
+import { MatSort } from '@angular/material/sort';
+import { ListComponentBase } from '../../shared/base';
+import { MedicineService } from '../medicine.service';
+import { ActivatedRoute } from '@angular/router';
+import { NotifierService } from 'angular-notifier';
+import { MatDialog } from '@angular/material/dialog';
+import { MedicineFormDialogComponent } from '../medicine-form-dialog/medicine-form-dialog.component';
 import { FormControl } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 
@@ -27,7 +27,7 @@ export class MedicineListComponent extends ListComponentBase implements OnInit {
     super();
   }
 
-  @ViewChild(MatTable, { static: true }) table: MatTable<any>;
+  @ViewChild(MatTable, {static: true}) table: MatTable<any>;
 
   apiFilter: MedicineFilter;
   searchProductForm = new FormControl();
@@ -101,7 +101,11 @@ export class MedicineListComponent extends ListComponentBase implements OnInit {
         this.apiFilter.keyword = res;
         this.loadData();
         // this.service.setLoadProduct(false);
+      } else {
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
       }
+
     });
   }
 

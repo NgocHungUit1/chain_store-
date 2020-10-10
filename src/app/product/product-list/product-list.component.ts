@@ -126,6 +126,10 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
         this.apiFilter.keyword = res;
         this.loadData();
         this.service.setLoadProduct(false);
+      } else {
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+        this.service.setLoadProduct(false);
       }
     });
   }
