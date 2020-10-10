@@ -14,6 +14,17 @@
         <mat-icon>menu</mat-icon>
       </button>
       <h3>Danh mục thuốc của Cục Quản lý dược</h3>
+
+      <div class="select-product">
+        <mat-form-field title="">
+          <mat-label>Tìm kiếm mã, tên, đăng ký, sx ...</mat-label>
+          <input matInput [formControl]="searchProductForm" placeholder="" #input>
+          <button mat-icon-button matPrefix>
+            <mat-icon>search</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+
       <span fxFlex="1 1 0%"></span>
       <div class="diva-column-select">
         <button mat-raised-button color="primary" (click)="selectColumn.toggle();">

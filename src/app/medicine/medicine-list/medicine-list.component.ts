@@ -9,6 +9,8 @@ import {ActivatedRoute} from '@angular/router';
 import {NotifierService} from 'angular-notifier';
 import {MatDialog} from '@angular/material/dialog';
 import {MedicineFormDialogComponent} from '../medicine-form-dialog/medicine-form-dialog.component';
+import { FormControl } from '@angular/forms';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   templateUrl: './medicine-list.component.html',
@@ -28,6 +30,7 @@ export class MedicineListComponent extends ListComponentBase implements OnInit {
   @ViewChild(MatTable, { static: true }) table: MatTable<any>;
 
   apiFilter: MedicineFilter;
+  searchProductForm = new FormControl();
 
   columnsHeader = {
     '#': '#',
@@ -91,6 +94,15 @@ export class MedicineListComponent extends ListComponentBase implements OnInit {
   ngOnInit() {
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
+
+    this.searchProductForm.valueChanges.pipe(debounceTime(800)).subscribe(res => {
+      if (res !== '') {
+        this.apiFilter = this.buildFilterFromParams();
+        this.apiFilter.keyword = res;
+        this.loadData();
+        // this.service.setLoadProduct(false);
+      }
+    });
   }
 
   reconnect(item) {
