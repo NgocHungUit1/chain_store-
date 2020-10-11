@@ -328,8 +328,16 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
     return date.getDate() + '/' + month + '/' + date.getFullYear();
   }
 
+  /**
+   * Download File Excel
+   */
   exportExcel() {
-    // this.router.navigate(['/sale']);
+    this.apiFilter = this.buildFilterFromParams();
+    this.service.exportExcel(this.apiFilter).subscribe(res => {
+      // console.log(res);
+      const url = this.service.downloadFileExcel();
+      window.location.href = url;
+    });
   }
 
 }

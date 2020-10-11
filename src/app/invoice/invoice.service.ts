@@ -3,6 +3,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { DateFilter, Invoice, InvoiceFilter } from './invoice.model';
+import { AuthService } from '../authentication/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +34,10 @@ export class InvoiceService {
     return date.getFullYear() + '-' + month + '-' + date.getDate();
   }
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private auth: AuthService
+  ) {
   }
 
   getApiUrl(filter?: InvoiceFilter) {
@@ -140,6 +144,21 @@ export class InvoiceService {
   payTheDebt(id) {
     const url = environment.apiUrl + '/invoice/pay-the-debt';
     return this.http.post<boolean>(url, {invoice_id: id});
+  }
+
+  /**
+   * Export report excel
+   * @param filter
+   */
+  exportExcel(filter?: InvoiceFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + '/invoice/export?' + filter.toFilterString();
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
+  downloadFileExcel() {
+    const _token = this.auth.getToken();
+    const url = environment.apiUrl + '/invoice/download-template?token=' + _token;
+    return url;
   }
 }
 

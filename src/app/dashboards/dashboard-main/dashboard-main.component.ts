@@ -21,6 +21,7 @@ import {
 import { DashboardService } from '../dashboard.service';
 import { DataDashBoard } from '../dashboard.model';
 import { DateFilter } from '../../invoice/invoice.model';
+import { SaleReportService } from '../../sale-report/sale-report.service';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -154,9 +155,75 @@ export class DashboardMainComponent implements OnInit {
     const from = this.convertDate(date_from, '-');
     const to = this.convertDate(date_to, '-');
     this.serviceDashBoard.getDataDashBoard(from, to).subscribe(res => {
-      // console.log(res);
       this.dataDashBoard = res;
     });
+
+    this.serviceDashBoard.getDataBarChart(from, to).subscribe(res => {
+
+
+      this.chartOptions = {
+        series: [
+          {
+            name: 'Bán hàng',
+            data: res['BanHang']
+          },
+          {
+            name: 'Nhập hàng',
+            data: res['NhapHang']
+          }
+        ],
+        chart: {
+          type: 'bar',
+          height: 340
+        },
+        grid: {
+          borderColor: 'rgba(0,0,0,.2)',
+          strokeDashArray: 3,
+        },
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: '30%',
+            endingShape: 'flat'
+          },
+
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          show: true,
+          width: 2,
+          colors: ['transparent']
+        },
+        xaxis: {
+          categories: res['date']
+        },
+
+        legend: {
+          show: false,
+        },
+        fill: {
+          colors: ['#26c6da', '#1e88e5'],
+          opacity: 1
+        },
+        // tooltip: ApexTooltip,
+        tooltip: {
+          fillSeriesColor: false,
+          marker: {
+            show: false,
+          },
+        }
+      };
+
+
+      // this.barChartData = [
+      //   {data: res['BanHang'], label: 'Bán hàng'},
+      //   {data: res['NhapHang'], label: 'Nhập hàng'}
+      // ];
+      // this.barChartLabels = res['date'];
+    });
+
   }
 
   convertDateYYYYMMDD(date: Date) {

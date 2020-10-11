@@ -14,4 +14,9 @@ export class DashboardService {
     const url = environment.apiUrl + '/report/dash-board';
     return this.http.post<any>(url, {from: from, to: to});
   }
+
+  getDataBarChart(from: string, to: string) {
+    const url = environment.apiUrl + '/report/data-bar-chart';
+    return this.http.post<any>(url, {from: from, to: to});
+  }
 }

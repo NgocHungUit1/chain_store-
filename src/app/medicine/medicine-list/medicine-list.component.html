@@ -18,7 +18,10 @@
       <div class="select-product">
         <mat-form-field title="">
           <mat-label>Tìm kiếm mã, tên, đăng ký, sx ...</mat-label>
-          <input matInput [formControl]="searchProductForm" placeholder="" #input>
+          <input matInput [formControl]="searchProductForm"
+                 #tooltip="matTooltip"
+                 matTooltip="Tìm kiếm mã, tên sản phẩm , số đăng ký, nhà sản xuất "
+                 placeholder="" #input>
           <button mat-icon-button matPrefix>
             <mat-icon>search</mat-icon>
           </button>
