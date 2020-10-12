@@ -17,6 +17,8 @@ import { AppSidebarComponent } from './sidebar/sidebar.component';
 import { AppBreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { CustomerService } from '../../customer/customer.service';
+import {UserService} from '../../user/user.service';
+import {NotifierService} from 'angular-notifier';
 
 /** @title Responsive sidenav */
 @Component({
@@ -36,6 +38,10 @@ export class FullComponent implements OnDestroy {
   showHide: boolean;
   sidebarOpened;
 
+  name_store: string = "Admin";
+  branchList: any;
+  branchLoginId: number;
+
   public showSearch = false;
 
   public config: PerfectScrollbarConfigInterface = {};
@@ -47,6 +53,8 @@ export class FullComponent implements OnDestroy {
     public menuItems: MenuItems,
     public router: Router,
     public customerService: CustomerService,
+    public userService: UserService,
+    public notifySer: NotifierService,
   ) {
     this.mobileQuery = media.matchMedia('(min-width: 768px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -56,13 +64,35 @@ export class FullComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.mobileQuery.removeListener(this._mobileQueryListener);
   }
-
-  name_store: string = "Admin";
   // Mini sidebar
   ngOnInit(): void {
     this.customerService.getNameStore().subscribe(name => {
       this.name_store = name;
     });
+    this.userService.getStoreBranchList().subscribe(res => {
+      this.branchList = res.body;
+
+    });
+
+    this.userService.getBranchLogin().subscribe(branchLogin => {
+      this.branchLoginId = branchLogin;
+    });
     this.menuItems.refreshMenuItem();
+  }
+
+  public changeBranch(event) {
+    console.log(event.value);
+    const data = {'branch_store_id': event.value};
+    this.userService.updateBranchLogin(data).subscribe(res => {
+      if (res === true) {
+        this.notifySer.notify('success', 'Chuyển chi nhánh thành công.');
+        setTimeout(function() {
+          location.reload();
+        }, 500);
+      } else {
+        this.notifySer.notify('error', 'Đã có lỗi xảy ra, vui lòng kiểm tra lại.');
+      }
+    }, (error) => {
+    });
   }
 }

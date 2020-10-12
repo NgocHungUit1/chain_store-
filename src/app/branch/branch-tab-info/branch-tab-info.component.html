@@ -1,0 +1,122 @@
+<div fxLayout="row wrap" *ngIf="branch !== null" class="m-b-20">
+  <div fxFlex="100">
+    <h3 style="color: #009688">{{branch.name}}</h3>
+  </div>
+  <div fxFlex="100">
+    <div fxLayout="row wrap">
+      <div fxFlex="100" class="product-info">
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Tên chi nhánh: </span> {{branch.name}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Tên người đại diện: </span> {{branch?.representative_name}}
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Số điện thoại: </span> {{branch.phone_number}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Chứng minh nhân dân: </span> {{branch?.representative_certificate_number}}
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Email: </span> {{branch.email}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">SĐT người đại diện: </span> {{branch.representative_phone}}
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Địa chỉ: </span> {{branch.address}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Người chịu trách nhiệm: </span> {{branch.responsible_person_name}}
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Tỉnh/Thành phố: </span><span
+              *ngIf="branch.province">{{branch.province.name}}</span>
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Số chứng chỉ hành nghề: </span> {{branch.practicing_certificate_no}}
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Quận/Huyện: </span><span
+            *ngIf="branch.district">{{branch.district.name}}</span>
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Trình độ chuyên môn: </span> {{branch.professional_qualification}}
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Phường/Xã: </span><span
+            *ngIf="branch.ward">{{branch.ward.name}}</span>
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">SĐT người chịu trách nhiệm: </span> {{branch.responsible_person_phone_number}}
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Số đăng ký nhà thuốc: </span> {{branch.pharmacy_registration_number}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Email người chịu trách nhiệm: </span> {{branch.responsible_person_email}}
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Giấy phép kinh doanh: </span> {{branch.business_registration_certificate}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="user-field-label">Trạng thái: </span>
+            <label *ngIf="branch.status == '9'" class="label label-warning">Ngưng hoạt động</label>
+            <label *ngIf="branch.status == '10'" class="label label-success">Hoạt động</label>
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" class="product-info-row product-info-row-last">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Loại hinhg nhà thuốc:{{branch.pharmacy_type }}</span>
+          </div>
+          <div fxFlex="52"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div fxFlex="100" align="end">
+    <button class="m-r-10" mat-raised-button color="primary" (click)="openBranchFormDialog(branch.id)">
+      <mat-icon>edit</mat-icon>
+      Cập nhật
+    </button>
+    <button class="m-r-10" mat-raised-button color="warn" (click)="openDeleteBranch(branch.id)">
+      <mat-icon>delete</mat-icon>
+      Xóa
+    </button>
+  </div>
+</div>

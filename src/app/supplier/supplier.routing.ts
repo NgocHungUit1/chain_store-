@@ -21,6 +21,10 @@ export const SupplierRoutes: Routes = [
         path: 'user',
         loadChildren: () => import('../user/user.module').then(m => m.UserModule)
       },
+      {
+        path: 'branch',
+        loadChildren: () => import('../branch/branch.module').then(m => m.BranchModule)
+      },
     ]
   }
 ];

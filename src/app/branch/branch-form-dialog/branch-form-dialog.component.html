@@ -1,0 +1,274 @@
+<h1 mat-dialog-title *ngIf="!(branch_id !== null && branch_id !== undefined)">Thêm chi nhánh</h1>
+<h1 mat-dialog-title *ngIf="branch_id !== null && branch_id !== undefined">Cập nhật chi nhánh</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <div fxLayout="row">
+      <div fxLayout="row wrap">
+        <div fxFlex="48">
+          <div fxLayout="row wrap">
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Tên chi nhánh</mat-label>
+                <input matInput tabindex="1" formControlName="name">
+                <mat-error *ngIf="form.controls['name'].hasError('required')">Tên chi nhánh không được bỏ trống
+                </mat-error>
+                <mat-error *ngIf="form.controls['name'].hasError('maxlength')">Tên chi nhánh quá dài
+                </mat-error>
+                <mat-error
+                  *ngIf="form.controls['name'].hasError('ajaxValidator')">
+                  {{ form.controls['name'].getError('ajaxValidator')?.value}}</mat-error>
+              </mat-form-field>
+            </div>
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Số điện thoại</mat-label>
+                <input matInput tabindex="2" formControlName="phone_number">
+                <mat-error *ngIf="form.controls['phone_number'].hasError('required')">Số điện thoại không được bỏ trống
+                </mat-error>
+                <mat-error *ngIf="form.controls['phone_number'].hasError('maxlength')">Số điện thoại quá dài
+                </mat-error>
+                <mat-error
+                  *ngIf="form.controls['phone_number'].hasError('ajaxValidator')">
+                  {{ form.controls['phone_number'].getError('ajaxValidator')?.value}}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Email</mat-label>
+                <input matInput tabindex="3" formControlName="email">
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Địa chỉ</mat-label>
+                <textarea matInput tabindex="4" formControlName="address" rows="2"></textarea>
+                <mat-error *ngIf="form.controls['address'].hasError('required')">Địa chỉ không được bỏ trống
+                </mat-error>
+                <mat-error *ngIf="form.controls['address'].hasError('maxlength')">Địa chỉ quá dài
+                </mat-error>
+                <mat-error
+                  *ngIf="form.controls['address'].hasError('ajaxValidator')">
+                  {{ form.controls['address'].getError('ajaxValidator')?.value}}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <input matInput placeholder="Tỉnh/Thành phố" tabindex="5" aria-label="Tỉnh/Thành phố"
+                       [matAutocomplete]="province" formControlName="province">
+                <button mat-icon-button matPrefix>
+                  <mat-icon>search</mat-icon>
+                </button>
+                <button mat-icon-button matSuffix (click)="this.form.patchValue({province: null});"
+                        *ngIf="this.form.controls['province'].value">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <mat-autocomplete #province="matAutocomplete" [displayWith]="displayLocation"
+                                  (optionSelected)='onProvinceChange($event.option.value)'>
+                  <mat-option *ngFor="let province of filteredProvinces | async" [value]="province">
+                    <span>{{province.name}}</span>
+                  </mat-option>
+                </mat-autocomplete>
+                <mat-error *ngIf="form.controls['province'].hasError('required')">Tỉnh/Thành phố không được bỏ trống
+                </mat-error>
+                <mat-error
+                  *ngIf="form.controls['province'].hasError('ajaxValidator')">
+                  {{ form.controls['province'].getError('ajaxValidator')?.value}}</mat-error>
+              </mat-form-field>
+            </div>
+            <div fxFlex="100">
+              <mat-form-field>
+                <input matInput placeholder="Quận/Huyện" tabindex="6" aria-label="Quận/Huyện"
+                       [matAutocomplete]="district"
+                       formControlName="district">
+                <button mat-icon-button matPrefix>
+                  <mat-icon>search</mat-icon>
+                </button>
+                <button mat-icon-button matSuffix (click)="this.form.patchValue({district: null});"
+                        *ngIf="this.form.controls['district'].value">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <mat-autocomplete #district="matAutocomplete" [displayWith]="displayLocation"
+                                  (optionSelected)='onDistrictChange($event.option.value)'>
+                  <mat-option *ngFor="let district of filteredDistricts | async" [value]="district">
+                    <span>{{district.name}}</span>
+                  </mat-option>
+                </mat-autocomplete>
+                <mat-error *ngIf="form.controls['district'].hasError('required')">Quận/Huyện không được bỏ trống
+                </mat-error>
+                <mat-error
+                  *ngIf="form.controls['district'].hasError('ajaxValidator')">
+                  {{ form.controls['district'].getError('ajaxValidator')?.value}}</mat-error>
+              </mat-form-field>
+            </div>
+            <div fxFlex="100">
+              <mat-form-field>
+                <input matInput placeholder="Phường/Xã" tabindex="7" aria-label="Phường/Xã" [matAutocomplete]="ward"
+                       formControlName="ward">
+                <button mat-icon-button matPrefix>
+                  <mat-icon>search</mat-icon>
+                </button>
+                <button mat-icon-button matSuffix (click)="this.form.patchValue({ward: null});"
+                        *ngIf="this.form.controls['ward'].value">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <mat-autocomplete #ward="matAutocomplete" [displayWith]="displayLocation">
+                  <mat-option *ngFor="let ward of filteredWards | async" [value]="ward">
+                    <span>{{ward.name}}</span>
+                  </mat-option>
+                </mat-autocomplete>
+                <mat-error *ngIf="form.controls['ward'].hasError('required')">Phường/Xã không được bỏ trống
+                </mat-error>
+                <mat-error
+                  *ngIf="form.controls['district'].hasError('ajaxValidator')">
+                  {{ form.controls['district'].getError('ajaxValidator')?.value}}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Số đăng ký nhà thuốc</mat-label>
+                <input matInput tabindex="8" formControlName="pharmacy_registration_number">
+                <mat-error *ngIf="form.controls['pharmacy_registration_number'].hasError('maxlength')">Số đăng ký nhà thuốc quá dài
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Giấy phép kinh doanh</mat-label>
+                <input matInput tabindex="9" formControlName="business_registration_certificate">
+                <mat-error *ngIf="form.controls['business_registration_certificate'].hasError('maxlength')">Giấy phép kinh doanh quá dài
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="48">
+              <mat-form-field>
+                <mat-select placeholder="Trạng thái" tabindex="10" [formControl]="form.controls['status']">
+                  <mat-option *ngFor="let item of statusItems" [value]="item.id">
+                    {{item.title}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.controls['status'].hasError('required')">Vui lòng chọn trạng thái</mat-error>
+              </mat-form-field>
+            </div>
+
+          </div>
+        </div>
+
+        <div fxFlex="4"></div>
+
+        <div fxFlex="48">
+          <div fxLayout="row wrap">
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Loại hình nhà thuốc</mat-label>
+                <input matInput tabindex="11" formControlName="pharmacy_type">
+                <mat-error *ngIf="form.controls['pharmacy_type'].hasError('maxlength')">
+                  Loại hình nhà thuốc quá dài
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Tên người đại diện</mat-label>
+                <input matInput tabindex="12" formControlName="representative_name">
+                <mat-error *ngIf="form.controls['representative_name'].hasError('maxlength')">
+                  Tên người đại diện quá dài
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Chứng minh nhân dân</mat-label>
+                <input matInput tabindex="13" formControlName="representative_certificate_number">
+                <mat-error *ngIf="form.controls['representative_certificate_number'].hasError('maxlength')">
+                  Chứng minh nhân dân quá dài
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>SĐT người đại diện</mat-label>
+                <input matInput tabindex="14" formControlName="representative_phone">
+                <mat-error *ngIf="form.controls['representative_phone'].hasError('maxlength')">
+                  SĐT người đại diện quá dài
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Người chịu trách nhiệm</mat-label>
+                <input matInput tabindex="15" formControlName="responsible_person_name">
+                <mat-error *ngIf="form.controls['responsible_person_name'].hasError('maxlength')">
+                  Người chịu trách nhiệm quá dài
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Số chứng chỉ hành nghề</mat-label>
+                <input matInput tabindex="16" formControlName="practicing_certificate_no">
+                <mat-error *ngIf="form.controls['practicing_certificate_no'].hasError('maxlength')">
+                  Số chứng chỉ hành nghề quá dài
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Trình độ chuyên môn</mat-label>
+                <input matInput tabindex="17" formControlName="professional_qualification">
+                <mat-error *ngIf="form.controls['professional_qualification'].hasError('maxlength')">
+                  Trình độ chuyên môn quá dài
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>SĐT người chịu trách nhiệm</mat-label>
+                <input matInput tabindex="18" formControlName="responsible_person_phone_number">
+                <mat-error *ngIf="form.controls['responsible_person_phone_number'].hasError('maxlength')">
+                  SĐT người chịu trách nhiệm quá dài
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Email người chịu trách nhiệm</mat-label>
+                <input matInput tabindex="19" formControlName="responsible_person_email">
+                <mat-error *ngIf="form.controls['responsible_person_email'].hasError('maxlength')">
+                  Email người chịu trách nhiệm quá dài
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="14" (click)="submit()">
+    <mat-icon>save</mat-icon>
+    Lưu
+  </button>
+  <button mat-button (click)="onNoClick()" tabindex="-1">
+    <mat-icon>cancel</mat-icon>
+    Bỏ qua
+  </button>
+</div>
