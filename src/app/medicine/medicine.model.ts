@@ -28,6 +28,7 @@ export class MedicineFilter extends ApiFilterBase{
   page = 1;
   pageSize = 15;
   sort = '';
+  keyword = '';
 
   getModelSearch() {
     return 'MedicineSearch';

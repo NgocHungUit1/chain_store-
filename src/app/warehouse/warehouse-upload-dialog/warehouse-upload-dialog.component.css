@@ -5,3 +5,14 @@
 .example-month-picker .mat-calendar-arrow {
   display: none;
 }
+
+.new-file {
+  color: red;
+  font-size: 16px;
+  font-weight: 600;
+  font-style: italic;
+}
+
+p {
+  font-size: 15px;
+}

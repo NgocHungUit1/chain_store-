@@ -6,6 +6,13 @@
 .mat-column-unit {
   flex: 1 1 0%;
 }
+
 .mat-column-main_active_substance, .mat-column-content {
   flex: 2 1 0%;
+}
+
+.select-product {
+  margin-left: 10px;
+  font-size: 1rem;
+  min-width: 215px;
 }

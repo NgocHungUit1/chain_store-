@@ -10,22 +10,24 @@ import { DemoMaterialModule } from '../demo-material-module';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { SaleReportRoutes } from './sale-report.routing';
 import { SaleReportMainComponent } from './sale-report-main/sale-report-main.component';
+import { ChartsModule } from 'ng2-charts';
 
 
 @NgModule({
   declarations: [SaleReportMainComponent],
-  imports: [
-    CommonModule,
-    RouterModule.forChild(SaleReportRoutes),
-    FormsModule,
-    ReactiveFormsModule,
-    FlexLayoutModule,
-    QuillModule.forRoot(),
-    DragulaModule.forRoot(),
-    PerfectScrollbarModule,
-    Ng2SearchPipeModule,
-    DemoMaterialModule
-  ]
+    imports: [
+        CommonModule,
+        RouterModule.forChild(SaleReportRoutes),
+        FormsModule,
+        ReactiveFormsModule,
+        FlexLayoutModule,
+        QuillModule.forRoot(),
+        DragulaModule.forRoot(),
+        PerfectScrollbarModule,
+        Ng2SearchPipeModule,
+        DemoMaterialModule,
+        ChartsModule
+    ]
 })
 export class SaleReportModule {
 }
