@@ -2,7 +2,7 @@
 <!-- Main wrapper - style you can find in pages.scss -->
 <!-- ============================================================== -->
 <div class="main-container cart" [dir]="dir"
-  [ngClass]="{'minisidebar': minisidebar, 'boxed': boxed, 'danger': danger, 'blue': blue, 'green': green, 'dark': dark, 'sidebar-opened': sidebarOpened, 'sidebar-closed': !sidebarOpened }">
+     [ngClass]="{'minisidebar': minisidebar, 'boxed': boxed, 'danger': danger, 'blue': blue, 'green': green, 'dark': dark, 'sidebar-opened': sidebarOpened, 'sidebar-closed': !sidebarOpened }">
   <!-- ============================================================== -->
   <!-- Topbar - style you can find in header.scss -->
   <!-- ==============================================================
@@ -30,7 +30,7 @@
     <!-- ============================================================== -->
 
     <button mat-icon-button (click)="snav.toggle()" fxShow.sm="true" fxShow.xs="true" fxShow.gt-lg="false"
-      fxShow="false">
+            fxShow="false">
       <mat-icon>menu</mat-icon>
     </button>
     <!-- ============================================================== -->
@@ -40,17 +40,29 @@
     <div class="select-product">
       <mat-form-field>
         <input class="input-search-product" style="outline: 0;" type="text" [formControl]="selectProduct" matInput
-          [matAutocomplete]="chooseProduct" placeholder="Tìm hàng hóa ">
-        <button mat-button matPrefix>
+               [matAutocomplete]="chooseProduct" placeholder="Tìm hàng hóa ">
+        <button mat-icon-button matPrefix>
           <mat-icon>search</mat-icon>
         </button>
         <mat-autocomplete #chooseProduct="matAutocomplete" (optionSelected)="onSelectedProduct($event.option.value)">
-          <mat-option *ngFor="let product of filteredProducts | async" [value]="product">
-            <img class="example-option-img " aria-hidden [src]="product.default_image" height="25">
-            <span class="m-l-10"
-              *ngIf="product.base_unit !== null">{{ product.product_no+' | '+product.product_name +' - '+ product.base_unit }}
-              - Giá : {{ product.sell_price | number }}</span>
-            <span class="m-l-10" *ngIf="product.base_unit == null">{{ product.product_name }}</span>
+          <mat-option fxLayout="row" *ngFor="let product of filteredProducts | async" [value]="product"
+                      style="min-height: 70px; line-height:25px !important;"
+                      title="{{ product.product_name }}">
+            <img fxFlex="25" class="example-option-img " aria-hidden [src]="product.default_image" width="22">
+
+            <span fxFlex="75" style="margin-left: 5px;" class="m-l-10"
+                  *ngIf="product.base_unit !== null">
+              <b style="font-size: 12px;">{{ product.product_name  }}</b>
+              <br>
+              {{ product.product_no }} &nbsp;Giá: {{ product.sell_price | number }} {{ product.base_unit }}
+              -Tồn:{{ product.quantity_of_stock }}
+            </span>
+
+            <span fxFlex="75" class="m-l-10" *ngIf="product.base_unit == null">
+              <b style="font-size: 12px;">{{ product.product_name }}</b>
+              <br>
+              {{ product.product_no }} &nbsp;Giá: {{ product.sell_price | number }}
+            </span>
 
           </mat-option>
         </mat-autocomplete>
@@ -83,10 +95,10 @@
 
     <nav mat-tab-nav-bar>
       <a mat-tab-link *ngFor="let mItemInvoice of listmItemInvoice" (click)="activeLink = mItemInvoice.invoice_id"
-        [active]="activeLink == mItemInvoice.invoice_id" (click)="activeInvoice(mItemInvoice?.invoice_id)" mat-primary>
+         [active]="activeLink == mItemInvoice.invoice_id" (click)="activeInvoice(mItemInvoice?.invoice_id)" mat-primary>
         <span *ngIf="mItemInvoice?.invoice_id > 0">{{ mItemInvoice.invoice_name }}</span>
         <span
-          *ngIf="mItemInvoice?.invoice_id < 0">{{ mItemInvoice.invoice_name+' '+(mItemInvoice?.invoice_id*-1) }}</span>
+          *ngIf="mItemInvoice?.invoice_id < 0">{{ mItemInvoice.invoice_name + ' ' + (mItemInvoice?.invoice_id * -1) }}</span>
         <button mat-icon-button (click)="deleteInvoice(mItemInvoice?.invoice_id)">
           <mat-icon>close</mat-icon>
         </button>
@@ -113,13 +125,13 @@
   <!-- End Topbar - style you can find in pages.scss -->
   <!-- ============================================================== -->
   <mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 0 : 0"
-    [ngClass]="{'minisidebar': minisidebar}">
+                         [ngClass]="{'minisidebar': minisidebar}">
     <!-- ============================================================== -->
     <!-- Sidebar - style you can find in sidebar.scss -->
     <!-- ============================================================== -->
     <mat-sidenav #snav id="snav" [mode]="mobileQuery.matches ? 'side' : 'over'" fixedTopGap="0"
-      [opened]="mobileQuery.matches" [disableClose]="mobileQuery.matches" (open)="sidebarOpened = true"
-      (close)="sidebarOpened = false">
+                 [opened]="mobileQuery.matches" [disableClose]="mobileQuery.matches" (open)="sidebarOpened = true"
+                 (close)="sidebarOpened = false">
       <!-- <app-sidebar></app-sidebar> -->
     </mat-sidenav>
     <!-- ============================================================== -->
@@ -148,7 +160,8 @@
           </mat-list-item>
           <mat-list-item>
             <mat-checkbox color="warn" [(ngModel)]="green" (change)="danger = blue = false" class="text-megna">Teal
-              Green</mat-checkbox>
+              Green
+            </mat-checkbox>
           </mat-list-item>
           <mat-list-item>
             <mat-checkbox color="warn" [(ngModel)]="blue" (change)="green = danger = false" class="text-info">Blue

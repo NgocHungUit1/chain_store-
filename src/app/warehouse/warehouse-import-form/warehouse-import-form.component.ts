@@ -20,6 +20,8 @@ import { ProductService } from '../../product/product.service';
 import { WarehouseParcelFormDialogComponent } from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
 import { WarehouseDiscountDialogComponent } from '../warehouse-discount-dialog/warehouse-discount-dialog.component';
 import { SupplierFormDialogComponent } from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
+import { ProductMedicineDialogComponent } from '../../product/product-medicine-dialog/product-medicine-dialog.component';
+import { ProductMerchandiseFormDialogComponent } from '../../product/product-merchandise-form-dialog/product-merchandise-form-dialog.component';
 
 @Component({
   selector: 'app-warehouse-import-form',
@@ -309,16 +311,29 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     }
   }
 
+  /**
+   * Event choice search
+   * @param product
+   */
   onSelectedProduct(product) {
-    this.productSer.getDetail(product.id, 'productUnits').subscribe(res => {
+    this.handleAddProductToList(product.id);
+  }
+
+  /**
+   * Handle add product to list
+   * @param product_id
+   */
+  handleAddProductToList(product_id) {
+    this.productSer.getDetail(product_id, 'productUnits').subscribe(res => {
+      // console.log(res);
       const warehouseProduct = new WarehouseProduct();
-      warehouseProduct.product_id = product.id;
-      warehouseProduct.product = product;
+      warehouseProduct.product_id = res['id'];
+      warehouseProduct.product = res;
       warehouseProduct.quantity = 1;
-      warehouseProduct.price = (product.original_price !== null) ? product.original_price : 0;
+      warehouseProduct.price = (res['original_price'] !== null) ? res['original_price'] : 0;
       warehouseProduct.discount = 0;
       warehouseProduct.discount_type = 'price';
-      warehouseProduct.amount = (product.original_price !== null) ? product.original_price : 0;
+      warehouseProduct.amount = (res['original_price'] !== null) ? res['original_price'] : 0;
       warehouseProduct.productUnits = res['productUnits'];
       warehouseProduct.product_parcels = [];
 
@@ -602,6 +617,45 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       WindowPrt.focus();
       WindowPrt.print();
       WindowPrt.close();
+    });
+  }
+
+  openProductMedicineDialog(action, obj) {
+    obj.action = action;
+    obj.title = 'Thêm thuốc';
+    obj.product_id = null;
+    obj.copy_product_id = null;
+    const dialogRef = this.dialog.open(ProductMedicineDialogComponent, {
+      data: obj,
+      width: '60%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // console.log(result);
+      if (result['event'] === 'Save') {
+        this.handleAddProductToList(result['data']['id']);
+      }
+    });
+  }
+
+  openProductMerchandiseFormDialog(action, obj) {
+    obj.action = action;
+    obj.title = 'Thêm hàng hóa';
+    obj.product_id = null;
+    obj.copy_product_id = null;
+    const dialogRef = this.dialog.open(ProductMerchandiseFormDialogComponent, {
+      data: obj,
+      width: '60%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // this.loadData();
+      // console.log(result);
+      if (result['event'] === 'Save') {
+        this.handleAddProductToList(result['data']['id']);
+      }
     });
   }
 

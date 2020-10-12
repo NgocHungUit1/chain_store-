@@ -8,7 +8,7 @@
 .select-product {
   margin-left: 50px;
   font-size: 1rem;
-  min-width: 215px;
+  min-width: 450px;
 }
 
 .mat-column-quantity, .mat-column-price {
