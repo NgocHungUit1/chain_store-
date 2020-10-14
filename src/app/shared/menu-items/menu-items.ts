@@ -101,7 +101,7 @@ const MENUITEMS = [
   },
   {
     state: 'partner',
-    name: 'Nhân viên',
+    name: 'Quản lý cửa hàng',
     type: 'sub',
     icon: 'assignment_ind',
     roles: ['ADMIN'],
