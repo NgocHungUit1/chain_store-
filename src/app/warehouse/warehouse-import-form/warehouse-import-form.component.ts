@@ -528,11 +528,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   /**
    * Main handel print
-   * @param id
+   * @param id mainService
    */
   printWarehouse(id: string) {
     this.mainService.getDataWarehouseToPrint(id).subscribe(res => {
-
       let printContent = '<title>' + res.no + '</title>';
       printContent += '<style>table {' +
         'border-collapse: collapse;' +
@@ -563,16 +562,14 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         '<td style="text-align:right;">' + res?.discount_amount + '</td>' +
         '</tr>' +
         '<tr>' +
-        '<td style="font-weight: 600;">Số lượng</td>' +
-        '<td style="text-align:right;">' + res?.total_quantity + '</td>' +
+        '<td style="font-weight: 600;" >Tính vào công nợ </td>' +
+        '<td style="text-align:right;">' + res?.remain_amount + '</td>' +
         '<td style="font-weight: 600;">Tiền trả nhà cung cấp </td>' +
         '<td style="text-align:right;">' + res?.paid_amount + '</td>' +
         '</tr>' +
         '<tr>' +
-        '<td style="font-weight: 600;">Ghi chú</td>' +
-        '<td>' + res?.note + '</td>' +
-        '<td style="font-weight: 600;">Tính vào công nợ </td>' +
-        '<td style="text-align:right;">' + res?.remain_amount + '</td>' +
+        '<td style="font-weight: 600;" >Ghi chú</td>' +
+        '<td colspan="3">' + res?.note + '</td>' +
         '</tr>' +
         '</table>';
 
@@ -657,6 +654,16 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         this.handleAddProductToList(result['data']['id']);
       }
     });
+  }
+
+  /**
+   * Tra du tien tong tien hoa don
+   */
+  paidAmount() {
+    this.form.patchValue({
+      paid_amount: this.form.get('total_amount').value,
+    });
+    this.recalculateWarehouse();
   }
 
 }

@@ -97,7 +97,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       // name : [null, Validators.required],
       product_no: [
         null,
-        // Validators.required
+        Validators.required
       ],
       barcode: [null],
       product_type: ['merchandise'],
@@ -107,7 +107,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       placements: [[]],
       product_name: [null, Validators.required],
       sell_price: [null, Validators.required],
-      original_price: [null],
+      original_price: [null, Validators.required],
       weight: [null],
       base_unit: [null, Validators.required],
       medicine_id: [null],
@@ -197,7 +197,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
 
       data.original_price = numeral(data.original_price).value();
       data.sell_price = numeral(data.sell_price).value();
-      
+
       if (this.product_id === null) {
         // Create New
         if (data.product_no === null || data.product_no === "") {
@@ -466,7 +466,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
 
   /**
    * Format input number
-   * @Nghia 
+   * @Nghia
    */
   inputformatNumber(event: any) {
     event.target.value = numeral(event.target.value).format('0,0');

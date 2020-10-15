@@ -250,13 +250,13 @@
                 </mat-select>
               </mat-form-field>
             </div>
-            <div fxFlex="100">
-              <mat-form-field>
-                <mat-label>Số lượng</mat-label>
-                <input matInput tabindex="4" formControlName="quantity" value="{{ form.get('quantity').value | number}}"
-                       readonly="readonly">
-              </mat-form-field>
-            </div>
+<!--            <div fxFlex="100">-->
+<!--              <mat-form-field>-->
+<!--                <mat-label>Số lượng</mat-label>-->
+<!--                <input matInput tabindex="4" formControlName="quantity" value="{{ form.get('quantity').value | number}}"-->
+<!--                       readonly="readonly">-->
+<!--              </mat-form-field>-->
+<!--            </div>-->
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Tổng tiền hàng</mat-label>
@@ -285,6 +285,10 @@
               <mat-form-field>
                 <mat-label>Tiền trả nhà cung cấp</mat-label>
                 <input matInput tabindex="7" formControlName="paid_amount" (change)="recalculateWarehouse();">
+                <button mat-raised-button color="primary" matSuffix (click)="paidAmount()">
+                  Trả đủ
+<!--                  <mat-icon>delete</mat-icon>-->
+                </button>
               </mat-form-field>
             </div>
             <div fxFlex="100">

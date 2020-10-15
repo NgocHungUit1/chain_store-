@@ -78,10 +78,11 @@ tr.example-element-row:not(.example-expanded-row):active {
   min-width: 215px;
 }
 
-.title-time-filter{
+.title-time-filter {
   padding: 16px 0 0 20px;
 }
-.mat-card{
-  margin : 0px !important;
+
+.mat-card {
+  margin: 0px !important;
 }
 

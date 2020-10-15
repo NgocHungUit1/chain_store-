@@ -57,7 +57,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
 
   columnsHeader = {
     '#': '#',
-    'product_no': 'Mã hàng',
+    // 'product_no': 'Mã hàng',
     'product_name': 'Tên hàng',
     // 'product_parcel': 'Lô',
     'product_unit_id': 'Đơn vị',
@@ -70,7 +70,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
   displayedColumns: string[] = [];
   columnsToDisplay: string[] = [
     '#',
-    'product_no',
+    // 'product_no',
     'product_name',
     // 'product_parcel',
     'product_unit_id',

@@ -188,16 +188,14 @@ export class WarehouseInfoTabComponent implements OnChanges {
         '<td style="text-align:right;">' + res?.discount_amount + '</td>' +
         '</tr>' +
         '<tr>' +
-        '<td style="font-weight: 600;">Số lượng</td>' +
-        '<td style="text-align:right;">' + res?.total_quantity + '</td>' +
+        '<td style="font-weight: 600;" >Tính vào công nợ </td>' +
+        '<td style="text-align:right;">' + res?.remain_amount + '</td>' +
         '<td style="font-weight: 600;">Tiền trả nhà cung cấp </td>' +
         '<td style="text-align:right;">' + res?.paid_amount + '</td>' +
         '</tr>' +
         '<tr>' +
-        '<td style="font-weight: 600;">Ghi chú</td>' +
-        '<td>' + res?.note + '</td>' +
-        '<td style="font-weight: 600;">Tính vào công nợ </td>' +
-        '<td style="text-align:right;">' + res?.remain_amount + '</td>' +
+        '<td style="font-weight: 600;" >Ghi chú</td>' +
+        '<td colspan="3">' + res?.note + '</td>' +
         '</tr>' +
         '</table>';
 
