@@ -5,9 +5,11 @@
 .mat-column-quantity_of_stock {
   flex: 1 1 0%;
 }
+
 .mat-column-product_name {
   flex: 2 1 0%;
 }
+
 table {
   width: 100%;
 }
@@ -55,6 +57,7 @@ tr.example-element-row:not(.example-expanded-row):active {
 .example-element-description-attribution {
   opacity: 0.5;
 }
+
 .example-expanded-row {
   font-weight: 700;
   background-color: #ebf5ea;
@@ -68,4 +71,12 @@ tr.example-element-row:not(.example-expanded-row):active {
   margin-left: 10px;
   font-size: 1rem;
   min-width: 215px;
+}
+
+.title-time-filter {
+  padding: 16px 0 0 20px;
+}
+
+.mat-card {
+  margin: 0px !important;
 }

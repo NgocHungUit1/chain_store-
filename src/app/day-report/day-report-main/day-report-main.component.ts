@@ -138,7 +138,6 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
     filter.date_to = objDateFilter.date_to;
     filter.order_status = this.orderStatusFilter.controls['status'].value;
 
-
     return filter;
   }
 

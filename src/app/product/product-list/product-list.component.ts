@@ -11,7 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ProductMerchandiseFormDialogComponent } from '../product-merchandise-form-dialog/product-merchandise-form-dialog.component';
-import { FormControl } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/internal/observable/of';
 import { ProductUploadDialogComponent } from '../product-upload-dialog/product-upload-dialog.component';
@@ -35,7 +35,8 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     private service: ProductService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private notifySer: NotifierService
+    private notifySer: NotifierService,
+    private fb: FormBuilder,
   ) {
     super();
   }
@@ -45,6 +46,33 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
 
   apiFilter: ProductFilter;
   expandedElement: Product | null;
+
+  typeProductFilter: FormGroup;
+
+  typeProductFilterList = [
+    {
+      'value': 'medicine',
+      'name': 'Thuốc',
+    },
+    {
+      'value': 'merchandise',
+      'name': 'Hàng hóa',
+    },
+  ];
+
+
+  statusProductFilter: FormGroup;
+
+  statusProductFilterList = [
+    {
+      'value': 10,
+      'name': 'Kinh doanh',
+    },
+    {
+      'value': 9,
+      'name': 'Ngừng kinh doanh',
+    },
+  ];
 
   columnsHeader = {
     '#': '#',
@@ -90,6 +118,8 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.expand = 'medicine,productUnits,productPlacements,group,images';
+    filter.product_type = this.typeProductFilter.controls['status'].value;
+    filter.status = this.statusProductFilter.controls['status'].value;
     return filter;
   }
 
@@ -108,7 +138,37 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     });
   }
 
+
+  /**
+   * Tim kiem theo phan loai sản phẩm
+   */
+  typeProductFilterChange() {
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
+  }
+
+  /**
+   * Tim kiem theo trang thai sản phẩm
+   */
+  statusProductFilterChange() {
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
+  }
+
   ngOnInit() {
+
+    this.typeProductFilter = this.fb.group({
+      status: [
+        ['medicine', 'merchandise']
+      ],
+    });
+
+    this.statusProductFilter = this.fb.group({
+      status: [
+        [10, 9]
+      ],
+    });
+
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
 

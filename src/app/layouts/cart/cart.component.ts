@@ -1,4 +1,3 @@
-
 import { MediaMatcher } from '@angular/cdk/layout';
 import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
@@ -26,6 +25,7 @@ import { PriceListService } from '../../price-book/price-list.service';
 import { ProductService } from '../../product/product.service';
 import { OrderService } from '../../sale/order.service';
 import { ItemInvoice } from '../../sale/order.model';
+import { NotifierService } from 'angular-notifier';
 
 /** @title Responsive sidenav */
 @Component({
@@ -66,6 +66,7 @@ export class CartComponent implements OnDestroy {
     private orderService: OrderService,
     private productSer: ProductService,
     private priceListSer: PriceListService,
+    private notifySer: NotifierService
   ) {
     this.mobileQuery = media.matchMedia('(min-width: 768px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -123,8 +124,13 @@ export class CartComponent implements OnDestroy {
 
 
   onSelectedProduct(product) {
-    this.handlePriceListProduct(product);
+    if (product['quantity_of_stock'] > 0) {
+      this.handlePriceListProduct(product);
+    } else {
+      this.notifySer.notify('warning', 'Không đủ tồn kho.');
+    }
     this.selectProduct.patchValue(null);
+
   }
 
   handlePriceListProduct(product: Product) {
@@ -152,8 +158,8 @@ export class CartComponent implements OnDestroy {
   activeInvoice(invoice_id: number) {
     this.orderService.activeInvoice(invoice_id);
   }
-  // Mini sidebar
 
+  // Mini sidebar
 
 
 }

@@ -8,7 +8,7 @@
 .select-product {
   margin-left: 50px;
   font-size: 1rem;
-  min-width: 215px;
+  min-width: 450px;
 }
 
 .mat-column-quantity, .mat-column-price {
@@ -53,6 +53,11 @@
 .mat-column-product_name {
   flex: 1 1 0px;
   max-width: 160px;
+}
+
+.mat-column-discount {
+  flex: 1 1 0px;
+  max-width: 25px;
 }
 
 .mat-table .mat-form-field {

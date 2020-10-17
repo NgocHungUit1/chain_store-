@@ -4,52 +4,66 @@
   border-radius: 0px;
   min-height: 839px;
 }
+
 .select-product {
   margin-left: 50px;
   font-size: 1rem;
-  min-width: 215px;
+  min-width: 450px;
 }
+
 .mat-column-quantity, .mat-column-price {
   max-width: 32px;
   text-align: right;
 }
+
 .mat-column-discount {
   max-width: 35px;
   text-align: right;
 }
+
 .mat-column-amount {
   max-width: 35px;
   text-align: right;
 }
+
 .mat-column-product_unit_id {
   max-width: 36px;
   text-align: right;
 }
+
 .mat-column-product_parcel {
   flex: 1 1 0px;
   width: 20%;
   min-width: 200px;
 }
+
 .mat-column-product_no {
   flex: 1 1 0px;
 }
+
 .mat-column-actions {
   max-width: 30px;
   text-align: center;
 }
+
 .mat-column-product_name {
-  flex: 2 1 0px;
+  flex: 1 1 0px;
+  max-width: 160px;
 }
+
 .mat-table .mat-form-field {
   padding-left: 10px;
 }
+
 .mat-table .mat-form-field.parcel-field {
   padding-left: 0px;
   width: 80%;
 }
+
 .quantity-input {
   text-align: center;
 }
+
 .price-input, .discount-input {
   text-align: right;
 }

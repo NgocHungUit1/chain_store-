@@ -50,7 +50,7 @@ export class WarehouseProduct {
   product_id: number;
   warehouse_id: number;
   product_unit_id: number;
-  product: Product;
+  product: object;
   quantity: number;
   price: number;
   discount: number;

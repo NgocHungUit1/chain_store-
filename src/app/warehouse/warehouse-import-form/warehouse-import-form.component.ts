@@ -20,6 +20,8 @@ import { ProductService } from '../../product/product.service';
 import { WarehouseParcelFormDialogComponent } from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
 import { WarehouseDiscountDialogComponent } from '../warehouse-discount-dialog/warehouse-discount-dialog.component';
 import { SupplierFormDialogComponent } from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
+import { ProductMedicineDialogComponent } from '../../product/product-medicine-dialog/product-medicine-dialog.component';
+import { ProductMerchandiseFormDialogComponent } from '../../product/product-merchandise-form-dialog/product-merchandise-form-dialog.component';
 import {UserService} from '../../user/user.service';
 
 @Component({
@@ -321,16 +323,29 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     }
   }
 
+  /**
+   * Event choice search
+   * @param product
+   */
   onSelectedProduct(product) {
-    this.productSer.getDetail(product.id, 'productUnits').subscribe(res => {
+    this.handleAddProductToList(product.id);
+  }
+
+  /**
+   * Handle add product to list
+   * @param product_id
+   */
+  handleAddProductToList(product_id) {
+    this.productSer.getDetail(product_id, 'productUnits').subscribe(res => {
+      // console.log(res);
       const warehouseProduct = new WarehouseProduct();
-      warehouseProduct.product_id = product.id;
-      warehouseProduct.product = product;
+      warehouseProduct.product_id = res['id'];
+      warehouseProduct.product = res;
       warehouseProduct.quantity = 1;
-      warehouseProduct.price = (product.original_price !== null) ? product.original_price : 0;
+      warehouseProduct.price = (res['original_price'] !== null) ? res['original_price'] : 0;
       warehouseProduct.discount = 0;
       warehouseProduct.discount_type = 'price';
-      warehouseProduct.amount = (product.original_price !== null) ? product.original_price : 0;
+      warehouseProduct.amount = (res['original_price'] !== null) ? res['original_price'] : 0;
       warehouseProduct.productUnits = res['productUnits'];
       warehouseProduct.product_parcels = [];
 
@@ -525,11 +540,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   /**
    * Main handel print
-   * @param id
+   * @param id mainService
    */
   printWarehouse(id: string) {
     this.mainService.getDataWarehouseToPrint(id).subscribe(res => {
-
       let printContent = '<title>' + res.no + '</title>';
       printContent += '<style>table {' +
         'border-collapse: collapse;' +
@@ -560,16 +574,14 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         '<td style="text-align:right;">' + res?.discount_amount + '</td>' +
         '</tr>' +
         '<tr>' +
-        '<td style="font-weight: 600;">Số lượng</td>' +
-        '<td style="text-align:right;">' + res?.total_quantity + '</td>' +
+        '<td style="font-weight: 600;" >Tính vào công nợ </td>' +
+        '<td style="text-align:right;">' + res?.remain_amount + '</td>' +
         '<td style="font-weight: 600;">Tiền trả nhà cung cấp </td>' +
         '<td style="text-align:right;">' + res?.paid_amount + '</td>' +
         '</tr>' +
         '<tr>' +
-        '<td style="font-weight: 600;">Ghi chú</td>' +
-        '<td>' + res?.note + '</td>' +
-        '<td style="font-weight: 600;">Tính vào công nợ </td>' +
-        '<td style="text-align:right;">' + res?.remain_amount + '</td>' +
+        '<td style="font-weight: 600;" >Ghi chú</td>' +
+        '<td colspan="3">' + res?.note + '</td>' +
         '</tr>' +
         '</table>';
 
@@ -615,6 +627,55 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       WindowPrt.print();
       WindowPrt.close();
     });
+  }
+
+  openProductMedicineDialog(action, obj) {
+    obj.action = action;
+    obj.title = 'Thêm thuốc';
+    obj.product_id = null;
+    obj.copy_product_id = null;
+    const dialogRef = this.dialog.open(ProductMedicineDialogComponent, {
+      data: obj,
+      width: '60%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // console.log(result);
+      if (result['event'] === 'Save') {
+        this.handleAddProductToList(result['data']['id']);
+      }
+    });
+  }
+
+  openProductMerchandiseFormDialog(action, obj) {
+    obj.action = action;
+    obj.title = 'Thêm hàng hóa';
+    obj.product_id = null;
+    obj.copy_product_id = null;
+    const dialogRef = this.dialog.open(ProductMerchandiseFormDialogComponent, {
+      data: obj,
+      width: '60%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // this.loadData();
+      // console.log(result);
+      if (result['event'] === 'Save') {
+        this.handleAddProductToList(result['data']['id']);
+      }
+    });
+  }
+
+  /**
+   * Tra du tien tong tien hoa don
+   */
+  paidAmount() {
+    this.form.patchValue({
+      paid_amount: this.form.get('total_amount').value,
+    });
+    this.recalculateWarehouse();
   }
 
 }

@@ -13,14 +13,36 @@
             <mat-icon>search</mat-icon>
           </button>
           <mat-autocomplete #chooseProduct="matAutocomplete" (optionSelected)="onSelectedProduct($event.option.value)">
-            <mat-option *ngFor="let product of filteredProducts | async" [value]="product">
-              <img class="example-option-img" aria-hidden [src]="product.default_image" height="25">
-              <span>{{product.product_name}}</span>
+            <mat-option fxLayout="row" *ngFor="let product of filteredProducts | async" [value]="product"
+                        style="min-height: 70px; line-height:25px !important;"
+                        title="{{ product.product_name }}">
+              <img fxFlex="25" class="example-option-img" aria-hidden [src]="product.default_image" width="23">
+              <span fxFlex="75" style="margin-left: 5px;">
+                <b style="font-size: 12px;">{{ product.product_name }}</b><br>
+                {{ product.product_no }} &nbsp;  Giá : {{ product.original_price | number }}
+                &nbsp; - {{ product.base_unit }}
+              </span>
+              <mat-divider></mat-divider>
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
       </div>
       <span fxFlex="1 1 0%"></span>
+
+      <button mat-raised-button color="primary" [matMenuTriggerFor]="createMenu" style="margin-right: 10px">
+        <mat-icon>add</mat-icon>
+        Thêm mới
+      </button>
+      <mat-menu #createMenu="matMenu">
+        <button mat-menu-item (click)="openProductMedicineDialog('Add', {});">
+          <mat-icon>add</mat-icon>
+          <span>Thêm thuốc</span>
+        </button>
+        <button mat-menu-item (click)="openProductMerchandiseFormDialog('Add',{})">
+          <mat-icon>add</mat-icon>
+          <span>Thêm hàng hóa</span>
+        </button>
+      </mat-menu>
     </mat-toolbar>
     <div fxLayout="row wrap">
       <div fxFlex="100">
@@ -236,13 +258,13 @@
                 </mat-select>
               </mat-form-field>
             </div>
-            <div fxFlex="100">
-              <mat-form-field>
-                <mat-label>Số lượng</mat-label>
-                <input matInput tabindex="4" formControlName="quantity" value="{{ form.get('quantity').value | number}}"
-                       readonly="readonly">
-              </mat-form-field>
-            </div>
+<!--            <div fxFlex="100">-->
+<!--              <mat-form-field>-->
+<!--                <mat-label>Số lượng</mat-label>-->
+<!--                <input matInput tabindex="4" formControlName="quantity" value="{{ form.get('quantity').value | number}}"-->
+<!--                       readonly="readonly">-->
+<!--              </mat-form-field>-->
+<!--            </div>-->
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Tổng tiền hàng</mat-label>
@@ -271,6 +293,10 @@
               <mat-form-field>
                 <mat-label>Tiền trả nhà cung cấp</mat-label>
                 <input matInput tabindex="7" formControlName="paid_amount" (change)="recalculateWarehouse();">
+                <button mat-raised-button color="primary" matSuffix (click)="paidAmount()">
+                  Trả đủ
+<!--                  <mat-icon>delete</mat-icon>-->
+                </button>
               </mat-form-field>
             </div>
             <div fxFlex="100">
