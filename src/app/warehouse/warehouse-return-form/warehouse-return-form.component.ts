@@ -19,6 +19,7 @@ import { Product } from '../../product/product.model';
 import { ProductService } from '../../product/product.service';
 import { WarehouseParcelFormDialogComponent } from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
 import { SupplierFormDialogComponent } from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
+import {UserService} from '../../user/user.service';
 
 @Component({
   selector: 'app-warehouse-return-form',
@@ -30,6 +31,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
   constructor(
     private mainService: WarehouseService,
     private warehouseProductService: WarehouseProductService,
+    private userService: UserService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,
@@ -50,6 +52,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
   updateModelId = null;
   model = null;
   parcels: object[] = [];
+  branchList: any;
   statuses = [
     {id: '10', name: 'Hoàn thành'},
     {id: '9', name: 'Lưu tạm'},
@@ -109,6 +112,11 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
       paid_amount: [null],
       remain_amount: [null],
       note: [null],
+      branch_id: [null, Validators.required],
+    });
+    this.userService.getStoreBranchList().subscribe(res => {
+      this.branchList = res.body;
+
     });
 
     this.displayedColumns = this.columnsToDisplay;
@@ -165,6 +173,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
           paid_amount: res['paid_amount'],
           remain_amount: res['remain_amount'],
           note: res['note'],
+          branch_id: res['branch_id'],
         });
         this.form.controls['date'].disable();
         this.form.controls['supplier'].disable();
@@ -177,6 +186,10 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
         this.loadData();
       });
     } else {
+      this.userService.getBranchLogin().subscribe(branchLogin => {
+        this.form.controls['branch_id'].setValue(branchLogin.toString());
+      });
+
       this.mainService.getRenderWarehouseNo().subscribe(res => {
         this.form.patchValue({
           no: 'PT0' + res,

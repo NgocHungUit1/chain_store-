@@ -59,6 +59,7 @@ export class ItemInvoice {
   paymentSiderBar: PaymentSiderBar;
   noteSiderBar: string;
   is_return: boolean;
+  branch_id: number;
 }
 
 export class ListInvoice {

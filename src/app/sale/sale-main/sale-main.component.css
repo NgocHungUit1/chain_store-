@@ -187,6 +187,10 @@ html .page-wrapper .page-content {
   padding-bottom: 20px;
 }
 
+.branch-action {
+  padding-bottom: 20px;
+}
+
 .price-discount-text {
   font-size: 15px;
   text-align: left;
