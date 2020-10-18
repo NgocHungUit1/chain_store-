@@ -188,6 +188,20 @@
             </div>
           </div>
 
+          <div class="branch-action">
+            <mat-form-field>
+              <button mat-button matPrefix>
+                <mat-icon>business</mat-icon>
+              </button>
+              <mat-select class="input-search" placeholder="Chọn chi nhánh" formControlName="branch_id"
+              [disabled]="localItemInvoice?.is_return === true">
+                <mat-option *ngFor="let branch of branchList " [value]="branch.id">
+                  {{ branch.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
           <div class="customer-action">
             <div fxLayout="row wrap">
               <div fxFlex="70">

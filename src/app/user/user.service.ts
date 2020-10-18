@@ -110,6 +110,21 @@ export class UserService {
     return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
   }
 
+  getStoreBranchList() {
+    const url = environment.apiUrl + '/user/branch-list';
+    return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
+  }
+
+  getBranchLogin() {
+    const url = environment.apiUrl + '/user/branch-login';
+    return this.http.get<number>(url);
+  }
+
+  updateBranchLogin(data) {
+    const url = environment.apiUrl + '/user/update-branch-login';
+    return this.http.post(url, data);
+  }
+
 }
 
 

@@ -40,7 +40,7 @@ export class EmployeeTabInfoComponent implements OnInit {
     const obj = {
       action: 'Update',
       title: 'Cập nhật nhân viên',
-      customer_id: id,
+      employee_id: id,
     };
 
     const dialogRef = this.dialog.open(EmployeeFormDialogComponent, {

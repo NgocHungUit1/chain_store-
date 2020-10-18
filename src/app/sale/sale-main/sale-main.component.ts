@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {FormControl, FormBuilder, FormGroup} from '@angular/forms';
+import {FormControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatDialog} from '@angular/material/dialog';
 import {NotifierService} from 'angular-notifier';
 import {Observable} from 'rxjs';
@@ -76,6 +76,8 @@ export class SaleMainComponent implements OnInit {
   autoPrintInSoLo: boolean = false;
 
   changePriceBook: boolean = false;
+
+  branchList: any;
 
   /**
    *  So sanh danh sach cu
@@ -325,6 +327,7 @@ export class SaleMainComponent implements OnInit {
     let userID = null;
     let priceBookID = null;
     let noteSiderBar = null;
+    let branch_id = null;
     let listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     listItemInvoice.forEach(element => {
@@ -332,6 +335,7 @@ export class SaleMainComponent implements OnInit {
         userID = element?.user?.id;
         priceBookID = element?.price_book_id;
         noteSiderBar = element.noteSiderBar;
+        branch_id = element?.branch_id;
         this.selectUser.patchValue(element?.user?.username);
         this.selectCustomer.patchValue(element?.customer?.name); // add name khach hang
       }
@@ -340,8 +344,15 @@ export class SaleMainComponent implements OnInit {
       userID: [userID],
       priceBookID: [priceBookID],
       noteSiderBar: [noteSiderBar],
-      customerPay: [0]
+      customerPay: [0],
+      branch_id: [branch_id],
     });
+
+    if (this.form.controls['branch_id'].value == null) {
+      this.userService.getBranchLogin().subscribe(branchLogin => {
+        this.form.controls['branch_id'].setValue(branchLogin);
+      });
+    }
 
   }
 
@@ -386,6 +397,11 @@ export class SaleMainComponent implements OnInit {
       this.handleActiveUser();
       this.loadPriceBookDefault();
     });
+
+    this.userService.getStoreBranchList().subscribe(res => {
+      this.branchList = res.body;
+    });
+
 
     this.orderService.subscribeLoadDetailPage.subscribe(action => {
       if (action === true) {
@@ -935,6 +951,11 @@ export class SaleMainComponent implements OnInit {
       });
     });
 
+    if (this.form.controls['branch_id'].value == null) {
+      this.notifySer.notify('warning', 'Chưa chọn chi nhánh!');
+      return;
+    }
+
     /**
      * Gang du lieu data
      */
@@ -947,6 +968,7 @@ export class SaleMainComponent implements OnInit {
         discount_type: this.discount_type,
         note: this.form.controls['noteSiderBar'].value,
         price_book_id: this.form.controls['priceBookID'].value,
+        branch_id: this.form.controls['branch_id'].value,
       },
       InvoiceDetail: invoiceDetail,
       PaymentMethod: 'cash', //mItemInvoice.paymentSiderBar?.type,
@@ -1080,6 +1102,7 @@ export class SaleMainComponent implements OnInit {
         discount_type: this.discount_type,
         note: this.form.controls['noteSiderBar'].value,
         price_book_id: this.form.controls['priceBookID'].value,
+        branch_id: this.form.controls['branch_id'].value,
       },
       ReturnsDetail: returnsDetail,
       // PaymentMethod: mItemInvoice.paymentSiderBar?.type,

@@ -83,7 +83,7 @@ export class EmployeeListComponent  extends ListComponentBase implements OnInit 
     const objectKeys = Object.keys(filter) as Array<keyof EmployeeFilter>;
 
     for (const attr of objectKeys) {
-      write(filter, attr, this.route.snapshot.queryParams['EmployeesSearch[' + attr + ']']);
+      write(filter, attr, this.route.snapshot.queryParams['EmployeeSearch[' + attr + ']']);
     }
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
