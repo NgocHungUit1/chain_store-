@@ -63,13 +63,19 @@ export class StockTakeListComponent extends ListComponentBase implements OnInit 
   columnsHeader = {
     '#': '#',
     'no': 'Mã kiểm kho',
+    'created_at': 'Thời gian',
+    'balance_at': 'Ngày cân bằng',
+    'note': 'Ghi chú',
+    'deviation_price_sum': 'Tổng giá chênh lệch',
+    'total_price': 'Tổng thực tế',
+    'balance_status': 'Trạng thái',
   };
 
   displayedColumns: string[] = [
-    '#', 'no'
+    '#', 'no', 'created_at', 'balance_at', 'note', 'deviation_price_sum', 'total_price', 'balance_status'
   ];
   columnsToDisplay: string[] = [
-    '#', 'no'
+    '#', 'no', 'created_at', 'balance_at', 'note', 'deviation_price_sum', 'total_price', 'balance_status'
   ];
   dataSource: StockTake[] = [];
 
@@ -85,11 +91,11 @@ export class StockTakeListComponent extends ListComponentBase implements OnInit 
     }
   ];
 
-  // for second column
-  second_columnsToDisplay: string[] = [
-    'second_#', 'second_invoice_no', 'second_created_at', 'second_returns', 'second_customer', 'second_national_no',
-    'second_total_price', 'second_discount', 'second_payment'
-  ];
+  balanceStatuses: object = {
+    draft: 'Lưu tạm',
+    done: 'Hoàn thành',
+    cancel: 'Hủy bỏ',
+  };
 
   buildFilterFromParams(): StockTakeFilter {
     function write<K extends keyof StockTakeFilter>(arg: StockTakeFilter, key: K, value: StockTakeFilter[K]): void {
@@ -98,7 +104,6 @@ export class StockTakeListComponent extends ListComponentBase implements OnInit 
 
     const objDateFilter = this.service.getDateFilter();
     const filter = new StockTakeFilter();
-
     const objectKeys = Object.keys(filter) as Array<keyof StockTakeFilter>;
 
     for (const attr of objectKeys) {
@@ -107,7 +112,7 @@ export class StockTakeListComponent extends ListComponentBase implements OnInit 
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'customer,payment,detail,priceBook,store,user,returns,paymentInfo';
+    filter.expand = 'store,user,balanceBy,deviationPriceSum,totalPrice';
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
 
@@ -157,11 +162,21 @@ export class StockTakeListComponent extends ListComponentBase implements OnInit 
           + date.slice(0, 4) + ' '
           + date.slice(11, 16);
 
+        if (elementData.balance_at !== 0) {
+          const balance_date = new Date(1000 * elementData.balance_at).toJSON().slice(0, 16);
+          elementData.balance_at = balance_date.slice(8, 10) + '/'
+            + balance_date.slice(5, 7) + '/'
+            + balance_date.slice(0, 4) + ' '
+            + balance_date.slice(11, 16);
+        } else {
+          elementData.balance_at = '';
+        }
+
+
       });
       this.dataSource = data;
 
       this.reloadFilter(res);
-      // const url = this.service.getStateUrl(this.apiFilter);
       this.isLoadingResults = false;
     });
 
@@ -191,13 +206,6 @@ export class StockTakeListComponent extends ListComponentBase implements OnInit 
         this.loadData();
       }
     });
-
-    // this.service.subscribeLoadInvoice.subscribe(action => {
-    //   if (action === true) {
-    //     this.apiFilter = this.buildFilterFromParams();
-    //     this.loadData();
-    //   }
-    // });
 
   }
 

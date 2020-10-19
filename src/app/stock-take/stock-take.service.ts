@@ -92,5 +92,10 @@ export class StockTakeService {
     return this.http.get<string>(url);
   }
 
+  updateBalanceStatus(id: string, balance_status: string) {
+    const url = environment.apiUrl + '/stock-take/update-balance-status/';
+    return this.http.post<StockTake>(url, {id: id, balance_status: balance_status});
+  }
+
 
 }

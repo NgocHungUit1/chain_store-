@@ -141,15 +141,15 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
         this.form.patchValue({
           date: dateStr,
           no: res['no'],
-          status: res['status'] + '',
-          // quantity: Number(res['total_quantity']),
+          balance_status: res['balance_status'],
+          total_price: res['total_price'],
+          actual_number: res['actual_number'],
           note: res['note'],
         });
 
 
         this.form.controls['date'].disable();
         this.form.controls['no'].disable();
-        this.form.controls['status'].disable();
 
         this.loadData();
       });
@@ -160,6 +160,7 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
           balance_status: 'draft',
         });
       });
+      this.form.controls['no'].disable();
     }
 
   }
@@ -185,7 +186,16 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
         if (this.updateModelId !== null) {
           stockTakeItem.id = item.id;
         }
-
+        stockTakeItem.stock_take_id = item.stockTake;
+        stockTakeItem.product_id = item.product_id;
+        stockTakeItem.product = item.product;
+        stockTakeItem.product_unit_id = item.product_unit_id;
+        stockTakeItem.quantity_of_stock = item.quantity_of_stock;
+        stockTakeItem.actual_number = item.actual_number;
+        stockTakeItem.deviation_number = item.deviation_number;
+        stockTakeItem.deviation_price = item.deviation_price;
+        stockTakeItem.price = item.price;
+        stockTakeItem.productUnits = item.productUnits;
         newData.push(stockTakeItem);
       });
       this.data = newData;
@@ -211,40 +221,11 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.expand = 'product,productUnits';
     if (this.updateModelId !== null) {
-      // filter.warehouse_id = this.updateModelId;
+      filter.stock_take_id = this.updateModelId;
     }
     return filter;
   }
 
-  submit(status) {
-    return;
-    if (this.form.valid) {
-      const data = this.form.getRawValue();
-
-      if (this.form.controls['date'].value !== null && typeof this.form.controls['date'].value === 'object') {
-        const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
-
-        data['date'] = effDate.toISOString().split('T')[0];
-      }
-      data['items'] = this.data;
-      data['status'] = status;
-
-      if (this.updateModelId !== null) {
-        delete data['date'];
-
-        this.stockTakeService.update(this.updateModelId, data).subscribe(res => {
-          this.model = res;
-          this.notifySer.notify('success', 'Lưu thành công.');
-        });
-      } else {
-        this.stockTakeService.create(data).subscribe(res => {
-          this.model = res;
-          this.notifySer.notify('success', 'Lưu thành công.');
-          this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
-        });
-      }
-    }
-  }
 
   /**
    * Event choice search
@@ -335,11 +316,16 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
     this.recalculateStockTake();
   }
 
-  openDialogBalanceSave() {
-    // if (invoice['returns'].length > 0) {
-    //   this.notifySer.notify('warning', 'Hóa đơn đã có trả hàng, không thể hủy đơn !');
-    //   return;
-    // }
+  openDialogBalanceSave(balance_status: string = 'draft') {
+    if (this.data.length <= 0) {
+      this.notifySer.notify('warning', 'Chưa có sản phẩm trong phiếu !');
+      return;
+    }
+
+    if (balance_status === 'draft') {
+      this.saveStockTake();
+      return;
+    }
 
     const obj = {
       action: 'Delete',
@@ -354,46 +340,49 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result.event === 'accept') {
-        // this.invoiceService.delete(invoice.id).subscribe(res => {
-        //   // console.log(res);
-        //   if (res === true) {
-        //     this.notifySer.notify('success', 'Xóa hóa đơn thành công!');
-        //     this.invoiceService.setLoadInvoice(true);
-        //   }
-        // });
-        this.saveStockTake();
+        this.saveStockTake(balance_status);
       }
     });
   }
 
-  saveStockTake() {
+  saveStockTake(balance_status: string = 'draft') {
     if (this.form.valid) {
       const data = this.form.getRawValue();
+      if (balance_status === 'done') {
+        data['balance_status'] = 'done';
+      }
       if (this.form.controls['date'].value !== null && typeof this.form.controls['date'].value === 'object') {
         const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
         data['date'] = effDate.toISOString().split('T')[0];
       }
       data['items'] = this.data;
-      // console.log(data);
-
-      // data['status'] = status;
 
       if (this.updateModelId !== null) {
         delete data['date'];
-
         this.stockTakeService.update(this.updateModelId, data).subscribe(res => {
           this.model = res;
           this.notifySer.notify('success', 'Lưu thành công.');
+          if (balance_status === 'done') {
+            this.router.navigate(['/store/stock-take']);
+          } else {
+            this.router.navigate(['/store/stock-take/update/' + res.id]);
+          }
         });
       } else {
         this.stockTakeService.create(data).subscribe(res => {
           this.model = res;
           this.notifySer.notify('success', 'Lưu thành công.');
-          // this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
+          if (balance_status === 'done') {
+            this.router.navigate(['/store/stock-take']);
+          } else {
+            this.router.navigate(['/store/stock-take/update/' + res.id]);
+          }
         });
       }
-    }
 
+
+      //
+    }
   }
 
   /**

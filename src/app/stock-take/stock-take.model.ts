@@ -20,8 +20,6 @@ export class StockTakeItem {
   deviation_price: number;
   price: number;
   productUnits: object[];
-  productParcels: object[];
-  product_parcels: object[];
 }
 
 export class StockTakeItemFilter extends ApiFilterBase {
@@ -57,6 +55,11 @@ export class StockTake {
   stockTakeItem: StockTakeItem[];
   balance_status: string;
   user: User;
+  created_at: any;
+  status: string;
+  balanceBy: object;
+  deviationPriceSum: number; // tong gia tri lech
+  totalPrice: number; // tong thuc te
 }
 
 export class StockTakeFilter extends ApiFilterBase {

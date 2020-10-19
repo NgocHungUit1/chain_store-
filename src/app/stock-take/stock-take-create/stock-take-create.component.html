@@ -61,7 +61,6 @@
                   </b>
 
 
-
                 </td>
               </ng-container>
 
@@ -182,25 +181,29 @@
             </div>
             <div fxFlex="100">
 
-              <button *ngIf="updateModelId === null || (model !== null && model['status'] === 9)" mat-raised-button
-                      color="accent" fxFlex="45" tabindex="10" [disabled]="this.form.invalid" (click)="submit(9)">
+              <button *ngIf="updateModelId === null || (model !== null && model['balance_status'] === 'draft')"
+                      mat-raised-button
+                      color="accent" fxFlex="45" tabindex="10" [disabled]="this.form.invalid"
+                      (click)="openDialogBalanceSave('draft')">
                 <mat-icon>save</mat-icon>
                 Lưu tạm
               </button>
-              <button *ngIf="updateModelId === null || (model !== null && model['status'] === 9)" mat-raised-button
-                      color="primary" fxFlex="55" (click)="openDialogBalanceSave()" [disabled]="this.form.invalid" tabindex="11">
+              <button *ngIf="updateModelId === null || (model !== null && model['balance_status'] === 'draft')"
+                      mat-raised-button
+                      color="primary" fxFlex="55" (click)="openDialogBalanceSave('done')" [disabled]="this.form.invalid"
+                      tabindex="11">
                 <mat-icon>check</mat-icon>
                 Hoàn thành
               </button>
             </div>
 
             <div fxFlex="100" style="padding-top: 10px">
-<!--              <button *ngIf="updateModelId !== null && model !== null "-->
-<!--                      mat-raised-button color="info" fxFlex="100" [disabled]="this.form.invalid"-->
-<!--                      (click)="buttonPrintWarehouse(model)">-->
-<!--                <mat-icon>print</mat-icon>-->
-<!--                In đơn nhập-->
-<!--              </button>-->
+              <!--              <button *ngIf="updateModelId !== null && model !== null "-->
+              <!--                      mat-raised-button color="info" fxFlex="100" [disabled]="this.form.invalid"-->
+              <!--                      (click)="buttonPrintWarehouse(model)">-->
+              <!--                <mat-icon>print</mat-icon>-->
+              <!--                In đơn nhập-->
+              <!--              </button>-->
             </div>
 
 

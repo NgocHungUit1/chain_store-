@@ -13,6 +13,10 @@ export const StockTakeRoutes: Routes = [
       {
         path: 'create',
         component: StockTakeCreateComponent
+      },
+      {
+        path: 'update/:id',
+        component: StockTakeCreateComponent
       }
     ]
   }
