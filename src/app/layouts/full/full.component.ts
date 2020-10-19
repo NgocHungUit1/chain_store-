@@ -66,18 +66,23 @@ export class FullComponent implements OnDestroy {
   }
   // Mini sidebar
   ngOnInit(): void {
-    this.customerService.getNameStore().subscribe(name => {
-      this.name_store = name;
-    });
-    this.userService.getStoreBranchList().subscribe(res => {
-      this.branchList = res.body;
+    this.userService.getRemainingExpiryDate().subscribe( day => {
+      if (day < 4) {
+        this.notifySer.notify('warning', 'Cửa hàng của bạn còn ' + day + ' ngày sử dụng, vui lòng liên hệ để gia hạn.');
+      }
+      this.customerService.getNameStore().subscribe(name => {
+        this.name_store = name;
+      });
 
-    });
+      this.userService.getStoreBranchList().subscribe(res => {
+        this.branchList = res.body;
+      });
 
-    this.userService.getBranchLogin().subscribe(branchLogin => {
-      this.branchLoginId = branchLogin;
+      this.userService.getBranchLogin().subscribe(branchLogin => {
+        this.branchLoginId = branchLogin;
+      });
+      this.menuItems.refreshMenuItem();
     });
-    this.menuItems.refreshMenuItem();
   }
 
   public changeBranch(event) {

@@ -125,6 +125,11 @@ export class UserService {
     return this.http.post(url, data);
   }
 
+  getRemainingExpiryDate() {
+    const url = environment.apiUrl + '/user/remaining-expiry-date';
+    return this.http.get<number>(url);
+  }
+
 }
 
 
