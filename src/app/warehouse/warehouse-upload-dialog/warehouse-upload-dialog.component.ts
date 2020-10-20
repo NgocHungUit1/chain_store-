@@ -3,6 +3,7 @@ import { ProductService } from '../../product/product.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { WarehouseService } from '../warehouse.service';
+import {UserService} from '../../user/user.service';
 
 @Component({
   selector: 'app-warehouse-upload-dialog',
@@ -15,11 +16,14 @@ export class WarehouseUploadDialogComponent implements OnInit {
 
   @ViewChild('fileInput') fileInput: any;
   selectedFile: File = null;
+  branchList: any;
+  branchId: string;
 
   templateLink = null;
 
   constructor(
     public mainSer: WarehouseService,
+    public userService: UserService,
     public dialogRef: MatDialogRef<WarehouseUploadDialogComponent>,
     public notifierSer: NotifierService,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -28,11 +32,24 @@ export class WarehouseUploadDialogComponent implements OnInit {
 
   ngOnInit() {
     this.templateLink = this.mainSer.getDownloadTemplateLink();
+
+    this.userService.getStoreBranchList().subscribe(res => {
+      this.branchList = res.body;
+    });
+
+    this.userService.getBranchLogin().subscribe(branchLogin => {
+      this.branchId = branchLogin.toString();
+    });
   }
 
   submit(e) {
+    if (!this.branchId) {
+      this.notifierSer.notify('success', 'Chi nhánh không được bỏ trống.');
+      return;
+    }
     const data = new FormData();
     data.append('file', this.selectedFile);
+    data.append('branch_id', this.branchId);
 
     this.submitted = true;
     this.mainSer.upload(data).subscribe(uploadRes => {
