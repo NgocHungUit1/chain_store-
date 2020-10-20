@@ -31,6 +31,24 @@
       </mat-card-content>
     </mat-card>
 
+    <mat-card class="time-filter-info">
+      <mat-card-title class="title-time-filter">Trạng thái</mat-card-title>
+      <mat-card-content>
+
+        <form [formGroup]="balanceStatusFilter">
+          <mat-form-field appearance="fill">
+            <mat-label>Cân bằng</mat-label>
+            <mat-select formControlName="status" (selectionChange)="orderStatusFilterChange()" multiple>
+              <mat-option *ngFor="let item of balanceStatusFilterList"
+                          [value]="item.value">{{ item.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </form>
+
+      </mat-card-content>
+    </mat-card>
+
   </mat-sidenav>
   <mat-sidenav-content>
     <mat-toolbar class="dv-header">
@@ -123,7 +141,11 @@
 
               <ng-container matColumnDef="balance_status">
                 <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['balance_status'] }}</th>
-                <td mat-cell *matCellDef="let element"> {{ balanceStatuses[element.balance_status] }}</td>
+                <td mat-cell *matCellDef="let element">
+                  <label
+                    class="{{ balanceStatusesColor[element.balance_status] }}">{{ balanceStatuses[element.balance_status] }}
+                  </label>
+                </td>
               </ng-container>
 
               <ng-container matColumnDef="expandedDetail">

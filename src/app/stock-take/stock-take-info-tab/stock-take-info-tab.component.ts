@@ -135,4 +135,8 @@ export class StockTakeInfoTabComponent implements OnChanges {
     });
   }
 
+  printStockTake() {
+    this.notifySer.notify('info', 'Đang phát triển');
+  }
+
 }

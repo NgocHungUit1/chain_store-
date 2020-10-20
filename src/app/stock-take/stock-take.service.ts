@@ -5,7 +5,6 @@ import { StockTake, StockTakeFilter } from './stock-take.model';
 import { DateFilter, Invoice, InvoiceFilter } from '../invoice/invoice.model';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Warehouse } from '../warehouse/warehouse.model';
 
 @Injectable({
   providedIn: 'root'

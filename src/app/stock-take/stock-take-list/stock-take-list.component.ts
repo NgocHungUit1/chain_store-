@@ -8,12 +8,12 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { DateFilter, Invoice, InvoiceFilter } from '../../invoice/invoice.model';
 import { debounceTime } from 'rxjs/operators';
-import { DatetimeDefaultFilterDialogComponent } from '../../invoice/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
-import { DatetimeChooseFilterDialogComponent } from '../../invoice/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
 import { ListComponentBase } from '../../shared/base';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { StockTakeService } from '../stock-take.service';
 import { StockTake, StockTakeFilter } from '../stock-take.model';
+import { DatetimeChooseFilterDialogComponent } from '../datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
+import { DatetimeDefaultFilterDialogComponent } from '../datetime-default-filter-dialog/datetime-default-filter-dialog.component';
 
 @Component({
   selector: 'app-stock-take-list',
@@ -90,12 +90,34 @@ export class StockTakeListComponent extends ListComponentBase implements OnInit 
       'title': 'Lựa chọn khác'
     }
   ];
+  balanceStatusFilter: FormGroup;
 
   balanceStatuses: object = {
     draft: 'Lưu tạm',
     done: 'Hoàn thành',
     cancel: 'Hủy bỏ',
   };
+
+  balanceStatusesColor: object = {
+    draft: 'label label-warning',
+    done: 'label label-success',
+    cancel: 'label label-danger',
+  };
+
+  balanceStatusFilterList = [
+    {
+      'value': 'draft',
+      'name': 'Lưu tạm',
+    },
+    {
+      'value': 'done',
+      'name': 'Hoàn thành',
+    },
+    {
+      'value': 'cancel',
+      'name': 'Hủy bỏ',
+    },
+  ];
 
   buildFilterFromParams(): StockTakeFilter {
     function write<K extends keyof StockTakeFilter>(arg: StockTakeFilter, key: K, value: StockTakeFilter[K]): void {
@@ -115,7 +137,7 @@ export class StockTakeListComponent extends ListComponentBase implements OnInit 
     filter.expand = 'store,user,balanceBy,deviationPriceSum,totalPrice';
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
-
+    filter.balance_status = this.balanceStatusFilter.controls['status'].value;
 
     return filter;
   }
@@ -124,6 +146,12 @@ export class StockTakeListComponent extends ListComponentBase implements OnInit 
     this.timeFilter = this.fb.group({
       typeTime: [
         'default'
+      ],
+    });
+
+    this.balanceStatusFilter = this.fb.group({
+      status: [
+        ['draft', 'done', 'cancel']
       ],
     });
   }
@@ -199,7 +227,7 @@ export class StockTakeListComponent extends ListComponentBase implements OnInit 
     this.searchInvoiceForm.valueChanges.pipe(debounceTime(800)).subscribe(res => {
       if (res !== '') {
         this.apiFilter = this.buildFilterFromParams();
-        // this.apiFilter.invoice_no = res;
+        this.apiFilter.keyword = res;
         this.loadData();
       } else {
         this.apiFilter = this.buildFilterFromParams();
@@ -276,6 +304,14 @@ export class StockTakeListComponent extends ListComponentBase implements OnInit 
 
   goToCartPage() {
     this.router.navigate(['/sale']);
+  }
+
+  /**
+   * Tim kiem theo trang thai don hang
+   */
+  orderStatusFilterChange() {
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
   }
 
 }

@@ -76,6 +76,8 @@ export class StockTakeFilter extends ApiFilterBase {
   sort = '';
   date_from = '';
   date_to = '';
+  keyword = '';
+  balance_status = '';
 
   getModelSearch() {
     return 'StockTakeSearch';
