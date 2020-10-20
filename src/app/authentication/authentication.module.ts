@@ -25,6 +25,7 @@ import { ForgotComponent } from './forgot/forgot.component';
 import { LockscreenComponent } from './lockscreen/lockscreen.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { ExpirationComponent } from './expiration/expiration.component';
 
 @NgModule({
     imports: [
@@ -44,7 +45,8 @@ import { RegisterComponent } from './register/register.component';
         ForgotComponent,
         LockscreenComponent,
         LoginComponent,
-        RegisterComponent
+        RegisterComponent,
+        ExpirationComponent
     ]
 })
 export class AuthenticationModule { }

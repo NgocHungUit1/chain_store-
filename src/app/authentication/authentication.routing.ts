@@ -5,6 +5,7 @@ import { ForgotComponent } from './forgot/forgot.component';
 import { LockscreenComponent } from './lockscreen/lockscreen.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import {ExpirationComponent} from './expiration/expiration.component';
 export const AuthenticationRoutes: Routes = [
   {
     path: '',
@@ -28,7 +29,11 @@ export const AuthenticationRoutes: Routes = [
       {
         path: 'register',
         component: RegisterComponent
-      }
+      },
+      {
+        path: 'expiration',
+        component: ExpirationComponent
+      },
     ]
   }
 ];

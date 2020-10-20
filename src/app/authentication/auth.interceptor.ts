@@ -54,6 +54,8 @@ export class AuthInterceptor implements HttpInterceptor {
         // return of (this.router.navigate(['auth/login']));
         this.notify.notify('error', 'Bạn không có quyền truy cập tính năng này.');
         return of (this.router.navigate(['/']));
+      case 410:
+        return of (this.router.navigate(['/authentication/expiration']));
       case 422:
         this.notify.notify('error', err.statusText);
         return throwError(err);
