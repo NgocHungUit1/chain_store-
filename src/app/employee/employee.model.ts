@@ -18,6 +18,7 @@ export class Employee {
   district: Location;
   ward: Location;
   user: User;
+  branchList: any;
 }
 
 
@@ -38,7 +39,7 @@ export class EmployeeFilter extends ApiFilterBase {
   sort = '';
 
   getModelSearch() {
-    return 'EmployeesSearch';
+    return 'EmployeeSearch';
   }
 
 }

@@ -118,6 +118,18 @@
 
             <div fxFlex="100">
               <mat-form-field>
+                <mat-select tabindex="8" formControlName="branches" [multiple]='true' (selectionChange)="test()"
+                            placeholder="Chi nhánh">
+                  <mat-option *ngFor="let branch of branchList" [value]="branch.id">
+                    {{branch.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="form.controls['branches'].hasError('required')">Chi nhánh không được bỏ trống</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
                 <mat-label>Địa chỉ</mat-label>
                 <textarea matInput tabindex="9" formControlName="address" rows="2"></textarea>
               </mat-form-field>

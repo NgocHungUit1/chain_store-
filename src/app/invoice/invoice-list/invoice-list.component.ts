@@ -122,7 +122,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'customer,payment,detail,priceBook,store,user,returns,paymentInfo';
+    filter.expand = 'customer,payment,detail,priceBook,store,user,returns,paymentInfo,branch';
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
 

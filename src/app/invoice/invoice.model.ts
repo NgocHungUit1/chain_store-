@@ -1,6 +1,7 @@
 import { Customer } from '../customer/customer.model';
 import { ApiFilterBase } from '../shared/base';
 import { PriceList } from '../price-book/price-list.model';
+import {Branch} from '../branch/branch.model';
 
 export class User {
   username: string;
@@ -42,6 +43,7 @@ export class Invoice {
   stt: number; // for view
   status: number; // for view
   national_pharmacy_no: string; // for view
+  branch: Branch;
 }
 
 export class InvoiceFilter extends ApiFilterBase {

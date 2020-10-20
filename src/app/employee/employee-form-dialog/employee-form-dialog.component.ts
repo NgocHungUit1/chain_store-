@@ -11,6 +11,8 @@ import {EmployeeService} from '../employee.service';
 import {UserService} from '../../user/user.service';
 import {UserFilter} from '../../user/user.model';
 import {UserFormDialogComponent} from '../../user/user-form-dialog/user-form-dialog.component';
+import {BranchService} from '../../branch/branch.service';
+import {BranchFilter} from '../../branch/branch.model';
 
 class ImageSnippet {
   pending = false;
@@ -38,7 +40,9 @@ export class EmployeeFormDialogComponent implements OnInit {
   employee_id: string;
 
   userFilter: UserFilter = new UserFilter();
+  branchFilter: BranchFilter = new BranchFilter();
   users: any;
+  branchList: any;
 
   selectedFile: ImageSnippet;
   url = '';
@@ -62,12 +66,13 @@ export class EmployeeFormDialogComponent implements OnInit {
     private fb: FormBuilder,
     private employeeService: EmployeeService,
     private userService: UserService,
+    private branchService: BranchService,
     private dialog: MatDialog,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object
   ) {
 
     this.local_data = { ...data };
-    this.employee_id = this.local_data.customer_id;
+    this.employee_id = this.local_data.employee_id;
 
   }
 
@@ -108,7 +113,8 @@ export class EmployeeFormDialogComponent implements OnInit {
       ward: [null],
       province: [null],
       note: [null],
-      sex: [null]
+      sex: [null],
+      branches: [null, Validators.required],
     });
   }
 
@@ -117,6 +123,8 @@ export class EmployeeFormDialogComponent implements OnInit {
     this.initForm();
 
     this.getListUser();
+
+    this.getListBranch();
 
     this.locationSer.autocomplete('', 'province').subscribe(locations => {
       this.provinces = locations;
@@ -152,6 +160,13 @@ export class EmployeeFormDialogComponent implements OnInit {
     });
   }
 
+  getListBranch() {
+    this.branchFilter.pageSize = 100;
+    this.branchService.getList(this.branchFilter).subscribe(res => {
+      this.branchList = res.body;
+    });
+  }
+
   updateForm(id) {
     const user = this.users.find(x => x.id === id);
     if (user) {
@@ -182,6 +197,7 @@ export class EmployeeFormDialogComponent implements OnInit {
         facebook: employee['facebook'],
         birth_date: birthDate,
         sex: employee['sex'],
+        branches: employee['branchList']['array'],
       });
 
       if (employee['province_id'] !== null) {
@@ -356,6 +372,12 @@ export class EmployeeFormDialogComponent implements OnInit {
     if (file) {
       reader.readAsDataURL(file);
     }
+  }
 
+  test() {
+    if (this.form.getRawValue()['branches'].length === 0) {
+      console.log('ok');
+    }
+    console.log(this.form.getRawValue()['branches']);
   }
 }

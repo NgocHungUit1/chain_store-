@@ -50,6 +50,16 @@
     <!--</form>-->
 
     <span fxFlex></span>
+    <div style="width: 200px; margin-right: 10px;">
+      <mat-form-field>
+        <mat-select style="font-size: 16px;" tabindex="10" (selectionChange)="changeBranch($event)" [value]="branchLoginId">
+          <mat-option *ngFor="let item of branchList" [value]="item.id">
+            {{item.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
     <!-- ============================================================== -->
     <!-- app header component - style you can find in header.scss / header.component.ts-->
     <!-- ============================================================== -->
