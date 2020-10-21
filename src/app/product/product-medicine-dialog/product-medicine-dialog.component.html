@@ -15,7 +15,7 @@
               <div fxFlex="100">
                 <mat-form-field>
                   <input type="text" (change)="onProductNoChange()" matInput [formControl]="form.controls['product_no']"
-                         placeholder="Mã hàng tự động *">
+                         required placeholder="Mã hàng tự động">
                 </mat-form-field>
               </div>
             </div>
@@ -29,7 +29,7 @@
             <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field>
-                  <input type="text" matInput [formControl]="form.controls['product_name']" placeholder="Tên thuốc *"
+                  <input type="text" matInput [formControl]="form.controls['product_name']" required placeholder="Tên thuốc "
                          [matAutocomplete]="auto">
                   <button mat-icon-button matPrefix>
                     <mat-icon>search</mat-icon>
@@ -57,7 +57,7 @@
             <div fxLayout="row wrap">
               <div fxFlex="90">
                 <mat-form-field>
-                  <mat-select placeholder="Nhóm *" [formControl]="form.controls['group_id']">
+                  <mat-select required placeholder="Nhóm" [formControl]="form.controls['group_id']">
                     <mat-option>--</mat-option>
                     <mat-option *ngFor="let group of groups" [value]="group.id">
                       {{group.name}}
@@ -76,7 +76,7 @@
             <div fxLayout="row wrap">
               <div fxFlex="90">
                 <mat-form-field>
-                  <mat-select placeholder="Đường dùng *" [formControl]="form.controls['using_id']">
+                  <mat-select required placeholder="Đường dùng" [formControl]="form.controls['using_id']">
                     <mat-option>--</mat-option>
                     <mat-option *ngFor="let using of usings" [value]="using.id">
                       {{using.name}}
@@ -141,7 +141,7 @@
             <div fxLayout="row wrap">
               <mat-form-field>
                 <input type="text" matInput [formControl]="form.controls['original_price']"
-                       (keyup)="inputformatNumber($event)" placeholder="Giá vốn *">
+                       (keyup)="inputformatNumber($event)" required placeholder="Giá vốn">
               </mat-form-field>
             </div>
             <div fxLayout="row wrap">
@@ -154,7 +154,7 @@
               <div fxFlex="100">
                 <mat-form-field>
                   <input type="text" matInput [formControl]="form.controls['sell_price']"
-                         (keyup)="inputformatNumber($event)" placeholder="Giá bán *">
+                         (keyup)="inputformatNumber($event)" required placeholder="Giá bán">
                 </mat-form-field>
               </div>
 <!--              <div fxFlex="30">-->
@@ -172,7 +172,7 @@
             </div>
 
             <mat-form-field>
-              <input type="text" matInput [formControl]="form.controls['base_unit']" placeholder="Đơn vị cơ bản *">
+              <input type="text" matInput [formControl]="form.controls['base_unit']" required placeholder="Đơn vị cơ bản ">
             </mat-form-field>
 
             <mat-form-field>
@@ -187,28 +187,28 @@
                 <div fxLayout="row wrap">
                   <div fxFlex="100">
                     <mat-form-field>
-                      <input type="text" matInput formControlName="registration_no" placeholder="Số đăng ký *">
+                      <input type="text" matInput formControlName="registration_no" required placeholder="Số đăng ký ">
                     </mat-form-field>
                   </div>
                 </div>
                 <div fxLayout="row wrap">
                   <div fxFlex="100">
                     <mat-form-field>
-                      <input type="text" matInput formControlName="main_active_substance" placeholder="Hoạt chất *">
+                      <input type="text" matInput formControlName="main_active_substance" required placeholder="Hoạt chất ">
                     </mat-form-field>
                   </div>
                 </div>
                 <div fxLayout="row wrap">
                   <div fxFlex="100">
                     <mat-form-field>
-                      <input type="text" matInput formControlName="content" placeholder="Hàm lượng *">
+                      <input type="text" matInput formControlName="content" required placeholder="Hàm lượng ">
                     </mat-form-field>
                   </div>
                 </div>
                 <div fxLayout="row wrap">
                   <div fxFlex="100">
                     <mat-form-field>
-                      <input type="text" matInput formControlName="packing" placeholder="Quy cách đóng gói *">
+                      <input type="text" matInput formControlName="packing" required placeholder="Quy cách đóng gói ">
                     </mat-form-field>
                   </div>
                 </div>
