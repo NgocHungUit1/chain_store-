@@ -8,7 +8,7 @@
     </div>
     <div fxLayout="row wrap">
 
-      <div fxFlex="100" class="m-b-10">
+      <div fxFlex="50" class="m-b-10">
         <input class="hide" #fileInput type="file" (change)="inputChange($event)" accept=".xls,.xlsx"/>
         <button mat-raised-button type="button" [disabled]="selectedFile !== null" (click)="fileInput.click()">
           <mat-icon>cloud_upload</mat-icon>
@@ -21,6 +21,15 @@
         </button>
       </div>
 
+      <div fxFlex="50">
+        <mat-form-field>
+          <mat-label>Chi nhánh nhập</mat-label>
+          <mat-select [(ngModel)]="branchId" placeholder="Chọn chi nhánh" [ngModelOptions]="{standalone: true}" required>
+            <mat-option *ngFor="let branch of branchList" value="{{branch.id}}">{{branch.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
     </div>
   </mat-dialog-content>
   <p style="color:red; font-weight: 600;">Lưu ý :</p>
@@ -29,7 +38,7 @@
   <p>- 1 đơn nhập hàng có tối đa 50 sản phẩm.</p>
   <mat-dialog-actions align="end">
 
-    <button mat-raised-button color="primary" [disabled]="submitted || selectedFile === null"
+    <button mat-raised-button color="primary" [disabled]="submitted || selectedFile === null || !branchId"
             class="justify-content-end"
             type="submit">
       <mat-icon>cloud_upload</mat-icon>

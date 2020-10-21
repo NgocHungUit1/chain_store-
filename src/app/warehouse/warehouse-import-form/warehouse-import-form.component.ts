@@ -181,7 +181,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           paid_amount: Number(res['paid_amount']),
           remain_amount: Number(res['remain_amount']),
           note: res['note'],
-          branch_id: res['branch_id'],
+          branch_id: res['branch_id'].toString(),
         });
 
         // console.log(res['discount_amount']);
