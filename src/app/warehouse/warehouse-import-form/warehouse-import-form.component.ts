@@ -22,7 +22,7 @@ import { WarehouseDiscountDialogComponent } from '../warehouse-discount-dialog/w
 import { SupplierFormDialogComponent } from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
 import { ProductMedicineDialogComponent } from '../../product/product-medicine-dialog/product-medicine-dialog.component';
 import { ProductMerchandiseFormDialogComponent } from '../../product/product-merchandise-form-dialog/product-merchandise-form-dialog.component';
-import {UserService} from '../../user/user.service';
+import { UserService } from '../../user/user.service';
 
 @Component({
   selector: 'app-warehouse-import-form',
@@ -115,7 +115,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       total_amount: [null],
       discount_amount: [null],
       discount_type: [null],
-      paid_amount: [null],
+      paid_amount: [null, Validators.required],
       remain_amount: [null],
       note: [null],
       branch_id: [null, Validators.required],
@@ -294,7 +294,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     return filter;
   }
 
-  submit(status) {
+  submit(status: number) {
     if (this.form.valid) {
       const data = this.form.getRawValue();
       data['supplier_id'] = data['supplier']['id'];
@@ -310,14 +310,24 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         delete data['date'];
         delete data['supplier'];
         this.mainService.update(this.updateModelId, data).subscribe(res => {
-          this.model = res;
           this.notifySer.notify('success', 'Lưu thành công.');
+          if (status === 9) {
+            this.model = res;
+            this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
+          } else {
+            this.router.navigate(['/transaction/warehouse/']);
+          }
         });
       } else {
         this.mainService.create(data).subscribe(res => {
-          this.model = res;
           this.notifySer.notify('success', 'Lưu thành công.');
-          this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
+          if (status === 9) {
+            this.model = res;
+            this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
+          } else {
+            this.router.navigate(['/transaction/warehouse/']);
+          }
+
         });
       }
     }

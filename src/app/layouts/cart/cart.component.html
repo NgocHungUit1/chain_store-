@@ -55,7 +55,7 @@
               <b style="font-size: 12px;">{{ product.product_name  }}</b>
               <br>
               {{ product.product_no }} &nbsp;Giá: {{ product.sell_price | number }} {{ product.base_unit }}
-              -Tồn:{{ product.quantity_of_stock }}
+              -Tồn:{{ product.product_unit_quantity_of_stock }}
             </span>
 
             <span fxFlex="75" class="m-l-10" *ngIf="product.base_unit == null">

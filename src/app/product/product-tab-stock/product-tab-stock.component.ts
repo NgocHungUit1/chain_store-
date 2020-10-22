@@ -8,6 +8,7 @@ import { Component, Input, OnInit } from '@angular/core';
 export class ProductTabStockComponent implements OnInit {
 
   @Input() units: object[];
+  @Input() quantity_of_stock: number;
 
   displayedColumns: string[] = ['#', 'no', 'name', 'value', 'sell_price', 'quantity_of_stock'];
 

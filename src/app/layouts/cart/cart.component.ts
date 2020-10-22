@@ -134,16 +134,13 @@ export class CartComponent implements OnDestroy {
   }
 
   handlePriceListProduct(product: Product) {
-    // console.log(product);
     let units = product.productUnits;
-    // let unitOne = units.find(element => element.quantity_of_stock > 0);
+    units.forEach(element => {
+      element.quantity_of_stock = Math.floor(product.quantity_of_stock / element.value);
+    });
     units = units.filter(element => element.quantity_of_stock > 0);
     product.productUnits = units;
-    // product.product_unit_id = unitOne?.id;
-    // product.product_unit_value = unitOne?.value;
-    // product.base_unit = unitOne?.name;
-    // product.product_no = unitOne?.no;
-    // product.sell_price = unitOne?.sell_price;
+
     this.orderService.addProduct(product);
   }
 

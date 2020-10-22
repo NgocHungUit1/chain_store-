@@ -145,11 +145,15 @@ export class WarehouseInfoTabComponent implements OnChanges {
   }
 
   /**
-   * In don nhap hang
+   * In don nhap hang/ tra hang
    * @param model
    */
   buttonPrintWarehouse(model) {
-    this.printWarehouse(model.id);
+    if (this.model.type === 'import') {
+      this.printWarehouse(model.id);
+    } else {
+      this.notifySer.notify('info', 'Đang phát triển');
+    }
   }
 
   /**
