@@ -20,6 +20,7 @@ export class StockTakeItem {
   deviation_price: number;
   price: number;
   productUnits: object[];
+  view_quantity_of_stock: number;
 }
 
 export class StockTakeItemFilter extends ApiFilterBase {

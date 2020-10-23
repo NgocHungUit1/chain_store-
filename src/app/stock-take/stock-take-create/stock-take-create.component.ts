@@ -17,6 +17,7 @@ import { StockTakeService } from '../stock-take.service';
 import { StockTake, StockTakeItem, StockTakeItemFilter } from '../stock-take.model';
 import { StockTakeItemService } from '../stock-take-item.service';
 import { StockTakeBalanceDialogComponent } from '../stock-take-balance-dialog/stock-take-balance-dialog.component';
+import { element } from 'protractor';
 
 @Component({
   selector: 'app-stock-take-create',
@@ -195,7 +196,14 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
         stockTakeItem.deviation_number = item.deviation_number;
         stockTakeItem.deviation_price = item.deviation_price;
         stockTakeItem.price = item.price;
-        stockTakeItem.productUnits = item.productUnits;
+        stockTakeItem.view_quantity_of_stock = item.quantity_of_stock;
+
+        const units = item.productUnits;
+        // tslint:disable-next-line:no-shadowed-variable
+        units.forEach(element => {
+          element.quantity_of_stock = Math.floor(item.quantity_of_stock / element.value);
+        });
+        stockTakeItem.productUnits = units;
         newData.push(stockTakeItem);
       });
       this.data = newData;
@@ -248,10 +256,17 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
       stockTakeItem.productUnits = res['productUnits'];
 
       if (res['productUnits'].length > 0) {
+
+        const units = res['productUnits'];
+        units.forEach(element => {
+          element.quantity_of_stock = Math.floor(res['quantity_of_stock'] / element.value);
+        });
+        stockTakeItem.productUnits = units;
+
         res['productUnits'].sort((a, b) => (a.value > b.value) ? 1 : -1);
         stockTakeItem.product_unit_id = res['productUnits'][0]['id'];
-        stockTakeItem.quantity_of_stock = res['productUnits'][0]['quantity_of_stock'];
-        stockTakeItem.deviation_number = stockTakeItem.actual_number - stockTakeItem.quantity_of_stock;
+        stockTakeItem.view_quantity_of_stock = res['productUnits'][0]['quantity_of_stock'];
+        stockTakeItem.deviation_number = stockTakeItem.actual_number - stockTakeItem.view_quantity_of_stock;
         stockTakeItem.price = res['productUnits'][0]['original_price'];
         stockTakeItem.deviation_price = stockTakeItem.deviation_number * stockTakeItem.price;
       }
@@ -265,7 +280,7 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
   }
 
   recalculateItem(index) {
-    this.data[index]['deviation_number'] = this.data[index]['actual_number'] - this.data[index]['quantity_of_stock'];
+    this.data[index]['deviation_number'] = this.data[index]['actual_number'] - this.data[index]['view_quantity_of_stock'];
     this.data[index]['deviation_price'] = this.data[index]['deviation_number'] * this.data[index]['price'];
     this.recalculateStockTake();
   }
@@ -301,8 +316,8 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
     if (this.data[index] !== undefined) {
       const unit = this.data[index]['productUnits'].find(element => element['id'] === select.value);
       const unitBase = this.data[index]['productUnits'].find(element => element['is_base'] === 1);
-      this.data[index]['quantity_of_stock'] = unit['quantity_of_stock'];
-      this.data[index]['deviation_number'] = this.data[index]['actual_number'] - this.data[index]['quantity_of_stock'];
+      this.data[index]['view_quantity_of_stock'] = unit['quantity_of_stock'];
+      this.data[index]['deviation_number'] = this.data[index]['actual_number'] - this.data[index]['view_quantity_of_stock'];
       this.data[index]['price'] = unitBase['original_price'] * unit['value'];
       this.data[index]['deviation_price'] = this.data[index]['deviation_number'] * this.data[index]['price'];
       this.recalculateStockTake();
@@ -311,7 +326,7 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
 
   changeQuantity(index, value) {
     this.data[index]['actual_number'] = Number(this.data[index]['actual_number']) + Number(value);
-    this.data[index]['deviation_number'] = this.data[index]['actual_number'] - this.data[index]['quantity_of_stock'];
+    this.data[index]['deviation_number'] = this.data[index]['actual_number'] - this.data[index]['view_quantity_of_stock'];
     this.data[index]['deviation_price'] = this.data[index]['price'] * this.data[index]['deviation_number'];
     this.recalculateStockTake();
   }
