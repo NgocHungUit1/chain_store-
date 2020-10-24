@@ -199,7 +199,8 @@
   <div fxLayout="row wrap">
     <div fxFlex="100">
       <button class="m-r-10" mat-raised-button color="primary"
-              [disabled]="checkPermissionDisable('Invoice.Update-Order')" (click)="updateInvoice(invoice)">
+              [disabled]="checkPermissionDisable('Invoice.Update-Order') || !isAdminStore"
+              (click)="updateInvoice(invoice)">
         <mat-icon>edit</mat-icon>
         Cập nhật
       </button>
