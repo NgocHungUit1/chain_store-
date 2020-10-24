@@ -152,7 +152,10 @@
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Mã kiểm kho</mat-label>
-                <input matInput tabindex="2" formControlName="no">
+                <input matInput tabindex="2" formControlName="no"
+                       readonly
+                       matTooltip="Mã phiếu được hệ thống tự động, không được thay đổi"
+                       matTooltipPosition="left">
               </mat-form-field>
             </div>
 

@@ -43,6 +43,11 @@ export class InvoiceTabInfoComponent implements OnInit {
     'done': 'Hoàn thành'
   };
 
+  orderStatusColor = {
+    'pending': 'label label-warning',
+    'done': 'label label-success'
+  };
+
   autoPrintInSoLo: boolean = false;
 
   constructor(

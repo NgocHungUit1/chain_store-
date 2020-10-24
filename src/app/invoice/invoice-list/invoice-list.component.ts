@@ -52,6 +52,8 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   apiFilter: InvoiceFilter;
   expandedElement: Invoice | null;
   timeFilter: FormGroup;
+  orderStatusFilter: FormGroup;
+
   currentDateFilter: DateFilter;
 
   searchInvoiceForm = new FormControl();
@@ -100,6 +102,17 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     }
   ];
 
+  orderStatusFilterList = [
+    {
+      'value': 'pending',
+      'name': 'Đang xử lý',
+    },
+    {
+      'value': 'done',
+      'name': 'Hoàn thành',
+    },
+  ];
+
   // for second column
   second_columnsToDisplay: string[] = [
     'second_#', 'second_invoice_no', 'second_created_at', 'second_returns', 'second_customer', 'second_national_no',
@@ -125,7 +138,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     filter.expand = 'customer,payment,detail,priceBook,store,user,returns,paymentInfo,branch';
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
-
+    filter.order_status = this.orderStatusFilter.controls['status'].value;
 
     return filter;
   }
@@ -136,6 +149,19 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
         'default'
       ],
     });
+    this.orderStatusFilter = this.fb.group({
+      status: [
+        ['pending', 'done']
+      ],
+    });
+  }
+
+  /**
+   * Tim kiem theo trang thai don hang
+   */
+  orderStatusFilterChange() {
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
   }
 
   initDateFilter() {

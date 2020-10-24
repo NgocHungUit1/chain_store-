@@ -12,7 +12,7 @@
           <div fxFlex="4"></div>
           <div fxFlex="48" class="invoice-info-field">
             <span class="invoice-field-label">Trạng thái :</span>
-            <strong>{{ orderStatus[invoice.order_status] }}</strong>
+            <label class="{{ orderStatusColor[invoice.order_status] }}">{{ orderStatus[invoice.order_status] }}</label>
           </div>
         </div>
 

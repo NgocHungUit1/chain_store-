@@ -207,7 +207,11 @@
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Mã phiếu nhập</mat-label>
-                <input matInput tabindex="2" formControlName="no">
+                <input matInput tabindex="2"
+                       formControlName="no"
+                       readonly
+                       matTooltip="Mã phiếu được hệ thống tự động, không được thay đổi"
+                       matTooltipPosition="left" >
               </mat-form-field>
             </div>
             <div fxFlex="90">
@@ -241,13 +245,13 @@
                 </mat-select>
               </mat-form-field>
             </div>
-<!--            <div fxFlex="100">-->
-<!--              <mat-form-field>-->
-<!--                <mat-label>Số lượng</mat-label>-->
-<!--                <input matInput tabindex="4" formControlName="quantity" value="{{ form.get('quantity').value | number}}"-->
-<!--                       readonly="readonly">-->
-<!--              </mat-form-field>-->
-<!--            </div>-->
+            <!--            <div fxFlex="100">-->
+            <!--              <mat-form-field>-->
+            <!--                <mat-label>Số lượng</mat-label>-->
+            <!--                <input matInput tabindex="4" formControlName="quantity" value="{{ form.get('quantity').value | number}}"-->
+            <!--                       readonly="readonly">-->
+            <!--              </mat-form-field>-->
+            <!--            </div>-->
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Tổng tiền hàng</mat-label>
@@ -278,7 +282,7 @@
                 <input matInput tabindex="7" formControlName="paid_amount" (change)="recalculateWarehouse();">
                 <button mat-raised-button color="primary" matSuffix (click)="paidAmount()">
                   Trả đủ
-<!--                  <mat-icon>delete</mat-icon>-->
+                  <!--                  <mat-icon>delete</mat-icon>-->
                 </button>
               </mat-form-field>
             </div>

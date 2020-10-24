@@ -150,8 +150,7 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
 
 
         this.form.controls['date'].disable();
-        this.form.controls['no'].disable();
-
+        // this.form.controls['no'].disable();
         this.loadData();
       });
     } else {
@@ -161,7 +160,8 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
           balance_status: 'draft',
         });
       });
-      this.form.controls['no'].disable();
+      this.form.controls['date'].disable();
+      // this.form.controls['no'].disable();
     }
 
   }
