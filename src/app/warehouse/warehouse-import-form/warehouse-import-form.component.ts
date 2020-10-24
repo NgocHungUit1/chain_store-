@@ -308,6 +308,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
       if (data['supplier_id'] === undefined) {
         this.notifySer.notify('warning', this.form.controls['supplier'].value + ' chưa được tạo bên nhà cung cấp.');
+        return;
       }
 
       if (this.updateModelId !== null) {
