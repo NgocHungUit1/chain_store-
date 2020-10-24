@@ -43,6 +43,9 @@ export class WarehouseInfoTabComponent implements OnChanges {
   data: WarehouseProduct[] = [];
   productDataSource = new MatTableDataSource<WarehouseProduct>([]);
 
+  allPermission: any;
+  isAdminStore: boolean;
+
   constructor(
     private modelSer: WarehouseService,
     private warehouseProductService: WarehouseProductService,
@@ -59,6 +62,8 @@ export class WarehouseInfoTabComponent implements OnChanges {
 
       this.loadData();
     }
+    this.allPermission = sessionStorage.getItem('allPermission').split(',');
+    this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
   }
 
   loadData(): void {
@@ -105,6 +110,10 @@ export class WarehouseInfoTabComponent implements OnChanges {
 
   delete() {
     // TODO: call confirm dialog
+    if (this.checkPermissionDisable('Warehouse.Delete')) {
+      this.notifySer.notify('error', 'Bạn không có quyền thực hiện chức năng này.');
+      return;
+    }
     this.modelSer.delete(this.model.id).subscribe(res => {
       const typeStr = res['type'] === 'import' ? 'nhập' : 'trả';
       this.notifySer.notify('warning', 'Đã xóa đơn ' + typeStr + ' hàng');
@@ -241,6 +250,14 @@ export class WarehouseInfoTabComponent implements OnChanges {
       WindowPrt.print();
       WindowPrt.close();
     });
+  }
+
+  checkPermissionDisable(permission) {
+    const indexPermission = this.allPermission.indexOf(permission);
+    if (indexPermission !== -1) {
+      return false;
+    }
+    return  true;
   }
 
 }

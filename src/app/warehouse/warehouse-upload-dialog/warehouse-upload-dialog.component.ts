@@ -62,7 +62,7 @@ export class WarehouseUploadDialogComponent implements OnInit {
       }
       console.log(uploadRes);
       if (uploadRes['errors']) {
-        this.notifierSer.notify('error', uploadRes['errors']);
+        this.notifierSer.notify('error', uploadRes['errors'][0]);
         // uploadRes['errors'].forEach(error => {
         //   this.notifierSer.notify('error', error);
         // });

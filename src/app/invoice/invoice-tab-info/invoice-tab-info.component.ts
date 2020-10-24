@@ -44,6 +44,8 @@ export class InvoiceTabInfoComponent implements OnInit {
   };
 
   autoPrintInSoLo: boolean = false;
+  allPermission: any;
+  isAdminStore: boolean;
 
   constructor(
     private dialog: MatDialog,
@@ -71,6 +73,9 @@ export class InvoiceTabInfoComponent implements OnInit {
       this.giamGiaHoaDon = this.tongTienHang * invoiceData.discount / 100;
       this.giamGiaHoaDonText = '(' + invoiceData.discount + '%)';
     }
+
+    this.allPermission = sessionStorage.getItem('allPermission').split(',');
+    this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
   }
 
   deleteInvoice(invoice) {
@@ -424,6 +429,14 @@ export class InvoiceTabInfoComponent implements OnInit {
         this.notifySer.notify('success', 'Liên thông thành công.');
       }
     });
+  }
+
+  checkPermissionDisable(permission) {
+    const indexPermission = this.allPermission.indexOf(permission);
+    if (indexPermission !== -1) {
+      return false;
+    }
+    return  true;
   }
 
 }

@@ -391,7 +391,8 @@
 
 
           <div *ngIf="localItemInvoice?.is_return !== true; else buttonThanhToan">
-            <button mat-button class="payment-button btn-success" (click)="payment()">
+            <button mat-button class="payment-button btn-success {{checkPermissionSaleDisable() ? 'disable' : ''}}"
+                  [disabled]="checkPermissionSaleDisable()" (click)="payment()">
               <span>Thanh toán</span>
             </button>
           </div>

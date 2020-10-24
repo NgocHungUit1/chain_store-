@@ -53,6 +53,8 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
   model = null;
   parcels: object[] = [];
   branchList: any;
+  allPermission: any;
+  isAdminStore: boolean;
   statuses = [
     {id: '10', name: 'Hoàn thành'},
     {id: '9', name: 'Lưu tạm'},
@@ -116,8 +118,10 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
     });
     this.userService.getStoreBranchList().subscribe(res => {
       this.branchList = res.body;
-
     });
+
+    this.allPermission = sessionStorage.getItem('allPermission').split(',');
+    this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
 
     this.displayedColumns = this.columnsToDisplay;
 
@@ -173,7 +177,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
           paid_amount: res['paid_amount'],
           remain_amount: res['remain_amount'],
           note: res['note'],
-          branch_id: res['branch_id'],
+          branch_id: res['branch_id'].toString(),
         });
         this.form.controls['date'].disable();
         this.form.controls['supplier'].disable();
@@ -294,6 +298,11 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
       data['items'] = this.data;
       data['status'] = status;
       if (this.updateModelId !== null) {
+        if (this.model['status'] === 10 && !this.isAdminStore) {
+          this.notifySer.notify('error', 'Bạn không có quyền thực hiện chức năng này.');
+          return;
+        }
+
         delete data['date'];
         delete data['supplier'];
         this.mainService.update(this.updateModelId, data).subscribe(res => {
@@ -422,6 +431,14 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
     dialogRef.afterClosed().subscribe(result => {
       this.form.patchValue({'supplier': result});
     });
+  }
+
+  checkPermissionDisable(permission) {
+    const indexPermission = this.allPermission.indexOf(permission);
+    if (indexPermission !== -1) {
+      return false;
+    }
+    return  true;
   }
 
 }

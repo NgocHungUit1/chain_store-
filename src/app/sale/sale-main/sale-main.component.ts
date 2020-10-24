@@ -48,16 +48,16 @@ export class SaleMainComponent implements OnInit {
   isLoadingResults = true;
 
   listProduct: any = [];
-  countProduct: number = 0;
+  countProduct = 0;
 
   today: number = Date.now();
-  sumPrice: number = 0;
-  numberDiscount: number = 0; // use for view
-  discount: number = 0; // use for payment
-  discount_type: string = 'price'; // use for payment
-  customerPay: number = 0;
-  tienThuaTraKhach: number = 0;
-  tienKhachNo: number = 0;
+  sumPrice = 0;
+  numberDiscount = 0; // use for view
+  discount = 0; // use for payment
+  discount_type = 'price'; // use for payment
+  customerPay = 0;
+  tienThuaTraKhach = 0;
+  tienKhachNo = 0;
   priceLists: PriceList[] = [];
   form: FormGroup;
   selectCustomer = new FormControl();
@@ -72,13 +72,15 @@ export class SaleMainComponent implements OnInit {
   listProductUnitIdChooseOld: number[] = [];
   common_idOld: string;
 
-  autoPrint: boolean = true;
-  autoPrintInSoLo: boolean = false;
+  autoPrint = true;
+  autoPrintInSoLo = false;
 
-  changePriceBook: boolean = false;
+  changePriceBook = false;
 
   branchList: any;
 
+  allPermission: any;
+  isAdminStore: boolean;
   /**
    *  So sanh danh sach cu
    * @param listProductUnitIdChoose
@@ -94,7 +96,7 @@ export class SaleMainComponent implements OnInit {
   }
 
   async loadData() {
-    let mItemInvoice = this.getNewItemInvoice();
+    const mItemInvoice = this.getNewItemInvoice();
 
     await this.handleAddPriceBookExist(mItemInvoice);
 
@@ -126,7 +128,7 @@ export class SaleMainComponent implements OnInit {
    * Active User
    */
   handleActiveUser() {
-    let listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     listItemInvoice.forEach(element => {
       if (element.active === true) {
@@ -187,7 +189,7 @@ export class SaleMainComponent implements OnInit {
       // debugger;
 
       // handle add common price
-      const priceBookID = mItemInvoice.price_book_id; //this.orderService.getPriceBookID();
+      const priceBookID = mItemInvoice.price_book_id; // this.orderService.getPriceBookID();
       const list = this.listProduct;
 
       if (priceBookID !== null && Array.isArray(list) && this.listProduct !== null) {
@@ -250,7 +252,7 @@ export class SaleMainComponent implements OnInit {
                 bug
                  */
                 // console.log(this.listProduct);
-                let list = this.listProduct;
+                const list = this.listProduct;
                 this.listProduct = [];
                 this.listProduct = list;
               } else {
@@ -328,7 +330,7 @@ export class SaleMainComponent implements OnInit {
     let priceBookID = null;
     let noteSiderBar = null;
     let branch_id = null;
-    let listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     listItemInvoice.forEach(element => {
       if (element.active === true) {
@@ -388,6 +390,8 @@ export class SaleMainComponent implements OnInit {
    */
   ngOnInit(): void {
     this.isLoadingResults = true;
+    this.allPermission = sessionStorage.getItem('allPermission').split(',');
+    this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
     this.initFormSiderBar();
     /**
      * Load user login
@@ -524,7 +528,7 @@ export class SaleMainComponent implements OnInit {
 
 
   onSelectedCustomer(customer) {
-    let listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     listItemInvoice.forEach(element => {
       if (element.active === true) {
@@ -536,7 +540,7 @@ export class SaleMainComponent implements OnInit {
   }
 
   onSelectedUser(user) {
-    let listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     listItemInvoice.forEach(element => {
       if (element.active === true) {
@@ -873,7 +877,7 @@ export class SaleMainComponent implements OnInit {
 
   // ------------------------------------------------------ PAYMENT ----------------------------------------------------------//
   payment() {
-    let listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
     listItemInvoice.forEach(element => {
@@ -906,9 +910,9 @@ export class SaleMainComponent implements OnInit {
     const list = this.listProduct;
     let needReturn = 0;
     list.forEach(element => {
-      let product_unit_id = element.product_unit_id;
-      let units = element.product.productUnits;
-      let product_unit = units.find(ele => ele.id === product_unit_id);
+      const product_unit_id = element.product_unit_id;
+      const units = element.product.productUnits;
+      const product_unit = units.find(ele => ele.id === product_unit_id);
       // console.log(product_unit);
       if (element.amount > product_unit.quantity_of_stock) {
         this.notifySer.notify('warning', 'Không đủ số lượng tồn kho sản phẩm ' + element.product.product_name);
@@ -916,7 +920,7 @@ export class SaleMainComponent implements OnInit {
       }
       // console.log(product_unit);
     });
-    if (needReturn === 1){
+    if (needReturn === 1) {
       return;
     }
 
@@ -971,7 +975,7 @@ export class SaleMainComponent implements OnInit {
         branch_id: this.form.controls['branch_id'].value,
       },
       InvoiceDetail: invoiceDetail,
-      PaymentMethod: 'cash', //mItemInvoice.paymentSiderBar?.type,
+      PaymentMethod: 'cash', // mItemInvoice.paymentSiderBar?.type,
       PaymentPrice: this.sumPrice - this.numberDiscount, // tien thanh toan
       KhachNo: this.tienKhachNo,
     };
@@ -996,6 +1000,10 @@ export class SaleMainComponent implements OnInit {
         this.orderService.setLoadDetailPage(true);
       });
     } else {
+      if (!this.isAdminStore) {
+        this.notifySer.notify('error', 'Bạn không có quyền thực hiện chức năng này.');
+        return;
+      }
       this.orderService.updateOrder(dataInvoice).subscribe(res => {
         if (res !== false) {
           if (typeof res === 'number' && this.autoPrint === true) {
@@ -1018,7 +1026,7 @@ export class SaleMainComponent implements OnInit {
    * Tra hang
    */
   returns() {
-    let listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
     listItemInvoice.forEach(element => {
@@ -1043,7 +1051,7 @@ export class SaleMainComponent implements OnInit {
       return;
     }
 
-    let listCheckReturn = mItemInvoice.listProduct;
+    const listCheckReturn = mItemInvoice.listProduct;
     let amountCheckReturn = 0;
     listCheckReturn.forEach(element => {
       amountCheckReturn += element.amount;
@@ -1174,10 +1182,10 @@ export class SaleMainComponent implements OnInit {
   }
 
   onChangeProductUnit(e: any, itemProduct, i: number) {
-    let units = itemProduct?.product?.productUnits;
-    let item = units.find(element => element.id === e.value);
+    const units = itemProduct?.product?.productUnits;
+    const item = units.find(element => element.id === e.value);
 
-    let listProduct = this.listProduct;
+    const listProduct = this.listProduct;
     listProduct[i]['product_unit_id'] = item['id'];
     listProduct[i]['product_unit_value'] = item['value'];
     listProduct[i]['product']['sell_price'] = item['sell_price'];
@@ -1204,6 +1212,22 @@ export class SaleMainComponent implements OnInit {
     event.target.value = numeral(event.target.value).format('0,0');
     this.tienThuaTraKhach = numeral(this.form.controls['customerPay'].value).value() - this.sumPrice + this.numberDiscount;
     this.tienKhachNo = this.sumPrice - this.numberDiscount - numeral(this.form.controls['customerPay'].value).value();
+  }
+
+  public checkPermissionSaleDisable() {
+    let indexPermission;
+    if (this.localItemInvoice?.invoice_id < 0) {
+       indexPermission = this.allPermission.indexOf('Invoice.Sale-Order');
+    } else {
+      indexPermission = this.allPermission.indexOf('Invoice.Update-Order');
+      if (!this.isAdminStore) {
+        return true;
+      }
+    }
+    if ( indexPermission !== -1) {
+      return false;
+    }
+    return true;
   }
 
 }

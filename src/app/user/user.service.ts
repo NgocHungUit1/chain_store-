@@ -130,6 +130,16 @@ export class UserService {
     return this.http.get<number>(url);
   }
 
+  getAllPermission() {
+    const url = environment.apiUrl + '/user/all-permission';
+    return this.http.get<HttpResponse<any>>(url);
+  }
+
+  isAdminStore() {
+    const url = environment.apiUrl + '/user/is-admin-store';
+    return this.http.get<boolean>(url);
+  }
+
 }
 
 

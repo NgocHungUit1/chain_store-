@@ -145,6 +145,10 @@ html .page-wrapper .page-content {
   margin-bottom: 10px;
 }
 
+.disable {
+  background-color: #a6aba6 !important;
+}
+
 .payment-button span {
   font-size: 20px;
   font-weight: 600;
