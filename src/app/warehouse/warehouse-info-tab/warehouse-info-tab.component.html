@@ -177,10 +177,18 @@
           In đơn
         </button>
 
-        <button class="m-r-10" mat-raised-button color="primary" (click)="reopen()" *ngIf="model.status === 9">
+        <button class="m-r-10" mat-raised-button color="primary"
+                (click)="reopen()" *ngIf="model.status === 9">
           <mat-icon>undo</mat-icon>
           Mở lại
         </button>
+        <button class="m-r-10" mat-raised-button color="primary"
+                [disabled]="checkPermissionDisable('Warehouse.Update') || !isAdminStore"
+                (click)="reopen()" *ngIf="model.status === 10">
+          <mat-icon>edit</mat-icon>
+          Cập nhật
+        </button>
+
         <button class="m-r-10" mat-raised-button color="primary" (click)="finish()" *ngIf="model.status === 9">
           <mat-icon>check</mat-icon>
           Hoàn thành
@@ -204,7 +212,9 @@
         <!--<mat-icon>file_copy</mat-icon>-->
         <!--Sao chép-->
         <!--</button>-->
-        <button class="m-r-10" mat-raised-button color="danger" (click)="delete()" *ngIf="model.status === 1">
+        <button class="m-r-10" mat-raised-button color="danger"
+                [disabled]="checkPermissionDisable('Warehouse.Delete') || !isAdminStore"
+                (click)="delete()" *ngIf="model.status === 10">
           <mat-icon>delete</mat-icon>
           Xóa
         </button>

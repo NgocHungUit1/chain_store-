@@ -70,6 +70,8 @@ export class FullComponent implements OnDestroy {
       if (day < 4) {
         this.notifySer.notify('warning', 'Cửa hàng của bạn còn ' + day + ' ngày sử dụng, vui lòng liên hệ để gia hạn.');
       }
+      this.menuItems.refreshMenuItem();
+
       this.customerService.getNameStore().subscribe(name => {
         this.name_store = name;
       });
@@ -81,7 +83,14 @@ export class FullComponent implements OnDestroy {
       this.userService.getBranchLogin().subscribe(branchLogin => {
         this.branchLoginId = branchLogin;
       });
-      this.menuItems.refreshMenuItem();
+
+      this.userService.getAllPermission().subscribe(res => {
+        sessionStorage.setItem('allPermission', res.toString());
+      });
+
+      this.userService.isAdminStore().subscribe(isAdminStore => {
+        sessionStorage.setItem('isAdminStore', String(isAdminStore));
+      });
     });
   }
 

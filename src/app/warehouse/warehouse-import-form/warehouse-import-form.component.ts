@@ -55,6 +55,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   updateModelId = null;
   model: Warehouse = null;
   branchList: any;
+  allPermission: any;
+  isAdminStore: boolean;
 
   statuses = [
     {id: '10', name: 'Hoàn thành'},
@@ -120,6 +122,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       note: [null],
       branch_id: [null, Validators.required],
     });
+
+    this.allPermission = sessionStorage.getItem('allPermission').split(',');
+    this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
 
     this.userService.getStoreBranchList().subscribe(res => {
       this.branchList = res.body;
@@ -312,6 +317,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       }
 
       if (this.updateModelId !== null) {
+        if (this.model['status'] === 10 && !this.isAdminStore) {
+          this.notifySer.notify('error', 'Bạn không có quyền thực hiện chức năng này.');
+          return;
+        }
         delete data['date'];
         delete data['supplier'];
         this.mainService.update(this.updateModelId, data).subscribe(res => {
@@ -691,6 +700,14 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       paid_amount: this.form.get('total_amount').value,
     });
     this.recalculateWarehouse();
+  }
+
+  checkPermissionDisable(permission) {
+    const indexPermission = this.allPermission.indexOf(permission);
+    if (indexPermission !== -1) {
+      return false;
+    }
+    return  true;
   }
 
 }

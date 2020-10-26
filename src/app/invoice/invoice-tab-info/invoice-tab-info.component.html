@@ -198,7 +198,9 @@
 
   <div fxLayout="row wrap">
     <div fxFlex="100">
-      <button class="m-r-10" mat-raised-button color="primary" (click)="updateInvoice(invoice)">
+      <button class="m-r-10" mat-raised-button color="primary"
+              [disabled]="checkPermissionDisable('Invoice.Update-Order') || !isAdminStore"
+              (click)="updateInvoice(invoice)">
         <mat-icon>edit</mat-icon>
         Cập nhật
       </button>
@@ -237,7 +239,9 @@
         <mat-icon>close_fullscreen</mat-icon>
         Gỡ liên thông
       </button>
-      <button class="m-r-10" mat-raised-button color="warn" (click)='deleteInvoice(invoice)'>
+      <button class="m-r-10" mat-raised-button color="warn"
+              [disabled]="checkPermissionDisable('Invoice.Delete-Invoice') || !isAdminStore"
+              (click)='deleteInvoice(invoice)'>
         <mat-icon>delete</mat-icon>
         Hủy bỏ
       </button>
