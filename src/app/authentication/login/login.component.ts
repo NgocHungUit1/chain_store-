@@ -31,7 +31,9 @@ export class LoginComponent implements OnInit {
     });
     this.authSer.checkStatus().subscribe(x => {
       if (x) {
-        this.router.navigate(['/']);
+        this.router.navigate(['/']).then(() => {
+          window.location.reload();
+        });
       }
     });
   }
@@ -48,7 +50,9 @@ export class LoginComponent implements OnInit {
           this.wrongMessage = response.message;
         } else {
           this.authSer.setToken(response.token);
-          this.router.navigate(['/']);
+          this.router.navigate(['/']).then(() => {
+            window.location.reload();
+          });
         }
       });
   }
