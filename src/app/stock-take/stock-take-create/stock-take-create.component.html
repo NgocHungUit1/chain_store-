@@ -91,7 +91,8 @@
                     <input matInput class="actual-number"
                            [value]="element['actual_number']"
                            (change)="recalculateItem(i)"
-                           [(ngModel)]="data[i]['actual_number']">
+                           [(ngModel)]="data[i]['actual_number']"
+                           autocomplete="off">
                     <button mat-icon-button matPrefix (click)="changeQuantity(i, -1)"
                             [disabled]="element['actual_number'] === 1 ">
                       <mat-icon>indeterminate_check_box</mat-icon>

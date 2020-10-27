@@ -216,7 +216,11 @@ export class InvoiceTabInfoComponent implements OnInit {
       const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
       const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
       let printContent = '<title>' + res?.invoice_no + '</title>';
-      printContent += '<style>table {' +
+      printContent += '<style> ' +
+        'p,table,div {' +
+        'font-family: arial, sans-serif;' +
+        '}' +
+        'table {' +
         // 'font-family: arial, sans-serif;' +
         'border-collapse: collapse;' +
         'width: 100%;' +
@@ -239,7 +243,7 @@ export class InvoiceTabInfoComponent implements OnInit {
         '<th>Đơn giá</th>' +
         '<th style="text-align:center;">Số lượng</th>';
 
-      if (this.autoPrintInSoLo == true) {
+      if (this.autoPrintInSoLo === true) {
         printContent += '<th style="text-align:left;">Số lô</th>';
       }
 
@@ -441,7 +445,7 @@ export class InvoiceTabInfoComponent implements OnInit {
     if (indexPermission !== -1) {
       return false;
     }
-    return  true;
+    return true;
   }
 
 }

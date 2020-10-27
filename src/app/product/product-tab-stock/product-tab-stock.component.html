@@ -29,10 +29,9 @@
     <th mat-header-cell class="column-number" *matHeaderCellDef> {{ columnsHeader['quantity_of_stock'] }} </th>
     <td mat-cell class="column-number bold-text"
         *matCellDef="let element">
-      <span *ngIf="quantity_of_stock / element.value >= 1; else null_quantity_of_stock">
-        {{ quantity_of_stock / element.value | number : '0.0-0' }}
+      <span>
+        {{  element.quantity_of_stock | number : '0.0-0' }}
       </span>
-      <ng-template #null_quantity_of_stock>0</ng-template>
     </td>
   </ng-container>
 

@@ -1,4 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { element } from 'protractor';
+import { ProductUnit } from '../product.model';
 
 @Component({
   selector: 'app-product-tab-stock',
@@ -7,7 +9,7 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class ProductTabStockComponent implements OnInit {
 
-  @Input() units: object[];
+  @Input() units: ProductUnit[];
   @Input() quantity_of_stock: number;
 
   displayedColumns: string[] = ['#', 'no', 'name', 'value', 'sell_price', 'quantity_of_stock'];
@@ -26,6 +28,12 @@ export class ProductTabStockComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const units = this.units;
+    units.forEach(element => {
+      element.quantity_of_stock = Math.floor(this.quantity_of_stock / element.value);
+    });
+    this.units = units;
   }
+
 
 }
