@@ -32,7 +32,6 @@ export class ProductTabStockChangeComponent extends ListComponentBase implements
   @Output() reload: EventEmitter<any> = new EventEmitter();
 
 
-
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
   @ViewChild('selectColumn') selectColumn;
 
@@ -87,7 +86,7 @@ export class ProductTabStockChangeComponent extends ListComponentBase implements
     }
 
     filter.page = this.route.snapshot.queryParams['page'];
-    filter.pageSize = this.route.snapshot.queryParams['pageSize'];
+    filter.pageSize = 10;//this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.product_id = this.product_id;
     filter.expand = '';

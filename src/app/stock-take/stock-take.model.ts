@@ -21,6 +21,8 @@ export class StockTakeItem {
   price: number;
   productUnits: object[];
   view_quantity_of_stock: number;
+  product_name: string;
+  product_no: string;
 }
 
 export class StockTakeItemFilter extends ApiFilterBase {
@@ -88,4 +90,29 @@ export class StockTakeFilter extends ApiFilterBase {
 export class DateFilter {
   date_from: string;
   date_to: string;
+}
+
+
+export class resStockTakePrint {
+  id: string;
+  no: string;
+  total_price: number;
+  actual_number: number;
+  actual_price: number;
+  balance_at: string;
+  note: string;
+  store: Store;
+  stockTakeItem: StockTakeItem[];
+  balance_status: string;
+  balance_by: User;
+  branch: string;
+  user: User;
+  created_at: string;
+  created_by: User;
+  status: string;
+  balanceBy: User;
+  deviationPriceSum: number; // tong gia tri lech
+  totalPrice: number; // tong thuc te
+  date: string;
+  detail: StockTakeItem[];
 }

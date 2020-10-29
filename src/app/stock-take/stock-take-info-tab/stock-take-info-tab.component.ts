@@ -135,8 +135,123 @@ export class StockTakeInfoTabComponent implements OnChanges {
     });
   }
 
-  printStockTake() {
-    this.notifySer.notify('info', 'Đang phát triển');
+  actionPrintStockTake(stockTake: StockTake) {
+    // console.log(stockTake);
+    this.printStockTake(stockTake.id);
+    // this.notifySer.notify('info', 'Đang phát triển');
+  }
+
+  printStockTake(id: string) {
+    this.stockTakeSer.getDataStockTakeToPrint(id).subscribe(res => {
+      console.log(res);
+
+      // const address = (res?.customer?.address !== null && res?.customer?.address !== undefined) ? res?.customer?.address : '';
+      // const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
+      // const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
+      let printContent = '<title>' + res?.no + '</title>';
+      printContent += '<style> ' +
+        'p,table,div {' +
+        'font-family: arial, sans-serif;' +
+        '}' +
+        'table {' +
+        // 'font-family: arial, sans-serif;' +
+        'border-collapse: collapse;' +
+        'width: 100%;' +
+        '}' +
+        'td, th {' +
+        'border: 1px solid #dddddd;' +
+        'text-align: left;' +
+        'padding: 8px;' +
+        '}</style>' +
+        '<section style="padding: 10px;">' +
+        '<p style="text-align:center; font-weight:600;">PHIẾU KIỂM KHO</p>' +
+        '<p style="text-align:center; font-weight:600;">Mã phiếu : ' + res?.no + '</p><br>' +
+
+        '<table style="" >' +
+        '<tr>' +
+        '<td style="font-weight: 600;">Chi nhánh </td>' +
+        '<td>' + res.branch + '</td>' +
+        '<td style="font-weight: 600;">Trạng thái </td>' +
+        '<td style="text-align:left;">' + res.balance_status + '</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td style="font-weight: 600;">Người tạo </td>' +
+        '<td>' + res?.created_by?.username + '</td>' +
+        '<td style="font-weight: 600;">Ngày tạo </td>' +
+        '<td style="text-align:right;">' + res.created_at + '</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td style="font-weight: 600;" >Người cân bằng </td>' +
+        '<td >' + res.balance_by.username + '</td>' +
+        '<td style="font-weight: 600;">Ngày cân bằng </td>' +
+        '<td style="text-align:right;">' + res.balance_at + '</td>' +
+        '</tr>' +
+        '</table><br>';
+
+      printContent += '<table>' +
+        '<tr>' +
+        '<th>STT</th>' +
+        '<th>Mã hàng</th>' +
+        '<th>Tên hàng</th>' +
+        '<th style="text-align:center;">Tồn kho</th>' +
+        '<th style="text-align:center;">Kiểm thực tế</th>' +
+        '<th style="text-align:center;">SL lệch</th>' +
+        '<th style="text-align:center;">Giá trị lệch</th>' +
+        '</tr>';
+
+      const detail = res.detail;
+
+      /**
+       * Chi tiet don hang
+       */
+      let stt = 0;
+      detail.forEach(element => {
+        stt++;
+        printContent += '<tr>' +
+          '<td style="text-align:center;">' + stt + '</td>' +
+          '<td style="text-align:left;">' + element.product_no + '</td>' +
+          '<td style="text-align:left;">' + element.product_name + '</td>' +
+          '<td style="text-align:center;">' + element.quantity_of_stock + '</td>' +
+          '<td style="text-align:center;">' + element.actual_number + '</td>' +
+          '<td style="text-align:center;">' + element.deviation_number + '</td>' +
+          '<td style="text-align:center;">' + element.deviation_price + '</td>';
+
+        printContent += '</tr>';
+
+      });
+      printContent += '</table>';
+
+      printContent += '<p style="text-align:left;font-style: italic;" >Ghi chú: ' + res.note + '</p>';
+
+      /**
+       * Tong tien hang
+       */
+      let colspan = 6;
+      printContent += '<table>';
+
+      printContent += '<tr>' +
+        '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng thực tế :</td>' +
+        '<td style="text-align:right; font-weight:600;">' + res.totalPrice + '</td>' +
+        '</tr>';
+      printContent += '<tr>' +
+        '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng giá trị lệch :</td>' +
+        '<td style="text-align:right; font-weight:600;">' + res.deviationPriceSum + '</td>' +
+        '</tr>';
+      // printContent += '<tr>' +
+      //   '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng thanh toán :</td>' +
+      //   '<td style="text-align:right; font-weight:600;">' + res.sum_payment + '</td>' +
+      //   '</tr>';
+      printContent += '</table>';
+      printContent += '</section>';
+
+      const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+      WindowPrt.document.write(printContent);
+      WindowPrt.document.close();
+      WindowPrt.focus();
+      WindowPrt.print();
+      WindowPrt.close();
+    });
+
   }
 
 }

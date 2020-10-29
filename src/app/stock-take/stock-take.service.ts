@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { AuthService } from '../authentication/auth.service';
-import { StockTake, StockTakeFilter } from './stock-take.model';
-import { DateFilter, Invoice, InvoiceFilter } from '../invoice/invoice.model';
+import { DateFilter, resStockTakePrint, StockTake, StockTakeFilter } from './stock-take.model';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -94,6 +93,11 @@ export class StockTakeService {
   updateBalanceStatus(id: string, balance_status: string) {
     const url = environment.apiUrl + '/stock-take/update-balance-status/';
     return this.http.post<StockTake>(url, {id: id, balance_status: balance_status});
+  }
+
+  getDataStockTakeToPrint(id: string) {
+    const url = environment.apiUrl + '/stock-take/get-data-print/';
+    return this.http.post<resStockTakePrint>(url, {id: id});
   }
 
 
