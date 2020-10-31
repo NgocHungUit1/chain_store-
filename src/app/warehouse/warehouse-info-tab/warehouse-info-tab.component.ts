@@ -161,7 +161,8 @@ export class WarehouseInfoTabComponent implements OnChanges {
     if (this.model.type === 'import') {
       this.printWarehouse(model.id);
     } else {
-      this.notifySer.notify('info', 'Đang phát triển');
+      // this.notifySer.notify('info', 'Đang phát triển');
+      this.printWarehouseReturn(model.id);
     }
   }
 
@@ -172,7 +173,11 @@ export class WarehouseInfoTabComponent implements OnChanges {
   printWarehouse(id: string) {
     this.modelSer.getDataWarehouseToPrint(id).subscribe(res => {
       let printContent = '<title>' + res.no + '</title>';
-      printContent += '<style>table {' +
+      printContent += '<style> ' +
+        'p,table,div {' +
+        'font-family: arial, sans-serif;' +
+        '}' +
+        'table {' +
         'border-collapse: collapse;' +
         'width: 100%;' +
         '}' +
@@ -256,12 +261,107 @@ export class WarehouseInfoTabComponent implements OnChanges {
     });
   }
 
+  /**
+   * Main handel print warehouse return
+   * @param id
+   */
+  printWarehouseReturn(id: string) {
+    this.modelSer.getDataWarehouseToPrint(id).subscribe(res => {
+      let printContent = '<title>' + res.no + '</title>';
+      printContent += '<style> ' +
+        'p,table,div {' +
+        'font-family: arial, sans-serif;' +
+        '}' +
+        'table {' +
+        'border-collapse: collapse;' +
+        'width: 100%;' +
+        '}' +
+        'td, th {' +
+        'border: 1px solid #dddddd;' +
+        'text-align: left;' +
+        'padding: 8px;' +
+        '}</style>' +
+        '<section style="padding: -5px;">' +
+        '<p style="text-align:center;">Địa chỉ : ' + res?.store?.name + '</p>' +
+        '<p style="text-align:center; font-weight:600;">HÓA ĐƠN TRẢ HÀNG</p>' +
+        '<p style="text-align:center; font-weight:600;">Mã phiếu trả: ' + res?.no + '</p> ' +
+        '<p style="text-align:left;">Ngày nhập: ' + res?.date + ' </p>' +
+        '<p style="text-align:left;">Người nhập: ' + res?.created_by + ' </p>' +
+        '<table>' +
+        '<tr>' +
+        '<td style="font-weight: 600;"> Nhà cung cấp </td>' +
+        '<td>' + res?.supplier?.name + '</td>' +
+        '<td style="font-weight: 600;"> Tổng tiền hàng </td>' +
+        '<td style="text-align:right;">' + res?.total_price + '</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td style="font-weight: 600;">Trạng thái </td>' +
+        '<td>' + res?.status + '</td>' +
+        '<td style="font-weight: 600;">Giảm giá </td>' +
+        '<td style="text-align:right;">' + res?.discount_amount + '</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td style="font-weight: 600;" >Tính vào công nợ </td>' +
+        '<td style="text-align:right;">' + res?.remain_amount + '</td>' +
+        '<td style="font-weight: 600;">Tiền NCC đã trả </td>' +
+        '<td style="text-align:right;">' + res?.paid_amount + '</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td style="font-weight: 600;" >Ghi chú</td>' +
+        '<td colspan="3">' + res?.note + '</td>' +
+        '</tr>' +
+        '</table>';
+
+      printContent += '<p style="text-align:left;">Chi tiết nhập hàng :</p>';
+
+      const detail = res.warehoureItems;
+      printContent += '<table>';
+      printContent += '<tr style="text-align:center; font-size: 13px">';
+      printContent += '<th>' + 'Mã hàng' + '</th>';
+      printContent += '<th>' + 'Tên hàng' + '</th>';
+      printContent += '<th>' + 'Đơn gía' + '</th>';
+      printContent += '<th>' + 'Giảm giá' + '</th>';
+      printContent += '<th>' + 'Thành tiền' + '</th>';
+      printContent += '</tr>';
+
+      detail.forEach(element => {
+        printContent += '<tr>';
+        printContent += '<td style="text-align:left;">' + element?.product?.product_no + '</td>';
+        printContent += '<td style="text-align:left;">' + element?.product?.product_name + '<br>' +
+          'Đơn vị : ' + element?.product_unit?.name + '<br>' +
+          'Số lượng : ' + element.quantity + '<br>';
+        const parcels = element.parcels;
+        if (parcels[0] !== undefined) {
+          printContent += 'Lô: ' + parcels[0]['parcel_no'] + '-';
+          printContent += parcels[0]['expiration_date'] + '-SL:';
+          printContent += parcels[0]['quantity'];
+        }
+        printContent += '</td>';
+        printContent += '<td style="text-align:right;">' + element.price + '</td>';
+        printContent += '<td style="text-align:right;">' + element.discount + '</td>';
+        printContent += '<td style="text-align:right;">' + element.amount + '</td>';
+        printContent += '</tr>';
+      });
+      printContent += '</table>';
+
+      printContent += '<p style="text-align:center;font-style: italic;" >---</p>';
+      printContent += '</section>';
+
+      const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+      WindowPrt.document.write(printContent);
+      WindowPrt.document.close();
+      WindowPrt.focus();
+      WindowPrt.print();
+      WindowPrt.close();
+    });
+  }
+
   checkPermissionDisable(permission) {
     const indexPermission = this.allPermission.indexOf(permission);
     if (indexPermission !== -1) {
       return false;
     }
-    return  true;
+    return true;
   }
 
 }
