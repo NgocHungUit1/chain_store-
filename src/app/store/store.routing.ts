@@ -12,6 +12,10 @@ export const StoreRoutes: Routes = [
         path: 'stock-take',
         loadChildren: () => import('../stock-take/stock-take.module').then(m => m.StockTakeModule)
       },
+      {
+        path: 'sample-prescription',
+        loadChildren: () => import('../sample-prescription/sample-prescription.module').then(m => m.SamplePrescriptionModule)
+      },
     ]
   }
 ];

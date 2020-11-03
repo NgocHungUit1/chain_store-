@@ -61,6 +61,7 @@ const MENUITEMS = [
     children: [
       {state: 'medicine', name: 'Danh mục thuốc', type: 'link', icon: 'list',  roles: ['ADMIN', 'WAREHOUSE', 'SALE']},
       {state: 'product', name: 'Sản phẩm', type: 'link', icon: 'local_pharmacy',  roles: ['ADMIN', 'WAREHOUSE']},
+      {state: 'sample-prescription', name: 'Đơn thuốc mẫu', type: 'link', icon: 'list_alt',  roles: ['ADMIN', 'SALE']},
       {state: 'price-book', name: 'Thiết lập giá', type: 'link', icon: 'loyalty',  roles: ['ADMIN', 'WAREHOUSE']},
       {state: 'stock-take', name: 'Kiểm kho', type: 'link', icon: 'check_circle_outline', roles: ['ADMIN', 'WAREHOUSE']},
     ]
