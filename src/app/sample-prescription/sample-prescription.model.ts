@@ -25,6 +25,7 @@ export class SamplePrescription {
   balanceBy: object;
 }
 
+
 export class SamplePrescriptionFilter extends ApiFilterBase {
   id = '';
   no = '';
@@ -44,6 +45,34 @@ export class SamplePrescriptionFilter extends ApiFilterBase {
 
   getModelSearch() {
     return 'SamplePrescriptionSearch';
+  }
+}
+
+export class SamplePrescriptionItem {
+  id: string;
+  product_id: string;
+  product_no: string;
+  amount: number;
+  note: number;
+  product: object;
+  product_unit_id: string;
+  productUnits: object[];
+}
+
+export class SamplePrescriptionItemFilter extends ApiFilterBase {
+  id = '';
+  no = '';
+  product_id = '';
+  product_no = '';
+  product_unit_id = '';
+  amount = '';
+  note = '';
+  page = 1;
+  pageSize = 15;
+  sort = '';
+
+  getModelSearch() {
+    return 'SamplePrescriptionItemSearch';
   }
 }
 

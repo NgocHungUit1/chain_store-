@@ -76,7 +76,12 @@ export class SamplePrescriptionService {
 
   getDetail(invoice_id: string, price_book_id: string) {
     const url = environment.apiUrl + '/sample-prescription/detail';
-    return this.http.post(url, {invoice_id: invoice_id, price_book_id: price_book_id});
+    return this.http.post<SamplePrescription>(url, {invoice_id: invoice_id, price_book_id: price_book_id});
+  }
+
+  getRenderSamplePrescriptionNo() {
+    const url = environment.apiUrl + '/stock-take/render-no';
+    return this.http.get<string>(url);
   }
 
 

@@ -139,8 +139,4 @@ export class SamplePrescriptionListComponent extends ListComponentBase implement
     this.loadData();
   }
 
-  goToCartPage() {
-    this.router.navigate(['/sale']);
-  }
-
 }

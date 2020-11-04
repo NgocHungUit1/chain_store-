@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SamplePrescriptionCreateComponent } from './sample-prescription-create.component';
+import { SamplePrescriptionCreateComponent } from './sample-prescription-item-create.component';
 
 describe('SamplePrescriptionCreateComponent', () => {
   let component: SamplePrescriptionCreateComponent;
