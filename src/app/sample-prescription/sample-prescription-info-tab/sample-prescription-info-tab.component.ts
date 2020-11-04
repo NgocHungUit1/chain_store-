@@ -1,15 +1,96 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { SamplePrescription, SamplePrescriptionItemFilter } from '../sample-prescription.model';
+import { StockTakeItem, StockTakeItemFilter } from '../../stock-take/stock-take.model';
+import { MatTableDataSource } from '@angular/material/table';
+import { StockTakeService } from '../../stock-take/stock-take.service';
+import { StockTakeItemService } from '../../stock-take/stock-take-item.service';
+import { NotifierService } from 'angular-notifier';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { SamplePrescriptionService } from '../sample-prescription.service';
+import { SamplePrescriptionItemService } from '../sample-prescription-item.service';
 
 @Component({
   selector: 'app-sample-prescription-info-tab',
   templateUrl: './sample-prescription-info-tab.component.html',
   styleUrls: ['./sample-prescription-info-tab.component.css']
 })
-export class SamplePrescriptionInfoTabComponent implements OnInit {
+export class SamplePrescriptionInfoTabComponent implements OnChanges {
 
-  constructor() { }
+  @Input() sample: SamplePrescription;
+  @Input() expandedElement: boolean;
+  @Output() reload: EventEmitter<any> = new EventEmitter();
 
-  ngOnInit(): void {
+  columnsHeader = {
+    '#': '#',
+    'product_no': 'Mã hàng',
+    'product_name': 'Tên hàng',
+    'amount': 'Số lượng',
+    'note': 'Liều dùng',
+  };
+  displayedColumns = [
+    '#',
+    'product_no',
+    'product_name',
+    'amount',
+    'note',
+  ];
+
+  statusList = {
+    '10': 'Áp dụng',
+    '9': 'Chưa áp dụng'
+  };
+
+  apiFilter: SamplePrescriptionItemFilter;
+  isLoadingResults = false;
+  data: StockTakeItem[] = [];
+  productDataSource = new MatTableDataSource<StockTakeItem>([]);
+
+  constructor(
+    private samplePrescriptionService: SamplePrescriptionService,
+    private samplePrescriptionItemService: SamplePrescriptionItemService,
+    public notifySer: NotifierService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private dialog: MatDialog
+  ) {
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (this.expandedElement) {
+      this.apiFilter = this.buildFilterFromParams();
+
+      this.loadData();
+    }
+  }
+
+  loadData(): void {
+
+    this.isLoadingResults = true;
+    this.samplePrescriptionItemService.getList(this.apiFilter).subscribe(res => {
+      this.data = res.body;
+      this.productDataSource = new MatTableDataSource<StockTakeItem>(this.data);
+      this.isLoadingResults = false;
+    });
+  }
+
+  buildFilterFromParams(): SamplePrescriptionItemFilter {
+    // tslint:disable-next-line:max-line-length
+    function write<K extends keyof SamplePrescriptionItemFilter>(arg: SamplePrescriptionItemFilter, key: K, value: SamplePrescriptionItemFilter[K]): void {
+      arg[key] = value;
+    }
+
+    const filter = new SamplePrescriptionItemFilter();
+    filter.page = this.route.snapshot.queryParams['page'];
+    filter.pageSize = 50;//this.route.snapshot.queryParams['pageSize'];
+    filter.sort = this.route.snapshot.queryParams['sort'];
+    filter.sample_prescription_id = this.sample.id;
+    filter.expand = 'product,productUnit';
+    return filter;
+  }
+
+  reOpen() {
+    this.router.navigate(['/store/sample-prescription/update/' + this.sample.id]);
   }
 
 }

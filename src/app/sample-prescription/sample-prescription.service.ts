@@ -4,6 +4,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { AuthService } from '../authentication/auth.service';
 import { SamplePrescription, SamplePrescriptionFilter } from './sample-prescription.model';
+import { StockTake } from '../stock-take/stock-take.model';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +34,7 @@ export class SamplePrescriptionService {
 
   getStateUrl(filter?: SamplePrescriptionFilter) {
 
-    let url = '/invoice/list';
+    let url = '/sample-prescription/list';
     if (!filter.page) {
       filter.page = 1;
     }
@@ -74,13 +75,18 @@ export class SamplePrescriptionService {
     return this.http.get<SamplePrescription[]>(url);
   }
 
-  getDetail(invoice_id: string, price_book_id: string) {
-    const url = environment.apiUrl + '/sample-prescription/detail';
-    return this.http.post<SamplePrescription>(url, {invoice_id: invoice_id, price_book_id: price_book_id});
+  // getDetail(invoice_id: string, price_book_id: string) {
+  //   const url = environment.apiUrl + '/sample-prescription/detail';
+  //   return this.http.post<SamplePrescription>(url, {invoice_id: invoice_id, price_book_id: price_book_id});
+  // }
+
+  getDetail(id: string, expand: string = '') {
+    const url = environment.apiUrl + '/sample-prescription/' + id + '?expand=' + expand;
+    return this.http.get<SamplePrescription>(url);
   }
 
   getRenderSamplePrescriptionNo() {
-    const url = environment.apiUrl + '/stock-take/render-no';
+    const url = environment.apiUrl + '/sample-prescription/render-no';
     return this.http.get<string>(url);
   }
 

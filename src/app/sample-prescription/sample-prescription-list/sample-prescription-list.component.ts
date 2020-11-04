@@ -66,16 +66,22 @@ export class SamplePrescriptionListComponent extends ListComponentBase implement
     '#', 'no', 'name', 'status'
   ];
 
-  orderStatusFilterList = [
+  statusFilterList = [
     {
-      'value': 'pending',
-      'name': 'Đang xử lý',
+      'value': '10',
+      'name': 'Áp dụng',
     },
     {
-      'value': 'done',
-      'name': 'Hoàn thành',
+      'value': '9',
+      'name': 'Chưa áp dụng',
     },
   ];
+
+  statusList = {
+    '10': 'Áp dụng',
+    '9': 'Chưa áp dụng'
+  };
+
 
   ngOnInit(): void {
     this.buildFrom();
@@ -100,9 +106,7 @@ export class SamplePrescriptionListComponent extends ListComponentBase implement
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.expand = 'store,user';
-    // filter.date_from = objDateFilter.date_from;
-    // filter.date_to = objDateFilter.date_to;
-    // filter.order_status = this.orderStatusFilter.controls['status'].value;
+    filter.status = this.orderStatusFilter.controls['status'].value;
 
     return filter;
   }
@@ -110,7 +114,7 @@ export class SamplePrescriptionListComponent extends ListComponentBase implement
   buildFrom() {
     this.orderStatusFilter = this.fb.group({
       status: [
-        ['pending', 'done']
+        ['10', '9']
       ],
     });
   }

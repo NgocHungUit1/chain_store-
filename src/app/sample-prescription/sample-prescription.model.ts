@@ -11,9 +11,7 @@ export class Store {
 export class SamplePrescription {
   id: string;
   no: string;
-  total_price: number;
-  actual_number: number;
-  actual_price: number;
+  date: string;
   balance_at: number;
   balance_by: number;
   note: string;
@@ -29,9 +27,6 @@ export class SamplePrescription {
 export class SamplePrescriptionFilter extends ApiFilterBase {
   id = '';
   no = '';
-  total_price = '';
-  actual_number = '';
-  actual_price = '';
   balance_at = '';
   balance_by = '';
   status = '';
@@ -50,6 +45,7 @@ export class SamplePrescriptionFilter extends ApiFilterBase {
 
 export class SamplePrescriptionItem {
   id: string;
+  sample_prescription_id: string;
   product_id: string;
   product_no: string;
   amount: number;
@@ -62,6 +58,7 @@ export class SamplePrescriptionItem {
 export class SamplePrescriptionItemFilter extends ApiFilterBase {
   id = '';
   no = '';
+  sample_prescription_id = '';
   product_id = '';
   product_no = '';
   product_unit_id = '';

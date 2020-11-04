@@ -3,7 +3,7 @@ import { ListComponentBase } from '../../shared/base';
 import { WarehouseService } from '../../warehouse/warehouse.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ProductService } from '../../product/product.service';
 import { NotifierService } from 'angular-notifier';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
@@ -50,16 +50,12 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
 
   statuses = [
     {
-      id: 'draft',
-      name: 'Lưu nháp'
+      id: '10',
+      name: 'Áp dụng'
     },
     {
-      id: 'done',
-      name: 'Hoàn thành'
-    },
-    {
-      id: 'cancel',
-      name: 'Hủy bỏ'
+      id: '9',
+      name: 'Chưa áp dụng'
     },
   ];
 
@@ -100,10 +96,9 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
     this.form = this.fb.group({
       date: date,
       no: [null],
-      balance_status: ['draft'],
+      name: [null, Validators.required],
+      status: ['10'],
       note: [null],
-      total_price: [0],
-      actual_number: [0],
     });
 
     this.displayedColumns = this.columnsToDisplay;
@@ -138,9 +133,8 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
         this.form.patchValue({
           date: dateStr,
           no: res['no'],
-          balance_status: res['balance_status'],
-          total_price: res['total_price'],
-          actual_number: res['actual_number'],
+          name: res['name'],
+          status: res['status'] + '',
           note: res['note'],
         });
 
@@ -150,8 +144,8 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
     } else {
       this.samplePrescriptionService.getRenderSamplePrescriptionNo().subscribe(res => {
         this.form.patchValue({
-          no: 'KK0' + res,
-          balance_status: 'draft',
+          no: 'DTM0' + res,
+          status: '10',
         });
       });
       this.form.controls['date'].disable();
@@ -183,18 +177,14 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
         sampleItem.product_id = item.product_id;
         sampleItem.product = item.product;
         sampleItem.product_unit_id = item.product_unit_id;
+        sampleItem.productUnits = item.productUnits;
+        sampleItem.amount = item.amount;
+        sampleItem.note = item.note;
 
-        const units = item.productUnits;
-        // tslint:disable-next-line:no-shadowed-variable
-        units.forEach(element => {
-          element.quantity_of_stock = Math.floor(item.quantity_of_stock / element.value);
-        });
-        sampleItem.productUnits = units;
         newData.push(sampleItem);
       });
       this.data = newData;
       this.productDataSource = new MatTableDataSource<SamplePrescriptionItem>(this.data);
-      this.recalculate();
       this.isLoadingResults = false;
     });
   }
@@ -216,7 +206,7 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.expand = 'product,productUnits';
     if (this.updateModelId !== null) {
-      // filter.stock_take_id = this.updateModelId;
+      filter.sample_prescription_id = this.updateModelId;
     }
     return filter;
   }
@@ -239,50 +229,19 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
       const sampleItem = new SamplePrescriptionItem();
       sampleItem.product_id = res['id'];
       sampleItem.product = res;
+      sampleItem.amount = 1;
       sampleItem.productUnits = res['productUnits'];
 
       if (res['productUnits'].length > 0) {
-
-        const units = res['productUnits'];
-        units.forEach(element => {
-          element.quantity_of_stock = Math.floor(res['quantity_of_stock'] / element.value);
-        });
-        sampleItem.productUnits = units;
-
+        sampleItem.productUnits = res['productUnits'];
         res['productUnits'].sort((a, b) => (a.value > b.value) ? 1 : -1);
         sampleItem.product_unit_id = res['productUnits'][0]['id'];
-        // sampleItem.view_quantity_of_stock = res['productUnits'][0]['quantity_of_stock'];
-        // sampleItem.deviation_number = sampleItem.actual_number - sampleItem.view_quantity_of_stock;
-        // sampleItem.price = res['productUnits'][0]['original_price'];
-        // sampleItem.deviation_price = sampleItem.deviation_number * sampleItem.price;
       }
 
       const newData = this.data.concat([sampleItem]);
       this.data = newData;
       this.productDataSource = new MatTableDataSource<SamplePrescriptionItem>(this.data);
-      this.recalculate();
       this.selectProduct.patchValue(null);
-    });
-  }
-
-  recalculateItem(index) {
-    this.data[index]['deviation_number'] = this.data[index]['actual_number'] - this.data[index]['view_quantity_of_stock'];
-    this.data[index]['deviation_price'] = this.data[index]['deviation_number'] * this.data[index]['price'];
-    this.recalculate();
-  }
-
-  recalculate() {
-
-    let total_price = 0;
-    let actual_number = 0;
-    this.data.forEach(item => {
-      total_price += Number(item['deviation_price']);
-      actual_number += Number(item['actual_number']);
-    });
-
-    this.form.patchValue({
-      total_price: total_price,
-      actual_number: actual_number,
     });
   }
 
@@ -290,7 +249,6 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
     const newData = this.data;
     newData.splice(i, 1);
     this.data = newData;
-    this.recalculate();
     this.productDataSource = new MatTableDataSource<SamplePrescriptionItem>(this.data);
   }
 
@@ -299,22 +257,11 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
    * @param select
    */
   onUnitChange(index, select) {
-    if (this.data[index] !== undefined) {
-      const unit = this.data[index]['productUnits'].find(element => element['id'] === select.value);
-      const unitBase = this.data[index]['productUnits'].find(element => element['is_base'] === 1);
-      this.data[index]['view_quantity_of_stock'] = unit['quantity_of_stock'];
-      this.data[index]['deviation_number'] = this.data[index]['actual_number'] - this.data[index]['view_quantity_of_stock'];
-      this.data[index]['price'] = unitBase['original_price'] * unit['value'];
-      this.data[index]['deviation_price'] = this.data[index]['deviation_number'] * this.data[index]['price'];
-      this.recalculate();
-    }
+
   }
 
   changeQuantity(index, value) {
-    this.data[index]['actual_number'] = Number(this.data[index]['actual_number']) + Number(value);
-    this.data[index]['deviation_number'] = this.data[index]['actual_number'] - this.data[index]['view_quantity_of_stock'];
-    this.data[index]['deviation_price'] = this.data[index]['price'] * this.data[index]['deviation_number'];
-    this.recalculate();
+    this.data[index]['amount'] = Number(this.data[index]['amount']) + Number(value);
   }
 
   saveSample() {
@@ -331,22 +278,16 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
         delete data['date'];
         this.samplePrescriptionService.update(this.updateModelId, data).subscribe(res => {
           // this.model = res;
-          // this.notifySer.notify('success', 'Lưu thành công.');
-          // if (balance_status === 'done') {
-          //   this.router.navigate(['/store/stock-take']);
-          // } else {
-          //   this.router.navigate(['/store/stock-take/update/' + res.id]);
-          // }
+          this.notifySer.notify('success', 'Lưu thành công.');
+          this.router.navigate(['/store/sample-prescription']);
+
         });
       } else {
         this.samplePrescriptionService.create(data).subscribe(res => {
           // this.model = res;
-          // this.notifySer.notify('success', 'Lưu thành công.');
-          // if (balance_status === 'done') {
-          //   this.router.navigate(['/store/stock-take']);
-          // } else {
-          //   this.router.navigate(['/store/stock-take/update/' + res.id]);
-          // }
+          this.notifySer.notify('success', 'Lưu thành công.');
+          this.router.navigate(['/store/sample-prescription']);
+
         });
       }
 

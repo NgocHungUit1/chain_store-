@@ -25,7 +25,7 @@ export class SamplePrescriptionItemService {
       filter.pageSize = 20;
     }
 
-    let url = '/sample-prescription?per-page=' + filter.pageSize;
+    let url = '/sample-prescription-detail?per-page=' + filter.pageSize;
 
     url += '&' + filter.toFilterString();
     return url;
@@ -33,7 +33,7 @@ export class SamplePrescriptionItemService {
 
   getStateUrl(filter?: SamplePrescriptionItemFilter) {
 
-    let url = '/invoice/list';
+    let url = '/sample-prescription-detail/list';
     if (!filter.page) {
       filter.page = 1;
     }
@@ -63,17 +63,6 @@ export class SamplePrescriptionItemService {
     const url = environment.apiUrl + '/sample-prescription/delete-invoice';
     return this.http.post(url, {invoice_id: id});
   }
-
-  autocomplete(term: string) {
-    const url = environment.apiUrl + '/sample-prescription/autocomplete?term=' + term;
-    return this.http.get<SamplePrescription[]>(url);
-  }
-
-  getDetail(invoice_id: string, price_book_id: string) {
-    const url = environment.apiUrl + '/sample-prescription/detail';
-    return this.http.post(url, {invoice_id: invoice_id, price_book_id: price_book_id});
-  }
-
 
 }
 
