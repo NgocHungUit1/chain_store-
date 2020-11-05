@@ -550,6 +550,11 @@ export class SaleMainComponent implements OnInit {
           username: user?.username,
           email: user?.email
         };
+
+        this.user.id = user?.id;
+        this.user.username = user?.username;
+        this.user.email = user?.email;
+
       }
     });
     this.orderService.setListInvoiceLocalStorage(listInvoice);
@@ -894,20 +899,15 @@ export class SaleMainComponent implements OnInit {
     });
 
     const customer = mItemInvoice.customer;
-    // if (mItemInvoice.customer === undefined) {
-    //   this.notifySer.notify('warning', 'Chưa chọn khách hàng !');
-    //   return;
-    // }
-    if (mItemInvoice.user === undefined) {
-      this.notifySer.notify('warning', 'Chưa chọn nhân viên !');
+
+    if (this.selectUser.value === '') {
+      this.notifySer.notify('warning', 'Chưa chọn tên nhân viên !');
       return;
     }
-    // console.log(Number(this.form.controls['customerPay'].value));
 
-    // if (this.sumPrice - this.numberDiscount > numeral(this.form.controls['customerPay'].value).value()) {
-    //   this.notifySer.notify('warning', 'Thanh toán chưa đủ !');
-    //   return;
-    // }
+    if (mItemInvoice.user === undefined) {
+      mItemInvoice.user = this.user;
+    }
 
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
       this.notifySer.notify('warning', 'Chưa chọn sản phẩm !');
@@ -1048,9 +1048,13 @@ export class SaleMainComponent implements OnInit {
     //   return;
     // }
 
-    if (mItemInvoice.user === undefined) {
-      this.notifySer.notify('warning', 'Chưa chọn nhân viên !');
+    if (this.selectUser.value === '') {
+      this.notifySer.notify('warning', 'Chưa chọn tên nhân viên !');
       return;
+    }
+
+    if (mItemInvoice.user === undefined) {
+      mItemInvoice.user = this.user;
     }
 
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
