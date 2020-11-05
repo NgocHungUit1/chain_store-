@@ -48,6 +48,7 @@ export class Product {
     product_unit_id: number; // for unit
     product_unit_value: number; //for unit
     product_unit_quantity_of_stock: number; //for unit
+    amount: number;
 }
 
 

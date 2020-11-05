@@ -3,8 +3,9 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { AuthService } from '../authentication/auth.service';
-import { SamplePrescription, SamplePrescriptionFilter } from './sample-prescription.model';
+import { SamplePrescription, SamplePrescriptionFilter, SamplePrescriptionItem } from './sample-prescription.model';
 import { StockTake } from '../stock-take/stock-take.model';
+import { Product } from '../product/product.model';
 
 @Injectable({
   providedIn: 'root'
@@ -83,6 +84,16 @@ export class SamplePrescriptionService {
   getRenderSamplePrescriptionNo() {
     const url = environment.apiUrl + '/sample-prescription/render-no';
     return this.http.get<string>(url);
+  }
+
+  /**
+   *
+   * @param id
+   * @param expand
+   */
+  getDetailForCart(id: string) {
+    const url = environment.apiUrl + '/sample-prescription/cart';
+    return this.http.post<Product[]>(url, {id: id});
   }
 
 

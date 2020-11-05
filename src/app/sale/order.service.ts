@@ -1,5 +1,5 @@
-import {Injectable} from '@angular/core';
-import {Observable, BehaviorSubject} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { Observable, BehaviorSubject } from 'rxjs';
 import {
   Order,
   Detail,
@@ -11,10 +11,10 @@ import {
   resInvoicePrint,
   resReturnsPrint
 } from '../sale/order.model';
-import {Product} from '../product/product.model';
-import {environment} from '../../environments/environment';
-import {HttpClient} from '@angular/common/http';
-import {Customer} from '../customer/customer.model';
+import { Product } from '../product/product.model';
+import { environment } from '../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { Customer } from '../customer/customer.model';
 
 @Injectable({
   providedIn: 'root'
@@ -201,7 +201,7 @@ export class OrderService {
       mProductInfo.product_unit_id = object.product_unit_id;
       mProductInfo.product_unit_value = object.product_unit_value;
       mProductInfo.base_unit = object.base_unit;
-      mProductInfo.amount = 1;
+      mProductInfo.amount = (object.amount === undefined || object.amount === null) ? 1 : object.amount;
       listProduct.push(mProductInfo);
       mItemInvoice.listProduct = listProduct;
     } else {

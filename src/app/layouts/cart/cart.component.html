@@ -40,28 +40,38 @@
     <div class="select-product">
       <mat-form-field>
         <input class="input-search-product" style="outline: 0;" type="text" [formControl]="selectProduct" matInput
-               [matAutocomplete]="chooseProduct" placeholder="Tìm hàng hóa ">
+               [matAutocomplete]="chooseProduct" [placeholder]="placeholderSearch">
         <button mat-icon-button matPrefix>
           <mat-icon>search</mat-icon>
+        </button>
+        <button mat-icon-button matSuffix (click)="changeTypeSearch();">
+          <mat-icon>{{ iconChangeType }}</mat-icon>
         </button>
         <mat-autocomplete #chooseProduct="matAutocomplete" (optionSelected)="onSelectedProduct($event.option.value)">
           <mat-option fxLayout="row" *ngFor="let product of filteredProducts | async" [value]="product"
                       style="min-height: 70px; line-height:25px !important;"
                       title="{{ product.product_name }}">
-            <img fxFlex="25" class="example-option-img " aria-hidden [src]="product.default_image" width="22">
+            <img *ngIf="iconChangeType === 'cached'" fxFlex="25" class="example-option-img " aria-hidden [src]="product.default_image" width="22">
 
-            <span fxFlex="75" style="margin-left: 5px;" class="m-l-10"
-                  *ngIf="product.base_unit !== null">
+            <span  fxFlex="75" style="margin-left: 5px;" class="m-l-10"
+                  *ngIf="product.base_unit !== null && iconChangeType === 'cached'">
               <b style="font-size: 12px;">{{ product.product_name  }}</b>
               <br>
               {{ product.product_no }} &nbsp;Giá: {{ product.sell_price | number }} {{ product.base_unit }}
               -Tồn:{{ product.product_unit_quantity_of_stock }}
             </span>
 
-            <span fxFlex="75" class="m-l-10" *ngIf="product.base_unit == null">
+            <span  fxFlex="75" class="m-l-10" *ngIf="product.base_unit == null && iconChangeType === 'cached'">
               <b style="font-size: 12px;">{{ product.product_name }}</b>
               <br>
               {{ product.product_no }} &nbsp;Giá: {{ product.sell_price | number }}
+            </span>
+
+<!--            Don thuoc mau-->
+            <span *ngIf="iconChangeType === 'assignment'" fxFlex="100" style="margin-left: 5px;" class="m-l-10">
+              <b style="font-size: 12px;">{{ product.product_name  }}</b>
+              <br>
+              {{ product.product_no }}
             </span>
 
           </mat-option>
