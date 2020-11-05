@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { SamplePrescriptionService } from '../sample-prescription.service';
 import { SamplePrescription, SamplePrescriptionFilter } from '../sample-prescription.model';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-sample-prescription-list',
@@ -49,7 +50,7 @@ export class SamplePrescriptionListComponent extends ListComponentBase implement
   expandedElement: SamplePrescription | null;
   orderStatusFilter: FormGroup;
 
-  searchInvoiceForm = new FormControl();
+  searchSampleForm = new FormControl();
 
 
   columnsHeader = {
@@ -82,11 +83,26 @@ export class SamplePrescriptionListComponent extends ListComponentBase implement
     '9': 'Chưa áp dụng'
   };
 
+  statusesColor: object = {
+    '9': 'label label-warning',
+    '10': 'label label-success',
+  };
 
   ngOnInit(): void {
     this.buildFrom();
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
+
+    this.searchSampleForm.valueChanges.pipe(debounceTime(800)).subscribe(res => {
+      if (res !== '') {
+        this.apiFilter = this.buildFilterFromParams();
+        this.apiFilter.keyword = res;
+        this.loadData();
+      } else {
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+      }
+    });
   }
 
   buildFilterFromParams(): SamplePrescriptionFilter {
@@ -96,7 +112,6 @@ export class SamplePrescriptionListComponent extends ListComponentBase implement
     }
 
     const filter = new SamplePrescriptionFilter();
-
     const objectKeys = Object.keys(filter) as Array<keyof SamplePrescriptionFilter>;
 
     for (const attr of objectKeys) {

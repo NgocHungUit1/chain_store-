@@ -66,19 +66,14 @@ export class SamplePrescriptionService {
   }
 
   delete(id: string) {
-    const url = environment.apiUrl + '/sample-prescription/delete-invoice';
-    return this.http.post(url, {invoice_id: id});
+    const url = environment.apiUrl + '/sample-prescription/delete-sample';
+    return this.http.post(url, {id: id});
   }
 
   autocomplete(term: string) {
     const url = environment.apiUrl + '/sample-prescription/autocomplete?term=' + term;
     return this.http.get<SamplePrescription[]>(url);
   }
-
-  // getDetail(invoice_id: string, price_book_id: string) {
-  //   const url = environment.apiUrl + '/sample-prescription/detail';
-  //   return this.http.post<SamplePrescription>(url, {invoice_id: invoice_id, price_book_id: price_book_id});
-  // }
 
   getDetail(id: string, expand: string = '') {
     const url = environment.apiUrl + '/sample-prescription/' + id + '?expand=' + expand;

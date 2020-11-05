@@ -11,7 +11,9 @@
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
             <span class="product-field-label">Trạng thái:</span>
-            <label>{{ statusList[sample.status] }}</label>
+            <label class="{{ statusesColor[sample.status] }}">
+              {{ statusList[sample.status] }}
+            </label>
           </div>
         </div>
 
@@ -88,6 +90,11 @@
         <button class="m-r-10" mat-raised-button color="primary" (click)="reOpen()">
           <mat-icon>check</mat-icon>
           Cập nhật
+        </button>
+        <button class="m-r-10" mat-raised-button color="danger"
+                (click)="delete()">
+          <mat-icon>delete</mat-icon>
+          Xóa
         </button>
 
       </div>

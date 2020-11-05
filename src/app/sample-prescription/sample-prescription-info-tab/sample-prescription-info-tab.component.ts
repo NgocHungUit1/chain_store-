@@ -41,6 +41,12 @@ export class SamplePrescriptionInfoTabComponent implements OnChanges {
     '9': 'Chưa áp dụng'
   };
 
+  statusesColor: object = {
+    '9': 'label label-warning',
+    '10': 'label label-success',
+  };
+
+
   apiFilter: SamplePrescriptionItemFilter;
   isLoadingResults = false;
   data: StockTakeItem[] = [];
@@ -92,5 +98,17 @@ export class SamplePrescriptionInfoTabComponent implements OnChanges {
   reOpen() {
     this.router.navigate(['/store/sample-prescription/update/' + this.sample.id]);
   }
+
+  delete() {
+    this.samplePrescriptionService.delete(this.sample.id).subscribe(res => {
+      if (res === true) {
+        this.notifySer.notify('success', 'Xóa đơn thuốc mẫu thành công!');
+        this.sample = null;
+      } else {
+        this.notifySer.notify('danger', 'Không xóa được.');
+      }
+    });
+  }
+
 
 }

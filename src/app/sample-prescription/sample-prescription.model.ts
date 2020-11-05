@@ -69,7 +69,7 @@ export class SamplePrescriptionItemFilter extends ApiFilterBase {
   sort = '';
 
   getModelSearch() {
-    return 'SamplePrescriptionItemSearch';
+    return 'SamplePrescriptionDetailSearch';
   }
 }
 
