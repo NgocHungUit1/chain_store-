@@ -169,12 +169,17 @@ export class InvoiceTabInfoComponent implements OnInit {
       type: invoice.discount_type
     };
 
-    let aProductInfo: ProductInfo[] = [];
+    const aProductInfo: ProductInfo[] = [];
     const detail = invoice.detail || [];
 
     detail.forEach(element => {
-      let units = element?.product?.productUnits;
-      let item = units.find(element => element.is_base == 1);
+      const units = element.product.productUnits;
+      units.forEach(item => {
+        item.quantity_of_stock = Math.floor(element.product.quantity_of_stock / item.value);
+      });
+      element.product.productUnits = units;
+
+      let item = units.find(ele => ele.is_base === 1);
 
       const mProductInfo = new ProductInfo();
       mProductInfo.amount = element.amount;
@@ -182,8 +187,6 @@ export class InvoiceTabInfoComponent implements OnInit {
       mProductInfo.product = element.product;
       mProductInfo.product.end_price = element.price;
       mProductInfo.common_price = element.price;
-      // mProductInfo.product_unit_id = element.product_unit_id;
-      // mProductInfo.product_unit_value = element.product_unit_value;
       mProductInfo.product_unit_id = item['id'];
       mProductInfo.product_unit_value = item['value'];
       mProductInfo.base_unit = element.base_unit;
