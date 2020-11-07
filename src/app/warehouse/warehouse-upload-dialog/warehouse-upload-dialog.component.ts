@@ -60,12 +60,8 @@ export class WarehouseUploadDialogComponent implements OnInit {
       } else {
         this.notifierSer.notify('error', 'Tải dữ liệu không thành công!');
       }
-      console.log(uploadRes);
       if (uploadRes['errors']) {
-        this.notifierSer.notify('error', uploadRes['errors'][0]);
-        // uploadRes['errors'].forEach(error => {
-        //   this.notifierSer.notify('error', error);
-        // });
+        this.notifierSer.notify('error', uploadRes['errors']);
       }
     }, error1 => {
       this.submitted = false;
