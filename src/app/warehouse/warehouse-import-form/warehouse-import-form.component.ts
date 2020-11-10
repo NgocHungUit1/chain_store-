@@ -365,7 +365,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       const warehouseProduct = new WarehouseProduct();
       warehouseProduct.product_id = res['id'];
       warehouseProduct.product = res;
-      warehouseProduct.quantity = 1;
+      warehouseProduct.quantity = 0; // de nhap so lo
       warehouseProduct.price = (res['original_price'] !== null) ? res['original_price'] : 0;
       warehouseProduct.discount = 0;
       warehouseProduct.discount_type = 'price';
@@ -482,11 +482,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   changeQuantity(index, value) {
-    this.data[index]['quantity'] = Number(this.data[index]['quantity']) + Number(value);
-    if (this.data[index]['product_parcels'].length === 1) {
-      this.data[index]['product_parcels'][0]['quantity'] = this.data[index]['quantity'];
-    }
-    this.recalculateItem(index);
+    this.openParcelFormDialog(index);
+    // this.data[index]['quantity'] = Number(this.data[index]['quantity']) + Number(value);
+    // if (this.data[index]['product_parcels'].length === 1) {
+    //   this.data[index]['product_parcels'][0]['quantity'] = this.data[index]['quantity'];
+    // }
+    // this.recalculateItem(index);
   }
 
   onParcelSelectedChange(index, value) {
