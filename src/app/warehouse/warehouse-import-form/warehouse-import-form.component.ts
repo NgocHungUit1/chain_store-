@@ -579,7 +579,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         'padding: 8px;' +
         '}</style>' +
         '<section style="padding: -5px;">' +
-        '<p style="text-align:center;">Địa chỉ : ' + res?.store?.name + '</p>' +
+        '<p style="text-align:left;">Nhà thuốc: ' + res?.store?.name + '</p>' +
+        '<p style="text-align:left;">Địa chỉ: ' + res?.store?.address + '</p>' +
+        '<p style="text-align:left;">SĐT: ' + res?.store?.phone + '</p>' +
         '<p style="text-align:center; font-weight:600;">HÓA ĐƠN NHẬP HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;">Mã phiếu nhập: ' + res?.no + '</p> ' +
         '<p style="text-align:left;">Ngày nhập: ' + res?.date + ' </p>' +
