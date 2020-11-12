@@ -130,7 +130,17 @@
 
               <ng-container matColumnDef="product_name">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_name']}}</th>
-                <td mat-cell *matCellDef="let element"> {{element.product_name}}</td>
+                <td mat-cell *matCellDef="let element">
+                  <span *ngIf="element.product_name.length > 90; else productName"
+                        matTooltip="{{ element.product_name }}">
+                    {{ element.product_name | slice:0:90 }} ...
+                  </span>
+                  <ng-template #productName>
+                    <span>
+                      {{ element.product_name }}
+                    </span>
+                  </ng-template>
+                </td>
               </ng-container>
 
               <ng-container matColumnDef="shortcut">
