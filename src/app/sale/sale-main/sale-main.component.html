@@ -194,7 +194,8 @@
                 <mat-icon>business</mat-icon>
               </button>
               <mat-select class="input-search" placeholder="Chọn chi nhánh" formControlName="branch_id"
-              [disabled]="localItemInvoice?.is_return === true">
+                          (selectionChange)="changeBranch($event)"
+                          [disabled]="localItemInvoice?.is_return === true">
                 <mat-option *ngFor="let branch of branchList " [value]="branch.id">
                   {{ branch.name }}
                 </mat-option>
@@ -392,7 +393,7 @@
 
           <div *ngIf="localItemInvoice?.is_return !== true; else buttonThanhToan">
             <button mat-button class="payment-button btn-success {{checkPermissionSaleDisable() ? 'disable' : ''}}"
-                  [disabled]="checkPermissionSaleDisable()" (click)="payment()">
+                    [disabled]="checkPermissionSaleDisable()" (click)="payment()">
               <span>Thanh toán</span>
             </button>
           </div>

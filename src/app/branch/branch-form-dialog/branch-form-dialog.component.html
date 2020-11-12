@@ -9,7 +9,7 @@
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Tên chi nhánh</mat-label>
-                <input matInput tabindex="1" formControlName="name">
+                <input matInput tabindex="1" formControlName="name" required>
                 <mat-error *ngIf="form.controls['name'].hasError('required')">Tên chi nhánh không được bỏ trống
                 </mat-error>
                 <mat-error *ngIf="form.controls['name'].hasError('maxlength')">Tên chi nhánh quá dài
@@ -22,7 +22,7 @@
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Số điện thoại</mat-label>
-                <input matInput tabindex="2" formControlName="phone_number">
+                <input matInput tabindex="2" formControlName="phone_number" required>
                 <mat-error *ngIf="form.controls['phone_number'].hasError('required')">Số điện thoại không được bỏ trống
                 </mat-error>
                 <mat-error *ngIf="form.controls['phone_number'].hasError('maxlength')">Số điện thoại quá dài
@@ -36,14 +36,14 @@
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Email</mat-label>
-                <input matInput tabindex="3" formControlName="email">
+                <input matInput tabindex="3" formControlName="email" required>
               </mat-form-field>
             </div>
 
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Địa chỉ</mat-label>
-                <textarea matInput tabindex="4" formControlName="address" rows="2"></textarea>
+                <textarea matInput tabindex="4" formControlName="address" rows="2" required></textarea>
                 <mat-error *ngIf="form.controls['address'].hasError('required')">Địa chỉ không được bỏ trống
                 </mat-error>
                 <mat-error *ngIf="form.controls['address'].hasError('maxlength')">Địa chỉ quá dài
@@ -57,7 +57,7 @@
             <div fxFlex="100">
               <mat-form-field>
                 <input matInput placeholder="Tỉnh/Thành phố" tabindex="5" aria-label="Tỉnh/Thành phố"
-                       [matAutocomplete]="province" formControlName="province">
+                       [matAutocomplete]="province" formControlName="province" required>
                 <button mat-icon-button matPrefix>
                   <mat-icon>search</mat-icon>
                 </button>
@@ -82,7 +82,7 @@
               <mat-form-field>
                 <input matInput placeholder="Quận/Huyện" tabindex="6" aria-label="Quận/Huyện"
                        [matAutocomplete]="district"
-                       formControlName="district">
+                       formControlName="district" required>
                 <button mat-icon-button matPrefix>
                   <mat-icon>search</mat-icon>
                 </button>
@@ -106,7 +106,7 @@
             <div fxFlex="100">
               <mat-form-field>
                 <input matInput placeholder="Phường/Xã" tabindex="7" aria-label="Phường/Xã" [matAutocomplete]="ward"
-                       formControlName="ward">
+                       formControlName="ward" required>
                 <button mat-icon-button matPrefix>
                   <mat-icon>search</mat-icon>
                 </button>

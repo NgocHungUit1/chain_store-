@@ -386,6 +386,23 @@ export class SaleMainComponent implements OnInit {
     });
   }
 
+  public changeBranch(event) {
+    const data = {'branch_store_id': event.value};
+    this.userService.updateBranchLogin(data).subscribe(res => {
+      if (res === true) {
+        this.notifySer.notify('success', 'Chuyển chi nhánh thành công.');
+        this.resetDataSiderBar();
+        this.orderService.initListInvoice();
+        setTimeout(function () {
+          location.reload();
+        }, 500);
+      } else {
+        this.notifySer.notify('error', 'Đã có lỗi xảy ra, vui lòng kiểm tra lại.');
+      }
+    }, (error) => {
+    });
+  }
+
   /**
    * Init Component
    */

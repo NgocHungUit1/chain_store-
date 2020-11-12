@@ -248,7 +248,9 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
    * @param product_id
    */
   handleAddProductToList(product_id) {
-    this.productSer.getDetail(product_id, 'productUnits').subscribe(res => {
+    this.productSer.getDetail(product_id, 'productUnits,quantity').subscribe(res => {
+      // console.log(res);
+      res['quantity_of_stock'] = res['quantity']['number'];
       const stockTakeItem = new StockTakeItem();
       stockTakeItem.product_id = res['id'];
       stockTakeItem.product = res;
@@ -258,6 +260,7 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
       if (res['productUnits'].length > 0) {
 
         const units = res['productUnits'];
+        // tslint:disable-next-line:no-shadowed-variable
         units.forEach(element => {
           element.quantity_of_stock = Math.floor(res['quantity_of_stock'] / element.value);
         });

@@ -161,7 +161,7 @@ export class CartComponent implements OnDestroy {
       } else {
         this.notifySer.notify('warning', 'Không đủ tồn kho.');
       }
-      console.log(product);
+      // console.log(product);
     } else {
       /**
        * product.id  === sample.id
@@ -169,7 +169,7 @@ export class CartComponent implements OnDestroy {
       this.samplePrescriptionService.getDetailForCart(product.id).subscribe(res => {
         // tslint:disable-next-line:no-shadowed-variable
         res.forEach(element => {
-          console.log(element);
+          // console.log(element);
           this.handlePriceListProduct(element);
         });
       });

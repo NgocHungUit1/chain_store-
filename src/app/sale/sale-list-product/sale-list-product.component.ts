@@ -72,7 +72,7 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.price_book_id = itemInvoice?.price_book_id;
-    filter.expand = 'medicine,productPlacements,group,images,common,productUnits';
+    filter.expand = 'images,common,productUnits,quantity';
     return filter;
   }
 
@@ -90,7 +90,8 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
         //   quantity_of_stock += unit.name + '-' + unit.quantity_of_stock + ' ';
         // });
         // element.quantity_of_stock = element.base + '-' + element.quantity_of_stock;
-        element.text_quantity_of_stock = element.base_unit + '-' + element.quantity_of_stock;
+        element.quantity_of_stock = element.quantity?.number;
+        element.text_quantity_of_stock = element.base_unit + '-' + element.quantity?.number;
 
       });
       this.dataSource = data;
