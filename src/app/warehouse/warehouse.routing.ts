@@ -43,6 +43,10 @@ export const WarehouseRoutes: Routes = [
         path: 'returns',
         component: ReturnsListComponent
       },
+      {
+        path: 'move',
+        loadChildren: () => import('../move/move.module').then(m => m.MoveModule)
+      },
     ]
   }
 ];
