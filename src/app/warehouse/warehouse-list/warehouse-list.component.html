@@ -14,6 +14,17 @@
         <mat-icon>menu</mat-icon>
       </button>
       <h3>Danh sách Nhập hàng</h3>
+
+      <div class="select-product">
+        <mat-form-field>
+          <mat-label>Tìm kiếm sản phẩm, mã phiếu nhập</mat-label>
+          <input matInput [formControl]="searchProductForm" placeholder="" #input>
+          <button mat-icon-button matPrefix>
+            <mat-icon>search</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+
       <span fxFlex="1 1 0%"></span>
       <button mat-raised-button color="accent" (click)="openUploadDialog();" style="margin-right: 10px">
         <mat-icon>cloud_upload</mat-icon>

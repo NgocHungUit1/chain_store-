@@ -115,9 +115,14 @@ export class WarehouseInfoTabComponent implements OnChanges {
       return;
     }
     this.modelSer.delete(this.model.id).subscribe(res => {
-      const typeStr = res['type'] === 'import' ? 'nhập' : 'trả';
-      this.notifySer.notify('warning', 'Đã xóa đơn ' + typeStr + ' hàng');
+      // console.log(res);
+      // const typeStr = res['type'] === 'import' ? 'nhập' : 'trả';
+      // this.notifySer.notify('warning', 'Đã xóa đơn ' + typeStr + ' hàng');
+      this.notifySer.notify('warning', 'Đã xóa đơn');
       this.reload.emit(null);
+      setTimeout(function () {
+        location.reload();
+      }, 1000);
     });
   }
 

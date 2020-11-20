@@ -10,11 +10,13 @@ import { DemoMaterialModule } from '../demo-material-module';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { MoveListComponent } from './move-list/move-list.component';
 import { MoveRoutes } from './move.routing';
+import { MoveCreateComponent } from './move-create/move-create.component';
+import { MoveInfoTabComponent } from './move-info-tab/move-info-tab.component';
 
 
 
 @NgModule({
-  declarations: [MoveListComponent],
+  declarations: [MoveListComponent, MoveCreateComponent, MoveInfoTabComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(MoveRoutes),

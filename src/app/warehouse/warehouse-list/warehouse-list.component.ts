@@ -11,6 +11,8 @@ import { WarehouseService } from '../warehouse.service';
 import { Warehouse, WarehouseFilter } from '../warehouse.model';
 import { ProductUploadDialogComponent } from '../../product/product-upload-dialog/product-upload-dialog.component';
 import { WarehouseUploadDialogComponent } from '../warehouse-upload-dialog/warehouse-upload-dialog.component';
+import { FormControl } from '@angular/forms';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   templateUrl: './warehouse-list.component.html',
@@ -37,6 +39,9 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
 
   apiFilter: WarehouseFilter;
+
+  searchProductForm = new FormControl();
+
 
   columnsHeader = {
     '#': '#',
@@ -112,6 +117,19 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
   ngOnInit() {
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
+
+    this.searchProductForm.valueChanges.pipe(debounceTime(800)).subscribe(res => {
+      if (res !== '') {
+        this.apiFilter = this.buildFilterFromParams();
+        this.apiFilter.keyword = res;
+        this.loadData();
+        // this.service.setLoadProduct(false);
+      } else {
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+        // this.service.setLoadProduct(false);
+      }
+    });
   }
 
   openUploadDialog() {
