@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
-import { Router } from "@angular/router";
-import { AuthService } from "../../../authentication/auth.service";
+import { Router } from '@angular/router';
+import { AuthService } from '../../../authentication/auth.service';
 import { log } from 'console';
 import { OrderService } from '../../../sale/order.service';
+
 @Component({
   selector: 'app-header-cart',
   templateUrl: './header-cart.component.html',
-  styleUrls: []
+  styleUrls: ['./header-cart.component.css']
 })
 export class AppHeaderCartComponent {
   public config: PerfectScrollbarConfigInterface = {};
@@ -81,7 +82,6 @@ export class AppHeaderCartComponent {
     private route: Router,
     private authSer: AuthService,
     private orderService: OrderService,
-
   ) {
 
   }
@@ -92,6 +92,14 @@ export class AppHeaderCartComponent {
         this.route.navigate(['/', 'authentication', 'login']);
       }
     });
+  }
+
+  barcode: string;
+
+  onkeydown(event: KeyboardEvent) {
+    this.barcode = event.target.value;
+    console.log(this.barcode);
+    event.target.value = '';
   }
 
 }
