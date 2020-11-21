@@ -22,7 +22,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
     '#': '#',
     'product_no': 'Mã hàng',
     'product_name': 'Tên hàng',
-    'quantity': 'Số lượng',
+    'quantity': 'Tổng số lượng',
     'price': 'Đơn giá',
     'discount': 'Giảm giá',
     'amount': 'Thành tiền',

@@ -56,32 +56,33 @@ export class MoveListComponent extends ListComponentBase implements OnInit {
 
   columnsHeader = {
     '#': '#',
-    'no': 'Mã đơn thuốc',
-    'name': 'Tên đơn thuốc',
+    'no': 'Mã phiếu chuyển',
+    'branch_from': 'Từ chi nhánh',
+    'branch_to': 'Đến chi nhánh',
     'status': 'Trạng thái',
   };
 
   displayedColumns: string[] = [
-    '#', 'no', 'name', 'status'
+    '#', 'no', 'branch_from', 'branch_to', 'status'
   ];
   columnsToDisplay: string[] = [
-    '#', 'no', 'name', 'status'
+    '#', 'no', 'branch_from', 'branch_to', 'status'
   ];
 
   statusFilterList = [
     {
       'value': '10',
-      'name': 'Áp dụng',
+      'name': 'Hoàn thành',
     },
     {
       'value': '9',
-      'name': 'Chưa áp dụng',
+      'name': 'Khởi tạo',
     },
   ];
 
   statusList = {
-    '10': 'Áp dụng',
-    '9': 'Chưa áp dụng'
+    '10': 'Hoàn thành',
+    '9': 'Khởi tạo'
   };
 
   statusesColor: object = {
@@ -116,12 +117,12 @@ export class MoveListComponent extends ListComponentBase implements OnInit {
     const objectKeys = Object.keys(filter) as Array<keyof MoveFilter>;
 
     for (const attr of objectKeys) {
-      write(filter, attr, this.route.snapshot.queryParams['SamplePrescriptionSearch[' + attr + ']']);
+      write(filter, attr, this.route.snapshot.queryParams['MoveSearch[' + attr + ']']);
     }
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'store,user';
+    filter.expand = 'store,user,doneBy,branchFrom,branchTo';
     filter.status = this.orderStatusFilter.controls['status'].value;
 
     return filter;
@@ -143,6 +144,16 @@ export class MoveListComponent extends ListComponentBase implements OnInit {
       data.forEach(elementData => {
         stt++;
         elementData.stt = stt; // tinh STT
+
+        if (elementData.done_at !== 0) {
+          const balance_date = new Date(1000 * elementData.done_at).toJSON().slice(0, 16);
+          elementData.done_at = balance_date.slice(8, 10) + '/'
+            + balance_date.slice(5, 7) + '/'
+            + balance_date.slice(0, 4) + ' '
+            + balance_date.slice(11, 16);
+        } else {
+          elementData.done_at = '';
+        }
       });
       this.dataSource = data;
       this.reloadFilter(res);

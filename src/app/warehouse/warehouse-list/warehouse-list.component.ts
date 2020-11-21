@@ -11,7 +11,7 @@ import { WarehouseService } from '../warehouse.service';
 import { Warehouse, WarehouseFilter } from '../warehouse.model';
 import { ProductUploadDialogComponent } from '../../product/product-upload-dialog/product-upload-dialog.component';
 import { WarehouseUploadDialogComponent } from '../warehouse-upload-dialog/warehouse-upload-dialog.component';
-import { FormControl } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 
 @Component({
@@ -31,7 +31,8 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     private mainService: WarehouseService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
-    private notifyService: NotifierService
+    private notifyService: NotifierService,
+    private fb: FormBuilder,
   ) {
     super();
   }
@@ -41,6 +42,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
   apiFilter: WarehouseFilter;
 
   searchProductForm = new FormControl();
+  orderStatusFilter: FormGroup;
 
 
   columnsHeader = {
@@ -77,6 +79,18 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     'status',
     'national_pharmacy_no',
   ];
+
+  statusFilterList = [
+    {
+      'value': '10',
+      'name': 'Hoàn thành',
+    },
+    {
+      'value': '9',
+      'name': 'Lưu tạm',
+    },
+  ];
+
   dataSource = [];
   expandedElement: Warehouse | null;
 
@@ -102,6 +116,8 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.expand = 'supplier,created_user,product_count,total_quantity';
     filter.type = 'import';
+    filter.status = this.orderStatusFilter.controls['status'].value;
+
     return filter;
   }
 
@@ -115,6 +131,13 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
   }
 
   ngOnInit() {
+
+    this.orderStatusFilter = this.fb.group({
+      status: [
+        ['10', '9']
+      ],
+    });
+
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
 
@@ -141,5 +164,10 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
         this.loadData();
       }
     });
+  }
+
+  orderStatusFilterChange() {
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
   }
 }

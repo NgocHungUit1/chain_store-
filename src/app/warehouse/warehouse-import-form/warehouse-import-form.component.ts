@@ -71,7 +71,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'product_name': 'Tên hàng',
     // 'product_parcel': 'Lô',
     'product_unit_id': 'Đơn vị',
-    'quantity': 'Số lượng',
+    'quantity': 'Tổng số lượng',
     'price': 'Đơn giá',
     'discount': 'Giảm giá',
     'amount': 'Thành tiền',
@@ -710,7 +710,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     if (indexPermission !== -1) {
       return false;
     }
-    return  true;
+    return true;
   }
 
 }

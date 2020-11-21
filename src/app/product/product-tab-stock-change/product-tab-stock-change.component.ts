@@ -55,6 +55,8 @@ export class ProductTabStockChangeComponent extends ListComponentBase implements
     'stock-take': 'Kiểm kho',
     'sale': 'Bán hàng',
     'return-sale': 'Trả hàng bán',
+    'move-from': 'Chuyển hàng đi',
+    'move-to': 'Chuyển hàng đến',
   };
 
   apiFilter: StockCardFilter;

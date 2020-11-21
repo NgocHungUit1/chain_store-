@@ -66,8 +66,8 @@ export class MoveService {
   }
 
   delete(id: string) {
-    const url = environment.apiUrl + '/move/delete-sample';
-    return this.http.post(url, {id: id});
+    const url = environment.apiUrl + '/move/' + id;
+    return this.http.delete(url, {});
   }
 
   autocomplete(term: string) {
@@ -80,19 +80,14 @@ export class MoveService {
     return this.http.get<Move>(url);
   }
 
-  getRenderSamplePrescriptionNo() {
+  getRenderNo() {
     const url = environment.apiUrl + '/move/render-no';
     return this.http.get<string>(url);
   }
 
-  /**
-   *
-   * @param id
-   * @param expand
-   */
-  getDetailForCart(id: string) {
-    const url = environment.apiUrl + '/move/cart';
-    return this.http.post<Product[]>(url, {id: id});
+  validate(data) {
+    const url = environment.apiUrl + '/move/validate';
+    return this.http.post(url, data);
   }
 
 

@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { MoveListComponent } from './move-list/move-list.component';
+import { MoveCreateComponent } from './move-create/move-create.component';
 
 export const MoveRoutes: Routes = [
   {
@@ -9,14 +10,14 @@ export const MoveRoutes: Routes = [
         path: '',
         component: MoveListComponent
       },
-      // {
-      //   path: 'create',
-      //   component: StockTakeCreateComponent
-      // },
-      // {
-      //   path: 'update/:id',
-      //   component: StockTakeCreateComponent
-      // }
+      {
+        path: 'create',
+        component: MoveCreateComponent
+      },
+      {
+        path: 'update/:id',
+        component: MoveCreateComponent
+      }
     ]
   }
 ];

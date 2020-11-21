@@ -8,6 +8,10 @@ export class Store {
   name: string;
 }
 
+export class Branch {
+  name: string;
+}
+
 export class Move {
   id: string;
   no: string;
@@ -20,15 +24,16 @@ export class Move {
   user: User;
   created_at: any;
   status: string;
-  balanceBy: object;
+  doneBy: object;
+  branchFrom: Branch;
+  branchTo: Branch;
+  done_at: string;
 }
 
 
 export class MoveFilter extends ApiFilterBase {
   id = '';
   no = '';
-  balance_at = '';
-  balance_by = '';
   status = '';
   page = 1;
   pageSize = 15;
@@ -36,7 +41,7 @@ export class MoveFilter extends ApiFilterBase {
   date_from = '';
   date_to = '';
   keyword = '';
-  balance_status = '';
+  done_at = '';
 
   getModelSearch() {
     return 'MoveSearch';
@@ -58,7 +63,7 @@ export class MoveDetail {
 export class MoveDetailFilter extends ApiFilterBase {
   id = '';
   no = '';
-  sample_prescription_id = '';
+  move_id = '';
   product_id = '';
   product_no = '';
   product_unit_id = '';

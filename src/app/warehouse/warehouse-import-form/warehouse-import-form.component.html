@@ -111,18 +111,18 @@
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['quantity']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index">
                   <mat-form-field>
-                    <!--                    (change)="recalculateItem(i)"-->
-                    <input matInput class="quantity-input" [value]="element['quantity']"
-                           [(ngModel)]="data[i]['quantity']" [disabled]="data[i]['product_parcels'].length > 1"
-                           readonly>
-                    <button mat-icon-button matPrefix (click)="changeQuantity(i, -1)"
-                            [disabled]="element['quantity'] === 1 || data[i]['product_parcels'].length > 1">
-                      <mat-icon>indeterminate_check_box</mat-icon>
-                    </button>
-                    <button mat-icon-button matSuffix (click)="changeQuantity(i, 1);"
-                            [disabled]="data[i]['product_parcels'].length > 1">
-                      <mat-icon>add_box</mat-icon>
-                    </button>
+                                        <input matInput class="quantity-input" [value]="element['quantity']"
+                                               [(ngModel)]="data[i]['quantity']" [disabled]="data[i]['product_parcels'].length > 1"
+                                               readonly>
+                                        <button mat-icon-button matPrefix (click)="changeQuantity(i, -1)"
+                                                [disabled]="element['quantity'] === 1 || data[i]['product_parcels'].length > 1">
+                                          <mat-icon>indeterminate_check_box</mat-icon>
+                                        </button>
+                                        <button mat-icon-button matSuffix (click)="changeQuantity(i, 1);"
+                                                [disabled]="data[i]['product_parcels'].length > 1">
+                                          <mat-icon>add_box</mat-icon>
+                                        </button>
+<!--                    {{ element['quantity'] | number }}-->
                   </mat-form-field>
                 </td>
               </ng-container>
