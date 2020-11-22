@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../authentication/auth.service';
 import { log } from 'console';
 import { OrderService } from '../../../sale/order.service';
+import { ProductService } from '../../../product/product.service';
+import { Product } from '../../../product/product.model';
 
 @Component({
   selector: 'app-header-cart',
@@ -82,6 +84,7 @@ export class AppHeaderCartComponent {
     private route: Router,
     private authSer: AuthService,
     private orderService: OrderService,
+    private productSer: ProductService,
   ) {
 
   }
@@ -96,10 +99,29 @@ export class AppHeaderCartComponent {
 
   barcode: string;
 
-  onkeydown(text: string) {
-    this.barcode = text;
+  onkeydown($event) {
+    this.barcode = $event.target.value;
     console.log(this.barcode);
-    text = '';
+    this.productSer.addproductBarcode(this.barcode).subscribe(res => {
+      // console.log(res);
+      if (res !== null) {
+        this.handlePriceListProduct(res);
+      }
+    });
+    $event.target.value = '';
+  }
+
+  handlePriceListProduct(product: Product) {
+    let units = product.productUnits;
+    // tslint:disable-next-line:no-shadowed-variable
+    units.forEach(element => {
+      element.quantity_of_stock = Math.floor(product.quantity_of_stock / element.value);
+    });
+    // tslint:disable-next-line:no-shadowed-variable
+    units = units.filter(element => element.quantity_of_stock > 0);
+    product.productUnits = units;
+
+    this.orderService.addProduct(product);
   }
 
 }

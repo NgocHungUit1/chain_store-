@@ -4,6 +4,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Product, ProductFilter } from './product.model';
 import { AuthService } from '../authentication/auth.service';
+import { NotifierService } from 'angular-notifier';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,11 @@ export class ProductService {
     this.loadProduct.next(action);
   }
 
-  constructor(private http: HttpClient, private auth: AuthService) {
+  constructor(
+    private http: HttpClient,
+    private auth: AuthService,
+    public notifySer: NotifierService,
+  ) {
   }
 
   getApiUrl(filter?: ProductFilter) {
@@ -157,6 +162,11 @@ export class ProductService {
   lock(id) {
     const url = environment.apiUrl + '/product/lock?id=' + id;
     return this.http.post(url, {});
+  }
+
+  addproductBarcode(code: string) {
+    const url = environment.apiUrl + '/product/search-code?code=' + code;
+    return this.http.get<Product>(url);
   }
 }
 
