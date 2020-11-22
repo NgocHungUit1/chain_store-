@@ -652,7 +652,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       WindowPrt.document.close();
       WindowPrt.focus();
       WindowPrt.print();
-      WindowPrt.close();
+      // WindowPrt.close();
     });
   }
 

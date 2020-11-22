@@ -250,7 +250,11 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
   handleAddProductToList(product_id) {
     this.productSer.getDetail(product_id, 'productUnits,quantity').subscribe(res => {
       // console.log(res);
-      res['quantity_of_stock'] = res['quantity']['number'];
+      if (res['quantity'] === null) {
+        res['quantity_of_stock'] = 0;
+      } else {
+        res['quantity_of_stock'] = res['quantity']['number'];
+      }
       const stockTakeItem = new StockTakeItem();
       stockTakeItem.product_id = res['id'];
       stockTakeItem.product = res;

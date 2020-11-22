@@ -815,7 +815,7 @@ export class SaleMainComponent implements OnInit {
       WindowPrt.document.close();
       WindowPrt.focus();
       WindowPrt.print();
-      WindowPrt.close();
+      // WindowPrt.close();
     });
 
   }
@@ -899,7 +899,7 @@ export class SaleMainComponent implements OnInit {
       WindowPrt.document.close();
       WindowPrt.focus();
       WindowPrt.print();
-      WindowPrt.close();
+      // WindowPrt.close();
     });
 
   }
@@ -923,6 +923,9 @@ export class SaleMainComponent implements OnInit {
     }
 
     if (mItemInvoice.user === undefined) {
+
+      // console.log(this.user);
+      // return;
       mItemInvoice.user = this.user;
     }
 
@@ -998,6 +1001,7 @@ export class SaleMainComponent implements OnInit {
         price_book_id: this.form.controls['priceBookID'].value,
         branch_id: this.form.controls['branch_id'].value,
       },
+      UserID: mItemInvoice.user.id,
       InvoiceDetail: invoiceDetail,
       PaymentMethod: 'cash', // mItemInvoice.paymentSiderBar?.type,
       PaymentPrice: this.sumPrice - this.numberDiscount, // tien thanh toan

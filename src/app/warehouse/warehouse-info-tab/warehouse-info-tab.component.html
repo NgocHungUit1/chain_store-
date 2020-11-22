@@ -60,10 +60,14 @@
             <td mat-cell *matCellDef="let element">
               <p>{{ element.product.product_name }}</p>
               <p>Đơn vị : {{ element.productUnit.name }}</p>
-              <p *ngIf="element['productParcelsForView'][0] !== undefined">Lô
-                : {{ element['productParcelsForView'][0]['parcel_no'] }}
-                - {{ element['productParcelsForView'][0]['expiration_date'] }} -
-                SL: {{ element['productParcelsForView'][0]['quantity'] }}</p>
+              <!--              <p *ngIf="element['productParcelsForView'][0] !== undefined">Lô-->
+              <!--                : {{ element['productParcelsForView'][0]['parcel_no'] }}-->
+              <!--                - {{ element['productParcelsForView'][0]['expiration_date'] }} - -->
+              <!--                SL: {{ element['productParcelsForView'][0]['quantity'] }}</p>-->
+
+              <p *ngIf="element['productParcelsForView'][0] !== undefined"
+                 [innerHTML]="element['productParcelsForViewHtml']">
+              </p>
             </td>
           </ng-container>
 

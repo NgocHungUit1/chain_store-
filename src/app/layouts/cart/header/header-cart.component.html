@@ -13,7 +13,7 @@
 <!-- ============================================================== -->
 <!-- Notification - style you can find in header.scss -->
 <!-- ============================================================== -->
-<input type="text" id="barecode-forcus" (keyup.enter)="onkeydown($event)">
+<input type="text" id="barecode-forcus" (keyup.enter)="onkeydown($event.target.value)">
 
 <!--<form method="POST" action="">-->
 <!--  <input onkeydown="process_key(event)" />-->

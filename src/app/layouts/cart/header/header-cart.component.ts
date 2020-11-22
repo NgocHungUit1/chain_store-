@@ -96,10 +96,10 @@ export class AppHeaderCartComponent {
 
   barcode: string;
 
-  onkeydown(event: KeyboardEvent) {
-    this.barcode = event.target.value;
+  onkeydown(text: string) {
+    this.barcode = text;
     console.log(this.barcode);
-    event.target.value = '';
+    text = '';
   }
 
 }

@@ -258,12 +258,13 @@ export class InvoiceTabInfoComponent implements OnInit {
       /**
        * Chi tiet don hang
        */
+      // tslint:disable-next-line:no-shadowed-variable
       detail.forEach(element => {
         if (element?.base_unit == null) {
           printContent += '<tr>' +
             '<td>' + element.product?.product_name + '<br>' + element.price + '</td>' +
             '<td style="text-align:center;">' + element.amount + '</td>';
-          if (this.autoPrintInSoLo == true) {
+          if (this.autoPrintInSoLo === true) {
             printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
           }
           printContent += '<td style="text-align:right;">' + element.total + '</td>' +
@@ -314,7 +315,7 @@ export class InvoiceTabInfoComponent implements OnInit {
       WindowPrt.document.close();
       WindowPrt.focus();
       WindowPrt.print();
-      WindowPrt.close();
+      // WindowPrt.close(); // lỗi tự đôngs
     });
 
   }

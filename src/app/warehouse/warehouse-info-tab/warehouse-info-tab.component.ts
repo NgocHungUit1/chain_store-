@@ -70,7 +70,17 @@ export class WarehouseInfoTabComponent implements OnChanges {
     this.isLoadingResults = true;
     this.warehouseProductService.getList(this.apiFilter).subscribe(res => {
       this.data = res.body;
+//      const productParcelsForView = this.data.productParcelsForView;
+
       this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+      // console.log(this.productDataSource);
+      this.productDataSource.data.forEach(item => {
+        item.productParcelsForViewHtml = 'Lô : ';
+        item.productParcelsForView.forEach(parcel => {
+          item.productParcelsForViewHtml += parcel['parcel_no'] + ' - ' + parcel['expiration_date'] + ' -SL: ' + parcel['quantity'] + '<br>';
+        });
+        console.log(item);
+      });
       this.isLoadingResults = false;
     });
   }
@@ -264,7 +274,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
       WindowPrt.document.close();
       WindowPrt.focus();
       WindowPrt.print();
-      WindowPrt.close();
+      // WindowPrt.close();
     });
   }
 
@@ -359,7 +369,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
       WindowPrt.document.close();
       WindowPrt.focus();
       WindowPrt.print();
-      WindowPrt.close();
+      // WindowPrt.close();
     });
   }
 

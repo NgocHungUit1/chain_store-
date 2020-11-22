@@ -61,6 +61,8 @@ export class WarehouseProduct {
   productUnits: object[];
   productParcels: object[];
   product_parcels: object[];
+  productParcelsForView: object[];
+  productParcelsForViewHtml: string;
 }
 
 export class WarehouseProductFilter extends ApiFilterBase {
