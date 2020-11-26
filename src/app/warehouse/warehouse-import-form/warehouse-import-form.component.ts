@@ -23,6 +23,7 @@ import { SupplierFormDialogComponent } from '../../supplier/supplier-form-dialog
 import { ProductMedicineDialogComponent } from '../../product/product-medicine-dialog/product-medicine-dialog.component';
 import { ProductMerchandiseFormDialogComponent } from '../../product/product-merchandise-form-dialog/product-merchandise-form-dialog.component';
 import { UserService } from '../../user/user.service';
+import * as numeral from 'numeral';
 
 @Component({
   selector: 'app-warehouse-import-form',
@@ -303,9 +304,14 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     if (this.form.valid) {
       const data = this.form.getRawValue();
       data['supplier_id'] = data['supplier']['id'];
+      data['quantity'] = numeral(data['quantity']).value();
+      data['total_price'] = numeral(data['total_price']).value();
+      data['remain_amount'] = numeral(data['remain_amount']).value();
+      data['total_amount'] = numeral(data['total_amount']).value();
+      data['paid_amount'] = numeral(data['paid_amount']).value();
+
       if (this.form.controls['date'].value !== null && typeof this.form.controls['date'].value === 'object') {
         const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
-
         data['date'] = effDate.toISOString().split('T')[0];
       }
       data['items'] = this.data;
@@ -414,7 +420,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       if (item['discount_type'] === 'price') {
         price = Number(price) + Number(item['quantity']) * ((Number(item['price'] - Number(item['discount']))));
       } else {
-        let money = Number(item['quantity']) * Number(item['price']) * (1 - (Number(item['discount']) / 100));
+        const money = Number(item['quantity']) * Number(item['price']) * (1 - (Number(item['discount']) / 100));
         price = Number(price) + money;
       }
     });
@@ -428,10 +434,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     }
 
     this.form.patchValue({
-      quantity: quantity,
-      total_price: price,
-      remain_amount: remainAmount,
-      total_amount: totalAmount
+      quantity: numeral(quantity).format('0,0'),
+      total_price: numeral(price).format('0,0'),
+      remain_amount: numeral(remainAmount).format('0,0'),
+      total_amount: numeral(totalAmount).format('0,0')
     });
   }
 
@@ -463,7 +469,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   openParcelFormDialog(index) {
     const dialogRef = this.dialog.open(WarehouseParcelFormDialogComponent, {
-      width: '20%',
+      width: '30%',
       data: {parcels: this.parcels}
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -711,6 +717,14 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       return false;
     }
     return true;
+  }
+
+  /**
+   * Format input number
+   * @Nghia
+   */
+  inputformatNumber(event: any) {
+    event.target.value = numeral(event.target.value).format('0,0');
   }
 
 }
