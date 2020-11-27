@@ -102,6 +102,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
   isRateLimitReached = false;
 
   searchProductForm = new FormControl();
+  codeSearch = null;
 
   buildFilterFromParams(): ProductFilter {
     function write<K extends keyof ProductFilter>(arg: ProductFilter, key: K, value: ProductFilter[K]): void {
@@ -109,6 +110,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     }
 
     const filter = new ProductFilter();
+
     const objectKeys = Object.keys(filter) as Array<keyof ProductFilter>;
 
     for (const attr of objectKeys) {
@@ -120,10 +122,22 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     filter.expand = 'medicine,productUnits,productPlacements,group,images,quantity';
     filter.product_type = this.typeProductFilter.controls['status'].value;
     filter.status = this.statusProductFilter.controls['status'].value;
+
+
     return filter;
   }
 
   loadData(): void {
+    const code = this.route.snapshot.paramMap.get('code');
+    if (code !== null && code !== undefined) {
+      if (this.codeSearch == null) {
+        this.apiFilter.product_no = code;
+        this.codeSearch = code;
+      } else {
+        this.apiFilter.product_no = '';
+      }
+    }
+
     this.isLoadingResults = true;
     this.service.getList(this.apiFilter).subscribe(res => {
       this.dataSource = res.body;

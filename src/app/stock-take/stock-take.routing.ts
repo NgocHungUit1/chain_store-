@@ -11,6 +11,10 @@ export const StockTakeRoutes: Routes = [
         component: StockTakeListComponent
       },
       {
+        path: 'code/:code',
+        component: StockTakeListComponent
+      },
+      {
         path: 'create',
         component: StockTakeCreateComponent
       },

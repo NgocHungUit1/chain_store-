@@ -16,6 +16,10 @@ export const WarehouseRoutes: Routes = [
         component: WarehouseListComponent
       },
       {
+        path: 'warehouse/code/:code',
+        component: WarehouseListComponent
+      },
+      {
         path: 'warehouse/create',
         component: WarehouseImportFormComponent
       },
@@ -40,7 +44,15 @@ export const WarehouseRoutes: Routes = [
         component: InvoiceListComponent
       },
       {
+        path: 'invoice/:code',
+        component: InvoiceListComponent,
+      },
+      {
         path: 'returns',
+        component: ReturnsListComponent
+      },
+      {
+        path: 'returns/code/:code',
         component: ReturnsListComponent
       },
       {

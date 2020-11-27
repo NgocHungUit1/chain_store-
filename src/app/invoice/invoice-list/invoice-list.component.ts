@@ -119,6 +119,8 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     'second_total_price', 'second_discount', 'second_payment'
   ];
 
+  codeSearch = null;
+
   buildFilterFromParams(): InvoiceFilter {
     function write<K extends keyof InvoiceFilter>(arg: InvoiceFilter, key: K, value: InvoiceFilter[K]): void {
       arg[key] = value;
@@ -184,9 +186,20 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   }
 
   loadData(): void {
+
+    const code = this.route.snapshot.paramMap.get('code');
+    if (code !== null && code !== undefined) {
+      if (this.codeSearch == null) {
+        this.apiFilter.invoice_no = code;
+        this.codeSearch = code;
+      } else {
+        this.apiFilter.invoice_no = '';
+      }
+    }
+
     this.isLoadingResults = true;
     this.service.getList(this.apiFilter).subscribe(res => {
-      let data = res.body;
+      const data = res.body;
       let stt = 0;
       data.forEach(elementData => {
         stt++;

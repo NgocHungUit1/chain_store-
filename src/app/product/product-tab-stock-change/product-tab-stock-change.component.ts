@@ -9,6 +9,8 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@angular/forms';
+import { ProductMerchandiseFormDialogComponent } from '../product-merchandise-form-dialog/product-merchandise-form-dialog.component';
+import { ProductStockChangeDialogComponent } from '../product-stock-change-dialog/product-stock-change-dialog.component';
 
 @Component({
   selector: 'app-product-tab-stock-change',
@@ -59,6 +61,17 @@ export class ProductTabStockChangeComponent extends ListComponentBase implements
     'move-to': 'Chuyển hàng đến',
   };
 
+  methodLinks = {
+    'import': '/transaction/warehouse/code/',
+    'return': '/transaction/returns/code/',
+    'stock-take': '/store/stock-take/code/',
+    'sale': '/transaction/invoice/',
+    'return-sale': '#',
+    'move-from': '/transaction/move/code/',
+    'move-to': '/transaction/move/code/',
+  };
+
+
   apiFilter: StockCardFilter;
   isLoadingResults = false;
   isRateLimitReached = false;
@@ -70,6 +83,7 @@ export class ProductTabStockChangeComponent extends ListComponentBase implements
     if (this.expandedElement) {
       this.apiFilter = this.buildFilterFromParams();
       this.loadData();
+
     }
   }
 
@@ -88,7 +102,7 @@ export class ProductTabStockChangeComponent extends ListComponentBase implements
     }
 
     filter.page = this.route.snapshot.queryParams['page'];
-    filter.pageSize = 10;//this.route.snapshot.queryParams['pageSize'];
+    filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.product_id = this.product_id;
     filter.expand = '';
@@ -100,8 +114,32 @@ export class ProductTabStockChangeComponent extends ListComponentBase implements
 
     this.stockCardService.getList(this.apiFilter).subscribe(res => {
       this.data = res.body;
-      // this.stockCardDataSource = new MatTableDataSource<StockCard>(this.data);
+      // console.log(this.data);
+      this.stockCardDataSource = new MatTableDataSource<StockCard>(this.data);
       this.isLoadingResults = false;
+      this.reloadFilter(res);
+    });
+  }
+
+  openProductStockChangeDialog() {
+    let obj = {
+      // action: copy_product_id !== null ? 'Copy' : 'Update',
+      // title: copy_product_id !== null ? 'Sao chép hàng hóa' : 'Cập nhật hàng hóa',
+      product_id: this.product_id,
+      // copy_product_id: copy_product_id
+    };
+
+    const dialogRef = this.dialog.open(ProductStockChangeDialogComponent, {
+      data: obj,
+      width: '80%',
+      // minHeight: '80%',
+      maxHeight: '500px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // if (result.event !== 'Cancel') {
+      //   // this.loadProduct(result.data.id);
+      // }
     });
   }
 }

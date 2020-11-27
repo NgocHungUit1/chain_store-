@@ -7,8 +7,12 @@ export const InvoiceRoutes: Routes = [
     children: [
       {
         path: 'invoice',
-        component: InvoiceListComponent
+        component: InvoiceListComponent,
       },
+      // {
+      //   path: 'invoice/:code',
+      //   component: InvoiceListComponent,
+      // },
     ]
   }
 ];

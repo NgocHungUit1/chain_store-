@@ -11,6 +11,10 @@ export const MoveRoutes: Routes = [
         component: MoveListComponent
       },
       {
+        path: 'code/:code',
+        component: MoveListComponent
+      },
+      {
         path: 'create',
         component: MoveCreateComponent
       },

@@ -90,6 +90,8 @@ export class MoveListComponent extends ListComponentBase implements OnInit {
     '10': 'label label-success',
   };
 
+  codeSearch: string;
+
   ngOnInit(): void {
     this.buildFrom();
     this.apiFilter = this.buildFilterFromParams();
@@ -137,6 +139,16 @@ export class MoveListComponent extends ListComponentBase implements OnInit {
   }
 
   loadData(): void {
+    const code = this.route.snapshot.paramMap.get('code');
+    if (code !== null && code !== undefined) {
+      if (this.codeSearch == null) {
+        this.apiFilter.no = code;
+        this.codeSearch = code;
+      } else {
+        this.apiFilter.no = '';
+      }
+    }
+
     this.isLoadingResults = true;
     this.service.getList(this.apiFilter).subscribe(res => {
       let data = res.body;

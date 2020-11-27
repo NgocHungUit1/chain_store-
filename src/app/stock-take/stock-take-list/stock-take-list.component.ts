@@ -118,6 +118,8 @@ export class StockTakeListComponent extends ListComponentBase implements OnInit 
       'name': 'Hủy bỏ',
     },
   ];
+  codeSearch = null;
+
 
   buildFilterFromParams(): StockTakeFilter {
     function write<K extends keyof StockTakeFilter>(arg: StockTakeFilter, key: K, value: StockTakeFilter[K]): void {
@@ -176,6 +178,16 @@ export class StockTakeListComponent extends ListComponentBase implements OnInit 
   }
 
   loadData(): void {
+    const code = this.route.snapshot.paramMap.get('code');
+    if (code !== null && code !== undefined) {
+      if (this.codeSearch == null) {
+        this.apiFilter.no = code;
+        this.codeSearch = code;
+      } else {
+        this.apiFilter.no = '';
+      }
+    }
+
     this.isLoadingResults = true;
     this.service.getList(this.apiFilter).subscribe(res => {
       let data = res.body;

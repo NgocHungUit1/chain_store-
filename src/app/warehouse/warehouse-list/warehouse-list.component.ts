@@ -99,6 +99,8 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
 
   isLoadingResults = true;
   isRateLimitReached = false;
+  codeSearch = null;
+
 
   buildFilterFromParams(): WarehouseFilter {
     function write<K extends keyof WarehouseFilter>(arg: WarehouseFilter, key: K, value: WarehouseFilter[K]): void {
@@ -122,6 +124,15 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
   }
 
   loadData(): void {
+    const code = this.route.snapshot.paramMap.get('code');
+    if (code !== null && code !== undefined) {
+      if (this.codeSearch == null) {
+        this.apiFilter.no = code;
+        this.codeSearch = code;
+      } else {
+        this.apiFilter.no = '';
+      }
+    }
     this.isLoadingResults = true;
     this.mainService.getList(this.apiFilter).subscribe(res => {
       this.dataSource = res.body;
