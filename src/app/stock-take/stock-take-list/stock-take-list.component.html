@@ -1,0 +1,189 @@
+<mat-sidenav-container>
+  <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true">
+    <mat-toolbar class="dv-header">
+      <button mat-icon-button>
+        <mat-icon>filter_list</mat-icon>
+      </button>
+      <h3>Lọc và tìm kiếm</h3>
+    </mat-toolbar>
+
+    <mat-card class="time-filter-info">
+      <mat-card-title class="title-time-filter">Thời gian</mat-card-title>
+      <mat-card-content>
+
+        <form [formGroup]="timeFilter">
+          <mat-radio-group (change)="radioTimeChange($event)" formControlName="typeTime">
+            <mat-radio-button style="display: inline; " value="default"
+                              (click)="openTimeDefault()">{{ titleTimeDefault }}
+              <button mat-icon-button aria-label="add">
+                <mat-icon>swap_vert</mat-icon>
+              </button>
+            </mat-radio-button>
+            <mat-radio-button style="display: inline; " value="choose" (click)="openTimeChoose()">{{ titleTimeChoose }}
+              <button mat-icon-button aria-label="add">
+                <mat-icon>date_range</mat-icon>
+              </button>
+            </mat-radio-button>
+
+          </mat-radio-group>
+        </form>
+
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="time-filter-info">
+      <mat-card-title class="title-time-filter">Trạng thái</mat-card-title>
+      <mat-card-content>
+
+        <form [formGroup]="balanceStatusFilter">
+          <mat-form-field appearance="fill">
+            <mat-label>Cân bằng</mat-label>
+            <mat-select formControlName="status" (selectionChange)="orderStatusFilterChange()" multiple>
+              <mat-option *ngFor="let item of balanceStatusFilterList"
+                          [value]="item.value">{{ item.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </form>
+
+      </mat-card-content>
+    </mat-card>
+
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar class="dv-header">
+      <button mat-icon-button (click)="leftside.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <h3>
+        Phiếu kiểm kho
+      </h3>
+
+      <div class="select-product">
+        <mat-form-field>
+          <mat-label>Theo mã phiếu kiểm</mat-label>
+          <input matInput [formControl]="searchInvoiceForm" placeholder="" #input>
+          <button mat-icon-button matPrefix>
+            <mat-icon>search</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+
+
+      <span fxFlex="1 1 0%"></span>
+
+      <button mat-raised-button color="primary" routerLink="/store/stock-take/create" style="margin-right: 10px">
+        <mat-icon>add</mat-icon>
+        Tạo kiểm kho
+      </button>
+
+      <div class="diva-column-select">
+        <button mat-raised-button color="primary" (click)="selectColumn.toggle();">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <mat-select [(ngModel)]="displayedColumns" #selectColumn [multiple]="true"
+                    style="width: 100%; display: inline-flex; margin-left: -20px; color: white" placeholder="Chọn cột">
+          <mat-select-trigger></mat-select-trigger>
+          <mat-option *ngFor="let column of columnsToDisplay" [value]="column">{{columnsHeader[column]}}</mat-option>
+        </mat-select>
+      </div>
+      <button style="margin-left: 10px" mat-raised-button color="primary" (click)="loadData()">
+        <mat-icon>refresh</mat-icon>
+        Làm mới
+      </button>
+    </mat-toolbar>
+    <div fxLayout="row wrap">
+      <div fxFlex="100">
+        <div class="table-container">
+          <div class="table-loading-shade" *ngIf="isLoadingResults || isRateLimitReached">
+            <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+            <div class="table-rate-limit-reached" *ngIf="isRateLimitReached">
+              GitHub's API rate limit has been reached. It will be reset in one minute.
+            </div>
+          </div>
+          <div class=" table-responsive">
+            <table mat-table multiTemplateDataRows [dataSource]="dataSource">
+
+              <ng-container matColumnDef="#">
+                <th mat-header-cell *matHeaderCellDef> #</th>
+                <td mat-cell *matCellDef="let element; let i = index;"> {{ (page - 1) * pageSize + element.stt }} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="no">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['no'] }}</th>
+                <td mat-cell *matCellDef="let element"> {{ element.no }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="created_at">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['created_at'] }}</th>
+                <td mat-cell *matCellDef="let element"> {{ element.created_at }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="balance_at">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['balance_at'] }}</th>
+                <td mat-cell *matCellDef="let element"> {{ element.balance_at }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="note">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['note'] }}</th>
+                <td mat-cell *matCellDef="let element"> {{ element.note }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="deviation_price_sum">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['deviation_price_sum'] }}</th>
+                <td mat-cell *matCellDef="let element"> {{ element.deviationPriceSum | number }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="total_price">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['total_price'] }}</th>
+                <td mat-cell *matCellDef="let element"> {{ element.totalPrice | number }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="balance_status">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['balance_status'] }}</th>
+                <td mat-cell *matCellDef="let element">
+                  <label
+                    class="{{ balanceStatusesColor[element.balance_status] }}">{{ balanceStatuses[element.balance_status] }}
+                  </label>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="expandedDetail">
+                <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
+                  <div class="example-element-detail"
+                       [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                    <mat-tab-group style="width: 100%;">
+                      <mat-tab label="Thông tin">
+                        <app-stock-take-info-tab [stockTake]="element"
+                                                 [expandedElement]="element == expandedElement ? true : false"
+                                                 (reload)="loadData();"></app-stock-take-info-tab>
+                      </mat-tab>
+                      <!--                      <mat-tab label="Lịch sử trả hàng" *ngIf="(element['returns']).length > 0 ">-->
+                      <!--                        &lt;!&ndash;                        <app-invoice-tab-returns [returns]="element.returns"></app-invoice-tab-returns>&ndash;&gt;-->
+                      <!--                      </mat-tab>-->
+                      <!--                      <mat-tab label="Lịch sử thanh toán">-->
+                      <!--                        &lt;!&ndash;                        <app-invoice-tab-payment [payment]="element.paymentInfo"></app-invoice-tab-payment>&ndash;&gt;-->
+                      <!--                      </mat-tab>-->
+
+                    </mat-tab-group>
+                  </div>
+                </td>
+              </ng-container>
+
+
+              <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+
+              <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" class="example-element-row"
+                  [class.example-expanded-row]="expandedElement === element"
+                  (click)="expandedElement = expandedElement === element ? null : element">
+              </tr>
+              <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+            </table>
+          </div>
+          <mat-paginator #paginator [length]="pageTotalCount" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+                         (page)="onMatPageChange($event)" [pageIndex]="page - 1" showFirstLastButtons></mat-paginator>
+        </div>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

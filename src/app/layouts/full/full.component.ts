@@ -95,7 +95,7 @@ export class FullComponent implements OnDestroy {
   }
 
   public changeBranch(event) {
-    console.log(event.value);
+    // console.log(event.value);
     const data = {'branch_store_id': event.value};
     this.userService.updateBranchLogin(data).subscribe(res => {
       if (res === true) {

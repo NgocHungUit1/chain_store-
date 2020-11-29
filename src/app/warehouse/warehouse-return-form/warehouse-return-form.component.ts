@@ -19,7 +19,7 @@ import { Product } from '../../product/product.model';
 import { ProductService } from '../../product/product.service';
 import { WarehouseParcelFormDialogComponent } from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
 import { SupplierFormDialogComponent } from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
-import {UserService} from '../../user/user.service';
+import { UserService } from '../../user/user.service';
 
 @Component({
   selector: 'app-warehouse-return-form',
@@ -286,7 +286,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
     return filter;
   }
 
-  submit(status) {
+  submit(status: number) {
     if (this.form.valid) {
       const data = this.form.getRawValue();
       data['supplier_id'] = data['supplier']['id'];
@@ -297,6 +297,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
       }
       data['items'] = this.data;
       data['status'] = status;
+
       if (this.updateModelId !== null) {
         if (this.model['status'] === 10 && !this.isAdminStore) {
           this.notifySer.notify('error', 'Bạn không có quyền thực hiện chức năng này.');
@@ -306,14 +307,24 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
         delete data['date'];
         delete data['supplier'];
         this.mainService.update(this.updateModelId, data).subscribe(res => {
-          this.model = res;
+
           this.notifySer.notify('success', 'Lưu thành công.');
+          if (status === 9) {
+            this.model = res;
+            this.router.navigate(['/transaction/warehouse-return/update/' + res['id']]);
+          } else {
+            this.router.navigate(['/transaction/warehouse-return/']);
+          }
         });
       } else {
         this.mainService.create(data).subscribe(res => {
-          this.model = res;
           this.notifySer.notify('success', 'Lưu thành công.');
-          this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
+          if (status === 9) {
+            this.model = res;
+            this.router.navigate(['/transaction/warehouse-return/update/' + res['id']]);
+          } else {
+            this.router.navigate(['/transaction/warehouse-return/']);
+          }
         });
       }
     }

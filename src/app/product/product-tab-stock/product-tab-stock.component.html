@@ -27,9 +27,15 @@
 
   <ng-container matColumnDef="quantity_of_stock">
     <th mat-header-cell class="column-number" *matHeaderCellDef> {{ columnsHeader['quantity_of_stock'] }} </th>
-    <td mat-cell class="column-number bold-text" *matCellDef="let element"> {{ element.quantity_of_stock | number }} </td>
+    <td mat-cell class="column-number bold-text"
+        *matCellDef="let element">
+      <span>
+        {{  element.quantity_of_stock | number : '0.0-0' }}
+      </span>
+    </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns" class="header-element-row"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
+<br>

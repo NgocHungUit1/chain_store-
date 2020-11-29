@@ -1,0 +1,33 @@
+<div mat-dialog-content>
+  <div [formGroup]="form">
+
+    <div fxLayout="row wrap">
+      <div fxFlex="45">
+        <mat-form-field>
+          <mat-label>Từ ngày</mat-label>
+          <input matInput tabindex="3" [matDatepicker]="date_from" formControlName="date_from">
+          <mat-datepicker-toggle matSuffix [for]="date_from"></mat-datepicker-toggle>
+          <mat-datepicker #date_from></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div fxFlex="10"></div>
+      <div fxFlex="45">
+        <mat-form-field>
+          <mat-label>Đến ngày</mat-label>
+          <input matInput tabindex="3" [matDatepicker]="date_to" formControlName="date_to">
+          <mat-datepicker-toggle matSuffix [for]="date_to"></mat-datepicker-toggle>
+          <mat-datepicker #date_to></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="3" (click)="submit()">
+    <mat-icon>filter_list</mat-icon>Tìm kiếm
+  </button>
+  <button mat-raised-button (click)="onNoClick()" tabindex="-1">
+    <mat-icon>cancel</mat-icon>Bỏ qua
+  </button>
+</div>

@@ -43,6 +43,11 @@ export class InvoiceTabInfoComponent implements OnInit {
     'done': 'Hoàn thành'
   };
 
+  orderStatusColor = {
+    'pending': 'label label-warning',
+    'done': 'label label-success'
+  };
+
   autoPrintInSoLo: boolean = false;
   allPermission: any;
   isAdminStore: boolean;
@@ -164,12 +169,17 @@ export class InvoiceTabInfoComponent implements OnInit {
       type: invoice.discount_type
     };
 
-    let aProductInfo: ProductInfo[] = [];
+    const aProductInfo: ProductInfo[] = [];
     const detail = invoice.detail || [];
 
     detail.forEach(element => {
-      let units = element?.product?.productUnits;
-      let item = units.find(element => element.is_base == 1);
+      const units = element.product.productUnits;
+      units.forEach(item => {
+        item.quantity_of_stock = Math.floor(element.product.quantity_of_stock / item.value);
+      });
+      element.product.productUnits = units;
+
+      let item = units.find(ele => ele.is_base === 1);
 
       const mProductInfo = new ProductInfo();
       mProductInfo.amount = element.amount;
@@ -177,8 +187,6 @@ export class InvoiceTabInfoComponent implements OnInit {
       mProductInfo.product = element.product;
       mProductInfo.product.end_price = element.price;
       mProductInfo.common_price = element.price;
-      // mProductInfo.product_unit_id = element.product_unit_id;
-      // mProductInfo.product_unit_value = element.product_unit_value;
       mProductInfo.product_unit_id = item['id'];
       mProductInfo.product_unit_value = item['value'];
       mProductInfo.base_unit = element.base_unit;
@@ -211,7 +219,11 @@ export class InvoiceTabInfoComponent implements OnInit {
       const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
       const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
       let printContent = '<title>' + res?.invoice_no + '</title>';
-      printContent += '<style>table {' +
+      printContent += '<style> ' +
+        'p,table,div {' +
+        'font-family: arial, sans-serif;' +
+        '}' +
+        'table {' +
         // 'font-family: arial, sans-serif;' +
         'border-collapse: collapse;' +
         'width: 100%;' +
@@ -234,7 +246,7 @@ export class InvoiceTabInfoComponent implements OnInit {
         '<th>Đơn giá</th>' +
         '<th style="text-align:center;">Số lượng</th>';
 
-      if (this.autoPrintInSoLo == true) {
+      if (this.autoPrintInSoLo === true) {
         printContent += '<th style="text-align:left;">Số lô</th>';
       }
 
@@ -246,12 +258,13 @@ export class InvoiceTabInfoComponent implements OnInit {
       /**
        * Chi tiet don hang
        */
+      // tslint:disable-next-line:no-shadowed-variable
       detail.forEach(element => {
         if (element?.base_unit == null) {
           printContent += '<tr>' +
             '<td>' + element.product?.product_name + '<br>' + element.price + '</td>' +
             '<td style="text-align:center;">' + element.amount + '</td>';
-          if (this.autoPrintInSoLo == true) {
+          if (this.autoPrintInSoLo === true) {
             printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
           }
           printContent += '<td style="text-align:right;">' + element.total + '</td>' +
@@ -302,7 +315,7 @@ export class InvoiceTabInfoComponent implements OnInit {
       WindowPrt.document.close();
       WindowPrt.focus();
       WindowPrt.print();
-      WindowPrt.close();
+      // WindowPrt.close(); // lỗi tự đôngs
     });
 
   }
@@ -436,7 +449,7 @@ export class InvoiceTabInfoComponent implements OnInit {
     if (indexPermission !== -1) {
       return false;
     }
-    return  true;
+    return true;
   }
 
 }

@@ -1,4 +1,4 @@
-import { Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   HTTP_INTERCEPTORS,
   HttpErrorResponse,
@@ -10,8 +10,8 @@ import {
 import { Observable, of, throwError } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import {AuthService} from './auth.service';
-import {NotifierService} from "angular-notifier";
+import { AuthService } from './auth.service';
+import { NotifierService } from 'angular-notifier';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +21,8 @@ export class AuthInterceptor implements HttpInterceptor {
     private router: Router,
     private auth: AuthService,
     private notify: NotifierService
-  ) {}
+  ) {
+  }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // console.log('START AUTH INTERCEPTOR'); // @AUTH
@@ -47,23 +48,30 @@ export class AuthInterceptor implements HttpInterceptor {
         this.auth.clearToken();
         // localStorage.removeItem('auth_token');
         // return of (this.router.navigate(['auth/login']));
-        return of (this.router.navigate(['authentication/login']));
+        return of(this.router.navigate(['authentication/login']));
 
       case 403:
         // localStorage.removeItem('auth_token');
         // return of (this.router.navigate(['auth/login']));
         this.notify.notify('error', 'Bạn không có quyền truy cập tính năng này.');
-        return of (this.router.navigate(['/']));
+        return of(this.router.navigate(['/']));
       case 410:
-        return of (this.router.navigate(['/authentication/expiration']));
+        return of(this.router.navigate(['/authentication/expiration']));
       case 422:
-        this.notify.notify('error', err.statusText);
-        return throwError(err);
+        const error = err.error;
+        if (error[0]['message'] !== undefined) {
+          this.notify.notify('error', error[0]['message']);
+          return throwError(err);
+        } else {
+          this.notify.notify('error', err.statusText);
+          return throwError(err);
+        }
+
       default:
         console.log(err);
         this.notify.notify('error', err.statusText);
         return;
-        // throwError(err);
+      // throwError(err);
     }
   }
 }

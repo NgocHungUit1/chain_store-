@@ -1,12 +1,12 @@
-import {Component, Inject, OnInit, Optional} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {NotifierService} from 'angular-notifier';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {SupplierService} from '../supplier.service';
-import {map, startWith} from 'rxjs/operators';
-import {Observable} from 'rxjs/Observable';
-import {LocationService} from '../../location/location.service';
-import {Location} from '../../location/location.model';
+import { Component, Inject, OnInit, Optional } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { NotifierService } from 'angular-notifier';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { SupplierService } from '../supplier.service';
+import { map, startWith } from 'rxjs/operators';
+import { Observable } from 'rxjs/Observable';
+import { LocationService } from '../../location/location.service';
+import { Location } from '../../location/location.model';
 
 @Component({
   selector: 'app-supplier-form-dialog',
@@ -27,6 +27,7 @@ export class SupplierFormDialogComponent implements OnInit {
   supplier_id: string;
 
   public parentList = [];
+
   constructor(
     public dialogRef: MatDialogRef<SupplierFormDialogComponent>,
     public notifySer: NotifierService,
@@ -49,7 +50,7 @@ export class SupplierFormDialogComponent implements OnInit {
         null,
         Validators.compose([
           Validators.required,
-          Validators.maxLength(32)
+          Validators.maxLength(60)
         ])
       ],
       phone_number: [null, Validators.required],

@@ -1,0 +1,76 @@
+<div mat-dialog-content>
+  <div>
+
+    <div fxLayout="row wrap">
+      <div fxFlex="30">
+        <mat-list>
+          <mat-list-item>
+            <label>Theo ngày</label>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          <mat-list-item>
+            <button mat-button (click)="btnHomNay()" tabindex="2">
+              Hôm nay
+            </button>
+          </mat-list-item>
+          <mat-list-item>
+            <button mat-button (click)="btnHomQua()" tabindex="2">
+              Hôm qua
+            </button>
+          </mat-list-item>
+        </mat-list>
+
+
+      </div>
+      <div fxFlex="5"></div>
+
+      <div fxFlex="30">
+        <mat-list>
+          <mat-list-item>
+            <label>Theo tuần</label>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          <mat-list-item>
+            <button mat-button (click)="btnTuanNay()" tabindex="3">
+              Tuần này
+            </button>
+          </mat-list-item>
+          <mat-list-item>
+            <button mat-button (click)="btnTuanTruoc()" tabindex="4">
+              Tuần trước
+            </button>
+          </mat-list-item>
+        </mat-list>
+      </div>
+      <div fxFlex="5"></div>
+
+      <div fxFlex="30">
+        <mat-list>
+          <mat-list-item>
+            <label>Theo tháng</label>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          <mat-list-item>
+            <button mat-button (click)="btnThangNay()" tabindex="5">
+              Tháng này
+            </button>
+          </mat-list-item>
+          <mat-list-item>
+            <button mat-button (click)="btnThangTruoc()" tabindex="6">
+              Tháng trước
+            </button>
+          </mat-list-item>
+        </mat-list>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div mat-dialog-actions>
+  <!-- <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="3" (click)="submit()">
+    <mat-icon>save</mat-icon>Lưu
+  </button> -->
+  <button mat-button mat-raised-button (click)="onNoClick()" tabindex="-1">
+    <mat-icon>cancel</mat-icon>Bỏ qua
+  </button>
+</div>

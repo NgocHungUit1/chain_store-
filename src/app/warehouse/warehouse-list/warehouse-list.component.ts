@@ -11,6 +11,8 @@ import { WarehouseService } from '../warehouse.service';
 import { Warehouse, WarehouseFilter } from '../warehouse.model';
 import { ProductUploadDialogComponent } from '../../product/product-upload-dialog/product-upload-dialog.component';
 import { WarehouseUploadDialogComponent } from '../warehouse-upload-dialog/warehouse-upload-dialog.component';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   templateUrl: './warehouse-list.component.html',
@@ -29,7 +31,8 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     private mainService: WarehouseService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
-    private notifyService: NotifierService
+    private notifyService: NotifierService,
+    private fb: FormBuilder,
   ) {
     super();
   }
@@ -37,6 +40,10 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
 
   apiFilter: WarehouseFilter;
+
+  searchProductForm = new FormControl();
+  orderStatusFilter: FormGroup;
+
 
   columnsHeader = {
     '#': '#',
@@ -72,6 +79,18 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     'status',
     'national_pharmacy_no',
   ];
+
+  statusFilterList = [
+    {
+      'value': '10',
+      'name': 'Hoàn thành',
+    },
+    {
+      'value': '9',
+      'name': 'Lưu tạm',
+    },
+  ];
+
   dataSource = [];
   expandedElement: Warehouse | null;
 
@@ -80,6 +99,8 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
 
   isLoadingResults = true;
   isRateLimitReached = false;
+  codeSearch = null;
+
 
   buildFilterFromParams(): WarehouseFilter {
     function write<K extends keyof WarehouseFilter>(arg: WarehouseFilter, key: K, value: WarehouseFilter[K]): void {
@@ -97,10 +118,21 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.expand = 'supplier,created_user,product_count,total_quantity';
     filter.type = 'import';
+    filter.status = this.orderStatusFilter.controls['status'].value;
+
     return filter;
   }
 
   loadData(): void {
+    const code = this.route.snapshot.paramMap.get('code');
+    if (code !== null && code !== undefined) {
+      if (this.codeSearch == null) {
+        this.apiFilter.no = code;
+        this.codeSearch = code;
+      } else {
+        this.apiFilter.no = '';
+      }
+    }
     this.isLoadingResults = true;
     this.mainService.getList(this.apiFilter).subscribe(res => {
       this.dataSource = res.body;
@@ -110,8 +142,28 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
   }
 
   ngOnInit() {
+
+    this.orderStatusFilter = this.fb.group({
+      status: [
+        ['10', '9']
+      ],
+    });
+
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
+
+    this.searchProductForm.valueChanges.pipe(debounceTime(800)).subscribe(res => {
+      if (res !== '') {
+        this.apiFilter = this.buildFilterFromParams();
+        this.apiFilter.keyword = res;
+        this.loadData();
+        // this.service.setLoadProduct(false);
+      } else {
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+        // this.service.setLoadProduct(false);
+      }
+    });
   }
 
   openUploadDialog() {
@@ -123,5 +175,10 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
         this.loadData();
       }
     });
+  }
+
+  orderStatusFilterChange() {
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
   }
 }

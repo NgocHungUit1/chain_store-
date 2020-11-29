@@ -22,6 +22,7 @@ import { ProductMerchandiseFormDialogComponent } from './product-merchandise-for
 import { ProductManufacturerFormDialogComponent } from './product-manufacturer-form-dialog/product-manufacturer-form-dialog.component';
 import { ProductPopupDeleteDialogComponent } from './product-popup-delete-dialog/product-popup-delete-dialog.component';
 import { ProductUploadDialogComponent } from './product-upload-dialog/product-upload-dialog.component';
+import { ProductStockChangeDialogComponent } from './product-stock-change-dialog/product-stock-change-dialog.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { ProductUploadDialogComponent } from './product-upload-dialog/product-up
     ProductMerchandiseFormDialogComponent,
     ProductManufacturerFormDialogComponent,
     ProductPopupDeleteDialogComponent,
-    ProductUploadDialogComponent
+    ProductUploadDialogComponent,
+    ProductStockChangeDialogComponent
   ],
   imports: [
     CommonModule,

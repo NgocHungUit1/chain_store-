@@ -22,7 +22,8 @@ import { WarehouseDiscountDialogComponent } from '../warehouse-discount-dialog/w
 import { SupplierFormDialogComponent } from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
 import { ProductMedicineDialogComponent } from '../../product/product-medicine-dialog/product-medicine-dialog.component';
 import { ProductMerchandiseFormDialogComponent } from '../../product/product-merchandise-form-dialog/product-merchandise-form-dialog.component';
-import {UserService} from '../../user/user.service';
+import { UserService } from '../../user/user.service';
+import * as numeral from 'numeral';
 
 @Component({
   selector: 'app-warehouse-import-form',
@@ -71,7 +72,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'product_name': 'Tên hàng',
     // 'product_parcel': 'Lô',
     'product_unit_id': 'Đơn vị',
-    'quantity': 'Số lượng',
+    'quantity': 'Tổng số lượng',
     'price': 'Đơn giá',
     'discount': 'Giảm giá',
     'amount': 'Thành tiền',
@@ -117,7 +118,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       total_amount: [null],
       discount_amount: [null],
       discount_type: [null],
-      paid_amount: [null],
+      paid_amount: [null, Validators.required],
       remain_amount: [null],
       note: [null],
       branch_id: [null, Validators.required],
@@ -299,17 +300,27 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     return filter;
   }
 
-  submit(status) {
+  submit(status: number) {
     if (this.form.valid) {
       const data = this.form.getRawValue();
       data['supplier_id'] = data['supplier']['id'];
+      data['quantity'] = numeral(data['quantity']).value();
+      data['total_price'] = numeral(data['total_price']).value();
+      data['remain_amount'] = numeral(data['remain_amount']).value();
+      data['total_amount'] = numeral(data['total_amount']).value();
+      data['paid_amount'] = numeral(data['paid_amount']).value();
+
       if (this.form.controls['date'].value !== null && typeof this.form.controls['date'].value === 'object') {
         const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
-
         data['date'] = effDate.toISOString().split('T')[0];
       }
       data['items'] = this.data;
       data['status'] = status;
+
+      if (data['supplier_id'] === undefined) {
+        this.notifySer.notify('warning', this.form.controls['supplier'].value + ' chưa được tạo bên nhà cung cấp.');
+        return;
+      }
 
       if (this.updateModelId !== null) {
         if (this.model['status'] === 10 && !this.isAdminStore) {
@@ -319,14 +330,24 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         delete data['date'];
         delete data['supplier'];
         this.mainService.update(this.updateModelId, data).subscribe(res => {
-          this.model = res;
           this.notifySer.notify('success', 'Lưu thành công.');
+          if (status === 9) {
+            this.model = res;
+            this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
+          } else {
+            this.router.navigate(['/transaction/warehouse/']);
+          }
         });
       } else {
         this.mainService.create(data).subscribe(res => {
-          this.model = res;
           this.notifySer.notify('success', 'Lưu thành công.');
-          this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
+          if (status === 9) {
+            this.model = res;
+            this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
+          } else {
+            this.router.navigate(['/transaction/warehouse/']);
+          }
+
         });
       }
     }
@@ -350,7 +371,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       const warehouseProduct = new WarehouseProduct();
       warehouseProduct.product_id = res['id'];
       warehouseProduct.product = res;
-      warehouseProduct.quantity = 1;
+      warehouseProduct.quantity = 0; // de nhap so lo
       warehouseProduct.price = (res['original_price'] !== null) ? res['original_price'] : 0;
       warehouseProduct.discount = 0;
       warehouseProduct.discount_type = 'price';
@@ -399,7 +420,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       if (item['discount_type'] === 'price') {
         price = Number(price) + Number(item['quantity']) * ((Number(item['price'] - Number(item['discount']))));
       } else {
-        let money = Number(item['quantity']) * Number(item['price']) * (1 - (Number(item['discount']) / 100));
+        const money = Number(item['quantity']) * Number(item['price']) * (1 - (Number(item['discount']) / 100));
         price = Number(price) + money;
       }
     });
@@ -413,10 +434,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     }
 
     this.form.patchValue({
-      quantity: quantity,
-      total_price: price,
-      remain_amount: remainAmount,
-      total_amount: totalAmount
+      quantity: numeral(quantity).format('0,0'),
+      total_price: numeral(price).format('0,0'),
+      remain_amount: numeral(remainAmount).format('0,0'),
+      total_amount: numeral(totalAmount).format('0,0')
     });
   }
 
@@ -448,7 +469,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   openParcelFormDialog(index) {
     const dialogRef = this.dialog.open(WarehouseParcelFormDialogComponent, {
-      width: '20%',
+      width: '30%',
       data: {parcels: this.parcels}
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -467,11 +488,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   changeQuantity(index, value) {
-    this.data[index]['quantity'] = Number(this.data[index]['quantity']) + Number(value);
-    if (this.data[index]['product_parcels'].length === 1) {
-      this.data[index]['product_parcels'][0]['quantity'] = this.data[index]['quantity'];
-    }
-    this.recalculateItem(index);
+    this.openParcelFormDialog(index);
+    // this.data[index]['quantity'] = Number(this.data[index]['quantity']) + Number(value);
+    // if (this.data[index]['product_parcels'].length === 1) {
+    //   this.data[index]['product_parcels'][0]['quantity'] = this.data[index]['quantity'];
+    // }
+    // this.recalculateItem(index);
   }
 
   onParcelSelectedChange(index, value) {
@@ -564,7 +586,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         'padding: 8px;' +
         '}</style>' +
         '<section style="padding: -5px;">' +
-        '<p style="text-align:center;">Địa chỉ : ' + res?.store?.name + '</p>' +
+        '<p style="text-align:left;">Nhà thuốc: ' + res?.store?.name + '</p>' +
+        '<p style="text-align:left;">Địa chỉ: ' + res?.store?.address + '</p>' +
+        '<p style="text-align:left;">SĐT: ' + res?.store?.phone + '</p>' +
         '<p style="text-align:center; font-weight:600;">HÓA ĐƠN NHẬP HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;">Mã phiếu nhập: ' + res?.no + '</p> ' +
         '<p style="text-align:left;">Ngày nhập: ' + res?.date + ' </p>' +
@@ -634,7 +658,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       WindowPrt.document.close();
       WindowPrt.focus();
       WindowPrt.print();
-      WindowPrt.close();
+      // WindowPrt.close();
     });
   }
 
@@ -692,7 +716,15 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     if (indexPermission !== -1) {
       return false;
     }
-    return  true;
+    return true;
+  }
+
+  /**
+   * Format input number
+   * @Nghia
+   */
+  inputformatNumber(event: any) {
+    event.target.value = numeral(event.target.value).format('0,0');
   }
 
 }

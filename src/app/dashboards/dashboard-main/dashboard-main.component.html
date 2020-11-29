@@ -29,28 +29,7 @@
       </mat-card-content>
     </mat-card>
   </div>
-  <!-- column -->
-  <!-- column -->
-  <div fxFlex.gt-sm="33.33" fxFlex.gt-xs="100" fxFlex="100">
-    <mat-card class="bg-purple">
-      <mat-card-content>
-        <!-- column -->
-        <div class="d-flex no-block align-items-center">
-          <div class="stats">
-            <h3 class="text-white m-0">Trả hàng </h3>
-            <h6 class="text-white m-t-0">{{ dataDashBoard?.returns?.count }} phiếu</h6>
-            <h1 class="text-white m-0">{{ dataDashBoard?.returns?.sum | number }}</h1>
-          </div>
-          <div class="ml-auto" style="height: 84px; width: 100px">
-            <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels"
-                    [options]="barChartOptions" [colors]="barChartColors" [legend]="barChartLegend"
-                    [chartType]="barChartType">
-            </canvas>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
+
   <!-- column -->
   <!-- column -->
   <div fxFlex.gt-sm="33.33" fxFlex.gt-xs="100" fxFlex="100">
@@ -74,6 +53,29 @@
     </mat-card>
   </div>
   <!-- column -->
+
+  <!-- column -->
+  <!-- column -->
+  <div fxFlex.gt-sm="33.33" fxFlex.gt-xs="100" fxFlex="100">
+    <mat-card class="bg-purple">
+      <mat-card-content>
+        <!-- column -->
+        <div class="d-flex no-block align-items-center">
+          <div class="stats">
+            <h3 class="text-white m-0">Trả hàng </h3>
+            <h6 class="text-white m-t-0">{{ dataDashBoard?.returns?.count }} phiếu</h6>
+            <h1 class="text-white m-0">{{ dataDashBoard?.returns?.sum | number }}</h1>
+          </div>
+          <div class="ml-auto" style="height: 84px; width: 100px">
+            <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels"
+                    [options]="barChartOptions" [colors]="barChartColors" [legend]="barChartLegend"
+                    [chartType]="barChartType">
+            </canvas>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
 
   <!-- column -->
 </div>

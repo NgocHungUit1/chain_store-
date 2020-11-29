@@ -1,25 +1,25 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {FormControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {MatDialog} from '@angular/material/dialog';
-import {NotifierService} from 'angular-notifier';
-import {Observable} from 'rxjs';
-import {Product} from '../../product/product.model';
-import {OrderService} from '../order.service';
-import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
-import {of} from 'rxjs/internal/observable/of';
-import {PriceList, PriceListFilter} from '../../price-book/price-list.model';
-import {PriceListService} from '../../price-book/price-list.service';
-import {NoteDetailOrderDialogComponent} from '../note-detail-order-dialog/note-detail-order-dialog.component';
-import {PriceDetailOrderDialogComponent} from '../price-detail-order-dialog/price-detail-order-dialog.component';
-import {PriceListProductService} from '../../price-book/price-list-product.service';
-import {ItemInvoice} from '../order.model';
-import {Customer} from '../../customer/customer.model';
-import {SaleCustomerFormDialogComponent} from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
-import {PaymentSiderbarDialogComponent} from '../payment-siderbar-dialog/payment-siderbar-dialog.component';
-import {DiscountSiderbarDialogComponent} from '../discount-siderbar-dialog/discount-siderbar-dialog.component';
-import {CustomerService} from '../../customer/customer.service';
-import {UserService} from '../../user/user.service';
-import {User} from '../../user/user.model';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { FormControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { NotifierService } from 'angular-notifier';
+import { Observable } from 'rxjs';
+import { Product } from '../../product/product.model';
+import { OrderService } from '../order.service';
+import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
+import { of } from 'rxjs/internal/observable/of';
+import { PriceList, PriceListFilter } from '../../price-book/price-list.model';
+import { PriceListService } from '../../price-book/price-list.service';
+import { NoteDetailOrderDialogComponent } from '../note-detail-order-dialog/note-detail-order-dialog.component';
+import { PriceDetailOrderDialogComponent } from '../price-detail-order-dialog/price-detail-order-dialog.component';
+import { PriceListProductService } from '../../price-book/price-list-product.service';
+import { ItemInvoice } from '../order.model';
+import { Customer } from '../../customer/customer.model';
+import { SaleCustomerFormDialogComponent } from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
+import { PaymentSiderbarDialogComponent } from '../payment-siderbar-dialog/payment-siderbar-dialog.component';
+import { DiscountSiderbarDialogComponent } from '../discount-siderbar-dialog/discount-siderbar-dialog.component';
+import { CustomerService } from '../../customer/customer.service';
+import { UserService } from '../../user/user.service';
+import { User } from '../../user/user.model';
 import * as numeral from 'numeral';
 
 @Component({
@@ -81,6 +81,7 @@ export class SaleMainComponent implements OnInit {
 
   allPermission: any;
   isAdminStore: boolean;
+
   /**
    *  So sanh danh sach cu
    * @param listProductUnitIdChoose
@@ -385,6 +386,23 @@ export class SaleMainComponent implements OnInit {
     });
   }
 
+  public changeBranch(event) {
+    const data = {'branch_store_id': event.value};
+    this.userService.updateBranchLogin(data).subscribe(res => {
+      if (res === true) {
+        this.notifySer.notify('success', 'Chuyển chi nhánh thành công.');
+        this.resetDataSiderBar();
+        this.orderService.initListInvoice();
+        setTimeout(function () {
+          location.reload();
+        }, 500);
+      } else {
+        this.notifySer.notify('error', 'Đã có lỗi xảy ra, vui lòng kiểm tra lại.');
+      }
+    }, (error) => {
+    });
+  }
+
   /**
    * Init Component
    */
@@ -549,6 +567,11 @@ export class SaleMainComponent implements OnInit {
           username: user?.username,
           email: user?.email
         };
+
+        this.user.id = user?.id;
+        this.user.username = user?.username;
+        this.user.email = user?.email;
+
       }
     });
     this.orderService.setListInvoiceLocalStorage(listInvoice);
@@ -680,8 +703,10 @@ export class SaleMainComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      // console.log(result);
       if (result !== undefined) {
-        this.selectCustomer.patchValue(result?.name);
+        this.onSelectedCustomer(result);
+        // this.selectCustomer.patchValue(result?.name);
       }
     });
   }
@@ -695,7 +720,11 @@ export class SaleMainComponent implements OnInit {
       const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
       const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
       let printContent = '<title>' + res?.invoice_no + '</title>';
-      printContent += '<style>table {' +
+      printContent += '<style> ' +
+        'p,table,div {' +
+        'font-family: arial, sans-serif;' +
+        '}' +
+        'table {' +
         // 'font-family: arial, sans-serif;' +
         'border-collapse: collapse;' +
         'width: 100%;' +
@@ -718,7 +747,7 @@ export class SaleMainComponent implements OnInit {
         '<th>Đơn giá</th>' +
         '<th style="text-align:center;">Số lượng</th>';
 
-      if (this.autoPrintInSoLo == true) {
+      if (this.autoPrintInSoLo === true) {
         printContent += '<th style="text-align:left;">Số lô</th>';
       }
 
@@ -786,7 +815,7 @@ export class SaleMainComponent implements OnInit {
       WindowPrt.document.close();
       WindowPrt.focus();
       WindowPrt.print();
-      WindowPrt.close();
+      // WindowPrt.close();
     });
 
   }
@@ -870,7 +899,7 @@ export class SaleMainComponent implements OnInit {
       WindowPrt.document.close();
       WindowPrt.focus();
       WindowPrt.print();
-      WindowPrt.close();
+      // WindowPrt.close();
     });
 
   }
@@ -887,20 +916,18 @@ export class SaleMainComponent implements OnInit {
     });
 
     const customer = mItemInvoice.customer;
-    // if (mItemInvoice.customer === undefined) {
-    //   this.notifySer.notify('warning', 'Chưa chọn khách hàng !');
-    //   return;
-    // }
-    if (mItemInvoice.user === undefined) {
-      this.notifySer.notify('warning', 'Chưa chọn nhân viên !');
+
+    if (this.selectUser.value === '') {
+      this.notifySer.notify('warning', 'Chưa chọn tên nhân viên !');
       return;
     }
-    // console.log(Number(this.form.controls['customerPay'].value));
 
-    // if (this.sumPrice - this.numberDiscount > numeral(this.form.controls['customerPay'].value).value()) {
-    //   this.notifySer.notify('warning', 'Thanh toán chưa đủ !');
-    //   return;
-    // }
+    if (mItemInvoice.user === undefined) {
+
+      // console.log(this.user);
+      // return;
+      mItemInvoice.user = this.user;
+    }
 
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
       this.notifySer.notify('warning', 'Chưa chọn sản phẩm !');
@@ -974,6 +1001,7 @@ export class SaleMainComponent implements OnInit {
         price_book_id: this.form.controls['priceBookID'].value,
         branch_id: this.form.controls['branch_id'].value,
       },
+      UserID: mItemInvoice.user.id,
       InvoiceDetail: invoiceDetail,
       PaymentMethod: 'cash', // mItemInvoice.paymentSiderBar?.type,
       PaymentPrice: this.sumPrice - this.numberDiscount, // tien thanh toan
@@ -1041,9 +1069,13 @@ export class SaleMainComponent implements OnInit {
     //   return;
     // }
 
-    if (mItemInvoice.user === undefined) {
-      this.notifySer.notify('warning', 'Chưa chọn nhân viên !');
+    if (this.selectUser.value === '') {
+      this.notifySer.notify('warning', 'Chưa chọn tên nhân viên !');
       return;
+    }
+
+    if (mItemInvoice.user === undefined) {
+      mItemInvoice.user = this.user;
     }
 
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
@@ -1217,14 +1249,14 @@ export class SaleMainComponent implements OnInit {
   public checkPermissionSaleDisable() {
     let indexPermission;
     if (this.localItemInvoice?.invoice_id < 0) {
-       indexPermission = this.allPermission.indexOf('Invoice.Sale-Order');
+      indexPermission = this.allPermission.indexOf('Invoice.Sale-Order');
     } else {
       indexPermission = this.allPermission.indexOf('Invoice.Update-Order');
       if (!this.isAdminStore) {
         return true;
       }
     }
-    if ( indexPermission !== -1) {
+    if (indexPermission !== -1) {
       return false;
     }
     return true;

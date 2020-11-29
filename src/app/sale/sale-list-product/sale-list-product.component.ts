@@ -72,7 +72,7 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.price_book_id = itemInvoice?.price_book_id;
-    filter.expand = 'medicine,productPlacements,group,images,common,productUnits';
+    filter.expand = 'images,common,productUnits,quantity';
     return filter;
   }
 
@@ -85,11 +85,14 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
       data.forEach(element => {
         // console.log(element);
         const productUnits = element.productUnits;
-        let quantity_of_stock = '';
-        productUnits.forEach(unit => {
-          quantity_of_stock += unit.name + '-' + unit.quantity_of_stock + ' ';
-        });
-        element.quantity_of_stock = quantity_of_stock;
+        // let quantity_of_stock = '';
+        // productUnits.forEach(unit => {
+        //   quantity_of_stock += unit.name + '-' + unit.quantity_of_stock + ' ';
+        // });
+        // element.quantity_of_stock = element.base + '-' + element.quantity_of_stock;
+        element.quantity_of_stock = element.quantity?.number;
+        element.text_quantity_of_stock = element.base_unit + '-' + element.quantity?.number;
+
       });
       this.dataSource = data;
 
@@ -106,7 +109,7 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
     this.loadData();
     this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
       const listItemInvoice = ListInvoice.itemInvoice;
-      // console.log(listItemInvoice);
+      // tslint:disable-next-line:no-shadowed-variable
       listItemInvoice.forEach(element => {
         if (element.active === true && this.priceBookID !== element?.price_book_id) {
           this.priceBookID = element?.price_book_id;
@@ -136,9 +139,12 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
   addProductToOrder(object) {
     const product = object;
     let units = object.productUnits;
-    let unitOne = units.find(element => element.quantity_of_stock > 0);
+    let unitOne = units.find(element => element.is_base > 0);
+    units.forEach(element => {
+      element.quantity_of_stock = Math.floor(product.quantity_of_stock / element.value);
+    });
     units = units.filter(element => element.quantity_of_stock > 0);
-    if (unitOne == undefined) {
+    if (product.quantity_of_stock <= 0) {
       this.notifySer.notify('warning', 'Sản phẩm hết hàng trong kho !');
       return;
     }

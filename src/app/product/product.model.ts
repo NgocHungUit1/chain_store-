@@ -47,6 +47,17 @@ export class Product {
   stt: number; // for view
   product_unit_id: number; // for unit
   product_unit_value: number; //for unit
+  product_unit_quantity_of_stock: number; //for unit
+  amount: number;
+  quantity: Quantity;
+}
+
+export class Quantity {
+  id: string;
+  product_id: string;
+  branch_id: string;
+  store_id: string;
+  number: number;
 }
 
 

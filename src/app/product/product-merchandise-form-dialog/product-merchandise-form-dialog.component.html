@@ -16,7 +16,7 @@
             <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field>
-                  <input type="text" matInput [formControl]="form.controls['product_no']" placeholder="Mã hàng hóa *">
+                  <input type="text" matInput [formControl]="form.controls['product_no']" required placeholder="Mã hàng hóa">
                 </mat-form-field>
               </div>
             </div>
@@ -24,7 +24,8 @@
             <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field>
-                  <input type="text" matInput [formControl]="form.controls['product_name']" placeholder="Tên hàng *">
+                  <input type="text" matInput [formControl]="form.controls['product_name']"
+                         required placeholder="Tên hàng" autocomplete="off">
                 </mat-form-field>
               </div>
             </div>
@@ -32,7 +33,7 @@
             <div fxLayout="row wrap">
               <div fxFlex="90">
                 <mat-form-field>
-                  <mat-select placeholder="Nhóm *" [formControl]="form.controls['group_id']">
+                  <mat-select required placeholder="Nhóm " [formControl]="form.controls['group_id']">
                     <mat-option>--</mat-option>
                     <mat-option *ngFor="let group of groups" [value]="group.id">
                       {{group.name}}
@@ -51,7 +52,8 @@
             <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field >
-                  <input type="text" matInput [formControl]="form.controls['original_price']" (keyup)="inputformatNumber($event)" placeholder="Giá vốn *">
+                  <input type="text" matInput [formControl]="form.controls['original_price']"
+                         (keyup)="inputformatNumber($event)" required placeholder="Giá vốn" autocomplete="off">
                 </mat-form-field>
               </div>
             </div>
@@ -59,7 +61,8 @@
             <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field>
-                  <input type="text" matInput [formControl]="form.controls['sell_price']" (keyup)="inputformatNumber($event)" placeholder="Giá bán *">
+                  <input type="text" matInput [formControl]="form.controls['sell_price']"
+                         (keyup)="inputformatNumber($event)" required placeholder="Giá bán" autocomplete="off">
                 </mat-form-field>
               </div>
             </div>
@@ -67,8 +70,8 @@
             <div fxLayout="row wrap">
               <div fxFlex="30">
                 <mat-form-field>
-                  <input type="text" matInput [formControl]="form.controls['base_unit']"
-                    placeholder="Đơn vị cơ bản *">
+                  <input type="text" matInput [formControl]="form.controls['base_unit']" required
+                    placeholder="Đơn vị cơ bản">
                 </mat-form-field>
               </div>
             </div>

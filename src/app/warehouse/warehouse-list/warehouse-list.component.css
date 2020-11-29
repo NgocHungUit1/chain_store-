@@ -73,3 +73,17 @@ tr.example-element-row:not(.example-expanded-row):active {
 .column-center-text {
   text-align: center;
 }
+
+.select-product {
+  margin-left: 10px;
+  font-size: 1rem;
+  min-width: 215px;
+}
+
+.title-time-filter{
+  padding: 16px 0 0 20px;
+}
+
+.mat-card{
+  margin : 0px !important;
+}

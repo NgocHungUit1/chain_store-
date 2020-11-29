@@ -39,6 +39,7 @@ export class WarehouseFilter extends ApiFilterBase {
   page = 1;
   pageSize = 15;
   sort = '';
+  keyword = '';
 
   getModelSearch() {
     return 'WarehouseSearch';
@@ -60,6 +61,8 @@ export class WarehouseProduct {
   productUnits: object[];
   productParcels: object[];
   product_parcels: object[];
+  productParcelsForView: object[];
+  productParcelsForViewHtml: string;
 }
 
 export class WarehouseProductFilter extends ApiFilterBase {
