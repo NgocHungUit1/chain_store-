@@ -1,0 +1,197 @@
+<mat-sidenav-container>
+  <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true">
+    <mat-toolbar class="dv-header">
+      <button mat-icon-button>
+        <mat-icon>filter_list</mat-icon>
+      </button>
+      <h3>Lọc và tìm kiếm</h3>
+    </mat-toolbar>
+    <mat-card>
+      <mat-calendar
+        #dateCalendar
+        [(selected)]="dateNowTimesheet"
+      ></mat-calendar>
+    </mat-card>
+
+    <span style="margin: 10px;"></span>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>
+          Trạng thái làm việc
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content style="padding: 10px;">
+        <div *ngFor="let data of statusClockingList; let i=index" class="status-clocking ">
+          <div>
+            <input type="checkbox" [value]="data.value" checked="true" (change)="onChangeSelectStatusSearch($event)"/>
+            {{data.name}}
+          </div>
+          <div class="box-color-status background-status-{{data.value}}"></div>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+    <span style="margin: 10px;"></span>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>
+          Ca làm việc
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content style="padding: 10px;">
+        <mat-form-field>
+          <mat-select placeholder="Ca làm việc" [(ngModel)]="arrShiftsSearch" [multiple]="true"
+                      (selectionChange)="loadData()">
+            <mat-option *ngFor="let shifts of shiftsList" [value]="shifts.id">
+              {{shifts.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+
+    <span style="margin: 10px;"></span>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>
+          Nhân viên
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content style="padding: 10px;">
+        <mat-form-field>
+          <mat-select placeholder="Ca làm việc" [(ngModel)]="arrEmployeeSearch" [multiple]="true"
+                      (selectionChange)="loadData()">
+            <mat-option *ngFor="let employee of employeeList" [value]="employee.id">
+              {{employee.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+
+
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar class="dv-header">
+      <button mat-icon-button (click)="leftside.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <h3>Bảng chấm công</h3>
+      <div class=m-l-20>
+        <mat-button-toggle-group (valueChange)="changDateTypeTimeSheet()" [(ngModel)]="typeDateTimeSheet">
+          <mat-button-toggle *ngFor="let item of listTypeDate" value="{{item.id}}">{{item.name}}</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+      <span fxFlex="1 1 0%"></span>
+      <button mat-raised-button color="primary" (click)="openTimeSheetFormDialog()" style="margin-right: 10px">
+        <mat-icon>add</mat-icon>
+        Đặt lịch làm việc
+      </button>
+      <button style="margin-left: 10px" mat-raised-button color="primary" (click)="loadData()">
+        <mat-icon>refresh</mat-icon>
+        Làm mới
+      </button>
+    </mat-toolbar>
+    <div fxLayout="row wrap">
+      <div fxFlex="100">
+        <div class="table-container">
+          <div class="table-loading-shade" *ngIf="isLoadingResults || isRateLimitReached">
+            <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+            <div class="table-rate-limit-reached" *ngIf="isRateLimitReached">
+              GitHub's API rate limit has been reached. It will be reset in one minute.
+            </div>
+          </div>
+          <mat-card>
+            <div class="table-responsive">
+              <table cellspacing="0" border="1">
+                <thead>
+                <tr>
+                  <td class="sticky" (click)="openShiftsFormDialog()">
+                    <div class="td-shifts">
+                      Ca làm việc
+                      <button mat-icon-button>
+                        <mat-icon>add</mat-icon>
+                      </button>
+                    </div>
+                  </td>
+                  <td class="border-none">
+                    <table cellspacing="0" class="table-employee-clocking">
+                      <tr>
+                        <td rowspan="2" class="td-employee sticky position-employee" (click)="openEmployeeFormDialog()">
+                          Nhân Viên
+                          <button mat-icon-button>
+                            <mat-icon>add</mat-icon>
+                          </button>
+                        </td>
+                        <td class="calendar-timesheet sticky border-none">
+                          <button mat-icon-button type="button" (click)="changeDateSelect('previous')"
+                                  class="mat-focus-indicator mat-calendar-previous-button mat-icon-button mat-button-base">
+                          </button>
+                          <div class="calendar-month">{{dateNowTimesheet | date: 'MM-yyyy'}}</div>
+                          <button mat-icon-button type="button" (click)="changeDateSelect('next')"
+                                  class="mat-focus-indicator mat-calendar-next-button mat-icon-button mat-button-base">
+                          </button>
+                        </td>
+                      </tr>
+                      <tr class="height-day">
+                        <td class="{{typeDateTimeSheet == 'month' ? 'with-td-month' : ''}}"
+                            *ngFor="let day of listDayTimeSheet">
+                          {{getNameWeekday(day)}} {{day | date: 'dd'}}
+                        </td>
+
+                      </tr>
+                    </table>
+                  </td>
+
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let shifts of getShiftsListTimeSheet()">
+                  <td class="sticky">
+                    <div class="td-shifts td-shift-title" (click)="openShiftsFormDialog(shifts.id)">
+                      <div>{{shifts.name}}</div>
+                      <div>{{shifts.from_time}} - {{shifts.to_time}}</div>
+                      <div>{{shifts?.branch?.name}}</div>
+                    </div>
+                  </td>
+                  <td class="border-none">
+                    <table cellspacing="0" class="table-employee-clocking">
+                      <tr *ngFor="let employee of getListEmployeeShifts(shifts.id)">
+                        <td class="td-employee sticky position-employee">
+                          <span>{{employee.name}}</span>
+                        </td>
+                        <td class="{{typeDateTimeSheet == 'month' ? 'with-td-month' : ''}}"
+                            *ngFor="let day of listDayTimeSheet">
+                          <div
+                            class="td-clocking-content {{backgroundClockingEmployeeDay(shifts.id, employee.id, day)}}"
+                            *ngIf="clockingEmployeeDay(shifts.id, employee.id, day)"
+                            (click)="openClockingFormDialog(clockingEmployeeDay(shifts.id, employee.id, day).id)">
+                          </div>
+                          <div
+                            class="td-clocking-content"
+                            *ngIf="!clockingEmployeeDay(shifts.id, employee.id, day)"
+                            (click)="openTimeSheetFormDialog(shifts.id, day, employee.id)">
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="td-employee sticky position-employee">
+                        </td>
+                        <td class="{{typeDateTimeSheet == 'month' ? 'with-td-month' : ''}}"
+                            *ngFor="let day of listDayTimeSheet"
+                            (click)="openTimeSheetFormDialog(shifts.id, day)">
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

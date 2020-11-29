@@ -1,0 +1,219 @@
+<h1 mat-dialog-title *ngIf="this.clocking_id !== null && this.clocking_id !== undefined">
+  <div style="display: flex">
+    <div class="box-color-status background-status-{{clocking?.status}}"></div>
+    {{employee?.name}}:
+    {{clocking?.status ? statusClocking[clocking?.status].name : ''}}
+  </div>
+</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <div fxLayout="row wrap">
+      <div fxFlex="100">
+        <div fxLayout="row wrap">
+
+          <div fxFlex="100">
+            <div fxLayout="row wrap">
+              <div fxFlex="40" style="padding-right: 10px;">
+                <mat-form-field>
+                  <mat-label>Ngày làm việc</mat-label>
+                  <input matInput [(ngModel)]="clockingDate" [ngModelOptions]="{standalone: true}"
+                         [matDatepicker]="toPicker" readonly='true'>
+                  <mat-datepicker-toggle disabled="true" matSuffix [for]="toPicker"></mat-datepicker-toggle>
+                  <mat-datepicker #toPicker></mat-datepicker>
+                </mat-form-field>
+
+                <mat-form-field>
+                  <mat-label>Ca làm việc</mat-label>
+                  <mat-select placeholder="Ca làm việc" [value]="timesheet?.shifts_id">
+                    <mat-option *ngFor="let item of shiftsList" [value]="item.id">
+                      {{item.name}} ( {{item.from_time}} - {{item.to_time}})
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <span fxFlex="4" style="border-left: 1px solid"></span>
+              <div fxFlex="56">
+                <mat-form-field>
+                  <mat-label>Ghi chú</mat-label>
+                  <textarea cols="2" matInput formControlName="note" type="text" placeholder="Ghi chú"></textarea>
+                </mat-form-field>
+              </div>
+
+            </div>
+          </div>
+
+          <div fxFlex="100">
+            <div fxLayout="row wrap">
+              <mat-tab-group style="width: 100%;">
+                <mat-tab label="Chấm công">
+                  <div style="margin-top: 20px;"></div>
+                  <div fxFlex="100">
+                    <div fxLayout="row wrap">
+                      <div fxFlex="40">
+                        <mat-form-field>
+                          <mat-label>Chấm công</mat-label>
+                          <mat-select placeholder="Chấm công" [formControl]="form.controls['timekeeping_type']">
+                            <mat-option *ngFor="let item of timekeepingTypes" [value]="item.value">
+                              {{item.name}}
+                            </mat-option>
+                          </mat-select>
+                          <mat-error *ngIf="form.controls['timekeeping_type'].hasError('required')">
+                            Vui lòng chọn loại chấm công
+                          </mat-error>
+                        </mat-form-field>
+                      </div>
+                      <span fxFlex="4"></span>
+
+                      <div fxFlex="56" *ngIf="form.controls['timekeeping_type'].value === '2'" style="display: flex; align-items: center;">
+                        <mat-radio-group [formControl]="form.controls['is_take_leave']">
+                          <mat-radio-button class="example-margin" [value]="1">Có phép</mat-radio-button>
+                          <mat-radio-button class="example-margin" [value]="0">Không phép</mat-radio-button>
+                        </mat-radio-group>
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <div fxFlex="100" *ngIf="form.controls['timekeeping_type'].value === '1'">
+                    <div fxLayout="row wrap">
+                      <div fxFlex="100" style="display: flex;">
+                        <div class="checkbox-time">
+                          <mat-checkbox [formControl]="form.controls['is_check_in']" (change)="changeCheckIn()">
+                            Vào
+                          </mat-checkbox>
+                        </div>
+
+                        <div class="margin-item width-time">
+                          <mat-form-field class="{{isDisabledCheckIn ? 'disabled-input' : ''}}">
+                            <input matInput [readonly]="isDisabledCheckIn" type="time"
+                                   (change)="updateChangeDateTime()"
+                                   [formControl]="form.controls['check_in_time']">
+                          </mat-form-field>
+                        </div>
+
+                        <div class="margin-item" *ngIf="!isDisabledCheckIn && showStartDate">
+                          <mat-form-field>
+                            <mat-select placeholder="Ngày" [formControl]="form.controls['check_in_date']"
+                                        (valueChange)="updateChangeDateTime($event)">
+                              <mat-option *ngFor="let item of listStartDate" [value]="item">
+                                {{item}}
+                              </mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                        </div>
+
+                        <button mat-mini-fab class="margin-item" *ngIf="!isDisabledCheckIn"
+                                (click)="showDateTime(true)">
+                          <mat-icon>more_vert</mat-icon>
+                        </button>
+
+                        <div *ngIf="totalTimeCheckIn != 0" class="margin-item" style="display: flex;">
+                          <div class="checkbox-total-time">
+                            <mat-checkbox [checked]="true" (change)="updateTotalTime($event)">
+                              {{totalTimeCheckIn > 0 ? 'Làm thêm' : 'Đi muộn'}}</mat-checkbox>
+                          </div>
+
+                          <mat-form-field style="width: 50px;">
+                            <input matInput type="number" min="0" [(ngModel)]="hoursCheckIn"
+                                   [ngModelOptions]="{standalone: true}">
+                          </mat-form-field>
+
+                          <div class="hours-minute">giờ</div>
+
+                          <mat-form-field style="width: 50px;">
+                            <input matInput type="number" min="0" [(ngModel)]="minuteCheckIn"
+                                   [ngModelOptions]="{standalone: true}">
+                          </mat-form-field>
+
+                          <div class="hours-minute">phút</div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+
+                  <div fxFlex="100" *ngIf="form.controls['timekeeping_type'].value === '1'">
+                    <div fxLayout="row wrap">
+                      <div fxFlex="100" style="display: flex;">
+                        <div class="checkbox-time">
+                          <mat-checkbox [formControl]="form.controls['is_check_out']"
+                                        (change)="changeCheckOut()">
+                            Ra
+                          </mat-checkbox>
+                        </div>
+                        <div class="margin-item width-time">
+                          <mat-form-field class="{{isDisabledCheckOut ? 'disabled-input' : ''}}">
+                            <input matInput [readonly]="isDisabledCheckOut" type="time"
+                                   (change)="updateChangeDateTime(null, true)"
+                                   [formControl]="form.controls['check_out_time']">
+                          </mat-form-field>
+                        </div>
+
+                        <div class="margin-item" *ngIf="!isDisabledCheckOut && showEndDate">
+                          <mat-form-field>
+                            <mat-select placeholder="Ngày" [formControl]="form.controls['check_out_date']"
+                                        (valueChange)="updateChangeDateTime($event,true)">
+                              <mat-option *ngFor="let item of listEndDate" [value]="item">
+                                {{item}}
+                              </mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                        </div>
+                        <button mat-mini-fab class="margin-item"
+                                *ngIf="!isDisabledCheckOut" (click)="showDateTime()">
+                          <mat-icon>more_vert</mat-icon>
+                        </button>
+
+                        <div *ngIf="totalTimeCheckOut != 0" class="margin-item" style="display: flex;">
+                          <div class="checkbox-total-time">
+                            <mat-checkbox [checked]="true" (change)="updateTotalTime($event, true)">
+                              {{totalTimeCheckOut > 0 ? 'Làm thêm' : 'Về sớm'}}</mat-checkbox>
+                          </div>
+
+                          <mat-form-field style="width: 50px;">
+                            <input matInput type="number" min="0" [(ngModel)]="hoursCheckOut"
+                                   [ngModelOptions]="{standalone: true}">
+                          </mat-form-field>
+
+                          <div class="hours-minute">giờ</div>
+
+                          <mat-form-field style="width: 50px;">
+                            <input matInput type="number" min="0" [(ngModel)]="minuteCheckOut"
+                                   [ngModelOptions]="{standalone: true}">
+                          </mat-form-field>
+
+                          <div class="hours-minute">phút</div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+
+                </mat-tab>
+                <mat-tab label="Lịch sử">
+                  <app-clocking-history></app-clocking-history>
+                </mat-tab>
+              </mat-tab-group>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="7" (click)="submit()">
+    <mat-icon>save</mat-icon>
+    Lưu
+  </button>
+  <button mat-raised-button color="warn" (click)="delete()">
+    <mat-icon>delete</mat-icon>
+    Hủy
+  </button>
+  <button mat-raised-button (click)="onNoClick()" tabindex="-1">
+    <mat-icon>cancel</mat-icon>
+    Bỏ qua
+  </button>
+</div>

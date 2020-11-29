@@ -37,9 +37,9 @@ export class EmployeeFilter extends ApiFilterBase {
   page = 1;
   pageSize = 15;
   sort = '';
+  isNotPageSize = false;
 
   getModelSearch() {
     return 'EmployeeSearch';
   }
-
 }

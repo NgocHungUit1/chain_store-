@@ -1,0 +1,30 @@
+.mat-button-toggle-checked.mat-button-toggle-appearance-standard {
+  background-color: #4bac4d;
+  color: #fff;
+}
+
+.mat-column-name,
+.mat-column-user_name,
+.mat-column-phone_number,
+.mat-column-email,
+.mat-column-actions {
+  flex: 1 1 0%;
+}
+
+.mat-column-main_active_substance, .mat-column-content {
+  flex: 2 1 0%;
+}
+table {
+  width: 100%;
+}
+
+.not-data {
+  text-align: center;
+  align-content: center;
+  display: grid;
+  height: 150px;
+}
+
+.table-employee {
+  min-height: 200px;
+}

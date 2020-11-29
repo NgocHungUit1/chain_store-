@@ -1,0 +1,85 @@
+<h1 mat-dialog-title *ngIf="!(this.shifts_id !== null && this.shifts_id !== undefined)">Thêm ca làm việc</h1>
+<h1 mat-dialog-title *ngIf="this.shifts_id !== null && this.shifts_id !== undefined">Cập nhật ca làm việc</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <div fxLayout="row wrap">
+      <div fxFlex="100">
+        <div fxLayout="row wrap">
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Tên</mat-label>
+              <input matInput formControlName="name" type="text">
+              <mat-error *ngIf="form.controls['name'].hasError('required')">Tên ca làm việc không được bỏ trống
+              </mat-error>
+              <mat-error *ngIf="form.controls['name'].hasError('ajaxValidator')
+                    && form.controls['name'].touched">{{ form.controls['name'].getError('ajaxValidator')?.value}}</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <div fxLayout="row wrap">
+              <div fxFlex="30">
+                <mat-form-field>
+                  <mat-label>Thời gian bắt đầu</mat-label>
+                  <input matInput formControlName="from_time" type="time" (change)="updateTotalTime()">
+                  <mat-error *ngIf="form.controls['from_time'].hasError('required')">Thời gian bắt đầu không được bỏ trống
+                  </mat-error>
+                  <mat-error *ngIf="form.controls['from_time'].hasError('ajaxValidator')
+                    && form.controls['from_time'].touched">{{ form.controls['from_time'].getError('ajaxValidator')?.value}}</mat-error>
+                </mat-form-field>
+              </div>
+              <span fxFlex="4"></span>
+
+              <div fxFlex="30">
+                <mat-form-field>
+                  <mat-label>Thời gian kết thúc</mat-label>
+                  <input matInput formControlName="to_time" type="time" (change)="updateTotalTime()">
+                  <mat-error *ngIf="form.controls['to_time'].hasError('required')">Thời gian kết thúc không được bỏ trống
+                  </mat-error>
+                  <mat-error *ngIf="form.controls['to_time'].hasError('ajaxValidator')
+                    && form.controls['to_time'].touched">{{ form.controls['to_time'].getError('ajaxValidator')?.value}}</mat-error>
+                </mat-form-field>
+              </div>
+              <span fxFlex="4"></span>
+
+              <div fxFlex="32">
+                <div class="total-time">{{totalTime}}</div>
+              </div>
+            </div>
+          </div>
+
+          <div fxFlex="50">
+            <mat-form-field>
+              <mat-select placeholder="Trạng thái" [formControl]="form.controls['status']">
+                <mat-option *ngFor="let item of statusItems" [value]="item.id">
+                  {{item.title}}
+                </mat-option>
+              </mat-select>
+
+              <mat-error *ngIf="form.controls['status'].hasError('required')">Vui lòng chọn trạng thái</mat-error>
+            </mat-form-field>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="7" (click)="submit()">
+    <mat-icon>save</mat-icon>
+    Lưu
+  </button>
+  <button mat-raised-button color="warn" style="margin-right: 10px" *ngIf="shifts_id"
+          (click)="openDeleteShifts()">
+    <mat-icon>delete</mat-icon>
+    Xóa
+  </button>
+  <button mat-button (click)="onNoClick()" tabindex="-1">
+    <mat-icon>cancel</mat-icon>
+    Bỏ qua
+  </button>
+</div>
