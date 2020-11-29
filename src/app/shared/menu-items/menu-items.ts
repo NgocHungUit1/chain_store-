@@ -110,7 +110,7 @@ const MENUITEMS = [
       {state: 'user', name: 'Tài khoản', type: 'link', icon: 'person', roles: ['ADMIN']},
       {state: 'employee', name: 'Nhân viên', type: 'link', icon: 'assignment_ind', roles: ['ADMIN']},
       {state: 'branch', name: 'Chi nhánh', type: 'link', icon: 'business', roles: ['ADMIN']},
-      {state: 'timesheet', name: 'Chấm công', type: 'link', icon: 'business', roles: ['ADMIN']},
+      {state: 'timesheet', name: 'Chấm công', type: 'link', icon: 'calendar_today', roles: ['ADMIN']},
     ]
   },
   {
