@@ -374,10 +374,4 @@ export class EmployeeFormDialogComponent implements OnInit {
     }
   }
 
-  test() {
-    if (this.form.getRawValue()['branches'].length === 0) {
-      console.log('ok');
-    }
-    console.log(this.form.getRawValue()['branches']);
-  }
 }

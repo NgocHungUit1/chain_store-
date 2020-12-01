@@ -13,6 +13,8 @@ import {EmployeeRoutes} from './employee.routing';
 import { EmployeeFormDialogComponent } from './employee-form-dialog/employee-form-dialog.component';
 import { EmployeePopupDeleteDialogComponent } from './employee-popup-delete-dialog/employee-popup-delete-dialog.component';
 import { EmployeeTabInfoComponent } from './employee-tab-info/employee-tab-info.component';
+import { EmployeeTimeSheetListComponent } from './employee-time-sheet-list/employee-time-sheet-list.component';
+import { EmployeeTimesheetPopupDeleteDialogComponent } from './employee-timesheet-popup-delete-dialog/employee-timesheet-popup-delete-dialog.component';
 
 
 
@@ -22,6 +24,8 @@ import { EmployeeTabInfoComponent } from './employee-tab-info/employee-tab-info.
     EmployeeFormDialogComponent,
     EmployeePopupDeleteDialogComponent,
     EmployeeTabInfoComponent,
+    EmployeeTimeSheetListComponent,
+    EmployeeTimesheetPopupDeleteDialogComponent,
   ],
   imports: [
     CommonModule,

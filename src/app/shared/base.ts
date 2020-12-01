@@ -141,6 +141,7 @@ export class ListComponentBase {
     this.page = event.pageIndex + 1;
     this.apiFilter.page = event.pageIndex + 1;
     this.apiFilter.pageSize = event.pageSize;
+    console.log(this.apiFilter);
     this.loadData();
   }
 
