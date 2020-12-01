@@ -25,6 +25,10 @@ export const SupplierRoutes: Routes = [
         path: 'branch',
         loadChildren: () => import('../branch/branch.module').then(m => m.BranchModule)
       },
+      {
+        path: 'timesheet',
+        loadChildren: () => import('../timesheet/timesheet.module').then(m => m.TimesheetModule)
+      }
     ]
   }
 ];
