@@ -7,13 +7,20 @@ import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatTable } from '@angular/material/table';
-import { Product, ProductFilter } from '../../product/product.model';
+import { Product, ProductFilter, ProductReport } from '../../product/product.model';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { debounceTime } from 'rxjs/operators';
 import { ProductMedicineDialogComponent } from '../../product/product-medicine-dialog/product-medicine-dialog.component';
+// tslint:disable-next-line:max-line-length
 import { ProductMerchandiseFormDialogComponent } from '../../product/product-merchandise-form-dialog/product-merchandise-form-dialog.component';
 import { ProductUploadDialogComponent } from '../../product/product-upload-dialog/product-upload-dialog.component';
+import { InvoiceService } from '../../invoice/invoice.service';
+import { DateFilter } from '../../invoice/invoice.model';
+// tslint:disable-next-line:max-line-length
+import { DatetimeDefaultFilterDialogComponent } from '../../invoice/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
+import { DatetimeChooseFilterDialogComponent } from '../../invoice/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
+import { ProductReportService } from '../product-report.service';
 
 @Component({
   selector: 'app-product-report-main',
@@ -30,10 +37,11 @@ import { ProductUploadDialogComponent } from '../../product/product-upload-dialo
 export class ProductReportMainComponent extends ListComponentBase implements OnInit {
 
   constructor(
-    private service: ProductService,
+    private service: ProductReportService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private notifySer: NotifierService,
+    private serviceInvoice: InvoiceService,
     private fb: FormBuilder,
   ) {
     super();
@@ -43,21 +51,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
   @ViewChild('selectColumn') selectColumn;
 
   apiFilter: ProductFilter;
-  expandedElement: Product | null;
-
-  typeProductFilter: FormGroup;
-
-  typeProductFilterList = [
-    {
-      'value': 'medicine',
-      'name': 'Thuốc',
-    },
-    {
-      'value': 'merchandise',
-      'name': 'Hàng hóa',
-    },
-  ];
-
+  expandedElement: ProductReport | null;
 
   statusProductFilter: FormGroup;
 
@@ -72,14 +66,27 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     },
   ];
 
+
+  timeFilter: FormGroup;
+  currentDateFilter: DateFilter;
+
+  titleTimeDefault = 'Tháng này';
+  titleTimeChoose = 'Lựa chọn khác';
+
+  reportType: FormGroup;
+
   columnsHeader = {
     '#': '#',
-    'product_type': 'Phân loại',
     'product_no': 'Mã hàng',
     'product_name': 'Tên hàng',
-    'shortcut': 'Tên ngắn',
-    'original_price': 'Giá vốn',
-    'sell_price': 'Giá bán',
+    'sl_ban': 'SL bán',
+    'doanh_thu': 'Doanh thu',
+    'sl_tra': 'SL trả',
+    'gia_tri_tra': 'Giá trị trả',
+    'doanh_thu_thuan': 'Doanh thu thuần',
+    'tong_gia_vo': 'Tổng giá vốn',
+    'loi_nhuan': 'Lợi nhuận',
+    'ty_suat': 'Tỷ suất',
     'status': 'Trạng thái',
     // 'quantity_of_stock': 'Tồn kho'
   };
@@ -89,9 +96,11 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     'merchandise': 'Hàng hóa',
   };
 
-  displayedColumns: string[] = ['#', 'product_type', 'product_no', 'product_name', 'shortcut', 'original_price', 'sell_price', 'status'];
-  columnsToDisplay: string[] = ['#', 'product_type', 'product_no', 'product_name', 'shortcut', 'original_price', 'sell_price', 'status'];
-  dataSource: Product[] = [];
+  displayedColumns: string[] = ['#', 'product_no', 'product_name',
+    'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
+  columnsToDisplay: string[] = ['#', 'product_no', 'product_name',
+    'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
+  dataSource: ProductReport[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -105,7 +114,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     function write<K extends keyof ProductFilter>(arg: ProductFilter, key: K, value: ProductFilter[K]): void {
       arg[key] = value;
     }
-
+    const objDateFilter = this.serviceInvoice.getDateFilter();
     const filter = new ProductFilter();
     const objectKeys = Object.keys(filter) as Array<keyof ProductFilter>;
 
@@ -115,15 +124,17 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
+    // filter.expand = 'returnsDetailsBranch';
     // filter.expand = 'medicine,productUnits,productPlacements,group,images,quantity';
-    filter.product_type = this.typeProductFilter.controls['status'].value;
-    filter.status = this.statusProductFilter.controls['status'].value;
+    // filter.status = this.statusProductFilter.controls['status'].value;
+    filter.date_from = objDateFilter.date_from;
+    filter.date_to = objDateFilter.date_to;
     return filter;
   }
 
   loadData(): void {
     this.isLoadingResults = true;
-    this.service.getList(this.apiFilter).subscribe(res => {
+    this.service.getListReportSale(this.apiFilter).subscribe(res => {
       this.dataSource = res.body;
       let stt = 0;
       this.dataSource.forEach(elementData => {
@@ -131,19 +142,105 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
         elementData.stt = stt;
       });
       this.reloadFilter(res);
-      const url = this.service.getStateUrl(this.apiFilter);
+      const url = this.service.getApiUrlReportSale(this.apiFilter);
       this.isLoadingResults = false;
     });
   }
 
-
-  /**
-   * Tim kiem theo phan loai sản phẩm
-   */
-  typeProductFilterChange() {
-    this.apiFilter = this.buildFilterFromParams();
-    this.loadData();
+  radioTimeChange(event: Event) {
+    if (this.timeFilter.controls['typeTime'].value === 'choose') {
+      const date = this.serviceInvoice.getDateFilter();
+      const date_from = new Date(date.date_from);
+      const date_to = new Date(date.date_to);
+      this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+    } else {
+      this.titleTimeChoose = 'Lựa chọn khác';
+    }
   }
+
+  convertDate(date: Date) {
+    const month = date.getMonth() + 1;
+    return date.getDate() + '/' + month + '/' + date.getFullYear();
+  }
+
+  openTimeDefault() {
+    const obj = {};
+    const dialogRef = this.dialog.open(DatetimeDefaultFilterDialogComponent, {
+      data: obj,
+      width: '40%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.title !== undefined) {
+        this.titleTimeDefault = result?.title;
+      }
+      const date = this.serviceInvoice.getDateFilter();
+      const date_from = new Date(date.date_from);
+      const date_to = new Date(date.date_to);
+      this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+      this.timeFilter.patchValue({
+        typeTime: 'default',
+      });
+
+      this.apiFilter = this.buildFilterFromParams();
+      this.loadData();
+    });
+  }
+
+  openTimeChoose() {
+    const obj = {};
+    const dialogRef = this.dialog.open(DatetimeChooseFilterDialogComponent, {
+      data: obj,
+      width: '40%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+      this.timeFilter.patchValue({
+        typeTime: 'choose',
+      });
+      const date = this.serviceInvoice.getDateFilter();
+      const date_from = new Date(date.date_from);
+      const date_to = new Date(date.date_to);
+      this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+
+      this.apiFilter = this.buildFilterFromParams();
+      this.loadData();
+    });
+  }
+
+  initDateFilter() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const first = new Date(year, month, 1);
+    const obj = new DateFilter();
+    // tháng này
+
+    obj.date_from = this.serviceInvoice.convertDateYYYYMMDD(first);
+    obj.date_to = this.serviceInvoice.convertDateYYYYMMDD(today);
+
+    const date_from = new Date(obj.date_from);
+    const date_to = new Date(obj.date_to);
+    this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+
+    this.currentDateFilter = obj;
+    this.serviceInvoice.setDateFilter(obj);
+  }
+
+  buildFromTimeFilter() {
+    this.timeFilter = this.fb.group({
+      typeTime: [
+        'default'
+      ],
+    });
+    this.reportType = this.fb.group({
+      type: ['sale']
+    });
+  }
+
 
   /**
    * Tim kiem theo trang thai sản phẩm
@@ -154,13 +251,8 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
   }
 
   ngOnInit() {
-
-    this.typeProductFilter = this.fb.group({
-      status: [
-        ['medicine', 'merchandise']
-      ],
-    });
-
+    this.initDateFilter();
+    this.buildFromTimeFilter();
     this.statusProductFilter = this.fb.group({
       status: [
         [10, 9]
@@ -170,12 +262,23 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
 
-    this.service.subscribeLoadProduct.subscribe(action => {
-      if (action === true) {
-        this.apiFilter = this.buildFilterFromParams();
-        this.loadData();
-        this.service.setLoadProduct(false);
+
+    this.reportType.valueChanges.subscribe(res => {
+      if (res.type === 'sale') {
+        this.displayedColumns = ['#', 'product_no', 'product_name',
+          'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
+        this.columnsToDisplay = ['#', 'product_no', 'product_name',
+          'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
       }
+      if (res.type === 'profit') {
+        this.displayedColumns = ['#', 'product_no', 'product_name',
+          'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan',
+          'tong_gia_vo', 'loi_nhuan', 'ty_suat'];
+        this.columnsToDisplay = ['#', 'product_no', 'product_name',
+          'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan',
+          'tong_gia_vo', 'loi_nhuan', 'ty_suat'];
+      }
+
     });
 
     this.searchProductForm.valueChanges.pipe(debounceTime(800)).subscribe(res => {
@@ -183,11 +286,9 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
         this.apiFilter = this.buildFilterFromParams();
         this.apiFilter.keyword = res;
         this.loadData();
-        this.service.setLoadProduct(false);
       } else {
         this.apiFilter = this.buildFilterFromParams();
         this.loadData();
-        this.service.setLoadProduct(false);
       }
     });
   }

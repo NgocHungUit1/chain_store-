@@ -80,3 +80,10 @@ tr.example-element-row:not(.example-expanded-row):active {
 .mat-card {
   margin: 0px !important;
 }
+
+.radio-button-report-type {
+  display: inline;
+}
+
+
+

@@ -192,7 +192,12 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
       if (this.codeSearch == null) {
         this.apiFilter.invoice_no = code;
         this.codeSearch = code;
+        this.apiFilter.date_from = '';
+        this.apiFilter.date_to = '';
       } else {
+        const objDateFilter = this.service.getDateFilter();
+        this.apiFilter.date_from = objDateFilter.date_from;
+        this.apiFilter.date_to = objDateFilter.date_to;
         this.apiFilter.invoice_no = '';
       }
     }
@@ -201,6 +206,11 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     this.service.getList(this.apiFilter).subscribe(res => {
       const data = res.body;
       let stt = 0;
+      if (data.length === 1) {
+        const arr = data;
+        this.expandedElement = data[0];
+      }
+
       data.forEach(elementData => {
         stt++;
         elementData.stt = stt; // tinh STT

@@ -168,6 +168,29 @@ export class ProductService {
     const url = environment.apiUrl + '/product/search-code?code=' + code;
     return this.http.get<Product>(url);
   }
+
+  /*
+  API for Report
+   */
+  getApiUrlReport(filter?: ProductFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/product/report?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
+  getListReport(filter?: ProductFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrlReport(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
 }
 
 
