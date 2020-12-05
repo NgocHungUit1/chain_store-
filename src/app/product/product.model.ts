@@ -80,6 +80,8 @@ export class ProductFilter extends ApiFilterBase {
   product_type = '';
   date_from = '';
   date_to = '';
+  export: boolean = false;
+  type_report = '';
 
   getModelSearch() {
     return 'ProductSearch';

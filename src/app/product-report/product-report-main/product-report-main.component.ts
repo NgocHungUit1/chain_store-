@@ -152,7 +152,6 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
   }
 
 
-
   loadData(): void {
     const typeReport = this.reportType.controls['type'].value;
     if (typeReport === 'sale' || typeReport === 'profit') {
@@ -399,6 +398,33 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
         this.loadData();
       }
     });
+  }
+
+  /**
+   * Download File Excel
+   */
+  exportExcel() {
+    const typeReport = this.reportType.controls['type'].value;
+    if (typeReport === 'sale' || typeReport === 'profit') {
+      const _apiFilter = this.apiFilter;
+      _apiFilter.export = true;
+      _apiFilter.type_report = typeReport;
+      this.service.getListReportSale(_apiFilter).subscribe(res => {
+        const url = this.service.downloadFileExcel(typeReport);
+        window.location.href = url;
+      });
+    }
+    // this.apiFilter = this.buildFilterFromParams();
+    if (typeReport === 'stock') {
+      const _apiFilter = this.apiFilter;
+      _apiFilter.export = true;
+      _apiFilter.type_report = typeReport;
+      this.service.exportExcel(_apiFilter).subscribe(res => {
+        const url = this.service.downloadFileExcel(typeReport);
+        window.location.href = url;
+      });
+    }
+
   }
 
 }

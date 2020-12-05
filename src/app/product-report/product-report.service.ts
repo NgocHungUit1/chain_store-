@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment';
 import { AuthService } from '../authentication/auth.service';
 import { NotifierService } from 'angular-notifier';
 import { ProductFilter } from '../product/product.model';
+import { InvoiceFilter } from '../invoice/invoice.model';
 
 @Injectable({
   providedIn: 'root'
@@ -62,6 +63,21 @@ export class ProductReportService {
   getListReportStock(filter?: ProductFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrlReportStock(filter);
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
+  /**
+   * Export report excel
+   * @param filter
+   */
+  exportExcel(filter?: ProductFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + '/report/export?' + filter.toFilterString();
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
+  downloadFileExcel(type: string) {
+    const _token = this.auth.getToken();
+    const url = environment.apiUrl + '/report/download-template?token=' + _token + '&type=' + type;
+    return url;
   }
 }
 
