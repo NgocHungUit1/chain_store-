@@ -82,8 +82,14 @@ tr.example-element-row:not(.example-expanded-row):active {
 }
 
 .radio-button-report-type {
-  display: inline;
+  /*display: inline;*/
+  margin: 5px;
 }
 
+.type-radio-group {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+}
 
 

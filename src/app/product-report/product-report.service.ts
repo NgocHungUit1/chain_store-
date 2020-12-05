@@ -19,7 +19,7 @@ export class ProductReportService {
   }
 
   /*
-  API for Report
+   *API for Report Sale
    */
   getApiUrlReportSale(filter?: ProductFilter) {
     if (!filter.page) {
@@ -38,6 +38,29 @@ export class ProductReportService {
 
   getListReportSale(filter?: ProductFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrlReportSale(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
+  /*
+   *API for Report Stock
+   */
+  getApiUrlReportStock(filter?: ProductFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/report/stock?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
+  getListReportStock(filter?: ProductFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrlReportStock(filter);
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 }

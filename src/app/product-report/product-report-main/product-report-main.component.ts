@@ -84,23 +84,38 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     'sl_tra': 'SL trả',
     'gia_tri_tra': 'Giá trị trả',
     'doanh_thu_thuan': 'Doanh thu thuần',
-    'tong_gia_vo': 'Tổng giá vốn',
+    'tong_gia_von': 'Tổng giá vốn',
     'loi_nhuan': 'Lợi nhuận',
     'ty_suat': 'Tỷ suất',
     'status': 'Trạng thái',
+    'stock_product_no': 'Mã hàng',
+    'stock_product_name': 'Tên hàng',
+    'stock_so_luong': 'Số lượng',
+    'stock_gia_ban': 'Giá bán',
+    'stock_gia_tri_ban': 'Giá trị bán',
+    'stock_gia_von': 'Giá vốn',
+    'stock_gia_tri_kho': 'Giá trị kho'
     // 'quantity_of_stock': 'Tồn kho'
   };
 
-  productTypeLable = {
-    'medicine': 'Thuốc',
-    'merchandise': 'Hàng hóa',
-  };
-
+  // for sale
   displayedColumns: string[] = ['#', 'product_no', 'product_name',
     'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
   columnsToDisplay: string[] = ['#', 'product_no', 'product_name',
     'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
+  second_columnsToDisplay: string[] = ['second_#', 'second_product_no', 'second_product_name',
+    'second_sl_ban', 'second_doanh_thu', 'second_sl_tra', 'second_gia_tri_tra', 'second_doanh_thu_thuan'];
   dataSource: ProductReport[] = [];
+
+  sum_sl_ban: number;
+  sum_doanh_thu: number;
+  sum_sl_tra: number;
+  sum_gia_tri_tra: number;
+  sum_tong_gia_von: number;
+  //
+  sum_stock_so_luong: number;
+  sum_stock_gia_tri_ban: number;
+  sum_stock_gia_tri_kho: number;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -114,6 +129,8 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     function write<K extends keyof ProductFilter>(arg: ProductFilter, key: K, value: ProductFilter[K]): void {
       arg[key] = value;
     }
+
+    const typeReport = this.reportType.controls['type'].value;
     const objDateFilter = this.serviceInvoice.getDateFilter();
     const filter = new ProductFilter();
     const objectKeys = Object.keys(filter) as Array<keyof ProductFilter>;
@@ -124,27 +141,58 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
+    if (typeReport === 'stock') {
+      filter.expand = 'quantity';
+    }
     // filter.expand = 'returnsDetailsBranch';
     // filter.expand = 'medicine,productUnits,productPlacements,group,images,quantity';
-    // filter.status = this.statusProductFilter.controls['status'].value;
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
     return filter;
   }
 
+
+
   loadData(): void {
-    this.isLoadingResults = true;
-    this.service.getListReportSale(this.apiFilter).subscribe(res => {
-      this.dataSource = res.body;
-      let stt = 0;
-      this.dataSource.forEach(elementData => {
-        stt++;
-        elementData.stt = stt;
+    const typeReport = this.reportType.controls['type'].value;
+    if (typeReport === 'sale' || typeReport === 'profit') {
+      this.isLoadingResults = true;
+      this.service.getListReportSale(this.apiFilter).subscribe(res => {
+        this.dataSource = res.body.data;
+        this.sum_sl_ban = res.body.sum_sl_ban;
+        this.sum_doanh_thu = res.body.sum_doanh_thu;
+        this.sum_sl_tra = res.body.sum_sl_tra;
+        this.sum_gia_tri_tra = res.body.sum_gia_tri_tra;
+        this.sum_tong_gia_von = res.body.sum_tong_gia_von;
+        let stt = 0;
+        this.dataSource.forEach(elementData => {
+          stt++;
+          elementData.stt = stt;
+        });
+        this.reloadFilter(res);
+        // const url = this.service.getApiUrlReportSale(this.apiFilter);
+        this.isLoadingResults = false;
       });
-      this.reloadFilter(res);
-      const url = this.service.getApiUrlReportSale(this.apiFilter);
-      this.isLoadingResults = false;
-    });
+    }
+
+    if (typeReport === 'stock') {
+      this.isLoadingResults = true;
+      this.service.getListReportStock(this.apiFilter).subscribe(res => {
+        this.dataSource = res.body.data;
+        this.sum_stock_so_luong = res.body.sum_stock_so_luong;
+        this.sum_stock_gia_tri_ban = res.body.sum_stock_gia_tri_ban;
+        this.sum_stock_gia_tri_kho = res.body.sum_stock_gia_tri_kho;
+        let stt = 0;
+        this.dataSource.forEach(elementData => {
+          stt++;
+          elementData.stt = stt;
+        });
+        this.reloadFilter(res);
+        // const url = this.service.getApiUrlReportSale(this.apiFilter);
+        this.isLoadingResults = false;
+      });
+    }
+
   }
 
   radioTimeChange(event: Event) {
@@ -269,15 +317,32 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
           'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
         this.columnsToDisplay = ['#', 'product_no', 'product_name',
           'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
+        this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name',
+          'second_sl_ban', 'second_doanh_thu', 'second_sl_tra', 'second_gia_tri_tra', 'second_doanh_thu_thuan'];
       }
       if (res.type === 'profit') {
         this.displayedColumns = ['#', 'product_no', 'product_name',
           'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan',
-          'tong_gia_vo', 'loi_nhuan', 'ty_suat'];
+          'tong_gia_von', 'loi_nhuan', 'ty_suat'];
         this.columnsToDisplay = ['#', 'product_no', 'product_name',
           'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan',
-          'tong_gia_vo', 'loi_nhuan', 'ty_suat'];
+          'tong_gia_von', 'loi_nhuan', 'ty_suat'];
+        this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name',
+          'second_sl_ban', 'second_doanh_thu', 'second_sl_tra', 'second_gia_tri_tra', 'second_doanh_thu_thuan',
+          'second_tong_gia_von', 'second_loi_nhuan', 'second_ty_suat'
+        ];
       }
+      if (res.type === 'stock') {
+        this.displayedColumns = ['#', 'product_no', 'product_name',
+          'stock_so_luong', 'stock_gia_ban', 'stock_gia_tri_ban', 'stock_gia_von', 'stock_gia_tri_kho'];
+        this.columnsToDisplay = ['#', 'product_no', 'product_name',
+          'stock_so_luong', 'stock_gia_ban', 'stock_gia_tri_ban', 'stock_gia_von', 'stock_gia_tri_kho'];
+        this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name',
+          'second_stock_so_luong', 'second_stock_gia_ban', 'second_stock_gia_tri_ban', 'second_stock_gia_von', 'second_stock_gia_tri_kho'];
+      }
+
+      this.apiFilter = this.buildFilterFromParams();
+      this.loadData();
 
     });
 
