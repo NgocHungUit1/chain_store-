@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { StockTakeBalanceDialogComponent } from './stock-take-balance-dialog.component';
 
@@ -6,7 +6,7 @@ describe('StockTakeBalanceDialogComponent', () => {
   let component: StockTakeBalanceDialogComponent;
   let fixture: ComponentFixture<StockTakeBalanceDialogComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ StockTakeBalanceDialogComponent ]
     })

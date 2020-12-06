@@ -1,5 +1,5 @@
-import {HostBinding} from "@angular/core";
-import * as moment from "moment";
+import { HostBinding, Directive } from "@angular/core";
+import * as moment from 'moment';
 
 
 export class ApiFilterBase {
@@ -39,6 +39,7 @@ export class ApiFilterBase {
   }
 }
 
+@Directive()
 export class ListComponentBase {
   @HostBinding('class.dv-list-page') layout = true;
   /**

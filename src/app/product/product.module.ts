@@ -23,6 +23,8 @@ import { ProductManufacturerFormDialogComponent } from './product-manufacturer-f
 import { ProductPopupDeleteDialogComponent } from './product-popup-delete-dialog/product-popup-delete-dialog.component';
 import { ProductUploadDialogComponent } from './product-upload-dialog/product-upload-dialog.component';
 import { ProductStockChangeDialogComponent } from './product-stock-change-dialog/product-stock-change-dialog.component';
+import { IdCodeFormDialogComponent } from './id-code-form-dialog/id-code-form-dialog.component';
+import { ViewIdCodeFormDialogComponent } from './view-id-code-form-dialog/view-id-code-form-dialog.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +40,9 @@ import { ProductStockChangeDialogComponent } from './product-stock-change-dialog
     ProductManufacturerFormDialogComponent,
     ProductPopupDeleteDialogComponent,
     ProductUploadDialogComponent,
-    ProductStockChangeDialogComponent
+    ProductStockChangeDialogComponent,
+    IdCodeFormDialogComponent,
+    ViewIdCodeFormDialogComponent
   ],
   imports: [
     CommonModule,

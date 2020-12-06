@@ -1,0 +1,146 @@
+<!--<h1 mat-dialog-title>Thêm nhóm hàng</h1>-->
+
+<div fxFlex="100">
+  <div fxLayout="row wrap">
+    <div fxFlex="32">
+      <div mat-dialog-content>
+        <h3>Chọn loại giấy in tem mã</h3>
+        <form [formGroup]="form">
+
+          <mat-form-field>
+            <mat-label>Số lượng in</mat-label>
+            <input matInput type="number" min="1" formControlName="so_luong">
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Loại mã</mat-label>
+            <mat-select formControlName="in_ma">
+              <mat-option value="ma_hang">Mã hàng</mat-option>
+              <mat-option value="ma_vach">Mã vạch</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>In giá</mat-label>
+            <mat-select formControlName="in_gia">
+              <mat-option value="yes">Bảng giá chung</mat-option>
+              <mat-option value="no">Không in giá</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>In kèm VNĐ</mat-label>
+            <mat-select formControlName="in_vnd">
+              <mat-option value="yes">Giá kèm VNĐ</mat-option>
+              <mat-option value="no">Giá không kèm VNĐ</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>In đơn vị</mat-label>
+            <mat-select formControlName="in_don_vi">
+              <mat-option value="yes">Giá kèm đơn vị</mat-option>
+              <mat-option value="no">Giá không kèm đơn vị</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Cửa hàng</mat-label>
+            <mat-select formControlName="in_ten_cua_hang">
+              <mat-option value="yes">In tên cửa hàng</mat-option>
+              <mat-option value="no">Không in tên cửa hàng</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+
+        </form>
+      </div>
+      <div mat-dialog-actions>
+        <!--  <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="3" (click)="submit()"><mat-icon>save</mat-icon>Lưu</button>-->
+        <button mat-raised-button (click)="onNoClick()" tabindex="-1">
+          <mat-icon>cancel</mat-icon>
+          Bỏ qua
+        </button>
+      </div>
+    </div>
+
+    <div fxFlex="2"></div>
+
+    <div fxFlex="32">
+
+      <mat-card>
+        <mat-card-content>
+          <img mat-card-md-image src="assets/images/id-code-form/3_nhan.jpg">
+          <span class="text-card">Mẫu giấy cuộn 3 nhãn (Khổ giấy in nhãn 104x22mm/4.2x0.9 Inch)</span>
+          <button mat-raised-button class="button-card" (click)="openViewIdCodeFormDialog()" color="primary">
+            <mat-icon>format_align_justify</mat-icon>
+            Xem mã in
+          </button>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-content>
+          <img mat-card-md-image src="assets/images/id-code-form/2_nhan.jpg">
+          <span class="text-card">Mẫu giấy cuộn 2 nhãn (Khổ giấy in nhãn 72x22mm)</span>
+          <button mat-raised-button class="button-card" color="primary">
+            <mat-icon>format_align_justify</mat-icon>
+            Xem mã in
+          </button>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-content>
+          <img mat-card-md-image src="assets/images/id-code-form/2_nhan_doi.jpg">
+          <span class="text-card">Mẫu giấy cuộn 2 nhãn (Khổ giấy in nhãn 74x22mm)</span>
+          <button mat-raised-button class="button-card" color="primary">
+            <mat-icon>format_align_justify</mat-icon>
+            Xem mã in
+          </button>
+        </mat-card-content>
+      </mat-card>
+
+    </div>
+
+    <div fxFlex="2"></div>
+
+    <div fxFlex="32">
+      <mat-card>
+        <mat-card-content>
+          <img mat-card-md-image src="assets/images/id-code-form/12_nhan.jpg">
+          <span class="text-card">Mẫu giấy 12 nhãn (Khổ giấy in nhãn Tomy 103 202x162mm)</span>
+          <button mat-raised-button class="button-card" color="primary">
+            <mat-icon>format_align_justify</mat-icon>
+            Xem mã in
+          </button>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-content>
+          <img mat-card-md-image src="assets/images/id-code-form/65_nhan.jpg">
+          <span class="text-card">Mẫu giấy 65 nhãn (Khổ giấy in nhãn A4 - Tomy 145)</span>
+          <button mat-raised-button class="button-card" color="primary">
+            <mat-icon>format_align_justify</mat-icon>
+            Xem mã in
+          </button>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-content>
+          <img mat-card-md-image src="assets/images/id-code-form/hang_trang_suc.jpg">
+          <span class="text-card">Mẫu tem hàng trang sức (Khổ nhãn 75mm x 10mm / 2.75in x 0.4in)</span>
+          <button mat-raised-button class="button-card" color="primary">
+            <mat-icon>format_align_justify</mat-icon>
+            Xem mã in
+          </button>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+
+

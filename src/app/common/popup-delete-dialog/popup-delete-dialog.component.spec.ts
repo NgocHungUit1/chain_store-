@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { PopupDeleteDialogComponent } from './popup-delete-dialog.component';
 
@@ -6,7 +6,7 @@ describe('PopupDeleteDialogComponent', () => {
   let component: PopupDeleteDialogComponent;
   let fixture: ComponentFixture<PopupDeleteDialogComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ PopupDeleteDialogComponent ]
     })

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { PriceDetailOrderDialogComponent } from './price-detail-order-dialog.component';
 
@@ -6,7 +6,7 @@ describe('PriceDetailOrderDialogComponent', () => {
   let component: PriceDetailOrderDialogComponent;
   let fixture: ComponentFixture<PriceDetailOrderDialogComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ PriceDetailOrderDialogComponent ]
     })

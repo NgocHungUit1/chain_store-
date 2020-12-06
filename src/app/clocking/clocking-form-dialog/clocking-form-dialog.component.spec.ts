@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ClockingFormDialogComponent } from './clocking-form-dialog.component';
 
@@ -6,7 +6,7 @@ describe('ClockingFormDialogComponent', () => {
   let component: ClockingFormDialogComponent;
   let fixture: ComponentFixture<ClockingFormDialogComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ClockingFormDialogComponent ]
     })
