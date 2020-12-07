@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { BranchTabInfoComponent } from './branch-tab-info.component';
 
@@ -6,7 +6,7 @@ describe('BranchTabInfoComponent', () => {
   let component: BranchTabInfoComponent;
   let fixture: ComponentFixture<BranchTabInfoComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ BranchTabInfoComponent ]
     })

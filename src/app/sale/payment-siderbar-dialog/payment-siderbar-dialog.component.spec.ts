@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { PaymentSiderbarDialogComponent } from './payment-siderbar-dialog.component';
 
@@ -6,7 +6,7 @@ describe('PaymentSiderbarDialogComponent', () => {
   let component: PaymentSiderbarDialogComponent;
   let fixture: ComponentFixture<PaymentSiderbarDialogComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ PaymentSiderbarDialogComponent ]
     })

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { DatetimeDefaultFilterDialogComponent } from './datetime-default-filter-dialog.component';
 
@@ -6,7 +6,7 @@ describe('DatetimeDefaultFilterDialogComponent', () => {
   let component: DatetimeDefaultFilterDialogComponent;
   let fixture: ComponentFixture<DatetimeDefaultFilterDialogComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ DatetimeDefaultFilterDialogComponent ]
     })

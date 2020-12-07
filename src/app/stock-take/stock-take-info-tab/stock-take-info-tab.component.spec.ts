@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { StockTakeInfoTabComponent } from './stock-take-info-tab.component';
 
@@ -6,7 +6,7 @@ describe('StockTakeInfoTabComponent', () => {
   let component: StockTakeInfoTabComponent;
   let fixture: ComponentFixture<StockTakeInfoTabComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ StockTakeInfoTabComponent ]
     })

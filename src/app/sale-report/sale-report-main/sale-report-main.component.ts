@@ -65,7 +65,7 @@ export class SaleReportMainComponent implements OnInit {
   }
 
 
-  buildFrom() {
+  buildFromTimeFilter() {
     this.timeFilter = this.fb.group({
       typeTime: [
         'default'
@@ -110,7 +110,7 @@ export class SaleReportMainComponent implements OnInit {
 
   ngOnInit(): void {
     this.initDateFilter();
-    this.buildFrom();
+    this.buildFromTimeFilter();
     this.buildView();
   }
 

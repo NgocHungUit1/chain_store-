@@ -65,7 +65,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     HttpClientModule,
     PerfectScrollbarModule,
     SharedModule,
-    RouterModule.forRoot(AppRoutes),
+    RouterModule.forRoot(AppRoutes, { relativeLinkResolution: 'legacy' }),
     NgMultiSelectDropDownModule.forRoot(),
     NotifierModule.withConfig({
       position: {

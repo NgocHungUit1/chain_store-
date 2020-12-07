@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { InvoiceTabReturnsComponent } from './invoice-tab-returns.component';
 
@@ -6,7 +6,7 @@ describe('InvoiceTabReturnsComponent', () => {
   let component: InvoiceTabReturnsComponent;
   let fixture: ComponentFixture<InvoiceTabReturnsComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ InvoiceTabReturnsComponent ]
     })

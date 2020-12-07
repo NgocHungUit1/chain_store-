@@ -266,9 +266,16 @@ export class ProductMedicineDialogComponent implements OnInit {
         placements.push(pPlacement.id);
       });
       // debugger;
-      let medicine = product['medicine'];
-      medicine.made_in = product['made_in'];
-      medicine.manufacturer = product['manufacturer'];
+      const medicine = product['medicine'];
+      if (medicine !== null) {
+        medicine.made_in = product['made_in'];
+        medicine.manufacturer = product['manufacturer'];
+      }
+      if (medicine == null) {
+        this.notifySer.notify('info', 'Vui lòng nhập lại tên thuốc để xác định lại mã dược quốc gia');
+        product['product_name'] = '';
+      }
+
       if (copy === null) {
         this.form.patchValue({
           product_no: product['product_no'],
@@ -361,6 +368,12 @@ export class ProductMedicineDialogComponent implements OnInit {
     if (this.form.valid) {
       this.loading = true;
       const data = this.form.getRawValue();
+      if (data.medicine_id == null) {
+        this.notifySer.notify('info', 'Vui lòng nhập lại tên thuốc để xác định lại mã dược quốc gia');
+        this.form.controls['product_name'].setValue('');
+        this.loading = false;
+        return;
+      }
       data.manufacturer = data.medicine.manufacturer;
       data.made_in = data.medicine.made_in;
       data.original_price = numeral(data.original_price).value();

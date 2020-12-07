@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ShiftsFormDialogComponent } from './shifts-form-dialog.component';
 
@@ -6,7 +6,7 @@ describe('ShiftsFormDialogComponent', () => {
   let component: ShiftsFormDialogComponent;
   let fixture: ComponentFixture<ShiftsFormDialogComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ShiftsFormDialogComponent ]
     })

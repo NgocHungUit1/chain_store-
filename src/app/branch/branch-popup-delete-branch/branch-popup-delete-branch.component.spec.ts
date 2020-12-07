@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { BranchPopupDeleteBranchComponent } from './branch-popup-delete-branch.component';
 
@@ -6,7 +6,7 @@ describe('BranchPopupDeleteBranchComponent', () => {
   let component: BranchPopupDeleteBranchComponent;
   let fixture: ComponentFixture<BranchPopupDeleteBranchComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ BranchPopupDeleteBranchComponent ]
     })

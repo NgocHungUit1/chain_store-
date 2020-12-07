@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ClockingHistoryComponent } from './clocking-history.component';
 
@@ -6,7 +6,7 @@ describe('ClockingHistoryComponent', () => {
   let component: ClockingHistoryComponent;
   let fixture: ComponentFixture<ClockingHistoryComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ClockingHistoryComponent ]
     })

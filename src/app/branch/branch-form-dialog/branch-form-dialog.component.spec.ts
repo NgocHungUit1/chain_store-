@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { BranchFormDialogComponent } from './branch-form-dialog.component';
 
@@ -6,7 +6,7 @@ describe('BranchFormDialogComponent', () => {
   let component: BranchFormDialogComponent;
   let fixture: ComponentFixture<BranchFormDialogComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ BranchFormDialogComponent ]
     })

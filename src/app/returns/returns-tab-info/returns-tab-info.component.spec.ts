@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ReturnsTabInfoComponent } from './returns-tab-info.component';
 
@@ -6,7 +6,7 @@ describe('ReturnsTabInfoComponent', () => {
   let component: ReturnsTabInfoComponent;
   let fixture: ComponentFixture<ReturnsTabInfoComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ReturnsTabInfoComponent ]
     })

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TimesheetFormDialogComponent } from './timesheet-form-dialog.component';
 
@@ -6,7 +6,7 @@ describe('TimesheetFormDialogComponent', () => {
   let component: TimesheetFormDialogComponent;
   let fixture: ComponentFixture<TimesheetFormDialogComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TimesheetFormDialogComponent ]
     })

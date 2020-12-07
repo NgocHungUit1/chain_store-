@@ -142,6 +142,10 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     this.service.getList(this.apiFilter).subscribe(res => {
       this.dataSource = res.body;
       let stt = 0;
+      if (this.dataSource.length === 1) {
+        const arr = this.dataSource;
+        this.expandedElement = arr[0];
+      }
       this.dataSource.forEach(elementData => {
         stt++;
         elementData.stt = stt;

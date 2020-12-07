@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {ProductUploadDialogComponent} from './product-upload-dialog.component';
 
@@ -6,7 +6,7 @@ describe('ProductUploadDialogComponent', () => {
   let component: ProductUploadDialogComponent;
   let fixture: ComponentFixture<ProductUploadDialogComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ProductUploadDialogComponent ]
     })

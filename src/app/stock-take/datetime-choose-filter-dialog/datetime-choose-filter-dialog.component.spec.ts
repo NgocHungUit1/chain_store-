@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { DatetimeChooseFilterDialogComponent } from './datetime-choose-filter-dialog.component';
 
@@ -6,7 +6,7 @@ describe('DatetimeChooseFilterDialogComponent', () => {
   let component: DatetimeChooseFilterDialogComponent;
   let fixture: ComponentFixture<DatetimeChooseFilterDialogComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ DatetimeChooseFilterDialogComponent ]
     })

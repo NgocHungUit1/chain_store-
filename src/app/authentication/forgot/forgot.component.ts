@@ -6,7 +6,7 @@ import {
   Validators,
   FormControl
 } from '@angular/forms';
-import { CustomValidators  } from 'ngx-custom-validators';
+import { CustomValidators } from 'ngx-custom-validators';
 
 
 @Component({
@@ -16,13 +16,16 @@ import { CustomValidators  } from 'ngx-custom-validators';
 })
 export class ForgotComponent implements OnInit {
   public form: FormGroup;
-  constructor(private fb: FormBuilder, private router: Router) {}
+
+  constructor(private fb: FormBuilder, private router: Router) {
+  }
 
   ngOnInit() {
     this.form = this.fb.group({
       email: [
         null,
-        Validators.compose([Validators.required, CustomValidators.email])
+        // Validators.compose([Validators.required, CustomValidators.email])
+        Validators.compose([Validators.required])
       ]
     });
   }

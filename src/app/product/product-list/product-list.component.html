@@ -11,7 +11,7 @@
       <mat-card-title class="title-time-filter">Phân loại</mat-card-title>
       <mat-card-content>
         <form [formGroup]="typeProductFilter">
-          <mat-form-field appearance="fill">
+          <mat-form-field>
             <mat-label>Phân loại</mat-label>
             <mat-select formControlName="status" (selectionChange)="typeProductFilterChange()" multiple>
               <mat-option *ngFor="let item of typeProductFilterList"
@@ -27,7 +27,7 @@
       <mat-card-title class="title-time-filter">Trạng thái</mat-card-title>
       <mat-card-content>
         <form [formGroup]="statusProductFilter">
-          <mat-form-field appearance="fill">
+          <mat-form-field>
             <mat-label>Trạng thái</mat-label>
             <mat-select formControlName="status" (selectionChange)="statusProductFilterChange()" multiple>
               <mat-option *ngFor="let item of statusProductFilterList"

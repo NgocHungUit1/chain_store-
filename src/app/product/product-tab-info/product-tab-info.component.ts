@@ -1,11 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ProductService } from "../product.service";
-import { Product } from "../product.model";
-import { ProductMedicineDialogComponent } from "../product-medicine-dialog/product-medicine-dialog.component";
-import { ProductMerchandiseFormDialogComponent } from "../product-merchandise-form-dialog/product-merchandise-form-dialog.component";
-import { ProductPopupDeleteDialogComponent } from "../product-popup-delete-dialog/product-popup-delete-dialog.component";
-import { MatDialog } from "@angular/material/dialog";
-import { NotifierService } from "angular-notifier";
+import { ProductService } from '../product.service';
+import { Product } from '../product.model';
+import { ProductMedicineDialogComponent } from '../product-medicine-dialog/product-medicine-dialog.component';
+import { ProductMerchandiseFormDialogComponent } from '../product-merchandise-form-dialog/product-merchandise-form-dialog.component';
+import { ProductPopupDeleteDialogComponent } from '../product-popup-delete-dialog/product-popup-delete-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { NotifierService } from 'angular-notifier';
+import { IdCodeFormDialogComponent } from '../id-code-form-dialog/id-code-form-dialog.component';
+
+const JsBarcode = require('jsbarcode');
 
 @Component({
   selector: 'app-product-tab-info',
@@ -23,7 +26,8 @@ export class ProductTabInfoComponent implements OnInit {
     private productSer: ProductService,
     public notifySer: NotifierService,
     private dialog: MatDialog
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
     const data = [];
@@ -57,19 +61,47 @@ export class ProductTabInfoComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result.event == 'Update') {
+      if (result.event === 'Update') {
         this.loadProduct(result.data.id);
       }
 
-      if (obj.action == 'Copy') {
+      if (obj.action === 'Copy') {
         // debugger;
         this.productSer.setLoadProduct(false);
       }
     });
   }
 
+  openIdCodeFormDialog(id) {
+    // <img id="barcode"/>
+
+    // JsBarcode('#barcode')
+    // .options({font: 'OCR-B'}) // Will affect all barcodes
+    // .CODE128('HH036-12', {fontSize: 18, textMargin: 0})
+    // // .blank(20) // Create space between the barcodes
+    // // .EAN5('12345', {height: 85, textPosition: 'top', fontSize: 16, marginTop: 15})
+    // .render();
+    // console.log('nghia');
+    // return;
+
+    const obj = {
+      product_id: id,
+    };
+
+    const dialogRef = this.dialog.open(IdCodeFormDialogComponent, {
+      data: obj,
+      width: '80%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+    });
+  }
+
   openMerchandiseFormDialog(id, copy_product_id = null) {
-    let obj = {
+
+    const obj = {
       action: copy_product_id !== null ? 'Copy' : 'Update',
       title: copy_product_id !== null ? 'Sao chép hàng hóa' : 'Cập nhật hàng hóa',
       product_id: id,
@@ -91,7 +123,7 @@ export class ProductTabInfoComponent implements OnInit {
 
   deleteMerchandise(id) {
 
-    let obj = {
+    const obj = {
       action: 'Delete',
       title: 'Xóa hàng hóa',
       product_id: id,
