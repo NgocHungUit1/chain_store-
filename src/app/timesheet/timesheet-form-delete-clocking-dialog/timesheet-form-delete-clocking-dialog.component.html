@@ -1,0 +1,152 @@
+<h1 mat-dialog-title>Hủy chi tiết ca làm việc</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <div fxLayout="row wrap">
+      <div fxFlex="100">
+        <div fxLayout="row wrap">
+
+          <div fxFlex="100">
+            <div fxLayout="row wrap">
+
+              <div fxFlex="40">
+                <mat-form-field>
+                  <mat-label>Ngày bắt đầu</mat-label>
+                  <input matInput formControlName="from_date" [matDatepicker]="fromPicker">
+                  <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+                  <mat-datepicker #fromPicker></mat-datepicker>
+                  <mat-error *ngIf="form.controls['from_date'].hasError('required')">
+                    Ngày bắt đầu không được bỏ trống
+                  </mat-error>
+                  <mat-error *ngIf="form.controls['from_date'].hasError('ajaxValidator')
+                    && form.controls['from_date'].touched">{{ form.controls['from_date'].getError('ajaxValidator')?.value}}</mat-error>
+                </mat-form-field>
+              </div>
+              <span fxFlex="4"></span>
+              <div fxFlex="40">
+                <mat-form-field>
+                  <mat-label>Ngày kết thúc</mat-label>
+                  <input matInput formControlName="to_date" [matDatepicker]="toPicker">
+                  <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+                  <mat-datepicker #toPicker></mat-datepicker>
+                  <mat-error *ngIf="form.controls['to_date'].hasError('required')">
+                    Ngày bắt đầu không được bỏ trống
+                  </mat-error>
+                  <mat-error *ngIf="form.controls['to_date'].hasError('ajaxValidator')
+                            && form.controls['to_date'].touched">{{ form.controls['to_date'].getError('ajaxValidator')?.value}}</mat-error>
+                </mat-form-field>
+              </div>
+
+            </div>
+          </div>
+
+          <div fxFlex="100" style="margin-top: 20px;">
+            <div fxLayout="row wrap">
+              <div fxFlex="40">
+                <mat-form-field>
+                  <mat-select placeholder="Ca làm việc" [formControl]="form.controls['shifts_id']">
+                    <mat-option value="">Tất cả</mat-option>
+                    <mat-option *ngFor="let shifts of shiftsList" [value]="shifts.id">
+                      {{shifts.name}}
+                    </mat-option>
+                  </mat-select>
+
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+
+          <div fxFlex="100" style="margin-top: 20px;">
+            <mat-form-field>
+              <mat-select placeholder="Trạng thái" [formControl]="form.controls['status']" [multiple]="true">
+                <mat-option *ngFor="let status of statusClockingList" [value]="status.value">
+                  {{status.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="40" style="margin-top: 20px;">
+            <mat-form-field>
+              <input matInput placeholder="Nhân viên" [matAutocomplete]="employee"
+                     formControlName="employee">
+              <button mat-icon-button matPrefix>
+                <mat-icon>search</mat-icon>
+              </button>
+              <button mat-icon-button matSuffix (click)="form.patchValue({employee: null});"
+                      *ngIf="form.controls['employee'].value">
+                <mat-icon>delete</mat-icon>
+              </button>
+              <mat-autocomplete #employee="matAutocomplete" [displayWith]="displayEmployee"
+                                (optionSelected)='addEmployee($event.option.value)'>
+                <mat-option *ngFor="let employee of filteredEmployee | async" [value]="employee">
+                  <span>{{employee.name}}</span>
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-card class="table-employee">
+              <div class="responsive-table">
+                <table mat-table [dataSource]="dataSelectEmployee">
+
+                  <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef> {{columnsHeader['name']}}</th>
+                    <td mat-cell *matCellDef="let element"> {{element.name}}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="user_name">
+                    <th mat-header-cell *matHeaderCellDef> {{columnsHeader['user_name']}}</th>
+                    <td mat-cell *matCellDef="let element"> {{element?.user?.username}}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="phone_number">
+                    <th mat-header-cell *matHeaderCellDef> {{columnsHeader['phone_number']}}</th>
+                    <td mat-cell *matCellDef="let element"> {{element.phone_number}}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="email">
+                    <th mat-header-cell *matHeaderCellDef> {{columnsHeader['email']}}</th>
+                    <td mat-cell *matCellDef="let element"> {{element.email}}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef> {{columnsHeader['actions']}}</th>
+                    <td mat-cell *matCellDef="let element">
+                      <div class="button-row">
+                        <button mat-raised-button color="warn" (click)="removeEmployee(element)">
+                          Xóa
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayColumns;"></tr>
+                </table>
+              </div>
+
+              <div *ngIf="!dataSelectEmployee" class="not-data">
+                Không tìm thấy kết quả phù hợp
+              </div>
+            </mat-card>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="7" (click)="openDialogConfirm()">
+    <mat-icon>save</mat-icon>
+    Hoàn tất
+  </button>
+  <button mat-button (click)="onNoClick()" tabindex="-1">
+    <mat-icon>cancel</mat-icon>
+    Bỏ qua
+  </button>
+</div>

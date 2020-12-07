@@ -7,7 +7,6 @@ import {ClockingService} from '../clocking.service';
 import {Employee} from '../../employee/employee.model';
 import {Timesheet} from '../../timesheet/timesheet.model';
 import {Clocking} from '../clocking.model';
-import {months} from 'moment';
 
 @Component({
   selector: 'app-clocking-form-dialog',
@@ -110,7 +109,7 @@ export class ClockingFormDialogComponent implements OnInit {
       check_in_date: [null, null], // ngày check_in
       check_out_date: [null, null], // ngày check_out
       timekeeping_type: [this.timekeepingTypes[0].value, Validators.required],
-      is_take_leave: [true, null],
+      is_take_leave: [1, null],
       over_time_after_shift_work: [0],
       over_time_before_shift_work: [0],
       time_is_late: [0],
@@ -137,14 +136,13 @@ export class ClockingFormDialogComponent implements OnInit {
         check_in_date: this.formatDateToTime(clocking['check_in_time'] ? clocking['check_in_time'] : clocking['start_time'], true),
         check_out_date: this.formatDateToTime(clocking['check_out_time'] ? clocking['check_out_time'] : clocking['end_time'], true),
         timekeeping_type: clocking['timekeeping_type'] ? clocking['timekeeping_type'].toString() : this.timekeepingTypes[0].value,
-        is_take_leave: clocking['is_take_leave'] != null ? clocking['is_take_leave'] : '1',
+        is_take_leave: clocking['is_take_leave'] != null ? clocking['is_take_leave'] : 1,
         over_time_after_shift_work: clocking['over_time_after_shift_work'],
         over_time_before_shift_work: clocking['over_time_before_shift_work'],
         time_is_late: clocking['time_is_late'],
         time_is_leave_work_early: clocking['time_is_leave_work_early'],
         note: clocking['note'],
       });
-
       this.listStartDate.push(moment(clocking['start_time']).format('YYYY-MM-DD'));
       this.listStartDate.push(moment(clocking['start_time']).subtract(1, 'days').format('YYYY-MM-DD'));
 
@@ -157,8 +155,6 @@ export class ClockingFormDialogComponent implements OnInit {
       if (clocking['check_out_time']) {
         this.isDisabledCheckOut = false;
       }
-
-      console.log(this.form.getRawValue());
 
       this.clocking = clocking;
       this.employee = clocking.timesheet.employee;

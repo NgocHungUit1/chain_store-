@@ -25,9 +25,6 @@ import { ShiftsPopupDeleteDialogComponent } from './shifts-popup-delete-dialog/s
     PerfectScrollbarModule,
     Ng2SearchPipeModule,
     DemoMaterialModule,
-  ],
-  entryComponents: [
-    ShiftsFormDialogComponent
   ]
 })
 

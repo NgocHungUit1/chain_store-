@@ -21,10 +21,8 @@ td {
 }
 
 .td-shifts {
-  width: 140px;
+  width: 180px;
   height: 100%;
-  padding-left: 10px;
-
 }
 
 .td-employee {
@@ -35,14 +33,14 @@ td {
 
 .sticky {
   position: sticky;
-  left: 0;
+  left: 1px;
   z-index: 999;
   background: white;
   border: solid 1px #d3d3d3;
 }
 
 .position-employee {
-  left: 145px;
+  left: 185px;
 }
 
 thead {
@@ -50,11 +48,11 @@ thead {
 }
 
 .td-shift-title {
-  width: 135px;
+  line-height: 1.5;
 }
 
 .with-td-month {
-   width: 50px;
+   width: 60px;
 }
 
 .table-employee-clocking {
@@ -65,8 +63,19 @@ thead {
   height: 40px;
 }
 
+.table-employee-clocking .day {
+  background-color: #99abb4;
+  color: white;
+  padding: 4px;
+  border-radius: 10px;
+  margin-left: 2px;
+}
+.table-employee-clocking .day-active {
+  background-color: #009688;
+}
+
 .calendar-timesheet {
-  left: 285px;
+  left: 325px;
   display: flex;
   width: 200px;
 }
@@ -75,6 +84,7 @@ thead {
   display: flex;
   justify-items: center;
   align-items: center;
+  font-size: 16px;
 }
 
 .border-none {
