@@ -266,9 +266,16 @@ export class ProductMedicineDialogComponent implements OnInit {
         placements.push(pPlacement.id);
       });
       // debugger;
-      let medicine = product['medicine'];
-      medicine.made_in = product['made_in'];
-      medicine.manufacturer = product['manufacturer'];
+      const medicine = product['medicine'];
+      if (medicine !== null) {
+        medicine.made_in = product['made_in'];
+        medicine.manufacturer = product['manufacturer'];
+      }
+      if (medicine == null) {
+        this.notifySer.notify('info', 'Vui lòng nhập lại tên thuốc để xác định lại mã dược quốc gia');
+        product['product_name'] = '';
+      }
+
       if (copy === null) {
         this.form.patchValue({
           product_no: product['product_no'],
