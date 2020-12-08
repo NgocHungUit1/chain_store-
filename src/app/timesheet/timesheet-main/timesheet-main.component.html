@@ -79,7 +79,7 @@
       </button>
       <h3>Bảng chấm công</h3>
       <div class=m-l-20>
-        <mat-button-toggle-group (valueChange)="changDateTypeTimeSheet()" [(ngModel)]="typeDateTimeSheet">
+        <mat-button-toggle-group (change)="changDateTypeTimeSheet()" [(ngModel)]="typeDateTimeSheet">
           <mat-button-toggle *ngFor="let item of listTypeDate" value="{{item.id}}">{{item.name}}</mat-button-toggle>
         </mat-button-toggle-group>
       </div>
@@ -88,6 +88,46 @@
         <mat-icon>add</mat-icon>
         Đặt lịch làm việc
       </button>
+      <button mat-raised-button color="primary" [matMenuTriggerFor]="menuExportFile" style="margin-right: 10px">
+        <mat-icon>exit_to_app</mat-icon>
+        Xuất file
+      </button>
+      <mat-menu #menuExportFile="matMenu">
+        <button mat-menu-item disabled>
+          <mat-icon>exit_to_app</mat-icon>
+          Chi tiết ca làm việc
+        </button>
+
+        <button mat-menu-item disabled>
+          <mat-icon>exit_to_app</mat-icon>
+          Chi tiết giờ làm việc
+        </button>
+      </mat-menu>
+
+      <button mat-raised-button color="primary" [matMenuTriggerFor]="menuSetting">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <mat-menu #menuSetting="matMenu">
+        <button mat-menu-item disabled>
+          <mat-icon>cached</mat-icon>
+          Đổi ca làm việc
+        </button>
+
+        <button mat-menu-item disabled>
+          <mat-icon>file_copy</mat-icon>
+          Sao chép lịch làm việc
+        </button>
+
+        <button mat-menu-item (click)="openFormDeleteClockingDialog()">
+          <mat-icon>delete</mat-icon>
+          Hủy chi tiết ca làm việc
+        </button>
+
+        <button mat-menu-item disabled>
+          <mat-icon>settings</mat-icon>
+          Tùy chọn chấm công
+        </button>
+      </mat-menu>
       <button style="margin-left: 10px" mat-raised-button color="primary" (click)="loadData()">
         <mat-icon>refresh</mat-icon>
         Làm mới
@@ -137,7 +177,7 @@
                       <tr class="height-day">
                         <td class="{{typeDateTimeSheet == 'month' ? 'with-td-month' : ''}}"
                             *ngFor="let day of listDayTimeSheet">
-                          {{getNameWeekday(day)}} {{day | date: 'dd'}}
+                          {{getNameWeekday(day)}} <span class="day {{checkNowDate(day) ? 'day-active' : '' }}">{{day | date: 'dd'}}</span>
                         </td>
 
                       </tr>
@@ -150,7 +190,7 @@
                 <tr *ngFor="let shifts of getShiftsListTimeSheet()">
                   <td class="sticky">
                     <div class="td-shifts td-shift-title" (click)="openShiftsFormDialog(shifts.id)">
-                      <div>{{shifts.name}}</div>
+                      <div><b>{{shifts.name}}</b></div>
                       <div>{{shifts.from_time}} - {{shifts.to_time}}</div>
                       <div>{{shifts?.branch?.name}}</div>
                     </div>

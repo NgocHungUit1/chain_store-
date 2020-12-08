@@ -1,0 +1,12 @@
+<h2 mat-dialog-title><strong>{{title}}</strong></h2>
+
+<p style="margin-top: 10px;">{{desc}}</p>
+
+<mat-toolbar-row>
+  <span fxFlex="1 1 0%"></span>
+  <button mat-raised-button color="warn" (click)="delete()" style="margin-right: 10px">
+    <mat-icon>done</mat-icon> Xóa
+  </button>
+
+  <button mat-button type="button" (click)="closeDialog()">Bỏ qua</button>
+</mat-toolbar-row>

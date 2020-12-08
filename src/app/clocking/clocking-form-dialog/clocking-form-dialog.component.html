@@ -2,7 +2,7 @@
   <div style="display: flex">
     <div class="box-color-status background-status-{{clocking?.status}}"></div>
     {{employee?.name}}:
-    {{clocking?.status ? statusClocking[clocking?.status].name : ''}}
+    {{clocking?.status != null ? statusClocking[clocking?.status].name : ''}}
   </div>
 </h1>
 <div mat-dialog-content>
@@ -190,9 +190,9 @@
                   </div>
 
                 </mat-tab>
-                <mat-tab label="Lịch sử">
-                  <app-clocking-history></app-clocking-history>
-                </mat-tab>
+<!--                <mat-tab label="Lịch sử">-->
+<!--                  <app-clocking-history></app-clocking-history>-->
+<!--                </mat-tab>-->
               </mat-tab-group>
             </div>
           </div>
