@@ -13,13 +13,14 @@
 
         <form [formGroup]="timeFilter">
           <mat-radio-group (change)="radioTimeChange($event)" formControlName="typeTime">
-            <mat-radio-button style="display: inline; " value="default" (click)="openTimeDefault()">{{ titleTimeDefault }}
-              <button mat-icon-button aria-label="add" >
+            <mat-radio-button style="display: inline; " value="default"
+                              (click)="openTimeDefault()">{{ titleTimeDefault }}
+              <button mat-icon-button aria-label="add">
                 <mat-icon>swap_vert</mat-icon>
               </button>
             </mat-radio-button>
             <mat-radio-button style="display: inline; " value="choose" (click)="openTimeChoose()">{{ titleTimeChoose }}
-              <button mat-icon-button aria-label="add" >
+              <button mat-icon-button aria-label="add">
                 <mat-icon>date_range</mat-icon>
               </button>
             </mat-radio-button>
@@ -35,7 +36,7 @@
       <mat-card-content>
 
         <form [formGroup]="orderStatusFilter">
-          <mat-form-field appearance="fill">
+          <mat-form-field>
             <mat-label>Đơn hàng</mat-label>
             <mat-select formControlName="status" (selectionChange)="orderStatusFilterChange()" multiple>
               <mat-option *ngFor="let item of orderStatusFilterList"

@@ -42,9 +42,9 @@
                   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedMedicine($event.option.value)">
                     <mat-option fxLayout="row" *ngFor="let medicine of filteredMedicines | async" [value]="medicine"
                                 style="min-height: 75px; line-height:25px !important;">
-                      <span style="font-size: 13px">
-                        <b>Mã thuốc: {{ medicine.medicine_no }} </b> <br>
-                        Tên: {{ medicine.medicine_name }} <br>
+                      <span style="font-size: 13px;">
+                        <b> {{ medicine.medicine_name }} </b> <br>
+                        Mã thuốc: {{ medicine.medicine_no }}  <br>
                         Số đăng ký: {{ medicine.registration_no }}  - Đơn vị: {{ medicine.unit }}
                       </span>
 
@@ -148,7 +148,7 @@
             <div fxLayout="row wrap">
               <mat-form-field>
                 <input type="text" matInput [formControl]="form.controls['original_price']"
-                       (keyup)="inputformatNumber($event)" required placeholder="Giá vốn">
+                       (keyup)="inputformatNumber($event)" required placeholder="Giá vốn" autocomplete="off">
               </mat-form-field>
             </div>
             <div fxLayout="row wrap">
@@ -161,7 +161,7 @@
               <div fxFlex="100">
                 <mat-form-field>
                   <input type="text" matInput [formControl]="form.controls['sell_price']"
-                         (keyup)="inputformatNumber($event)" required placeholder="Giá bán">
+                         (keyup)="inputformatNumber($event)" required placeholder="Giá bán" autocomplete="off">
                 </mat-form-field>
               </div>
               <!--              <div fxFlex="30">-->
@@ -180,11 +180,11 @@
 
             <mat-form-field>
               <input type="text" matInput [formControl]="form.controls['base_unit']" required
-                     placeholder="Đơn vị cơ bản ">
+                     placeholder="Đơn vị cơ bản " autocomplete="off">
             </mat-form-field>
 
             <mat-form-field>
-              <input type="number" matInput [formControl]="form.controls['weight']" placeholder="Trọng lượng">
+              <input type="number" matInput [formControl]="form.controls['weight']" placeholder="Trọng lượng" autocomplete="off">
             </mat-form-field>
           </div>
 

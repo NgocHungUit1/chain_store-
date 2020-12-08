@@ -1,5 +1,4 @@
-
-<div>
+<div id="contentToConvert">
 
   <b>Nha thuoc nguyen bao</b>
   <b>PQA viêm mũi dị ứng (Lọ)</b>
@@ -7,8 +6,11 @@
   <p>120.000đ/Hộp</p>
 
 </div>
-
+<button mat-raised-button class="button-card" (click)="generatePDF()" color="primary">
+  <mat-icon>format_align_justify</mat-icon>
+  Xem mã in
+</button>
 <button mat-raised-button (click)="onNoClick()" tabindex="-1">
-<!--  <mat-icon>cancel</mat-icon>-->
+  <!--  <mat-icon>cancel</mat-icon>-->
   Bỏ qua
 </button>
