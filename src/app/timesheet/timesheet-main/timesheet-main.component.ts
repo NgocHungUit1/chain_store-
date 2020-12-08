@@ -17,6 +17,7 @@ import {ClockingFormDialogComponent} from '../../clocking/clocking-form-dialog/c
 import {EmployeeService} from '../../employee/employee.service';
 import {EmployeeFilter} from '../../employee/employee.model';
 import {EmployeeFormDialogComponent} from '../../employee/employee-form-dialog/employee-form-dialog.component';
+import {TimesheetFormDeleteClockingDialogComponent} from '../timesheet-form-delete-clocking-dialog/timesheet-form-delete-clocking-dialog.component';
 
 @Component({
   selector: 'app-timesheet-main',
@@ -155,10 +156,22 @@ export class TimesheetMainComponent extends ListComponentBase implements OnInit 
     this.apiFilter.status = this.statusClockingSelect;
     this.apiFilter.employee_ids = this.arrEmployeeSearch.toString();
     this.apiFilter.shifts_ids = this.arrShiftsSearch.toString();
-    this.apiFilter.start_date = moment(this.dateNowTimesheet).startOf('month').format('YYYY-MM-DD');
-    this.apiFilter.end_date = moment(this.dateNowTimesheet).endOf('month').add(1, 'days').format('YYYY-MM-DD');
+
+    let startDate;
+    if (this.typeDateTimeSheet !==  'month') {
+      if (moment(this.dateNowTimesheet).weekday() === 0) {
+        startDate = moment(this.dateNowTimesheet).subtract(1, 'week').weekday(1);
+      } else {
+        startDate = moment(this.dateNowTimesheet).weekday(1);
+      }
+      this.apiFilter.start_date = startDate.weekday(1).format('YYYY-MM-DD');
+      this.apiFilter.end_date = moment(this.dateNowTimesheet).weekday(7).add(1, 'days').format('YYYY-MM-DD');
+    } else {
+      this.apiFilter.start_date = moment(this.dateNowTimesheet).startOf('month').format('YYYY-MM-DD');
+      this.apiFilter.end_date = moment(this.dateNowTimesheet).endOf('month').add(1, 'days').format('YYYY-MM-DD');
+    }
     this.clockingService.getList(this.apiFilter).subscribe(res => {
-      this.dataSource = res.body;
+      this.dataSource = [...res.body];
       this.reloadFilter(res);
       this.isLoadingResults = false;
     });
@@ -221,7 +234,7 @@ export class TimesheetMainComponent extends ListComponentBase implements OnInit 
   getListEmployee() {
     this.employeeFilter.isNotPageSize = true;
     this.employeeService.getList(this.employeeFilter).subscribe(res => {
-      this.employeeList = res.body;
+      this.employeeList = [...res.body];
     });
   }
 
@@ -257,10 +270,6 @@ export class TimesheetMainComponent extends ListComponentBase implements OnInit 
           && moment(this.dateNowTimesheet).format('YYYY-MM-DD') === moment(item.start_time).format('YYYY-MM-DD'));
         break;
       case 'week':
-        result = this.dataSource.filter(item => item.timesheet.shifts_id === shiftsId
-          && moment(item.start_time).format('YYYY-MM-DD') >= moment(this.dateNowTimesheet).weekday(1).format('YYYY-MM-DD')
-          && moment(item.end_time).format('YYYY-MM-DD') <= moment(this.dateNowTimesheet).weekday(7).format('YYYY-MM-DD'));
-        break;
       case 'month':
         result = this.dataSource.filter(item => item.timesheet.shifts_id === shiftsId);
         break;
@@ -276,19 +285,23 @@ export class TimesheetMainComponent extends ListComponentBase implements OnInit 
   }
 
   changDateTypeTimeSheet() {
+    this.loadData();
     this.listDayTimeSheet = [];
     if (this.typeDateTimeSheet === 'day') {
       this.listDayTimeSheet.push(moment(this.dateNowTimesheet));
     } else if (this.typeDateTimeSheet === 'week') {
       for (let i = 0; i < 7; i++) {
-        this.listDayTimeSheet.push(moment(this.dateNowTimesheet).weekday(i + 1));
+        if (moment(this.dateNowTimesheet).weekday() === 0) {
+          this.listDayTimeSheet.push(moment(this.dateNowTimesheet).subtract(1, 'week').weekday(i + 1));
+        } else {
+          this.listDayTimeSheet.push(moment(this.dateNowTimesheet).weekday(i + 1));
+        }
       }
     } else if (this.typeDateTimeSheet === 'month') {
       for (let i = 0; i < moment(this.dateNowTimesheet).daysInMonth(); i++) {
         this.listDayTimeSheet.push(moment(this.dateNowTimesheet).startOf('month').add(i, 'days'));
       }
     }
-
   }
 
   getNameWeekday(date) {
@@ -313,18 +326,20 @@ export class TimesheetMainComponent extends ListComponentBase implements OnInit 
     }
 
     if (event === 'next') {
+      if (moment(this.dateNowTimesheet).weekday() === 0 && typeSub === 'week') {
+        typeSub = 'day';
+      }
       this.dateNowTimesheet = moment(this.dateNowTimesheet).add(1, typeSub).format('YYYY-MM-DD');
     } else {
-      this.dateNowTimesheet = moment(this.dateNowTimesheet).subtract(1, typeSub).format('YYYY-MM-DD');
+      if (moment(this.dateNowTimesheet).weekday() === 0 && typeSub === 'week') {
+        this.dateNowTimesheet = moment(this.dateNowTimesheet).subtract(2, typeSub).format('YYYY-MM-DD');
+      } else {
+        this.dateNowTimesheet = moment(this.dateNowTimesheet).subtract(1, typeSub).format('YYYY-MM-DD');
+      }
     }
     switch (this.typeDateTimeSheet) {
       case 'week':
-        if (moment().weeks() === moment(this.dateNowTimesheet).weeks()) {
-          this.dateNowTimesheet = moment().format('YYYY-MM-DD');
-        } else {
-          this.dateNowTimesheet = moment(this.dateNowTimesheet).weekday(1).format('YYYY-MM-DD');
-        }
-        this.loadData();
+        this.dateNowTimesheet = moment(this.dateNowTimesheet).weekday(1).format('YYYY-MM-DD');
         break;
       case 'month':
         if (moment().month() === moment(this.dateNowTimesheet).month()) {
@@ -332,7 +347,6 @@ export class TimesheetMainComponent extends ListComponentBase implements OnInit 
         } else {
           this.dateNowTimesheet = moment(this.dateNowTimesheet).startOf('month').format('YYYY-MM-DD');
         }
-        this.loadData();
         break;
     }
     this.changDateTypeTimeSheet();
@@ -402,6 +416,23 @@ export class TimesheetMainComponent extends ListComponentBase implements OnInit 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.getListEmployee();
+      }
+    });
+  }
+
+  checkNowDate(date) {
+    return moment(date).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD');
+  }
+
+  openFormDeleteClockingDialog() {
+    const dialogRef = this.dialog.open(TimesheetFormDeleteClockingDialogComponent, {
+      width: '60%',
+      minHeight: '60%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadData();
       }
     });
   }

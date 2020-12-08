@@ -26,9 +26,6 @@ import { ClockingHistoryComponent } from './clocking-history/clocking-history.co
     PerfectScrollbarModule,
     Ng2SearchPipeModule,
     DemoMaterialModule,
-  ],
-  entryComponents: [
-    ClockingFormDialogComponent
   ]
 })
 export class ClockingModule { }
