@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { IdCodeFormDialogComponent } from '../id-code-form-dialog/id-code-form-dialog.component';
 import { MedicineService } from '../../medicine/medicine.service';
+import { ManufacturerService } from '../manufacturer.service';
 
 const JsBarcode = require('jsbarcode');
 
@@ -27,7 +28,7 @@ export class ProductTabInfoComponent implements OnInit {
     private medicineService: MedicineService,
     private productSer: ProductService,
     public notifySer: NotifierService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {
   }
 
