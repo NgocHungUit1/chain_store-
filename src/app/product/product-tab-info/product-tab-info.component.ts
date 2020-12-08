@@ -188,4 +188,26 @@ export class ProductTabInfoComponent implements OnInit {
     });
   }
 
+  connectMedicine(product) {
+    this.medicineService.connect(product.medicine_id).subscribe(res => {
+      if (res['success']) {
+        product['medicine']['medicine_no'] = res['medicine_no'];
+        this.notifySer.notify('success', 'Liên thông thành công.');
+      } else if (res['message'] !== undefined) {
+        this.notifySer.notify('error', res['message']);
+      }
+    });
+  }
+
+  disConnectMedicine(product) {
+    this.medicineService.disconnect(product.medicine_id).subscribe(res => {
+      if (res['success']) {
+        product['medicine']['medicine_no'] = null;
+        this.notifySer.notify('success', 'Gỡ liên thông thành công.');
+      } else if (res['message'] !== undefined) {
+        this.notifySer.notify('error', res['message']);
+      }
+    });
+  }
+
 }

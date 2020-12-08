@@ -226,7 +226,6 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
       if (result.event === 'Save' && result.connect === true) {
         this.service.getDetail(result.data.id).subscribe(product => {
           // @ts-ignore
