@@ -184,7 +184,8 @@
             </mat-form-field>
 
             <mat-form-field>
-              <input type="number" matInput [formControl]="form.controls['weight']" placeholder="Trọng lượng" autocomplete="off">
+              <input type="number" matInput [formControl]="form.controls['weight']" placeholder="Trọng lượng"
+                     autocomplete="off">
             </mat-form-field>
           </div>
 
@@ -382,6 +383,10 @@
     <button mat-raised-button [disabled]="loading" (click)="submit('Save');" mat-flat-button color="primary">
       <mat-icon>save</mat-icon>
       Lưu
+    </button>
+    <button mat-raised-button [disabled]="loading" (click)="submit('Save',true);" mat-flat-button color="accent">
+      <mat-icon>open_in_full</mat-icon>
+      Lưu và liên thông
     </button>
     <button mat-raised-button [disabled]="loading" (click)="submit('SaveAndMore');" mat-flat-button color="primary">
       <mat-icon>save</mat-icon>

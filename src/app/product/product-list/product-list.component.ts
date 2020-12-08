@@ -15,6 +15,7 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/internal/observable/of';
 import { ProductUploadDialogComponent } from '../product-upload-dialog/product-upload-dialog.component';
+import { MedicineService } from '../../medicine/medicine.service';
 
 
 @Component({
@@ -32,6 +33,7 @@ import { ProductUploadDialogComponent } from '../product-upload-dialog/product-u
 export class ProductListComponent extends ListComponentBase implements OnInit {
 
   constructor(
+    private medicineService: MedicineService,
     private service: ProductService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
@@ -224,7 +226,25 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this.loadData();
+      console.log(result);
+      if (result.event === 'Save' && result.connect === true) {
+        this.service.getDetail(result.data.id).subscribe(product => {
+          // @ts-ignore
+          this.medicineService.connect(product.medicine_id).subscribe(res => {
+            if (res['success']) {
+              this.notifySer.notify('success', 'Liên thông thành công.');
+            } else if (res['message'] !== undefined) {
+              this.notifySer.notify('error', res['message']);
+            }
+            this.loadData();
+          });
+        });
+
+      } else {
+        if (result.event !== 'Cancel') {
+          this.loadData();
+        }
+      }
     });
   }
 

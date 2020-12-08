@@ -7,6 +7,7 @@ import { ProductPopupDeleteDialogComponent } from '../product-popup-delete-dialo
 import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { IdCodeFormDialogComponent } from '../id-code-form-dialog/id-code-form-dialog.component';
+import { MedicineService } from '../../medicine/medicine.service';
 
 const JsBarcode = require('jsbarcode');
 
@@ -23,6 +24,7 @@ export class ProductTabInfoComponent implements OnInit {
   imageIndex = 0;
 
   constructor(
+    private medicineService: MedicineService,
     private productSer: ProductService,
     public notifySer: NotifierService,
     private dialog: MatDialog
@@ -61,6 +63,16 @@ export class ProductTabInfoComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      // console.log(result);
+      if (result.event === 'Save' && result.connect === true) {
+        this.medicineService.connect(result.data.medicine_id).subscribe(res => {
+          if (res['success']) {
+            this.notifySer.notify('success', 'Liên thông thành công.');
+          } else if (res['message'] !== undefined) {
+            this.notifySer.notify('error', res['message']);
+          }
+        });
+      }
       if (result.event === 'Update') {
         this.loadProduct(result.data.id);
       }
