@@ -103,11 +103,11 @@
               Liên thông
             </button>
 
-            <button class="m-r-10" mat-raised-button color="warn" *ngIf="this.product.product_type === 'medicine' && this.product?.medicine?.medicine_no !== null"
-                    (click)="disConnectMedicine(this.product)">
-              <mat-icon>close_fullscreen</mat-icon>
-              Gỡ liên thông
-            </button>
+<!--            <button class="m-r-10" mat-raised-button color="warn" *ngIf="this.product.product_type === 'medicine' && this.product?.medicine?.medicine_no !== null"-->
+<!--                    (click)="disConnectMedicine(this.product)">-->
+<!--              <mat-icon>close_fullscreen</mat-icon>-->
+<!--              Gỡ liên thông-->
+<!--            </button>-->
 
             <button class="m-r-10" mat-raised-button color="warn" (click)="lock()"
                     *ngIf="this.product.status == 10; else productStatus10">
