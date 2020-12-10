@@ -150,7 +150,7 @@ export class MoveCreateComponent extends ListComponentBase implements OnInit {
     } else {
       this.moveService.getRenderNo().subscribe(res => {
         this.form.patchValue({
-          no: 'CK0' + res,
+          no: 'CK' + res,
           status: '9',
         });
       });
