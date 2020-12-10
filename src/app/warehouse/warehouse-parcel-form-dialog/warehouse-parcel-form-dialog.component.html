@@ -1,8 +1,8 @@
 <h1 mat-dialog-title>Thêm Lô</h1>
 <div mat-dialog-content>
-  <form [formGroup]="form">
+  <form [formGroup]="form" style="font-size: 14px;">
     <mat-form-field>
-      <input matInput tabindex="1" placeholder="Số Lô" [formControl]="this.form.controls['parcel_no']">
+      <input matInput tabindex="1" placeholder="Số Lô" [formControl]="this.form.controls['parcel_no']" autocomplete="off">
     </mat-form-field>
     <mat-form-field>
       <input matInput tabindex="2" [matDatepicker]="date_picker" [formControl]="form.controls['expiration_date']"
@@ -11,8 +11,8 @@
       <mat-datepicker #date_picker></mat-datepicker>
     </mat-form-field>
     <mat-form-field>
-      <input matInput tabindex="3" type="number" placeholder="Số lượng hàng hóa trong lô"
-             [formControl]="this.form.controls['quantity']">
+      <input matInput tabindex="3" type="number" placeholder="Số lượng hàng hóa trong lô" min="1"
+             [formControl]="this.form.controls['quantity']" autocomplete="off">
     </mat-form-field>
   </form>
 </div>

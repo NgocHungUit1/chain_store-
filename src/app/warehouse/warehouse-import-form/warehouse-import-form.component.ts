@@ -209,7 +209,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       });
       this.mainService.getRenderWarehouseNo().subscribe(res => {
         this.form.patchValue({
-          no: 'PN0' + res,
+          no: 'PN' + res,
           total_price: 0,
           discount_amount: 0,
           discount_type: 'price'
@@ -469,7 +469,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   openParcelFormDialog(index) {
     const dialogRef = this.dialog.open(WarehouseParcelFormDialogComponent, {
-      width: '30%',
+      width: '35%',
       data: {parcels: this.parcels}
     });
     dialogRef.afterClosed().subscribe(result => {

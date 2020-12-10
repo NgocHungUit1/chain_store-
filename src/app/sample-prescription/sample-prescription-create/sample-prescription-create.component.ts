@@ -144,7 +144,7 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
     } else {
       this.samplePrescriptionService.getRenderSamplePrescriptionNo().subscribe(res => {
         this.form.patchValue({
-          no: 'DTM0' + res,
+          no: 'DTM' + res,
           status: '10',
         });
       });

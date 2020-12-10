@@ -81,11 +81,12 @@
         <div fxLayout="row wrap">
           <!-- kiem tra loai show form -->
           <div fxFlex="100" *ngIf="product.product_type == 'medicine' ">
-            <!--            <button class="m-r-10" mat-raised-button-->
-            <!--                    (click)="openIdCodeFormDialog(this.product.id)">-->
-            <!--              <mat-icon>format_align_justify</mat-icon>-->
-            <!--              In tem mã-->
-            <!--            </button>-->
+<!--            <button class="m-r-10" mat-raised-button-->
+<!--                    (click)="openIdCodeFormDialog(this.product.id)">-->
+<!--              <mat-icon>format_align_justify</mat-icon>-->
+<!--              In tem mã-->
+<!--            </button>-->
+
             <button class="m-r-10" mat-raised-button color="primary"
                     (click)="openMedicineDialog(this.product.id, null)">
               <mat-icon>edit</mat-icon>
@@ -97,7 +98,8 @@
               Sao chép
             </button>
 
-            <button class="m-r-10" mat-raised-button color="accent" *ngIf="this.product.product_type === 'medicine' && this.product?.medicine?.medicine_no === null"
+            <button class="m-r-10" mat-raised-button color="accent"
+                    *ngIf="this.product.product_type === 'medicine' && this.product?.medicine?.medicine_no === null"
                     (click)="connectMedicine(this.product)">
               <mat-icon>open_in_full</mat-icon>
               Liên thông
@@ -126,11 +128,12 @@
             <!-- <button class="m-r-10" mat-raised-button color="warn" (click)="deleteMedicine(this.product.id)"><mat-icon>delete</mat-icon> Xóa</button> -->
           </div>
           <div fxFlex="100" *ngIf="product.product_type == 'merchandise' ">
-            <!--            <button class="m-r-10" mat-raised-button-->
-            <!--                    (click)="openIdCodeFormDialog(this.product.id)">-->
-            <!--              <mat-icon>format_align_justify</mat-icon>-->
-            <!--              In tem mã-->
-            <!--            </button>-->
+<!--            <button class="m-r-10" mat-raised-button-->
+<!--                    (click)="openIdCodeFormDialog(this.product.id)">-->
+<!--              <mat-icon>format_align_justify</mat-icon>-->
+<!--              In tem mã-->
+<!--            </button>-->
+
             <button class="m-r-10" mat-raised-button color="primary"
                     (click)="openMerchandiseFormDialog(this.product.id, null)">
               <mat-icon>edit</mat-icon>
