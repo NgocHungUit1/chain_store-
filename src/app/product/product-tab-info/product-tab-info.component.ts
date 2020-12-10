@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { ProductService } from '../product.service';
 import { Product } from '../product.model';
 import { ProductMedicineDialogComponent } from '../product-medicine-dialog/product-medicine-dialog.component';
@@ -17,12 +17,17 @@ const JsBarcode = require('jsbarcode');
   templateUrl: './product-tab-info.component.html',
   styleUrls: ['./product-tab-info.component.css']
 })
-export class ProductTabInfoComponent implements OnInit {
+export class ProductTabInfoComponent implements OnChanges {
 
-  @Input() product: Product;
-
+  @Input() product_id: string;
+  @Input() expandedElement: boolean;
+  @Output() reload: EventEmitter<any> = new EventEmitter();
+  product: Product;
   images: string[] = [];
   imageIndex = 0;
+
+  allPermission: any;
+  isAdminStore: boolean;
 
   constructor(
     private medicineService: MedicineService,
@@ -32,14 +37,21 @@ export class ProductTabInfoComponent implements OnInit {
   ) {
   }
 
-  ngOnInit(): void {
-    const data = [];
 
-    this.product.images.forEach(pImage => {
-      data.push(pImage['link']);
-    });
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.expandedElement) {
+      this.productSer.getDetail(this.product_id, 'medicine,productUnits,productPlacements,group,images').subscribe(res => {
+        this.product = <Product>res;
+        const data = [];
+        this.product.images.forEach(pImage => {
+          data.push(pImage['link']);
+        });
+        this.images = data;
+      });
 
-    this.images = data;
+    }
+    this.allPermission = sessionStorage.getItem('allPermission').split(',');
+    this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
   }
 
   loadProduct(id) {
@@ -149,7 +161,7 @@ export class ProductTabInfoComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result.event == 'Delete') {
+      if (result.event === 'Delete') {
         // BUG
         this.product = null;
       }
@@ -210,5 +222,14 @@ export class ProductTabInfoComponent implements OnInit {
       }
     });
   }
+
+  checkPermissionDisable(permission) {
+    const indexPermission = this.allPermission.indexOf(permission);
+    if (indexPermission !== -1) {
+      return false;
+    }
+    return true;
+  }
+
 
 }
