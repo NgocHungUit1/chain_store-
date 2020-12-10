@@ -8,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { IdCodeFormDialogComponent } from '../id-code-form-dialog/id-code-form-dialog.component';
 import { MedicineService } from '../../medicine/medicine.service';
-import { ManufacturerService } from '../manufacturer.service';
+import { Router } from '@angular/router';
 
 const JsBarcode = require('jsbarcode');
 
@@ -34,8 +34,14 @@ export class ProductTabInfoComponent implements OnChanges {
     private productSer: ProductService,
     public notifySer: NotifierService,
     private dialog: MatDialog,
+    private router: Router
   ) {
   }
+
+  textType = {
+    'medicine': 'Thuốc',
+    'merchandise': 'Hàng hóa'
+  };
 
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -86,13 +92,18 @@ export class ProductTabInfoComponent implements OnChanges {
           }
         });
       }
-      if (result.event === 'Update') {
-        this.loadProduct(result.data.id);
-      }
+      // if (result.event === 'Update') {
+      //   this.loadProduct(result.data.id);
+      // }
+      //
+      // if (obj.action === 'Copy') {
+      //   // debugger;
+      //   this.productSer.setLoadProduct(false);
+      // }
 
-      if (obj.action === 'Copy') {
-        // debugger;
-        this.productSer.setLoadProduct(false);
+      if (result.event !== 'Cancel') {
+        this.loadProduct(result.data.id);
+        this.reload.emit(null);
       }
     });
   }
@@ -142,6 +153,7 @@ export class ProductTabInfoComponent implements OnChanges {
     dialogRef.afterClosed().subscribe(result => {
       if (result.event !== 'Cancel') {
         this.loadProduct(result.data.id);
+        this.reload.emit(null);
       }
     });
   }
@@ -229,6 +241,21 @@ export class ProductTabInfoComponent implements OnChanges {
       return false;
     }
     return true;
+  }
+
+  goToWarehouseCreate() {
+    localStorage.setItem('product_id', this.product_id);
+    this.router.navigate(['/transaction/warehouse/create']);
+  }
+
+  goToStockTakeCreate() {
+    localStorage.setItem('product_id', this.product_id);
+    this.router.navigate(['/store/stock-take/create']);
+  }
+
+  goToMoveCreate() {
+    localStorage.setItem('product_id', this.product_id);
+    this.router.navigate(['/transaction/move/create']);
   }
 
 

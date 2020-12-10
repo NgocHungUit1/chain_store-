@@ -20,7 +20,7 @@
             </div>
             <div fxFlex="20" class="form-radio-field">
                 <mat-radio-group tabindex="10" formControlName="calculation">
-                    <mat-radio-button *ngFor="let calculationItem of calculationItems" [value]="calculationItem.id" 
+                    <mat-radio-button *ngFor="let calculationItem of calculationItems" [value]="calculationItem.id"
                     (click)="updatePriceEvent()"  (mouseover)="updatePriceEvent()" (mouseout)="updatePriceEvent()">
                         {{calculationItem.title}}
                     </mat-radio-button>
@@ -33,7 +33,7 @@
             </div>
             <div fxFlex="23" class="form-radio-field">
                 <mat-radio-group tabindex="10" formControlName="type">
-                    <mat-radio-button *ngFor=" let typeItem of typeItems" [value]="typeItem.id" 
+                    <mat-radio-button *ngFor=" let typeItem of typeItems" [value]="typeItem.id"
                     (click)="updatePriceEvent()"  (mouseover)="updatePriceEvent()" (mouseout)="updatePriceEvent()">
                         {{typeItem.title}}
                     </mat-radio-button>
@@ -55,7 +55,7 @@
     <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="3" (click)="submit()">
         <mat-icon>save</mat-icon>Lưu
     </button>
-    <button mat-button (click)="onNoClick()" tabindex="-1">
+    <button mat-raised-button (click)="onNoClick()" tabindex="-1">
         <mat-icon>cancel</mat-icon>Bỏ qua
     </button>
 </div>

@@ -164,6 +164,12 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
       // this.form.controls['no'].disable();
     }
 
+    const product_id = localStorage.getItem('product_id');
+    if (product_id !== null) {
+      this.handleAddProductToList(product_id);
+      localStorage.removeItem('product_id');
+    }
+
   }
 
   lookupProduct(value: string): Observable<Product[]> {

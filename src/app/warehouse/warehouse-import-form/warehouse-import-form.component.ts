@@ -217,6 +217,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       });
     }
 
+    const product_id = localStorage.getItem('product_id');
+    if (product_id !== null) {
+      this.handleAddProductToList(product_id);
+      localStorage.removeItem('product_id');
+    }
+
   }
 
   displaySupplier(supplier?: Supplier): string | undefined {

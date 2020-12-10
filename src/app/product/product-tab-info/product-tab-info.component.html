@@ -12,33 +12,33 @@
       <div fxFlex="60" class="product-info">
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Mã hàng:</span> <strong>{{product.product_no}}</strong>
+            <span class="product-field-label">Mã hàng:</span> <strong>{{ product.product_no }}</strong>
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
             <span class="product-field-label">Hãng sản xuất:</span> <span
-            *ngIf="product.medicine">{{product.medicine.manufacturer}}</span>
+            *ngIf="product.medicine">{{ product.medicine.manufacturer }}</span>
           </div>
         </div>
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Nhóm hàng:</span> <span
-            *ngIf="product.group">{{product.group.name}}</span>
+            <span class="product-field-label">Nhóm hàng:</span>
+            <span *ngIf="product.group">{{ product.group.name }}</span>
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
             <span class="product-field-label">Nước sản xuất:</span> <span
-            *ngIf="product.medicine">{{product.medicine.made_in}}</span>
+            *ngIf="product.medicine">{{ product.medicine.made_in }}</span>
           </div>
         </div>
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Loại hàng:</span> {{product.product_type}}
+            <span class="product-field-label">Loại hàng:</span> {{ textType[product.product_type] }}
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Quy cách đóng gói:</span> <span
-            *ngIf="product.medicine">{{product.medicine.packing}}</span>
+            <span class="product-field-label">Quy cách đóng gói:</span>
+            <span *ngIf="product.medicine">{{product.medicine.packing}}</span>
           </div>
         </div>
         <div fxLayout="row wrap" class="product-info-row">
@@ -81,11 +81,11 @@
         <div fxLayout="row wrap">
           <!-- kiem tra loai show form -->
           <div fxFlex="100" *ngIf="product.product_type == 'medicine' ">
-<!--            <button class="m-r-10" mat-raised-button-->
-<!--                    (click)="openIdCodeFormDialog(this.product.id)">-->
-<!--              <mat-icon>format_align_justify</mat-icon>-->
-<!--              In tem mã-->
-<!--            </button>-->
+            <!--            <button class="m-r-10" mat-raised-button-->
+            <!--                    (click)="openIdCodeFormDialog(this.product.id)">-->
+            <!--              <mat-icon>format_align_justify</mat-icon>-->
+            <!--              In tem mã-->
+            <!--            </button>-->
 
             <button class="m-r-10" mat-raised-button color="primary"
                     (click)="openMedicineDialog(this.product.id, null)">
@@ -105,12 +105,12 @@
               Liên thông
             </button>
 
-            <button class="m-r-10" mat-raised-button color="warn"
-                    *ngIf="this.product.product_type === 'medicine' && this.product?.medicine?.medicine_no !== null"
-                    (click)="disConnectMedicine(this.product)">
-              <mat-icon>close_fullscreen</mat-icon>
-              Gỡ liên thông
-            </button>
+            <!--            <button class="m-r-10" mat-raised-button color="warn"-->
+            <!--                    *ngIf="this.product.product_type === 'medicine' && this.product?.medicine?.medicine_no !== null"-->
+            <!--                    (click)="disConnectMedicine(this.product)">-->
+            <!--              <mat-icon>close_fullscreen</mat-icon>-->
+            <!--              Gỡ liên thông-->
+            <!--            </button>-->
 
             <button class="m-r-10" mat-raised-button color="warn" (click)="lock()"
                     *ngIf="this.product.status == 10; else productStatus10">
@@ -131,15 +131,15 @@
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menuActions="matMenu" yPosition="above">
-              <button mat-menu-item routerLink="/transaction/warehouse/create">
+              <button mat-menu-item (click)="goToWarehouseCreate()">
                 <mat-icon>local_grocery_store</mat-icon>
                 Nhập hàng
               </button>
-              <button mat-menu-item routerLink="/store/stock-take/create">
+              <button mat-menu-item (click)="goToStockTakeCreate()">
                 <mat-icon>check_circle_outline</mat-icon>
                 Kiểm kho
               </button>
-              <button mat-menu-item routerLink="/transaction/move/create">
+              <button mat-menu-item (click)="goToMoveCreate()">
                 <mat-icon>local_shipping</mat-icon>
                 Chuyển hàng
               </button>
@@ -178,13 +178,22 @@
               </button>
             </ng-template>
 
-            <button mat-icon-button [matMenuTriggerFor]="menuActions">
+            <button mat-icon-button [matMenuTriggerFor]="menuActions"
+                    [disabled]="checkPermissionDisable('Warehouse.Update') || !isAdminStore">
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menuActions="matMenu" yPosition="above">
-              <button mat-menu-item>
-                <mat-icon>edit</mat-icon>
-                Sửa
+              <button mat-menu-item (click)="goToWarehouseCreate()">
+                <mat-icon>local_grocery_store</mat-icon>
+                Nhập hàng
+              </button>
+              <button mat-menu-item (click)="goToStockTakeCreate()">
+                <mat-icon>check_circle_outline</mat-icon>
+                Kiểm kho
+              </button>
+              <button mat-menu-item (click)="goToMoveCreate()">
+                <mat-icon>local_shipping</mat-icon>
+                Chuyển hàng
               </button>
             </mat-menu>
             <!-- <button class="m-r-10" mat-raised-button color="warn" (click)="deleteMerchandise(this.product.id)"><mat-icon>delete</mat-icon> Xóa</button> -->
