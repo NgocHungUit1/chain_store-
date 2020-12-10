@@ -49,10 +49,11 @@
 
               <ng-container matColumnDef="product_name">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_name']}}</th>
-                <td mat-cell *matCellDef="let element; let i = index" title="{{ element.product.product_name }}">
+                <td mat-cell *matCellDef="let element; let i = index"
+                    title="{{ element.product.product_name }}">
 
                   <span class="span-product-no">Mã hàng : {{ element.product.product_no }}</span>
-
+                  <br>
                   <b>
                     <p *ngIf="element.product.product_name.length > 45">{{ element.product.product_name | slice:0:45 }}
                       ...

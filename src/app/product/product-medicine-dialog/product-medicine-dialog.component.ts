@@ -269,14 +269,12 @@ export class ProductMedicineDialogComponent implements OnInit {
       product['productPlacements'].forEach(pPlacement => {
         placements.push(pPlacement.id);
       });
-      // debugger;
+
       const medicine = product['medicine'];
-      medicine.made_in = product['made_in'];
-      medicine.manufacturer = product['manufacturer'];
-      // if (medicine !== null) {
-      //   medicine.made_in = product['made_in'];
-      //   medicine.manufacturer = product['manufacturer'];
-      // }
+      if (medicine !== null) {
+        medicine.made_in = product['made_in'];
+        medicine.manufacturer = product['manufacturer'];
+      }
 
 
       if (copy === null) {

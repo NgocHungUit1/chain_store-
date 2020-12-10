@@ -97,14 +97,14 @@
               </div>
             </div>
 
-            <div fxLayout="row wrap">
-              <div fxFlex="100">
-                <mat-form-field>
-                  <input type="number" matInput [formControl]="form.controls['quantity_of_stock']"
-                    placeholder="Tồn kho">
-                </mat-form-field>
-              </div>
-            </div>
+<!--            <div fxLayout="row wrap">-->
+<!--              <div fxFlex="100">-->
+<!--                <mat-form-field>-->
+<!--                  <input type="number" matInput [formControl]="form.controls['quantity_of_stock']"-->
+<!--                    placeholder="Tồn kho">-->
+<!--                </mat-form-field>-->
+<!--              </div>-->
+<!--            </div>-->
 
 
           </div>
@@ -305,6 +305,6 @@
     <button mat-raised-button [disabled]="loading" mat-flat-button color="primary">
       <mat-icon>save</mat-icon> Lưu và Sao chép
     </button>
-    <button mat-button type="button" (click)="closeDialog()">Bỏ qua</button>
+    <button mat-raised-button type="button" (click)="closeDialog()"><mat-icon>cancel</mat-icon>Bỏ qua</button>
   </div>
 </form>
