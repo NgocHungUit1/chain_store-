@@ -121,7 +121,8 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'medicine,productUnits,productPlacements,group,images,quantity';
+    // filter.expand = 'medicine,productUnits,productPlacements,group,images,quantity';
+    // filter.expand = ;
     filter.product_type = this.typeProductFilter.controls['status'].value;
     filter.status = this.statusProductFilter.controls['status'].value;
 

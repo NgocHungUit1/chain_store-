@@ -170,7 +170,10 @@
                        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
                     <mat-tab-group style="width: 100%;">
                       <mat-tab label="Thông tin">
-                        <app-product-tab-info [product]="element"></app-product-tab-info>
+                        <app-product-tab-info
+                          [product_id]="element.id"
+                          [expandedElement]="element == expandedElement ? true : false"
+                          (reload)="loadData();"></app-product-tab-info>
                       </mat-tab>
                       <mat-tab label="Thẻ kho">
                         <app-product-tab-stock-change
@@ -180,8 +183,9 @@
                       </mat-tab>
                       <mat-tab label="Tồn kho">
                         <app-product-tab-stock
-                          [quantity]="element.quantity"
-                          [units]="element.productUnits"></app-product-tab-stock>
+                          [expandedElement]="element == expandedElement ? true : false"
+                          [product_id]="element.id"
+                          (reload)="loadData();"></app-product-tab-stock>
                       </mat-tab>
                     </mat-tab-group>
                   </div>
