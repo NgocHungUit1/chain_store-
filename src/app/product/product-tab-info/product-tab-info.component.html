@@ -81,11 +81,11 @@
         <div fxLayout="row wrap">
           <!-- kiem tra loai show form -->
           <div fxFlex="100" *ngIf="product.product_type == 'medicine' ">
-            <!--            <button class="m-r-10" mat-raised-button-->
-            <!--                    (click)="openIdCodeFormDialog(this.product.id)">-->
-            <!--              <mat-icon>format_align_justify</mat-icon>-->
-            <!--              In tem mã-->
-            <!--            </button>-->
+            <button class="m-r-10" mat-raised-button disabled="disabled"
+                    (click)="openIdCodeFormDialog(this.product.id)">
+              <mat-icon>format_align_justify</mat-icon>
+              In tem mã
+            </button>
 
             <button class="m-r-10" mat-raised-button color="primary"
                     (click)="openMedicineDialog(this.product.id, null)">
@@ -148,11 +148,11 @@
             <!-- <button class="m-r-10" mat-raised-button color="warn" (click)="deleteMedicine(this.product.id)"><mat-icon>delete</mat-icon> Xóa</button> -->
           </div>
           <div fxFlex="100" *ngIf="product.product_type == 'merchandise' ">
-            <!--            <button class="m-r-10" mat-raised-button-->
-            <!--                    (click)="openIdCodeFormDialog(this.product.id)">-->
-            <!--              <mat-icon>format_align_justify</mat-icon>-->
-            <!--              In tem mã-->
-            <!--            </button>-->
+            <button class="m-r-10" mat-raised-button disabled="disabled"
+                    (click)="openIdCodeFormDialog(this.product.id)">
+              <mat-icon>format_align_justify</mat-icon>
+              In tem mã
+            </button>
 
             <button class="m-r-10" mat-raised-button color="primary"
                     (click)="openMerchandiseFormDialog(this.product.id, null)">
