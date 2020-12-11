@@ -152,6 +152,18 @@
                 <td mat-cell class="column-number" *matCellDef="let element"> {{ element.sell_price | number }}</td>
               </ng-container>
 
+              <ng-container matColumnDef="quantity">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['quantity']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span *ngIf="element.quantity !== null;else quantityNull">
+                    {{ element.quantity.number | number }}
+                  </span>
+                  <ng-template #quantityNull>
+                    <span>0</span>
+                  </ng-template>
+                </td>
+              </ng-container>
+
               <ng-container matColumnDef="status">
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['status']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">

@@ -85,7 +85,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     'original_price': 'Giá vốn',
     'sell_price': 'Giá bán',
     'status': 'Trạng thái',
-    // 'quantity_of_stock': 'Tồn kho'
+    'quantity': 'Tồn kho'
   };
 
   productTypeLable = {
@@ -93,8 +93,8 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     'merchandise': 'Hàng hóa',
   };
 
-  displayedColumns: string[] = ['#', 'product_type', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'status'];
-  columnsToDisplay: string[] = ['#', 'product_type', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'status'];
+  displayedColumns: string[] = ['#', 'product_type', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'quantity', 'status'];
+  columnsToDisplay: string[] = ['#', 'product_type', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'quantity', 'status'];
   dataSource: Product[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -122,7 +122,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     // filter.expand = 'medicine,productUnits,productPlacements,group,images,quantity';
-    // filter.expand = ;
+    filter.expand = 'quantity';
     filter.product_type = this.typeProductFilter.controls['status'].value;
     filter.status = this.statusProductFilter.controls['status'].value;
 

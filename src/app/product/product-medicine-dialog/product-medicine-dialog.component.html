@@ -22,7 +22,7 @@
             <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field>
-                  <input type="text" matInput [formControl]="form.controls['barcode']" placeholder="Mã vạch" autofocus>
+                  <input type="text" matInput [formControl]="form.controls['barcode']" placeholder="Mã vạch" autocomplete="off"  autofocus >
                 </mat-form-field>
               </div>
             </div>
@@ -44,8 +44,8 @@
                                 style="min-height: 75px; line-height:25px !important;">
                       <span style="font-size: 13px;">
                         <b> {{ medicine.medicine_name }} </b> <br>
-                        Mã thuốc: {{ medicine.medicine_no }}  <br>
-                        Số đăng ký: {{ medicine.registration_no }}  - Đơn vị: {{ medicine.unit }}
+                        Nhà sản xuất: {{ medicine.manufacturer }}  <br>
+                        Mã thuốc: {{ medicine.medicine_no }} - Số đăng ký: {{ medicine.registration_no }}  - Đơn vị: {{ medicine.unit }}
                       </span>
 
                     </mat-option>
@@ -56,7 +56,7 @@
             <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field>
-                  <input type="text" matInput [formControl]="form.controls['shortcut']" placeholder="Tên viết tắt">
+                  <input type="text" matInput [formControl]="form.controls['shortcut']" placeholder="Tên viết tắt" autocomplete="off">
                 </mat-form-field>
               </div>
             </div>
