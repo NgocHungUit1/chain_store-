@@ -109,7 +109,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     const date = new FormControl(new Date());
     this.form = this.fb.group({
       date: date,
-      no: [null],
+      no: [null, Validators.required],
       supplier: [null, Validators.required],
       status: [null],
       type: ['import'],
@@ -308,7 +308,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   submit(status: number) {
     if (this.form.valid) {
+
       const data = this.form.getRawValue();
+      // console.log(data);
+      // return;
       data['supplier_id'] = data['supplier']['id'];
       data['quantity'] = numeral(data['quantity']).value();
       data['total_price'] = numeral(data['total_price']).value();

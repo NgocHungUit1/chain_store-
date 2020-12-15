@@ -43,10 +43,6 @@ export const AppRoutes: Routes = [
         path: 'report',
         loadChildren: () => import('./report/report.module').then(m => m.ReportModule)
       },
-      {
-        path: 'transaction-warehouse-create',
-        component: WarehouseImportFormComponent,
-      },
       // {
       //     path: 'material',
       //     loadChildren:

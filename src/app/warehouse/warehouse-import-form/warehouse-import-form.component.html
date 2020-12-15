@@ -4,7 +4,7 @@
       <button mat-icon-button routerLink="/transaction/warehouse">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <h3>Nhập hàng</h3>
+      <h3>Đơn Nhập hàng</h3>
       <div class="select-product">
         <mat-form-field>
           <input type="text" [formControl]="selectProduct" matInput [matAutocomplete]="chooseProduct"
@@ -218,9 +218,8 @@
                 <mat-label>Mã phiếu nhập</mat-label>
                 <input matInput tabindex="2"
                        formControlName="no"
-                       readonly
-                       matTooltip="Mã phiếu được hệ thống tự động, không được thay đổi"
-                       matTooltipPosition="left">
+                       [readonly]="updateModelId !== null"
+                       matTooltipPosition="left" required>
               </mat-form-field>
             </div>
             <div fxFlex="90">

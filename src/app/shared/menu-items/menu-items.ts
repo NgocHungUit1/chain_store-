@@ -76,7 +76,7 @@ const MENUITEMS = [
     children: [
       {state: 'invoice', name: 'Hóa đơn bán', type: 'link', icon: 'receipt', roles: ['ADMIN', 'SALE']},
       {state: 'returns', name: 'Trả hàng', type: 'link', icon: 'keyboard_return',  roles: ['ADMIN', 'SALE']},
-      {state: 'warehouse', name: 'Hóa đơn nhập', type: 'link', icon: 'local_grocery_store', roles: ['ADMIN', 'WAREHOUSE']},
+      {state: 'warehouse', name: 'Đơn nhập', type: 'link', icon: 'local_grocery_store', roles: ['ADMIN', 'WAREHOUSE']},
       {state: 'warehouse-return', name: 'Trả hàng nhập', type: 'link', 'icon': 'assignment_return', roles: ['ADMIN', 'WAREHOUSE']},
       {state: 'move', name: 'Chuyển hàng', type: 'link', icon: 'local_shipping', roles: ['ADMIN', 'WAREHOUSE']},
     ]
@@ -94,9 +94,9 @@ const MENUITEMS = [
     ]
   },
   {
-    state: 'transaction-warehouse-create',
+    state: 'transaction/warehouse/create',
     name: 'Nhập hàng',
-    type: 'link',
+    type: 'extLink',
     icon: 'local_grocery_store',
     roles: ['ADMIN', 'WAREHOUSE'],
   },
