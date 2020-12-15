@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { FullComponent } from './layouts/full/full.component';
 import { CartComponent } from './layouts/cart/cart.component';
 import { AppBlankComponent } from './layouts/blank/blank.component';
+import { WarehouseImportFormComponent } from './warehouse/warehouse-import-form/warehouse-import-form.component';
 
 export const AppRoutes: Routes = [
   {
@@ -41,7 +42,11 @@ export const AppRoutes: Routes = [
       {
         path: 'report',
         loadChildren: () => import('./report/report.module').then(m => m.ReportModule)
-      }
+      },
+      {
+        path: 'transaction-warehouse-create',
+        component: WarehouseImportFormComponent,
+      },
       // {
       //     path: 'material',
       //     loadChildren:
