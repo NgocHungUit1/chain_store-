@@ -499,7 +499,9 @@ export class ProductMedicineDialogComponent implements OnInit {
   }
 
   openGroupFormDialog() {
-    const dialogRef = this.dialog.open(ProductGroupFormDialogComponent, {});
+    const dialogRef = this.dialog.open(ProductGroupFormDialogComponent, {
+      width: '30%',
+    });
     dialogRef.afterClosed().subscribe(result => {
 
       if (result !== false && result !== undefined) {
@@ -510,7 +512,9 @@ export class ProductMedicineDialogComponent implements OnInit {
   }
 
   openUsingFormDialog() {
-    const dialogRef = this.dialog.open(ProductUsingFormDialogComponent, {});
+    const dialogRef = this.dialog.open(ProductUsingFormDialogComponent, {
+      width: '30%',
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== false && result !== undefined) {
@@ -521,7 +525,9 @@ export class ProductMedicineDialogComponent implements OnInit {
   }
 
   openPlacementFormDialog() {
-    const dialogRef = this.dialog.open(ProductPlacementFormDialogComponent, {});
+    const dialogRef = this.dialog.open(ProductPlacementFormDialogComponent, {
+      width: '30%',
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== false && result !== undefined) {
@@ -537,7 +543,7 @@ export class ProductMedicineDialogComponent implements OnInit {
 
   openManufacturerFormDialog() {
     const dialogRef = this.dialog.open(ProductManufacturerFormDialogComponent, {
-      width: '30%',
+      width: '40%',
       minHeight: '60%',
     });
     dialogRef.afterClosed().subscribe(result => {

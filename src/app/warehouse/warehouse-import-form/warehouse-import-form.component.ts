@@ -400,12 +400,17 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
    * @param product
    */
   onSelectedProduct(product) {
-    if (product.product_type !== undefined) {
-      this.handleAddProductToList(product.id);
-    } else {
-      sessionStorage.setItem('medicine', JSON.stringify(product));
-      this.openProductMedicineDialog('Add', {});
+    if (this.form.controls['status'].value === '10') {
+      this.notifySer.notify('warning', 'Đơn nhập hàng đã hoàn thành.');
       this.selectProduct.patchValue(null);
+    } else {
+      if (product.product_type !== undefined) {
+        this.handleAddProductToList(product.id);
+      } else {
+        sessionStorage.setItem('medicine', JSON.stringify(product));
+        this.openProductMedicineDialog('Add', {});
+        this.selectProduct.patchValue(null);
+      }
     }
   }
 

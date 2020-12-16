@@ -42,7 +42,7 @@
       </div>
       <span fxFlex="1 1 0%"></span>
 
-      <button mat-raised-button color="primary" [matMenuTriggerFor]="createMenu" style="margin-right: 10px">
+      <button mat-raised-button color="primary" [matMenuTriggerFor]="createMenu" style="margin-right: 10px" [disabled]="form.controls['status'].value === '10'">
         <mat-icon>add</mat-icon>
         Thêm mới
       </button>
@@ -74,11 +74,6 @@
                 <td mat-cell *matCellDef="let element; let i = index;"> {{i + 1}}</td>
               </ng-container>
 
-              <!--              <ng-container matColumnDef="product_no">-->
-              <!--                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_no']}}</th>-->
-              <!--                <td mat-cell *matCellDef="let element"> {{ element.product.product_no }}</td>-->
-              <!--              </ng-container>-->
-
               <ng-container matColumnDef="product_name">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_name']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index" title="{{ element.product.product_name }}">
@@ -94,14 +89,14 @@
 
                   <mat-form-field class="parcel-field">
                     <mat-select multiple [(ngModel)]="data[i]['product_parcels']"
-                                (selectionChange)="onParcelSelectedChange(i, $event.value)">
+                                (selectionChange)="onParcelSelectedChange(i, $event.value)" [disabled]="form.controls['status'].value === '10'">
                       <mat-option *ngFor="let parcel of parcels" [value]="parcel">
                         {{parcel['parcel_no']}} - {{parcel['expiration_date']}} - SL: {{parcel['quantity']}}
                       </mat-option>
                     </mat-select>
 
                   </mat-form-field>
-                  <button mat-icon-button matSuffix aria-label="add" (click)="openParcelFormDialog(i);">
+                  <button mat-icon-button matSuffix aria-label="add" (click)="openParcelFormDialog(i);" [disabled]="form.controls['status'].value === '10'" >
                     <mat-icon>add</mat-icon>
                   </button>
 
@@ -109,11 +104,11 @@
               </ng-container>
 
               <ng-container matColumnDef="product_unit_id">
-                <th mat-header-cell class="text-left" *matHeaderCellDef> {{columnsHeader['product_unit_id']}}</th>
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_unit_id']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index">
-                  <mat-form-field *ngIf="element.productUnits.length">
+                  <mat-form-field *ngIf="element.productUnits.length" >
                     <mat-select matInput [(ngModel)]="data[i]['product_unit_id']"
-                                (selectionChange)="onUnitChange(i, $event)">
+                                (selectionChange)="onUnitChange(i, $event)" [disabled]="form.controls['status'].value === '10'">
                       <mat-option *ngFor="let unit of element.productUnits" [value]="unit.id">{{unit.name}}</mat-option>
                     </mat-select>
                   </mat-form-field>
@@ -148,11 +143,6 @@
               <ng-container matColumnDef="price">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['price']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index">
-                  <!--                  <mat-form-field>-->
-                  <!--                    <input matInput class="price-input" [value]="element['price']"-->
-                  <!--                           (change)="recalculateItem(i)"-->
-                  <!--                           [(ngModel)]="data[i]['price']">-->
-                  <!--                  </mat-form-field>-->
                   <span>{{ element.price | currency : 'VND' : ''}} </span>
                 </td>
               </ng-container>
@@ -162,11 +152,9 @@
                 <td mat-cell *matCellDef="let element; let i = index">
 
                   <mat-form-field *ngIf="element['discount_type'] == 'price'">
-                    <!-- <input matInput class="discount-input" [value]="element['discount']" (change)="recalculateItem(i)"
-                      [(ngModel)]="data[i]['discount']" > -->
                     <input matInput class="discount-input" [(ngModel)]="data[i]['discount']"
                            value="{{ element['discount'] | number }}" (click)="openDiscountDialogWarehouseProduct(i);"
-                           readonly>
+                           readonly [disabled]="form.controls['status'].value === '10'">
                   </mat-form-field>
 
                   <mat-form-field *ngIf="element['discount_type'] == 'percent'">
@@ -174,7 +162,7 @@
                            value="{{ (element['price']*element['discount']/100) | number }}"
                            (click)="openDiscountDialogWarehouseProduct(i);"
                            title="{{ (element['price']*element['discount']/100) | number }} {{ '('+element['discount']+'%)' }}"
-                           readonly>
+                           readonly [disabled]="form.controls['status'].value === '10'">
                   </mat-form-field>
                 </td>
               </ng-container>
@@ -189,7 +177,7 @@
               <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef></th>
                 <td mat-cell *matCellDef="let element; let i = index">
-                  <button mat-icon-button (click)="removeProduct(i)">
+                  <button mat-icon-button (click)="removeProduct(i)" [disabled]="form.controls['status'].value === '10'">
                     <mat-icon>delete</mat-icon>
                   </button>
                 </td>
@@ -221,7 +209,7 @@
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Chi nhánh nhập</mat-label>
-                <mat-select [formControl]="form.controls['branch_id']" placeholder="Chọn chi nhánh">
+                <mat-select [formControl]="form.controls['branch_id']" placeholder="Chọn chi nhánh" [disabled]="form.controls['status'].value === '10'">
                   <mat-option *ngFor="let branch of branchList" value="{{branch.id}}">{{branch.name}}</mat-option>
                 </mat-select>
               </mat-form-field>

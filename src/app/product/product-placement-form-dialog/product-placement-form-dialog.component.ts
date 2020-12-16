@@ -1,8 +1,8 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MatDialogRef} from "@angular/material/dialog";
-import {NotifierService} from "angular-notifier";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {PlacementService} from "../placement.service";
+import {MatDialogRef} from '@angular/material/dialog';
+import {NotifierService} from 'angular-notifier';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {PlacementService} from '../placement.service';
 
 @Component({
   selector: 'app-product-placement-form-dialog',
@@ -18,12 +18,12 @@ export class ProductPlacementFormDialogComponent implements OnInit {
     private mainSer: PlacementService,
   ) { }
 
+  public form: FormGroup;
+  loading = false;
+
   onNoClick(): void {
     this.dialogRef.close();
   }
-
-  public form: FormGroup;
-  loading = false;
 
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -40,7 +40,7 @@ export class ProductPlacementFormDialogComponent implements OnInit {
 
   submit() {
     if (this.form.valid) {
-      let data = this.form.getRawValue();
+      const data = this.form.getRawValue();
       this.mainSer.create(data).subscribe(res => {
         this.notifySer.notify('success', 'Thêm vị trí thành công!');
         this.dialogRef.close(res);

@@ -160,13 +160,13 @@
 
           <div class="user-action">
             <div fxLayout="row wrap">
-              <div fxFlex="60">
+              <div fxFlex="70">
 
                 <mat-form-field>
                   <input class="input-search-user input-search" type="text" [formControl]="selectUser" matInput
                          [matAutocomplete]="chooseUser" placeholder="Tìm nhân viên "
                          [readonly]="localItemInvoice?.is_return == true">
-                  <button mat-button matPrefix>
+                  <button mat-icon-button matPrefix>
                     <mat-icon>search</mat-icon>
                   </button>
                   <mat-autocomplete #chooseUser="matAutocomplete"
@@ -180,9 +180,9 @@
 
               </div>
               <div fxFlex="2"></div>
-              <div fxFlex="38">
+              <div fxFlex="28">
                 <mat-form-field>
-                  <input matInput class="input-search" value="{{ today | date:'short' }}" disabled>
+                  <input matInput class="input-search" value="{{ today | date:'shortTime' }}" disabled>
                 </mat-form-field>
               </div>
             </div>

@@ -392,7 +392,9 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
   }
 
   openGroupFormDialog() {
-    const dialogRef = this.dialog.open(ProductGroupFormDialogComponent, {});
+    const dialogRef = this.dialog.open(ProductGroupFormDialogComponent, {
+      width: '30%',
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== false && result !== undefined) {
@@ -403,7 +405,9 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
   }
 
   openPlacementFormDialog() {
-    const dialogRef = this.dialog.open(ProductPlacementFormDialogComponent, {});
+    const dialogRef = this.dialog.open(ProductPlacementFormDialogComponent, {
+      width: '30%',
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== false && result !== undefined) {
