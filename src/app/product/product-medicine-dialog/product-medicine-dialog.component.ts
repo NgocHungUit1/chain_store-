@@ -153,8 +153,8 @@ export class ProductMedicineDialogComponent implements OnInit {
       barcode: [null],
       product_type: ['medicine'],
       shortcut: [null],
-      using_id: [null, Validators.required],
-      group_id: [null, Validators.required],
+      using_id: [null], // bỏ yêu cầu nhóm đường dùng
+      group_id: [null],
       placements: [[]],
       product_name: [null, Validators.required],
       sell_price: [null, Validators.required],
@@ -172,7 +172,6 @@ export class ProductMedicineDialogComponent implements OnInit {
         manufacturer: [null],
         made_in: [null]
       }),
-
       units: new FormArray([]),
       min_quantity: [0],
       max_quantity: [0],
@@ -247,12 +246,18 @@ export class ProductMedicineDialogComponent implements OnInit {
     );
 
     // tim kiem quoc gia
-    this.filteredOptionsMadeIn = this.form.controls['medicine'].valueChanges
-      .pipe(
-        startWith(''),
-        map(value =>
-          this._filterMadeIn(value)
-        ));
+    this.filteredOptionsMadeIn = this.form.controls['medicine'].valueChanges.pipe(
+      startWith(''),
+      map(value =>
+        this._filterMadeIn(value)
+      ));
+
+    if (sessionStorage.getItem('medicine') !== null) {
+      const medicine = JSON.parse(sessionStorage.getItem('medicine'));
+      this.selectedMedicine(medicine);
+      sessionStorage.removeItem('medicine');
+      this.notifySer.notify('info', 'Cập nhật thêm thông tin sản phẩm');
+    }
   }
 
   public _filterMadeIn(value: any): string[] {

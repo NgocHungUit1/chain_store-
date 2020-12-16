@@ -33,7 +33,7 @@
             <div fxLayout="row wrap">
               <div fxFlex="90">
                 <mat-form-field>
-                  <mat-select required placeholder="Nhóm " [formControl]="form.controls['group_id']">
+                  <mat-select placeholder="Nhóm " [formControl]="form.controls['group_id']">
                     <mat-option>--</mat-option>
                     <mat-option *ngFor="let group of groups" [value]="group.id">
                       {{group.name}}
