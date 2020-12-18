@@ -276,8 +276,12 @@ export class TimesheetMainComponent extends ListComponentBase implements OnInit 
     }
     const data = [];
     result.forEach(function (item) {
-      if (!data.find(x => x.id === item.timesheet.employee_id)) {
+      if (data.length === 0) {
         data.push(item.timesheet.employee);
+      } else {
+        if (!data.find(x => x.id === item.timesheet.employee_id)) {
+          data.push(item.timesheet.employee);
+        }
       }
     });
     return data;
