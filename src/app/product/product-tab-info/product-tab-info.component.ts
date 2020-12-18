@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { ProductService } from '../product.service';
 import { Product } from '../product.model';
 import { ProductMedicineDialogComponent } from '../product-medicine-dialog/product-medicine-dialog.component';
@@ -7,6 +7,8 @@ import { ProductPopupDeleteDialogComponent } from '../product-popup-delete-dialo
 import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { IdCodeFormDialogComponent } from '../id-code-form-dialog/id-code-form-dialog.component';
+import { MedicineService } from '../../medicine/medicine.service';
+import { Router } from '@angular/router';
 
 const JsBarcode = require('jsbarcode');
 
@@ -15,28 +17,47 @@ const JsBarcode = require('jsbarcode');
   templateUrl: './product-tab-info.component.html',
   styleUrls: ['./product-tab-info.component.css']
 })
-export class ProductTabInfoComponent implements OnInit {
+export class ProductTabInfoComponent implements OnChanges {
 
-  @Input() product: Product;
-
+  @Input() product_id: string;
+  @Input() expandedElement: boolean;
+  @Output() reload: EventEmitter<any> = new EventEmitter();
+  product: Product;
   images: string[] = [];
   imageIndex = 0;
 
+  allPermission: any;
+  isAdminStore: boolean;
+
   constructor(
+    private medicineService: MedicineService,
     private productSer: ProductService,
     public notifySer: NotifierService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router
   ) {
   }
 
-  ngOnInit(): void {
-    const data = [];
+  textType = {
+    'medicine': 'Thuốc',
+    'merchandise': 'Hàng hóa'
+  };
 
-    this.product.images.forEach(pImage => {
-      data.push(pImage['link']);
-    });
 
-    this.images = data;
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.expandedElement) {
+      this.productSer.getDetail(this.product_id, 'medicine,productUnits,productPlacements,group,images').subscribe(res => {
+        this.product = <Product>res;
+        const data = [];
+        this.product.images.forEach(pImage => {
+          data.push(pImage['link']);
+        });
+        this.images = data;
+      });
+
+    }
+    this.allPermission = sessionStorage.getItem('allPermission').split(',');
+    this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
   }
 
   loadProduct(id) {
@@ -61,13 +82,28 @@ export class ProductTabInfoComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result.event === 'Update') {
-        this.loadProduct(result.data.id);
+      // console.log(result);
+      if (result.event === 'Save' && result.connect === true) {
+        this.medicineService.connect(result.data.medicine_id).subscribe(res => {
+          if (res['success']) {
+            this.notifySer.notify('success', 'Liên thông thành công.');
+          } else if (res['message'] !== undefined) {
+            this.notifySer.notify('error', res['message']);
+          }
+        });
       }
+      // if (result.event === 'Update') {
+      //   this.loadProduct(result.data.id);
+      // }
+      //
+      // if (obj.action === 'Copy') {
+      //   // debugger;
+      //   this.productSer.setLoadProduct(false);
+      // }
 
-      if (obj.action === 'Copy') {
-        // debugger;
-        this.productSer.setLoadProduct(false);
+      if (result.event !== 'Cancel') {
+        this.loadProduct(result.data.id);
+        this.reload.emit(null);
       }
     });
   }
@@ -117,6 +153,7 @@ export class ProductTabInfoComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result.event !== 'Cancel') {
         this.loadProduct(result.data.id);
+        this.reload.emit(null);
       }
     });
   }
@@ -136,7 +173,7 @@ export class ProductTabInfoComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result.event == 'Delete') {
+      if (result.event === 'Delete') {
         // BUG
         this.product = null;
       }
@@ -175,5 +212,51 @@ export class ProductTabInfoComponent implements OnInit {
       this.notifySer.notify('success', 'Đã kích hoạt thành công!');
     });
   }
+
+  connectMedicine(product) {
+    this.medicineService.connect(product.medicine_id).subscribe(res => {
+      if (res['success']) {
+        product['medicine']['medicine_no'] = res['medicine_no'];
+        this.notifySer.notify('success', 'Liên thông thành công.');
+      } else if (res['message'] !== undefined) {
+        this.notifySer.notify('error', res['message']);
+      }
+    });
+  }
+
+  disConnectMedicine(product) {
+    this.medicineService.disconnect(product.medicine_id).subscribe(res => {
+      if (res['success']) {
+        product['medicine']['medicine_no'] = null;
+        this.notifySer.notify('success', 'Gỡ liên thông thành công.');
+      } else if (res['message'] !== undefined) {
+        this.notifySer.notify('error', res['message']);
+      }
+    });
+  }
+
+  checkPermissionDisable(permission) {
+    const indexPermission = this.allPermission.indexOf(permission);
+    if (indexPermission !== -1) {
+      return false;
+    }
+    return true;
+  }
+
+  goToWarehouseCreate() {
+    localStorage.setItem('product_id', this.product_id);
+    this.router.navigate(['/transaction/warehouse/create']);
+  }
+
+  goToStockTakeCreate() {
+    localStorage.setItem('product_id', this.product_id);
+    this.router.navigate(['/store/stock-take/create']);
+  }
+
+  goToMoveCreate() {
+    localStorage.setItem('product_id', this.product_id);
+    this.router.navigate(['/transaction/move/create']);
+  }
+
 
 }

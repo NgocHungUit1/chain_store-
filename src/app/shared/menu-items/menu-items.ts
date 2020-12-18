@@ -74,9 +74,9 @@ const MENUITEMS = [
     roles: ['ADMIN', 'WAREHOUSE', 'SALE'],
     // badge: [{type: 'red', value: '17'}],
     children: [
-      {state: 'invoice', name: 'Hóa đơn', type: 'link', icon: 'receipt', roles: ['ADMIN', 'SALE']},
+      {state: 'invoice', name: 'Hóa đơn bán', type: 'link', icon: 'receipt', roles: ['ADMIN', 'SALE']},
       {state: 'returns', name: 'Trả hàng', type: 'link', icon: 'keyboard_return',  roles: ['ADMIN', 'SALE']},
-      {state: 'warehouse', name: 'Nhập hàng', type: 'link', icon: 'local_grocery_store', roles: ['ADMIN', 'WAREHOUSE']},
+      {state: 'warehouse', name: 'Đơn nhập', type: 'link', icon: 'local_grocery_store', roles: ['ADMIN', 'WAREHOUSE']},
       {state: 'warehouse-return', name: 'Trả hàng nhập', type: 'link', 'icon': 'assignment_return', roles: ['ADMIN', 'WAREHOUSE']},
       {state: 'move', name: 'Chuyển hàng', type: 'link', icon: 'local_shipping', roles: ['ADMIN', 'WAREHOUSE']},
     ]
@@ -94,6 +94,13 @@ const MENUITEMS = [
     ]
   },
   {
+    state: 'transaction/warehouse/create',
+    name: 'Nhập hàng',
+    type: 'extLink',
+    icon: 'local_grocery_store',
+    roles: ['ADMIN', 'WAREHOUSE'],
+  },
+  {
     state: 'sale',
     name: 'Bán hàng',
     type: 'link',
@@ -102,7 +109,7 @@ const MENUITEMS = [
   },
   {
     state: 'partner',
-    name: 'Quản lý cửa hàng',
+    name: 'Cửa hàng',
     type: 'sub',
     icon: 'assignment_ind',
     roles: ['ADMIN'],
@@ -111,6 +118,7 @@ const MENUITEMS = [
       {state: 'employee', name: 'Nhân viên', type: 'link', icon: 'assignment_ind', roles: ['ADMIN']},
       {state: 'branch', name: 'Chi nhánh', type: 'link', icon: 'business', roles: ['ADMIN']},
       {state: 'timesheet', name: 'Chấm công', type: 'link', icon: 'calendar_today', roles: ['ADMIN']},
+      // {state: 'expenses-other', name: 'Quản lý chi phí nhập hàng', type: 'link', icon: 'attach_money', roles: ['ADMIN']},
     ]
   },
   {

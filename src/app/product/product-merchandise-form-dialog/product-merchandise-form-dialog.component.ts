@@ -1,21 +1,21 @@
 import { Component, Optional, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { NotifierService } from "angular-notifier";
-import { ProductService } from "../product.service";
-import { GroupService } from "../group.service";
-import { Group, GroupFilter } from "../group.model";
-import { PlacementService } from "../placement.service";
-import { PlacementFilter } from "../placement.model";
-import { ProductGroupFormDialogComponent } from "../product-group-form-dialog/product-group-form-dialog.component";
-import { ProductPlacementFormDialogComponent } from "../product-placement-form-dialog/product-placement-form-dialog.component";
+import { NotifierService } from 'angular-notifier';
+import { ProductService } from '../product.service';
+import { GroupService } from '../group.service';
+import { Group, GroupFilter } from '../group.model';
+import { PlacementService } from '../placement.service';
+import { PlacementFilter } from '../placement.model';
+import { ProductGroupFormDialogComponent } from '../product-group-form-dialog/product-group-form-dialog.component';
+import { ProductPlacementFormDialogComponent } from '../product-placement-form-dialog/product-placement-form-dialog.component';
 import * as numeral from 'numeral';
 
 class ImageSnippet {
-  constructor(public src: string, public file: File, public id: string) { }
+  constructor(public src: string, public file: File, public id: string) {
+  }
 }
-
 
 @Component({
   selector: 'app-product-merchandise-form-dialog',
@@ -66,11 +66,11 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
   };
 
   imageButtons = [
-    { isShow: true },
-    { isShow: true },
-    { isShow: true },
-    { isShow: true },
-    { isShow: true },
+    {isShow: true},
+    {isShow: true},
+    {isShow: true},
+    {isShow: true},
+    {isShow: true},
   ];
 
   selectedFiles: ImageSnippet[] = [];
@@ -84,7 +84,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
     private placementSer: PlacementService,
     private dialog: MatDialog,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
-    this.local_data = { ...data };
+    this.local_data = {...data};
     this.action = this.local_data.action;
     this.title = this.local_data.title;
     this.copy_product_id = this.local_data.copy_product_id;
@@ -103,7 +103,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       product_type: ['merchandise'],
       shortcut: [null],
       using_id: [-1],
-      group_id: [null, Validators.required],
+      group_id: [null],
       placements: [[]],
       product_name: [null, Validators.required],
       sell_price: [null, Validators.required],
@@ -133,13 +133,13 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
 
   ngOnInit() {
 
-    let groupFilter = new GroupFilter();
+    const groupFilter = new GroupFilter();
     // groupFilter.store_id = 1;
     this.groupSer.getList(groupFilter).subscribe(res => {
       this.groups = res.body;
     });
 
-    let placementFilter = new PlacementFilter();
+    const placementFilter = new PlacementFilter();
     this.placementSer.getList(placementFilter).subscribe(res => {
       this.placements = res.body;
     });
@@ -166,7 +166,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
   }
 
   closeDialog() {
-    this.dialogRef.close({ event: 'Cancel' });
+    this.dialogRef.close({event: 'Cancel'});
   }
 
   removeUnit(i) {
@@ -178,7 +178,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
   }
 
   addUnit() {
-    let index = this.units.length + 1;
+    const index = this.units.length + 1;
 
     const group = new FormGroup({
       unit_name: new FormControl('', Validators.required),
@@ -206,14 +206,14 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
             this.productSer.create(data).subscribe(product => {
               this.notifySer.notify('success', 'Thêm hàng hóa thành công!');
               this.uploadImage(product, action);
-              this.dialogRef.close({ event: action, data: product });
+              this.dialogRef.close({event: action, data: product});
             });
           });
         } else {
           this.productSer.create(data).subscribe(product => {
             this.notifySer.notify('success', 'Thêm hàng hóa thành công!');
             this.uploadImage(product, action);
-            this.dialogRef.close({ event: action, data: product });
+            this.dialogRef.close({event: action, data: product});
           });
         }
 
@@ -222,7 +222,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
         this.productSer.update(this.product_id, data).subscribe(product => {
           this.notifySer.notify('success', 'Cập nhật hàng hóa thành công!');
           this.uploadImage(product, action);
-          this.dialogRef.close({ event: action, data: product });
+          this.dialogRef.close({event: action, data: product});
         });
       }
 
@@ -252,7 +252,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       /**
        * Upload product images
        */
-      let formData = new FormData();
+      const formData = new FormData();
       formData.append('product_id', product['id']);
 
       this.selectedFiles.forEach(imageSnip => {
@@ -269,7 +269,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
           this.notifySer.notify('error', 'Không thể tải hình ảnh!');
         }
         if (action === 'Save') {
-          this.dialogRef.close({ event: this.action, data: product });
+          this.dialogRef.close({event: this.action, data: product});
         } else if (action === 'SaveAndMore') {
           this.form.reset({
             product_type: 'merchandise'
@@ -288,7 +288,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       });
     } else {
       this.loading = false;
-      this.dialogRef.close({ event: this.action, data: product });
+      this.dialogRef.close({event: this.action, data: product});
     }
   }
 
@@ -314,9 +314,9 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
 
   loadProduct(id, copy: any = null) {
     this.productSer.getDetail(id, 'medicine,images,productPlacements,productUnits').subscribe(product => {
-      let placements = [];
+      const placements = [];
       product['productPlacements'].forEach(pPlacement => {
-        placements.push(pPlacement.id)
+        placements.push(pPlacement.id);
       });
 
       if (copy == null) {
@@ -392,27 +392,29 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
   }
 
   openGroupFormDialog() {
-    const dialogRef = this.dialog.open(ProductGroupFormDialogComponent, {});
+    const dialogRef = this.dialog.open(ProductGroupFormDialogComponent, {
+      width: '30%',
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== false && result !== undefined) {
         this.groups.push(result);
-        this.form.patchValue({ group_id: result.id });
+        this.form.patchValue({group_id: result.id});
       }
     });
   }
 
   openPlacementFormDialog() {
-    const dialogRef = this.dialog.open(ProductPlacementFormDialogComponent, {});
+    const dialogRef = this.dialog.open(ProductPlacementFormDialogComponent, {
+      width: '30%',
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== false && result !== undefined) {
         this.placements.push(result);
-
-        let curSelects = this.form.controls['placements'].value;
+        const curSelects = this.form.controls['placements'].value;
         curSelects.push(result.id);
-
-        this.form.patchValue({ placements: curSelects });
+        this.form.patchValue({placements: curSelects});
       }
     });
   }
@@ -423,7 +425,6 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
 
     reader.addEventListener('load', (event: any) => {
       this.selectedFiles.push(new ImageSnippet(event.target.result, file, ''));
-
       this.selectedFiles.forEach((value, index) => {
         this.imageButtons[index]['isShow'] = false;
       });
@@ -442,7 +443,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
   }
 
   removeSelectedImage(index) {
-    let removeImage = this.selectedFiles[index];
+    const removeImage = this.selectedFiles[index];
     this.selectedFiles.splice(index, 1);
     if (removeImage['id'].length > 0) {
       this.productSer.removeImage(this.product_id, removeImage['id']).subscribe(res => {
@@ -455,9 +456,9 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
   }
 
   onProductNoChange() {
-    let productNo = this.form.controls['product_no'].value;
+    const productNo = this.form.controls['product_no'].value;
     for (let i = 0; i < this.units.controls.length; i++) {
-      let index = i + 1;
+      const index = i + 1;
       this.units.controls[i].patchValue({
         unit_no: productNo + '-' + index
       });
@@ -471,12 +472,6 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
   inputformatNumber(event: any) {
     event.target.value = numeral(event.target.value).format('0,0');
   }
-
-
-
-
-
-
 
 
 }

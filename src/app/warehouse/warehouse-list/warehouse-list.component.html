@@ -8,11 +8,35 @@
     </mat-toolbar>
 
     <mat-card class="time-filter-info">
+      <mat-card-title class="title-time-filter">Thời gian</mat-card-title>
+      <mat-card-content>
+
+        <form [formGroup]="timeFilter">
+          <mat-radio-group (change)="radioTimeChange($event)" formControlName="typeTime">
+            <mat-radio-button style="display: inline; " value="default"
+                              (click)="openTimeDefault()">{{ titleTimeDefault }}
+              <button mat-icon-button aria-label="add">
+                <mat-icon>swap_vert</mat-icon>
+              </button>
+            </mat-radio-button>
+            <mat-radio-button style="display: inline; " value="choose" (click)="openTimeChoose()">{{ titleTimeChoose }}
+              <button mat-icon-button aria-label="add">
+                <mat-icon>date_range</mat-icon>
+              </button>
+            </mat-radio-button>
+
+          </mat-radio-group>
+        </form>
+
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="time-filter-info">
       <mat-card-title class="title-time-filter">Trạng thái</mat-card-title>
       <mat-card-content>
 
         <form [formGroup]="orderStatusFilter">
-          <mat-form-field appearance="fill">
+          <mat-form-field>
             <mat-label>Đơn hàng</mat-label>
             <mat-select formControlName="status" (selectionChange)="orderStatusFilterChange()" multiple>
               <mat-option *ngFor="let item of statusFilterList"
@@ -125,7 +149,10 @@
                 <th mat-header-cell class="column-center-text"
                     *matHeaderCellDef> {{ columnsHeader['paid_amount'] }}</th>
                 <td mat-cell class="column-right-text" *matCellDef="let element">
-                  {{element.paid_amount | currency : 'VND' : ''}}</td>
+                  <span [class.red-warning]="element.paid_amount < element.total_amount">
+                    {{element.paid_amount | currency : 'VND' : ''}}
+                  </span>
+                </td>
               </ng-container>
 
               <ng-container matColumnDef="remain_amount">

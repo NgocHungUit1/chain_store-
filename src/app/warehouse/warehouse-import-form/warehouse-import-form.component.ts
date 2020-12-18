@@ -21,9 +21,12 @@ import { WarehouseParcelFormDialogComponent } from '../warehouse-parcel-form-dia
 import { WarehouseDiscountDialogComponent } from '../warehouse-discount-dialog/warehouse-discount-dialog.component';
 import { SupplierFormDialogComponent } from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
 import { ProductMedicineDialogComponent } from '../../product/product-medicine-dialog/product-medicine-dialog.component';
+// tslint:disable-next-line:max-line-length
 import { ProductMerchandiseFormDialogComponent } from '../../product/product-merchandise-form-dialog/product-merchandise-form-dialog.component';
 import { UserService } from '../../user/user.service';
 import * as numeral from 'numeral';
+import { MedicineService } from '../../medicine/medicine.service';
+import { Medicine } from '../../medicine/medicine.model';
 
 @Component({
   selector: 'app-warehouse-import-form',
@@ -35,6 +38,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   constructor(
     private mainService: WarehouseService,
     private warehouseProductService: WarehouseProductService,
+    private medicineService: MedicineService,
     private userService: UserService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
@@ -104,12 +108,13 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   filteredSuppliers: Observable<Supplier[]>;
   filteredProducts: Observable<Product[]>;
+  filteredMedicines: Observable<Medicine[]>;
 
   ngOnInit() {
     const date = new FormControl(new Date());
     this.form = this.fb.group({
       date: date,
-      no: [null],
+      no: [null, Validators.required],
       supplier: [null, Validators.required],
       status: [null],
       type: ['import'],
@@ -148,21 +153,36 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         }
       })
     );
-    this.filteredProducts = this.selectProduct.valueChanges.pipe(
-      startWith(''),
-      // delay emits
-      debounceTime(300),
-      // use switch map so as to cancel previous subscribed events, before creating new once
-      switchMap(value => {
+
+    // this.filteredProducts = this.selectProduct.valueChanges.pipe(
+    //   startWith(''),
+    //   // delay emits
+    //   debounceTime(300),
+    //   // use switch map so as to cancel previous subscribed events, before creating new once
+    //   switchMap(value => {
+    //     if (value !== '') {
+    //       // lookup from github
+    //       return this.lookupProduct(value);
+    //     } else {
+    //       // if no value is present, return null
+    //       return of(null);
+    //     }
+    //   })
+    // );
+
+
+    this.selectProduct.valueChanges.subscribe(value => {
+      setTimeout(res => {
         if (value !== '') {
-          // lookup from github
-          return this.lookupProduct(value);
+          this.filteredProducts = this.lookupProduct(value);
+          this.filteredMedicines = this.lookupMedicine(value);
         } else {
           // if no value is present, return null
-          return of(null);
+          this.filteredProducts = of(null);
+          this.filteredMedicines = of(null);
         }
-      })
-    );
+      }, 300);
+    });
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id !== null && id !== undefined) {
@@ -209,12 +229,18 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       });
       this.mainService.getRenderWarehouseNo().subscribe(res => {
         this.form.patchValue({
-          no: 'PN0' + res,
+          no: 'PN' + res,
           total_price: 0,
           discount_amount: 0,
           discount_type: 'price'
         });
       });
+    }
+
+    const product_id = localStorage.getItem('product_id');
+    if (product_id !== null) {
+      this.handleAddProductToList(product_id);
+      localStorage.removeItem('product_id');
     }
 
   }
@@ -233,6 +259,19 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       })
     );
   }
+
+
+  lookupMedicine(value: string): Observable<Medicine[]> {
+    return this.medicineService.autocomplete(value).pipe(
+      // map the item property of the github results as our return object
+      map(results => results),
+      // catch errors
+      catchError(_ => {
+        return of(null);
+      })
+    );
+  }
+
 
   lookupProduct(value: string): Observable<Product[]> {
     return this.productSer.autocomplete(value).pipe(
@@ -291,7 +330,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       write(filter, attr, this.route.snapshot.queryParams['WarehouseProductSearch[' + attr + ']']);
     }
     filter.page = this.route.snapshot.queryParams['page'];
-    filter.pageSize = 50;//this.route.snapshot.queryParams['pageSize'];
+    filter.pageSize = 50; // this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.expand = 'product,productParcels,productUnits';
     if (this.updateModelId !== null) {
@@ -302,7 +341,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   submit(status: number) {
     if (this.form.valid) {
+
       const data = this.form.getRawValue();
+      // console.log(data);
+      // return;
       data['supplier_id'] = data['supplier']['id'];
       data['quantity'] = numeral(data['quantity']).value();
       data['total_price'] = numeral(data['total_price']).value();
@@ -358,7 +400,18 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
    * @param product
    */
   onSelectedProduct(product) {
-    this.handleAddProductToList(product.id);
+    if (this.form.controls['status'].value === '10') {
+      this.notifySer.notify('warning', 'Đơn nhập hàng đã hoàn thành.');
+      this.selectProduct.patchValue(null);
+    } else {
+      if (product.product_type !== undefined) {
+        this.handleAddProductToList(product.id);
+      } else {
+        sessionStorage.setItem('medicine', JSON.stringify(product));
+        this.openProductMedicineDialog('Add', {});
+        this.selectProduct.patchValue(null);
+      }
+    }
   }
 
   /**
@@ -406,10 +459,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   recalculateWarehouse() {
-    let quantity: number = 0;
-    let price: number = 0;
-    let remainAmount: number = 0;
-    let totalAmount: number = 0;
+    let quantity = 0;
+    let price = 0;
+    let remainAmount = 0;
+    let totalAmount = 0;
     const paidAmount = this.form.controls['paid_amount'].value;
     const discount = this.form.controls['discount_amount'].value;
     const discount_type = this.form.controls['discount_type'].value;
@@ -469,7 +522,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   openParcelFormDialog(index) {
     const dialogRef = this.dialog.open(WarehouseParcelFormDialogComponent, {
-      width: '30%',
+      width: '35%',
       data: {parcels: this.parcels}
     });
     dialogRef.afterClosed().subscribe(result => {

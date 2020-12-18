@@ -122,6 +122,8 @@ export class MedicineListComponent extends ListComponentBase implements OnInit {
       if (res['success']) {
         item.medicine_no = res['medicine_no'];
         this.notifySer.notify('success', 'Liên thông thành công.');
+      } else if (res['message'] !== undefined) {
+        this.notifySer.notify('error', res['message']);
       }
     });
   }

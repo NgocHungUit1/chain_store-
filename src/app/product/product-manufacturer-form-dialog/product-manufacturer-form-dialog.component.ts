@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from "@angular/material/dialog";
-import { NotifierService } from "angular-notifier";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { MatDialogRef } from '@angular/material/dialog';
+import { NotifierService } from 'angular-notifier';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ManufacturerService } from '../manufacturer.service';
 
 @Component({
@@ -18,12 +18,12 @@ export class ProductManufacturerFormDialogComponent implements OnInit {
     private mainSer: ManufacturerService,
   ) { }
 
+  public form: FormGroup;
+  loading = false;
+
   onNoClick(): void {
     this.dialogRef.close();
   }
-
-  public form: FormGroup;
-  loading = false;
 
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -31,7 +31,7 @@ export class ProductManufacturerFormDialogComponent implements OnInit {
         null,
         Validators.compose([
           Validators.required,
-          Validators.maxLength(32)
+          Validators.maxLength(200)
         ])
       ],
     });
@@ -39,7 +39,7 @@ export class ProductManufacturerFormDialogComponent implements OnInit {
 
   submit() {
     if (this.form.valid) {
-      let data = this.form.getRawValue();
+      const data = this.form.getRawValue();
       this.mainSer.create(data).subscribe(res => {
         this.notifySer.notify('success', 'Thêm vị trí thành công!');
         this.dialogRef.close(res);

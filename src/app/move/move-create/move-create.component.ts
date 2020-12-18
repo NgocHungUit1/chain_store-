@@ -150,7 +150,7 @@ export class MoveCreateComponent extends ListComponentBase implements OnInit {
     } else {
       this.moveService.getRenderNo().subscribe(res => {
         this.form.patchValue({
-          no: 'CK0' + res,
+          no: 'CK' + res,
           status: '9',
         });
       });
@@ -161,6 +161,12 @@ export class MoveCreateComponent extends ListComponentBase implements OnInit {
     }
     this.form.controls['date'].disable();
     this.form.controls['branch_from'].disable();
+
+    const product_id = localStorage.getItem('product_id');
+    if (product_id !== null) {
+      this.handleAddProductToList(product_id);
+      localStorage.removeItem('product_id');
+    }
 
   }
 

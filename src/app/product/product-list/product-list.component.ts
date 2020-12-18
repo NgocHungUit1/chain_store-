@@ -15,6 +15,7 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/internal/observable/of';
 import { ProductUploadDialogComponent } from '../product-upload-dialog/product-upload-dialog.component';
+import { MedicineService } from '../../medicine/medicine.service';
 
 
 @Component({
@@ -32,6 +33,7 @@ import { ProductUploadDialogComponent } from '../product-upload-dialog/product-u
 export class ProductListComponent extends ListComponentBase implements OnInit {
 
   constructor(
+    private medicineService: MedicineService,
     private service: ProductService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
@@ -76,14 +78,14 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
 
   columnsHeader = {
     '#': '#',
-    'product_type': 'Phân loại',
+    // 'product_type': 'Phân loại',
     'product_no': 'Mã hàng',
     'product_name': 'Tên hàng',
-    'shortcut': 'Tên ngắn',
+    'base_unit': 'Đơn vị',
     'original_price': 'Giá vốn',
     'sell_price': 'Giá bán',
     'status': 'Trạng thái',
-    // 'quantity_of_stock': 'Tồn kho'
+    'quantity': 'Tồn kho'
   };
 
   productTypeLable = {
@@ -91,8 +93,8 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     'merchandise': 'Hàng hóa',
   };
 
-  displayedColumns: string[] = ['#', 'product_type', 'product_no', 'product_name', 'shortcut', 'original_price', 'sell_price', 'status'];
-  columnsToDisplay: string[] = ['#', 'product_type', 'product_no', 'product_name', 'shortcut', 'original_price', 'sell_price', 'status'];
+  displayedColumns: string[] = ['#', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'quantity', 'status'];
+  columnsToDisplay: string[] = ['#', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'quantity', 'status'];
   dataSource: Product[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -119,7 +121,8 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'medicine,productUnits,productPlacements,group,images,quantity';
+    // filter.expand = 'medicine,productUnits,productPlacements,group,images,quantity';
+    filter.expand = 'quantity';
     filter.product_type = this.typeProductFilter.controls['status'].value;
     filter.status = this.statusProductFilter.controls['status'].value;
 
@@ -224,7 +227,24 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this.loadData();
+      if (result.event === 'Save' && result.connect === true) {
+        this.service.getDetail(result.data.id).subscribe(product => {
+          // @ts-ignore
+          this.medicineService.connect(product.medicine_id).subscribe(res => {
+            if (res['success']) {
+              this.notifySer.notify('success', 'Liên thông thành công.');
+            } else if (res['message'] !== undefined) {
+              this.notifySer.notify('error', res['message']);
+            }
+            this.loadData();
+          });
+        });
+
+      } else {
+        if (result.event !== 'Cancel') {
+          this.loadData();
+        }
+      }
     });
   }
 

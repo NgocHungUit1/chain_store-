@@ -4,7 +4,7 @@
       <button mat-icon-button routerLink="/transaction/warehouse">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <h3>Nhập hàng</h3>
+      <h3>Đơn Nhập hàng</h3>
       <div class="select-product">
         <mat-form-field>
           <input type="text" [formControl]="selectProduct" matInput [matAutocomplete]="chooseProduct"
@@ -17,19 +17,33 @@
                         style="min-height: 70px; line-height:25px !important;"
                         title="{{ product.product_name }}">
               <img fxFlex="25" class="example-option-img" aria-hidden [src]="product.default_image" width="23">
-              <span fxFlex="75" style="margin-left: 5px;">
+              <span fxFlex="75" style="margin-left: 5px; font-size: 13px;">
                 <b style="font-size: 12px;">{{ product.product_name }}</b><br>
                 {{ product.product_no }} &nbsp;  Giá : {{ product.original_price | number }}
                 &nbsp; - {{ product.base_unit }}
               </span>
               <mat-divider></mat-divider>
             </mat-option>
+
+            <mat-option fxLayout="row" *ngFor="let medicine of filteredMedicines | async" [value]="medicine"
+                        style="min-height: 70px; line-height:25px !important;"
+                        title="{{ medicine.medicine_name }}">
+              <span fxFlex="100" style="margin-left: 5px; font-size: 13px;">
+                <b> {{ medicine.medicine_name }} </b> <br>
+                Nhà sản xuất: {{ medicine.manufacturer }}  <br>
+                Mã thuốc: {{ medicine.medicine_no }} - Số đăng ký: {{ medicine.registration_no }}
+                - Đơn vị: {{ medicine.unit }}
+              </span>
+              <mat-divider></mat-divider>
+            </mat-option>
+
           </mat-autocomplete>
         </mat-form-field>
       </div>
       <span fxFlex="1 1 0%"></span>
 
-      <button mat-raised-button color="primary" [matMenuTriggerFor]="createMenu" style="margin-right: 10px">
+      <button mat-raised-button color="primary" [matMenuTriggerFor]="createMenu" style="margin-right: 10px"
+              [disabled]="form.controls['status'].value === '10'">
         <mat-icon>add</mat-icon>
         Thêm mới
       </button>
@@ -61,11 +75,6 @@
                 <td mat-cell *matCellDef="let element; let i = index;"> {{i + 1}}</td>
               </ng-container>
 
-              <!--              <ng-container matColumnDef="product_no">-->
-              <!--                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_no']}}</th>-->
-              <!--                <td mat-cell *matCellDef="let element"> {{ element.product.product_no }}</td>-->
-              <!--              </ng-container>-->
-
               <ng-container matColumnDef="product_name">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_name']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index" title="{{ element.product.product_name }}">
@@ -81,14 +90,16 @@
 
                   <mat-form-field class="parcel-field">
                     <mat-select multiple [(ngModel)]="data[i]['product_parcels']"
-                                (selectionChange)="onParcelSelectedChange(i, $event.value)">
+                                (selectionChange)="onParcelSelectedChange(i, $event.value)"
+                                [disabled]="form.controls['status'].value === '10'">
                       <mat-option *ngFor="let parcel of parcels" [value]="parcel">
                         {{parcel['parcel_no']}} - {{parcel['expiration_date']}} - SL: {{parcel['quantity']}}
                       </mat-option>
                     </mat-select>
 
                   </mat-form-field>
-                  <button mat-icon-button matSuffix aria-label="add" (click)="openParcelFormDialog(i);">
+                  <button mat-icon-button matSuffix aria-label="add" (click)="openParcelFormDialog(i);"
+                          [disabled]="form.controls['status'].value === '10'">
                     <mat-icon>add</mat-icon>
                   </button>
 
@@ -96,11 +107,12 @@
               </ng-container>
 
               <ng-container matColumnDef="product_unit_id">
-                <th mat-header-cell class="text-left" *matHeaderCellDef> {{columnsHeader['product_unit_id']}}</th>
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_unit_id']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index">
                   <mat-form-field *ngIf="element.productUnits.length">
                     <mat-select matInput [(ngModel)]="data[i]['product_unit_id']"
-                                (selectionChange)="onUnitChange(i, $event)">
+                                (selectionChange)="onUnitChange(i, $event)"
+                                [disabled]="form.controls['status'].value === '10'">
                       <mat-option *ngFor="let unit of element.productUnits" [value]="unit.id">{{unit.name}}</mat-option>
                     </mat-select>
                   </mat-form-field>
@@ -110,24 +122,24 @@
               <ng-container matColumnDef="quantity">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['quantity']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index">
-<!--                  <mat-form-field>-->
-<!--                    &lt;!&ndash;                    <input matInput class="quantity-input" [value]="element['quantity']"&ndash;&gt;-->
-<!--                    &lt;!&ndash;                           [(ngModel)]="data[i]['quantity']" [disabled]="data[i]['product_parcels'].length > 1"&ndash;&gt;-->
-<!--                    &lt;!&ndash;                           readonly>&ndash;&gt;-->
-<!--                    &lt;!&ndash;                    <button mat-icon-button matPrefix (click)="changeQuantity(i, -1)"&ndash;&gt;-->
-<!--                    &lt;!&ndash;                            [disabled]="element['quantity'] === 1 || data[i]['product_parcels'].length > 1">&ndash;&gt;-->
-<!--                    &lt;!&ndash;                      <mat-icon>indeterminate_check_box</mat-icon>&ndash;&gt;-->
-<!--                    &lt;!&ndash;                    </button>&ndash;&gt;-->
-<!--                    &lt;!&ndash;                    <button mat-icon-button matSuffix (click)="changeQuantity(i, 1);"&ndash;&gt;-->
-<!--                    &lt;!&ndash;                            [disabled]="data[i]['product_parcels'].length > 1">&ndash;&gt;-->
-<!--                    &lt;!&ndash;                      <mat-icon>add_box</mat-icon>&ndash;&gt;-->
-<!--                    &lt;!&ndash;                    </button>&ndash;&gt;-->
+                  <!--                  <mat-form-field>-->
+                  <!--                    &lt;!&ndash;                    <input matInput class="quantity-input" [value]="element['quantity']"&ndash;&gt;-->
+                  <!--                    &lt;!&ndash;                           [(ngModel)]="data[i]['quantity']" [disabled]="data[i]['product_parcels'].length > 1"&ndash;&gt;-->
+                  <!--                    &lt;!&ndash;                           readonly>&ndash;&gt;-->
+                  <!--                    &lt;!&ndash;                    <button mat-icon-button matPrefix (click)="changeQuantity(i, -1)"&ndash;&gt;-->
+                  <!--                    &lt;!&ndash;                            [disabled]="element['quantity'] === 1 || data[i]['product_parcels'].length > 1">&ndash;&gt;-->
+                  <!--                    &lt;!&ndash;                      <mat-icon>indeterminate_check_box</mat-icon>&ndash;&gt;-->
+                  <!--                    &lt;!&ndash;                    </button>&ndash;&gt;-->
+                  <!--                    &lt;!&ndash;                    <button mat-icon-button matSuffix (click)="changeQuantity(i, 1);"&ndash;&gt;-->
+                  <!--                    &lt;!&ndash;                            [disabled]="data[i]['product_parcels'].length > 1">&ndash;&gt;-->
+                  <!--                    &lt;!&ndash;                      <mat-icon>add_box</mat-icon>&ndash;&gt;-->
+                  <!--                    &lt;!&ndash;                    </button>&ndash;&gt;-->
 
-<!--                    <input matInput class="quantity-input" [value]="element['quantity']"-->
-<!--                           [(ngModel)]="data[i]['quantity']" [disabled]="data[i]['product_parcels'].length > 1"-->
-<!--                           readonly>-->
+                  <!--                    <input matInput class="quantity-input" [value]="element['quantity']"-->
+                  <!--                           [(ngModel)]="data[i]['quantity']" [disabled]="data[i]['product_parcels'].length > 1"-->
+                  <!--                           readonly>-->
 
-<!--                  </mat-form-field>-->
+                  <!--                  </mat-form-field>-->
                   <span>{{ element.quantity | currency : 'VND' : ''}} </span>
                 </td>
               </ng-container>
@@ -135,11 +147,6 @@
               <ng-container matColumnDef="price">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['price']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index">
-<!--                  <mat-form-field>-->
-<!--                    <input matInput class="price-input" [value]="element['price']"-->
-<!--                           (change)="recalculateItem(i)"-->
-<!--                           [(ngModel)]="data[i]['price']">-->
-<!--                  </mat-form-field>-->
                   <span>{{ element.price | currency : 'VND' : ''}} </span>
                 </td>
               </ng-container>
@@ -149,11 +156,9 @@
                 <td mat-cell *matCellDef="let element; let i = index">
 
                   <mat-form-field *ngIf="element['discount_type'] == 'price'">
-                    <!-- <input matInput class="discount-input" [value]="element['discount']" (change)="recalculateItem(i)"
-                      [(ngModel)]="data[i]['discount']" > -->
                     <input matInput class="discount-input" [(ngModel)]="data[i]['discount']"
                            value="{{ element['discount'] | number }}" (click)="openDiscountDialogWarehouseProduct(i);"
-                           readonly>
+                           readonly [disabled]="form.controls['status'].value === '10'">
                   </mat-form-field>
 
                   <mat-form-field *ngIf="element['discount_type'] == 'percent'">
@@ -161,7 +166,7 @@
                            value="{{ (element['price']*element['discount']/100) | number }}"
                            (click)="openDiscountDialogWarehouseProduct(i);"
                            title="{{ (element['price']*element['discount']/100) | number }} {{ '('+element['discount']+'%)' }}"
-                           readonly>
+                           readonly [disabled]="form.controls['status'].value === '10'">
                   </mat-form-field>
                 </td>
               </ng-container>
@@ -176,7 +181,8 @@
               <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef></th>
                 <td mat-cell *matCellDef="let element; let i = index">
-                  <button mat-icon-button (click)="removeProduct(i)">
+                  <button mat-icon-button (click)="removeProduct(i)"
+                          [disabled]="form.controls['status'].value === '10'">
                     <mat-icon>delete</mat-icon>
                   </button>
                 </td>
@@ -208,7 +214,8 @@
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Chi nhánh nhập</mat-label>
-                <mat-select [formControl]="form.controls['branch_id']" placeholder="Chọn chi nhánh">
+                <mat-select [formControl]="form.controls['branch_id']" placeholder="Chọn chi nhánh"
+                            [disabled]="form.controls['status'].value === '10'">
                   <mat-option *ngFor="let branch of branchList" value="{{branch.id}}">{{branch.name}}</mat-option>
                 </mat-select>
               </mat-form-field>
@@ -218,9 +225,8 @@
                 <mat-label>Mã phiếu nhập</mat-label>
                 <input matInput tabindex="2"
                        formControlName="no"
-                       readonly
-                       matTooltip="Mã phiếu được hệ thống tự động, không được thay đổi"
-                       matTooltipPosition="left">
+                       [readonly]="updateModelId !== null"
+                       matTooltipPosition="left" required>
               </mat-form-field>
             </div>
             <div fxFlex="90">
@@ -236,7 +242,9 @@
                 </button>
                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySupplier">
                   <mat-option *ngFor="let supplier of filteredSuppliers | async" [value]="supplier">
-                    {{supplier.name}}
+                    <span>
+                      {{supplier.name}}
+                    </span>
                   </mat-option>
                 </mat-autocomplete>
               </mat-form-field>
@@ -246,14 +254,14 @@
                 <mat-icon>add</mat-icon>
               </button>
             </div>
-            <div fxFlex="100">
-              <mat-form-field>
-                <mat-label>Trạng thái</mat-label>
-                <mat-select [formControl]="form.controls['status']" placeholder="Chọn trạng thái">
-                  <mat-option *ngFor="let status of statuses" value="{{status.id}}">{{status.name}}</mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
+            <!--            <div fxFlex="100">-->
+            <!--              <mat-form-field>-->
+            <!--                <mat-label>Trạng thái</mat-label>-->
+            <!--                <mat-select [formControl]="form.controls['status']" placeholder="Chọn trạng thái">-->
+            <!--                  <mat-option *ngFor="let status of statuses" value="{{status.id}}">{{status.name}}</mat-option>-->
+            <!--                </mat-select>-->
+            <!--              </mat-form-field>-->
+            <!--            </div>-->
             <!--            <div fxFlex="100">-->
             <!--              <mat-form-field>-->
             <!--                <mat-label>Số lượng</mat-label>-->

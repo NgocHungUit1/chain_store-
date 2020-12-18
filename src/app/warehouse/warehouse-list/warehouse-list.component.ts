@@ -13,6 +13,10 @@ import { ProductUploadDialogComponent } from '../../product/product-upload-dialo
 import { WarehouseUploadDialogComponent } from '../warehouse-upload-dialog/warehouse-upload-dialog.component';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
+import { InvoiceService } from '../../invoice/invoice.service';
+import { DatetimeDefaultFilterDialogComponent } from '../../invoice/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
+import { DatetimeChooseFilterDialogComponent } from '../../invoice/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
+import { DateFilter } from '../../invoice/invoice.model';
 
 @Component({
   templateUrl: './warehouse-list.component.html',
@@ -32,6 +36,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private notifyService: NotifierService,
+    private service: InvoiceService,
     private fb: FormBuilder,
   ) {
     super();
@@ -44,10 +49,16 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
   searchProductForm = new FormControl();
   orderStatusFilter: FormGroup;
 
+  timeFilter: FormGroup;
+
+  titleTimeDefault = 'Tháng này';
+  titleTimeChoose = 'Lựa chọn khác';
+
+  currentDateFilter: DateFilter;
 
   columnsHeader = {
     '#': '#',
-    'national_pharmacy_no': 'Mã phiếu dược quốc gia',
+    'national_pharmacy_no': 'Mã DQG',
     'date': 'Ngày nhập',
     'supplier_id': 'Nhà cung cấp',
     'total_amount': 'Tổng tiền',
@@ -62,9 +73,9 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     'date',
     'supplier_id',
     'total_amount',
-    'discount_amount',
+    // 'discount_amount',
     'paid_amount',
-    'remain_amount',
+    // 'remain_amount',
     'status',
     'national_pharmacy_no',
   ];
@@ -109,6 +120,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
 
     const filter = new WarehouseFilter();
     const objectKeys = Object.keys(filter) as Array<keyof WarehouseFilter>;
+    const objDateFilter = this.service.getDateFilter();
 
     for (const attr of objectKeys) {
       write(filter, attr, this.route.snapshot.queryParams['WarehouseSearch[' + attr + ']']);
@@ -118,9 +130,29 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.expand = 'supplier,created_user,product_count,total_quantity';
     filter.type = 'import';
+    filter.date_from = objDateFilter.date_from;
+    filter.date_to = objDateFilter.date_to;
     filter.status = this.orderStatusFilter.controls['status'].value;
-
     return filter;
+  }
+
+  initDateFilter() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const first = new Date(year, month, 1);
+    const obj = new DateFilter();
+    // tháng này
+
+    obj.date_from = this.service.convertDateYYYYMMDD(first);
+    obj.date_to = this.service.convertDateYYYYMMDD(today);
+
+    const date_from = new Date(obj.date_from);
+    const date_to = new Date(obj.date_to);
+    this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+
+    this.currentDateFilter = obj;
+    this.service.setDateFilter(obj);
   }
 
   loadData(): void {
@@ -143,14 +175,30 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
 
   ngOnInit() {
 
+    this.initDateFilter();
+
     this.orderStatusFilter = this.fb.group({
       status: [
         ['10', '9']
       ],
     });
 
+    this.timeFilter = this.fb.group({
+      typeTime: [
+        'default'
+      ],
+    });
+
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
+
+    this.service.subscribeDateFilter.subscribe(obj => {
+      if (JSON.stringify(this.currentDateFilter) !== JSON.stringify(obj)) {
+        this.currentDateFilter = obj;
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+      }
+    });
 
     this.searchProductForm.valueChanges.pipe(debounceTime(800)).subscribe(res => {
       if (res !== '') {
@@ -180,5 +228,63 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
   orderStatusFilterChange() {
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
+  }
+
+  convertDate(date: Date) {
+    const month = date.getMonth() + 1;
+    return date.getDate() + '/' + month + '/' + date.getFullYear();
+  }
+
+  openTimeDefault() {
+    const obj = {};
+    const dialogRef = this.dialog.open(DatetimeDefaultFilterDialogComponent, {
+      data: obj,
+      width: '40%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.title !== undefined) {
+        this.titleTimeDefault = result?.title;
+      }
+      const date = this.service.getDateFilter();
+      const date_from = new Date(date.date_from);
+      const date_to = new Date(date.date_to);
+      this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+      this.timeFilter.patchValue({
+        typeTime: 'default',
+      });
+    });
+  }
+
+  openTimeChoose() {
+    const obj = {};
+    const dialogRef = this.dialog.open(DatetimeChooseFilterDialogComponent, {
+      data: obj,
+      width: '40%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+      this.timeFilter.patchValue({
+        typeTime: 'choose',
+      });
+      const date = this.service.getDateFilter();
+      const date_from = new Date(date.date_from);
+      const date_to = new Date(date.date_to);
+      this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+    });
+  }
+
+  radioTimeChange(event: Event) {
+    if (this.timeFilter.controls['typeTime'].value === 'choose') {
+      const date = this.service.getDateFilter();
+      const date_from = new Date(date.date_from);
+      const date_to = new Date(date.date_to);
+      this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+    } else {
+      this.titleTimeChoose = 'Lựa chọn khác';
+    }
   }
 }
