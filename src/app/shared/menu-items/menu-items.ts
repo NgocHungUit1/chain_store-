@@ -118,6 +118,7 @@ const MENUITEMS = [
       {state: 'employee', name: 'Nhân viên', type: 'link', icon: 'assignment_ind', roles: ['ADMIN']},
       {state: 'branch', name: 'Chi nhánh', type: 'link', icon: 'business', roles: ['ADMIN']},
       {state: 'timesheet', name: 'Chấm công', type: 'link', icon: 'calendar_today', roles: ['ADMIN']},
+      // {state: 'expenses-other', name: 'Quản lý chi phí nhập hàng', type: 'link', icon: 'attach_money', roles: ['ADMIN']},
     ]
   },
   {

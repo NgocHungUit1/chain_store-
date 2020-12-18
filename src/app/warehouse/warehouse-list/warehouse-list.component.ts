@@ -58,7 +58,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
 
   columnsHeader = {
     '#': '#',
-    'national_pharmacy_no': 'Mã phiếu dược quốc gia',
+    'national_pharmacy_no': 'Mã DQG',
     'date': 'Ngày nhập',
     'supplier_id': 'Nhà cung cấp',
     'total_amount': 'Tổng tiền',
@@ -73,9 +73,9 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     'date',
     'supplier_id',
     'total_amount',
-    'discount_amount',
+    // 'discount_amount',
     'paid_amount',
-    'remain_amount',
+    // 'remain_amount',
     'status',
     'national_pharmacy_no',
   ];

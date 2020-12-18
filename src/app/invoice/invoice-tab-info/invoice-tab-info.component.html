@@ -240,12 +240,12 @@
         <mat-icon>close_fullscreen</mat-icon>
         Gỡ liên thông
       </button>
-      <button class="m-r-10" mat-raised-button color="warn"
-              [disabled]="checkPermissionDisable('Invoice.Delete-Invoice') || !isAdminStore"
-              (click)='deleteInvoice(invoice)'>
-        <mat-icon>delete</mat-icon>
-        Hủy bỏ
-      </button>
+<!--      <button class="m-r-10" mat-raised-button color="warn"-->
+<!--              [disabled]="checkPermissionDisable('Invoice.Delete-Invoice') || !isAdminStore"-->
+<!--              (click)='deleteInvoice(invoice)'>-->
+<!--        <mat-icon>delete</mat-icon>-->
+<!--        Hủy bỏ-->
+<!--      </button>-->
 
       <button class="m-r-10" mat-raised-button color="primary" (click)='payTheDebt(invoice)'
               *ngIf="invoice?.total_price - giamGiaHoaDon - KhachDaTra > 0">
