@@ -1,14 +1,17 @@
 <div id="contentToConvert">
-  <b>Nha thuoc nguyen bao</b><br>
-  <span>PQA viêm mũi dị ứng (Lọ)</span><br>
-  <img id="barcode" alt=""/><br>
-  <span>120.000đ/Hộp</span>
+  <div id="image-print">
+    <b class="name-store" *ngIf="nameStore !== undefined">{{ nameStore }}</b><br *ngIf="nameStore !== undefined">
+    <p class="product-name">{{ this.product?.product_name }}</p>
+    <img id="barcode" alt=""/><br>
+    <span *ngIf="money !== undefined">{{ money }}</span>
+  </div>
 </div>
-<button mat-raised-button class="button-card" (click)="generatePDF()" color="primary">
+<br>
+<button mat-raised-button class="button-card" (click)="generatePDF()" color="primary" disabled="disabled">
   <mat-icon>format_align_justify</mat-icon>
   Xem mã in
 </button>
 <button mat-raised-button (click)="onNoClick()" tabindex="-1">
-    <mat-icon>cancel</mat-icon>
+  <mat-icon>cancel</mat-icon>
   Bỏ qua
 </button>

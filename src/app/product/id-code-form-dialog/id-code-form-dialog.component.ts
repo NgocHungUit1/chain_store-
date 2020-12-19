@@ -72,9 +72,13 @@ export class IdCodeFormDialogComponent implements OnInit {
     // .render();
     // console.log('nghia');
     // return;
+    const data = this.form.getRawValue();
+    // 130/83
+    // console.log(data);
 
     const obj = {
-      // product_id: id,
+      product_id: this.product_id,
+      option: data,
     };
 
     const dialogRef = this.dialog.open(ViewIdCodeFormDialogComponent, {
