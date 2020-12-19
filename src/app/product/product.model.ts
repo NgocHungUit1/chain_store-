@@ -133,3 +133,12 @@ export class ProductReport {
   ty_suat: number;
   product: Product;
 }
+
+export class Option {
+  so_luong: number;
+  in_ma: string;
+  in_gia: string;
+  in_vnd: string;
+  in_don_vi: string;
+  in_ten_cua_hang: string;
+}

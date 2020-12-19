@@ -1,5 +1,23 @@
 #contentToConvert {
-  background-color: red;
   text-align: center;
 }
 
+.name-store {
+  max-width: 250px;
+  margin: auto;
+}
+
+#image-print {
+  max-width: 260px;
+  margin: auto;
+}
+
+.product-name {
+  max-width: 250px;
+  word-break: break-all;
+  margin: auto;
+}
+
+#barcode {
+  margin-bottom: -11px;
+}
