@@ -1,17 +1,15 @@
-import { Component, Inject, OnInit, Optional } from '@angular/core';
+import { Component, Inject, OnInit, Optional, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { FormBuilder } from '@angular/forms';
 import { jsPDF } from 'jspdf';
-import html2canvas from 'html2canvas';
 import { ProductService } from '../product.service';
 import { Option, Product } from '../product.model';
 import { CustomerService } from '../../customer/customer.service';
 import * as numeral from 'numeral';
+import domtoimage from 'dom-to-image';
+
 const JsBarcode = require('jsbarcode');
-import * as htmlToImage from 'html-to-image';
-import * as download from 'downloadjs';
-import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
 
 
 @Component({
@@ -21,6 +19,8 @@ import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
 })
 
 export class ViewIdCodeFormDialogComponent implements OnInit {
+
+  @ViewChild('container') container;
 
   local_data: any;
   product_id: string;
@@ -75,56 +75,82 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
         .render();
     });
 
-
-    // console.log('nghia');
-    // return;
   }
 
-  generatePDF() {
-    // this.notifySer.
-    // const data = document.getElementById('contentToConvert');
-    // const data = document.getElementById('image-print');
-    //
-    // html2canvas(data).then(canvas => {
-    //   const imgWidth = 102;
-    //   const imgHeight = canvas.height * imgWidth / canvas.width;
-    //
-    //   const img = new Image();
-    //   img.src = canvas.toDataURL('image/png');
-    //   img.width = 83;
-    //   const pdf = new jsPDF('l', 'mm', [104, 22]);
-    //   const position = 0;
-    //   pdf.addImage(img.src, 'PNG', 0, position, imgWidth, imgHeight);
-    //
-    //   // const contentDataURL = canvas.toDataURL('image/png');
-    //   // const pdf = new jsPDF('l', 'mm', [104, 22]);
-    //   // const position = 0;
-    //   // pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
-    //   // pdf.setLineWidth(100);
-    //   pdf.save('Ma_Vach.pdf');
-    // });
-
-    const data = document.getElementById('image-print');
-
-    htmlToImage.toPng(data)
+  generateImage() {
+    const product_name = this.product?.product_name;
+    setTimeout(() => domtoimage.toPng(this.container.nativeElement)
       .then(function (dataUrl) {
-
-        // const imgWidth = 102;
-        // const imgHeight = canvas.height * imgWidth / canvas.width;
-
         const img = new Image();
         img.src = dataUrl;
-        download(dataUrl, 'my-node.png');
-        // img.width = 83;
-        // // document.body.appendChild(img);
-        // const pdf = new jsPDF('l', 'mm', [104, 22]);
-        // const position = 0;
-        // pdf.addImage(img.src, 'PNG', 0, position, 130, 83);
-        // pdf.save('Ma_Vach.pdf');
+
+        const link = document.createElement('a');
+        link.download = product_name + '.png';
+        link.href = dataUrl;
+        link.click();
       })
       .catch(function (error) {
         console.error('oops, something went wrong!', error);
-      });
+      }), 500);
+
   }
+
+  generatePDF() {
+    const product_name = this.product?.product_name;
+    const so_luong = this.option.so_luong;
+    setTimeout(() => domtoimage.toPng(this.container.nativeElement)
+      .then(function (dataUrl) {
+        const img = new Image();
+        img.src = dataUrl;
+
+        const pdf = new jsPDF('l', 'mm', [105, 22]);
+        let position = 2;
+        let height = 18;
+        if (product_name.length > 40) {
+          position = 1;
+          height = 20;
+        }
+        const phan_du = so_luong % 3;
+        const so_trang = Math.floor(so_luong / 3);
+
+        if (so_trang > 0) {
+          for (let i = 1; i <= so_trang; i++) {
+            pdf.addImage(img.src, 'PNG', 0, position, 35, height);
+            pdf.addImage(img.src, 'PNG', 35, position, 35, height);
+            pdf.addImage(img.src, 'PNG', 70, position, 35, height);
+            if (so_trang - i > 0) {
+              pdf.addPage([105, 22], 'l');
+            }
+          }
+        }
+
+        if (phan_du > 0) {
+          pdf.addPage([105, 22], 'l');
+          if (phan_du === 1) {
+            pdf.addImage(img.src, 'PNG', 0, position, 35, height);
+          } else {
+            pdf.addImage(img.src, 'PNG', 0, position, 35, height);
+            pdf.addImage(img.src, 'PNG', 35, position, 35, height);
+          }
+        }
+
+        // pdf.addImage(img.src, 'PNG', 0, position, 35, height);
+        // pdf.addImage(img.src, 'PNG', 35, position, 35, height);
+        // pdf.addImage(img.src, 'PNG', 70, position, 35, height);
+        //
+        // pdf.addPage([105, 22], 'l');
+        // pdf.addImage(img.src, 'PNG', 0, position, 35, height);
+        // pdf.addImage(img.src, 'PNG', 35, position, 35, height);
+        // pdf.addImage(img.src, 'PNG', 70, position, 35, height);
+
+        pdf.save(product_name + '.pdf');
+
+      })
+      .catch(function (error) {
+        console.error('oops, something went wrong!', error);
+      }), 500);
+
+  }
+
 
 }

@@ -1,17 +1,40 @@
 <div id="contentToConvert">
-  <div id="image-print">
+  <div id="image-print" #container>
     <b class="name-store" *ngIf="nameStore !== undefined">{{ nameStore }}</b><br *ngIf="nameStore !== undefined">
     <p class="product-name">{{ this.product?.product_name }}</p>
     <img id="barcode" alt=""/><br>
-    <span *ngIf="money !== undefined">{{ money }}</span>
+    <b *ngIf="money !== undefined">{{ money }}</b>
   </div>
 </div>
 <br>
-<button mat-raised-button class="button-card" (click)="generatePDF()" color="primary" disabled="disabled">
-  <mat-icon>format_align_justify</mat-icon>
-  Xem mã in
-</button>
-<button mat-raised-button (click)="onNoClick()" tabindex="-1">
-  <mat-icon>cancel</mat-icon>
-  Bỏ qua
-</button>
+<!--disabled="disabled"-->
+
+
+<div fxLayout="row wrap">
+  <div fxFlex="100">
+
+    <button mat-raised-button color="primary" [matMenuTriggerFor]="createMenu" style="margin-right: 10px">
+      <mat-icon>cloud_download</mat-icon>
+      Download
+    </button>
+    <mat-menu #createMenu="matMenu">
+      <button mat-menu-item class="button-card" (click)="generateImage()" color="primary">
+        <mat-icon>image</mat-icon>
+        Image
+      </button>
+      <button mat-menu-item class="button-card" (click)="generatePDF()" color="primary">
+        <mat-icon>picture_as_pdf</mat-icon>
+        File Pdf
+      </button>
+    </mat-menu>
+
+
+    <button class="m-r-10" mat-raised-button (click)="onNoClick()" tabindex="-1">
+      <mat-icon>cancel</mat-icon>
+      Bỏ qua
+    </button>
+
+
+  </div>
+</div>
+

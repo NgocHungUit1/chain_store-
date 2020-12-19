@@ -1,5 +1,6 @@
 #contentToConvert {
   text-align: center;
+
 }
 
 .name-store {
@@ -9,7 +10,9 @@
 
 #image-print {
   max-width: 260px;
-  margin: auto;
+  background-color: white;
+  /*margin: auto;*/
+  border: 1px dotted black;
 }
 
 .product-name {
@@ -20,4 +23,8 @@
 
 #barcode {
   margin-bottom: -11px;
+}
+
+button {
+  margin-right:10px
 }

@@ -83,7 +83,7 @@ export class IdCodeFormDialogComponent implements OnInit {
 
     const dialogRef = this.dialog.open(ViewIdCodeFormDialogComponent, {
       data: obj,
-      width: '30%',
+      width: '300px',
       minHeight: '80%',
     });
 
