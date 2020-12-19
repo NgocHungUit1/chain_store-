@@ -28,6 +28,7 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
   option: Option;
   nameStore: string;
   money: string;
+  type: string;
 
   constructor(
     public dialogRef: MatDialogRef<ViewIdCodeFormDialogComponent>,
@@ -39,6 +40,7 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
     this.local_data = {...data};
     this.product_id = this.local_data.product_id;
     this.option = this.local_data.option;
+    this.type = this.local_data.type;
   }
 
   onNoClick(): void {
@@ -98,41 +100,110 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
   generatePDF() {
     const product_name = this.product?.product_name;
     const so_luong = this.option.so_luong;
+    const type = this.type;
     setTimeout(() => domtoimage.toPng(this.container.nativeElement)
       .then(function (dataUrl) {
         const img = new Image();
         img.src = dataUrl;
 
-        const pdf = new jsPDF('l', 'mm', [105, 22]);
-        let position = 2;
-        let height = 18;
-        if (product_name.length > 40) {
-          position = 1;
-          height = 20;
-        }
-        const phan_du = so_luong % 3;
-        const so_trang = Math.floor(so_luong / 3);
+        if (type === '104x22') {
+          const format = [105, 22];
+          const pdf = new jsPDF('l', 'mm', format);
+          let position = 2;
+          let height = 18;
+          if (product_name.length > 40) {
+            position = 1;
+            height = 20;
+          }
+          const phan_du = so_luong % 3;
+          const so_trang = Math.floor(so_luong / 3);
 
-        if (so_trang > 0) {
-          for (let i = 1; i <= so_trang; i++) {
-            pdf.addImage(img.src, 'PNG', 0, position, 35, height);
-            pdf.addImage(img.src, 'PNG', 35, position, 35, height);
-            pdf.addImage(img.src, 'PNG', 70, position, 35, height);
-            if (so_trang - i > 0) {
-              pdf.addPage([105, 22], 'l');
+          if (so_trang > 0) {
+            for (let i = 1; i <= so_trang; i++) {
+              pdf.addImage(img.src, 'PNG', 0, position, 35, height);
+              pdf.addImage(img.src, 'PNG', 35, position, 35, height);
+              pdf.addImage(img.src, 'PNG', 70, position, 35, height);
+              if (so_trang - i > 0) {
+                pdf.addPage(format, 'l');
+              }
             }
           }
-        }
 
-        if (phan_du > 0) {
-          pdf.addPage([105, 22], 'l');
-          if (phan_du === 1) {
-            pdf.addImage(img.src, 'PNG', 0, position, 35, height);
-          } else {
-            pdf.addImage(img.src, 'PNG', 0, position, 35, height);
-            pdf.addImage(img.src, 'PNG', 35, position, 35, height);
+          if (phan_du > 0) {
+            pdf.addPage(format, 'l');
+            if (phan_du === 1) {
+              pdf.addImage(img.src, 'PNG', 0, position, 35, height);
+            } else {
+              pdf.addImage(img.src, 'PNG', 0, position, 35, height);
+              pdf.addImage(img.src, 'PNG', 35, position, 35, height);
+            }
           }
-        }
+          pdf.save(product_name + '.pdf');
+
+        } // END '104x22'
+
+
+        if (type === '72x22') {
+          const format = [70, 22];
+          const pdf = new jsPDF('l', 'mm', format);
+          let position = 2;
+          let height = 18;
+          if (product_name.length > 40) {
+            position = 1;
+            height = 20;
+          }
+          const phan_du = so_luong % 2;
+          const so_trang = Math.floor(so_luong / 2);
+
+          if (so_trang > 0) {
+            for (let i = 1; i <= so_trang; i++) {
+              pdf.addImage(img.src, 'PNG', 0, position, 35, height);
+              pdf.addImage(img.src, 'PNG', 35, position, 35, height);
+              if (so_trang - i > 0) {
+                pdf.addPage(format, 'l');
+              }
+            }
+          }
+
+          if (phan_du > 0) {
+            pdf.addPage(format, 'l');
+            pdf.addImage(img.src, 'PNG', 0, position, 35, height);
+          }
+          pdf.save(product_name + '.pdf');
+
+        } // END '72x22'
+
+
+        if (type === '74x22') {
+          const format = [74, 22];
+          const pdf = new jsPDF('l', 'mm', format);
+          let position = 2;
+          let height = 18;
+          if (product_name.length > 40) {
+            position = 1;
+            height = 20;
+          }
+          const phan_du = so_luong % 2;
+          const so_trang = Math.floor(so_luong / 2);
+
+          if (so_trang > 0) {
+            for (let i = 1; i <= so_trang; i++) {
+              pdf.addImage(img.src, 'PNG', 0, position, 36, height);
+              pdf.addImage(img.src, 'PNG', 38, position, 36, height);
+              if (so_trang - i > 0) {
+                pdf.addPage(format, 'l');
+              }
+            }
+          }
+
+          if (phan_du > 0) {
+            pdf.addPage(format, 'l');
+            pdf.addImage(img.src, 'PNG', 0, position, 36, height);
+          }
+          pdf.save(product_name + '.pdf');
+
+        } // END '74x22'
+
 
         // pdf.addImage(img.src, 'PNG', 0, position, 35, height);
         // pdf.addImage(img.src, 'PNG', 35, position, 35, height);
@@ -143,7 +214,6 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
         // pdf.addImage(img.src, 'PNG', 35, position, 35, height);
         // pdf.addImage(img.src, 'PNG', 70, position, 35, height);
 
-        pdf.save(product_name + '.pdf');
 
       })
       .catch(function (error) {
