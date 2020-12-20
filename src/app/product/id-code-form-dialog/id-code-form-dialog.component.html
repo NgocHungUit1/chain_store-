@@ -2,14 +2,14 @@
 
 <div fxFlex="100">
   <div fxLayout="row wrap">
-    <div fxFlex="32">
+    <div fxFlex="22">
       <div mat-dialog-content>
         <h3>Chọn loại giấy in tem mã</h3>
         <form [formGroup]="form">
 
           <mat-form-field>
             <mat-label>Số lượng in</mat-label>
-            <input matInput type="number" min="1" formControlName="so_luong">
+            <input matInput type="number" min="1" formControlName="so_luong" autocomplete="off">
           </mat-form-field>
 
           <mat-form-field>
@@ -61,18 +61,20 @@
           <mat-icon>cancel</mat-icon>
           Bỏ qua
         </button>
+        <br>
+        <small>Lưu ý: Trong trường hợp Mã vạch được in không đọc được, vui lòng sử dụng Mẫu giấy lớn hơn hoặc rút ngắn mã hàng (tên hàng).</small>
       </div>
     </div>
 
     <div fxFlex="2"></div>
 
-    <div fxFlex="32">
+    <div fxFlex="38">
 
       <mat-card>
         <mat-card-content>
           <img mat-card-md-image src="assets/images/id-code-form/3_nhan.jpg">
           <span class="text-card">Mẫu giấy cuộn 3 nhãn (Khổ giấy in nhãn 104x22mm/4.2x0.9 Inch)</span>
-          <button mat-raised-button class="button-card" (click)="openViewIdCodeFormDialog()" color="primary" disabled="disabled">
+          <button mat-raised-button class="button-card" (click)="openViewIdCodeFormDialog('104x22')" color="primary">
             <mat-icon>format_align_justify</mat-icon>
             Xem mã in
           </button>
@@ -83,7 +85,7 @@
         <mat-card-content>
           <img mat-card-md-image src="assets/images/id-code-form/2_nhan.jpg">
           <span class="text-card">Mẫu giấy cuộn 2 nhãn (Khổ giấy in nhãn 72x22mm)</span>
-          <button mat-raised-button class="button-card" color="primary" disabled="disabled" >
+          <button mat-raised-button class="button-card" color="primary" (click)="openViewIdCodeFormDialog('72x22')">
             <mat-icon>format_align_justify</mat-icon>
             Xem mã in
           </button>
@@ -94,7 +96,7 @@
         <mat-card-content>
           <img mat-card-md-image src="assets/images/id-code-form/2_nhan_doi.jpg">
           <span class="text-card">Mẫu giấy cuộn 2 nhãn (Khổ giấy in nhãn 74x22mm)</span>
-          <button mat-raised-button class="button-card" color="primary" disabled="disabled">
+          <button mat-raised-button class="button-card" color="primary" (click)="openViewIdCodeFormDialog('74x22')">
             <mat-icon>format_align_justify</mat-icon>
             Xem mã in
           </button>
@@ -103,9 +105,7 @@
 
     </div>
 
-    <div fxFlex="2"></div>
-
-    <div fxFlex="32">
+    <div fxFlex="38">
       <mat-card>
         <mat-card-content>
           <img mat-card-md-image src="assets/images/id-code-form/12_nhan.jpg">

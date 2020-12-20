@@ -28,11 +28,11 @@ import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 
 import { SharedModule } from './shared/shared.module';
 import { SpinnerComponent } from './shared/spinner.component';
-import { authTokenInterceptorProvider } from "./authentication/auth-token.interceptor";
-import { authInterceptorProvider } from "./authentication/auth.interceptor";
-import { NotifierModule } from "angular-notifier";
-import { OverlayContainer } from "@angular/cdk/overlay";
-import { AngularImageViewerModule } from "angular-x-image-viewer";
+import { authTokenInterceptorProvider } from './authentication/auth-token.interceptor';
+import { authInterceptorProvider } from './authentication/auth.interceptor';
+import { NotifierModule } from 'angular-notifier';
+import { OverlayContainer } from '@angular/cdk/overlay';
+import { AngularImageViewerModule } from 'angular-x-image-viewer';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { PopupDeleteDialogComponent } from './common/popup-delete-dialog/popup-delete-dialog.component';

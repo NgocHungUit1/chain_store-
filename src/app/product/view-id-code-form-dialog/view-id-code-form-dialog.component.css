@@ -1,5 +1,30 @@
 #contentToConvert {
-  background-color: red;
   text-align: center;
+
 }
 
+.name-store {
+  max-width: 250px;
+  margin: auto;
+}
+
+#image-print {
+  max-width: 260px;
+  background-color: white;
+  /*margin: auto;*/
+  border: 1px dotted black;
+}
+
+.product-name {
+  max-width: 250px;
+  word-break: break-all;
+  margin: auto;
+}
+
+#barcode {
+  margin-bottom: -11px;
+}
+
+button {
+  margin-right:10px
+}

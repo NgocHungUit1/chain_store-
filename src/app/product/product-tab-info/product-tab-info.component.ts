@@ -109,16 +109,6 @@ export class ProductTabInfoComponent implements OnChanges {
   }
 
   openIdCodeFormDialog(id) {
-    // <img id="barcode"/>
-
-    // JsBarcode('#barcode')
-    // .options({font: 'OCR-B'}) // Will affect all barcodes
-    // .CODE128('HH036-12', {fontSize: 18, textMargin: 0})
-    // // .blank(20) // Create space between the barcodes
-    // // .EAN5('12345', {height: 85, textPosition: 'top', fontSize: 16, marginTop: 15})
-    // .render();
-    // console.log('nghia');
-    // return;
 
     const obj = {
       product_id: id,
@@ -127,7 +117,7 @@ export class ProductTabInfoComponent implements OnChanges {
     const dialogRef = this.dialog.open(IdCodeFormDialogComponent, {
       data: obj,
       width: '80%',
-      minHeight: '80%',
+      minHeight: '90%',
     });
 
     dialogRef.afterClosed().subscribe(result => {

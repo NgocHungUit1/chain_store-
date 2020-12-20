@@ -61,26 +61,20 @@ export class IdCodeFormDialogComponent implements OnInit {
 
   }
 
-  openViewIdCodeFormDialog() {
-    // <img id="barcode"/>
-
-    // JsBarcode('#barcode')
-    // .options({font: 'OCR-B'}) // Will affect all barcodes
-    // .CODE128('HH036-12', {fontSize: 18, textMargin: 0})
-    // // .blank(20) // Create space between the barcodes
-    // // .EAN5('12345', {height: 85, textPosition: 'top', fontSize: 16, marginTop: 15})
-    // .render();
-    // console.log('nghia');
-    // return;
+  openViewIdCodeFormDialog(type: string) {
+    const data = this.form.getRawValue();
+    // 130/83
 
     const obj = {
-      // product_id: id,
+      product_id: this.product_id,
+      option: data,
+      type: type,
     };
 
     const dialogRef = this.dialog.open(ViewIdCodeFormDialogComponent, {
       data: obj,
-      width: '30%',
-      minHeight: '80%',
+      width: '300px',
+      minHeight: '70%',
     });
 
     dialogRef.afterClosed().subscribe(result => {
