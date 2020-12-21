@@ -1,0 +1,100 @@
+<mat-sidenav-container>
+  <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true">
+    <mat-toolbar class="dv-header">
+      <button mat-icon-button>
+        <mat-icon>filter_list</mat-icon>
+      </button>
+      <h3>Thiết lập</h3>
+    </mat-toolbar>
+
+    <mat-card class="time-filter-info">
+      <mat-card-content>
+        <mat-radio-group [(ngModel)]="settingsType"
+                         class="type-radio-group">
+          <mat-radio-button class="radio-button-report-type" value="transaction">
+            Giao dịch
+            <button mat-icon-button aria-label="add">
+              <mat-icon>sync_alt</mat-icon>
+            </button>
+          </mat-radio-button>
+          <mat-radio-button class="radio-button-report-type" value="partner">
+            Đối tác
+            <button mat-icon-button aria-label="add">
+              <mat-icon>contacts</mat-icon>
+            </button>
+          </mat-radio-button>
+          <mat-radio-button class="radio-button-report-type" value="store">
+            Hàng hóa
+            <button mat-icon-button aria-label="add">
+              <mat-icon>web_asset</mat-icon>
+            </button>
+          </mat-radio-button>
+
+        </mat-radio-group>
+
+      </mat-card-content>
+    </mat-card>
+
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar class="dv-header">
+      <button mat-icon-button (click)="leftside.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <h3>
+        {{ settingsTypeName[settingsType] }}
+      </h3>
+
+      <span fxFlex="1 1 0%"></span>
+
+
+    </mat-toolbar>
+    <div fxLayout="row wrap">
+      <div fxFlex="100">
+
+        <div class="table-container">
+          <div class="table-loading-shade" *ngIf="isLoadingResults || isRateLimitReached">
+            <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+            <div class="table-rate-limit-reached" *ngIf="isRateLimitReached">
+              GitHub's API rate limit has been reached. It will be reset in one minute.
+            </div>
+          </div>
+
+          <div class=" table-responsive">
+
+            <mat-card *ngIf=" settingsType === 'transaction' ">
+              <mat-card-content>
+                <div fxLayout="row wrap">
+
+                  <div fxFlex="60px" class="custom-toggle">
+                    <mat-slide-toggle></mat-slide-toggle>
+                  </div>
+
+                  <div fxFlex="auto">
+                    <b>Hỗ trợ các khoản chi phí nhập hàng</b><br>
+                    <span> Cho phép tạo và quản lý các khoản chi phí khi nhập hàng như: phí dịch vụ, thuế hải quan… được tính
+                    bằng số tiền VNĐ hoặc % giá trị phiếu nhập.
+                    </span>
+                  </div>
+
+                  <div fxFlex="100px">
+                    <a mat-stroked-button routerLink="." disabled="disabled">Chi tiết</a>
+                  </div>
+
+                </div>
+              </mat-card-content>
+            </mat-card>
+
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+
+
+
+

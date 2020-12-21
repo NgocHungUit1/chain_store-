@@ -68,7 +68,7 @@ export class SaleReportMainComponent implements OnInit {
   buildFromTimeFilter() {
     this.timeFilter = this.fb.group({
       typeTime: [
-        'default'
+        'transaction'
       ],
     });
   }

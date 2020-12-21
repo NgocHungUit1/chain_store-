@@ -28,7 +28,11 @@ export const SupplierRoutes: Routes = [
       {
         path: 'timesheet',
         loadChildren: () => import('../timesheet/timesheet.module').then(m => m.TimesheetModule)
-      }
+      },
+      {
+        path: 'settings',
+        loadChildren: () => import('../settings/settings.module').then(m => m.SettingsModule)
+      },
     ]
   }
 ];
