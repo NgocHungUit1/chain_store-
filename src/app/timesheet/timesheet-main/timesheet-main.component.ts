@@ -15,7 +15,7 @@ import * as moment from 'moment';
 import {MatCalendar} from '@angular/material/datepicker';
 import {ClockingFormDialogComponent} from '../../clocking/clocking-form-dialog/clocking-form-dialog.component';
 import {EmployeeService} from '../../employee/employee.service';
-import {EmployeeFilter} from '../../employee/employee.model';
+import {Employee, EmployeeFilter} from '../../employee/employee.model';
 import {EmployeeFormDialogComponent} from '../../employee/employee-form-dialog/employee-form-dialog.component';
 import {TimesheetFormDeleteClockingDialogComponent} from '../timesheet-form-delete-clocking-dialog/timesheet-form-delete-clocking-dialog.component';
 
@@ -266,22 +266,18 @@ export class TimesheetMainComponent extends ListComponentBase implements OnInit 
     let result;
     switch (this.typeDateTimeSheet) {
       case 'day':
-        result = this.dataSource.filter(item => item.timesheet.shifts_id === shiftsId
+        result = this.dataSource.filter(item => item.timesheet && item.timesheet.shifts_id === shiftsId
           && moment(this.dateNowTimesheet).format('YYYY-MM-DD') === moment(item.start_time).format('YYYY-MM-DD'));
         break;
       case 'week':
       case 'month':
-        result = this.dataSource.filter(item => item.timesheet.shifts_id === shiftsId);
+        result = this.dataSource.filter(item => item.timesheet && item.timesheet.shifts_id === shiftsId);
         break;
     }
     const data = [];
     result.forEach(function (item) {
-      if (data.length === 0) {
+      if (!data.find(x => item.timesheet.employee && item.timesheet.employee.id != null && x.id === item.timesheet.employee.id)) {
         data.push(item.timesheet.employee);
-      } else {
-        if (!data.find(x => x.id === item.timesheet.employee_id)) {
-          data.push(item.timesheet.employee);
-        }
       }
     });
     return data;
@@ -358,13 +354,13 @@ export class TimesheetMainComponent extends ListComponentBase implements OnInit 
   }
 
   clockingEmployeeDay(shiftsId, employeeId, date) {
-    return this.dataSource.find(item => item.timesheet.shifts_id === shiftsId &&
+    return this.dataSource.find(item => item.timesheet && item.timesheet.shifts_id === shiftsId &&
       item.timesheet.employee_id === employeeId &&
       moment(date).format('YYYY-MM-DD') === moment(item.start_time).format('YYYY-MM-DD'));
   }
 
   backgroundClockingEmployeeDay(shiftsId, employeeId, date) {
-    const clocking = this.dataSource.find(item => item.timesheet.shifts_id === shiftsId &&
+    const clocking = this.dataSource.find(item => item.timesheet && item.timesheet.shifts_id === shiftsId &&
       item.timesheet.employee_id === employeeId &&
       moment(date).format('YYYY-MM-DD') === moment(item.start_time).format('YYYY-MM-DD'));
     if (clocking) {
