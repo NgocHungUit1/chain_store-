@@ -33,6 +33,10 @@ export const SupplierRoutes: Routes = [
         path: 'settings',
         loadChildren: () => import('../settings/settings.module').then(m => m.SettingsModule)
       },
+      {
+        path: 'expenses-other',
+        loadChildren: () => import('../expenses-order/expenses-order.module').then(m => m.ExpensesOrderModule)
+      },
     ]
   }
 ];

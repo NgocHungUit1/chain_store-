@@ -1,24 +1,25 @@
-import {Component, Inject, OnInit, Optional} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Location} from '../../location/location.model';
-import {Observable} from 'rxjs/Observable';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {NotifierService} from 'angular-notifier';
-import {LocationService} from '../../location/location.service';
-import {map, startWith} from 'rxjs/operators';
+import { Component, Inject, OnInit, Optional } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Location } from '../../location/location.model';
+import { Observable } from 'rxjs/Observable';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { NotifierService } from 'angular-notifier';
+import { LocationService } from '../../location/location.service';
+import { map, startWith } from 'rxjs/operators';
 import * as moment from 'moment';
-import {EmployeeService} from '../employee.service';
-import {UserService} from '../../user/user.service';
-import {UserFilter} from '../../user/user.model';
-import {UserFormDialogComponent} from '../../user/user-form-dialog/user-form-dialog.component';
-import {BranchService} from '../../branch/branch.service';
-import {BranchFilter} from '../../branch/branch.model';
+import { EmployeeService } from '../employee.service';
+import { UserService } from '../../user/user.service';
+import { UserFilter } from '../../user/user.model';
+import { UserFormDialogComponent } from '../../user/user-form-dialog/user-form-dialog.component';
+import { BranchService } from '../../branch/branch.service';
+import { BranchFilter } from '../../branch/branch.model';
 
 class ImageSnippet {
   pending = false;
   status = 'init';
 
-  constructor(public src: string, public file: File) {}
+  constructor(public src: string, public file: File) {
+  }
 }
 
 @Component({
@@ -71,7 +72,7 @@ export class EmployeeFormDialogComponent implements OnInit {
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object
   ) {
 
-    this.local_data = { ...data };
+    this.local_data = {...data};
     this.employee_id = this.local_data.employee_id;
 
   }
@@ -83,8 +84,8 @@ export class EmployeeFormDialogComponent implements OnInit {
   initForm() {
     this.form = this.fb.group({
       name: [null, Validators.compose([
-          Validators.required,
-          Validators.maxLength(32)
+        Validators.required,
+        Validators.maxLength(32)
       ])],
       image_url: [null, Validators.compose([
         Validators.maxLength(255)
@@ -242,6 +243,7 @@ export class EmployeeFormDialogComponent implements OnInit {
   displayLocation(location?: Location): string | undefined {
     return location ? location.name : undefined;
   }
+
   submit() {
     if (this.form.valid) {
       const data = this.form.getRawValue();

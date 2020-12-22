@@ -64,23 +64,33 @@
 
             <mat-card *ngIf=" settingsType === 'transaction' ">
               <mat-card-content>
-                <div fxLayout="row wrap">
-
+                <div fxLayout="row wrap" class="line-option">
                   <div fxFlex="60px" class="custom-toggle">
-                    <mat-slide-toggle></mat-slide-toggle>
+                    <mat-slide-toggle
+                      [checked]="optionStore_transaction_expenses_order?.value === 'yes' "
+                      (change)="changeSlideToggle('transaction_expenses_order')"
+                    ></mat-slide-toggle>
+                  </div>
+                  <div fxFlex="auto">
+                    <b><a routerLink="/partner/expenses-other">Thu khác khi bán hàng >> </a></b>
+                    <br>
+                    <span> Cho phép tạo và quản lý các khoản thu khác khi bán hàng như: phí giao hàng, phí dịch vụ, VAT...Phí thu khác được tính bằng số tiền VNĐ hoặc % giá trị đơn hàng.
+                    </span>
                   </div>
 
+                </div>
+
+                <div fxLayout="row wrap" class="line-option">
+                  <div fxFlex="60px" class="custom-toggle">
+                    <mat-slide-toggle disabled="disabled"></mat-slide-toggle>
+                  </div>
                   <div fxFlex="auto">
-                    <b>Hỗ trợ các khoản chi phí nhập hàng</b><br>
+                    <b><a routerLink="." disabled="disabled">Hỗ trợ các khoản chi phí nhập hàng >> </a></b>
+                    <br>
                     <span> Cho phép tạo và quản lý các khoản chi phí khi nhập hàng như: phí dịch vụ, thuế hải quan… được tính
                     bằng số tiền VNĐ hoặc % giá trị phiếu nhập.
                     </span>
                   </div>
-
-                  <div fxFlex="100px">
-                    <a mat-stroked-button routerLink="." disabled="disabled">Chi tiết</a>
-                  </div>
-
                 </div>
               </mat-card-content>
             </mat-card>
