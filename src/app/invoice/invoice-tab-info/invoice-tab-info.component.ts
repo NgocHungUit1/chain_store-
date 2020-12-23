@@ -2,14 +2,13 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NotifierService } from 'angular-notifier';
-import { element } from 'protractor';
 import { PopupDeleteDialogComponent } from '../../common/popup-delete-dialog/popup-delete-dialog.component';
 import { ItemInvoice, ProductInfo } from '../../sale/order.model';
 import { OrderService } from '../../sale/order.service';
 import { Invoice } from '../invoice.model';
 import { InvoiceService } from '../invoice.service';
-import { SaleMainComponent } from '../../sale/sale-main/sale-main.component';
 import { MedicineService } from '../../medicine/medicine.service';
+import { jsPDF } from 'jspdf';
 
 @Component({
   selector: 'app-invoice-tab-info',
@@ -32,11 +31,11 @@ export class InvoiceTabInfoComponent implements OnInit {
     'total_price': 'Thành tiền'
   };
 
-  tongSoLuong: number = 0;
-  tongTienHang: number = 0;
-  giamGiaHoaDon: number = 0;
+  tongSoLuong = 0;
+  tongTienHang = 0;
+  giamGiaHoaDon = 0;
   KhachCanTra: number;
-  KhachDaTra: number = 0;
+  KhachDaTra = 0;
   giamGiaHoaDonText = '';
   orderStatus = {
     'pending': 'Đang xử lý',
@@ -48,9 +47,11 @@ export class InvoiceTabInfoComponent implements OnInit {
     'done': 'label label-success'
   };
 
-  autoPrintInSoLo: boolean = false;
+  autoPrintInSoLo = false;
   allPermission: any;
   isAdminStore: boolean;
+
+  domPrint = '';
 
   constructor(
     private dialog: MatDialog,
@@ -68,6 +69,7 @@ export class InvoiceTabInfoComponent implements OnInit {
     const detail = this.invoice.detail;
     this.tongTienHang = invoiceData.total_price;
     this.KhachDaTra = invoiceData.total_payment;
+    // tslint:disable-next-line:no-shadowed-variable
     detail.forEach(element => {
       this.tongSoLuong = this.tongSoLuong + element?.amount;
     });
@@ -151,7 +153,7 @@ export class InvoiceTabInfoComponent implements OnInit {
       this.notifySer.notify('warning', 'Hóa đơn đã có trả hàng, không thể mở phiếu để cập nhật !');
       return;
     }
-    let mItemInvoice = new ItemInvoice();
+    const mItemInvoice = new ItemInvoice();
     mItemInvoice.invoice_id = invoice.id;
     mItemInvoice.active = true;
     mItemInvoice.is_return = false;
@@ -179,7 +181,7 @@ export class InvoiceTabInfoComponent implements OnInit {
       });
       element.product.productUnits = units;
 
-      let item = units.find(ele => ele.is_base === 1);
+      const item = units.find(ele => ele.is_base === 1);
 
       const mProductInfo = new ProductInfo();
       mProductInfo.amount = element.amount;
@@ -328,7 +330,7 @@ export class InvoiceTabInfoComponent implements OnInit {
     this.orderService.getReturns(invoice.id).subscribe(resultReturn => {
 
       // return;
-      let mItemInvoice = new ItemInvoice();
+      const mItemInvoice = new ItemInvoice();
       mItemInvoice.invoice_id = invoice.id;
       mItemInvoice.active = true;
       mItemInvoice.is_return = true;
@@ -346,14 +348,14 @@ export class InvoiceTabInfoComponent implements OnInit {
         type: invoice.discount_type
       };
 
-      let aProductInfo: ProductInfo[] = [];
+      const aProductInfo: ProductInfo[] = [];
       const detail = invoice.detail || [];
 
       if (resultReturn !== undefined && resultReturn !== null) {
         detail.forEach(element => {
 
-          let units = element?.product?.productUnits;
-          let item = units.find(element => element.is_base == 1);
+          const units = element?.product?.productUnits;
+          const item = units.find(element => element.is_base == 1);
           const mProductInfo = new ProductInfo();
           if (resultReturn[item['id']] !== undefined) {
             mProductInfo.amount = 0;
@@ -385,8 +387,8 @@ export class InvoiceTabInfoComponent implements OnInit {
         });
       } else {
         detail.forEach(element => {
-          let units = element?.product?.productUnits;
-          let item = units.find(element => element.is_base == 1);
+          const units = element?.product?.productUnits;
+          const item = units.find(element => element.is_base == 1);
           const mProductInfo = new ProductInfo();
           mProductInfo.amount = 0;
           mProductInfo.product_id = element.product?.id;
