@@ -8,7 +8,7 @@ export class ExpensesOrder {
   auto: string;
   return_auto: string;
   user: User;
-  value: string;
+  value: number;
   type: string;
   sort: string;
   status: number;
@@ -23,6 +23,8 @@ export class ExpensesOrderFilter extends ApiFilterBase {
   page = 1;
   pageSize = 15;
   sort = '';
+  status = '';
+  auto = '';
 
   getModelSearch() {
     return 'ExpensesOrderSearch';

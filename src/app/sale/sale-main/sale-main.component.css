@@ -2,7 +2,6 @@ html .page-wrapper .page-content {
   padding: 0px;
 }
 
-
 .container-action-sale {
   background-color: #ffffff;
   position: relative;
@@ -192,7 +191,7 @@ html .page-wrapper .page-content {
 }
 
 .branch-action {
-  padding-bottom: 20px;
+  /*padding-bottom: 20px;*/
 }
 
 .price-discount-text {

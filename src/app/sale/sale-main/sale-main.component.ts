@@ -21,6 +21,10 @@ import { CustomerService } from '../../customer/customer.service';
 import { UserService } from '../../user/user.service';
 import { User } from '../../user/user.model';
 import * as numeral from 'numeral';
+import { OptionStoreService } from '../../common/option-store.service';
+import { OptionStore } from '../../common/option-store.model';
+import { ExpensesOrderService } from '../../expenses-order/expenses-order.service';
+import { ExpensesOrder, ExpensesOrderFilter } from '../../expenses-order/expenses-order.model';
 
 @Component({
   selector: 'app-sale-main',
@@ -29,6 +33,7 @@ import * as numeral from 'numeral';
   styleUrls: ['./sale-main.component.css']
 })
 export class SaleMainComponent implements OnInit {
+
 
   constructor(
     private fb: FormBuilder,
@@ -39,9 +44,15 @@ export class SaleMainComponent implements OnInit {
     private priceListProductSer: PriceListProductService,
     private customerService: CustomerService,
     private userService: UserService,
+    private optionStoreService: OptionStoreService,
+    private expensesOrderService: ExpensesOrderService,
   ) {
 
   }
+
+  optionStore_transaction_expenses_order: OptionStore = null;
+  expenseOrder = 0; // thu khac
+  expenseOrders: ExpensesOrder[] = null;
 
   selectProduct = new FormControl();
   public filteredProducts: Observable<Product[]>;
@@ -103,6 +114,8 @@ export class SaleMainComponent implements OnInit {
 
     await this.handleAddCustomerExist(mItemInvoice);
 
+    await this.getDataExpenseOrder();
+
     await this.handleDetailOrder(mItemInvoice);
 
     await this.handleDiscountSiderBar(mItemInvoice);
@@ -110,6 +123,45 @@ export class SaleMainComponent implements OnInit {
     await this.handlePaymentSiderBar(mItemInvoice);
 
     this.localItemInvoice = mItemInvoice;
+
+  }
+
+  getDataExpenseOrder() {
+    if (this.optionStore_transaction_expenses_order == null) {
+
+    }
+    this.optionStoreService.getValue('transaction_expenses_order').subscribe(res => {
+      this.optionStore_transaction_expenses_order = res;
+      if (this.optionStore_transaction_expenses_order?.value === 'yes') {
+        const expensesOrderFilter = new ExpensesOrderFilter();
+        expensesOrderFilter.status = '10';
+        expensesOrderFilter.auto = '1';
+        if (this.expenseOrders == null) {
+          this.expensesOrderService.getList(expensesOrderFilter).subscribe(expensesOrders => {
+            this.expenseOrders = <ExpensesOrder[]>expensesOrders.body;
+            this.expenseOrder = 0;
+            this.expenseOrders.forEach((element: ExpensesOrder) => {
+              if (element.type === 'price') {
+                this.expenseOrder += element.value;
+              } else {
+                this.expenseOrder += element.value * this.sumPrice / 100;
+              }
+            });
+          });
+        } else {
+          // this.expenseOrders = <ExpensesOrder[]>expensesOrders.body;
+          this.expenseOrder = 0;
+          this.expenseOrders.forEach((element: ExpensesOrder) => {
+            if (element.type === 'price') {
+              this.expenseOrder += element.value;
+            } else {
+              this.expenseOrder += element.value * this.sumPrice / 100;
+            }
+          });
+        }
+
+      }
+    });
   }
 
   getNewItemInvoice() {
@@ -202,7 +254,7 @@ export class SaleMainComponent implements OnInit {
          *
          * this.common_idOld !== priceBookID
          */
-        if (this.compareEqualListProduct(listProductUnitIdChoose) === 0 || this.changePriceBook == true) {
+        if (this.compareEqualListProduct(listProductUnitIdChoose) === 0 || this.changePriceBook === true) {
           this.listProductUnitIdChooseOld = listProductUnitIdChoose;
           this.common_idOld = priceBookID;
           const common_id = priceBookID;
@@ -253,6 +305,7 @@ export class SaleMainComponent implements OnInit {
                 bug
                  */
                 // console.log(this.listProduct);
+
                 const list = this.listProduct;
                 this.listProduct = [];
                 this.listProduct = list;
@@ -264,6 +317,8 @@ export class SaleMainComponent implements OnInit {
           });
           this.listProduct.reverse();
           this.changePriceBook = false;
+
+
         } else {
           /**
            * Truong hop: khong thay doi vs sl , pricebook
@@ -407,6 +462,7 @@ export class SaleMainComponent implements OnInit {
    * Init Component
    */
   ngOnInit(): void {
+    // this.optionStore_transaction_expenses_order.value = 'no';
     this.isLoadingResults = true;
     this.allPermission = sessionStorage.getItem('allPermission').split(',');
     this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
@@ -434,6 +490,7 @@ export class SaleMainComponent implements OnInit {
       this.loadData();
     });
     this.isLoadingResults = false;
+
 
     /**
      * Tim kiem khach hang
@@ -905,6 +962,7 @@ export class SaleMainComponent implements OnInit {
   }
 
   // ------------------------------------------------------ PAYMENT ----------------------------------------------------------//
+
   payment() {
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;

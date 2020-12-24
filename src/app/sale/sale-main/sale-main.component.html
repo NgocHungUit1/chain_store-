@@ -292,6 +292,32 @@
             </div>
           </div>
 
+          <div class="order-detail"
+               *ngIf="localItemInvoice?.is_return !== true && optionStore_transaction_expenses_order?.value === 'yes' ">
+            <div fxLayout="row wrap" class="price-product">
+              <div fxFlex="50" class="price-product-text ">
+                <div>
+                  <span [matMenuTriggerFor]="menu"><mat-icon color="primary">info</mat-icon> Thu khác </span>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item *ngFor="let item of expenseOrders ">
+                      <span *ngIf="item?.type ==='price' ; else anotherType;">
+                        {{ item?.no }} - {{ item?.name }} - {{ item?.value | number}} VNĐ
+                      </span>
+                      <ng-template #anotherType>
+                        <span>{{ item?.no }} - {{ item?.name }} - {{ item?.value | number}} %</span>
+                      </ng-template>
+
+                    </button>
+                  </mat-menu>
+                </div>
+
+              </div>
+              <div fxFlex="50" class="price-product-number">
+                <input matInput type="text" value="{{ expenseOrder | number}}">
+              </div>
+            </div>
+          </div>
+
           <div class="customer-need">
 
             <div *ngIf="localItemInvoice?.is_return !== true; else khachCanTra">
@@ -300,7 +326,7 @@
                   <span>Khách cần trả</span>
                 </div>
                 <div fxFlex="50" class="customer-need-number">
-                  <input matInput type="text" value="{{ sumPrice - numberDiscount | number}}">
+                  <input matInput type="text" value="{{ sumPrice - numberDiscount + expenseOrder | number}}">
                 </div>
               </div>
             </div>

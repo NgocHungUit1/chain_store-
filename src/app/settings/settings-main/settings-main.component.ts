@@ -38,7 +38,6 @@ export class SettingsMainComponent implements OnInit {
     this.isLoadingResults = false;
 
     this.optionStoreService.getValue('transaction_expenses_order').subscribe(res => {
-      // console.log(res);
       this.optionStore_transaction_expenses_order = res;
     });
   }
@@ -49,7 +48,7 @@ export class SettingsMainComponent implements OnInit {
       this.optionStore_transaction_expenses_order.value = (this.optionStore_transaction_expenses_order.value === 'no') ? 'yes' : 'no';
       this.optionStoreService.update(this.optionStore_transaction_expenses_order.id,
         this.optionStore_transaction_expenses_order).subscribe(res => {
-        console.log(res);
+        // console.log(res);
       });
     }
   }
