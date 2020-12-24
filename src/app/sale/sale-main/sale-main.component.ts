@@ -126,12 +126,38 @@ export class SaleMainComponent implements OnInit {
 
   }
 
+  handleExpenseOrder() {
+    this.expenseOrder = 0;
+    this.expenseOrders.forEach((element: ExpensesOrder) => {
+      if (element.type === 'price') {
+        element.price = element.value;
+      } else {
+        element.price = element.value * this.sumPrice / 100;
+      }
+      this.expenseOrder += element.price;
+    });
+  }
+  
   getDataExpenseOrder() {
     if (this.optionStore_transaction_expenses_order == null) {
+      this.optionStoreService.getValue('transaction_expenses_order').subscribe(res => {
+        this.optionStore_transaction_expenses_order = res;
+        if (this.optionStore_transaction_expenses_order?.value === 'yes') {
+          const expensesOrderFilter = new ExpensesOrderFilter();
+          expensesOrderFilter.status = '10';
+          expensesOrderFilter.auto = '1';
+          if (this.expenseOrders == null) {
+            this.expensesOrderService.getList(expensesOrderFilter).subscribe(expensesOrders => {
+              this.expenseOrders = <ExpensesOrder[]>expensesOrders.body;
+              this.handleExpenseOrder();
+            });
+          } else {
+            this.handleExpenseOrder();
+          }
+        }
 
-    }
-    this.optionStoreService.getValue('transaction_expenses_order').subscribe(res => {
-      this.optionStore_transaction_expenses_order = res;
+      });
+    } else {
       if (this.optionStore_transaction_expenses_order?.value === 'yes') {
         const expensesOrderFilter = new ExpensesOrderFilter();
         expensesOrderFilter.status = '10';
@@ -139,30 +165,15 @@ export class SaleMainComponent implements OnInit {
         if (this.expenseOrders == null) {
           this.expensesOrderService.getList(expensesOrderFilter).subscribe(expensesOrders => {
             this.expenseOrders = <ExpensesOrder[]>expensesOrders.body;
-            this.expenseOrder = 0;
-            this.expenseOrders.forEach((element: ExpensesOrder) => {
-              if (element.type === 'price') {
-                this.expenseOrder += element.value;
-              } else {
-                this.expenseOrder += element.value * this.sumPrice / 100;
-              }
-            });
+            this.handleExpenseOrder();
           });
         } else {
-          // this.expenseOrders = <ExpensesOrder[]>expensesOrders.body;
-          this.expenseOrder = 0;
-          this.expenseOrders.forEach((element: ExpensesOrder) => {
-            if (element.type === 'price') {
-              this.expenseOrder += element.value;
-            } else {
-              this.expenseOrder += element.value * this.sumPrice / 100;
-            }
-          });
+          this.handleExpenseOrder();
         }
-
       }
-    });
+    }
   }
+
 
   getNewItemInvoice() {
     let mItemInvoice = new ItemInvoice();
@@ -300,11 +311,6 @@ export class SaleMainComponent implements OnInit {
                     }
                   }
                 });
-
-                /*
-                bug
-                 */
-                // console.log(this.listProduct);
 
                 const list = this.listProduct;
                 this.listProduct = [];
@@ -1058,12 +1064,14 @@ export class SaleMainComponent implements OnInit {
         note: this.form.controls['noteSiderBar'].value,
         price_book_id: this.form.controls['priceBookID'].value,
         branch_id: this.form.controls['branch_id'].value,
+        expenses_order_price: this.expenseOrder,
       },
       UserID: mItemInvoice.user.id,
       InvoiceDetail: invoiceDetail,
       PaymentMethod: 'cash', // mItemInvoice.paymentSiderBar?.type,
-      PaymentPrice: this.sumPrice - this.numberDiscount, // tien thanh toan
+      PaymentPrice: this.sumPrice - this.numberDiscount + this.expenseOrder, // tien thanh toan
       KhachNo: this.tienKhachNo,
+      ExpenseOrders: this.expenseOrders,
     };
 
     /**

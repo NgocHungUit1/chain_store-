@@ -5,7 +5,7 @@ import { NotifierService } from 'angular-notifier';
 import { PopupDeleteDialogComponent } from '../../common/popup-delete-dialog/popup-delete-dialog.component';
 import { ItemInvoice, ProductInfo } from '../../sale/order.model';
 import { OrderService } from '../../sale/order.service';
-import { Invoice } from '../invoice.model';
+import { Invoice, InvoiceDetail, InvoiceDetailFilter } from '../invoice.model';
 import { InvoiceService } from '../invoice.service';
 import { MedicineService } from '../../medicine/medicine.service';
 import { jsPDF } from 'jspdf';
@@ -57,6 +57,7 @@ export class InvoiceTabInfoComponent implements OnInit {
     private dialog: MatDialog,
     public notifySer: NotifierService,
     public invoiceService: InvoiceService,
+    // public invoiceService: InvoiceDetailS,
     private orderService: OrderService,
     private router: Router,
     private medicineService: MedicineService,
@@ -170,34 +171,37 @@ export class InvoiceTabInfoComponent implements OnInit {
       number: invoice.discount,
       type: invoice.discount_type
     };
-
     const aProductInfo: ProductInfo[] = [];
-    const detail = invoice.detail || [];
+    const invoiceDetailFilter = new InvoiceDetailFilter();
+    invoiceDetailFilter.invoice_id = invoice.id;
+    invoiceDetailFilter.expand = 'product,quantity,productUnits';
+    this.invoiceService.getInvoiceDetailList(invoiceDetailFilter).subscribe(res => {
+      const detail = res.body; // invoice.detail || [];
+      detail.forEach(element => {
+        const units = element.productUnits;
+        units.forEach(item => {
+          item.quantity_of_stock = Math.floor(element.quantity.number / item.value);
+        });
+        element.product.productUnits = units;
 
-    detail.forEach(element => {
-      const units = element.product.productUnits;
-      units.forEach(item => {
-        item.quantity_of_stock = Math.floor(element.product.quantity_of_stock / item.value);
+        const item = units.find(ele => ele.is_base === 1);
+
+        const mProductInfo = new ProductInfo();
+        mProductInfo.amount = element.amount;
+        mProductInfo.product_id = element.product?.id;
+        mProductInfo.product = element.product;
+        mProductInfo.product.end_price = element.price;
+        mProductInfo.common_price = element.price;
+        mProductInfo.product_unit_id = item['id'];
+        mProductInfo.product_unit_value = item['value'];
+        mProductInfo.base_unit = element.base_unit;
+        aProductInfo.push(mProductInfo);
       });
-      element.product.productUnits = units;
-
-      const item = units.find(ele => ele.is_base === 1);
-
-      const mProductInfo = new ProductInfo();
-      mProductInfo.amount = element.amount;
-      mProductInfo.product_id = element.product?.id;
-      mProductInfo.product = element.product;
-      mProductInfo.product.end_price = element.price;
-      mProductInfo.common_price = element.price;
-      mProductInfo.product_unit_id = item['id'];
-      mProductInfo.product_unit_value = item['value'];
-      mProductInfo.base_unit = element.base_unit;
-      aProductInfo.push(mProductInfo);
+      mItemInvoice.listProduct = aProductInfo;
+      this.orderService.addItemInvoiceUpdate(mItemInvoice);
+      this.router.navigate(['/sale']);
     });
-    mItemInvoice.listProduct = aProductInfo;
-    this.orderService.addItemInvoiceUpdate(mItemInvoice);
-    // debugger;
-    this.router.navigate(['/sale']);
+
   }
 
   /**

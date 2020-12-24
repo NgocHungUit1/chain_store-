@@ -33,19 +33,6 @@ export class SamplePrescriptionService {
     return url;
   }
 
-  getStateUrl(filter?: SamplePrescriptionFilter) {
-
-    let url = '/sample-prescription/list';
-    if (!filter.page) {
-      filter.page = 1;
-    }
-    if (!filter.pageSize) {
-      filter.pageSize = 20;
-    }
-    url += '?' + filter.toFilterString();
-    return url;
-  }
-
   getList(filter?: SamplePrescriptionFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrl(filter);
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});

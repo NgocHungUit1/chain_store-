@@ -298,7 +298,7 @@
               <div fxFlex="50" class="price-product-text ">
                 <div>
                   <span [matMenuTriggerFor]="menu"><mat-icon color="primary">info</mat-icon> Thu khác </span>
-                  <mat-menu #menu="matMenu">
+                  <mat-menu #menu="matMenu" yPosition="above" xPosition="before">
                     <button mat-menu-item *ngFor="let item of expenseOrders ">
                       <span *ngIf="item?.type ==='price' ; else anotherType;">
                         {{ item?.no }} - {{ item?.name }} - {{ item?.value | number}} VNĐ

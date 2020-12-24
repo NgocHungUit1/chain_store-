@@ -12,6 +12,7 @@ export class ExpensesOrder {
   type: string;
   sort: string;
   status: number;
+  price: number;
 }
 
 
