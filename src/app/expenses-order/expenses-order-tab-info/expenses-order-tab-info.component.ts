@@ -55,4 +55,10 @@ export class ExpensesOrderTabInfoComponent implements OnChanges {
     });
   }
 
+  deleteItem() {
+    this.expensesOrderService.delete(this.expensesOrder.id).subscribe(res => {
+      this.reload.emit(null);
+    });
+  }
+
 }
