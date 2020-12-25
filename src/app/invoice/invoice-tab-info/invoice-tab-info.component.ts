@@ -221,7 +221,6 @@ export class InvoiceTabInfoComponent implements OnInit {
    */
   printInvoice(invoice_id: number) {
     this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
-      const address = (res?.customer?.address !== null && res?.customer?.address !== undefined) ? res?.customer?.address : '';
       const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
       const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
       let printContent = '<title>' + res?.invoice_no + '</title>';
@@ -244,19 +243,22 @@ export class InvoiceTabInfoComponent implements OnInit {
         '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +
         '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
-        '<p style="">Khách hàng: ' + customer_name + '</p>' +
-        '<p style="">SĐT: ' + customer_phone + '</p>' +
-        '<p style="">Địa chỉ: ' + address + '</p>' +
-        '<table>' +
+        '<p style="">Khách hàng: ' + customer_name + '</p>';
+
+      if (customer_phone !== '') {
+        printContent += '<p style="">SĐT: ' + customer_phone + '</p>';
+      }
+
+      printContent += '<table>' +
         '<tr>' +
         '<th>Đơn giá</th>' +
-        '<th style="text-align:center;">Số lượng</th>';
+        '<th style="text-align:center;">SL</th>';
 
       if (this.autoPrintInSoLo === true) {
         printContent += '<th style="text-align:left;">Số lô</th>';
       }
 
-      printContent += '<th style="text-align:center;">Thành tiền</th>' +
+      printContent += '<th style="text-align:center;">T.Tiền</th>' +
         '</tr>';
 
       const detail = res.detail;
@@ -347,10 +349,10 @@ export class InvoiceTabInfoComponent implements OnInit {
         email: invoice.user.email,
         username: invoice.user.username
       };
-      mItemInvoice.discountSiderBar = {
-        number: invoice.discount,
-        type: invoice.discount_type
-      };
+      // mItemInvoice.discountSiderBar = {
+      //   number: invoice.discount,
+      //   type: invoice.discount_type
+      // };
 
       const aProductInfo: ProductInfo[] = [];
       const detail = invoice.detail || [];

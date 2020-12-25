@@ -18,7 +18,7 @@ import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operat
 import { MedicineService } from '../../medicine/medicine.service';
 import { of } from 'rxjs/internal/observable/of';
 import { ManufacturerService } from '../manufacturer.service';
-import { ManufacturerFilter } from '../manufacturer.model';
+import { Manufacturer, ManufacturerFilter } from '../manufacturer.model';
 import { ProductManufacturerFormDialogComponent } from '../product-manufacturer-form-dialog/product-manufacturer-form-dialog.component';
 import * as numeral from 'numeral';
 import { log } from 'util';
@@ -595,10 +595,19 @@ export class ProductMedicineDialogComponent implements OnInit {
   }
 
   selectedMedicine(medicine) {
+
     this.form.patchValue({
       medicine_id: medicine['id'],
       product_name: medicine['medicine_name'],
       medicine: medicine,
+    });
+    this.manufacturerSer.save({'name': medicine['manufacturer']}).subscribe(res => {
+      const result = <Manufacturer>res;
+      medicine.manufacturer = result['id'];
+      this.form.patchValue({
+        medicine: medicine,
+      });
+      this.manufacturers.push(result);
     });
   }
 

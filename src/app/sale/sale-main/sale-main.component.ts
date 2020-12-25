@@ -132,12 +132,12 @@ export class SaleMainComponent implements OnInit {
       if (element.type === 'price') {
         element.price = element.value;
       } else {
-        element.price = element.value * this.sumPrice / 100;
+        element.price = (element.value * this.sumPrice) / 100;
       }
       this.expenseOrder += element.price;
     });
   }
-  
+
   getDataExpenseOrder() {
     if (this.optionStore_transaction_expenses_order == null) {
       this.optionStoreService.getValue('transaction_expenses_order').subscribe(res => {
@@ -549,6 +549,7 @@ export class SaleMainComponent implements OnInit {
 
   upAmountProduct(product: Product, i: any) {
     this.orderService.upAmountProduct(product, i);
+    this.handleExpenseOrder();
   }
 
   upAmountProductReturn(product: Product, i: any) {
@@ -557,6 +558,7 @@ export class SaleMainComponent implements OnInit {
 
   downAmountProduct(product_id, i: any) {
     this.orderService.downAmountProduct(product_id, i);
+    this.handleExpenseOrder();
   }
 
   inputAmountProduct(product_id, value) {
@@ -779,7 +781,6 @@ export class SaleMainComponent implements OnInit {
    */
   printInvoice(invoice_id: number) {
     this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
-      const address = (res?.customer?.address !== null && res?.customer?.address !== undefined) ? res?.customer?.address : '';
       const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
       const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
       let printContent = '<title>' + res?.invoice_no + '</title>';
@@ -802,19 +803,19 @@ export class SaleMainComponent implements OnInit {
         '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +
         '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
-        '<p style="">Khách hàng: ' + customer_name + '</p>' +
-        '<p style="">SĐT: ' + customer_phone + '</p>' +
-        '<p style="">Địa chỉ: ' + address + '</p>' +
-        '<table>' +
+        '<p style="">Khách hàng: ' + customer_name + '</p>';
+      if (customer_phone !== '') {
+        printContent += '<p style="">SĐT: ' + customer_phone + '</p>';
+      }
+      printContent += '<table>' +
         '<tr>' +
         '<th>Đơn giá</th>' +
-        '<th style="text-align:center;">Số lượng</th>';
+        '<th style="text-align:center;">SL</th>';
 
       if (this.autoPrintInSoLo === true) {
         printContent += '<th style="text-align:left;">Số lô</th>';
       }
-
-      printContent += '<th style="text-align:center;">Thành tiền</th>' +
+      printContent += '<th style="text-align:center;">T.Tiền</th>' +
         '</tr>';
 
       const detail = res.detail;
@@ -827,7 +828,7 @@ export class SaleMainComponent implements OnInit {
           printContent += '<tr>' +
             '<td>' + element.product?.product_name + '<br>' + element.price + '</td>' +
             '<td style="text-align:center;">' + element.amount + '</td>';
-          if (this.autoPrintInSoLo == true) {
+          if (this.autoPrintInSoLo === true) {
             printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
           }
           printContent += '<td style="text-align:right;">' + element.total + '</td>' +
@@ -836,7 +837,7 @@ export class SaleMainComponent implements OnInit {
           printContent += '<tr>' +
             '<td>' + element.product?.product_name + ' - ' + element?.base_unit + '<br>' + element.price + '</td>' +
             '<td style="text-align:center;">' + element.amount + '</td>';
-          if (this.autoPrintInSoLo == true) {
+          if (this.autoPrintInSoLo === true) {
             printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
           }
           printContent += '<td style="text-align:right;">' + element.total + '</td>' +
@@ -888,7 +889,6 @@ export class SaleMainComponent implements OnInit {
    */
   printReturns(returns_id: number) {
     this.orderService.getDataReturnsToPrint(returns_id).subscribe(res => {
-      const address = (res?.customer?.address !== null && res?.customer?.address !== undefined) ? res?.customer?.address : '';
       const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
       const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
       let printContent = '<title>' + res?.return_no + '</title>';
@@ -907,14 +907,15 @@ export class SaleMainComponent implements OnInit {
         '<p style="text-align:center; font-weight:600;">HÓA ĐƠN TRẢ HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.return_no + '</p>' +
         '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
-        '<p style="">Khách hàng: ' + customer_name + '</p>' +
-        '<p style="">SĐT: ' + customer_phone + '</p>' +
-        '<p style="">Địa chỉ: ' + address + '</p>' +
-        '<table>' +
+        '<p style="">Khách hàng: ' + customer_name + '</p>';
+      if (customer_phone !== '') {
+        printContent += '<p style="">SĐT: ' + customer_phone + '</p>';
+      }
+      printContent += '<table>' +
         '<tr>' +
         '<th>Đơn giá</th>' +
-        '<th style="text-align:center;">Số lượng</th>' +
-        '<th style="text-align:center;">Thành tiền</th>' +
+        '<th style="text-align:center;">SL</th>' +
+        '<th style="text-align:center;">T.Tiền</th>' +
         '</tr>';
 
       const detail = res.detail;

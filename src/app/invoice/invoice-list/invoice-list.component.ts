@@ -77,7 +77,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     'total_price': 'Tổng tiền hàng',
     'discount': 'Giảm giá',
     'payment': 'Khách đã trả',
-    'national_pharmacy_no': 'Mã phiếu dược quốc gia',
+    'national_pharmacy_no': 'Mã phiếu DQG',
   };
 
   displayedColumns: string[] = [
