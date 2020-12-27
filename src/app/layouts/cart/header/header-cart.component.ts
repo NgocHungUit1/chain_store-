@@ -6,6 +6,7 @@ import { log } from 'console';
 import { OrderService } from '../../../sale/order.service';
 import { ProductService } from '../../../product/product.service';
 import { Product } from '../../../product/product.model';
+import { NotifierService } from 'angular-notifier';
 
 @Component({
   selector: 'app-header-cart',
@@ -13,6 +14,16 @@ import { Product } from '../../../product/product.model';
   styleUrls: ['./header-cart.component.css']
 })
 export class AppHeaderCartComponent {
+
+  constructor(
+    private route: Router,
+    private authSer: AuthService,
+    private orderService: OrderService,
+    private productSer: ProductService,
+    public notifierSer: NotifierService,
+  ) {
+
+  }
   public config: PerfectScrollbarConfigInterface = {};
 
 
@@ -80,14 +91,7 @@ export class AppHeaderCartComponent {
     }
   ];
 
-  constructor(
-    private route: Router,
-    private authSer: AuthService,
-    private orderService: OrderService,
-    private productSer: ProductService,
-  ) {
-
-  }
+  barcode: string;
 
   logout() {
     this.authSer.logout().subscribe(res => {
@@ -97,13 +101,14 @@ export class AppHeaderCartComponent {
     });
   }
 
-  barcode: string;
-
   onkeydown($event) {
     this.barcode = $event.target.value;
     console.log(this.barcode);
     this.productSer.addproductBarcode(this.barcode).subscribe(res => {
       // console.log(res);
+      if (res['errors']) {
+        this.notifierSer.notify('warning', res['errors']);
+      }
       if (res !== null) {
         this.handlePriceListProduct(res);
       }
