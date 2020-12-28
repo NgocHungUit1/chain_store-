@@ -380,10 +380,7 @@
                   </ng-template>
                 </div>
                 <div fxFlex="50" class="excess-cash-number">
-                  <!-- <input matInput type="text" *ngIf="customerPay - sumPrice + numberDiscount > 0"
-                    value="{{ customerPay - sumPrice + numberDiscount | number}}">
-                  <input matInput type="text" *ngIf="customerPay - sumPrice + numberDiscount <= 0" value="{{ customerPay }}"> -->
-                  <!--                  *ngIf=" tienThuaTraKhach > 0; else templateTienThuaTraKhach-->
+
                   <span *ngIf=" tienThuaTraKhach > 0; else templateTienThuaTraKhach">
                     {{ tienThuaTraKhach | number }}
                   </span>

@@ -370,6 +370,7 @@ export class SaleMainComponent implements OnInit {
         }
 
       }
+      this.handleExpenseOrder();
     }
   }
 
@@ -545,6 +546,11 @@ export class SaleMainComponent implements OnInit {
 
   deleleProduct(i: any) {
     this.orderService.deleteProduct(i);
+    const mItemInvoice = this.getNewItemInvoice();
+    if (mItemInvoice.listProduct.length === 0) {
+      this.sumPrice = 0;
+    }
+    this.handleExpenseOrder();
   }
 
   upAmountProduct(product: Product, i: any) {
@@ -749,16 +755,11 @@ export class SaleMainComponent implements OnInit {
   handlePaymentSiderBar(mItemInvoice) {
     const paymentSiderBar = mItemInvoice.paymentSiderBar;
     if (paymentSiderBar !== undefined) {
-      // this.customerPay = paymentSiderBar?.number;
       this.form.patchValue({
         customerPay: paymentSiderBar?.number
       });
-    } else {
-      // this.form.patchValue({
-      //   customerPay : 0
-      // });
-      // this.customerPay = 0;
     }
+    this.handleExpenseOrder();
   }
 
   openSaleCustomerFormDialogComponent() {
@@ -768,10 +769,8 @@ export class SaleMainComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      // console.log(result);
       if (result !== undefined) {
         this.onSelectedCustomer(result);
-        // this.selectCustomer.patchValue(result?.name);
       }
     });
   }
@@ -988,9 +987,6 @@ export class SaleMainComponent implements OnInit {
     }
 
     if (mItemInvoice.user === undefined) {
-
-      // console.log(this.user);
-      // return;
       mItemInvoice.user = this.user;
     }
 
@@ -1114,6 +1110,7 @@ export class SaleMainComponent implements OnInit {
         this.orderService.setLoadDetailPage(true);
       });
     }
+    this.handleExpenseOrder();
 
   }
 
@@ -1310,7 +1307,7 @@ export class SaleMainComponent implements OnInit {
   inputformatNumber(event: any) {
     event.target.value = numeral(event.target.value).format('0,0');
     this.tienThuaTraKhach = numeral(this.form.controls['customerPay'].value).value() - this.sumPrice + this.numberDiscount;
-    this.tienKhachNo = this.sumPrice - this.numberDiscount - numeral(this.form.controls['customerPay'].value).value();
+    this.tienKhachNo = this.sumPrice - this.numberDiscount - numeral(this.form.controls['customerPay'].value).value() + this.expenseOrder;
   }
 
   public checkPermissionSaleDisable() {
