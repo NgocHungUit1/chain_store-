@@ -103,7 +103,7 @@ export class AppHeaderCartComponent {
 
   onkeydown($event) {
     this.barcode = $event.target.value;
-    console.log(this.barcode);
+    // console.log(this.barcode);
     this.productSer.addproductBarcode(this.barcode).subscribe(res => {
       // console.log(res);
       if (res['errors']) {

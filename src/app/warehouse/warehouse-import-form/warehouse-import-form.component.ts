@@ -340,8 +340,15 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   submit(status: number) {
-    if (this.form.valid) {
+    this.recalculateWarehouse();
 
+    if (numeral(this.form.get('paid_amount').value).value() > numeral(this.form.get('total_price').value).value()) {
+      this.form.patchValue({
+        paid_amount: '',
+      });
+    }
+
+    if (this.form.valid) {
       const data = this.form.getRawValue();
       // console.log(data);
       // return;
