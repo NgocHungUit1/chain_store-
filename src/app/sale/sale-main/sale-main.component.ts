@@ -128,14 +128,16 @@ export class SaleMainComponent implements OnInit {
 
   handleExpenseOrder() {
     this.expenseOrder = 0;
-    this.expenseOrders.forEach((element: ExpensesOrder) => {
-      if (element.type === 'price') {
-        element.price = element.value;
-      } else {
-        element.price = (element.value * this.sumPrice) / 100;
-      }
-      this.expenseOrder += element.price;
-    });
+    if (this.expenseOrders !== null) {
+      this.expenseOrders.forEach((element: ExpensesOrder) => {
+        if (element.type === 'price') {
+          element.price = element.value;
+        } else {
+          element.price = (element.value * this.sumPrice) / 100;
+        }
+        this.expenseOrder += element.price;
+      });
+    }
   }
 
   getDataExpenseOrder() {
