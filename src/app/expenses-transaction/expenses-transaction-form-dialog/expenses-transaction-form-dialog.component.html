@@ -1,1 +1,84 @@
-<p>expenses-transaction-form-dialog works!</p>
+<h1 mat-dialog-title>Thêm loại chi phí nhập hàng</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <div fxLayout="row">
+
+      <div fxLayout="row wrap">
+
+        <div fxFlex="100">
+          <mat-form-field>
+            <mat-label>Mã chi phí</mat-label>
+            <input matInput tabindex="1" formControlName="no" required>
+          </mat-form-field>
+        </div>
+        <div fxFlex="100">
+          <mat-form-field>
+            <mat-label>Tên chi phí</mat-label>
+            <input matInput tabindex="2" formControlName="name" autocomplete="off">
+          </mat-form-field>
+        </div>
+
+        <div fxFlex="100">
+          <div fxLayout="row wrap">
+            <div fxFlex="50">
+              <mat-form-field>
+                <mat-label>Giá trị</mat-label>
+                <input matInput tabindex="3" formControlName="value" (keyup)="inputformatNumber($event)"
+                       autocomplete="off">
+              </mat-form-field>
+            </div>
+            <div fxFlex="50">
+              <mat-radio-group aria-label="Select an option" formControlName="type">
+                <mat-radio-button value="price">VNĐ</mat-radio-button>
+                <mat-radio-button value="percent">%</mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </div>
+        </div>
+
+
+        <div fxFlex="100">
+          <mat-form-field>
+            <mat-label>Thứ tự hiển thị</mat-label>
+            <input matInput tabindex="5" formControlName="sort" autocomplete="off">
+          </mat-form-field>
+        </div>
+
+        <div fxFlex="100">
+          <mat-form-field>
+            <mat-label>Hình thức</mat-label>
+            <mat-select formControlName="method">
+              <mat-option value="import">Chi phí nhập trả nhà cung cấp</mat-option>
+              <mat-option value="other">Chi phí khác</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div fxFlex="100">
+          <mat-checkbox class="example-margin" formControlName="auto">
+            Tự động đưa vào phiếu nhập hàng
+          </mat-checkbox>
+        </div>
+
+        <div fxFlex="100">
+          <mat-checkbox class="example-margin" formControlName="return_auto" disabled="disabled">
+            Hoàn lại khi trả hàng nhập
+          </mat-checkbox>
+        </div>
+
+      </div>
+
+    </div>
+
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="14" (click)="submit()">
+    <mat-icon>save</mat-icon>
+    Lưu
+  </button>
+  <button mat-raised-button (click)="onNoClick()" tabindex="-1">
+    <mat-icon>cancel</mat-icon>
+    Bỏ qua
+  </button>
+</div>

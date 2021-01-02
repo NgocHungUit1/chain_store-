@@ -32,6 +32,7 @@ export class SettingsMainComponent implements OnInit {
   isRateLimitReached = false;
 
   optionStore_transaction_expenses_order: OptionStore;
+  optionStore_transaction_expenses_transaction: OptionStore;
 
   ngOnInit(): void {
     this.settingsType = 'transaction';
@@ -39,6 +40,10 @@ export class SettingsMainComponent implements OnInit {
 
     this.optionStoreService.getValue('transaction_expenses_order').subscribe(res => {
       this.optionStore_transaction_expenses_order = res;
+    });
+
+    this.optionStoreService.getValue('transaction_expenses_transaction').subscribe(res => {
+      this.optionStore_transaction_expenses_transaction = res;
     });
   }
 
@@ -48,6 +53,13 @@ export class SettingsMainComponent implements OnInit {
       this.optionStore_transaction_expenses_order.value = (this.optionStore_transaction_expenses_order.value === 'no') ? 'yes' : 'no';
       this.optionStoreService.update(this.optionStore_transaction_expenses_order.id,
         this.optionStore_transaction_expenses_order).subscribe(res => {
+        // console.log(res);
+      });
+    }
+    if (name === 'transaction_expenses_transaction') {
+      this.optionStore_transaction_expenses_transaction.value = (this.optionStore_transaction_expenses_transaction.value === 'no') ? 'yes' : 'no';
+      this.optionStoreService.update(this.optionStore_transaction_expenses_transaction.id,
+        this.optionStore_transaction_expenses_transaction).subscribe(res => {
         // console.log(res);
       });
     }

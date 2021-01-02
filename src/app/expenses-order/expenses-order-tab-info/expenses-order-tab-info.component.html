@@ -51,9 +51,11 @@
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
             <span class="product-field-label">Giá trị: </span>
-            {{ expensesOrder.value | number }}
-            <span *ngIf="expensesOrder.type === 'price'">VNĐ</span>
-            <span *ngIf="expensesOrder.type === 'percent'">%</span>
+            <b>
+              {{ expensesOrder.value | number }}
+              <span *ngIf="expensesOrder.type === 'price'">VNĐ</span>
+              <span *ngIf="expensesOrder.type === 'percent'">%</span>
+            </b>
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48">
