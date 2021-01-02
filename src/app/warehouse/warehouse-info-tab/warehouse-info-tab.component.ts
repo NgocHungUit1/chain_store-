@@ -59,7 +59,6 @@ export class WarehouseInfoTabComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (this.expandedElement) {
       this.apiFilter = this.buildFilterFromParams();
-
       this.loadData();
     }
     this.allPermission = sessionStorage.getItem('allPermission').split(',');

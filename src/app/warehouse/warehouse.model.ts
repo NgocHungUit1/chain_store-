@@ -2,6 +2,7 @@ import { ApiFilterBase } from '../shared/base';
 import { Product } from '../product/product.model';
 import { Supplier } from '../supplier/supplier.model';
 import { User } from '../user/user.model';
+import { ExpensesTransaction } from '../expenses-transaction/expenses-transaction.model';
 
 export class Warehouse {
   id: string;
@@ -22,6 +23,8 @@ export class Warehouse {
   supplier: Supplier;
   created_by: number;
   created_user: User;
+  warehouseExpensess: ExpensesTransaction[];
+  expenses_price: number;
 }
 
 export class WarehouseFilter extends ApiFilterBase {

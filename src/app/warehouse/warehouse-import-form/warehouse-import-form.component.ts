@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
@@ -27,6 +27,10 @@ import { UserService } from '../../user/user.service';
 import * as numeral from 'numeral';
 import { MedicineService } from '../../medicine/medicine.service';
 import { Medicine } from '../../medicine/medicine.model';
+import { ExpensesTransaction, ExpensesTransactionFilter } from '../../expenses-transaction/expenses-transaction.model';
+import { ExpensesTransactionService } from '../../expenses-transaction/expenses-transaction.service';
+import { OptionStoreService } from '../../common/option-store.service';
+import { OptionStore } from '../../common/option-store.model';
 
 @Component({
   selector: 'app-warehouse-import-form',
@@ -46,10 +50,13 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     private fb: FormBuilder,
     private supplierSer: SupplierService,
     private productSer: ProductService,
-    private notifySer: NotifierService
+    private notifySer: NotifierService,
+    private expensesTransactionService: ExpensesTransactionService,
+    private optionStoreService: OptionStoreService,
   ) {
     super();
   }
+
 
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
   @ViewChild('selectColumn') selectColumn;
@@ -62,6 +69,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   branchList: any;
   allPermission: any;
   isAdminStore: boolean;
+  expensesTransaction: number;
+  expensesTransactions: ExpensesTransaction[] = [];
+  optionStore_transaction_expenses: OptionStore;
 
   statuses = [
     {id: '10', name: 'Hoàn thành'},
@@ -85,7 +95,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   displayedColumns: string[] = [];
   columnsToDisplay: string[] = [
     '#',
-    // 'product_no',
     'product_name',
     // 'product_parcel',
     'product_unit_id',
@@ -111,6 +120,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   filteredMedicines: Observable<Medicine[]>;
 
   ngOnInit() {
+
     const date = new FormControl(new Date());
     this.form = this.fb.group({
       date: date,
@@ -127,6 +137,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       remain_amount: [null],
       note: [null],
       branch_id: [null, Validators.required],
+      expenses_price: [0],
     });
 
     this.allPermission = sessionStorage.getItem('allPermission').split(',');
@@ -154,23 +165,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       })
     );
 
-    // this.filteredProducts = this.selectProduct.valueChanges.pipe(
-    //   startWith(''),
-    //   // delay emits
-    //   debounceTime(300),
-    //   // use switch map so as to cancel previous subscribed events, before creating new once
-    //   switchMap(value => {
-    //     if (value !== '') {
-    //       // lookup from github
-    //       return this.lookupProduct(value);
-    //     } else {
-    //       // if no value is present, return null
-    //       return of(null);
-    //     }
-    //   })
-    // );
-
-
     this.selectProduct.valueChanges.subscribe(value => {
       setTimeout(res => {
         if (value !== '') {
@@ -187,13 +181,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     const id = this.route.snapshot.paramMap.get('id');
     if (id !== null && id !== undefined) {
       this.updateModelId = id;
-      this.mainService.getDetail(this.updateModelId, 'supplier').subscribe(res => {
+      this.mainService.getDetail(this.updateModelId, 'supplier,warehouseExpensess').subscribe(res => {
         let dateStr = null;
         if (res['date'] !== null) {
           dateStr = new Date(res['date']).toISOString();
         }
         this.model = res;
-
         this.form.patchValue({
           date: dateStr,
           no: res['no'],
@@ -206,20 +199,28 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           discount_type: (res['discount_type'] !== undefined && res['discount_type'] !== null) ? res['discount_type'] : 'price',
           paid_amount: Number(res['paid_amount']),
           remain_amount: Number(res['remain_amount']),
+          expenses_price: Number(res['expenses_price']),
           note: res['note'],
           branch_id: res['branch_id'].toString(),
         });
+        console.log(Number(res['expenses_price']));
 
-        // console.log(res['discount_amount']);
+        this.expensesTransaction = Number(res['expenses_price']);
+
+        if (this.expensesTransaction > 0 && res['status'] === 10) {
+          this.expensesTransactions = res['warehouseExpensess'];
+        }
+        // debugger;
+        console.log(this.expensesTransactions);
 
 
         this.form.controls['date'].disable();
-        // this.form.controls['supplier'].disable();
         this.form.controls['no'].disable();
         this.form.controls['status'].disable();
         this.form.controls['quantity'].disable();
-        this.form.controls['total_price'].disable();
-        this.form.controls['remain_amount'].disable();
+        // this.form.controls['total_price'].disable();
+        // this.form.controls['remain_amount'].disable();
+        // this.form.controls['expenses_price'].disable();
 
         this.loadData();
       });
@@ -236,6 +237,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         });
       });
     }
+
+    this.setUpExpensesTransactions();
 
     const product_id = localStorage.getItem('product_id');
     if (product_id !== null) {
@@ -282,6 +285,27 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         return of(null);
       })
     );
+  }
+
+  setUpExpensesTransactions() {
+    this.optionStoreService.getValue('transaction_expenses_transaction').subscribe(res => {
+      this.optionStore_transaction_expenses = res;
+      console.log(this.form.get('status').value);
+      console.log(this.updateModelId);
+      if (this.optionStore_transaction_expenses.value === 'yes') {
+        if ((this.form.get('status').value === '9' && this.updateModelId !== null) || this.updateModelId === null) {
+          const filter = new ExpensesTransactionFilter();
+          filter.status = '10';
+          filter.auto = '1';
+          this.expensesTransactionService.getList(filter).subscribe(resEx => {
+            this.expensesTransactions = <ExpensesTransaction[]>resEx.body;
+            this.recalculateWarehouse();
+          });
+        }
+
+      }
+    });
+    // console.log(this.expensesTransactions);
   }
 
   loadData(): void {
@@ -341,15 +365,15 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   submit(status: number) {
     this.recalculateWarehouse();
-
-    if (numeral(this.form.get('paid_amount').value).value() > numeral(this.form.get('total_price').value).value()) {
+    const data = this.form.getRawValue();
+    if (numeral(data['paid_amount']).value() > (numeral(data['total_price']).value() + numeral(data['expenses_price']).value())) {
       this.form.patchValue({
         paid_amount: '',
       });
     }
 
     if (this.form.valid) {
-      const data = this.form.getRawValue();
+
       // console.log(data);
       // return;
       data['supplier_id'] = data['supplier']['id'];
@@ -358,7 +382,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       data['remain_amount'] = numeral(data['remain_amount']).value();
       data['total_amount'] = numeral(data['total_amount']).value();
       data['paid_amount'] = numeral(data['paid_amount']).value();
-
+      data['expenses_price'] = numeral(data['expenses_price']).value();
+      data['expensesTransactions'] = this.expensesTransactions;
       if (this.form.controls['date'].value !== null && typeof this.form.controls['date'].value === 'object') {
         const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
         data['date'] = effDate.toISOString().split('T')[0];
@@ -466,14 +491,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   recalculateWarehouse() {
-    let quantity = 0;
-    let price = 0;
-    let remainAmount = 0;
-    let totalAmount = 0;
-    const paidAmount = this.form.controls['paid_amount'].value;
+    let quantity = 0, price = 0, remainAmount = 0, totalAmount = 0;
+    const paidAmount = numeral(this.form.controls['paid_amount'].value).value();
     const discount = this.form.controls['discount_amount'].value;
     const discount_type = this.form.controls['discount_type'].value;
-
 
     this.data.forEach(item => {
       quantity = Number(quantity) + item['quantity'];
@@ -493,11 +514,29 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       totalAmount = Math.round(Number(price) - Number(price) * Number(discount) / 100);
     }
 
+    if (this.optionStore_transaction_expenses.value === 'yes') {
+      if (this.expensesTransactions !== null) {
+        this.expensesTransaction = 0;
+        this.expensesTransactions.forEach(item => {
+          if (item.type === 'price') {
+            item.price = item.value;
+          } else {
+            item.price = price * (item.value / 100);
+          }
+          this.expensesTransaction += item.price;
+        });
+        remainAmount = remainAmount - this.expensesTransaction; // tinh vao cong no
+      }
+    }
+    // debugger;
+    // console.log(remainAmount);
+
     this.form.patchValue({
       quantity: numeral(quantity).format('0,0'),
       total_price: numeral(price).format('0,0'),
       remain_amount: numeral(remainAmount).format('0,0'),
-      total_amount: numeral(totalAmount).format('0,0')
+      total_amount: numeral(totalAmount).format('0,0'),
+      expenses_price: numeral(this.expensesTransaction).format('0,0')
     });
   }
 
@@ -530,6 +569,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   openParcelFormDialog(index) {
     const dialogRef = this.dialog.open(WarehouseParcelFormDialogComponent, {
       width: '35%',
+      minHeight: '80%',
       data: {parcels: this.parcels}
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -765,8 +805,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
    * Tra du tien tong tien hoa don
    */
   paidAmount() {
+    const data = this.form.getRawValue();
+    const paid_amount = numeral(data['total_amount']).value() + numeral(data['expenses_price']).value();
     this.form.patchValue({
-      paid_amount: this.form.get('total_amount').value,
+      paid_amount: numeral(paid_amount).format('0,0'),
     });
     this.recalculateWarehouse();
   }

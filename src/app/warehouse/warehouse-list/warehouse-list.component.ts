@@ -128,7 +128,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'supplier,created_user,product_count,total_quantity';
+    filter.expand = 'supplier,created_user,product_count,total_quantity,warehouseExpensess';
     filter.type = 'import';
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;

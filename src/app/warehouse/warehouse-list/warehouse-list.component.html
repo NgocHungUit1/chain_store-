@@ -126,7 +126,7 @@
               <ng-container matColumnDef="total_amount">
                 <th mat-header-cell class="column-center-text" *matHeaderCellDef> {{columnsHeader['total_amount']}}</th>
                 <td mat-cell class="column-right-text" *matCellDef="let element">
-                  <b>{{ element.total_amount | currency : 'VND' : ''}}</b>
+                  <b>{{ element.total_amount + element.expenses_price | currency : 'VND' : ''}}</b>
                 </td>
               </ng-container>
 

@@ -203,8 +203,8 @@
           <div fxLayout="row wrap">
             <div fxFlex="60">
               <mat-form-field>
-                <input matInput [matDatepicker]="date_picker" [formControl]="form.controls['date']"
-                       placeholder="Ngày nhập">
+                <span matPrefix>Ngày nhập &nbsp;</span>
+                <input class="text-right" matInput [matDatepicker]="date_picker" [formControl]="form.controls['date']">
                 <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>
                 <mat-datepicker #date_picker></mat-datepicker>
               </mat-form-field>
@@ -222,8 +222,9 @@
             </div>
             <div fxFlex="100">
               <mat-form-field>
-                <mat-label>Mã phiếu nhập</mat-label>
-                <input matInput tabindex="2"
+                <!--                <mat-label>Mã phiếu nhập</mat-label>-->
+                <span matPrefix>Mã phiếu nhập &nbsp;</span>
+                <input class="text-right" matInput tabindex="2"
                        formControlName="no"
                        [readonly]="updateModelId !== null"
                        matTooltipPosition="left" required>
@@ -254,41 +255,46 @@
                 <mat-icon>add</mat-icon>
               </button>
             </div>
-            <!--            <div fxFlex="100">-->
-            <!--              <mat-form-field>-->
-            <!--                <mat-label>Trạng thái</mat-label>-->
-            <!--                <mat-select [formControl]="form.controls['status']" placeholder="Chọn trạng thái">-->
-            <!--                  <mat-option *ngFor="let status of statuses" value="{{status.id}}">{{status.name}}</mat-option>-->
-            <!--                </mat-select>-->
-            <!--              </mat-form-field>-->
-            <!--            </div>-->
-            <!--            <div fxFlex="100">-->
-            <!--              <mat-form-field>-->
-            <!--                <mat-label>Số lượng</mat-label>-->
-            <!--                <input matInput tabindex="4" formControlName="quantity" value="{{ form.get('quantity').value | number}}"-->
-            <!--                       readonly="readonly">-->
-            <!--              </mat-form-field>-->
-            <!--            </div>-->
+
             <div fxFlex="100">
               <mat-form-field>
-                <mat-label>Tổng tiền hàng</mat-label>
-                <input matInput tabindex="5" formControlName="total_price"
+                <!--                <mat-label>Tổng tiền hàng</mat-label>-->
+                <span matPrefix>Tổng tiền hàng &nbsp;</span>
+                <input class="text-right" matInput tabindex="5" formControlName="total_price"
                        value="{{ form.get('total_price').value }}" readonly>
               </mat-form-field>
             </div>
+
+            <div fxFlex="100" *ngIf="expensesTransaction > 0">
+              <mat-form-field>
+
+                <span [matMenuTriggerFor]="menu" matPrefix><mat-icon color="primary">keyboard_backspace</mat-icon> Chi phí nhập trả NCC </span>
+                <mat-menu #menu="matMenu" yPosition="above" xPosition="before">
+                  <button mat-menu-item *ngFor="let item of expensesTransactions ">
+                      <span *ngIf="item?.type ==='price' ; else anotherType;">
+                        {{ item?.no }} - {{ item?.name }} - {{ item?.value | number}} VNĐ
+                      </span>
+                    <ng-template #anotherType>
+                      <span>{{ item?.no }} - {{ item?.name }} - {{ item?.value | number}} %</span>
+                    </ng-template>
+                  </button>
+                </mat-menu>
+                <input class="text-right" matInput tabindex="5" formControlName="expenses_price"
+                       value="{{ form.get('expenses_price').value }}" readonly>
+              </mat-form-field>
+            </div>
+
             <div fxFlex="100">
               <!-- 2 truong hop  -->
               <mat-form-field *ngIf="form.get('discount_type').value == 'price'">
-                <mat-label>Giảm giá</mat-label>
-                <!-- <input matInput tabindex="6" formControlName="discount_amount" (change)="recalculateWarehouse();"> -->
-                <input matInput tabindex="6" value="{{ form.get('discount_amount').value | number }}"
+                <span matPrefix>Giảm giá &nbsp;</span>
+                <input class="text-right" matInput tabindex="6" value="{{ form.get('discount_amount').value | number }}"
                        (click)="openDiscountDialogWarehouse();">
-
               </mat-form-field>
 
               <mat-form-field *ngIf="form.get('discount_type').value == 'percent'">
-                <mat-label>Giảm giá</mat-label>
-                <input matInput tabindex="6"
+                <span matPrefix>Giảm giá &nbsp;</span>
+                <input class="text-right" matInput tabindex="6"
                        value="{{ (form.get('total_price').value * form.get('discount_amount').value / 100) | number:'1.0-0' }} {{ '(' + form.get('discount_amount').value + '%)' }}"
                        (click)="openDiscountDialogWarehouse();">
               </mat-form-field>
@@ -296,7 +302,7 @@
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Tiền trả nhà cung cấp</mat-label>
-                <input matInput tabindex="7" formControlName="paid_amount"
+                <input matInput tabindex="7" formControlName="paid_amount" (keyup)="inputformatNumber($event)"
                        value="{{ form.get('paid_amount').value }}" (change)="recalculateWarehouse();">
                 <button mat-raised-button color="primary" matSuffix (click)="paidAmount()">
                   Trả đủ
@@ -306,8 +312,8 @@
             </div>
             <div fxFlex="100">
               <mat-form-field>
-                <mat-label>Tính vào công nợ</mat-label>
-                <input matInput tabindex="8" formControlName="remain_amount"
+                <span matPrefix>Tính vào công nợ &nbsp;</span>
+                <input class="text-right" matInput tabindex="8" formControlName="remain_amount"
                        value="{{ form.get('remain_amount').value }}" readonly>
               </mat-form-field>
             </div>
