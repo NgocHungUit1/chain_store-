@@ -201,18 +201,18 @@ export class WarehouseInfoTabComponent implements OnChanges {
         'padding: 8px;' +
         '}</style>' +
         '<section style="padding: -5px;">' +
-        '<p style="text-align:left;">Nhà thuốc: ' + res?.store?.name + '</p>' +
-        '<p style="text-align:left;">Địa chỉ: ' + res?.store?.address + '</p>' +
-        '<p style="text-align:left;">SĐT: ' + res?.store?.phone + '</p>' +
-        '<p style="text-align:center; font-weight:600;">HÓA ĐƠN NHẬP HÀNG</p>' +
-        '<p style="text-align:center; font-weight:600;">Mã phiếu nhập: ' + res?.no + '</p> ' +
-        '<p style="text-align:left;">Ngày nhập: ' + res?.date + ' </p>' +
-        '<p style="text-align:left;">Người nhập: ' + res?.created_by + ' </p>' +
+        '<p style="text-align:left; margin: 10px">Nhà thuốc: ' + res?.store?.name + '</p>' +
+        '<p style="text-align:left; margin: 10px">Địa chỉ: ' + res?.store?.address + '</p>' +
+        '<p style="text-align:left; margin: 10px">SĐT: ' + res?.store?.phone + '</p>' +
+        '<p style="text-align:center; font-weight:600;margin: 10px;">HÓA ĐƠN NHẬP HÀNG</p>' +
+        '<p style="text-align:center; font-weight:600;margin: 10px;">Mã phiếu nhập: ' + res?.no + '</p> ' +
+        '<p style="text-align:left; margin: 10px;">Ngày nhập: ' + res?.date + ' </p>' +
+        '<p style="text-align:left; margin: 10px;">Người nhập: ' + res?.created_by + ' </p>' +
         '<table>' +
         '<tr>' +
         '<td style="font-weight: 600;"> Nhà cung cấp </td>' +
         '<td>' + res?.supplier?.name + '</td>' +
-        '<td style="font-weight: 600;"> Tổng tiền hàng </td>' +
+        '<td style="font-weight: 600;"> Tiền hàng </td>' +
         '<td style="text-align:right;">' + res?.total_price + '</td>' +
         '</tr>' +
         '<tr>' +
@@ -220,11 +220,17 @@ export class WarehouseInfoTabComponent implements OnChanges {
         '<td>' + res?.status + '</td>' +
         '<td style="font-weight: 600;">Giảm giá </td>' +
         '<td style="text-align:right;">' + res?.discount_amount + '</td>' +
-        '</tr>' +
-        '<tr>' +
+        '</tr>';
+      if (res?.expenses_price > 0) {
+        printContent += '<tr>' +
+          '<td style="font-weight: 600;" colspan="2" >Chi phí nhập hàng</td>' +
+          '<td colspan="2">' + res?.warehouseExpensess + '</td>' +
+          '</tr>';
+      }
+      printContent += '<tr>' +
         '<td style="font-weight: 600;" >Tính vào công nợ </td>' +
         '<td style="text-align:right;">' + res?.remain_amount + '</td>' +
-        '<td style="font-weight: 600;">Tiền trả nhà cung cấp </td>' +
+        '<td style="font-weight: 600;">Tiền trả NCC </td>' +
         '<td style="text-align:right;">' + res?.paid_amount + '</td>' +
         '</tr>' +
         '<tr>' +
@@ -233,14 +239,14 @@ export class WarehouseInfoTabComponent implements OnChanges {
         '</tr>' +
         '</table>';
 
-      printContent += '<p style="text-align:left;">Chi tiết nhập hàng :</p>';
+      printContent += '<p style="text-align:left;margin: 10px;">Chi tiết nhập hàng :</p>';
 
       const detail = res.warehoureItems;
       printContent += '<table>';
       printContent += '<tr style="text-align:center; font-size: 13px">';
       printContent += '<th>' + 'Mã hàng' + '</th>';
       printContent += '<th>' + 'Tên hàng' + '</th>';
-      printContent += '<th>' + 'Đơn gía' + '</th>';
+      printContent += '<th>' + 'Đơn giá' + '</th>';
       printContent += '<th>' + 'Giảm giá' + '</th>';
       printContent += '<th>' + 'Thành tiền' + '</th>';
       printContent += '</tr>';
@@ -250,7 +256,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
         printContent += '<td style="text-align:left;">' + element?.product?.product_no + '</td>';
         printContent += '<td style="text-align:left;">' + element?.product?.product_name + '<br>' +
           'Đơn vị : ' + element?.product_unit?.name + '<br>' +
-          'Số lượng : ' + element.quantity + '<br>';
+          'SL : ' + element.quantity + '<br>';
         const parcels = element.parcels;
         if (parcels[0] !== undefined) {
           printContent += 'Lô: ' + parcels[0]['parcel_no'] + '-';

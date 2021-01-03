@@ -112,5 +112,8 @@ export class resWarehousePrint {
   store: any;
   date: string;
   warehoureItems: any;
+  // warehouseExpensess: ExpensesTransaction[];
+  warehouseExpensess: string;
+  expenses_price: number;
 }
 

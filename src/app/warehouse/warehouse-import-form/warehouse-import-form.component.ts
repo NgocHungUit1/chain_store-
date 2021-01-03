@@ -203,16 +203,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           note: res['note'],
           branch_id: res['branch_id'].toString(),
         });
-        console.log(Number(res['expenses_price']));
 
         this.expensesTransaction = Number(res['expenses_price']);
 
         if (this.expensesTransaction > 0 && res['status'] === 10) {
           this.expensesTransactions = res['warehouseExpensess'];
         }
-        // debugger;
-        console.log(this.expensesTransactions);
-
 
         this.form.controls['date'].disable();
         this.form.controls['no'].disable();
@@ -290,8 +286,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   setUpExpensesTransactions() {
     this.optionStoreService.getValue('transaction_expenses_transaction').subscribe(res => {
       this.optionStore_transaction_expenses = res;
-      console.log(this.form.get('status').value);
-      console.log(this.updateModelId);
       if (this.optionStore_transaction_expenses.value === 'yes') {
         if ((this.form.get('status').value === '9' && this.updateModelId !== null) || this.updateModelId === null) {
           const filter = new ExpensesTransactionFilter();
@@ -363,6 +357,19 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     return filter;
   }
 
+  validateBeforeSubmit() {
+    const list = this.data;
+    if (list !== null) {
+      list.forEach(element => {
+        if (element.amount === 0) {
+          // @ts-ignore
+          this.notifySer.notify('warning', 'Chưa nhập số lượng ' + element?.product?.product_name);
+          return;
+        }
+      });
+    }
+  }
+
   submit(status: number) {
     this.recalculateWarehouse();
     const data = this.form.getRawValue();
@@ -372,59 +379,79 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       });
     }
 
-    if (this.form.valid) {
-
-      // console.log(data);
-      // return;
-      data['supplier_id'] = data['supplier']['id'];
-      data['quantity'] = numeral(data['quantity']).value();
-      data['total_price'] = numeral(data['total_price']).value();
-      data['remain_amount'] = numeral(data['remain_amount']).value();
-      data['total_amount'] = numeral(data['total_amount']).value();
-      data['paid_amount'] = numeral(data['paid_amount']).value();
-      data['expenses_price'] = numeral(data['expenses_price']).value();
-      data['expensesTransactions'] = this.expensesTransactions;
-      if (this.form.controls['date'].value !== null && typeof this.form.controls['date'].value === 'object') {
-        const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
-        data['date'] = effDate.toISOString().split('T')[0];
+    const promise = new Promise((resolve, reject) => {
+      const list = this.data;
+      console.log(list);
+      if (list.length > 0) {
+        list.forEach(element => {
+          if (element.amount === 0) {
+            // @ts-ignore
+            this.notifySer.notify('warning', 'Chưa nhập số lượng ' + element?.product?.product_name);
+            reject();
+          }
+        });
+        resolve();
+      } else {
+        this.notifySer.notify('warning', 'Danh sách không được để trống !');
+        reject();
       }
-      data['items'] = this.data;
-      data['status'] = status;
+    });
 
-      if (data['supplier_id'] === undefined) {
-        this.notifySer.notify('warning', this.form.controls['supplier'].value + ' chưa được tạo bên nhà cung cấp.');
-        return;
-      }
+    promise.then(() => {
+      if (this.form.valid) {
+        data['supplier_id'] = data['supplier']['id'];
+        data['quantity'] = numeral(data['quantity']).value();
+        data['total_price'] = numeral(data['total_price']).value();
+        data['remain_amount'] = numeral(data['remain_amount']).value();
+        data['total_amount'] = numeral(data['total_amount']).value();
+        data['paid_amount'] = numeral(data['paid_amount']).value();
+        data['expenses_price'] = numeral(data['expenses_price']).value();
+        data['expensesTransactions'] = this.expensesTransactions;
+        if (this.form.controls['date'].value !== null && typeof this.form.controls['date'].value === 'object') {
+          const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
+          data['date'] = effDate.toISOString().split('T')[0];
+        }
+        data['items'] = this.data;
+        data['status'] = status;
 
-      if (this.updateModelId !== null) {
-        if (this.model['status'] === 10 && !this.isAdminStore) {
-          this.notifySer.notify('error', 'Bạn không có quyền thực hiện chức năng này.');
+        if (data['supplier_id'] === undefined) {
+          this.notifySer.notify('warning', this.form.controls['supplier'].value + ' chưa được tạo bên nhà cung cấp.');
           return;
         }
-        delete data['date'];
-        delete data['supplier'];
-        this.mainService.update(this.updateModelId, data).subscribe(res => {
-          this.notifySer.notify('success', 'Lưu thành công.');
-          if (status === 9) {
-            this.model = res;
-            this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
-          } else {
-            this.router.navigate(['/transaction/warehouse/']);
-          }
-        });
-      } else {
-        this.mainService.create(data).subscribe(res => {
-          this.notifySer.notify('success', 'Lưu thành công.');
-          if (status === 9) {
-            this.model = res;
-            this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
-          } else {
-            this.router.navigate(['/transaction/warehouse/']);
-          }
 
-        });
+        if (this.updateModelId !== null) {
+          if (this.model['status'] === 10 && !this.isAdminStore) {
+            this.notifySer.notify('error', 'Bạn không có quyền thực hiện chức năng này.');
+            return;
+          }
+          delete data['date'];
+          delete data['supplier'];
+          this.mainService.update(this.updateModelId, data).subscribe(res => {
+            this.notifySer.notify('success', 'Lưu thành công.');
+            if (status === 9) {
+              this.model = res;
+              this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
+            } else {
+              this.router.navigate(['/transaction/warehouse/']);
+            }
+          });
+        } else {
+          this.mainService.create(data).subscribe(res => {
+            this.notifySer.notify('success', 'Lưu thành công.');
+            if (status === 9) {
+              this.model = res;
+              this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
+            } else {
+              this.router.navigate(['/transaction/warehouse/']);
+            }
+
+          });
+        }
       }
-    }
+
+    }).catch(() => {
+      console.log('rejected');
+    });
   }
 
   /**
@@ -460,7 +487,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       warehouseProduct.price = (res['original_price'] !== null) ? res['original_price'] : 0;
       warehouseProduct.discount = 0;
       warehouseProduct.discount_type = 'price';
-      warehouseProduct.amount = (res['original_price'] !== null) ? res['original_price'] : 0;
+      warehouseProduct.amount = 0; // (res['original_price'] !== null) ? res['original_price'] : 0;
       warehouseProduct.productUnits = res['productUnits'];
       warehouseProduct.product_parcels = [];
 
@@ -676,7 +703,11 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   printWarehouse(id: string) {
     this.mainService.getDataWarehouseToPrint(id).subscribe(res => {
       let printContent = '<title>' + res.no + '</title>';
-      printContent += '<style>table {' +
+      printContent += '<style> ' +
+        'p,table,div {' +
+        'font-family: arial, sans-serif;' +
+        '}' +
+        'table {' +
         'border-collapse: collapse;' +
         'width: 100%;' +
         '}' +
@@ -686,18 +717,18 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         'padding: 8px;' +
         '}</style>' +
         '<section style="padding: -5px;">' +
-        '<p style="text-align:left;">Nhà thuốc: ' + res?.store?.name + '</p>' +
-        '<p style="text-align:left;">Địa chỉ: ' + res?.store?.address + '</p>' +
-        '<p style="text-align:left;">SĐT: ' + res?.store?.phone + '</p>' +
-        '<p style="text-align:center; font-weight:600;">HÓA ĐƠN NHẬP HÀNG</p>' +
-        '<p style="text-align:center; font-weight:600;">Mã phiếu nhập: ' + res?.no + '</p> ' +
-        '<p style="text-align:left;">Ngày nhập: ' + res?.date + ' </p>' +
-        '<p style="text-align:left;">Người nhập: ' + res?.created_by + ' </p>' +
+        '<p style="text-align:left; margin: 10px">Nhà thuốc: ' + res?.store?.name + '</p>' +
+        '<p style="text-align:left; margin: 10px">Địa chỉ: ' + res?.store?.address + '</p>' +
+        '<p style="text-align:left; margin: 10px">SĐT: ' + res?.store?.phone + '</p>' +
+        '<p style="text-align:center; font-weight:600;margin: 10px;">HÓA ĐƠN NHẬP HÀNG</p>' +
+        '<p style="text-align:center; font-weight:600;margin: 10px;">Mã phiếu nhập: ' + res?.no + '</p> ' +
+        '<p style="text-align:left; margin: 10px;">Ngày nhập: ' + res?.date + ' </p>' +
+        '<p style="text-align:left; margin: 10px;">Người nhập: ' + res?.created_by + ' </p>' +
         '<table>' +
         '<tr>' +
         '<td style="font-weight: 600;"> Nhà cung cấp </td>' +
         '<td>' + res?.supplier?.name + '</td>' +
-        '<td style="font-weight: 600;"> Tổng tiền hàng </td>' +
+        '<td style="font-weight: 600;"> Tiền hàng </td>' +
         '<td style="text-align:right;">' + res?.total_price + '</td>' +
         '</tr>' +
         '<tr>' +
@@ -705,11 +736,17 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         '<td>' + res?.status + '</td>' +
         '<td style="font-weight: 600;">Giảm giá </td>' +
         '<td style="text-align:right;">' + res?.discount_amount + '</td>' +
-        '</tr>' +
-        '<tr>' +
+        '</tr>';
+      if (res?.expenses_price > 0) {
+        printContent += '<tr>' +
+          '<td style="font-weight: 600;" colspan="2" >Chi phí nhập hàng</td>' +
+          '<td colspan="2">' + res?.warehouseExpensess + '</td>' +
+          '</tr>';
+      }
+      printContent += '<tr>' +
         '<td style="font-weight: 600;" >Tính vào công nợ </td>' +
         '<td style="text-align:right;">' + res?.remain_amount + '</td>' +
-        '<td style="font-weight: 600;">Tiền trả nhà cung cấp </td>' +
+        '<td style="font-weight: 600;">Tiền trả NCC </td>' +
         '<td style="text-align:right;">' + res?.paid_amount + '</td>' +
         '</tr>' +
         '<tr>' +
@@ -718,14 +755,14 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         '</tr>' +
         '</table>';
 
-      printContent += '<p style="text-align:left;">Chi tiết nhập hàng :</p>';
+      printContent += '<p style="text-align:left;margin: 10px;">Chi tiết nhập hàng :</p>';
 
       const detail = res.warehoureItems;
       printContent += '<table>';
       printContent += '<tr style="text-align:center; font-size: 13px">';
       printContent += '<th>' + 'Mã hàng' + '</th>';
       printContent += '<th>' + 'Tên hàng' + '</th>';
-      printContent += '<th>' + 'Đơn gía' + '</th>';
+      printContent += '<th>' + 'Đơn giá' + '</th>';
       printContent += '<th>' + 'Giảm giá' + '</th>';
       printContent += '<th>' + 'Thành tiền' + '</th>';
       printContent += '</tr>';
@@ -735,7 +772,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         printContent += '<td style="text-align:left;">' + element?.product?.product_no + '</td>';
         printContent += '<td style="text-align:left;">' + element?.product?.product_name + '<br>' +
           'Đơn vị : ' + element?.product_unit?.name + '<br>' +
-          'Số lượng : ' + element.quantity + '<br>';
+          'SL : ' + element.quantity + '<br>';
         const parcels = element.parcels;
         if (parcels[0] !== undefined) {
           printContent += 'Lô: ' + parcels[0]['parcel_no'] + '-';

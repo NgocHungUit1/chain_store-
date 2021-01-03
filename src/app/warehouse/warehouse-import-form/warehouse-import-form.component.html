@@ -206,7 +206,7 @@
                 <span matPrefix>Ngày nhập &nbsp;</span>
                 <input class="text-right" matInput [matDatepicker]="date_picker" [formControl]="form.controls['date']">
                 <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>
-                <mat-datepicker #date_picker></mat-datepicker>
+                <mat-datepicker #date_picker ></mat-datepicker>
               </mat-form-field>
             </div>
             <div fxFlex="40">
@@ -222,7 +222,6 @@
             </div>
             <div fxFlex="100">
               <mat-form-field>
-                <!--                <mat-label>Mã phiếu nhập</mat-label>-->
                 <span matPrefix>Mã phiếu nhập &nbsp;</span>
                 <input class="text-right" matInput tabindex="2"
                        formControlName="no"
@@ -258,7 +257,6 @@
 
             <div fxFlex="100">
               <mat-form-field>
-                <!--                <mat-label>Tổng tiền hàng</mat-label>-->
                 <span matPrefix>Tổng tiền hàng &nbsp;</span>
                 <input class="text-right" matInput tabindex="5" formControlName="total_price"
                        value="{{ form.get('total_price').value }}" readonly>
