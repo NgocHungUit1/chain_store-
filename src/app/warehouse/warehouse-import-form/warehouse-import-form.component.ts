@@ -121,126 +121,160 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   ngOnInit() {
 
-    const date = new FormControl(new Date());
-    this.form = this.fb.group({
-      date: date,
-      no: [null, Validators.required],
-      supplier: [null, Validators.required],
-      status: [null],
-      type: ['import'],
-      quantity: [null],
-      total_price: [null],
-      total_amount: [null],
-      discount_amount: [null],
-      discount_type: [null],
-      paid_amount: [null, Validators.required],
-      remain_amount: [null],
-      note: [null],
-      branch_id: [null, Validators.required],
-      expenses_price: [0],
+    const optionStorePromise = new Promise((resolve) => {
+      this.optionStoreService.getValue('transaction_expenses_transaction').subscribe(res => {
+        this.optionStore_transaction_expenses = res;
+        resolve();
+      });
     });
 
-    this.allPermission = sessionStorage.getItem('allPermission').split(',');
-    this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
+    optionStorePromise.then(() => {
 
-    this.userService.getStoreBranchList().subscribe(res => {
-      this.branchList = res.body;
-    });
 
-    this.displayedColumns = this.columnsToDisplay;
+      const date = new FormControl(new Date());
+      this.form = this.fb.group({
+        date: date,
+        no: [null, Validators.required],
+        supplier: [null, Validators.required],
+        status: [null],
+        type: ['import'],
+        quantity: [null],
+        total_price: [null],
+        total_amount: [null],
+        discount_amount: [null],
+        discount_type: [null],
+        paid_amount: [null, Validators.required],
+        remain_amount: [null],
+        note: [null],
+        branch_id: [null, Validators.required],
+        expenses_price: [0],
+      });
 
-    this.filteredSuppliers = this.form.controls['supplier'].valueChanges.pipe(
-      startWith(''),
-      // delay emits
-      debounceTime(300),
-      // use switch map so as to cancel previous subscribed events, before creating new once
-      switchMap(value => {
-        if (value !== '') {
-          // lookup from github
-          return this.lookup(value);
-        } else {
-          // if no value is present, return null
-          return of(null);
-        }
-      })
-    );
+      this.allPermission = sessionStorage.getItem('allPermission').split(',');
+      this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
 
-    this.selectProduct.valueChanges.subscribe(value => {
-      setTimeout(res => {
-        if (value !== '') {
-          this.filteredProducts = this.lookupProduct(value);
-          this.filteredMedicines = this.lookupMedicine(value);
-        } else {
-          // if no value is present, return null
-          this.filteredProducts = of(null);
-          this.filteredMedicines = of(null);
-        }
-      }, 300);
-    });
+      this.userService.getStoreBranchList().subscribe(res => {
+        this.branchList = res.body;
+      });
 
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id !== null && id !== undefined) {
-      this.updateModelId = id;
-      this.mainService.getDetail(this.updateModelId, 'supplier,warehouseExpensess').subscribe(res => {
-        let dateStr = null;
-        if (res['date'] !== null) {
-          dateStr = new Date(res['date']).toISOString();
-        }
-        this.model = res;
-        this.form.patchValue({
-          date: dateStr,
-          no: res['no'],
-          supplier: res['supplier'],
-          status: res['status'] + '',
-          quantity: Number(res['total_quantity']),
-          total_price: (res['total_price'] !== undefined) ? Number(res['total_price']) : 0,
-          total_amount: Number(res['total_amount']),
-          discount_amount: (res['discount_amount'] !== undefined && res['discount_amount'] !== null) ? Number(res['discount_amount']) : 0,
-          discount_type: (res['discount_type'] !== undefined && res['discount_type'] !== null) ? res['discount_type'] : 'price',
-          paid_amount: Number(res['paid_amount']),
-          remain_amount: Number(res['remain_amount']),
-          expenses_price: Number(res['expenses_price']),
-          note: res['note'],
-          branch_id: res['branch_id'].toString(),
+      this.displayedColumns = this.columnsToDisplay;
+
+      this.filteredSuppliers = this.form.controls['supplier'].valueChanges.pipe(
+        startWith(''),
+        // delay emits
+        debounceTime(300),
+        // use switch map so as to cancel previous subscribed events, before creating new once
+        switchMap(value => {
+          if (value !== '') {
+            // lookup from github
+            return this.lookup(value);
+          } else {
+            // if no value is present, return null
+            return of(null);
+          }
+        })
+      );
+
+      this.selectProduct.valueChanges.subscribe(value => {
+        setTimeout(res => {
+          if (value !== '') {
+            this.filteredProducts = this.lookupProduct(value);
+            this.filteredMedicines = this.lookupMedicine(value);
+          } else {
+            // if no value is present, return null
+            this.filteredProducts = of(null);
+            this.filteredMedicines = of(null);
+          }
+        }, 300);
+      });
+
+      const id = this.route.snapshot.paramMap.get('id');
+      if (id !== null && id !== undefined) {
+        this.updateModelId = id;
+        this.mainService.getDetail(this.updateModelId, 'supplier,warehouseExpensess').subscribe(res => {
+          let dateStr = null;
+          if (res['date'] !== null) {
+            dateStr = new Date(res['date']).toISOString();
+          }
+          this.model = res;
+          this.form.patchValue({
+            date: dateStr,
+            no: res['no'],
+            supplier: res['supplier'],
+            status: res['status'] + '',
+            quantity: Number(res['total_quantity']),
+            total_price: (res['total_price'] !== undefined) ? Number(res['total_price']) : 0,
+            total_amount: Number(res['total_amount']),
+            discount_amount: (res['discount_amount'] !== undefined && res['discount_amount'] !== null) ? Number(res['discount_amount']) : 0,
+            discount_type: (res['discount_type'] !== undefined && res['discount_type'] !== null) ? res['discount_type'] : 'price',
+            paid_amount: Number(res['paid_amount']),
+            remain_amount: Number(res['remain_amount']),
+            expenses_price: Number(res['expenses_price']),
+            note: res['note'],
+            branch_id: res['branch_id'].toString(),
+          });
+
+          this.expensesTransaction = Number(res['expenses_price']);
+
+          if (this.expensesTransaction > 0 && res['status'] === 10) {
+            this.expensesTransactions = res['warehouseExpensess'];
+          }
+
+          if (this.optionStore_transaction_expenses.value === 'yes' && res['status'] === 9) {
+            const filter = new ExpensesTransactionFilter();
+            filter.status = '10';
+            filter.auto = '1';
+            this.expensesTransactionService.getList(filter).subscribe(resEx => {
+              this.expensesTransactions = <ExpensesTransaction[]>resEx.body;
+              this.recalculateWarehouse();
+            });
+          }
+
+          this.form.controls['date'].disable();
+          this.form.controls['no'].disable();
+          this.form.controls['status'].disable();
+          this.form.controls['quantity'].disable();
+          // this.form.controls['total_price'].disable();
+          // this.form.controls['remain_amount'].disable();
+          // this.form.controls['expenses_price'].disable();
+
+          this.loadData();
+        });
+      } else {
+        this.userService.getBranchLogin().subscribe(branchLogin => {
+          this.form.controls['branch_id'].setValue(branchLogin.toString());
+        });
+        this.mainService.getRenderWarehouseNo().subscribe(res => {
+          this.form.patchValue({
+            no: 'PN' + res,
+            total_price: 0,
+            discount_amount: 0,
+            discount_type: 'price'
+          });
         });
 
-        this.expensesTransaction = Number(res['expenses_price']);
-
-        if (this.expensesTransaction > 0 && res['status'] === 10) {
-          this.expensesTransactions = res['warehouseExpensess'];
+        if (this.optionStore_transaction_expenses.value === 'yes') {
+          const filter = new ExpensesTransactionFilter();
+          filter.status = '10';
+          filter.auto = '1';
+          this.expensesTransactionService.getList(filter).subscribe(resEx => {
+            this.expensesTransactions = <ExpensesTransaction[]>resEx.body;
+            this.recalculateWarehouse();
+          });
         }
+      }
 
-        this.form.controls['date'].disable();
-        this.form.controls['no'].disable();
-        this.form.controls['status'].disable();
-        this.form.controls['quantity'].disable();
-        // this.form.controls['total_price'].disable();
-        // this.form.controls['remain_amount'].disable();
-        // this.form.controls['expenses_price'].disable();
+      // this.setUpExpensesTransactions();
 
-        this.loadData();
-      });
-    } else {
-      this.userService.getBranchLogin().subscribe(branchLogin => {
-        this.form.controls['branch_id'].setValue(branchLogin.toString());
-      });
-      this.mainService.getRenderWarehouseNo().subscribe(res => {
-        this.form.patchValue({
-          no: 'PN' + res,
-          total_price: 0,
-          discount_amount: 0,
-          discount_type: 'price'
-        });
-      });
-    }
+      const product_id = localStorage.getItem('product_id');
+      if (product_id !== null) {
+        this.handleAddProductToList(product_id);
+        localStorage.removeItem('product_id');
+      }
 
-    this.setUpExpensesTransactions();
 
-    const product_id = localStorage.getItem('product_id');
-    if (product_id !== null) {
-      this.handleAddProductToList(product_id);
-      localStorage.removeItem('product_id');
-    }
+    });
+
 
   }
 
@@ -357,18 +391,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     return filter;
   }
 
-  validateBeforeSubmit() {
-    const list = this.data;
-    if (list !== null) {
-      list.forEach(element => {
-        if (element.amount === 0) {
-          // @ts-ignore
-          this.notifySer.notify('warning', 'Chưa nhập số lượng ' + element?.product?.product_name);
-          return;
-        }
-      });
-    }
-  }
 
   submit(status: number) {
     this.recalculateWarehouse();
@@ -381,7 +403,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
     const promise = new Promise((resolve, reject) => {
       const list = this.data;
-      console.log(list);
+      // console.log(list);
       if (list.length > 0) {
         list.forEach(element => {
           if (element.amount === 0) {
