@@ -31,6 +31,7 @@ import { ExpensesTransaction, ExpensesTransactionFilter } from '../../expenses-t
 import { ExpensesTransactionService } from '../../expenses-transaction/expenses-transaction.service';
 import { OptionStoreService } from '../../common/option-store.service';
 import { OptionStore } from '../../common/option-store.model';
+import { WarehouseExpensesComponent } from '../warehouse-expenses/warehouse-expenses.component';
 
 @Component({
   selector: 'app-warehouse-import-form',
@@ -121,6 +122,25 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   ngOnInit() {
 
+    const date = new FormControl(new Date());
+    this.form = this.fb.group({
+      date: date,
+      no: [null, Validators.required],
+      supplier: [null, Validators.required],
+      status: [null],
+      type: ['import'],
+      quantity: [null],
+      total_price: [null],
+      total_amount: [null],
+      discount_amount: [null],
+      discount_type: [null],
+      paid_amount: [null, Validators.required],
+      remain_amount: [null],
+      note: [null],
+      branch_id: [null, Validators.required],
+      expenses_price: [0],
+    });
+
     const optionStorePromise = new Promise((resolve) => {
       this.optionStoreService.getValue('transaction_expenses_transaction').subscribe(res => {
         this.optionStore_transaction_expenses = res;
@@ -130,25 +150,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
     optionStorePromise.then(() => {
 
-
-      const date = new FormControl(new Date());
-      this.form = this.fb.group({
-        date: date,
-        no: [null, Validators.required],
-        supplier: [null, Validators.required],
-        status: [null],
-        type: ['import'],
-        quantity: [null],
-        total_price: [null],
-        total_amount: [null],
-        discount_amount: [null],
-        discount_type: [null],
-        paid_amount: [null, Validators.required],
-        remain_amount: [null],
-        note: [null],
-        branch_id: [null, Validators.required],
-        expenses_price: [0],
-      });
 
       this.allPermission = sessionStorage.getItem('allPermission').split(',');
       this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
@@ -216,11 +217,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
           this.expensesTransaction = Number(res['expenses_price']);
 
-          if (this.expensesTransaction > 0 && res['status'] === 10) {
+          // && res['status'] === 10
+          if (this.expensesTransaction > 0 ) {
             this.expensesTransactions = res['warehouseExpensess'];
           }
 
-          if (this.optionStore_transaction_expenses.value === 'yes' && res['status'] === 9) {
+          if (this.optionStore_transaction_expenses.value === 'yes' && res['status'] !== 9  && res['status'] !== 10) {
             const filter = new ExpensesTransactionFilter();
             filter.status = '10';
             filter.auto = '1';
@@ -564,15 +566,18 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     }
 
     if (this.optionStore_transaction_expenses.value === 'yes') {
-      if (this.expensesTransactions !== null) {
+      if (this.expensesTransactions !== null && this.expensesTransactions !== undefined) {
         this.expensesTransaction = 0;
         this.expensesTransactions.forEach(item => {
-          if (item.type === 'price') {
-            item.price = item.value;
-          } else {
-            item.price = price * (item.value / 100);
+          if (item.auto === 1) {
+            item.value = numeral(item.value).value();
+            if (item.type === 'price') {
+              item.price = item.value;
+            } else {
+              item.price = price * (item.value / 100);
+            }
+            this.expensesTransaction += item.price;
           }
-          this.expensesTransaction += item.price;
         });
         remainAmount = remainAmount - this.expensesTransaction; // tinh vao cong no
       }
@@ -638,11 +643,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   changeQuantity(index, value) {
     this.openParcelFormDialog(index);
-    // this.data[index]['quantity'] = Number(this.data[index]['quantity']) + Number(value);
-    // if (this.data[index]['product_parcels'].length === 1) {
-    //   this.data[index]['product_parcels'][0]['quantity'] = this.data[index]['quantity'];
-    // }
-    // this.recalculateItem(index);
   }
 
   onParcelSelectedChange(index, value) {
@@ -666,7 +666,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result !== null) {
+      if (result !== null && result !== undefined) {
         this.form.patchValue({
           discount_amount: result.number,
           discount_type: result.type,
@@ -882,10 +882,28 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   /**
    * Format input number
-   * @Nghia
    */
   inputformatNumber(event: any) {
     event.target.value = numeral(event.target.value).format('0,0');
+  }
+
+  openWarehouseExpenses() {
+    // console.log(this.form.controls['status'].value);
+    const dialogRef = this.dialog.open(WarehouseExpensesComponent, {
+      width: '50%',
+      minHeight: '80%',
+      data: {
+        expenses: this.expensesTransactions,
+        status: this.form.controls['status'].value,
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      // console.log(result);
+      if (result !== null && result !== undefined) {
+        this.expensesTransactions = result;
+        this.recalculateWarehouse();
+      }
+    });
   }
 
 }
