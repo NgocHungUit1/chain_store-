@@ -214,7 +214,7 @@
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Chi nhánh nhập</mat-label>
-                <mat-select formGroupName="branch_id" placeholder="Chọn chi nhánh"
+                <mat-select [formControl]="form?.controls['branch_id']" placeholder="Chọn chi nhánh"
                             [disabled]="form?.controls['status'].value === '10'">
                   <mat-option *ngFor="let branch of branchList" value="{{branch.id}}">{{branch.name}}</mat-option>
                 </mat-select>
@@ -271,7 +271,7 @@
                 <mat-menu #menu="matMenu" yPosition="above" xPosition="before">
                   <button mat-menu-item *ngFor="let item of expensesTransactions ">
                       <span *ngIf="item?.type ==='price' && item?.auto === 1;">
-                        {{ item?.no }} - {{ item?.name }} - {{ item?.value | showValueExpenses}} VNĐ
+                        {{ item?.no }} - {{ item?.name }} - {{ item?.value | showValueExpenses }} VNĐ
                       </span>
                     <span *ngIf="item?.type ==='percent' && item?.auto === 1;">
                         {{ item?.no }} - {{ item?.name }} - {{ item?.value | showValueExpenses }}%
