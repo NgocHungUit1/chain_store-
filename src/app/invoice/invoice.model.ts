@@ -68,6 +68,7 @@ export class InvoiceFilter extends ApiFilterBase {
   date_to = '';
   national_pharmacy_no = '';
   order_status = '';
+  order_national = '';
 
   getModelSearch() {
     return 'InvoiceSearch';

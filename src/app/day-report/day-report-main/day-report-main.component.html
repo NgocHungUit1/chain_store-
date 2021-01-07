@@ -37,9 +37,20 @@
 
         <form [formGroup]="orderStatusFilter">
           <mat-form-field>
-            <mat-label>Đơn hàng</mat-label>
+            <mat-label class="mat-h4">Đơn hàng</mat-label>
             <mat-select formControlName="status" (selectionChange)="orderStatusFilterChange()" multiple>
               <mat-option *ngFor="let item of orderStatusFilterList"
+                          [value]="item.value">{{ item.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </form>
+
+        <form [formGroup]="orderNationalFilter" style="margin-top: 20px">
+          <mat-form-field>
+            <mat-label class="mat-h4">Liên thông</mat-label>
+            <mat-select formControlName="status" (selectionChange)="orderStatusFilterChange()" multiple>
+              <mat-option *ngFor="let item of orderNationalFilterList"
                           [value]="item.value">{{ item.name }}
               </mat-option>
             </mat-select>

@@ -53,6 +53,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   expandedElement: Invoice | null;
   timeFilter: FormGroup;
   orderStatusFilter: FormGroup;
+  orderNationalFilter: FormGroup;
 
   currentDateFilter: DateFilter;
 
@@ -113,6 +114,17 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     },
   ];
 
+  orderNationalFilterList = [
+    {
+      'value': 'yes',
+      'name': 'Đã liên thông',
+    },
+    {
+      'value': 'no',
+      'name': 'Chưa liên thông',
+    },
+  ];
+
   // for second column
   second_columnsToDisplay: string[] = [
     'second_#', 'second_invoice_no', 'second_created_at', 'second_returns', 'second_customer', 'second_national_no',
@@ -141,6 +153,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
     filter.order_status = this.orderStatusFilter.controls['status'].value;
+    filter.order_national = this.orderNationalFilter.controls['status'].value;
 
     return filter;
   }
@@ -154,6 +167,11 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     this.orderStatusFilter = this.fb.group({
       status: [
         ['pending', 'done']
+      ],
+    });
+    this.orderNationalFilter = this.fb.group({
+      status: [
+        ['yes', 'no']
       ],
     });
   }
