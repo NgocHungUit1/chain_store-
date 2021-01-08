@@ -19,20 +19,22 @@ import { WarehouseDiscountDialogComponent } from './warehouse-discount-dialog/wa
 import { WarehouseUploadDialogComponent } from './warehouse-upload-dialog/warehouse-upload-dialog.component';
 import { WarehouseExpensesComponent } from './warehouse-expenses/warehouse-expenses.component';
 import { ShowValueExpensesPipe } from './warehouse.pipe';
+import { WarehouseParcelListDialogComponent } from './warehouse-parcel-list-dialog/warehouse-parcel-list-dialog.component';
 
 @NgModule({
-    declarations: [
-        WarehouseListComponent,
-        WarehouseImportFormComponent,
-        WarehouseInfoTabComponent,
-        WarehouseReturnListComponent,
-        WarehouseReturnFormComponent,
-        WarehouseParcelFormDialogComponent,
-        WarehouseDiscountDialogComponent,
-        WarehouseUploadDialogComponent,
-        WarehouseExpensesComponent,
-        ShowValueExpensesPipe
-    ],
+  declarations: [
+    WarehouseListComponent,
+    WarehouseImportFormComponent,
+    WarehouseInfoTabComponent,
+    WarehouseReturnListComponent,
+    WarehouseReturnFormComponent,
+    WarehouseParcelFormDialogComponent,
+    WarehouseDiscountDialogComponent,
+    WarehouseUploadDialogComponent,
+    WarehouseExpensesComponent,
+    ShowValueExpensesPipe,
+    WarehouseParcelListDialogComponent
+  ],
   imports: [
     CommonModule,
     RouterModule.forChild(WarehouseRoutes),
@@ -49,4 +51,5 @@ import { ShowValueExpensesPipe } from './warehouse.pipe';
     WarehouseParcelFormDialogComponent
   ]
 })
-export class WarehouseModule { }
+export class WarehouseModule {
+}

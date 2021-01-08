@@ -32,6 +32,7 @@ import { ExpensesTransactionService } from '../../expenses-transaction/expenses-
 import { OptionStoreService } from '../../common/option-store.service';
 import { OptionStore } from '../../common/option-store.model';
 import { WarehouseExpensesComponent } from '../warehouse-expenses/warehouse-expenses.component';
+import { WarehouseParcelListDialogComponent } from '../warehouse-parcel-list-dialog/warehouse-parcel-list-dialog.component';
 
 @Component({
   selector: 'app-warehouse-import-form',
@@ -87,7 +88,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'product_name': 'Tên hàng',
     // 'product_parcel': 'Lô',
     'product_unit_id': 'Đơn vị',
-    'quantity': 'Tổng số lượng',
+    'quantity': 'Tổng SL',
     'price': 'Đơn giá',
     'discount': 'Giảm giá',
     'amount': 'Thành tiền',
@@ -218,11 +219,11 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           this.expensesTransaction = Number(res['expenses_price']);
 
           // && res['status'] === 10
-          if (this.expensesTransaction > 0 ) {
+          if (this.expensesTransaction > 0) {
             this.expensesTransactions = res['warehouseExpensess'];
           }
 
-          if (this.optionStore_transaction_expenses.value === 'yes' && res['status'] !== 9  && res['status'] !== 10) {
+          if (this.optionStore_transaction_expenses.value === 'yes' && res['status'] !== 9 && res['status'] !== 10) {
             const filter = new ExpensesTransactionFilter();
             filter.status = '10';
             filter.auto = '1';
@@ -548,11 +549,14 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     const discount_type = this.form.controls['discount_type'].value;
 
     this.data.forEach(item => {
-      quantity = Number(quantity) + item['quantity'];
+      const item_quantity = numeral(item['quantity']).value();
+      const item_price = Number(item['price']);
+      const item_discount = Number(item['discount']);
+      quantity = Number(quantity) + item_quantity;
       if (item['discount_type'] === 'price') {
-        price = Number(price) + Number(item['quantity']) * ((Number(item['price'] - Number(item['discount']))));
+        price = Number(price) + item_quantity * ((item_price - item_discount));
       } else {
-        const money = Number(item['quantity']) * Number(item['price']) * (1 - (Number(item['discount']) / 100));
+        const money = item_quantity * item_price * (1 - (item_discount / 100));
         price = Number(price) + money;
       }
     });
@@ -638,6 +642,41 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
         this.recalculateWarehouse();
       }
+    });
+  }
+
+  /**
+   * Danh sach lo hang hoa san pham
+   * @param index
+   */
+  openParcelListDialog(index) {
+
+    const dialogRef = this.dialog.open(WarehouseParcelListDialogComponent, {
+      width: '600px',
+      minHeight: '80%',
+      data: {parcels: this.data[index]['product_parcels']}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      this.data[index]['product_parcels'].forEach(element => {
+        if (element['expiration_date'] !== null && typeof element['expiration_date'] === 'object') {
+          const effDate = new Date(element['expiration_date'].getTime() + (420 * 60 * 1000));
+          element['expiration_date'] = effDate.toISOString().split('T')[0];
+        }
+      });
+
+      if (result !== null && result !== undefined) {
+        this.data[index]['product_parcels'] = result;
+        let quantity = 0;
+        this.data[index]['product_parcels'].forEach(parcel => {
+          parcel['quantity'] = numeral(parcel['quantity']).value();
+          quantity = quantity + parcel['quantity'];
+        });
+        this.data[index]['quantity'] = quantity;
+        this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
+
+        this.recalculateWarehouse();
+      }
+      // console.log(result);
     });
   }
 
@@ -885,6 +924,16 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
    */
   inputformatNumber(event: any) {
     event.target.value = numeral(event.target.value).format('0,0');
+  }
+
+  quantityChange(event: any, index) {
+    event.target.value = numeral(event.target.value).format('0,0');
+    if (this.data[index]['product_parcels'].length === 1) {
+      this.data[index]['product_parcels'][0]['quantity'] = numeral(event.target.value).value();
+    }
+    this.data[index]['quantity'] = numeral(event.target.value).value();
+    this.recalculateItem(index);
+    // this.recalculateWarehouse();
   }
 
   openWarehouseExpenses() {
