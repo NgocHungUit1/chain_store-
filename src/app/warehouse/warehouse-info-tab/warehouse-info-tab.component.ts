@@ -201,14 +201,14 @@ export class WarehouseInfoTabComponent implements OnChanges {
         'padding: 8px;' +
         '}</style>' +
         '<section style="padding: -5px;">' +
-        '<p style="text-align:left; margin: 10px">Nhà thuốc: ' + res?.store?.name + '</p>' +
-        '<p style="text-align:left; margin: 10px">Địa chỉ: ' + res?.store?.address + '</p>' +
-        '<p style="text-align:left; margin: 10px">SĐT: ' + res?.store?.phone + '</p>' +
+        '<p style="text-align:left; margin: 10px; font-size: 13px">Nhà thuốc: ' + res?.store?.name + '</p>' +
+        '<p style="text-align:left; margin: 10px; font-size: 13px">Địa chỉ: ' + res?.store?.address + '</p>' +
+        '<p style="text-align:left; margin: 10px; font-size: 13px">SĐT: ' + res?.store?.phone + '</p>' +
         '<p style="text-align:center; font-weight:600;margin: 10px;">HÓA ĐƠN NHẬP HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;margin: 10px;">Mã phiếu nhập: ' + res?.no + '</p> ' +
-        '<p style="text-align:left; margin: 10px;">Ngày nhập: ' + res?.date + ' </p>' +
-        '<p style="text-align:left; margin: 10px;">Người nhập: ' + res?.created_by + ' </p>' +
-        '<table>' +
+        '<p style="text-align:left; margin: 10px; font-size: 13px">Ngày nhập: ' + res?.date + ' </p>' +
+        '<p style="text-align:left; margin: 10px; font-size: 13px">Người nhập: ' + res?.created_by + ' </p>' +
+        '<table style="font-size: 13px">' +
         '<tr>' +
         '<td style="font-weight: 600;"> Nhà cung cấp </td>' +
         '<td>' + res?.supplier?.name + '</td>' +
@@ -252,17 +252,21 @@ export class WarehouseInfoTabComponent implements OnChanges {
       printContent += '</tr>';
 
       detail.forEach(element => {
-        printContent += '<tr>';
+        printContent += '<tr style="font-size: 13px">';
         printContent += '<td style="text-align:left;">' + element?.product?.product_no + '</td>';
         printContent += '<td style="text-align:left;">' + element?.product?.product_name + '<br>' +
           'Đơn vị : ' + element?.product_unit?.name + '<br>' +
           'SL : ' + element.quantity + '<br>';
         const parcels = element.parcels;
-        if (parcels[0] !== undefined) {
-          printContent += 'Lô: ' + parcels[0]['parcel_no'] + '-';
-          printContent += parcels[0]['expiration_date'] + '-SL:';
-          printContent += parcels[0]['quantity'];
+
+        if (parcels !== null && parcels !== undefined) {
+          parcels.forEach(parcel => {
+            printContent += 'Lô: ' + parcel['parcel_no'] + '-';
+            printContent += parcel['expiration_date'] + '-SL:';
+            printContent += parcel['quantity'] + '<br>';
+          });
         }
+
         printContent += '</td>';
         printContent += '<td style="text-align:right;">' + element.price + '</td>';
         printContent += '<td style="text-align:right;">' + element.discount + '</td>';

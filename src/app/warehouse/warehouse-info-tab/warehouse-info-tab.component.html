@@ -60,13 +60,8 @@
           <ng-container matColumnDef="product_name">
             <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_name']}}</th>
             <td mat-cell *matCellDef="let element">
-              <p>{{ element.product.product_name }}</p>
-              <p>Đơn vị : {{ element.productUnit.name }}</p>
-              <!--              <p *ngIf="element['productParcelsForView'][0] !== undefined">Lô-->
-              <!--                : {{ element['productParcelsForView'][0]['parcel_no'] }}-->
-              <!--                - {{ element['productParcelsForView'][0]['expiration_date'] }} - -->
-              <!--                SL: {{ element['productParcelsForView'][0]['quantity'] }}</p>-->
-
+              <b>{{ element.product.product_name }}</b>
+              <br><span>Đơn vị : {{ element.productUnit.name }}</span>
               <p *ngIf="element['productParcelsForView'][0] !== undefined"
                  [innerHTML]="element['productParcelsForViewHtml']">
               </p>
@@ -94,15 +89,6 @@
               <b>{{ element.amount | currency : 'VND' : ''}}</b>
             </td>
           </ng-container>
-
-          <!--          <ng-container matColumnDef="actions">-->
-          <!--            <th mat-header-cell *matHeaderCellDef></th>-->
-          <!--            <td mat-cell *matCellDef="let element; let i = index">-->
-          <!--              <button mat-icon-button (click)="configProductPrice(element)">-->
-          <!--                <mat-icon>attach_money</mat-icon>-->
-          <!--              </button>-->
-          <!--            </td>-->
-          <!--          </ng-container>-->
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
