@@ -130,7 +130,8 @@
                 <td mat-cell *matCellDef="let element; let i = index">
                   <mat-form-field>
                     <input matInput class="quantity-input" [value]="element['quantity']"
-                           [(ngModel)]="data[i]['quantity']" [disabled]="data[i]['product_parcels'].length > 1"
+                           [(ngModel)]="data[i]['quantity']"
+                           [disabled]="data[i]['product_parcels'].length > 1 || form?.controls['status'].value === '10'"
                            autocomplete="off" (keyup)="quantityChange($event,i)">
 
                   </mat-form-field>
