@@ -436,7 +436,11 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
           data['date'] = effDate.toISOString().split('T')[0];
         }
+        this.data.forEach(element => {
+          element.price = numeral(element.price).value();
+        });
         data['items'] = this.data;
+        console.log(this.data);
         data['status'] = status;
 
         if (data['supplier_id'] === undefined) {
