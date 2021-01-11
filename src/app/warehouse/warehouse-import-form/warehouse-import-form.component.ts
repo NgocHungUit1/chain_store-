@@ -532,11 +532,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   recalculateItem(i) {
     if (this.data[i] !== undefined) {
+      const price = numeral(this.data[i]['price']).value();
       if (this.data[i]['discount_type'] === 'price') {
-        this.data[i]['amount'] = Math.round((this.data[i]['price'] - this.data[i]['discount']) * this.data[i]['quantity']);
+        this.data[i]['amount'] = Math.round((price - this.data[i]['discount']) * this.data[i]['quantity']);
       } else {
         this.data[i]['amount'] =
-          Math.round((this.data[i]['price'] - (this.data[i]['price'] * this.data[i]['discount']) / 100) * this.data[i]['quantity']);
+          Math.round((price - (price * this.data[i]['discount']) / 100) * this.data[i]['quantity']);
       }
       this.recalculateWarehouse();
     }
@@ -550,7 +551,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
     this.data.forEach(item => {
       const item_quantity = numeral(item['quantity']).value();
-      const item_price = Number(item['price']);
+      const item_price = numeral(item['price']).value();
       const item_discount = Number(item['discount']);
       quantity = Number(quantity) + item_quantity;
       if (item['discount_type'] === 'price') {
@@ -936,6 +937,11 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     this.data[index]['quantity'] = numeral(event.target.value).value();
     this.recalculateItem(index);
     // this.recalculateWarehouse();
+  }
+
+  priceChange(event: any, index) {
+    event.target.value = numeral(event.target.value).format('0,0');
+    this.recalculateItem(index);
   }
 
   openWarehouseExpenses() {

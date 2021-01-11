@@ -71,7 +71,7 @@
             <table mat-table [dataSource]="productDataSource" class="table warehouse-product-table no-wrap">
 
               <ng-container matColumnDef="#">
-                <th mat-header-cell *matHeaderCellDef> #</th>
+                <th mat-header-cell *matHeaderCellDef style="width: 60px;"> #</th>
                 <td mat-cell *matCellDef="let element; let i = index;"> {{i + 1}}</td>
               </ng-container>
 
@@ -142,7 +142,13 @@
               <ng-container matColumnDef="price">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['price']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index">
-                  <span>{{ element.price | currency : 'VND' : ''}} </span>
+                  <mat-form-field class="text-right">
+                    <input matInput
+                           [(ngModel)]="data[i]['price']"
+                           [disabled]="form?.controls['status'].value === '10'"
+                           (keyup)="priceChange($event,i)">
+                  </mat-form-field>
+                  <!--                  <span>{{ element.price | currency : 'VND' : ''}} </span>-->
                 </td>
               </ng-container>
 
