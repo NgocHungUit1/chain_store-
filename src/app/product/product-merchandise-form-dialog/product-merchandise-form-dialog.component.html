@@ -31,25 +31,6 @@
             </div>
 
             <div fxLayout="row wrap">
-              <div fxFlex="90">
-                <mat-form-field>
-                  <mat-select placeholder="Nhóm " [formControl]="form.controls['group_id']">
-                    <mat-option>--</mat-option>
-                    <mat-option *ngFor="let group of groups" [value]="group.id">
-                      {{group.name}}
-                    </mat-option>
-                  </mat-select>
-
-                  <mat-error *ngIf="form.controls['group_id'].hasError('required')">Vui lòng chọn nhóm</mat-error>
-                </mat-form-field>
-              </div>
-              <div fxFlex="10">
-                <button mat-button aria-label="add" (click)="openGroupFormDialog()">
-                  <mat-icon>add</mat-icon>
-                </button>
-              </div>
-            </div>
-            <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field >
                   <input type="text" matInput [formControl]="form.controls['original_price']"
@@ -76,26 +57,6 @@
               </div>
             </div>
 
-            <div fxLayout="row wrap">
-              <div fxFlex="90">
-                <mat-form-field>
-                  <mat-select placeholder="Vị trí" multiple [formControl]="form.controls['placements']">
-                    <mat-option>--</mat-option>
-                    <mat-option *ngFor="let placement of placements" [value]="placement.id">
-                      {{placement.name}}
-                    </mat-option>
-                  </mat-select>
-
-                  <mat-error *ngIf="form.controls['placements'].hasError('required')">Vui lòng chọn đường dùng
-                  </mat-error>
-                </mat-form-field>
-              </div>
-              <div fxFlex="10">
-                <button mat-button aria-label="add" (click)="openPlacementFormDialog()">
-                  <mat-icon>add</mat-icon>
-                </button>
-              </div>
-            </div>
 
 <!--            <div fxLayout="row wrap">-->
 <!--              <div fxFlex="100">-->
@@ -246,6 +207,59 @@
 
       <!-- Tab mo ta chi tiet  -->
       <mat-tab label="Mô tả chi tiết">
+        <div fxLayout="row wrap" class="m-t-20">
+          <div fxFlex.gt-sm="58%" fxFlex="100">
+
+            <div fxLayout="row wrap">
+              <div fxFlex="90">
+                <mat-form-field>
+                  <mat-select placeholder="Nhóm " [formControl]="form.controls['group_id']">
+                    <mat-option>--</mat-option>
+                    <mat-option *ngFor="let group of groups" [value]="group.id">
+                      {{group.name}}
+                    </mat-option>
+                  </mat-select>
+
+                  <mat-error *ngIf="form.controls['group_id'].hasError('required')">Vui lòng chọn nhóm</mat-error>
+                </mat-form-field>
+              </div>
+              <div fxFlex="10">
+                <button mat-button aria-label="add" (click)="openGroupFormDialog()">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+            </div>
+
+            <div fxLayout="row wrap">
+              <div fxFlex="90">
+                <mat-form-field>
+                  <mat-select placeholder="Vị trí" multiple [formControl]="form.controls['placements']">
+                    <mat-option>--</mat-option>
+                    <mat-option *ngFor="let placement of placements" [value]="placement.id">
+                      {{placement.name}}
+                    </mat-option>
+                  </mat-select>
+
+                  <mat-error *ngIf="form.controls['placements'].hasError('required')">Vui lòng chọn đường dùng
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div fxFlex="10">
+                <button mat-button aria-label="add" (click)="openPlacementFormDialog()">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <div fxFlex.gt-sm="2%" fxFlex="100">
+          </div>
+
+          <div fxFlex.gt-sm="30%" fxFlex="100">
+          </div>
+
+        </div>
         <div fxLayout="row wrap" class="m-t-20">
           <div fxFlex="100">
             <mat-card style="margin: 0px; border: 1px solid #ccc">

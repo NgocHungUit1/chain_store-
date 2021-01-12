@@ -137,6 +137,7 @@ export class ProductTabInfoComponent implements OnChanges {
     const dialogRef = this.dialog.open(ProductMerchandiseFormDialogComponent, {
       data: obj,
       width: '60%',
+      minWidth: '750px',
       minHeight: '80%',
     });
 

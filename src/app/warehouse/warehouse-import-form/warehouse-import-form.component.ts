@@ -33,6 +33,7 @@ import { OptionStoreService } from '../../common/option-store.service';
 import { OptionStore } from '../../common/option-store.model';
 import { WarehouseExpensesComponent } from '../warehouse-expenses/warehouse-expenses.component';
 import { WarehouseParcelListDialogComponent } from '../warehouse-parcel-list-dialog/warehouse-parcel-list-dialog.component';
+import { WarehouseProductMedicineDialogComponent } from '../warehouse-product-medicine-dialog/warehouse-product-medicine-dialog.component';
 
 @Component({
   selector: 'app-warehouse-import-form',
@@ -496,7 +497,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         this.handleAddProductToList(product.id);
       } else {
         sessionStorage.setItem('medicine', JSON.stringify(product));
-        this.openProductMedicineDialog('Add', {});
+        // this.openProductMedicineDialog('Add', {});
+        this.openWarehouseProductMedicineDialog('Add', {});
         this.selectProduct.patchValue(null);
       }
     }
@@ -875,6 +877,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     const dialogRef = this.dialog.open(ProductMedicineDialogComponent, {
       data: obj,
       width: '60%',
+      minWidth: '750px',
       minHeight: '80%',
     });
 
@@ -886,6 +889,69 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     });
   }
 
+  openWarehouseProductMedicineDialog(action, obj) {
+    obj.action = action;
+    obj.title = 'Thêm thuốc nhập hàng';
+    obj.product_id = null;
+    obj.copy_product_id = null;
+    const dialogRef = this.dialog.open(WarehouseProductMedicineDialogComponent, {
+      data: obj,
+      width: '80%',
+      minWidth: '900px',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result);
+      if (result['event'] === 'Save') {
+
+
+        this.productSer.getDetail(result['data']['id'], 'productUnits').subscribe(res => {
+          // console.log(res);
+          const warehouseProduct = new WarehouseProduct();
+          warehouseProduct.product_id = res['id'];
+          warehouseProduct.product = res;
+          warehouseProduct.quantity = 0; // de nhap so lo
+          warehouseProduct.price = (res['original_price'] !== null) ? res['original_price'] : 0;
+          warehouseProduct.discount = 0;
+          warehouseProduct.discount_type = 'price';
+          warehouseProduct.amount = 0; // (res['original_price'] !== null) ? res['original_price'] : 0;
+          warehouseProduct.productUnits = res['productUnits'];
+          warehouseProduct.product_parcels = [];
+
+          if (res['productUnits'].length > 0) {
+            res['productUnits'].sort((a, b) => (a.value > b.value) ? 1 : -1);
+            warehouseProduct.product_unit_id = res['productUnits'][0]['id'];
+            warehouseProduct.price = res['productUnits'][0]['original_price'];
+          }
+
+          const newData = this.data.concat([warehouseProduct]);
+          this.data = newData;
+          this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+          this.recalculateWarehouse();
+          this.selectProduct.patchValue(null);
+
+          result = result['parcel'];
+          const index = this.data.length - 1;
+          this.parcels.push(result);
+          this.data[index]['product_parcels'].push(result);
+          let quantity = 0;
+          this.data[index]['product_parcels'].forEach(parcel => {
+            quantity = quantity + parcel['quantity'];
+          });
+          this.data[index]['quantity'] = quantity;
+          this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
+          this.recalculateWarehouse();
+
+        });
+
+
+        // this.handleAddProductToList(result['data']['id']);
+      }
+
+    });
+  }
+
   openProductMerchandiseFormDialog(action, obj) {
     obj.action = action;
     obj.title = 'Thêm hàng hóa';
@@ -894,6 +960,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     const dialogRef = this.dialog.open(ProductMerchandiseFormDialogComponent, {
       data: obj,
       width: '60%',
+      minWidth: '750px',
       minHeight: '80%',
     });
 

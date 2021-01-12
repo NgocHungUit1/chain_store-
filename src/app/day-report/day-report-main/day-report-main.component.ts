@@ -61,10 +61,11 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
 
   columnsHeader = {
     '#': '#',
-    'invoice_no': 'Mã đơn hàng',
+    'invoice_no': 'Đơn hàng',
     'created_at': 'Thời gian',
     // 'returns': 'Mã trả hàng',
     'customer': 'Khách hàng',
+    // 'detail': 'Chi tiết',
     'total_price': 'Tổng tiền hàng',
     'discount': 'Giảm giá',
     'payment': 'Khách đã trả',

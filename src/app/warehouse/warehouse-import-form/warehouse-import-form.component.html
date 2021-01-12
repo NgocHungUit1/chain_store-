@@ -71,7 +71,7 @@
             <table mat-table [dataSource]="productDataSource" class="table warehouse-product-table no-wrap">
 
               <ng-container matColumnDef="#">
-                <th mat-header-cell *matHeaderCellDef style="width: 60px;"> #</th>
+                <th mat-header-cell *matHeaderCellDef style="width: 55px;"> #</th>
                 <td mat-cell *matCellDef="let element; let i = index;"> {{i + 1}}</td>
               </ng-container>
 
@@ -90,7 +90,7 @@
 
                   <button mat-icon-button matPrefix aria-label="add" (click)="openParcelListDialog(i);"
                           [disabled]="form?.controls['status'].value === '10'">
-                    <mat-icon>edit</mat-icon>
+                    <mat-icon>list</mat-icon>
                   </button>
 
                   <mat-form-field class="parcel-field">
@@ -180,7 +180,7 @@
               </ng-container>
 
               <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef></th>
+                <th mat-header-cell *matHeaderCellDef style="width: 45px;"></th>
                 <td mat-cell *matCellDef="let element; let i = index">
                   <button mat-icon-button (click)="removeProduct(i)"
                           [disabled]="form.controls['status'].value === '10'">
@@ -266,22 +266,14 @@
 
             <div fxFlex="100" *ngIf="expensesTransaction > 0 || optionStore_transaction_expenses?.value === 'yes' ">
               <mat-form-field>
-                <span [matMenuTriggerFor]="menu" matPrefix>
-                  <mat-icon color="primary">keyboard_backspace</mat-icon> Chi phí nhập trả NCC
+                <span (click)="openWarehouseExpenses()" matPrefix>
+                  <mat-icon color="primary">list</mat-icon>
+                  Chi phí nhập trả NCC
                 </span>
-                <mat-menu #menu="matMenu" yPosition="above" xPosition="before">
-                  <button mat-menu-item *ngFor="let item of expensesTransactions ">
-                      <span *ngIf="item?.type ==='price' && item?.auto === 1;">
-                        {{ item?.no }} - {{ item?.name }} - {{ item?.value | showValueExpenses }} VNĐ
-                      </span>
-                    <span *ngIf="item?.type ==='percent' && item?.auto === 1;">
-                        {{ item?.no }} - {{ item?.name }} - {{ item?.value | showValueExpenses }}%
-                      </span>
-                  </button>
-                </mat-menu>
+
                 <input class="text-right" matInput tabindex="5" formControlName="expenses_price"
                        (click)="openWarehouseExpenses()"
-                       style="color: blue"
+                       style="color: #0000ff"
                        value="{{ form.get('expenses_price').value }}" readonly>
               </mat-form-field>
             </div>

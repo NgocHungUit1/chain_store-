@@ -667,8 +667,4 @@ export class ProductMedicineDialogComponent implements OnInit {
     event.target.value = numeral(event.target.value).format('0,0');
   }
 
-  chooseTypeSellPrice() {
-    console.log(this.form.controls['typeSellPrice'].value);
-  }
-
 }
