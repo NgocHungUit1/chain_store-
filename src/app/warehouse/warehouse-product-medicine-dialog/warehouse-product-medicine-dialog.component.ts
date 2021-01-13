@@ -381,23 +381,16 @@ export class WarehouseProductMedicineDialogComponent implements OnInit {
   }
 
   submit(action, connect = false) {
-    if (this.form.valid) {
+    if (this.form.valid && this.formParcel.valid) {
       this.loading = true;
       const data = this.form.getRawValue();
       const parcel = this.formParcel.getRawValue();
-
 
       if (this.formParcel.controls['expiration_date'].value !== null && typeof this.formParcel.controls['expiration_date'].value === 'object') {
         const effDate = new Date(this.formParcel.controls['expiration_date'].value.getTime() + (420 * 60 * 1000));
         parcel['expiration_date'] = effDate.toISOString().split('T')[0];
       }
 
-      // if (data.medicine_id == null) {
-      //   this.notifySer.notify('info', 'Vui lòng nhập lại tên thuốc để xác định lại mã dược quốc gia');
-      //   this.form.controls['product_name'].setValue('');
-      //   this.loading = false;
-      //   return;
-      // }
       data.manufacturer = data.medicine.manufacturer;
       data.made_in = data.medicine.made_in;
       data.original_price = numeral(data.original_price).value();
