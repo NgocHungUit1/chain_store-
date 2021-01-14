@@ -61,7 +61,6 @@ export class SaleMainComponent implements OnInit {
   listProduct: any = [];
   countProduct = 0;
 
-  today: number = Date.now();
   sumPrice = 0;
   numberDiscount = 0; // use for view
   discount = 0; // use for payment
@@ -395,6 +394,9 @@ export class SaleMainComponent implements OnInit {
     let priceBookID = null;
     let noteSiderBar = null;
     let branch_id = null;
+    let time = null;
+    const today = new Date();
+    time = today.getHours() + ':' + ('0' + today.getMinutes()).slice(-2);
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     listItemInvoice.forEach(element => {
@@ -413,6 +415,9 @@ export class SaleMainComponent implements OnInit {
       noteSiderBar: [noteSiderBar],
       customerPay: [0],
       branch_id: [branch_id],
+      time: [time],
+      today: [today],
+      invoice_id: [null]
     });
 
     if (this.form.controls['branch_id'].value == null) {
@@ -761,6 +766,28 @@ export class SaleMainComponent implements OnInit {
         customerPay: paymentSiderBar?.number
       });
     }
+    this.form.controls['today'].enable();
+    this.form.controls['time'].enable();
+
+    if (mItemInvoice.invoice_id > 0) {
+      const aDate = mItemInvoice.today.split('-');
+      this.form.patchValue({
+        today: new Date(aDate[0], aDate[1], aDate[2]),
+        time: mItemInvoice.time,
+        invoice_id: mItemInvoice.invoice_id
+      });
+      this.form.controls['today'].disable();
+      this.form.controls['time'].disable();
+    }
+
+    if (mItemInvoice.invoice_id === -1) {
+      const today = new Date();
+      const time = today.getHours() + ':' + ('0' + today.getMinutes()).slice(-2);
+      this.form.patchValue({
+        today: today,
+        time: time,
+      });
+    }
     this.handleExpenseOrder();
   }
 
@@ -974,6 +1001,8 @@ export class SaleMainComponent implements OnInit {
   payment() {
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
+    let date_created = '';
+    let data = this.form.getRawValue();
     let mItemInvoice = new ItemInvoice();
     listItemInvoice.forEach(element => {
       if (element.active === true) {
@@ -1050,6 +1079,12 @@ export class SaleMainComponent implements OnInit {
       return;
     }
 
+    if (data['today'] !== null && typeof data['today'] === 'object') {
+      // @ts-ignore
+      const effDate = new Date(data['today'].getTime() + (420 * 60 * 1000));
+      date_created = data['time'] + ' ' + effDate.toISOString().split('T')[0];
+    }
+
     /**
      * Gang du lieu data
      */
@@ -1071,6 +1106,7 @@ export class SaleMainComponent implements OnInit {
       PaymentPrice: this.sumPrice - this.numberDiscount + this.expenseOrder, // tien thanh toan
       KhachNo: this.tienKhachNo,
       ExpenseOrders: this.expenseOrders,
+      date_created: date_created,
     };
 
     /**

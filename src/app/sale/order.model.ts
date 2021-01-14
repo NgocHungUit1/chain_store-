@@ -60,6 +60,9 @@ export class ItemInvoice {
   noteSiderBar: string;
   is_return: boolean;
   branch_id: number;
+  created_at: string;
+  today: string;
+  time: string;
 }
 
 export class ListInvoice {

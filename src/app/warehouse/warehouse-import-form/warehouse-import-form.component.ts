@@ -410,7 +410,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       // console.log(list);
       if (list.length > 0) {
         list.forEach(element => {
-          if (element.amount === 0) {
+          if (element.quantity === 0) {
             // @ts-ignore
             this.notifySer.notify('warning', 'Chưa nhập số lượng ' + element?.product?.product_name);
             reject();

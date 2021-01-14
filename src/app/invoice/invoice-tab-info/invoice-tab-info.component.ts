@@ -162,6 +162,8 @@ export class InvoiceTabInfoComponent implements OnInit {
     mItemInvoice.price_book_id = invoice.price_book_id;
     mItemInvoice.customer = invoice.customer;
     mItemInvoice.branch_id = invoice.branch_id;
+    mItemInvoice.today = invoice.today;
+    mItemInvoice.time = invoice.time;
     mItemInvoice.user = {
       id: invoice.user.id,
       email: invoice.user.email,
@@ -344,6 +346,8 @@ export class InvoiceTabInfoComponent implements OnInit {
       mItemInvoice.price_book_id = invoice.price_book_id;
       mItemInvoice.customer = invoice.customer;
       mItemInvoice.branch_id = invoice.branch_id;
+      mItemInvoice.today = invoice.today;
+      mItemInvoice.time = invoice.time;
       mItemInvoice.user = {
         id: invoice.user.id,
         email: invoice.user.email,

@@ -62,7 +62,7 @@
 
             <div fxFlex="12" class="row-amount">
 
-              <div *ngIf="localItemInvoice.is_return !== true; else changeAmount">
+              <div *ngIf="localItemInvoice?.is_return !== true; else changeAmount">
 
                 <div fxLayout="row wrap">
                   <mat-form-field style=" font-size: 20px; text-align: center;">
@@ -160,7 +160,7 @@
 
           <div class="user-action">
             <div fxLayout="row wrap">
-              <div fxFlex="70">
+              <div fxFlex="90">
 
                 <mat-form-field>
                   <input class="input-search-user input-search" type="text" [formControl]="selectUser" matInput
@@ -180,12 +180,36 @@
 
               </div>
               <div fxFlex="2"></div>
-              <div fxFlex="28">
+              <div fxFlex="8">
+                <!--                <mat-form-field>-->
+                <!--                  <input matInput class="input-search" value="{{ today | date:'shortTime' }}" disabled>-->
+                <!--                </mat-form-field>-->
+
+
+              </div>
+            </div>
+
+            <div fxLayout="row wrap">
+              <div fxFlex="49">
                 <mat-form-field>
-                  <input matInput class="input-search" value="{{ today | date:'shortTime' }}" disabled>
+                  <mat-label>Thời gian</mat-label>
+                  <input matInput formControlName="time" type="time"
+                         required="required">
+                </mat-form-field>
+              </div>
+              <div fxFlex="2">
+              </div>
+              <div fxFlex="49">
+                <mat-form-field>
+                  <mat-label>Ngày</mat-label>
+                  <input class="input-search" matInput [matDatepicker]="date_picker" formControlName="today"
+                         required="required">
+                  <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>
+                  <mat-datepicker #date_picker></mat-datepicker>
                 </mat-form-field>
               </div>
             </div>
+
           </div>
 
           <div class="branch-action">
