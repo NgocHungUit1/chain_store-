@@ -160,7 +160,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       sell_price: [null, Validators.required],
       original_price: [null, Validators.required],
       weight: [null],
-      base_unit: [null, Validators.required],
+      base_unit: ['viên', Validators.required],
       medicine_id: [null],
       typeSellPrice: ['price'], // update for customer
       // Medicine
@@ -266,6 +266,14 @@ export class ProductMedicineDialogComponent implements OnInit {
       return this.optionsMadeIn.filter(option => option.toLowerCase().includes(value.made_in));
     }
     return [];
+  }
+
+  changeUnitValue(event: any, i) {
+    const value = event.target.value;
+    console.log(value);
+    this.units.controls[i].patchValue({
+      unit_price: value * this.form.controls['sell_price'].value,
+    });
   }
 
   loadProduct(id, copy: any = null) {

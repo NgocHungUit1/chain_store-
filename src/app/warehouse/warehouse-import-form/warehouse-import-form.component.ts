@@ -664,6 +664,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       data: {parcels: this.data[index]['product_parcels']}
     });
     dialogRef.afterClosed().subscribe(result => {
+      // console.log(result);
       this.data[index]['product_parcels'].forEach(element => {
         if (element['expiration_date'] !== null && typeof element['expiration_date'] === 'object') {
           const effDate = new Date(element['expiration_date'].getTime() + (420 * 60 * 1000));
@@ -896,8 +897,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     obj.copy_product_id = null;
     const dialogRef = this.dialog.open(WarehouseProductMedicineDialogComponent, {
       data: obj,
-      width: '80%',
-      minWidth: '900px',
+      width: '65%',
+      minWidth: '700px',
       minHeight: '80%',
     });
 

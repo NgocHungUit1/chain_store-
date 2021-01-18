@@ -1,5 +1,17 @@
-<h1 mat-dialog-title>Danh sách lô nhập</h1>
-<table mat-table [dataSource]="changes" class="mat-elevation-z8">
+<h1 mat-dialog-title>Danh sách lô nhập
+<!--  <button (click)="newParcel()" mat-mini-fab color="primary" aria-label="Example icon button with a filter list icon">-->
+<!--    <mat-icon>add</mat-icon>-->
+<!--  </button>-->
+</h1>
+
+<div class="table-loading-shade" *ngIf="isLoadingResults || isRateLimitReached">
+  <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+  <div class="table-rate-limit-reached" *ngIf="isRateLimitReached">
+    GitHub's API rate limit has been reached. It will be reset in one minute.
+  </div>
+</div>
+
+<table mat-table [dataSource]="parcels" class="mat-elevation-z8">
 
 
   <ng-container matColumnDef="parcel_no">

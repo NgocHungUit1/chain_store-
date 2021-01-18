@@ -82,7 +82,7 @@
 
             <div fxLayout="row wrap">
               <mat-form-field>
-                <input type="text" matInput [formControl]="form.controls['original_price']"
+                <input type="text" class="text-right" matInput [formControl]="form.controls['original_price']"
                        (keyup)="inputformatNumber($event)" required placeholder="Giá vốn" autocomplete="off">
               </mat-form-field>
             </div>
@@ -90,7 +90,7 @@
 
               <div fxFlex="100">
                 <mat-form-field>
-                  <input type="text" matInput [formControl]="form.controls['sell_price']"
+                  <input type="text" class="text-right" matInput [formControl]="form.controls['sell_price']"
                          (keyup)="inputformatNumber($event)" required placeholder="Giá bán" autocomplete="off">
                 </mat-form-field>
               </div>
@@ -204,13 +204,16 @@
                             </td>
                             <td>
                               <mat-form-field>
-                                <input type="number" formControlName="unit_value" matInput
+                                <input type="number" formControlName="unit_value" matInput class="text-right"
+                                       (change)="changeUnitValue($event,i)"
+                                       (keyup)="changeUnitValue($event,i)"
                                        placeholder="Giá trị quy đổi">
                               </mat-form-field>
                             </td>
                             <td>
                               <mat-form-field>
-                                <input type="number" formControlName="unit_price" matInput placeholder="Giá bán">
+                                <input type="number" class="text-right" formControlName="unit_price"
+                                       matInput placeholder="Giá bán">
                               </mat-form-field>
                             </td>
                             <td>
@@ -253,7 +256,7 @@
       <mat-tab label="Mô tả chi tiết">
         <div fxLayout="row wrap" class="m-t-20">
 
-          <div fxFlex.gt-sm="68%" fxFlex="100">
+          <div fxFlex.gt-sm="49%" fxFlex="100">
             <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field>
@@ -279,6 +282,19 @@
                 </button>
               </div>
             </div>
+
+          </div>
+          <div fxFlex.gt-sm="2%" fxFlex="100"></div>
+          <div fxFlex.gt-sm="49%" fxFlex="100">
+            <div fxLayout="row wrap">
+              <div fxFlex="90">
+                <mat-form-field>
+                  <input type="number" matInput [formControl]="form.controls['weight']" placeholder="Trọng lượng"
+                         autocomplete="off">
+                </mat-form-field>
+              </div>
+            </div>
+
             <div fxLayout="row wrap">
               <div fxFlex="90">
                 <mat-form-field>
@@ -317,15 +333,6 @@
                   <mat-icon>add</mat-icon>
                 </button>
               </div>
-            </div>
-          </div>
-          <div fxFlex.gt-sm="2%" fxFlex="100"></div>
-          <div fxFlex.gt-sm="30%" fxFlex="100">
-            <div fxFlex="100">
-              <mat-form-field>
-                <input type="number" matInput [formControl]="form.controls['weight']" placeholder="Trọng lượng"
-                       autocomplete="off">
-              </mat-form-field>
             </div>
           </div>
 

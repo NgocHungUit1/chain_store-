@@ -103,11 +103,11 @@ export class WarehouseProductMedicineDialogComponent implements OnInit {
   };
 
   imageButtons = [
-    {isShow: true},
-    {isShow: true},
-    {isShow: true},
-    {isShow: true},
-    {isShow: true},
+    // {isShow: true},
+    // {isShow: true},
+    // {isShow: true},
+    // {isShow: true},
+    // {isShow: true},
   ];
   optionsMadeIn: string[] = ['Trung Quốc', 'Ấn Độ', 'Mỹ', 'Indonesia', 'Braxin', 'Pakistan', 'Nigeria',
     'Bangladesh', 'Mexico', 'Nhật Bản', 'Ethiopia', 'Philippines', 'Việt Nam',
@@ -158,7 +158,7 @@ export class WarehouseProductMedicineDialogComponent implements OnInit {
       sell_price: [null, Validators.required],
       original_price: [null, Validators.required],
       weight: [null],
-      base_unit: [null, Validators.required],
+      base_unit: ['viên', Validators.required],
       medicine_id: [null],
       typeSellPrice: ['price'], // update for customer
       // Medicine
@@ -676,6 +676,13 @@ export class WarehouseProductMedicineDialogComponent implements OnInit {
    */
   inputformatNumber(event: any) {
     event.target.value = numeral(event.target.value).format('0,0');
+  }
+
+  changeUnitValue(event: any, i) {
+    const value = event.target.value;
+    this.units.controls[i].patchValue({
+      unit_price: value * this.form.controls['sell_price'].value,
+    });
   }
 
 }

@@ -9,7 +9,7 @@
   background-color: #fff;
   border: 1px dashed #ccc;
   border-radius: 3px;
-  width: calc((100% - 60px)/ 5);
+  width: calc((100% - 60px) / 5);
   min-height: 80px;
   float: left;
   margin-right: 12px;
@@ -100,7 +100,7 @@
 
 .product-upload-image li.selected-image {
   margin: 0 12px 0 0;
-  width: calc((100% - 60px)/ 5);
+  width: calc((100% - 60px) / 5);
   height: 80px;
 }
 
@@ -120,6 +120,11 @@ input {
 }
 
 .mat-radio-button ~ .mat-radio-button {
-  padding-top : 10px;
+  padding-top: 10px;
   margin-left: 16px;
+}
+
+mat-card-content.mat-card-content {
+  margin-bottom: 0;
+  padding: 12px;
 }

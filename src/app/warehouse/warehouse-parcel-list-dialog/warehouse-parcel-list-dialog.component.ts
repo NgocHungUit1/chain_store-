@@ -26,7 +26,9 @@ export class WarehouseParcelListDialogComponent implements OnInit {
   local_data: any;
   status: any;
   parcels: object[] = [];
-  changes: object[] = [];
+  isLoadingResults = true;
+  isRateLimitReached = false;
+
   displayedColumns: string[] = ['parcel_no', 'quantity', 'expiration_date'];
 
 
@@ -35,7 +37,7 @@ export class WarehouseParcelListDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.changes = this.parcels;
+    this.isLoadingResults = false;
   }
 
   submit() {
@@ -55,5 +57,18 @@ export class WarehouseParcelListDialogComponent implements OnInit {
     event.target.value = numeral(event.target.value).format('0,0');
   }
 
+  newParcel() {
+    this.isLoadingResults = true;
+    const obj = {
+      'parcel_no': '',
+      'quantity': 1,
+      'expiration_date': null
+    };
+    setTimeout(() => {
+      this.parcels.push(obj);
+      this.parcels = [...this.parcels];
+      this.isLoadingResults = false;
+    }, 50);
+  }
 
 }
