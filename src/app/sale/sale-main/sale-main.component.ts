@@ -827,7 +827,7 @@ export class SaleMainComponent implements OnInit {
         'padding: 8px;' +
         '}</style>' +
         '<section style="padding: 10px;">' +
-        '<p style="text-align:center;">Địa chỉ : ' + res?.store?.name + '</p>' +
+        '<p style="text-align:center;">' + res?.store?.name + '</p>' +
         '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +
         '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
@@ -900,6 +900,7 @@ export class SaleMainComponent implements OnInit {
       }
       printContent += '</table>';
       printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
+      printContent += '<p style="text-align:left; font-size: 12px;font-style: italic;" >Hổ trợ : 0972 574 506</p>';
       printContent += '</section>';
 
       const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
