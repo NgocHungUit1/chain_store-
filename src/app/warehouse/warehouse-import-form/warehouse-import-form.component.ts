@@ -786,13 +786,13 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         'padding: 8px;' +
         '}</style>' +
         '<section style="padding: -5px;">' +
-        '<p style="text-align:left; margin: 10px">Nhà thuốc: ' + res?.store?.name + '</p>' +
-        '<p style="text-align:left; margin: 10px">Địa chỉ: ' + res?.store?.address + '</p>' +
-        '<p style="text-align:left; margin: 10px">SĐT: ' + res?.store?.phone + '</p>' +
+        '<p style="text-align:left; margin: 10px;font-size: 13px">' + res?.store?.name + '</p>' +
+        // '<p style="text-align:left; margin: 10px">Địa chỉ: ' + res?.store?.address + '</p>' +
+        '<p style="text-align:left; margin: 5px;font-size: 13px">SĐT: ' + res?.store?.phone + '</p>' +
         '<p style="text-align:center; font-weight:600;margin: 10px;">HÓA ĐƠN NHẬP HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;margin: 10px;">Mã phiếu nhập: ' + res?.no + '</p> ' +
-        '<p style="text-align:left; margin: 10px;">Ngày nhập: ' + res?.date + ' </p>' +
-        '<p style="text-align:left; margin: 10px;">Người nhập: ' + res?.created_by + ' </p>' +
+        '<p style="text-align:left; margin: 8px;font-size: 13px">Ngày nhập: ' + res?.date + ' </p>' +
+        '<p style="text-align:left; margin: 8px;font-size: 13px">Người nhập: ' + res?.created_by + ' </p>' +
         '<table style="font-size: 13px">' +
         '<tr>' +
         '<td style="font-weight: 600;"> Nhà cung cấp </td>' +
@@ -857,7 +857,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         printContent += '</tr>';
       });
       printContent += '</table>';
-
+      printContent += '<p style="text-align:left; font-size: 12px;font-style: italic;" >Hổ trợ : 0972 574 506</p>';
       printContent += '<p style="text-align:center;font-style: italic;" >---</p>';
       printContent += '</section>';
 
