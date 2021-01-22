@@ -270,7 +270,7 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['stock_so_luong']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                      {{ element?.quantity?.number }}
+                      {{ element?.stockCard?.quantity_of_stock }}
                   </span>
                 </td>
               </ng-container>
@@ -294,7 +294,8 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['stock_gia_tri_ban']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                  {{ element?.quantity?.number * element.sell_price | number }}
+<!--                  {{ element?.quantity?.number * element.sell_price | number }}-->
+                  {{ element?.stockCard?.quantity_of_stock * element.sell_price | number }}
                   </span>
                 </td>
               </ng-container>
@@ -318,7 +319,8 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['stock_gia_tri_kho']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                    {{ element?.quantity?.number * element.original_price | number }}
+<!--                    {{ element?.quantity?.number * element.original_price | number }}-->
+                    {{ element?.stockCard?.quantity_of_stock * element.original_price | number }}
                   </span>
                 </td>
               </ng-container>

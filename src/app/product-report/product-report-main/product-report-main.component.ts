@@ -142,7 +142,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     if (typeReport === 'stock') {
-      filter.expand = 'quantity';
+      filter.expand = 'quantity,stockCard';
     }
     // filter.expand = 'returnsDetailsBranch';
     // filter.expand = 'medicine,productUnits,productPlacements,group,images,quantity';
