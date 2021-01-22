@@ -203,7 +203,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
         '<section style="padding: -5px;">' +
         '<p style="text-align:left; margin: 10px; font-size: 13px">' + res?.store?.name + '</p>' +
         // '<p style="text-align:left; margin: 10px; font-size: 13px">Địa chỉ: ' + res?.store?.address + '</p>' +
-        '<p style="text-align:left; margin: 5px; font-size: 13px">SĐT: ' + res?.store?.phone + '</p>' +
+        // '<p style="text-align:left; margin: 5px; font-size: 13px">SĐT: ' + res?.store?.phone + '</p>' +
         '<p style="text-align:center; font-weight:600;margin: 10px;">HÓA ĐƠN NHẬP HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;margin: 10px;">Mã phiếu nhập: ' + res?.no + '</p> ' +
         '<p style="text-align:left; margin: 8px; font-size: 13px">Ngày nhập: ' + res?.date + ' </p>' +
