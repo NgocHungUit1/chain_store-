@@ -34,6 +34,7 @@ import { OptionStore } from '../../common/option-store.model';
 import { WarehouseExpensesComponent } from '../warehouse-expenses/warehouse-expenses.component';
 import { WarehouseParcelListDialogComponent } from '../warehouse-parcel-list-dialog/warehouse-parcel-list-dialog.component';
 import { WarehouseProductMedicineDialogComponent } from '../warehouse-product-medicine-dialog/warehouse-product-medicine-dialog.component';
+import { element } from 'protractor';
 
 @Component({
   selector: 'app-warehouse-import-form',
@@ -353,7 +354,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         warehouseProduct.product_id = item.product_id;
         warehouseProduct.product = item.product;
         warehouseProduct.quantity = item.quantity;
-        warehouseProduct.price = (item.price !== null) ? item.price : 0;
+        warehouseProduct.price = (item.price !== null) ? numeral(item.price).format('0,0') : 0;
         warehouseProduct.discount = (item.discount !== null) ? item.discount : 0;
         warehouseProduct.discount_type = (item.discount_type !== null) ? item.discount_type : 'price';
         warehouseProduct.amount = (item.amount !== null) ? item.amount : 0;
@@ -509,31 +510,52 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
    * @param product_id
    */
   handleAddProductToList(product_id) {
-    this.productSer.getDetail(product_id, 'productUnits').subscribe(res => {
-      // console.log(res);
-      const warehouseProduct = new WarehouseProduct();
-      warehouseProduct.product_id = res['id'];
-      warehouseProduct.product = res;
-      warehouseProduct.quantity = 0; // de nhap so lo
-      warehouseProduct.price = (res['original_price'] !== null) ? res['original_price'] : 0;
-      warehouseProduct.discount = 0;
-      warehouseProduct.discount_type = 'price';
-      warehouseProduct.amount = 0; // (res['original_price'] !== null) ? res['original_price'] : 0;
-      warehouseProduct.productUnits = res['productUnits'];
-      warehouseProduct.product_parcels = [];
-
-      if (res['productUnits'].length > 0) {
-        res['productUnits'].sort((a, b) => (a.value > b.value) ? 1 : -1);
-        warehouseProduct.product_unit_id = res['productUnits'][0]['id'];
-        warehouseProduct.price = res['productUnits'][0]['original_price'];
+    let productExits = 0;
+    // tslint:disable-next-line:no-shadowed-variable
+    this.data.forEach((element, index) => {
+      if (element.product_id === product_id) {
+        productExits = 1;
+        if (element['product_parcels'].length > 0) {
+          element['product_parcels'][0]['quantity'] = element['product_parcels'][0]['quantity'] + 1;
+        }
+        element.quantity = element.quantity + 1;
+        this.recalculateItem(index);
       }
+    });
+    if (productExits === 0) {
+      this.productSer.getDetail(product_id, 'productUnits').subscribe(res => {
+        const warehouseProduct = new WarehouseProduct();
+        warehouseProduct.product_id = res['id'];
+        warehouseProduct.product = res;
+        warehouseProduct.quantity = 1; // de nhap so lo
+        warehouseProduct.price = (res['original_price'] !== null) ? numeral(res['original_price']).format('0,0') : 0;
+        warehouseProduct.discount = 0;
+        warehouseProduct.discount_type = 'price';
+        warehouseProduct.amount = (res['original_price'] !== null) ? res['original_price'] : 0;
+        // warehouseProduct.amount = 0; // (res['original_price'] !== null) ? res['original_price'] : 0;
+        warehouseProduct.productUnits = res['productUnits'];
+        warehouseProduct.product_parcels = [];
 
-      const newData = this.data.concat([warehouseProduct]);
-      this.data = newData;
+        if (res['productUnits'].length > 0) {
+          res['productUnits'].sort((a, b) => (a.value > b.value) ? 1 : -1);
+          warehouseProduct.product_unit_id = res['productUnits'][0]['id'];
+          warehouseProduct.price = res['productUnits'][0]['original_price'];
+        }
+
+        const newData = this.data.concat([warehouseProduct]);
+        this.data = newData;
+        this.data.forEach(element => {
+          element.price = numeral(element.price).format('0,0');
+        });
+        this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+        this.recalculateWarehouse();
+        this.selectProduct.patchValue(null);
+      });
+    } else {
       this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
       this.recalculateWarehouse();
       this.selectProduct.patchValue(null);
-    });
+    }
   }
 
   recalculateItem(i) {
@@ -647,6 +669,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         });
         this.data[index]['quantity'] = quantity;
         this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
+        this.recalculateItem(index);
         this.recalculateWarehouse();
       }
     });
@@ -699,6 +722,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     });
     this.data[index]['quantity'] = quantity;
     this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
+    this.recalculateItem(index);
     this.recalculateWarehouse();
   }
 
@@ -1033,6 +1057,27 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         this.recalculateWarehouse();
       }
     });
+  }
+
+  // Quet ma vach
+  onkeydownBarCode($event) {
+    if (this.form.controls['status'].value === '10') {
+      this.notifySer.notify('warning', 'Đơn nhập hàng đã hoàn thành.');
+      $event.target.value = '';
+    } else {
+      const barcode = $event.target.value;
+      // console.log($event.target.value);
+      this.productSer.addproductBarcode(barcode).subscribe(res => {
+        // console.log(res);
+        if (res['errors']) {
+          this.notifySer.notify('warning', res['errors']);
+        }
+        if (res !== null) {
+          this.handleAddProductToList(res.id);
+        }
+      });
+      $event.target.value = '';
+    }
   }
 
 }
