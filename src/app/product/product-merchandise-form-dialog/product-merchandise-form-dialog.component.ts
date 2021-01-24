@@ -473,5 +473,12 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
     event.target.value = numeral(event.target.value).format('0,0');
   }
 
+  changeUnitValue(event: any, i) {
+    const value = event.target.value;
+    this.units.controls[i].patchValue({
+      unit_price: value * this.form.controls['sell_price'].value,
+    });
+  }
+
 
 }

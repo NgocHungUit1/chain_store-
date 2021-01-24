@@ -21,6 +21,10 @@ import { CustomerService } from '../../customer/customer.service';
 import { UserService } from '../../user/user.service';
 import { User } from '../../user/user.model';
 import * as numeral from 'numeral';
+import { OptionStoreService } from '../../common/option-store.service';
+import { OptionStore } from '../../common/option-store.model';
+import { ExpensesOrderService } from '../../expenses-order/expenses-order.service';
+import { ExpensesOrder, ExpensesOrderFilter } from '../../expenses-order/expenses-order.model';
 
 @Component({
   selector: 'app-sale-main',
@@ -29,6 +33,7 @@ import * as numeral from 'numeral';
   styleUrls: ['./sale-main.component.css']
 })
 export class SaleMainComponent implements OnInit {
+
 
   constructor(
     private fb: FormBuilder,
@@ -39,9 +44,15 @@ export class SaleMainComponent implements OnInit {
     private priceListProductSer: PriceListProductService,
     private customerService: CustomerService,
     private userService: UserService,
+    private optionStoreService: OptionStoreService,
+    private expensesOrderService: ExpensesOrderService,
   ) {
 
   }
+
+  optionStore_transaction_expenses_order: OptionStore = null;
+  expenseOrder = 0; // thu khac
+  expenseOrders: ExpensesOrder[] = null;
 
   selectProduct = new FormControl();
   public filteredProducts: Observable<Product[]>;
@@ -50,7 +61,6 @@ export class SaleMainComponent implements OnInit {
   listProduct: any = [];
   countProduct = 0;
 
-  today: number = Date.now();
   sumPrice = 0;
   numberDiscount = 0; // use for view
   discount = 0; // use for payment
@@ -103,6 +113,8 @@ export class SaleMainComponent implements OnInit {
 
     await this.handleAddCustomerExist(mItemInvoice);
 
+    await this.getDataExpenseOrder();
+
     await this.handleDetailOrder(mItemInvoice);
 
     await this.handleDiscountSiderBar(mItemInvoice);
@@ -110,7 +122,59 @@ export class SaleMainComponent implements OnInit {
     await this.handlePaymentSiderBar(mItemInvoice);
 
     this.localItemInvoice = mItemInvoice;
+
   }
+
+  handleExpenseOrder() {
+    this.expenseOrder = 0;
+    if (this.expenseOrders !== null) {
+      this.expenseOrders.forEach((element: ExpensesOrder) => {
+        if (element.type === 'price') {
+          element.price = element.value;
+        } else {
+          element.price = (element.value * this.sumPrice) / 100;
+        }
+        this.expenseOrder += element.price;
+      });
+    }
+  }
+
+  getDataExpenseOrder() {
+    if (this.optionStore_transaction_expenses_order == null) {
+      this.optionStoreService.getValue('transaction_expenses_order').subscribe(res => {
+        this.optionStore_transaction_expenses_order = res;
+        if (this.optionStore_transaction_expenses_order?.value === 'yes') {
+          const expensesOrderFilter = new ExpensesOrderFilter();
+          expensesOrderFilter.status = '10';
+          expensesOrderFilter.auto = '1';
+          if (this.expenseOrders == null) {
+            this.expensesOrderService.getList(expensesOrderFilter).subscribe(expensesOrders => {
+              this.expenseOrders = <ExpensesOrder[]>expensesOrders.body;
+              this.handleExpenseOrder();
+            });
+          } else {
+            this.handleExpenseOrder();
+          }
+        }
+
+      });
+    } else {
+      if (this.optionStore_transaction_expenses_order?.value === 'yes') {
+        const expensesOrderFilter = new ExpensesOrderFilter();
+        expensesOrderFilter.status = '10';
+        expensesOrderFilter.auto = '1';
+        if (this.expenseOrders == null) {
+          this.expensesOrderService.getList(expensesOrderFilter).subscribe(expensesOrders => {
+            this.expenseOrders = <ExpensesOrder[]>expensesOrders.body;
+            this.handleExpenseOrder();
+          });
+        } else {
+          this.handleExpenseOrder();
+        }
+      }
+    }
+  }
+
 
   getNewItemInvoice() {
     let mItemInvoice = new ItemInvoice();
@@ -202,7 +266,7 @@ export class SaleMainComponent implements OnInit {
          *
          * this.common_idOld !== priceBookID
          */
-        if (this.compareEqualListProduct(listProductUnitIdChoose) === 0 || this.changePriceBook == true) {
+        if (this.compareEqualListProduct(listProductUnitIdChoose) === 0 || this.changePriceBook === true) {
           this.listProductUnitIdChooseOld = listProductUnitIdChoose;
           this.common_idOld = priceBookID;
           const common_id = priceBookID;
@@ -249,10 +313,6 @@ export class SaleMainComponent implements OnInit {
                   }
                 });
 
-                /*
-                bug
-                 */
-                // console.log(this.listProduct);
                 const list = this.listProduct;
                 this.listProduct = [];
                 this.listProduct = list;
@@ -264,6 +324,8 @@ export class SaleMainComponent implements OnInit {
           });
           this.listProduct.reverse();
           this.changePriceBook = false;
+
+
         } else {
           /**
            * Truong hop: khong thay doi vs sl , pricebook
@@ -309,6 +371,7 @@ export class SaleMainComponent implements OnInit {
         }
 
       }
+      this.handleExpenseOrder();
     }
   }
 
@@ -331,6 +394,9 @@ export class SaleMainComponent implements OnInit {
     let priceBookID = null;
     let noteSiderBar = null;
     let branch_id = null;
+    let time = null;
+    const today = new Date();
+    time = today.getHours() + ':' + ('0' + today.getMinutes()).slice(-2);
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     listItemInvoice.forEach(element => {
@@ -349,6 +415,9 @@ export class SaleMainComponent implements OnInit {
       noteSiderBar: [noteSiderBar],
       customerPay: [0],
       branch_id: [branch_id],
+      time: [time],
+      today: [today],
+      invoice_id: [null]
     });
 
     if (this.form.controls['branch_id'].value == null) {
@@ -407,6 +476,7 @@ export class SaleMainComponent implements OnInit {
    * Init Component
    */
   ngOnInit(): void {
+    // this.optionStore_transaction_expenses_order.value = 'no';
     this.isLoadingResults = true;
     this.allPermission = sessionStorage.getItem('allPermission').split(',');
     this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
@@ -434,6 +504,7 @@ export class SaleMainComponent implements OnInit {
       this.loadData();
     });
     this.isLoadingResults = false;
+
 
     /**
      * Tim kiem khach hang
@@ -482,10 +553,16 @@ export class SaleMainComponent implements OnInit {
 
   deleleProduct(i: any) {
     this.orderService.deleteProduct(i);
+    const mItemInvoice = this.getNewItemInvoice();
+    if (mItemInvoice.listProduct.length === 0) {
+      this.sumPrice = 0;
+    }
+    this.handleExpenseOrder();
   }
 
   upAmountProduct(product: Product, i: any) {
     this.orderService.upAmountProduct(product, i);
+    this.handleExpenseOrder();
   }
 
   upAmountProductReturn(product: Product, i: any) {
@@ -494,6 +571,7 @@ export class SaleMainComponent implements OnInit {
 
   downAmountProduct(product_id, i: any) {
     this.orderService.downAmountProduct(product_id, i);
+    this.handleExpenseOrder();
   }
 
   inputAmountProduct(product_id, value) {
@@ -684,16 +762,33 @@ export class SaleMainComponent implements OnInit {
   handlePaymentSiderBar(mItemInvoice) {
     const paymentSiderBar = mItemInvoice.paymentSiderBar;
     if (paymentSiderBar !== undefined) {
-      // this.customerPay = paymentSiderBar?.number;
       this.form.patchValue({
         customerPay: paymentSiderBar?.number
       });
-    } else {
-      // this.form.patchValue({
-      //   customerPay : 0
-      // });
-      // this.customerPay = 0;
     }
+    this.form.controls['today'].enable();
+    this.form.controls['time'].enable();
+
+    if (mItemInvoice.invoice_id > 0) {
+      const aDate = mItemInvoice.today.split('-');
+      this.form.patchValue({
+        today: new Date(aDate[0], aDate[1], aDate[2]),
+        time: mItemInvoice.time,
+        invoice_id: mItemInvoice.invoice_id
+      });
+      this.form.controls['today'].disable();
+      this.form.controls['time'].disable();
+    }
+
+    if (mItemInvoice.invoice_id === -1) {
+      const today = new Date();
+      const time = today.getHours() + ':' + ('0' + today.getMinutes()).slice(-2);
+      this.form.patchValue({
+        today: today,
+        time: time,
+      });
+    }
+    this.handleExpenseOrder();
   }
 
   openSaleCustomerFormDialogComponent() {
@@ -703,10 +798,8 @@ export class SaleMainComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      // console.log(result);
       if (result !== undefined) {
         this.onSelectedCustomer(result);
-        // this.selectCustomer.patchValue(result?.name);
       }
     });
   }
@@ -716,7 +809,6 @@ export class SaleMainComponent implements OnInit {
    */
   printInvoice(invoice_id: number) {
     this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
-      const address = (res?.customer?.address !== null && res?.customer?.address !== undefined) ? res?.customer?.address : '';
       const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
       const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
       let printContent = '<title>' + res?.invoice_no + '</title>';
@@ -735,23 +827,23 @@ export class SaleMainComponent implements OnInit {
         'padding: 8px;' +
         '}</style>' +
         '<section style="padding: 10px;">' +
-        '<p style="text-align:center;">Địa chỉ : ' + res?.store?.name + '</p>' +
+        '<p style="text-align:center;">' + res?.store?.name + '</p>' +
         '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +
         '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
-        '<p style="">Khách hàng: ' + customer_name + '</p>' +
-        '<p style="">SĐT: ' + customer_phone + '</p>' +
-        '<p style="">Địa chỉ: ' + address + '</p>' +
-        '<table>' +
+        '<p style="">Khách hàng: ' + customer_name + '</p>';
+      if (customer_phone !== '') {
+        printContent += '<p style="">SĐT: ' + customer_phone + '</p>';
+      }
+      printContent += '<table>' +
         '<tr>' +
         '<th>Đơn giá</th>' +
-        '<th style="text-align:center;">Số lượng</th>';
+        '<th style="text-align:center;">SL</th>';
 
       if (this.autoPrintInSoLo === true) {
         printContent += '<th style="text-align:left;">Số lô</th>';
       }
-
-      printContent += '<th style="text-align:center;">Thành tiền</th>' +
+      printContent += '<th style="text-align:center;">T.Tiền</th>' +
         '</tr>';
 
       const detail = res.detail;
@@ -764,7 +856,7 @@ export class SaleMainComponent implements OnInit {
           printContent += '<tr>' +
             '<td>' + element.product?.product_name + '<br>' + element.price + '</td>' +
             '<td style="text-align:center;">' + element.amount + '</td>';
-          if (this.autoPrintInSoLo == true) {
+          if (this.autoPrintInSoLo === true) {
             printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
           }
           printContent += '<td style="text-align:right;">' + element.total + '</td>' +
@@ -773,7 +865,7 @@ export class SaleMainComponent implements OnInit {
           printContent += '<tr>' +
             '<td>' + element.product?.product_name + ' - ' + element?.base_unit + '<br>' + element.price + '</td>' +
             '<td style="text-align:center;">' + element.amount + '</td>';
-          if (this.autoPrintInSoLo == true) {
+          if (this.autoPrintInSoLo === true) {
             printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
           }
           printContent += '<td style="text-align:right;">' + element.total + '</td>' +
@@ -808,6 +900,7 @@ export class SaleMainComponent implements OnInit {
       }
       printContent += '</table>';
       printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
+      printContent += '<p style="text-align:left; font-size: 12px;font-style: italic;" >Hổ trợ : 0972 574 506</p>';
       printContent += '</section>';
 
       const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
@@ -825,7 +918,6 @@ export class SaleMainComponent implements OnInit {
    */
   printReturns(returns_id: number) {
     this.orderService.getDataReturnsToPrint(returns_id).subscribe(res => {
-      const address = (res?.customer?.address !== null && res?.customer?.address !== undefined) ? res?.customer?.address : '';
       const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
       const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
       let printContent = '<title>' + res?.return_no + '</title>';
@@ -844,14 +936,15 @@ export class SaleMainComponent implements OnInit {
         '<p style="text-align:center; font-weight:600;">HÓA ĐƠN TRẢ HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.return_no + '</p>' +
         '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
-        '<p style="">Khách hàng: ' + customer_name + '</p>' +
-        '<p style="">SĐT: ' + customer_phone + '</p>' +
-        '<p style="">Địa chỉ: ' + address + '</p>' +
-        '<table>' +
+        '<p style="">Khách hàng: ' + customer_name + '</p>';
+      if (customer_phone !== '') {
+        printContent += '<p style="">SĐT: ' + customer_phone + '</p>';
+      }
+      printContent += '<table>' +
         '<tr>' +
         '<th>Đơn giá</th>' +
-        '<th style="text-align:center;">Số lượng</th>' +
-        '<th style="text-align:center;">Thành tiền</th>' +
+        '<th style="text-align:center;">SL</th>' +
+        '<th style="text-align:center;">T.Tiền</th>' +
         '</tr>';
 
       const detail = res.detail;
@@ -905,9 +998,12 @@ export class SaleMainComponent implements OnInit {
   }
 
   // ------------------------------------------------------ PAYMENT ----------------------------------------------------------//
+
   payment() {
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
+    let date_created = '';
+    let data = this.form.getRawValue();
     let mItemInvoice = new ItemInvoice();
     listItemInvoice.forEach(element => {
       if (element.active === true) {
@@ -923,9 +1019,6 @@ export class SaleMainComponent implements OnInit {
     }
 
     if (mItemInvoice.user === undefined) {
-
-      // console.log(this.user);
-      // return;
       mItemInvoice.user = this.user;
     }
 
@@ -987,6 +1080,12 @@ export class SaleMainComponent implements OnInit {
       return;
     }
 
+    if (data['today'] !== null && typeof data['today'] === 'object') {
+      // @ts-ignore
+      const effDate = new Date(data['today'].getTime() + (420 * 60 * 1000));
+      date_created = data['time'] + ' ' + effDate.toISOString().split('T')[0];
+    }
+
     /**
      * Gang du lieu data
      */
@@ -1000,12 +1099,15 @@ export class SaleMainComponent implements OnInit {
         note: this.form.controls['noteSiderBar'].value,
         price_book_id: this.form.controls['priceBookID'].value,
         branch_id: this.form.controls['branch_id'].value,
+        expenses_order_price: this.expenseOrder,
       },
       UserID: mItemInvoice.user.id,
       InvoiceDetail: invoiceDetail,
       PaymentMethod: 'cash', // mItemInvoice.paymentSiderBar?.type,
-      PaymentPrice: this.sumPrice - this.numberDiscount, // tien thanh toan
+      PaymentPrice: this.sumPrice - this.numberDiscount + this.expenseOrder, // tien thanh toan
       KhachNo: this.tienKhachNo,
+      ExpenseOrders: this.expenseOrders,
+      date_created: date_created,
     };
 
     /**
@@ -1047,6 +1149,7 @@ export class SaleMainComponent implements OnInit {
         this.orderService.setLoadDetailPage(true);
       });
     }
+    this.handleExpenseOrder();
 
   }
 
@@ -1243,7 +1346,7 @@ export class SaleMainComponent implements OnInit {
   inputformatNumber(event: any) {
     event.target.value = numeral(event.target.value).format('0,0');
     this.tienThuaTraKhach = numeral(this.form.controls['customerPay'].value).value() - this.sumPrice + this.numberDiscount;
-    this.tienKhachNo = this.sumPrice - this.numberDiscount - numeral(this.form.controls['customerPay'].value).value();
+    this.tienKhachNo = this.sumPrice - this.numberDiscount - numeral(this.form.controls['customerPay'].value).value() + this.expenseOrder;
   }
 
   public checkPermissionSaleDisable() {

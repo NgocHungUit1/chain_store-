@@ -223,6 +223,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     const dialogRef = this.dialog.open(ProductMedicineDialogComponent, {
       data: obj,
       width: '60%',
+      minWidth: '750px',
       minHeight: '80%',
     });
 
@@ -256,6 +257,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     const dialogRef = this.dialog.open(ProductMerchandiseFormDialogComponent, {
       data: obj,
       width: '60%',
+      minWidth: '750px',
       minHeight: '80%',
     });
 

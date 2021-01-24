@@ -57,7 +57,11 @@ export class ManufacturerService {
 
   create(data) {
     const url = environment.apiUrl + '/manufacturer';
+    return this.http.post(url, data);
+  }
 
+  save(data) {
+    const url = environment.apiUrl + '/manufacturer/save';
     return this.http.post(url, data);
   }
 }

@@ -1,6 +1,6 @@
 import { ApiFilterBase } from '../shared/base';
 import { Location } from '../location/location.model';
-import {User} from '../user/user.model';
+import { User } from '../user/user.model';
 
 export class Employee {
   id: string;

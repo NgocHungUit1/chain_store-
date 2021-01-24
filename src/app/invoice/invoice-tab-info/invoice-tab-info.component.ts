@@ -2,14 +2,13 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NotifierService } from 'angular-notifier';
-import { element } from 'protractor';
 import { PopupDeleteDialogComponent } from '../../common/popup-delete-dialog/popup-delete-dialog.component';
 import { ItemInvoice, ProductInfo } from '../../sale/order.model';
 import { OrderService } from '../../sale/order.service';
-import { Invoice } from '../invoice.model';
+import { Invoice, InvoiceDetail, InvoiceDetailFilter } from '../invoice.model';
 import { InvoiceService } from '../invoice.service';
-import { SaleMainComponent } from '../../sale/sale-main/sale-main.component';
 import { MedicineService } from '../../medicine/medicine.service';
+import { jsPDF } from 'jspdf';
 
 @Component({
   selector: 'app-invoice-tab-info',
@@ -32,11 +31,11 @@ export class InvoiceTabInfoComponent implements OnInit {
     'total_price': 'Thành tiền'
   };
 
-  tongSoLuong: number = 0;
-  tongTienHang: number = 0;
-  giamGiaHoaDon: number = 0;
+  tongSoLuong = 0;
+  tongTienHang = 0;
+  giamGiaHoaDon = 0;
   KhachCanTra: number;
-  KhachDaTra: number = 0;
+  KhachDaTra = 0;
   giamGiaHoaDonText = '';
   orderStatus = {
     'pending': 'Đang xử lý',
@@ -48,14 +47,17 @@ export class InvoiceTabInfoComponent implements OnInit {
     'done': 'label label-success'
   };
 
-  autoPrintInSoLo: boolean = false;
+  autoPrintInSoLo = false;
   allPermission: any;
   isAdminStore: boolean;
+
+  domPrint = '';
 
   constructor(
     private dialog: MatDialog,
     public notifySer: NotifierService,
     public invoiceService: InvoiceService,
+    // public invoiceService: InvoiceDetailS,
     private orderService: OrderService,
     private router: Router,
     private medicineService: MedicineService,
@@ -68,6 +70,7 @@ export class InvoiceTabInfoComponent implements OnInit {
     const detail = this.invoice.detail;
     this.tongTienHang = invoiceData.total_price;
     this.KhachDaTra = invoiceData.total_payment;
+    // tslint:disable-next-line:no-shadowed-variable
     detail.forEach(element => {
       this.tongSoLuong = this.tongSoLuong + element?.amount;
     });
@@ -151,7 +154,7 @@ export class InvoiceTabInfoComponent implements OnInit {
       this.notifySer.notify('warning', 'Hóa đơn đã có trả hàng, không thể mở phiếu để cập nhật !');
       return;
     }
-    let mItemInvoice = new ItemInvoice();
+    const mItemInvoice = new ItemInvoice();
     mItemInvoice.invoice_id = invoice.id;
     mItemInvoice.active = true;
     mItemInvoice.is_return = false;
@@ -159,6 +162,8 @@ export class InvoiceTabInfoComponent implements OnInit {
     mItemInvoice.price_book_id = invoice.price_book_id;
     mItemInvoice.customer = invoice.customer;
     mItemInvoice.branch_id = invoice.branch_id;
+    mItemInvoice.today = invoice.today;
+    mItemInvoice.time = invoice.time;
     mItemInvoice.user = {
       id: invoice.user.id,
       email: invoice.user.email,
@@ -168,34 +173,37 @@ export class InvoiceTabInfoComponent implements OnInit {
       number: invoice.discount,
       type: invoice.discount_type
     };
-
     const aProductInfo: ProductInfo[] = [];
-    const detail = invoice.detail || [];
+    const invoiceDetailFilter = new InvoiceDetailFilter();
+    invoiceDetailFilter.invoice_id = invoice.id;
+    invoiceDetailFilter.expand = 'product,quantity,productUnits';
+    this.invoiceService.getInvoiceDetailList(invoiceDetailFilter).subscribe(res => {
+      const detail = res.body; // invoice.detail || [];
+      detail.forEach(element => {
+        const units = element.productUnits;
+        units.forEach(item => {
+          item.quantity_of_stock = Math.floor(element.quantity.number / item.value);
+        });
+        element.product.productUnits = units;
 
-    detail.forEach(element => {
-      const units = element.product.productUnits;
-      units.forEach(item => {
-        item.quantity_of_stock = Math.floor(element.product.quantity_of_stock / item.value);
+        const item = units.find(ele => ele.is_base === 1);
+
+        const mProductInfo = new ProductInfo();
+        mProductInfo.amount = element.amount;
+        mProductInfo.product_id = element.product?.id;
+        mProductInfo.product = element.product;
+        mProductInfo.product.end_price = element.price;
+        mProductInfo.common_price = element.price;
+        mProductInfo.product_unit_id = item['id'];
+        mProductInfo.product_unit_value = item['value'];
+        mProductInfo.base_unit = element.base_unit;
+        aProductInfo.push(mProductInfo);
       });
-      element.product.productUnits = units;
-
-      let item = units.find(ele => ele.is_base === 1);
-
-      const mProductInfo = new ProductInfo();
-      mProductInfo.amount = element.amount;
-      mProductInfo.product_id = element.product?.id;
-      mProductInfo.product = element.product;
-      mProductInfo.product.end_price = element.price;
-      mProductInfo.common_price = element.price;
-      mProductInfo.product_unit_id = item['id'];
-      mProductInfo.product_unit_value = item['value'];
-      mProductInfo.base_unit = element.base_unit;
-      aProductInfo.push(mProductInfo);
+      mItemInvoice.listProduct = aProductInfo;
+      this.orderService.addItemInvoiceUpdate(mItemInvoice);
+      this.router.navigate(['/sale']);
     });
-    mItemInvoice.listProduct = aProductInfo;
-    this.orderService.addItemInvoiceUpdate(mItemInvoice);
-    // debugger;
-    this.router.navigate(['/sale']);
+
   }
 
   /**
@@ -215,7 +223,6 @@ export class InvoiceTabInfoComponent implements OnInit {
    */
   printInvoice(invoice_id: number) {
     this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
-      const address = (res?.customer?.address !== null && res?.customer?.address !== undefined) ? res?.customer?.address : '';
       const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
       const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
       let printContent = '<title>' + res?.invoice_no + '</title>';
@@ -234,23 +241,26 @@ export class InvoiceTabInfoComponent implements OnInit {
         'padding: 8px;' +
         '}</style>' +
         '<section style="padding: 10px;">' +
-        '<p style="text-align:center;">Địa chỉ : ' + res?.store?.name + '</p>' +
+        '<p style="text-align:center;">' + res?.store?.name + '</p>' +
         '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +
         '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
-        '<p style="">Khách hàng: ' + customer_name + '</p>' +
-        '<p style="">SĐT: ' + customer_phone + '</p>' +
-        '<p style="">Địa chỉ: ' + address + '</p>' +
-        '<table>' +
+        '<p style="">Khách hàng: ' + customer_name + '</p>';
+
+      if (customer_phone !== '') {
+        printContent += '<p style="">SĐT: ' + customer_phone + '</p>';
+      }
+
+      printContent += '<table>' +
         '<tr>' +
         '<th>Đơn giá</th>' +
-        '<th style="text-align:center;">Số lượng</th>';
+        '<th style="text-align:center;">SL</th>';
 
       if (this.autoPrintInSoLo === true) {
         printContent += '<th style="text-align:left;">Số lô</th>';
       }
 
-      printContent += '<th style="text-align:center;">Thành tiền</th>' +
+      printContent += '<th style="text-align:center;">T.Tiền</th>' +
         '</tr>';
 
       const detail = res.detail;
@@ -308,6 +318,8 @@ export class InvoiceTabInfoComponent implements OnInit {
       }
       printContent += '</table>';
       printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
+      printContent += '<p style="text-align:left; font-size: 12px;font-style: italic;" >Hổ trợ : 0972 574 506</p>';
+
       printContent += '</section>';
 
       const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
@@ -328,7 +340,7 @@ export class InvoiceTabInfoComponent implements OnInit {
     this.orderService.getReturns(invoice.id).subscribe(resultReturn => {
 
       // return;
-      let mItemInvoice = new ItemInvoice();
+      const mItemInvoice = new ItemInvoice();
       mItemInvoice.invoice_id = invoice.id;
       mItemInvoice.active = true;
       mItemInvoice.is_return = true;
@@ -336,24 +348,26 @@ export class InvoiceTabInfoComponent implements OnInit {
       mItemInvoice.price_book_id = invoice.price_book_id;
       mItemInvoice.customer = invoice.customer;
       mItemInvoice.branch_id = invoice.branch_id;
+      mItemInvoice.today = invoice.today;
+      mItemInvoice.time = invoice.time;
       mItemInvoice.user = {
         id: invoice.user.id,
         email: invoice.user.email,
         username: invoice.user.username
       };
-      mItemInvoice.discountSiderBar = {
-        number: invoice.discount,
-        type: invoice.discount_type
-      };
+      // mItemInvoice.discountSiderBar = {
+      //   number: invoice.discount,
+      //   type: invoice.discount_type
+      // };
 
-      let aProductInfo: ProductInfo[] = [];
+      const aProductInfo: ProductInfo[] = [];
       const detail = invoice.detail || [];
 
       if (resultReturn !== undefined && resultReturn !== null) {
         detail.forEach(element => {
 
-          let units = element?.product?.productUnits;
-          let item = units.find(element => element.is_base == 1);
+          const units = element?.product?.productUnits;
+          const item = units.find(element => element.is_base == 1);
           const mProductInfo = new ProductInfo();
           if (resultReturn[item['id']] !== undefined) {
             mProductInfo.amount = 0;
@@ -385,8 +399,8 @@ export class InvoiceTabInfoComponent implements OnInit {
         });
       } else {
         detail.forEach(element => {
-          let units = element?.product?.productUnits;
-          let item = units.find(element => element.is_base == 1);
+          const units = element?.product?.productUnits;
+          const item = units.find(element => element.is_base == 1);
           const mProductInfo = new ProductInfo();
           mProductInfo.amount = 0;
           mProductInfo.product_id = element.product?.id;

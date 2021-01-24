@@ -62,7 +62,7 @@
 
             <div fxFlex="12" class="row-amount">
 
-              <div *ngIf="localItemInvoice.is_return !== true; else changeAmount">
+              <div *ngIf="localItemInvoice?.is_return !== true; else changeAmount">
 
                 <div fxLayout="row wrap">
                   <mat-form-field style=" font-size: 20px; text-align: center;">
@@ -160,7 +160,7 @@
 
           <div class="user-action">
             <div fxLayout="row wrap">
-              <div fxFlex="70">
+              <div fxFlex="90">
 
                 <mat-form-field>
                   <input class="input-search-user input-search" type="text" [formControl]="selectUser" matInput
@@ -180,12 +180,36 @@
 
               </div>
               <div fxFlex="2"></div>
-              <div fxFlex="28">
+              <div fxFlex="8">
+                <!--                <mat-form-field>-->
+                <!--                  <input matInput class="input-search" value="{{ today | date:'shortTime' }}" disabled>-->
+                <!--                </mat-form-field>-->
+
+
+              </div>
+            </div>
+
+            <div fxLayout="row wrap">
+              <div fxFlex="49">
                 <mat-form-field>
-                  <input matInput class="input-search" value="{{ today | date:'shortTime' }}" disabled>
+                  <mat-label>Thời gian</mat-label>
+                  <input matInput formControlName="time" type="time"
+                         required="required">
+                </mat-form-field>
+              </div>
+              <div fxFlex="2">
+              </div>
+              <div fxFlex="49">
+                <mat-form-field>
+                  <mat-label>Ngày</mat-label>
+                  <input class="input-search" matInput [matDatepicker]="date_picker" formControlName="today"
+                         required="required">
+                  <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>
+                  <mat-datepicker #date_picker></mat-datepicker>
                 </mat-form-field>
               </div>
             </div>
+
           </div>
 
           <div class="branch-action">
@@ -292,6 +316,32 @@
             </div>
           </div>
 
+          <div class="order-detail"
+               *ngIf="localItemInvoice?.is_return !== true && optionStore_transaction_expenses_order?.value === 'yes' ">
+            <div fxLayout="row wrap" class="price-product">
+              <div fxFlex="50" class="price-product-text ">
+                <div>
+                  <span [matMenuTriggerFor]="menu"><mat-icon color="primary">info</mat-icon> Thu khác </span>
+                  <mat-menu #menu="matMenu" yPosition="above" xPosition="before">
+                    <button mat-menu-item *ngFor="let item of expenseOrders ">
+                      <span *ngIf="item?.type ==='price' ; else anotherType;">
+                        {{ item?.no }} - {{ item?.name }} - {{ item?.value | number}} VNĐ
+                      </span>
+                      <ng-template #anotherType>
+                        <span>{{ item?.no }} - {{ item?.name }} - {{ item?.value | number}} %</span>
+                      </ng-template>
+
+                    </button>
+                  </mat-menu>
+                </div>
+
+              </div>
+              <div fxFlex="50" class="price-product-number">
+                <input matInput type="text" value="{{ expenseOrder | number}}">
+              </div>
+            </div>
+          </div>
+
           <div class="customer-need">
 
             <div *ngIf="localItemInvoice?.is_return !== true; else khachCanTra">
@@ -300,7 +350,7 @@
                   <span>Khách cần trả</span>
                 </div>
                 <div fxFlex="50" class="customer-need-number">
-                  <input matInput type="text" value="{{ sumPrice - numberDiscount | number}}">
+                  <input matInput type="text" value="{{ sumPrice - numberDiscount + expenseOrder | number}}">
                 </div>
               </div>
             </div>
@@ -354,10 +404,7 @@
                   </ng-template>
                 </div>
                 <div fxFlex="50" class="excess-cash-number">
-                  <!-- <input matInput type="text" *ngIf="customerPay - sumPrice + numberDiscount > 0"
-                    value="{{ customerPay - sumPrice + numberDiscount | number}}">
-                  <input matInput type="text" *ngIf="customerPay - sumPrice + numberDiscount <= 0" value="{{ customerPay }}"> -->
-                  <!--                  *ngIf=" tienThuaTraKhach > 0; else templateTienThuaTraKhach-->
+
                   <span *ngIf=" tienThuaTraKhach > 0; else templateTienThuaTraKhach">
                     {{ tienThuaTraKhach | number }}
                   </span>

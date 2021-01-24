@@ -18,7 +18,7 @@ import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operat
 import { MedicineService } from '../../medicine/medicine.service';
 import { of } from 'rxjs/internal/observable/of';
 import { ManufacturerService } from '../manufacturer.service';
-import { ManufacturerFilter } from '../manufacturer.model';
+import { Manufacturer, ManufacturerFilter } from '../manufacturer.model';
 import { ProductManufacturerFormDialogComponent } from '../product-manufacturer-form-dialog/product-manufacturer-form-dialog.component';
 import * as numeral from 'numeral';
 import { log } from 'util';
@@ -160,7 +160,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       sell_price: [null, Validators.required],
       original_price: [null, Validators.required],
       weight: [null],
-      base_unit: [null, Validators.required],
+      base_unit: ['viên', Validators.required],
       medicine_id: [null],
       typeSellPrice: ['price'], // update for customer
       // Medicine
@@ -266,6 +266,14 @@ export class ProductMedicineDialogComponent implements OnInit {
       return this.optionsMadeIn.filter(option => option.toLowerCase().includes(value.made_in));
     }
     return [];
+  }
+
+  changeUnitValue(event: any, i) {
+    const value = event.target.value;
+    console.log(value);
+    this.units.controls[i].patchValue({
+      unit_price: value * this.form.controls['sell_price'].value,
+    });
   }
 
   loadProduct(id, copy: any = null) {
@@ -595,10 +603,19 @@ export class ProductMedicineDialogComponent implements OnInit {
   }
 
   selectedMedicine(medicine) {
+
     this.form.patchValue({
       medicine_id: medicine['id'],
       product_name: medicine['medicine_name'],
       medicine: medicine,
+    });
+    this.manufacturerSer.save({'name': medicine['manufacturer']}).subscribe(res => {
+      const result = <Manufacturer>res;
+      medicine.manufacturer = result['id'];
+      this.form.patchValue({
+        medicine: medicine,
+      });
+      this.manufacturers.push(result);
     });
   }
 
@@ -656,10 +673,6 @@ export class ProductMedicineDialogComponent implements OnInit {
    */
   inputformatNumber(event: any) {
     event.target.value = numeral(event.target.value).format('0,0');
-  }
-
-  chooseTypeSellPrice() {
-    console.log(this.form.controls['typeSellPrice'].value);
   }
 
 }

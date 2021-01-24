@@ -1,24 +1,30 @@
 .product-info .product-info-row {
   margin: 20px 0px;
 }
+
 .product-info .product-info-row .product-info-field {
   border-bottom: 1px solid #eee;
   padding: 3px 0 10px;
 }
+
 .product-info .product-info-row-last .product-info-field {
   border-bottom: 0px;
 }
+
 .product-info .product-info-row .product-field-label {
   min-width: 100px;
   display: inline-block;
 }
+
 .model-note {
   margin-top: 25px;
 }
+
 .table-container {
   min-height: 0px;
   margin-bottom: 20px;
 }
+
 .table-container tr.mat-header-row {
   height: 30px;
 }

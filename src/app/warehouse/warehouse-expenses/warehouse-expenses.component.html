@@ -1,0 +1,73 @@
+<h1 mat-dialog-title>Chi phí nhập trả nhà cung cấp</h1>
+<table mat-table [dataSource]="expenses" class="mat-elevation-z8">
+
+  <!-- Checkbox Column -->
+  <ng-container matColumnDef="select">
+    <th mat-header-cell *matHeaderCellDef>
+      <mat-checkbox (change)="$event ? masterToggle() : null"
+                    [checked]="selection.hasValue() && isAllSelected()"
+                    [indeterminate]="selection.hasValue() && !isAllSelected()"
+                    [aria-label]="checkboxLabel()"
+                    [disabled]="status === 10 || status === '10'">
+      </mat-checkbox>
+    </th>
+    <td mat-cell *matCellDef="let row">
+      <mat-checkbox (click)="$event.stopPropagation()"
+                    (change)="$event ? selection.toggle(row) : null"
+                    [checked]="selection.isSelected(row)"
+                    [aria-label]="checkboxLabel(row)"
+                    [disabled]="status === 10 || status === '10'">
+      </mat-checkbox>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="no">
+    <th mat-header-cell *matHeaderCellDef>Mã chi phí</th>
+    <td mat-cell *matCellDef="let element"> {{element.no}} </td>
+  </ng-container>
+
+  <!-- Name Column -->
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef>Loại chi phí</th>
+    <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+  </ng-container>
+
+  <!-- Weight Column -->
+  <ng-container matColumnDef="value">
+    <th mat-header-cell *matHeaderCellDef> Giá trị</th>
+    <td mat-cell *matCellDef="let element">
+      <mat-form-field style="width: 80px" class="text-right">
+        <input matInput [(ngModel)]="element.value" (keyup)="inputformatNumber($event)"
+               [disabled]="status === 10 || status === '10'">
+      </mat-form-field>
+    </td>
+  </ng-container>
+
+  <!-- Symbol Column -->
+  <ng-container matColumnDef="type">
+    <th mat-header-cell *matHeaderCellDef> Loại</th>
+    <td mat-cell *matCellDef="let element">
+      <mat-radio-group aria-label="Select an option" [(ngModel)]="element.type"
+                       [disabled]="status === 10 || status === '10'">
+        <mat-radio-button style="padding-right: 15px;" value="price">VNĐ</mat-radio-button>
+        <mat-radio-button value="percent">%</mat-radio-button>
+      </mat-radio-group>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<div mat-dialog-actions align="end">
+
+  <button mat-raised-button color="primary" tabindex="4" (click)="submit()">
+    <mat-icon>save</mat-icon>
+    Lưu
+  </button>
+
+  <button mat-raised-button (click)="onNoClick()" tabindex="-1">
+    <mat-icon>cancel</mat-icon>
+    Bỏ qua
+  </button>
+</div>

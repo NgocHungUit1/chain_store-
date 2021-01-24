@@ -44,6 +44,8 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
   expandedElement: Invoice | null;
   timeFilter: FormGroup;
   orderStatusFilter: FormGroup;
+  orderNationalFilter: FormGroup;
+
   currentDateFilter: DateFilter;
 
   searchInvoiceForm = new FormControl();
@@ -59,10 +61,11 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
 
   columnsHeader = {
     '#': '#',
-    'invoice_no': 'Mã đơn hàng',
+    'invoice_no': 'Đơn hàng',
     'created_at': 'Thời gian',
     // 'returns': 'Mã trả hàng',
     'customer': 'Khách hàng',
+    // 'detail': 'Chi tiết',
     'total_price': 'Tổng tiền hàng',
     'discount': 'Giảm giá',
     'payment': 'Khách đã trả',
@@ -94,6 +97,19 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
       'name': 'Hoàn thành',
     },
   ];
+
+
+  orderNationalFilterList = [
+    {
+      'value': 'yes',
+      'name': 'Đã liên thông',
+    },
+    {
+      'value': 'no',
+      'name': 'Chưa liên thông',
+    },
+  ];
+
   // label
   orderStatusLabel = {
     'pending': 'label label-warning',
@@ -137,6 +153,7 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
     filter.order_status = this.orderStatusFilter.controls['status'].value;
+    filter.order_national = this.orderNationalFilter.controls['status'].value;
 
     return filter;
   }
@@ -151,6 +168,12 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
     this.orderStatusFilter = this.fb.group({
       status: [
         ['pending', 'done']
+      ],
+    });
+
+    this.orderNationalFilter = this.fb.group({
+      status: [
+        ['yes', 'no']
       ],
     });
   }

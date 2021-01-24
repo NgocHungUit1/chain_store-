@@ -30,9 +30,21 @@ export const SupplierRoutes: Routes = [
         loadChildren: () => import('../timesheet/timesheet.module').then(m => m.TimesheetModule)
       },
       {
+        path: 'settings',
+        loadChildren: () => import('../settings/settings.module').then(m => m.SettingsModule)
+      },
+      {
+        path: 'expenses-order',
+        loadChildren: () => import('../expenses-order/expenses-order.module').then(m => m.ExpensesOrderModule)
+      },
+      {
+        path: 'expenses-transaction',
+        loadChildren: () => import('../expenses-transaction/expenses-transaction.module').then(m => m.ExpensesTransactionModule)
+      },
+      {
         path: 'pay-sheet',
         loadChildren: () => import('../pay-sheet/pay-sheet.module').then(m => m.PaySheetModule)
-      }
+      },
     ]
   }
 ];

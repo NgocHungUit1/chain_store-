@@ -16,7 +16,8 @@
             <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field>
-                  <input type="text" matInput [formControl]="form.controls['product_no']" required placeholder="Mã hàng hóa">
+                  <input type="text" matInput [formControl]="form.controls['product_no']" required
+                         placeholder="Mã hàng hóa">
                 </mat-form-field>
               </div>
             </div>
@@ -31,28 +32,10 @@
             </div>
 
             <div fxLayout="row wrap">
-              <div fxFlex="90">
-                <mat-form-field>
-                  <mat-select placeholder="Nhóm " [formControl]="form.controls['group_id']">
-                    <mat-option>--</mat-option>
-                    <mat-option *ngFor="let group of groups" [value]="group.id">
-                      {{group.name}}
-                    </mat-option>
-                  </mat-select>
-
-                  <mat-error *ngIf="form.controls['group_id'].hasError('required')">Vui lòng chọn nhóm</mat-error>
-                </mat-form-field>
-              </div>
-              <div fxFlex="10">
-                <button mat-button aria-label="add" (click)="openGroupFormDialog()">
-                  <mat-icon>add</mat-icon>
-                </button>
-              </div>
-            </div>
-            <div fxLayout="row wrap">
               <div fxFlex="100">
-                <mat-form-field >
+                <mat-form-field>
                   <input type="text" matInput [formControl]="form.controls['original_price']"
+                         class="text-right"
                          (keyup)="inputformatNumber($event)" required placeholder="Giá vốn" autocomplete="off">
                 </mat-form-field>
               </div>
@@ -62,6 +45,7 @@
               <div fxFlex="100">
                 <mat-form-field>
                   <input type="text" matInput [formControl]="form.controls['sell_price']"
+                         class="text-right"
                          (keyup)="inputformatNumber($event)" required placeholder="Giá bán" autocomplete="off">
                 </mat-form-field>
               </div>
@@ -71,40 +55,20 @@
               <div fxFlex="30">
                 <mat-form-field>
                   <input type="text" matInput [formControl]="form.controls['base_unit']" required
-                    placeholder="Đơn vị cơ bản">
+                         placeholder="Đơn vị cơ bản">
                 </mat-form-field>
               </div>
             </div>
 
-            <div fxLayout="row wrap">
-              <div fxFlex="90">
-                <mat-form-field>
-                  <mat-select placeholder="Vị trí" multiple [formControl]="form.controls['placements']">
-                    <mat-option>--</mat-option>
-                    <mat-option *ngFor="let placement of placements" [value]="placement.id">
-                      {{placement.name}}
-                    </mat-option>
-                  </mat-select>
 
-                  <mat-error *ngIf="form.controls['placements'].hasError('required')">Vui lòng chọn đường dùng
-                  </mat-error>
-                </mat-form-field>
-              </div>
-              <div fxFlex="10">
-                <button mat-button aria-label="add" (click)="openPlacementFormDialog()">
-                  <mat-icon>add</mat-icon>
-                </button>
-              </div>
-            </div>
-
-<!--            <div fxLayout="row wrap">-->
-<!--              <div fxFlex="100">-->
-<!--                <mat-form-field>-->
-<!--                  <input type="number" matInput [formControl]="form.controls['quantity_of_stock']"-->
-<!--                    placeholder="Tồn kho">-->
-<!--                </mat-form-field>-->
-<!--              </div>-->
-<!--            </div>-->
+            <!--            <div fxLayout="row wrap">-->
+            <!--              <div fxFlex="100">-->
+            <!--                <mat-form-field>-->
+            <!--                  <input type="number" matInput [formControl]="form.controls['quantity_of_stock']"-->
+            <!--                    placeholder="Tồn kho">-->
+            <!--                </mat-form-field>-->
+            <!--              </div>-->
+            <!--            </div>-->
 
 
           </div>
@@ -115,10 +79,10 @@
           <div fxFlex.gt-sm="40%" fxFlex="100">
             <div fxLayout="row wrap">
               <input type="file" id="file-input" #imageInput accept="image/*" (change)="processFile(imageInput)"
-                style="display: none">
+                     style="display: none">
               <ul class="product-upload-image">
                 <li class="show selected-image" *ngFor="let image of selectedFiles; index as i"
-                  [id]="'selected-image-'+i">
+                    [id]="'selected-image-'+i">
                   <!--<label>-->
                   <!--<span class="add-image-text"></span>-->
                   <img [src]="image.src">
@@ -170,43 +134,50 @@
                         <ng-container formArrayName="units">
                           <table>
                             <thead style="text-align: left">
-                              <th>Tên đơn vị</th>
-                              <th>Giá trị quy đổi</th>
-                              <th>Giá bán</th>
-                              <th>Mã hàng</th>
-                              <th></th>
+                            <th>Tên đơn vị</th>
+                            <th>Giá trị quy đổi</th>
+                            <th>Giá bán</th>
+                            <th>Mã hàng</th>
+                            <th></th>
                             </thead>
                             <tbody>
-                              <tr *ngFor="let _ of units.controls; index as i;">
-                                <ng-container [formGroupName]="i">
-                                  <td>
-                                    <mat-form-field>
-                                      <input type="text" formControlName="unit_name" matInput placeholder="Tên đơn vị">
-                                    </mat-form-field>
-                                  </td>
-                                  <td>
-                                    <mat-form-field>
-                                      <input type="number" formControlName="unit_value" matInput
-                                        placeholder="Giá trị quy đổi">
-                                    </mat-form-field>
-                                  </td>
-                                  <td>
-                                    <mat-form-field>
-                                      <input type="number" formControlName="unit_price" matInput placeholder="Giá bán">
-                                    </mat-form-field>
-                                  </td>
-                                  <td>
-                                    <mat-form-field>
-                                      <input type="text" formControlName="unit_no" matInput placeholder="Mã hàng">
-                                    </mat-form-field>
-                                  </td>
-                                  <td>
-                                    <a (click)="removeUnit(i)">
-                                      <mat-icon>delete</mat-icon>
-                                    </a>
-                                  </td>
-                                </ng-container>
-                              </tr>
+                            <tr *ngFor="let _ of units.controls; index as i;">
+                              <ng-container [formGroupName]="i">
+                                <td>
+                                  <mat-form-field>
+                                    <input type="text" formControlName="unit_name" matInput placeholder="Tên đơn vị">
+                                  </mat-form-field>
+                                </td>
+                                <td>
+                                  <mat-form-field>
+                                    <input type="number" formControlName="unit_value" matInput
+                                           class="text-right" min="0"
+                                           (change)="changeUnitValue($event,i)"
+                                           (keyup)="changeUnitValue($event,i)"
+                                           placeholder="Giá trị quy đổi">
+                                  </mat-form-field>
+                                </td>
+                                <td>
+                                  <mat-form-field>
+                                    <input type="number" formControlName="unit_price"
+                                           class="text-right"
+                                           matInput placeholder="Giá bán">
+                                  </mat-form-field>
+                                </td>
+                                <td>
+                                  <mat-form-field>
+                                    <input type="text" formControlName="unit_no"
+                                           class="text-center"
+                                           matInput placeholder="Mã hàng">
+                                  </mat-form-field>
+                                </td>
+                                <td>
+                                  <a (click)="removeUnit(i)">
+                                    <mat-icon>delete</mat-icon>
+                                  </a>
+                                </td>
+                              </ng-container>
+                            </tr>
                             </tbody>
                           </table>
                         </ng-container>
@@ -224,12 +195,9 @@
                     </div>
 
 
-
-
                   </mat-expansion-panel>
 
                 </mat-accordion>
-
 
 
               </div>
@@ -245,7 +213,61 @@
       </mat-tab>
 
       <!-- Tab mo ta chi tiet  -->
-      <mat-tab label="Mô tả chi tiết">
+      <mat-tab label="Chi tiết hàng hóa">
+        <div fxLayout="row wrap" class="m-t-20">
+          <div fxFlex.gt-sm="49%" fxFlex="100">
+
+            <div fxLayout="row wrap">
+              <div fxFlex="90">
+                <mat-form-field>
+                  <mat-select placeholder="Nhóm " [formControl]="form.controls['group_id']">
+                    <mat-option>--</mat-option>
+                    <mat-option *ngFor="let group of groups" [value]="group.id">
+                      {{group.name}}
+                    </mat-option>
+                  </mat-select>
+
+                  <mat-error *ngIf="form.controls['group_id'].hasError('required')">Vui lòng chọn nhóm</mat-error>
+                </mat-form-field>
+              </div>
+              <div fxFlex="10">
+                <button mat-button aria-label="add" (click)="openGroupFormDialog()">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <div fxFlex.gt-sm="2%" fxFlex="100">
+          </div>
+
+          <div fxFlex.gt-sm="49%" fxFlex="100">
+
+            <div fxLayout="row wrap">
+              <div fxFlex="90">
+                <mat-form-field>
+                  <mat-select placeholder="Vị trí" multiple [formControl]="form.controls['placements']">
+                    <mat-option>--</mat-option>
+                    <mat-option *ngFor="let placement of placements" [value]="placement.id">
+                      {{placement.name}}
+                    </mat-option>
+                  </mat-select>
+
+                  <mat-error *ngIf="form.controls['placements'].hasError('required')">Vui lòng chọn đường dùng
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div fxFlex="10">
+                <button mat-button aria-label="add" (click)="openPlacementFormDialog()">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
         <div fxLayout="row wrap" class="m-t-20">
           <div fxFlex="100">
             <mat-card style="margin: 0px; border: 1px solid #ccc">
@@ -279,7 +301,7 @@
                   <div fxFlex="100">
                     <mat-form-field>
                       <textarea matInput formControlName="note"
-                        placeholder="Mẫu ghi chú (hóa đơn, đặt hàng)"></textarea>
+                                placeholder="Mẫu ghi chú (hóa đơn, đặt hàng)"></textarea>
                     </mat-form-field>
                   </div>
                 </div>
@@ -297,14 +319,20 @@
   </mat-dialog-content>
   <div mat-dialog-actions align="end">
     <button mat-raised-button [disabled]="loading" (click)="submit('Save')" mat-flat-button color="primary">
-      <mat-icon>save</mat-icon> Lưu
+      <mat-icon>save</mat-icon>
+      Lưu
     </button>
     <button mat-raised-button [disabled]="loading" mat-flat-button color="primary">
-      <mat-icon>save</mat-icon> Lưu và Thêm mới
+      <mat-icon>save</mat-icon>
+      Lưu và Thêm mới
     </button>
     <button mat-raised-button [disabled]="loading" mat-flat-button color="primary">
-      <mat-icon>save</mat-icon> Lưu và Sao chép
+      <mat-icon>save</mat-icon>
+      Lưu và Sao chép
     </button>
-    <button mat-raised-button type="button" (click)="closeDialog()"><mat-icon>cancel</mat-icon>Bỏ qua</button>
+    <button mat-raised-button type="button" (click)="closeDialog()">
+      <mat-icon>cancel</mat-icon>
+      Bỏ qua
+    </button>
   </div>
 </form>

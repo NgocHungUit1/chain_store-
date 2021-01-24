@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { DateFilter, Invoice, InvoiceFilter } from './invoice.model';
+import { DateFilter, Invoice, InvoiceDetailFilter, InvoiceFilter } from './invoice.model';
 import { AuthService } from '../authentication/auth.service';
+import { SamplePrescriptionFilter } from '../sample-prescription/sample-prescription.model';
 
 @Injectable({
   providedIn: 'root'
@@ -159,6 +160,28 @@ export class InvoiceService {
     const _token = this.auth.getToken();
     const url = environment.apiUrl + '/invoice/download-template?token=' + _token;
     return url;
+  }
+
+
+
+  getStateUrlInvoiceDetailList(filter?: InvoiceDetailFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+    let url = '/invoice-detail?per-page=' + filter.pageSize;
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
+
+
+
+  getInvoiceDetailList(filter?: InvoiceDetailFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getStateUrlInvoiceDetailList(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 }
 

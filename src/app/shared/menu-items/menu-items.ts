@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import {of} from 'rxjs';
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {Route, Router} from '@angular/router';
-import {environment} from '../../../environments/environment';
+import { of } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Route, Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 export interface BadgeItem {
   type: string;
@@ -59,10 +59,10 @@ const MENUITEMS = [
     roles: ['ADMIN', 'WAREHOUSE', 'SALE'],
     // badge: [{type: 'red', value: '17'}],
     children: [
-      {state: 'medicine', name: 'Danh mục thuốc', type: 'link', icon: 'list',  roles: ['ADMIN', 'WAREHOUSE', 'SALE']},
-      {state: 'product', name: 'Sản phẩm', type: 'link', icon: 'local_pharmacy',  roles: ['ADMIN', 'WAREHOUSE']},
-      {state: 'sample-prescription', name: 'Đơn thuốc mẫu', type: 'link', icon: 'list_alt',  roles: ['ADMIN', 'SALE']},
-      {state: 'price-book', name: 'Thiết lập giá', type: 'link', icon: 'loyalty',  roles: ['ADMIN', 'WAREHOUSE']},
+      {state: 'medicine', name: 'Danh mục thuốc', type: 'link', icon: 'list', roles: ['ADMIN', 'WAREHOUSE', 'SALE']},
+      {state: 'product', name: 'Sản phẩm', type: 'link', icon: 'local_pharmacy', roles: ['ADMIN', 'WAREHOUSE']},
+      {state: 'sample-prescription', name: 'Đơn thuốc mẫu', type: 'link', icon: 'list_alt', roles: ['ADMIN', 'SALE']},
+      {state: 'price-book', name: 'Thiết lập giá', type: 'link', icon: 'loyalty', roles: ['ADMIN', 'WAREHOUSE']},
       {state: 'stock-take', name: 'Kiểm kho', type: 'link', icon: 'check_circle_outline', roles: ['ADMIN', 'WAREHOUSE']},
     ]
   },
@@ -75,8 +75,8 @@ const MENUITEMS = [
     // badge: [{type: 'red', value: '17'}],
     children: [
       {state: 'invoice', name: 'Hóa đơn bán', type: 'link', icon: 'receipt', roles: ['ADMIN', 'SALE']},
-      {state: 'returns', name: 'Trả hàng', type: 'link', icon: 'keyboard_return',  roles: ['ADMIN', 'SALE']},
-      {state: 'warehouse', name: 'Đơn nhập', type: 'link', icon: 'local_grocery_store', roles: ['ADMIN', 'WAREHOUSE']},
+      {state: 'warehouse', name: 'Hóa đơn nhập', type: 'link', icon: 'local_grocery_store', roles: ['ADMIN', 'WAREHOUSE']},
+      {state: 'returns', name: 'Trả hàng', type: 'link', icon: 'keyboard_return', roles: ['ADMIN', 'SALE']},
       {state: 'warehouse-return', name: 'Trả hàng nhập', type: 'link', 'icon': 'assignment_return', roles: ['ADMIN', 'WAREHOUSE']},
       {state: 'move', name: 'Chuyển hàng', type: 'link', icon: 'local_shipping', roles: ['ADMIN', 'WAREHOUSE']},
     ]
@@ -120,6 +120,7 @@ const MENUITEMS = [
       {state: 'timesheet', name: 'Chấm công', type: 'link', icon: 'calendar_today', roles: ['ADMIN']},
       // {state: 'expenses-other', name: 'Quản lý chi phí nhập hàng', type: 'link', icon: 'attach_money', roles: ['ADMIN']},
       {state: 'pay-sheet', name: 'Bảng tính lương', type: 'link', icon: 'assessment', roles: ['ADMIN']},
+      {state: 'settings', name: 'Thiết lập', type: 'link', icon: 'settings', roles: ['ADMIN']},
     ]
   },
   {
@@ -365,12 +366,13 @@ export class MenuItems {
           self.menuItems.push(_menu);
         }
       });
-      });
+    });
   }
 
   getMenuitem(): Menu[] {
     return this.menuItems;
   }
+
   // getMenuitem(): Menu[] {
   //   return MENUITEMS;
   // }

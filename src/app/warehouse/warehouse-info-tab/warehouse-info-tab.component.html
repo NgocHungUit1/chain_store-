@@ -60,13 +60,8 @@
           <ng-container matColumnDef="product_name">
             <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_name']}}</th>
             <td mat-cell *matCellDef="let element">
-              <p>{{ element.product.product_name }}</p>
-              <p>Đơn vị : {{ element.productUnit.name }}</p>
-              <!--              <p *ngIf="element['productParcelsForView'][0] !== undefined">Lô-->
-              <!--                : {{ element['productParcelsForView'][0]['parcel_no'] }}-->
-              <!--                - {{ element['productParcelsForView'][0]['expiration_date'] }} - -->
-              <!--                SL: {{ element['productParcelsForView'][0]['quantity'] }}</p>-->
-
+              <b>{{ element.product.product_name }}</b>
+              <br><span>Đơn vị : {{ element.productUnit.name }}</span>
               <p *ngIf="element['productParcelsForView'][0] !== undefined"
                  [innerHTML]="element['productParcelsForViewHtml']">
               </p>
@@ -95,47 +90,31 @@
             </td>
           </ng-container>
 
-          <!--          <ng-container matColumnDef="actions">-->
-          <!--            <th mat-header-cell *matHeaderCellDef></th>-->
-          <!--            <td mat-cell *matCellDef="let element; let i = index">-->
-          <!--              <button mat-icon-button (click)="configProductPrice(element)">-->
-          <!--                <mat-icon>attach_money</mat-icon>-->
-          <!--              </button>-->
-          <!--            </td>-->
-          <!--          </ng-container>-->
-
           <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
       </div>
     </div>
   </div>
-  <div fxFlex="80"></div>
-  <div fxFlex="20">
+  <div fxFlex="75"></div>
+  <div fxFlex="25">
     <div fxLayout="row wrap">
       <div fxFlex="100" class="product-info">
-        <!--        <div fxLayout="row wrap" class="product-info-row">-->
-        <!--          <div fxFlex="50" class="product-info-field">-->
-        <!--            <label>Tổng số lượng:</label>-->
-        <!--          </div>-->
-        <!--          <div fxFlex="50" class="product-info-field">-->
-        <!--            <span>{{ model.total_quantity | number }}</span>-->
-        <!--          </div>-->
-        <!--        </div>-->
+
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="50" class="product-info-field">
             <label>Tổng số mặt hàng:</label>
           </div>
-          <div fxFlex="50" class="product-info-field">
+          <div fxLayout="row" fxLayoutAlign="end" fxFlex="40" class="product-info-field">
             <span>{{model.product_count}}</span>
           </div>
         </div>
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="50" class="product-info-field">
-            <label *ngIf="model.type === 'import'">Tổng tiền hàng:</label>
-            <label *ngIf="model.type === 'return'">Tổng tiền hàng trả:</label>
+            <label *ngIf="model.type === 'import'">Tiền hàng:</label>
+            <label *ngIf="model.type === 'return'">Tiền hàng trả:</label>
           </div>
-          <div fxFlex="50" class="product-info-field">
+          <div fxLayout="row" fxLayoutAlign="end" fxFlex="40" class="product-info-field">
             <span>{{model.total_price | currency : 'VND' : ''}}</span>
           </div>
         </div>
@@ -143,7 +122,7 @@
           <div fxFlex="50" class="product-info-field">
             <label>Giảm giá:</label>
           </div>
-          <div fxFlex="50" class="product-info-field">
+          <div fxLayout="row" fxLayoutAlign="end" fxFlex="40" class="product-info-field">
             <span *ngIf="model.discount_type === 'price' ">{{ model.discount_amount | currency : 'VND' : ''}}</span>
             <span *ngIf="model.discount_type === 'percent' ">
               {{ model.total_price * model.discount_amount / 100 | number }}  {{ '(' + model.discount_amount + '%)'}}
@@ -151,24 +130,42 @@
 
           </div>
         </div>
-        <div fxLayout="row wrap" class="product-info-row">
-          <div fxFlex="50" class="product-info-field">
-            <label *ngIf="model.type === 'import'">Tổng cộng:</label>
-            <label *ngIf="model.type === 'return'">NCC cần trả:</label>
-          </div>
-          <div fxFlex="50" class="product-info-field">
-            <span>{{model.total_amount | currency : 'VND' : ''}}</span>
+
+        <div *ngFor="let expense of model.warehouseExpensess">
+          <div fxLayout="row wrap" class="product-info-row">
+            <div fxFlex="50" class="product-info-field">
+              <label>{{ expense.name }}</label>
+            </div>
+            <div fxLayout="row" fxLayoutAlign="end" fxFlex="40" class="product-info-field">
+              <span>{{ expense.price | number }}</span>
+            </div>
           </div>
         </div>
+
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="50" class="product-info-field">
+            <b>
+              <label *ngIf="model.type === 'import'">Tổng cộng:</label>
+              <label *ngIf="model.type === 'return'">NCC cần trả:</label>
+            </b>
+          </div>
+          <div fxLayout="row" fxLayoutAlign="end" fxFlex="40" class="product-info-field">
+            <b>
+              <span>{{model.total_amount + model.expenses_price | currency : 'VND' : ''}}</span>
+            </b>
+          </div>
+        </div>
+
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="50" class="product-info-field">
             <label *ngIf="model.type === 'import'">Tiền đã trả NCC:</label>
             <label *ngIf="model.type === 'return'">NCC đã trả:</label>
           </div>
-          <div fxFlex="50" class="product-info-field">
+          <div fxLayout="row" fxLayoutAlign="end" fxFlex="40" class="product-info-field">
             <span>{{model.paid_amount | currency : 'VND' : ''}}</span>
           </div>
         </div>
+
       </div>
     </div>
   </div>

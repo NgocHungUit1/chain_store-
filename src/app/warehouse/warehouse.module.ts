@@ -17,6 +17,10 @@ import { WarehouseInfoTabComponent } from './warehouse-info-tab/warehouse-info-t
 import { WarehouseParcelFormDialogComponent } from './warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
 import { WarehouseDiscountDialogComponent } from './warehouse-discount-dialog/warehouse-discount-dialog.component';
 import { WarehouseUploadDialogComponent } from './warehouse-upload-dialog/warehouse-upload-dialog.component';
+import { WarehouseExpensesComponent } from './warehouse-expenses/warehouse-expenses.component';
+import { ShowValueExpensesPipe } from './warehouse.pipe';
+import { WarehouseParcelListDialogComponent } from './warehouse-parcel-list-dialog/warehouse-parcel-list-dialog.component';
+import { WarehouseProductMedicineDialogComponent } from './warehouse-product-medicine-dialog/warehouse-product-medicine-dialog.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +31,11 @@ import { WarehouseUploadDialogComponent } from './warehouse-upload-dialog/wareho
     WarehouseReturnFormComponent,
     WarehouseParcelFormDialogComponent,
     WarehouseDiscountDialogComponent,
-    WarehouseUploadDialogComponent
+    WarehouseUploadDialogComponent,
+    WarehouseExpensesComponent,
+    ShowValueExpensesPipe,
+    WarehouseParcelListDialogComponent,
+    WarehouseProductMedicineDialogComponent
   ],
   imports: [
     CommonModule,
@@ -45,4 +53,5 @@ import { WarehouseUploadDialogComponent } from './warehouse-upload-dialog/wareho
     WarehouseParcelFormDialogComponent
   ]
 })
-export class WarehouseModule { }
+export class WarehouseModule {
+}

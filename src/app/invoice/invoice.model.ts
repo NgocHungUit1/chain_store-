@@ -1,7 +1,9 @@
 import { Customer } from '../customer/customer.model';
 import { ApiFilterBase } from '../shared/base';
 import { PriceList } from '../price-book/price-list.model';
-import {Branch} from '../branch/branch.model';
+import { Branch } from '../branch/branch.model';
+import { ExpensesOrder } from '../expenses-order/expenses-order.model';
+import { Product, Quantity } from '../product/product.model';
 
 export class User {
   username: string;
@@ -20,6 +22,8 @@ export class InvoiceDetail {
   price: number;
   discount: number;
   discount_type: string;
+  product: Product;
+  quantity: Quantity;
 }
 
 export class Invoice {
@@ -44,6 +48,8 @@ export class Invoice {
   status: number; // for view
   national_pharmacy_no: string; // for view
   branch: Branch;
+  expensesOrders: ExpensesOrder[];
+  expenses_order_price: number;
 }
 
 export class InvoiceFilter extends ApiFilterBase {
@@ -62,6 +68,7 @@ export class InvoiceFilter extends ApiFilterBase {
   date_to = '';
   national_pharmacy_no = '';
   order_status = '';
+  order_national = '';
 
   getModelSearch() {
     return 'InvoiceSearch';
@@ -72,4 +79,22 @@ export class InvoiceFilter extends ApiFilterBase {
 export class DateFilter {
   date_from: string;
   date_to: string;
+}
+
+
+export class InvoiceDetailFilter extends ApiFilterBase {
+  id = '';
+  invoice_id = '';
+  product_id = '';
+  amount = '';
+  note = '';
+  price = '';
+  discount = '';
+  discount_type = '';
+  page = 1;
+  pageSize = 15;
+
+  getModelSearch() {
+    return 'InvoiceDetailSearch';
+  }
 }
