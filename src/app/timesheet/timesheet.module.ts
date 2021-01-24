@@ -14,6 +14,8 @@ import { TimesheetMainComponent } from './timesheet-main/timesheet-main.componen
 import { TimesheetFormDialogComponent } from './timesheet-form-dialog/timesheet-form-dialog.component';
 import { TimesheetFormDeleteClockingDialogComponent } from './timesheet-form-delete-clocking-dialog/timesheet-form-delete-clocking-dialog.component';
 import { TimesheetConfirmDeleteClockingDialogComponent } from './timesheet-confirm-delete-clocking-dialog/timesheet-confirm-delete-clocking-dialog.component';
+import { HolidayFormDialogComponent } from './holiday-form-dialog/holiday-form-dialog.component';
+import { HolidayPopupDeleteDialogComponent } from './holiday-popup-delete-dialog/holiday-popup-delete-dialog.component';
 
 
 @NgModule({
@@ -21,7 +23,9 @@ import { TimesheetConfirmDeleteClockingDialogComponent } from './timesheet-confi
     TimesheetMainComponent,
     TimesheetFormDialogComponent,
     TimesheetFormDeleteClockingDialogComponent,
-    TimesheetConfirmDeleteClockingDialogComponent
+    TimesheetConfirmDeleteClockingDialogComponent,
+    HolidayFormDialogComponent,
+    HolidayPopupDeleteDialogComponent
   ],
   imports: [
     CommonModule,

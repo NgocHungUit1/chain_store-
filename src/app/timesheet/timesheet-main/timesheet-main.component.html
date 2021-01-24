@@ -88,10 +88,10 @@
         <mat-icon>add</mat-icon>
         Đặt lịch làm việc
       </button>
-      <button mat-raised-button color="primary" [matMenuTriggerFor]="menuExportFile" style="margin-right: 10px">
-        <mat-icon>exit_to_app</mat-icon>
-        Xuất file
-      </button>
+      <!--      <button mat-raised-button color="primary" [matMenuTriggerFor]="menuExportFile" style="margin-right: 10px">-->
+      <!--        <mat-icon>exit_to_app</mat-icon>-->
+      <!--        Xuất file-->
+      <!--      </button>-->
       <mat-menu #menuExportFile="matMenu">
         <button mat-menu-item disabled>
           <mat-icon>exit_to_app</mat-icon>
@@ -113,20 +113,20 @@
           Đổi ca làm việc
         </button>
 
-        <button mat-menu-item disabled>
-          <mat-icon>file_copy</mat-icon>
-          Sao chép lịch làm việc
-        </button>
+        <!--        <button mat-menu-item disabled>-->
+        <!--          <mat-icon>file_copy</mat-icon>-->
+        <!--          Sao chép lịch làm việc-->
+        <!--        </button>-->
 
         <button mat-menu-item (click)="openFormDeleteClockingDialog()">
           <mat-icon>delete</mat-icon>
           Hủy chi tiết ca làm việc
         </button>
 
-        <button mat-menu-item disabled>
-          <mat-icon>settings</mat-icon>
-          Tùy chọn chấm công
-        </button>
+        <!--        <button mat-menu-item disabled>-->
+        <!--          <mat-icon>settings</mat-icon>-->
+        <!--          Tùy chọn chấm công-->
+        <!--        </button>-->
       </mat-menu>
       <button style="margin-left: 10px" mat-raised-button color="primary" (click)="loadData()">
         <mat-icon>refresh</mat-icon>
@@ -175,9 +175,11 @@
                         </td>
                       </tr>
                       <tr class="height-day">
-                        <td class="{{typeDateTimeSheet == 'month' ? 'with-td-month' : ''}}"
-                            *ngFor="let day of listDayTimeSheet">
-                          {{getNameWeekday(day)}} <span class="day {{checkNowDate(day) ? 'day-active' : '' }}">{{day | date: 'dd'}}</span>
+                        <td *ngFor="let day of listDayTimeSheet"
+                            class="{{typeDateTimeSheet == 'month' ? 'with-td-month' : ''}} {{isHoliday(day)}}"
+                            (click)="openHolidayFormDialog(day)">
+                            {{getNameWeekday(day)}}
+                            <span class="day {{checkNowDate(day) ? 'day-active' : '' }}">{{day | date: 'dd'}}</span>
                         </td>
 
                       </tr>

@@ -1,0 +1,20 @@
+table {
+  width: 100%;
+}
+
+.input-custom {
+  border: none;
+  border-bottom: solid 1px;;
+}
+
+.table-container {
+  position: relative;
+  min-height: 300px;
+}
+
+.example-first-footer-row {
+  font-weight: bold;
+}
+
+
+

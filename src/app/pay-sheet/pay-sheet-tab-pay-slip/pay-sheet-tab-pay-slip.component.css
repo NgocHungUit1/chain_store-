@@ -1,0 +1,14 @@
+.mat-column-from_time,
+.mat-column-to_time,
+.mat-column-shifts,
+.mat-column-actions {
+  flex: 1 1 0%;
+}
+
+table {
+  width: 100%;
+}
+
+.table-container {
+  min-height: unset;
+}

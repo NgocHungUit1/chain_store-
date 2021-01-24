@@ -1,0 +1,177 @@
+<mat-sidenav-container>
+  <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true">
+    <mat-toolbar class="dv-header">
+      <button mat-icon-button>
+        <mat-icon>filter_list</mat-icon>
+      </button>
+      <h3>Lọc và tìm kiếm</h3>
+    </mat-toolbar>
+
+<!--    <mat-card class="time-filter-info">-->
+<!--      <mat-card-title class="title-time-filter">Thời gian</mat-card-title>-->
+<!--      <mat-card-content>-->
+
+<!--        <form [formGroup]="timeFilter">-->
+<!--          <mat-radio-group (change)="radioTimeChange($event)" formControlName="typeTime">-->
+<!--            <mat-radio-button style="display: inline; " value="default"-->
+<!--                              (click)="openTimeDefault()">{{ titleTimeDefault }}-->
+<!--              <button mat-icon-button aria-label="add">-->
+<!--                <mat-icon>swap_vert</mat-icon>-->
+<!--              </button>-->
+<!--            </mat-radio-button>-->
+<!--            <mat-radio-button style="display: inline; " value="choose" (click)="openTimeChoose()">{{ titleTimeChoose }}-->
+<!--              <button mat-icon-button aria-label="add">-->
+<!--                <mat-icon>date_range</mat-icon>-->
+<!--              </button>-->
+<!--            </mat-radio-button>-->
+
+<!--          </mat-radio-group>-->
+<!--        </form>-->
+
+<!--      </mat-card-content>-->
+<!--    </mat-card>-->
+
+    <mat-card class="time-filter-info">
+      <mat-card-title class="title-time-filter">Trạng thái</mat-card-title>
+      <mat-card-content>
+
+        <form [formGroup]="orderStatusFilter">
+          <mat-form-field>
+            <mat-label>Trạng thái bảng tính lương</mat-label>
+            <mat-select formControlName="status" (selectionChange)="orderStatusFilterChange()" multiple>
+              <mat-option *ngFor="let item of statusFilterList"
+                          [value]="item.value">{{ item.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </form>
+
+      </mat-card-content>
+    </mat-card>
+
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar class="dv-header">
+      <button mat-icon-button (click)="leftside.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <h3>Bảng lương</h3>
+      <span fxFlex="1 1 0%"></span>
+      <button mat-raised-button color="primary" (click)="openPaySheetFormDialog()" style="margin-right: 10px">
+        <mat-icon>add</mat-icon>
+        Bảng tính lương
+      </button>
+      <div class="diva-column-select">
+        <button mat-raised-button color="primary" (click)="selectColumn.toggle();">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <mat-select [(ngModel)]="displayedColumns" #selectColumn [multiple]="true"
+                    style="width: 100%; display: inline-flex; margin-left: -20px; color: white" placeholder="Chọn cột">
+          <mat-select-trigger></mat-select-trigger>
+          <mat-option *ngFor="let column of columnsToDisplay" [value]="column">{{columnsHeader[column]}}</mat-option>
+        </mat-select>
+      </div>
+      <button style="margin-left: 10px" mat-raised-button color="primary" (click)="loadData()">
+        <mat-icon>refresh</mat-icon>
+        Làm mới
+      </button>
+    </mat-toolbar>
+    <div fxLayout="row wrap">
+      <div fxFlex="100">
+        <div class="table-container">
+          <div class="table-loading-shade" *ngIf="isLoadingResults || isRateLimitReached">
+            <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+            <div class="table-rate-limit-reached" *ngIf="isRateLimitReached">
+              GitHub's API rate limit has been reached. It will be reset in one minute.
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="">
+
+              <ng-container matColumnDef="#">
+                <th mat-header-cell *matHeaderCellDef> #</th>
+                <td mat-cell *matCellDef="let element"> {{element.id}}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['name']}}</th>
+                <td mat-cell *matCellDef="let element"> {{element.name}}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="salary_period">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['salary_period']}}</th>
+                <td mat-cell *matCellDef="let element"> {{getNameSalaryPeriod(element.salary_period)}}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="salary_period_name">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['salary_period_name']}}</th>
+                <td mat-cell *matCellDef="let element"> {{ element?.start_time | date: 'yyyy/MM/dd' }} - {{ element?.end_time | date: 'yyyy/MM/dd' }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="total_amount">
+                <th mat-header-cell class="column-right-text" *matHeaderCellDef> {{columnsHeader['total_amount']}}</th>
+                <td mat-cell class="column-right-text" *matCellDef="let element">
+                  <b>{{ element.totalSalary | currency : 'VND' : ''}}</b>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="paid_amount">
+                <th mat-header-cell class="column-right-text" *matHeaderCellDef> {{ columnsHeader['paid_amount'] }}</th>
+                <td mat-cell class="column-right-text" *matCellDef="let element">
+                  <b>{{ element.totalPaymentSalary | currency : 'VND' : ''}}</b>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="remaining_paid_amount">
+                <th mat-header-cell class="column-right-text"
+                    *matHeaderCellDef> {{ columnsHeader['remaining_paid_amount'] }}</th>
+                <td mat-cell class="column-right-text" *matCellDef="let element">
+                  <b>{{ element.totalSalary - element.totalPaymentSalary | currency : 'VND' : ''}}</b>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <th mat-header-cell class="column-center-text" *matHeaderCellDef> {{ columnsHeader['status'] }}</th>
+                <td mat-cell style="text-align: center;" *matCellDef="let element">
+                  <label *ngIf="element.status == '0'" class="label label-danger">Hủy</label>
+                  <label *ngIf="element.status == '9'" class="label label-warning">Lưu tạm</label>
+                  <label *ngIf="element.status == '10'" class="label label-success">Hoàn thành</label>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="expandedDetail">
+                <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+                  <div class="example-element-detail"
+                       [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                    <mat-tab-group style="width: 100%;">
+                      <mat-tab label="Thông tin">
+                        <app-pay-sheet-tab-info [paySheet]="element">
+                        </app-pay-sheet-tab-info>
+                      </mat-tab>
+                      <mat-tab label="Phiếu lương">
+                        <app-pay-sheet-tab-pay-slip [paySheet]="element">
+                        </app-pay-sheet-tab-pay-slip>
+                      </mat-tab>
+                      <mat-tab label="Lịch sử thanh toán">
+                        <app-pay-sheet-tab-history-pay-slip-complete [paySheet]="element">
+                        </app-pay-sheet-tab-history-pay-slip-complete>
+                      </mat-tab>
+                    </mat-tab-group>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="example-element-row"
+                  [class.example-expanded-row]="expandedElement === element"
+                  (click)="expandedElement = expandedElement === element ? null : element">
+              </tr>
+              <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+            </table>
+          </div>
+          <mat-paginator #paginator [length]="pageTotalCount" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+                         (page)="onMatPageChange($event)" [pageIndex]="page - 1" showFirstLastButtons></mat-paginator>
+        </div>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

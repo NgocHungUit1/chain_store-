@@ -17,7 +17,7 @@ export class ShiftsFormDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<ShiftsFormDialogComponent>,
     public notifySer: NotifierService,
     private fb: FormBuilder,
-    private userService: ShiftsService,
+    private shiftsService: ShiftsService,
     private dialog: MatDialog,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object
   ) {
@@ -69,7 +69,7 @@ export class ShiftsFormDialogComponent implements OnInit {
   }
 
   loadShifts(id) {
-    this.userService.getDetail(id).subscribe(shifts => {
+    this.shiftsService.getDetail(id).subscribe(shifts => {
       this.form.patchValue({
         name: shifts['name'],
         from_time: shifts['from_time'],
@@ -85,7 +85,7 @@ export class ShiftsFormDialogComponent implements OnInit {
       const data = this.form.getRawValue();
 
       if (this.shifts_id !== null && this.shifts_id !== undefined) {
-        this.userService.update(this.shifts_id, data).subscribe(res => {
+        this.shiftsService.update(this.shifts_id, data).subscribe(res => {
           this.notifySer.notify('success', 'Cập nhật ca làm việc thành công!');
           this.dialogRef.close(res);
         }, (error) => {
@@ -94,7 +94,7 @@ export class ShiftsFormDialogComponent implements OnInit {
           }
         });
       } else {
-        this.userService.create(data).subscribe(res => {
+        this.shiftsService.create(data).subscribe(res => {
           this.notifySer.notify('success', 'Thêm ca làm việc thành công!');
           this.dialogRef.close(res);
         }, (error) => {

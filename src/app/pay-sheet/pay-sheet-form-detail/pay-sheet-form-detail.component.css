@@ -1,0 +1,39 @@
+.warehouse-info {
+  margin: 0px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 0px;
+  height: 100%;
+}
+
+.select-product {
+  margin-left: 50px;
+  font-size: 1rem;
+  min-width: 450px;
+}
+
+.mat-table .mat-form-field {
+  padding-left: 10px;
+}
+
+.mat-table .mat-form-field.parcel-field {
+  padding-left: 0px;
+  width: 80%;
+}
+
+.quantity-input {
+  text-align: center;
+}
+
+.price-input, .discount-input {
+  text-align: right;
+}
+
+.input-custom {
+  border: none;
+  border-bottom: solid 1px;;
+}
+
+table {
+  width: 100%;
+}
+

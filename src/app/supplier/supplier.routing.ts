@@ -28,6 +28,10 @@ export const SupplierRoutes: Routes = [
       {
         path: 'timesheet',
         loadChildren: () => import('../timesheet/timesheet.module').then(m => m.TimesheetModule)
+      },
+      {
+        path: 'pay-sheet',
+        loadChildren: () => import('../pay-sheet/pay-sheet.module').then(m => m.PaySheetModule)
       }
     ]
   }

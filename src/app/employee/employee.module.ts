@@ -15,6 +15,8 @@ import { EmployeePopupDeleteDialogComponent } from './employee-popup-delete-dial
 import { EmployeeTabInfoComponent } from './employee-tab-info/employee-tab-info.component';
 import { EmployeeTimeSheetListComponent } from './employee-time-sheet-list/employee-time-sheet-list.component';
 import { EmployeeTimesheetPopupDeleteDialogComponent } from './employee-timesheet-popup-delete-dialog/employee-timesheet-popup-delete-dialog.component';
+import { EmployeeTabSalaryComponent } from './employee-tab-salary/employee-tab-salary.component';
+import { NgxMaskModule, IConfig } from 'ngx-mask';
 
 
 
@@ -26,6 +28,7 @@ import { EmployeeTimesheetPopupDeleteDialogComponent } from './employee-timeshee
     EmployeeTabInfoComponent,
     EmployeeTimeSheetListComponent,
     EmployeeTimesheetPopupDeleteDialogComponent,
+    EmployeeTabSalaryComponent,
   ],
   imports: [
     CommonModule,
@@ -35,6 +38,7 @@ import { EmployeeTimesheetPopupDeleteDialogComponent } from './employee-timeshee
     FlexLayoutModule,
     QuillModule.forRoot(),
     DragulaModule.forRoot(),
+    NgxMaskModule.forRoot(),
     PerfectScrollbarModule,
     Ng2SearchPipeModule,
     DemoMaterialModule

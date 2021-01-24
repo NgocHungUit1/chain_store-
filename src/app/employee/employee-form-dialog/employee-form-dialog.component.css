@@ -50,3 +50,15 @@ img {
   transform: translate(-50%, -50%);
   opacity: 1;
 }
+
+::ng-deep .mat-tab-header {
+  margin-bottom: 16px;
+}
+
+.mat-form-card {
+  padding: 15px;
+}
+
+.mat-form-salary {
+  width: 120px;
+}

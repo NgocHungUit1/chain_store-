@@ -1,0 +1,75 @@
+<h1 mat-dialog-title *ngIf="!(this.holiday_id !== null && this.holiday_id !== undefined)">Thêm kỳ lễ tết</h1>
+<h1 mat-dialog-title *ngIf="this.holiday_id !== null && this.holiday_id !== undefined">Cập nhật kỳ lễ tết</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <div fxLayout="row wrap">
+      <div fxFlex="100">
+        <div fxLayout="row wrap">
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Tên</mat-label>
+              <input matInput formControlName="name" type="text">
+              <mat-error *ngIf="form.controls['name'].hasError('required')">Tên ca làm việc không được bỏ trống
+              </mat-error>
+              <mat-error *ngIf="form.controls['name'].hasError('ajaxValidator')
+                    && form.controls['name'].touched">{{ form.controls['name'].getError('ajaxValidator')?.value}}</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <div fxLayout="row wrap">
+              <div fxFlex="48">
+                <mat-form-field>
+                  <mat-label>Thời gian bắt đầu</mat-label>
+                  <input matInput formControlName="from_date" [matDatepicker]="fromPicker"
+                         (dateChange)="updateTotalDay()">
+                  <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+                  <mat-datepicker #fromPicker></mat-datepicker>
+                  <mat-error *ngIf="form.controls['from_date'].hasError('required')">Ngày bắt đầu không được bỏ trống
+                  </mat-error>
+                  <mat-error *ngIf="form.controls['from_date'].hasError('ajaxValidator')
+                    && form.controls['from_date'].touched">{{ form.controls['from_date'].getError('ajaxValidator')?.value}}</mat-error>
+                </mat-form-field>
+              </div>
+              <span fxFlex="4"></span>
+
+              <div fxFlex="48">
+                <mat-form-field>
+                  <mat-label>Thời gian kết thúc</mat-label>
+                  <input matInput formControlName="to_date" [matDatepicker]="toPicker" (dateChange)="updateTotalDay()">
+                  <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+                  <mat-datepicker #toPicker></mat-datepicker>
+                  <mat-error *ngIf="form.controls['to_date'].hasError('required')">Ngày kết thúc không được bỏ trống
+                  </mat-error>
+                  <mat-error *ngIf="form.controls['to_date'].hasError('ajaxValidator')
+                    && form.controls['to_date'].touched">{{ form.controls['to_date'].getError('ajaxValidator')?.value}}</mat-error>
+                </mat-form-field>
+              </div>
+
+              <mat-label>Số ngày: {{totalDay}}</mat-label>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="7" (click)="submit()">
+    <mat-icon>save</mat-icon>
+    Lưu
+  </button>
+  <button mat-raised-button color="warn" *ngIf="holiday_id"
+          (click)="openDeleteHoliday()">
+    <mat-icon>delete</mat-icon>
+    Xóa
+  </button>
+  <button mat-raised-button (click)="onNoClick()" tabindex="-1">
+    <mat-icon>cancel</mat-icon>
+    Bỏ qua
+  </button>
+</div>

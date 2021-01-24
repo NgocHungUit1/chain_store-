@@ -1,0 +1,87 @@
+<div fxLayout="row wrap" *ngIf="employee !== null" class="m-b-20">
+  <div fxFlex="100">
+    <h3 style="color: #009688">{{employee.name}}</h3>
+  </div>
+  <div fxFlex="100">
+    <div fxLayout="row wrap">
+      <div fxFlex="100" class="product-info">
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span
+              class="product-field-label">Kỳ hạn trả lương:</span> {{getNameSalaryPeriod(employee?.payRateItem?.salary_period)}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Lương chính:</span> {{ getNameSalaryType(mainSalaryRuleValue?.type) }}
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div *ngIf="mainSalaryRuleValue?.type == 3" fxFlex="48" class="product-info-field">
+            <span
+              class="product-field-label">Lương tháng:</span>
+            <b>{{ mainSalaryRuleValue?.details[0]?.default| currency : 'VND' : ''}}</b> (phụ thuộc ngày làm việc)
+          </div>
+          <div *ngIf="mainSalaryRuleValue?.type == 4" fxFlex="48" class="product-info-field">
+            <span
+              class="product-field-label">Lương mặc định:</span>
+            <b>{{ mainSalaryRuleValue?.details[0]?.default| currency : 'VND' : ''}}</b> (không phụ thuộc ngày làm việc)
+          </div>
+          <div fxFlex="52"></div>
+        </div>
+
+        <mat-card>
+          <div fxLayout="row wrap">
+            <div fxFlex="100" *ngIf="mainSalaryRuleValue?.type == 1">
+              <table mat-table [dataSource]="mainSalaryRuleValue?.details" style="width: 100%">
+                <ng-container matColumnDef="shift">
+                  <th mat-header-cell *matHeaderCellDef>Ca làm việc</th>
+                  <td mat-cell *matCellDef="let element">
+                    <span *ngIf="element.rank == 0">Mặc định</span>
+                    <span *ngIf="element?.rank != 0">{{getNameShifts(element?.rank)}}</span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="salary">
+                  <th mat-header-cell *matHeaderCellDef>Tiền lương / ca (VND)</th>
+                  <td mat-cell *matCellDef="let element">
+                    <b>{{element.default | currency : 'VND' : ''}}</b>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="day_off">
+                  <th mat-header-cell *matHeaderCellDef>Ngày nghỉ</th>
+                  <td mat-cell *matCellDef="let element">
+                    <span class="money-padding">{{element.mainSalaryHolidays[0].value}}</span>
+
+                    <span class="money-padding">{{element.mainSalaryHolidays[0].moneyTypes == 1 ? 'VND' : '%'}}</span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="holiday">
+                  <th mat-header-cell *matHeaderCellDef>Ngày lễ</th>
+                  <td mat-cell *matCellDef="let element">
+                    <span class="money-padding">{{element.mainSalaryHolidays[1].value}}</span>
+                    <span class="money-padding">{{element.mainSalaryHolidays[1].moneyTypes == 1 ? 'VND' : '%'}}</span>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="['shift', 'salary', 'day_off', 'holiday']"></tr>
+                <tr mat-row *matRowDef="let row; columns:  ['shift', 'salary', 'day_off', 'holiday'];"></tr>
+              </table>
+
+            </div>
+
+          </div>
+
+        </mat-card>
+      </div>
+
+    </div>
+  </div>
+  <div fxFlex="100" align="end">
+    <button class="m-r-10" mat-raised-button color="primary" (click)="openEmployeeFormDialog(this.employee.id)">
+      <mat-icon>edit</mat-icon>
+      Cập nhật
+    </button>
+  </div>
+</div>

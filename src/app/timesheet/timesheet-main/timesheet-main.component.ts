@@ -18,6 +18,8 @@ import {EmployeeService} from '../../employee/employee.service';
 import {Employee, EmployeeFilter} from '../../employee/employee.model';
 import {EmployeeFormDialogComponent} from '../../employee/employee-form-dialog/employee-form-dialog.component';
 import {TimesheetFormDeleteClockingDialogComponent} from '../timesheet-form-delete-clocking-dialog/timesheet-form-delete-clocking-dialog.component';
+import {HolidayService} from '../../holiday/holiday.service';
+import {HolidayFormDialogComponent} from '../holiday-form-dialog/holiday-form-dialog.component';
 
 @Component({
   selector: 'app-timesheet-main',
@@ -33,6 +35,7 @@ export class TimesheetMainComponent extends ListComponentBase implements OnInit 
     private employeeService: EmployeeService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
+    private holidayService: HolidayService,
     private notifyService: NotifierService
   ) {
     super();
@@ -47,6 +50,7 @@ export class TimesheetMainComponent extends ListComponentBase implements OnInit 
   expandedElement: Clocking | null;
   arrShiftsSearch = [];
   arrEmployeeSearch = [];
+  holidayList = [];
 
   selectedStatusClocking = [];
 
@@ -191,6 +195,8 @@ export class TimesheetMainComponent extends ListComponentBase implements OnInit 
     this.getListEmployee();
 
     this.changDateTypeTimeSheet();
+
+    this.getListHoliday();
 
     this.clockingService.subscribeLoadClocking.subscribe(action => {
       if (action === true) {
@@ -436,4 +442,54 @@ export class TimesheetMainComponent extends ListComponentBase implements OnInit 
       }
     });
   }
+
+  getListHoliday() {
+    this.holidayService.getList().subscribe(res => {
+      this.holidayList = res.body;
+    });
+  }
+
+  isHoliday(day) {
+    if (this.holidayList.length === 0) {
+      return '';
+    } else {
+      if (this.holidayList.find(item => item.from_date <= moment(day).format('YYYY-MM-DD')
+          && item.to_date >= moment(day).format('YYYY-MM-DD'))) {
+        return 'holiday';
+      }
+      return '';
+    }
+  }
+
+  openHolidayFormDialog(day) {
+    const holiday = this.holidayList.find(item => item.from_date <= moment(day).format('YYYY-MM-DD')
+      && item.to_date >= moment(day).format('YYYY-MM-DD'));
+    let data;
+    if (holiday) {
+      data = {
+        action: 'Update',
+        title: 'Cập nhật ngày lễ',
+        holiday_id: holiday.id,
+      };
+    } else {
+      data = {
+        action: 'Create',
+        title: 'Thêm ngày lễ',
+      };
+    }
+
+    const dialogRef = this.dialog.open(HolidayFormDialogComponent, {
+      width: '40%',
+      minHeight: '60%',
+      data: data
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.getListHoliday();
+      }
+    });
+  }
+
+
 }
