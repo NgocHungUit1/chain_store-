@@ -1,0 +1,47 @@
+<h1 mat-dialog-title>Thêm bảng tính lương</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <div fxLayout="row wrap">
+      <div fxFlex="100">
+        <div fxLayout="row wrap">
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Kỳ hạn trả lương</mat-label>
+              <mat-select tabindex="1"  formControlName="salary_period"
+                          placeholder="Kỳ hạn trả lương">
+                <mat-option *ngFor="let item of salaryPeriods" [value]="item.id">
+                  {{item.title}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+         <div fxFlex="100">
+          <mat-form-field>
+            <mat-label>Kỳ làm việc</mat-label>
+            <mat-select tabindex="2"  formControlName="from_to_date"
+                        placeholder="Thời gian">
+              <mat-option *ngFor="let item of fromToDateList" [value]="item.id">
+                {{item.start_time | date:'dd/MM/yyyy'}} - {{item.end_time | date:'dd/MM/yyyy'}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+          </div>
+        </div>
+      </div>
+
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="7" (click)="submit()">
+    <mat-icon>save</mat-icon>
+    Lưu
+  </button>
+  <button mat-raised-button (click)="onNoClick()" tabindex="-1">
+    <mat-icon>cancel</mat-icon>
+    Bỏ qua
+  </button>
+</div>

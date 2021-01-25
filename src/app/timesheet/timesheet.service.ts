@@ -85,5 +85,4 @@ export class TimesheetService {
     const url = environment.apiUrl + '/timesheet/delete-clocking';
     return this.http.post(url, data);
   }
-
 }

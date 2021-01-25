@@ -40,7 +40,11 @@ export const SupplierRoutes: Routes = [
       {
         path: 'expenses-transaction',
         loadChildren: () => import('../expenses-transaction/expenses-transaction.module').then(m => m.ExpensesTransactionModule)
-      }
+      },
+      {
+        path: 'pay-sheet',
+        loadChildren: () => import('../pay-sheet/pay-sheet.module').then(m => m.PaySheetModule)
+      },
     ]
   }
 ];

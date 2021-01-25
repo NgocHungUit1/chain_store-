@@ -1,0 +1,93 @@
+<div fxLayout="row wrap" *ngIf="paySheet !== null" class="m-b-20">
+  <div fxFlex="100">
+    <h3 style="color: #009688">{{paySheet?.name}}</h3>
+  </div>
+  <div fxFlex="100">
+    <div fxLayout="row wrap">
+      <div fxFlex="100" class="product-info">
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Tên:</span> {{paySheet?.name}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Trạng thái:</span>
+            <label *ngIf="paySheet?.status == '0'" class="label label-danger">Hủy</label>
+            <label *ngIf="paySheet?.status == '9'" class="label label-warning">Lưu tạm</label>
+            <label *ngIf="paySheet?.status == '10'" class="label label-success">Hoàn thành</label>
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Kỳ hạn trả:</span> {{getNameSalaryPeriod(paySheet?.salary_period)}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Chi nhánh:</span> {{paySheet?.branch?.name}}
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Kỳ làm việc:</span>
+            {{ paySheet?.start_time | date: 'yyyy/MM/dd' }} - {{ paySheet?.end_time | date: 'yyyy/MM/dd' }}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Tổng số nhân viên:</span> {{paySheet?.totalEmployee}}
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Người tạo:</span> {{paySheet?.createUser?.employee?.name ? paySheet?.createUser?.employee?.name : paySheet?.createUser?.username}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Tổng lương:</span>
+            <b>{{paySheet?.totalSalary | currency : 'VND' : ''}}</b>
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Ngày tạo:</span> {{paySheet?.created_at * 1000| date: 'yyyy-MM-dd HH:mm' }}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Đã trả nhân viên:</span> {{paySheet?.totalPaymentEmployee}}
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Người cập nhật cuối:</span> {{paySheet?.updateUser?.employee?.name ? paySheet?.updateUser?.employee?.name : paySheet?.updateUser?.username}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Còn cần trả:</span>
+            <b>{{paySheet?.totalSalary - paySheet?.totalPaymentSalary | currency : 'VND' : ''}}</b>
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row product-info-row-last">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Ngày cập nhật cuối:</span> {{paySheet?.updated_at * 1000| date: 'yyyy-MM-dd HH:mm' }}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Ghi chú:</span> {{paySheet?.note}}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div fxFlex="100" align="end">
+    <button class="m-r-10" mat-raised-button color="primary" [disabled]="paySheet?.status !== 9"
+            [routerLink]="['update', paySheet.id]">
+      <mat-icon>edit</mat-icon>
+      Cập nhật
+    </button>
+    <button class="m-r-10" mat-raised-button color="warn" (click)="cancelPaySheet()">
+      <mat-icon>delete</mat-icon>
+      Hủy bỏ
+    </button>
+  </div>
+</div>

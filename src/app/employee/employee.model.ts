@@ -19,6 +19,7 @@ export class Employee {
   ward: Location;
   user: User;
   branchList: any;
+  payRateItem: any;
 }
 
 

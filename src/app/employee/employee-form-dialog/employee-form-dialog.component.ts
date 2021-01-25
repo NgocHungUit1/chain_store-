@@ -7,12 +7,13 @@ import { NotifierService } from 'angular-notifier';
 import { LocationService } from '../../location/location.service';
 import { map, startWith } from 'rxjs/operators';
 import * as moment from 'moment';
-import { EmployeeService } from '../employee.service';
-import { UserService } from '../../user/user.service';
-import { UserFilter } from '../../user/user.model';
-import { UserFormDialogComponent } from '../../user/user-form-dialog/user-form-dialog.component';
-import { BranchService } from '../../branch/branch.service';
-import { BranchFilter } from '../../branch/branch.model';
+import {EmployeeService} from '../employee.service';
+import {UserService} from '../../user/user.service';
+import {UserFilter} from '../../user/user.model';
+import {UserFormDialogComponent} from '../../user/user-form-dialog/user-form-dialog.component';
+import {BranchService} from '../../branch/branch.service';
+import {BranchFilter} from '../../branch/branch.model';
+import {TimesheetService} from '../../timesheet/timesheet.service';
 
 class ImageSnippet {
   pending = false;
@@ -20,6 +21,20 @@ class ImageSnippet {
 
   constructor(public src: string, public file: File) {
   }
+}
+
+class SalaryHolidayItem {
+  moneyTypes: number;  // 1: VND, 2: % tổng lương
+  type: number; // 1: ngay nghi, 2:ngay le tet
+  value: number;
+  sort?: number;
+}
+
+class MainSalaryItem {
+  default: number;
+  mainSalaryHolidays: SalaryHolidayItem[];
+  rank: number;
+  shifts_id: number;
 }
 
 @Component({
@@ -47,6 +62,7 @@ export class EmployeeFormDialogComponent implements OnInit {
 
   selectedFile: ImageSnippet;
   url = '';
+  selectTab;
 
   sexItems: any[] = [
     {
@@ -59,6 +75,76 @@ export class EmployeeFormDialogComponent implements OnInit {
     }
   ];
 
+  shiftsList: any;
+  salaryDefault = null;
+  payRate: any = {
+    salary_period: 1,
+    mainSalaryRuleValue: {
+      type: -1,
+      details: [],
+    },
+    // allowanceRuleValue: {
+    //   details: null,
+    // },
+    // deductionRuleValue: {
+    //   details: null,
+    // },
+    // pay_rate_template_id: null
+  };
+
+  salaryPeriods: any[] = [
+    {
+      'id': 1,
+      'title': 'Hàng tháng'
+    },
+    // {
+    //   'id': 2,
+    //   'title': '2 lần 1 tháng'
+    // },
+    // {
+    //   'id': 3,
+    //   'title': 'Hàng tuần'
+    // },
+    // {
+    //   'id': 4,
+    //   'title': '2 tuần 1 lần'
+    // },
+    // {
+    //   'id': 5,
+    //   'title': '2 Tủy chọn'
+    // }
+  ];
+
+  salaryTypes: any[] = [
+    {
+      'id': 1,
+      'title': 'Theo ca làm việc'
+    },
+    // {
+    //   'id': 2,
+    //   'title': 'Theo giờ làm việc'
+    // },
+    {
+      'id': 3,
+      'title': 'Theo ngày làm việc'
+    },
+    {
+      'id': 4,
+      'title': 'Cố định'
+    },
+  ];
+
+  listMoneyTypes: any[] = [
+    {
+      'id': 1,
+      'title': 'VND'
+    },
+    {
+      'id': 2,
+      'title': '%'
+    },
+  ];
+
 
   constructor(
     public dialogRef: MatDialogRef<EmployeeFormDialogComponent>,
@@ -69,11 +155,13 @@ export class EmployeeFormDialogComponent implements OnInit {
     private userService: UserService,
     private branchService: BranchService,
     private dialog: MatDialog,
+    private timesheetService: TimesheetService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object
   ) {
 
     this.local_data = {...data};
     this.employee_id = this.local_data.employee_id;
+    this.selectTab = this.local_data.is_salary ? 1 : 0;
 
   }
 
@@ -126,6 +214,8 @@ export class EmployeeFormDialogComponent implements OnInit {
     this.getListUser();
 
     this.getListBranch();
+
+    this.getShiftsList();
 
     this.locationSer.autocomplete('', 'province').subscribe(locations => {
       this.provinces = locations;
@@ -200,6 +290,25 @@ export class EmployeeFormDialogComponent implements OnInit {
         sex: employee['sex'],
         branches: employee['branchList']['array'],
       });
+      const resPayRate = employee['payRateItem'];
+      const self = this;
+      if (resPayRate) {
+        this.payRate.salary_period = resPayRate['salary_period'];
+        // this.payRate.pay_rate_template_id = resPayRate['pay_rate_template_id'];
+        if (resPayRate['listPayRateDetail'].length > 0 ) {
+          resPayRate['listPayRateDetail'].forEach(function (item) {
+           if (item['rule_type'] === 'main_salary_rule') {
+             self.payRate.mainSalaryRuleValue = JSON.parse(item['rule_value']);
+             self.salaryDefault = self.payRate.mainSalaryRuleValue.details[0].default;
+           }
+           // else if (item['rule_type'] === 'deduction_rule') {
+           //   self.payRate.deductionRuleValue = JSON.parse(item['rule_value']);
+           // } else if (item['rule_type'] === 'allowance_rule') {
+           //   self.payRate.allowanceRuleValue = JSON.parse(item['rule_value']);
+           // }
+          });
+        }
+      }
 
       if (employee['province_id'] !== null) {
         this.locationSer.autocomplete('', 'district', employee['province_id']).subscribe(locations => {
@@ -262,6 +371,22 @@ export class EmployeeFormDialogComponent implements OnInit {
       if (data['ward'] !== null) {
         data['ward_id'] = data['ward'].id;
       }
+
+      for ( let i = 0; i < this.payRate.mainSalaryRuleValue.details.length; i++) {
+        if (this.payRate.mainSalaryRuleValue.type === 1
+          && this.payRate.mainSalaryRuleValue.details[i].rank !== 0
+          && this.payRate.mainSalaryRuleValue.details[i].shifts_id == null) {
+          this.notifySer.notify('error', 'Vui lòng chọn ca làm việc');
+          return;
+        }
+        if (this.payRate.mainSalaryRuleValue.details[i].default == 0 ||
+          this.payRate.mainSalaryRuleValue.details[i].default == null) {
+          this.notifySer.notify('error', 'Vui lòng nhập tiền lương');
+          return;
+        }
+      }
+      data['payRate'] = this.payRate;
+
       if (this.employee_id !== null && this.employee_id !== undefined) {
         this.employeeService.update(this.employee_id, data).subscribe(res => {
           this.notifySer.notify('success', 'Cập nhật nhân viên thành công!');
@@ -374,6 +499,62 @@ export class EmployeeFormDialogComponent implements OnInit {
     if (file) {
       reader.readAsDataURL(file);
     }
+  }
+
+  getShiftsList() {
+    this.timesheetService.getShiftsList().subscribe(res => {
+      this.shiftsList = res.body;
+    });
+  }
+
+  changeTypeSalary(value) {
+    this.payRate.mainSalaryRuleValue.details = [];
+    const item = new MainSalaryItem();
+    item.default = null;
+    if (value === 1) {
+      item.mainSalaryHolidays = [
+        {value: 100, moneyTypes: 2, sort: 0, type: 1}, // ngay nghi
+        {value: 100, moneyTypes: 2, sort: 1, type: 2}, // ngay le
+      ];
+
+    } else {
+      item.mainSalaryHolidays = null;
+
+    }
+    item.rank = 0;
+    item.shifts_id = null;
+    this.payRate.mainSalaryRuleValue.details.push(item);
+  }
+
+  updateSalaryAdvanced(value) {
+    console.log(value);
+    this.payRate.mainSalaryRuleValue.details[0].default = value;
+  }
+
+  addMainSalary() {
+    const item = new MainSalaryItem();
+    item.default = null;
+    item.mainSalaryHolidays = [
+      {value: 100, moneyTypes: 2, sort: 0, type: 1}, // ngay nghi
+      {value: 100, moneyTypes: 2, sort: 0, type: 2}, // ngay le
+    ];
+    item.rank = this.payRate.mainSalaryRuleValue.details.length !== 0 ? Math.max(...this.payRate.mainSalaryRuleValue.details.map(a => a.rank)) + 1 : 0;
+    item.shifts_id = null;
+    this.payRate.mainSalaryRuleValue.details.push(item);
+    this.payRate.mainSalaryRuleValue.details = [...this.payRate.mainSalaryRuleValue.details];
+  }
+
+  deleteMainSalary(rank) {
+    this.payRate.mainSalaryRuleValue.details = this.payRate.mainSalaryRuleValue.details.filter(item => item.rank !== rank);
+  }
+
+  changeShiftSalary(shifts_id, rank) {
+    const data = this.payRate.mainSalaryRuleValue.details.filter(item => item.shifts_id === shifts_id);
+    if (data.length > 1) {
+      this.deleteMainSalary(rank);
+      this.notifySer.notify('error', 'Ca làm việc này đã được chọn trước đó');
+    }
+
   }
 
 }

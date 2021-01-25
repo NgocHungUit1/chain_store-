@@ -184,6 +184,10 @@ export class TimesheetFormDialogComponent implements OnInit {
       const data = this.form.getRawValue();
       data['from_date'] = moment(data['from_date']).format('YYYY-MM-DD');
       data['to_date'] = moment(data['to_date']).format('YYYY-MM-DD');
+      if (data['to_date'] <  data['from_date']) {
+        this.notifySer.notify('error', 'Ngày kết thúc không hợp lệ');
+        return;
+      }
 
       if (!data['is_repeat']) {
         data['to_date'] = data['from_date'];
