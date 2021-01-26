@@ -62,10 +62,11 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
   columnsHeader = {
     '#': '#',
     'invoice_no': 'Đơn hàng',
-    'created_at': 'Thời gian',
+    // 'created_at': 'Thời gian',
     // 'returns': 'Mã trả hàng',
     'customer': 'Khách hàng',
-    // 'detail': 'Chi tiết',
+    'detail': 'Thông tin',
+    'expenses': 'Thu khác',
     'total_price': 'Tổng tiền hàng',
     'discount': 'Giảm giá',
     'payment': 'Khách đã trả',
@@ -73,11 +74,11 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
   };
 
   displayedColumns: string[] = [
-    '#', 'invoice_no', 'created_at', 'customer', 'total_price',
+    '#', 'invoice_no', 'customer', 'detail', 'expenses', 'total_price',
     'discount', 'payment'
   ];
   columnsToDisplay: string[] = [
-    '#', 'invoice_no', 'created_at', 'customer', 'total_price',
+    '#', 'invoice_no', 'customer', 'detail', 'expenses', 'total_price',
     'discount', 'payment'
   ];
   dataSource: Invoice[] = [];
@@ -129,7 +130,7 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
 
   // for second column
   second_columnsToDisplay: string[] = [
-    'second_#', 'second_invoice_no', 'second_created_at', 'second_customer',
+    'second_#', 'second_invoice_no', 'second_customer', 'second_detail', 'second_expenses',
     'second_total_price', 'second_discount', 'second_payment'
   ];
 
@@ -149,7 +150,7 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'customer,payment,detail,priceBook,store,user';
+    filter.expand = 'customer,payment,detail,priceBook,store,user,expensesOrders';
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
     filter.order_status = this.orderStatusFilter.controls['status'].value;

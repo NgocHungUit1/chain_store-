@@ -124,11 +124,11 @@
                 <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['invoice_no'] }}</th>
                 <td mat-cell *matCellDef="let element"> {{ element.invoice_no }}
                   <br>
-                  <label class="{{ orderStatusLabel[element.order_status] }}">
-                    {{ orderStatus[element.order_status] }}
-                  </label>
-<!--                  <br>-->
-<!--                  {{ element.created_at }}-->
+                  <!--                  <label class="{{ orderStatusLabel[element.order_status] }}">-->
+                  <!--                    {{ orderStatus[element.order_status] }}-->
+                  <!--                  </label>-->
+                  <!--                  <br>-->
+                  {{ element.created_at }}
                 </td>
               </ng-container>
 
@@ -137,11 +137,39 @@
                 <td mat-cell *matCellDef="let element"> {{element.national_pharmacy_no}}</td>
               </ng-container>
 
-              <ng-container matColumnDef="created_at">
-                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['created_at'] }}</th>
-                <td mat-cell *matCellDef="let element "> {{ element.created_at }}</td>
+              <!--              <ng-container matColumnDef="created_at">-->
+              <!--                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['created_at'] }}</th>-->
+              <!--                <td mat-cell *matCellDef="let element "> {{ element.created_at }}</td>-->
+              <!--              </ng-container>-->
+
+              <ng-container matColumnDef="detail">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['detail'] }}</th>
+                <td mat-cell *matCellDef="let element ">
+                  <ol style="list-style: decimal;padding-left: 18px;">
+                    <li *ngFor="let item of element.detail">
+                      {{ item.product.product_name }} - {{ item?.base_unit }} - Giá: {{ item?.common_price | number }}
+                      <span
+                        *ngIf="item.discount > 0 && item.discount_type === 'price'">- CK: {{ item.discount | number }}
+                        <span *ngIf="item.discount_type === 'percent'">%</span>
+                    </span>
+                      - SL: {{ item?.amount }}
+                    </li>
+                  </ol>
+
+                </td>
               </ng-container>
 
+              <ng-container matColumnDef="expenses">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['expenses'] }}</th>
+                <td mat-cell *matCellDef="let element ">
+                  <ol style="list-style: decimal;padding-left: 18px;">
+                    <li *ngFor="let expenses of element.expensesOrders">
+                      {{ expenses.name }} - {{ expenses.value | number }} <span
+                      *ngIf="expenses.type === 'percent'">%</span>
+                    </li>
+                  </ol>
+                </td>
+              </ng-container>
 
               <ng-container matColumnDef="customer">
                 <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['customer'] }}</th>
@@ -186,7 +214,14 @@
                 <th mat-header-cell *matHeaderCellDef></th>
               </ng-container>
 
-              <ng-container matColumnDef="second_created_at">
+              <!--              <ng-container matColumnDef="second_created_at">-->
+              <!--                <th mat-header-cell *matHeaderCellDef></th>-->
+              <!--              </ng-container>-->
+              <ng-container matColumnDef="second_detail">
+                <th mat-header-cell *matHeaderCellDef></th>
+              </ng-container>
+
+              <ng-container matColumnDef="second_expenses">
                 <th mat-header-cell *matHeaderCellDef></th>
               </ng-container>
 

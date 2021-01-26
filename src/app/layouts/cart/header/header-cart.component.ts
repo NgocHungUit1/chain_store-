@@ -24,6 +24,7 @@ export class AppHeaderCartComponent {
   ) {
 
   }
+
   public config: PerfectScrollbarConfigInterface = {};
 
 
@@ -127,6 +128,10 @@ export class AppHeaderCartComponent {
     product.productUnits = units;
 
     this.orderService.addProduct(product);
+  }
+
+  goToInvoices() {
+    this.route.navigate(['/transaction/invoice']);
   }
 
 }
