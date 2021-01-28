@@ -396,7 +396,7 @@ export class SaleMainComponent implements OnInit {
     let branch_id = null;
     let time = null;
     const today = new Date();
-    time = today.getHours() + ':' + ('0' + today.getMinutes()).slice(-2);
+    time = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     listItemInvoice.forEach(element => {
@@ -782,7 +782,7 @@ export class SaleMainComponent implements OnInit {
 
     if (mItemInvoice.invoice_id === -1) {
       const today = new Date();
-      const time = today.getHours() + ':' + ('0' + today.getMinutes()).slice(-2);
+      const time = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
       this.form.patchValue({
         today: today,
         time: time,
