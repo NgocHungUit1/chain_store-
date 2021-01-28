@@ -225,13 +225,22 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
             this.expensesTransactions = res['warehouseExpensess'];
           }
 
-          if (this.optionStore_transaction_expenses.value === 'yes' && res['status'] !== 9 && res['status'] !== 10) {
+          if (this.optionStore_transaction_expenses.value === 'yes' && res['status'] == 9) {
             const filter = new ExpensesTransactionFilter();
             filter.status = '10';
             filter.auto = '1';
             this.expensesTransactionService.getList(filter).subscribe(resEx => {
-              this.expensesTransactions = <ExpensesTransaction[]>resEx.body;
-              this.recalculateWarehouse();
+              const dataEx = <ExpensesTransaction[]>resEx.body;
+              dataEx.forEach(expense => {
+                // console.log(this.expensesTransactions.some(e => e.no === expense.no));
+                if (!this.expensesTransactions.some(e => e.no === expense.no)) {
+                  expense.auto = 0;
+                  this.expensesTransactions.push(expense);
+                }
+              });
+
+              // this.expensesTransactions = <ExpensesTransaction[]>resEx.body;
+              // this.recalculateWarehouse();
             });
           }
 
@@ -322,24 +331,24 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     );
   }
 
-  setUpExpensesTransactions() {
-    this.optionStoreService.getValue('transaction_expenses_transaction').subscribe(res => {
-      this.optionStore_transaction_expenses = res;
-      if (this.optionStore_transaction_expenses.value === 'yes') {
-        if ((this.form.get('status').value === '9' && this.updateModelId !== null) || this.updateModelId === null) {
-          const filter = new ExpensesTransactionFilter();
-          filter.status = '10';
-          filter.auto = '1';
-          this.expensesTransactionService.getList(filter).subscribe(resEx => {
-            this.expensesTransactions = <ExpensesTransaction[]>resEx.body;
-            this.recalculateWarehouse();
-          });
-        }
-
-      }
-    });
-    // console.log(this.expensesTransactions);
-  }
+  // setUpExpensesTransactions() {
+  //   this.optionStoreService.getValue('transaction_expenses_transaction').subscribe(res => {
+  //     this.optionStore_transaction_expenses = res;
+  //     if (this.optionStore_transaction_expenses.value === 'yes') {
+  //       if ((this.form.get('status').value === '9' && this.updateModelId !== null) || this.updateModelId === null) {
+  //         const filter = new ExpensesTransactionFilter();
+  //         filter.status = '10';
+  //         filter.auto = '1';
+  //         this.expensesTransactionService.getList(filter).subscribe(resEx => {
+  //           this.expensesTransactions = <ExpensesTransaction[]>resEx.body;
+  //           this.recalculateWarehouse();
+  //         });
+  //       }
+  //
+  //     }
+  //   });
+  //   // console.log(this.expensesTransactions);
+  // }
 
   loadData(): void {
     this.isLoadingResults = true;
@@ -442,7 +451,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           element.price = numeral(element.price).value();
         });
         data['items'] = this.data;
-        console.log(this.data);
+        // console.log(this.data);
         data['status'] = status;
 
         if (data['supplier_id'] === undefined) {

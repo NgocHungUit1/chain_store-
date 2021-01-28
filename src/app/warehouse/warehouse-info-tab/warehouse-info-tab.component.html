@@ -132,7 +132,7 @@
         </div>
 
         <div *ngFor="let expense of model.warehouseExpensess">
-          <div fxLayout="row wrap" class="product-info-row">
+          <div *ngIf="expense.auto === 1 " fxLayout="row wrap" class="product-info-row">
             <div fxFlex="50" class="product-info-field">
               <label>{{ expense.name }}</label>
             </div>
