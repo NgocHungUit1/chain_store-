@@ -25,6 +25,8 @@ import { OptionStoreService } from '../../common/option-store.service';
 import { OptionStore } from '../../common/option-store.model';
 import { ExpensesOrderService } from '../../expenses-order/expenses-order.service';
 import { ExpensesOrder, ExpensesOrderFilter } from '../../expenses-order/expenses-order.model';
+import { WarehouseExpensesComponent } from '../../warehouse/warehouse-expenses/warehouse-expenses.component';
+import { SaleExpensesDialogComponent } from '../sale-expenses-dialog/sale-expenses-dialog.component';
 
 @Component({
   selector: 'app-sale-main',
@@ -129,12 +131,14 @@ export class SaleMainComponent implements OnInit {
     this.expenseOrder = 0;
     if (this.expenseOrders !== null) {
       this.expenseOrders.forEach((element: ExpensesOrder) => {
-        if (element.type === 'price') {
-          element.price = element.value;
-        } else {
-          element.price = (element.value * this.sumPrice) / 100;
+        if (element.auto === 1) {
+          if (element.type === 'price') {
+            element.price = element.value;
+          } else {
+            element.price = (element.value * this.sumPrice) / 100;
+          }
+          this.expenseOrder += element.price;
         }
-        this.expenseOrder += element.price;
       });
     }
   }
@@ -800,6 +804,27 @@ export class SaleMainComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
         this.onSelectedCustomer(result);
+      }
+    });
+  }
+
+  /**
+   *  Chinh sua thu them
+   */
+  openExpensesOrder() {
+
+    const dialogRef = this.dialog.open(SaleExpensesDialogComponent, {
+      width: '50%',
+      minHeight: '80%',
+      data: {
+        expenses: this.expenseOrders,
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      // console.log(result);
+      if (result !== null && result !== undefined) {
+        this.expenseOrders = result;
+        this.handleExpenseOrder();
       }
     });
   }

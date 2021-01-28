@@ -20,6 +20,7 @@ import { NoteDetailOrderDialogComponent } from './note-detail-order-dialog/note-
 import { PriceDetailOrderDialogComponent } from './price-detail-order-dialog/price-detail-order-dialog.component';
 import { SaleCustomerFormDialogComponent } from './sale-customer-form-dialog/sale-customer-form-dialog.component';
 import { ShowPricePipe, TotalPricePipe } from './cart.pipe';
+import { SaleExpensesDialogComponent } from './sale-expenses-dialog/sale-expenses-dialog.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { ShowPricePipe, TotalPricePipe } from './cart.pipe';
     PriceDetailOrderDialogComponent,
     SaleCustomerFormDialogComponent,
     ShowPricePipe,
-    TotalPricePipe],
+    TotalPricePipe,
+    SaleExpensesDialogComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(SaleRoutes),

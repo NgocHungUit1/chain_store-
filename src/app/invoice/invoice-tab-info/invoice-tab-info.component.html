@@ -166,7 +166,7 @@
 
 
         <div *ngFor="let expensesOrder of invoice.expensesOrders">
-          <div fxLayout="row wrap" class="invoice-detail-info-row">
+          <div *ngIf="expensesOrder.auto === 1" fxLayout="row wrap" class="invoice-detail-info-row">
             <div fxFlex="48" class="invoice-detail-info-field">
               <span class="invoice-detail-field-label">{{ expensesOrder.name }} :</span>
             </div>

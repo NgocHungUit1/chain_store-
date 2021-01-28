@@ -5,7 +5,7 @@ export class ExpensesOrder {
   id: string;
   no: string;
   name: string;
-  auto: string;
+  auto: number;
   return_auto: string;
   user: User;
   value: number;
