@@ -66,6 +66,54 @@ export class ProductReportService {
   }
 
   /**
+   * API for Report Xuat nhap ton
+   */
+  getApiUrlReportExportImport(filter?: ProductFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/report/export-import?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
+  getListReportExportImport(filter?: ProductFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrlReportExportImport(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
+
+  /**
+   * API for Report Xuat nhap ton chi tiet
+   *
+   */
+  getApiUrlReportExportImportDetail(filter?: ProductFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/report/export-import-detail?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
+  getListReportExportImportDetail(filter?: ProductFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrlReportExportImportDetail(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
+  /**
    * Export report excel
    * @param filter
    */

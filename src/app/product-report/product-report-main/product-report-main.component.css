@@ -92,4 +92,12 @@ tr.example-element-row:not(.example-expanded-row):active {
   margin: 15px 0;
 }
 
+.color-import {
+  color: #e07f2a;
+}
+
+.color-export {
+  color: #0e68b4;
+}
+
 

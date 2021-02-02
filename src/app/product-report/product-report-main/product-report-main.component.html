@@ -47,6 +47,12 @@
             <mat-radio-button class="radio-button-report-type" value="stock">
               Giá trị kho
             </mat-radio-button>
+            <mat-radio-button class="radio-button-report-type" value="export-import">
+              Xuất nhập tồn
+            </mat-radio-button>
+            <mat-radio-button class="radio-button-report-type" value="export-import-detail">
+              Xuất nhập tồn chi tiết
+            </mat-radio-button>
 
           </mat-radio-group>
         </form>
@@ -295,7 +301,7 @@
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
 <!--                  {{ element?.quantity?.number * element.sell_price | number }}-->
-                  {{ element?.stockCard?.quantity_of_stock * element.sell_price | number }}
+                    {{ element?.stockCard?.quantity_of_stock * element.sell_price | number }}
                   </span>
                 </td>
               </ng-container>
@@ -326,6 +332,200 @@
               </ng-container>
               <ng-container matColumnDef="second_stock_gia_tri_kho">
                 <th mat-header-cell class="column-number" *matHeaderCellDef>{{ sum_stock_gia_tri_kho | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="ton_dau_ky">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['ton_dau_ky']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                      {{ 1 * element?.tonDauKy?.quantity_of_stock | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_ton_dau_ky">
+                <th mat-header-cell class="column-number" *matHeaderCellDef>{{ sum_ton_dau_ky | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="gia_tri_dau_ky">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['gia_tri_dau_ky']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ element?.tonDauKy?.quantity_of_stock * element.original_price | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_gia_tri_dau_ky">
+                <th mat-header-cell class="column-number" *matHeaderCellDef>{{ sum_gia_tri_dau_ky | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="sl_nhap">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['sl_nhap']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ 1 * element?.soLuongNhap | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_sl_nhap">
+                <th mat-header-cell class="column-number" *matHeaderCellDef>{{ sum_sl_nhap | number}}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="gia_tri_nhap">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['gia_tri_nhap']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                      {{ 1 * element?.soLuongNhap * element.original_price | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_gia_tri_nhap">
+                <th mat-header-cell class="column-number" *matHeaderCellDef>{{ sum_gia_tri_nhap | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="sl_xuat">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['sl_xuat']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                      {{ -1 * element?.soLuongXuat | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_sl_xuat">
+                <th mat-header-cell class="column-number" *matHeaderCellDef>{{ -1 * sum_sl_xuat | number}}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="gia_tri_xuat">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['gia_tri_xuat']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                      {{ -1 * element?.soLuongXuat * element.original_price | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_gia_tri_xuat">
+                <th mat-header-cell class="column-number" *matHeaderCellDef>{{ -1 * sum_gia_tri_xuat | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="ton_cuoi_ky">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['ton_cuoi_ky']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                      {{ 1 * element?.tonCuoiKy?.quantity_of_stock | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_ton_cuoi_ky">
+                <th mat-header-cell class="column-number " *matHeaderCellDef>{{ sum_ton_cuoi_ky | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="gia_tri_cuoi_ky">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['gia_tri_cuoi_ky']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ element?.tonCuoiKy?.quantity_of_stock * element.original_price | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_gia_tri_cuoi_ky">
+                <th mat-header-cell class="column-number color-export" *matHeaderCellDef>{{ sum_gia_tri_cuoi_ky | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="nhap_ncc">
+                <th mat-header-cell class="column-number color-import" *matHeaderCellDef> {{columnsHeader['nhap_ncc']}}</th>
+                <td mat-cell class="column-number color-import" *matCellDef="let element">
+                  <span>
+                    {{ 1 * element?.soLuongNhap | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_nhap_ncc">
+                <th mat-header-cell class="column-number color-import" *matHeaderCellDef>{{ sum_sl_nhap | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="nhap_kiem">
+                <th mat-header-cell class="column-number color-import" *matHeaderCellDef> {{columnsHeader['nhap_kiem']}}</th>
+                <td mat-cell class="column-number color-import" *matCellDef="let element">
+                  <span>
+                    {{ 1 * element?.soLuongKiemNhap | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_nhap_kiem">
+                <th mat-header-cell class="column-number color-import" *matHeaderCellDef>{{ sum_sl_kiem_nhap | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="nhap_tra_hang">
+                <th mat-header-cell class="column-number color-import" *matHeaderCellDef> {{columnsHeader['nhap_tra_hang']}}</th>
+                <td mat-cell class="column-number color-import" *matCellDef="let element">
+                  <span>
+                    {{ 1 * element?.soLuongTraHang | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_nhap_tra_hang">
+                <th mat-header-cell class="column-number color-import" *matHeaderCellDef>{{ sum_sl_nhap_tra_hang | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="nhap_chuyen">
+                <th mat-header-cell class="column-number color-import" *matHeaderCellDef> {{columnsHeader['nhap_chuyen']}}</th>
+                <td mat-cell class="column-number color-import" *matCellDef="let element">
+                  <span>
+                    {{ 1 * element?.soLuongNhapChuyen | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_nhap_chuyen">
+                <th mat-header-cell class="column-number color-import" *matHeaderCellDef>{{ sum_sl_nhap_chuyen | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="xuat_ban">
+                <th mat-header-cell class="column-number color-export" *matHeaderCellDef> {{columnsHeader['xuat_ban']}}</th>
+                <td mat-cell class="column-number color-export" *matCellDef="let element">
+                  <span>
+                    {{ -1 * element?.soLuongXuat | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_xuat_ban">
+                <th mat-header-cell class="column-number color-export" *matHeaderCellDef>{{ -1 * sum_sl_xuat | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="xuat_kiem">
+                <th mat-header-cell class="column-number color-export" *matHeaderCellDef> {{columnsHeader['xuat_kiem']}}</th>
+                <td mat-cell class="column-number color-export" *matCellDef="let element">
+                  <span>
+                    {{ -1 * element?.soLuongKiemXuat | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_xuat_kiem">
+                <th mat-header-cell class="column-number color-export" *matHeaderCellDef>{{ -1 * sum_sl_kiem_xuat | number }}</th>
+              </ng-container>
+
+              <ng-container matColumnDef="xuat_chuyen">
+                <th mat-header-cell class="column-number color-export" *matHeaderCellDef> {{columnsHeader['xuat_chuyen']}}</th>
+                <td mat-cell class="column-number color-export" *matCellDef="let element">
+                  <span>
+                    {{ -1 * element?.soLuongXuatChuyen | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_xuat_chuyen">
+                <th mat-header-cell class="column-number color-export" *matHeaderCellDef>{{ -1 * sum_sl_xuat_chuyen | number }}</th>
               </ng-container>
 
               <ng-container matColumnDef="expandedDetail">

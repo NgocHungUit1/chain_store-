@@ -94,7 +94,22 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     'stock_gia_ban': 'Giá bán',
     'stock_gia_tri_ban': 'Giá trị bán',
     'stock_gia_von': 'Giá vốn',
-    'stock_gia_tri_kho': 'Giá trị kho'
+    'stock_gia_tri_kho': 'Giá trị kho',
+    'ton_dau_ky': 'Tổn đầu kỳ', //
+    'gia_tri_dau_ky': 'Giá trị đầu kỳ',
+    'sl_nhap': 'Số lượng nhập',
+    'gia_tri_nhap': 'Giá trị nhập',
+    'sl_xuat': 'Số lượng xuất',
+    'gia_tri_xuat': 'Giá trị xuất',
+    'ton_cuoi_ky': 'Tồn cuối kỳ',
+    'gia_tri_cuoi_ky': 'Giá trị cuối kỳ',
+    'nhap_ncc': 'N.NCC',
+    'nhap_kiem': 'N.kiểm',
+    'nhap_tra_hang': 'Trả hàng',
+    'nhap_chuyen': 'N.chuyển',
+    'xuat_ban': 'X.bán',
+    'xuat_kiem': 'X.kiểm',
+    'xuat_chuyen': 'X.chuyển',
     // 'quantity_of_stock': 'Tồn kho'
   };
 
@@ -116,6 +131,23 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
   sum_stock_so_luong: number;
   sum_stock_gia_tri_ban: number;
   sum_stock_gia_tri_kho: number;
+
+  //
+  sum_ton_dau_ky: number;
+  sum_gia_tri_dau_ky: number;
+  sum_sl_nhap: number;
+  sum_gia_tri_nhap: number;
+  sum_sl_xuat: number;
+  sum_gia_tri_xuat: number;
+  sum_ton_cuoi_ky: number;
+  sum_gia_tri_cuoi_ky: number;
+
+  //
+  sum_sl_kiem_nhap: number;
+  sum_sl_kiem_xuat: number;
+  sum_sl_nhap_chuyen: number;
+  sum_sl_xuat_chuyen: number;
+  sum_sl_nhap_tra_hang: number;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -144,6 +176,16 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     if (typeReport === 'stock') {
       filter.expand = 'quantity,stockCard';
     }
+
+    if (typeReport === 'export-import') {
+      filter.expand = 'tonDauKy,tonCuoiKy,soLuongNhap,soLuongXuat';
+    }
+
+    if (typeReport === 'export-import-detail') {
+      filter.expand = 'tonDauKy,tonCuoiKy,soLuongNhap,soLuongXuat,soLuongKiemNhap,soLuongKiemXuat,' +
+        'soLuongNhapChuyen,soLuongXuatChuyen,soLuongTraHang';
+    }
+
     // filter.expand = 'returnsDetailsBranch';
     // filter.expand = 'medicine,productUnits,productPlacements,group,images,quantity';
     filter.date_from = objDateFilter.date_from;
@@ -181,6 +223,59 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
         this.sum_stock_so_luong = res.body.sum_stock_so_luong;
         this.sum_stock_gia_tri_ban = res.body.sum_stock_gia_tri_ban;
         this.sum_stock_gia_tri_kho = res.body.sum_stock_gia_tri_kho;
+        let stt = 0;
+        this.dataSource.forEach(elementData => {
+          stt++;
+          elementData.stt = stt;
+        });
+        this.reloadFilter(res);
+        // const url = this.service.getApiUrlReportSale(this.apiFilter);
+        this.isLoadingResults = false;
+      });
+    }
+
+    if (typeReport === 'export-import') {
+      this.isLoadingResults = true;
+      this.service.getListReportExportImport(this.apiFilter).subscribe(res => {
+        this.dataSource = res.body.data;
+        this.sum_ton_dau_ky = res.body.sum_ton_dau_ky;
+        this.sum_gia_tri_dau_ky = res.body.sum_gia_tri_dau_ky;
+        this.sum_sl_nhap = res.body.sum_sl_nhap;
+        this.sum_gia_tri_nhap = res.body.sum_gia_tri_nhap;
+        this.sum_sl_xuat = res.body.sum_sl_xuat;
+        this.sum_gia_tri_xuat = res.body.sum_gia_tri_xuat;
+        this.sum_ton_cuoi_ky = res.body.sum_ton_cuoi_ky;
+        this.sum_gia_tri_cuoi_ky = res.body.sum_gia_tri_cuoi_ky;
+
+        let stt = 0;
+        this.dataSource.forEach(elementData => {
+          stt++;
+          elementData.stt = stt;
+        });
+        this.reloadFilter(res);
+        // const url = this.service.getApiUrlReportSale(this.apiFilter);
+        this.isLoadingResults = false;
+      });
+    }
+
+    if (typeReport === 'export-import-detail') {
+      this.isLoadingResults = true;
+      this.service.getListReportExportImportDetail(this.apiFilter).subscribe(res => {
+        this.dataSource = res.body.data;
+        this.sum_ton_dau_ky = res.body.sum_ton_dau_ky;
+        this.sum_gia_tri_dau_ky = res.body.sum_gia_tri_dau_ky;
+        this.sum_sl_nhap = res.body.sum_sl_nhap;
+        this.sum_gia_tri_nhap = res.body.sum_gia_tri_nhap;
+        this.sum_sl_xuat = res.body.sum_sl_xuat;
+        this.sum_gia_tri_xuat = res.body.sum_gia_tri_xuat;
+        this.sum_ton_cuoi_ky = res.body.sum_ton_cuoi_ky;
+        this.sum_gia_tri_cuoi_ky = res.body.sum_gia_tri_cuoi_ky;
+        this.sum_sl_kiem_nhap = res.body.sum_sl_kiem_nhap;
+        this.sum_sl_kiem_xuat = res.body.sum_sl_kiem_xuat;
+        this.sum_sl_nhap_chuyen = res.body.sum_sl_nhap_chuyen;
+        this.sum_sl_xuat_chuyen = res.body.sum_sl_xuat_chuyen;
+        this.sum_sl_nhap_tra_hang = res.body.sum_sl_nhap_tra_hang;
+
         let stt = 0;
         this.dataSource.forEach(elementData => {
           stt++;
@@ -340,6 +435,33 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
           'second_stock_so_luong', 'second_stock_gia_ban', 'second_stock_gia_tri_ban', 'second_stock_gia_von', 'second_stock_gia_tri_kho'];
       }
 
+      if (res.type === 'export-import') {
+        this.displayedColumns = ['#', 'product_no', 'product_name', 'ton_dau_ky',
+          'gia_tri_dau_ky', 'sl_nhap', 'gia_tri_nhap', 'sl_xuat', 'gia_tri_xuat', 'ton_cuoi_ky', 'gia_tri_cuoi_ky'];
+        this.columnsToDisplay = ['#', 'product_no', 'product_name', 'ton_dau_ky',
+          'gia_tri_dau_ky', 'sl_nhap', 'gia_tri_nhap', 'sl_xuat', 'gia_tri_xuat', 'ton_cuoi_ky', 'gia_tri_cuoi_ky'];
+        this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name',
+          'second_ton_dau_ky', 'second_gia_tri_dau_ky', 'second_sl_nhap', 'second_gia_tri_nhap', 'second_sl_xuat',
+          'second_gia_tri_xuat', 'second_ton_cuoi_ky', 'second_gia_tri_cuoi_ky'];
+      }
+
+      if (res.type === 'export-import-detail') {
+        this.displayedColumns = ['#', 'product_no', 'product_name', 'ton_dau_ky',
+          'gia_tri_dau_ky', 'nhap_ncc', 'nhap_kiem', 'nhap_tra_hang', 'nhap_chuyen', '' +
+          'xuat_ban', 'xuat_kiem', 'xuat_chuyen',
+          'ton_cuoi_ky', 'gia_tri_cuoi_ky'];
+        this.columnsToDisplay = ['#', 'product_no', 'product_name', 'ton_dau_ky',
+          'gia_tri_dau_ky', 'nhap_ncc', 'nhap_kiem', 'nhap_tra_hang', 'nhap_chuyen',
+          'xuat_ban', 'xuat_kiem', 'xuat_chuyen',
+          'ton_cuoi_ky', 'gia_tri_cuoi_ky'];
+        this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name',
+          'second_ton_dau_ky', 'second_gia_tri_dau_ky',
+          'second_nhap_ncc', 'second_nhap_kiem', 'second_nhap_tra_hang', 'second_nhap_chuyen',
+          'second_xuat_ban', 'second_xuat_kiem', 'second_xuat_chuyen',
+          'second_ton_cuoi_ky', 'second_gia_tri_cuoi_ky'];
+      }
+
+
       this.apiFilter = this.buildFilterFromParams();
       this.loadData();
 
@@ -416,6 +538,26 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     }
     // this.apiFilter = this.buildFilterFromParams();
     if (typeReport === 'stock') {
+      const _apiFilter = this.apiFilter;
+      _apiFilter.export = true;
+      _apiFilter.type_report = typeReport;
+      this.service.exportExcel(_apiFilter).subscribe(res => {
+        const url = this.service.downloadFileExcel(typeReport);
+        window.location.href = url;
+      });
+    }
+
+    if (typeReport === 'export-import') {
+      const _apiFilter = this.apiFilter;
+      _apiFilter.export = true;
+      _apiFilter.type_report = typeReport;
+      this.service.exportExcel(_apiFilter).subscribe(res => {
+        const url = this.service.downloadFileExcel(typeReport);
+        window.location.href = url;
+      });
+    }
+
+    if (typeReport === 'export-import-detail') {
       const _apiFilter = this.apiFilter;
       _apiFilter.export = true;
       _apiFilter.type_report = typeReport;
