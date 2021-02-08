@@ -890,7 +890,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         printContent += '</tr>';
       });
       printContent += '</table>';
-      printContent += '<p style="text-align:left; font-size: 12px;font-style: italic;" >Hổ trợ : 0972 574 506</p>';
+      // printContent += '<p style="text-align:left; font-size: 12px;font-style: italic;" >Hổ trợ : 0972 574 506</p>';
       printContent += '<p style="text-align:center;font-style: italic;" >---</p>';
       printContent += '</section>';
 
