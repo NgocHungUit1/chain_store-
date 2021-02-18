@@ -930,8 +930,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     obj.copy_product_id = null;
     const dialogRef = this.dialog.open(WarehouseProductMedicineDialogComponent, {
       data: obj,
-      width: '65%',
-      minWidth: '700px',
+      // width: '65%',
+      minWidth: '750px',
       minHeight: '80%',
     });
 
