@@ -69,8 +69,8 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
     {isShow: true},
     {isShow: true},
     {isShow: true},
-    {isShow: true},
-    {isShow: true},
+    // {isShow: true},
+    // {isShow: true},
   ];
 
   selectedFiles: ImageSnippet[] = [];

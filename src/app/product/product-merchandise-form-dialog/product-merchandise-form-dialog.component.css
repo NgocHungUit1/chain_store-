@@ -9,7 +9,7 @@
   background-color: #fff;
   border: 1px dashed #ccc;
   border-radius: 3px;
-  width: calc((100% - 60px)/ 5);
+  width: calc((100% - 60px)/ 3);
   min-height: 80px;
   float: left;
   margin-right: 12px;

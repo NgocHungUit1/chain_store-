@@ -198,12 +198,12 @@
                         <tr *ngFor="let _ of units.controls; index as i;">
                           <ng-container [formGroupName]="i">
                             <td>
-                              <mat-form-field>
+                              <mat-form-field style="width: 100px">
                                 <input type="text" formControlName="unit_name" matInput placeholder="Tên đơn vị">
                               </mat-form-field>
                             </td>
                             <td>
-                              <mat-form-field>
+                              <mat-form-field style="width: 110px">
                                 <input type="number" formControlName="unit_value" matInput class="text-right"
                                        (change)="changeUnitValue($event,i)"
                                        (keyup)="changeUnitValue($event,i)"
@@ -211,13 +211,13 @@
                               </mat-form-field>
                             </td>
                             <td>
-                              <mat-form-field>
+                              <mat-form-field style="width: 110px">
                                 <input type="number" class="text-right" formControlName="unit_price"
                                        matInput placeholder="Giá bán">
                               </mat-form-field>
                             </td>
                             <td>
-                              <mat-form-field>
+                              <mat-form-field style="width: 120px">
                                 <input type="text" formControlName="unit_no" matInput placeholder="Mã hàng">
                               </mat-form-field>
                             </td>
