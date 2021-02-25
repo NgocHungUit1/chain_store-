@@ -1,0 +1,180 @@
+<h1 mat-dialog-title *ngIf="!(this.doctor_id !== null && this.doctor_id !== undefined)" >Thêm khách hàng</h1>
+<h1 mat-dialog-title *ngIf="this.doctor_id !== null && this.doctor_id !== undefined">Cập nhật khách hàng</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <div fxLayout="row wrap">
+
+      <div fxFlex="20">
+        <div fxLayout="row wrap">
+          <div class="image-profile">
+            <div class="image-container">
+              <img [src]="url ? url: '/assets/images/image_profile.png'" class=""> <br/>
+              <input #imageInput
+                     type="file"
+                     accept="image/*"
+                     (change)="processFile(imageInput)" class="select-profile-picture"
+                     #fileInput>
+              <span class="message">Chọn ảnh đại điện</span>
+            </div>
+
+            <div class="btn-select">
+              <button (click)="fileInput.click()">Chọn ảnh</button>
+            </div>
+            <div *ngIf="selectedFile">
+              <div *ngIf="selectedFile.status === 'ok'" class="alert alert-success"> Image Uploaded Succesfuly!</div>
+              <div *ngIf="selectedFile.status === 'fail'" class="alert alert-danger"> Image Upload Failed!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div fxFlex="2"></div>
+
+      <div fxFlex="38">
+        <div fxLayout="row wrap">
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Mã tự động</mat-label>
+              <input matInput tabindex="1" formControlName="no">
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Tên bác sĩ</mat-label>
+              <input matInput tabindex="2" formControlName="name">
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Điện thoại</mat-label>
+              <input matInput tabindex="2" formControlName="phone">
+            </mat-form-field>
+          </div>
+
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Địa chỉ</mat-label>
+              <textarea matInput tabindex="4" formControlName="address" rows="2"></textarea>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <input matInput placeholder="Tỉnh/Thành phố" tabindex="6" aria-label="Tỉnh/Thành phố"
+                     [matAutocomplete]="province" formControlName="province">
+              <button mat-icon-button matPrefix>
+                <mat-icon>search</mat-icon>
+              </button>
+              <button mat-icon-button matSuffix (click)="this.form.patchValue({province: null});"
+                      *ngIf="this.form.controls['province'].value">
+                <mat-icon>delete</mat-icon>
+              </button>
+              <mat-autocomplete #province="matAutocomplete" [displayWith]="displayLocation"
+                                (optionSelected)='onProvinceChange($event.option.value)'>
+                <mat-option *ngFor="let province of filteredProvinces | async" [value]="province">
+                  <span>{{province.name}}</span>
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+          <div fxFlex="100">
+            <mat-form-field>
+              <input matInput placeholder="Quận/Huyện" tabindex="7" aria-label="Quận/Huyện" [matAutocomplete]="district"
+                     formControlName="district">
+              <button mat-icon-button matPrefix>
+                <mat-icon>search</mat-icon>
+              </button>
+              <button mat-icon-button matSuffix (click)="this.form.patchValue({district: null});"
+                      *ngIf="this.form.controls['district'].value">
+                <mat-icon>delete</mat-icon>
+              </button>
+              <mat-autocomplete #district="matAutocomplete" [displayWith]="displayLocation"
+                                (optionSelected)='onDistrictChange($event.option.value)'>
+                <mat-option *ngFor="let district of filteredDistricts | async" [value]="district">
+                  <span>{{district.name}}</span>
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+          <div fxFlex="100">
+            <mat-form-field>
+              <input matInput placeholder="Phường/Xã" tabindex="8" aria-label="Phường/Xã" [matAutocomplete]="ward"
+                     formControlName="ward">
+              <button mat-icon-button matPrefix>
+                <mat-icon>search</mat-icon>
+              </button>
+              <button mat-icon-button matSuffix (click)="this.form.patchValue({ward: null});"
+                      *ngIf="this.form.controls['ward'].value">
+                <mat-icon>delete</mat-icon>
+              </button>
+              <mat-autocomplete #ward="matAutocomplete" [displayWith]="displayLocation">
+                <mat-option *ngFor="let ward of filteredWards | async" [value]="ward">
+                  <span>{{ward.name}}</span>
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <div fxFlex="2"></div>
+
+      <div fxFlex="38">
+        <div fxLayout="row wrap">
+
+
+          <div fxFlex="100" class="form-radio-field">
+            <mat-label>Giới tính</mat-label>
+            <mat-radio-group tabindex="10" formControlName="sex">
+              <mat-radio-button *ngFor="let sexItem of sexItems" [value]="sexItem.id">
+                {{sexItem.title}}
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-select tabindex="8" formControlName="branch_id" [multiple]='true'
+                          placeholder="Chi nhánh">
+                <mat-option *ngFor="let branch of branchList" [value]="branch.id">
+                  {{branch.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.controls['branch_id'].hasError('required')">Chi nhánh không được bỏ trống
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Email </mat-label>
+              <input matInput tabindex="11" formControlName="email">
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Ghi chú</mat-label>
+              <textarea matInput tabindex="13" formControlName="note" rows="2"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="14" (click)="submit()">
+    <mat-icon>save</mat-icon>
+    Lưu
+  </button>
+  <button mat-button (click)="onNoClick()" tabindex="-1">
+    <mat-icon>cancel</mat-icon>
+    Bỏ qua
+  </button>
+</div>

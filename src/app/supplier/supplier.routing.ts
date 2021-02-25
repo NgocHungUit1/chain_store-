@@ -45,6 +45,10 @@ export const SupplierRoutes: Routes = [
         path: 'pay-sheet',
         loadChildren: () => import('../pay-sheet/pay-sheet.module').then(m => m.PaySheetModule)
       },
+      {
+        path: 'doctor',
+        loadChildren: () => import('../doctor/doctor.module').then(m => m.DoctorModule)
+      },
     ]
   }
 ];

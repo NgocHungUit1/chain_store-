@@ -91,6 +91,7 @@ const MENUITEMS = [
     children: [
       {state: 'customer', name: 'Khách hàng', type: 'link', icon: 'person', roles: ['ADMIN', 'SALE']},
       {state: 'supplier', name: 'Nhà cung cấp', type: 'link', icon: 'people', roles: ['ADMIN', 'WAREHOUSE']},
+      {state: 'doctor', name: 'Bác sĩ', type: 'link', icon: 'local_hospital', roles: ['ADMIN', 'SALE']},
     ]
   },
   {

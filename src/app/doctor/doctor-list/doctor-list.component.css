@@ -1,0 +1,77 @@
+.mat-column-medicine_no,
+.mat-column-medicine_name,
+.mat-column-registration_no,
+.mat-column-manufacturer,
+.mat-column-made_in,
+.mat-column-unit {
+  flex: 1 1 0%;
+}
+.mat-column-main_active_substance, .mat-column-content {
+  flex: 2 1 0%;
+}
+table {
+  width: 100%;
+}
+
+tr.example-detail-row {
+  height: 0;
+}
+
+tr.example-element-row:not(.example-expanded-row):hover {
+  background: whitesmoke;
+}
+
+tr.example-element-row:not(.example-expanded-row):active {
+  background: #efefef;
+}
+
+.example-element-row td {
+  border-bottom-width: 0;
+}
+
+.example-element-detail {
+  overflow: hidden;
+  display: flex;
+}
+
+.example-element-diagram {
+  min-width: 80px;
+  border: 2px solid black;
+  padding: 8px;
+  font-weight: lighter;
+  margin: 8px 0;
+  height: auto;
+}
+
+.example-element-symbol {
+  font-weight: bold;
+  font-size: 40px;
+  line-height: normal;
+}
+
+.example-element-description {
+  padding: 16px;
+}
+
+.example-element-description-attribution {
+  opacity: 0.5;
+}
+.example-expanded-row {
+  font-weight: 700;
+  background-color: #ebf5ea;
+}
+
+.message {
+  position: absolute;
+  width: 90%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 100%);
+  transition: all 1s;
+  opacity: 0;
+}
+
+.image-container:hover .message {
+  transform: translate(-50%, -50%);
+  opacity: 1;
+}

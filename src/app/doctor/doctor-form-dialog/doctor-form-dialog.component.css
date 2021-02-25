@@ -1,0 +1,36 @@
+.mat-radio-button {
+  margin: 0 12px;
+}
+.form-radio-field {
+  margin: 16px 0;
+}
+.image-profile {
+  height: 135px;
+  width: 135px;
+}
+
+.image-container {
+  position: relative;
+  text-align: center;
+}
+
+img {
+  height: 135px;
+  width: 135px;
+}
+
+.select-profile-picture {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  opacity: 0;
+  height: 100%;
+  width: 100%;
+  cursor: pointer;
+}
+
+.btn-select {
+  padding: 10px 0;
+  display: grid;
+}
