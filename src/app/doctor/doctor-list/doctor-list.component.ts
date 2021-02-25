@@ -5,11 +5,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { NotifierService } from 'angular-notifier';
 import { DoctorService } from '../doctor.service';
-import { MatTable } from '@angular/material/table';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Doctor, DoctorFilter } from '../doctor.model';
 import { DoctorFormDialogComponent } from '../doctor-form-dialog/doctor-form-dialog.component';
+import { MoveDetail } from '../../move/move.model';
 
 @Component({
   selector: 'app-doctor-list',
@@ -17,8 +18,8 @@ import { DoctorFormDialogComponent } from '../doctor-form-dialog/doctor-form-dia
   styleUrls: ['./doctor-list.component.css'],
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ]
@@ -34,7 +35,7 @@ export class DoctorListComponent extends ListComponentBase implements OnInit {
     super();
   }
 
-  @ViewChild(MatTable, { static: true }) table: MatTable<any>;
+  @ViewChild(MatTable, {static: true}) table: MatTable<any>;
 
   apiFilter: DoctorFilter;
 
@@ -58,7 +59,8 @@ export class DoctorListComponent extends ListComponentBase implements OnInit {
     'status'
   ];
 
-  dataSource = [];
+  data: Doctor[] = [];
+  itemDataSource = new MatTableDataSource<Doctor>([]);
   expandedElement: Doctor | null;
 
 
@@ -89,7 +91,8 @@ export class DoctorListComponent extends ListComponentBase implements OnInit {
   loadData(): void {
     this.isLoadingResults = true;
     this.service.getList(this.apiFilter).subscribe(res => {
-      this.dataSource = res.body;
+      this.data = res.body;
+      this.itemDataSource = new MatTableDataSource<Doctor>(this.data);
       this.reloadFilter(res);
       this.isLoadingResults = false;
     });

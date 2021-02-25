@@ -3,14 +3,11 @@ import { Location } from '../location/location.model';
 
 export class Doctor {
   id: string;
+  no: string;
   name: string;
-  company_name: string;
   phone: string;
   sex: number;
-  dob: string;
   email: string;
-  tax_code: string;
-  facebook: string;
   note: string;
   status: string;
   address: string;
@@ -23,13 +20,10 @@ export class Doctor {
 export class DoctorFilter extends ApiFilterBase {
   id = '';
   name = '';
-  company_name = '';
+  no = '';
   phone = '';
   sex = '';
-  dob = '';
   email = '';
-  tax_code = '';
-  facebook = '';
   note = '';
   address = '';
   status = '';

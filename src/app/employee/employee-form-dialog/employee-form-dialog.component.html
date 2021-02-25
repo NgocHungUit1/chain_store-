@@ -35,7 +35,7 @@
                 <div fxFlex="100">
                   <mat-form-field>
                     <mat-label>Tên nhân viên</mat-label>
-                    <input matInput tabindex="1" formControlName="name">
+                    <input matInput tabindex="1" formControlName="name" required>
                     <mat-error *ngIf="form.controls['name'].hasError('required')">Tên nhân viên không được bỏ trống
                     </mat-error>
                     <mat-error
@@ -103,7 +103,7 @@
                     <div fxFlex="90">
                       <mat-form-field>
                         <mat-select (selectionChange)="updateForm($event.value)" tabindex="8" formControlName="user_id"
-                                    placeholder="Người dùng hệ thống">
+                                    placeholder="Người dùng hệ thống" required>
                           <mat-option *ngFor="let user of users" [value]="user.id">
                             {{user.username}}
                           </mat-option>
@@ -126,7 +126,7 @@
                 <div fxFlex="100">
                   <mat-form-field>
                     <mat-select tabindex="8" formControlName="branches" [multiple]='true'
-                                placeholder="Chi nhánh">
+                                placeholder="Chi nhánh" required>
                       <mat-option *ngFor="let branch of branchList" [value]="branch.id">
                         {{branch.name}}
                       </mat-option>

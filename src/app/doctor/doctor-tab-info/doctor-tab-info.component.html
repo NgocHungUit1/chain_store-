@@ -1,1 +1,96 @@
-<p>doctor-tab-info works!</p>
+<div fxLayout="row wrap" *ngIf="doctor !== null" class="m-b-20">
+  <div fxFlex="100">
+    <h3 style="color: #009688">{{doctor.name}}</h3>
+  </div>
+  <div fxFlex="100">
+    <div fxLayout="row wrap">
+      <div fxFlex="58" class="product-info">
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Mã bác sĩ:</span> <strong>{{doctor.no}}</strong>
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Tên bác sĩ:</span> {{doctor.name}}
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Địa chỉ:</span> {{doctor.address}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Tỉnh/Thành phố:</span> <span
+            *ngIf="doctor.province">{{doctor.province.name}}</span>
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Quận/Huyện:</span> <span
+            *ngIf="doctor.district">{{doctor.district.name}}</span>
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Phường/Xã:</span> <span
+            *ngIf="doctor.ward">{{doctor.ward.name}}</span>
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Điện thoại:</span> {{doctor.phone}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Email:</span> {{doctor.email}}
+          </div>
+        </div>
+
+      </div>
+
+      <div fxFlex="2"></div>
+
+      <div fxFlex="40" class="product-info">
+
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="100" class="product-info-field">
+            <span class="product-field-label">Giới tính:</span>
+            {{ sexHeader[doctor.sex] }}
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="100" class="product-info-field">
+            <span class="product-field-label">Trạng thái:</span>
+            <label *ngIf="doctor.status == '9'" class="label label-warning">Ngưng hoạt động</label>
+            <label *ngIf="doctor.status == '10'" class="label label-success">Hoạt động</label>
+          </div>
+        </div>
+
+
+        <div fxLayout="row wrap" class="product-info-row product-info-row-last">
+          <div fxFlex="100" class="product-info-field">
+            <span class="product-field-label">Ghi chú:</span> {{doctor.note}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div fxFlex="100" align="end">
+    <button class="m-r-10" mat-raised-button color="primary" (click)="openCustomerFormDialog(this.doctor.id)">
+      <mat-icon>edit</mat-icon>
+      Cập nhật
+    </button>
+    <button class="m-r-10" mat-raised-button color="accent" (click)="lock()" *ngIf="this.doctor.status == '10'">
+      <mat-icon>lock</mat-icon>
+      Ngừng hoạt động
+    </button>
+    <button class="m-r-10" mat-raised-button color="accent" (click)="activate()" *ngIf="this.doctor.status == '9'">
+      <mat-icon>lock_open</mat-icon>
+      Kích hoạt
+    </button>
+    <button class="m-r-10" mat-raised-button color="warn" (click)="openDeleteCustomer(this.doctor.id)">
+      <mat-icon>delete</mat-icon>
+      Xóa
+    </button>
+  </div>
+</div>

@@ -1,5 +1,5 @@
-<h1 mat-dialog-title *ngIf="!(this.doctor_id !== null && this.doctor_id !== undefined)" >Thêm khách hàng</h1>
-<h1 mat-dialog-title *ngIf="this.doctor_id !== null && this.doctor_id !== undefined">Cập nhật khách hàng</h1>
+<h1 mat-dialog-title *ngIf="!(this.doctor_id !== null && this.doctor_id !== undefined)" >Thêm bác sĩ</h1>
+<h1 mat-dialog-title *ngIf="this.doctor_id !== null && this.doctor_id !== undefined">Cập nhật bác sĩ</h1>
 <div mat-dialog-content>
   <form [formGroup]="form">
     <div fxLayout="row wrap">
@@ -43,7 +43,7 @@
           <div fxFlex="100">
             <mat-form-field>
               <mat-label>Tên bác sĩ</mat-label>
-              <input matInput tabindex="2" formControlName="name">
+              <input matInput tabindex="2" formControlName="name" required>
             </mat-form-field>
           </div>
 
@@ -138,7 +138,7 @@
 
           <div fxFlex="100">
             <mat-form-field>
-              <mat-select tabindex="8" formControlName="branch_id" [multiple]='true'
+              <mat-select tabindex="8" formControlName="branch_id"
                           placeholder="Chi nhánh">
                 <mat-option *ngFor="let branch of branchList" [value]="branch.id">
                   {{branch.name}}

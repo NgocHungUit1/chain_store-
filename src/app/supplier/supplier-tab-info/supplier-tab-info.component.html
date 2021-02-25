@@ -55,8 +55,8 @@
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="100" class="product-info-field">
             <span class="product-field-label">Trạng thái:</span>
-            <label *ngIf="supplier.status == '10'" class="label label-warning">Ngưng hoạt động</label>
-            <label *ngIf="supplier.status == '1'" class="label label-success">Hoạt động</label>
+            <label *ngIf="supplier.status == '9'" class="label label-warning">Ngưng hoạt động</label>
+            <label *ngIf="supplier.status == '10'" class="label label-success">Hoạt động</label>
           </div>
         </div>
         <div fxLayout="row wrap" class="product-info-row product-info-row-last">
@@ -68,9 +68,9 @@
     </div>
   </div>
   <div fxFlex="100" align="end">
-    <button class="m-r-10" mat-raised-button color="primary" (click)="openSupplierFormDialog(this.supplier.id, null)"><mat-icon>edit</mat-icon> Cập nhật</button>
-    <button class="m-r-10" mat-raised-button color="accent"  (click)="lock()" *ngIf="this.supplier.status == '1'"><mat-icon>lock</mat-icon> Ngừng hoạt động</button>
-    <button class="m-r-10" mat-raised-button color="accent"  (click)="activate()" *ngIf="this.supplier.status == '10'"><mat-icon>lock_open</mat-icon> Kích hoạt</button>
+    <button class="m-r-10" mat-raised-button color="primary" (click)="openSupplierFormDialog(this.supplier.id)"><mat-icon>edit</mat-icon> Cập nhật</button>
+    <button class="m-r-10" mat-raised-button color="accent"  (click)="lock()" *ngIf="this.supplier.status == '10'"><mat-icon>lock</mat-icon> Ngừng hoạt động</button>
+    <button class="m-r-10" mat-raised-button color="accent"  (click)="activate()" *ngIf="this.supplier.status == '9'"><mat-icon>lock_open</mat-icon> Kích hoạt</button>
     <button class="m-r-10" mat-raised-button color="warn"><mat-icon>delete</mat-icon> Xóa</button>
   </div>
 </div>

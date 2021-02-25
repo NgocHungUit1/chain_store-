@@ -40,7 +40,7 @@ export class DoctorService {
     return url;
   }
 
-  getList(filter?: CustomerFilter): Observable<HttpResponse<any>> {
+  getList(filter?: DoctorFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrl(filter);
     return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
   }
@@ -68,5 +68,15 @@ export class DoctorService {
   getRenderNo() {
     const url = environment.apiUrl + '/doctor/render-no';
     return this.http.get<string>(url);
+  }
+
+  activate(id) {
+    const url = environment.apiUrl + '/doctor/activate?id=' + id;
+    return this.http.post(url, {});
+  }
+
+  lock(id) {
+    const url = environment.apiUrl + '/doctor/lock?id=' + id;
+    return this.http.post(url, {});
   }
 }

@@ -64,7 +64,7 @@ export class DoctorFormDialogComponent implements OnInit {
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object
   ) {
 
-    this.local_data = { ...data };
+    this.local_data = {...data};
     this.doctor_id = this.local_data.doctor_id;
 
   }
@@ -74,21 +74,19 @@ export class DoctorFormDialogComponent implements OnInit {
   }
 
   initForm() {
+    this.getListBranch();
     this.form = this.fb.group({
       no: [null],
       name: [
         null,
         Validators.compose([
           Validators.required,
-          Validators.maxLength(32)
+          Validators.maxLength(100)
         ])
       ],
-      phone: [null, Validators.compose([
-        Validators.required,
-        Validators.maxLength(20)
-      ])],
+      phone: [null],
       email: [null, Validators.compose([
-        Validators.maxLength(20)
+        Validators.maxLength(25)
       ])],
       address: [null, Validators.compose([
         Validators.maxLength(200)
@@ -156,7 +154,8 @@ export class DoctorFormDialogComponent implements OnInit {
         ward: data['ward'],
         province: data['province'],
         note: data['note'],
-        sex: data['sex']
+        sex: data['sex'],
+        branch_id: data['branch_id']
       });
 
       if (data['province_id'] !== null) {

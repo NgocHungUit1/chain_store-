@@ -53,14 +53,14 @@ export class SupplierTabInfoComponent implements OnInit {
 
   lock() {
     this.supplierSer.lock(this.supplier.id).subscribe(x => {
-      this.supplier.status = '10';
+      this.supplier.status = '9';
       this.notifyService.notify('success', 'Đã khóa thành công!');
     });
   }
 
   activate() {
     this.supplierSer.activate(this.supplier.id).subscribe(x => {
-      this.supplier.status = '1';
+      this.supplier.status = '10';
       this.notifyService.notify('success', 'Đã kích hoạt thành công!');
     });
   }
