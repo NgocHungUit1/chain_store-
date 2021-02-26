@@ -1,10 +1,14 @@
 import { Component, Inject, OnInit, Optional } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { LocationService } from '../../location/location.service';
 import * as moment from 'moment';
 import { PrescriptionService } from '../prescription.service';
+import { UsingFilter } from '../../product/using.model';
+import { DoctorService } from '../../doctor/doctor.service';
+import { DoctorFilter } from '../../doctor/doctor.model';
+import { DoctorFormDialogComponent } from '../../doctor/doctor-form-dialog/doctor-form-dialog.component';
 
 @Component({
   selector: 'app-prescription-form-dialog',
@@ -30,12 +34,16 @@ export class PrescriptionFormDialogComponent implements OnInit {
     }
   ];
 
+  doctors = [];
+
   constructor(
     public dialogRef: MatDialogRef<PrescriptionFormDialogComponent>,
     public notifySer: NotifierService,
     public locationSer: LocationService,
+    public doctorService: DoctorService,
     private fb: FormBuilder,
     private service: PrescriptionService,
+    private dialog: MatDialog,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object
   ) {
 
@@ -76,6 +84,12 @@ export class PrescriptionFormDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    const doctorFilter = new DoctorFilter();
+    doctorFilter.pageSize = 50;
+    this.doctorService.getList(doctorFilter).subscribe(res => {
+      this.doctors = res.body;
+    });
 
     this.initForm();
 
@@ -141,6 +155,18 @@ export class PrescriptionFormDialogComponent implements OnInit {
         });
       }
     }
+  }
+
+  openDoctorFormDialog() {
+    const dialogRef = this.dialog.open(DoctorFormDialogComponent, {
+      width: '70%',
+      minWidth: '600px',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result);
+    });
   }
 
 

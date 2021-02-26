@@ -20,6 +20,25 @@
             </mat-form-field>
           </div>
 
+          <div fxLayout="row wrap">
+            <div fxFlex="90">
+              <mat-form-field>
+                <mat-select  placeholder="Bác sĩ kê đơn" [formControl]="form.controls['doctor_id']">
+                  <mat-option>--</mat-option>
+                  <mat-option *ngFor="let doctor of doctors" [value]="doctor.id">
+                    {{ doctor.name }}
+                  </mat-option>
+                </mat-select>
+
+              </mat-form-field>
+            </div>
+            <div fxFlex="10">
+              <button mat-button aria-label="add" (click)="openDoctorFormDialog()">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+          </div>
+
           <div fxFlex="100">
             <mat-form-field>
               <mat-label>Cơ sở khám bệnh</mat-label>
