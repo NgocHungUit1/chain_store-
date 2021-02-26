@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
@@ -27,6 +27,7 @@ import { ExpensesOrderService } from '../../expenses-order/expenses-order.servic
 import { ExpensesOrder, ExpensesOrderFilter } from '../../expenses-order/expenses-order.model';
 import { WarehouseExpensesComponent } from '../../warehouse/warehouse-expenses/warehouse-expenses.component';
 import { SaleExpensesDialogComponent } from '../sale-expenses-dialog/sale-expenses-dialog.component';
+import { PrescriptionFormDialogComponent } from '../prescription-form-dialog/prescription-form-dialog.component';
 
 @Component({
   selector: 'app-sale-main',
@@ -93,6 +94,9 @@ export class SaleMainComponent implements OnInit {
 
   allPermission: any;
   isAdminStore: boolean;
+
+  prescription_id: null; // ban theo don thuoc
+  @ViewChild('prescription') prescription;
 
   /**
    *  So sanh danh sach cu
@@ -421,7 +425,8 @@ export class SaleMainComponent implements OnInit {
       branch_id: [branch_id],
       time: [time],
       today: [today],
-      invoice_id: [null]
+      invoice_id: [null],
+      prescription_id: [null] // ban thuoc theo don
     });
 
     if (this.form.controls['branch_id'].value == null) {
@@ -1028,7 +1033,7 @@ export class SaleMainComponent implements OnInit {
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     let date_created = '';
-    let data = this.form.getRawValue();
+    const data = this.form.getRawValue();
     let mItemInvoice = new ItemInvoice();
     listItemInvoice.forEach(element => {
       if (element.active === true) {
@@ -1111,6 +1116,11 @@ export class SaleMainComponent implements OnInit {
       date_created = data['time'] + ' ' + effDate.toISOString().split('T')[0];
     }
 
+    let prescription_id = null;
+    if (this.prescription.checked) {
+      prescription_id = this.prescription_id;
+    }
+
     /**
      * Gang du lieu data
      */
@@ -1125,6 +1135,7 @@ export class SaleMainComponent implements OnInit {
         price_book_id: this.form.controls['priceBookID'].value,
         branch_id: this.form.controls['branch_id'].value,
         expenses_order_price: this.expenseOrder,
+        prescription_id: prescription_id,
       },
       UserID: mItemInvoice.user.id,
       InvoiceDetail: invoiceDetail,
@@ -1308,6 +1319,8 @@ export class SaleMainComponent implements OnInit {
     this.sumPrice = 0;
     this.countProduct = 0;
     this.listProduct = [];
+    this.prescription.checked = false;
+    this.prescription_id = null;
   }
 
   /**
@@ -1388,6 +1401,26 @@ export class SaleMainComponent implements OnInit {
       return false;
     }
     return true;
+  }
+
+  /**
+   * Ban thuoc theo don
+   */
+  clickPrescription() {
+    const obj = {
+      prescription_id: this.prescription_id
+    };
+    const dialogRef = this.dialog.open(PrescriptionFormDialogComponent, {
+      data: obj,
+      width: '60%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+        this.prescription_id = result.id;
+      }
+    });
   }
 
 }

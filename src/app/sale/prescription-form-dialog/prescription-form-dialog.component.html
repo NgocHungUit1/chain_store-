@@ -1,0 +1,127 @@
+<h1 mat-dialog-title>Thông tin đơn thuốc</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <div fxLayout="row wrap">
+
+      <div fxFlex="49">
+        <div fxLayout="row wrap">
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Mã đơn thuốc</mat-label>
+              <input matInput tabindex="1" formControlName="no" required>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Bác sĩ kê đơn</mat-label>
+              <input matInput tabindex="2" formControlName="doctor_id" >
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Cơ sở khám bệnh</mat-label>
+              <input matInput tabindex="2" formControlName="medical_facility_id" >
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Tên bệnh nhân</mat-label>
+              <input matInput tabindex="2" formControlName="name" >
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Tuổi</mat-label>
+              <input matInput tabindex="2" formControlName="age" >
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100" class="form-radio-field">
+            <mat-label>Giới tính</mat-label>
+            <mat-radio-group tabindex="10" formControlName="sex">
+              <mat-radio-button *ngFor="let sexItem of sexItems" [value]="sexItem.id">
+                {{sexItem.title}}
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Cân nặng</mat-label>
+              <input matInput tabindex="2" formControlName="weight" >
+            </mat-form-field>
+          </div>
+
+
+
+        </div>
+      </div>
+
+      <div fxFlex="2"></div>
+
+      <div fxFlex="49">
+        <div fxLayout="row wrap">
+
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>CMND/Căn cước</mat-label>
+              <input matInput tabindex="2" formControlName="cmnd">
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Thẻ BHYT</mat-label>
+              <input matInput tabindex="2" formControlName="bhyt">
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Địa chỉ</mat-label>
+              <input matInput tabindex="11" formControlName="address">
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Người giám hộ</mat-label>
+              <input matInput tabindex="11" formControlName="person">
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Điện thoại liên hệ </mat-label>
+              <input matInput tabindex="11" formControlName="phone">
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Chuẩn đoán</mat-label>
+              <textarea matInput tabindex="13" formControlName="note" rows="2"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="14" (click)="submit()">
+    <mat-icon>save</mat-icon>
+    Lưu
+  </button>
+  <button mat-button (click)="onNoClick()" tabindex="-1">
+    <mat-icon>cancel</mat-icon>
+    Bỏ qua
+  </button>
+</div>

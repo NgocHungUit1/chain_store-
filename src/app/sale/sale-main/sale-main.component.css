@@ -187,7 +187,7 @@ html .page-wrapper .page-content {
 }
 
 .pricebook-action {
-  padding-bottom: 20px;
+  padding-bottom: 5px;
 }
 
 .branch-action {
@@ -247,4 +247,22 @@ html .page-wrapper .page-content {
 
 .input-search {
   font-size: 15px;
+}
+
+.prescription {
+  padding-left: 15px;
+  font-size: 15px;
+  padding-bottom: 10px;
+}
+
+.prescription-checked {
+  padding-left: 15px;
+  font-size: 15px;
+  padding-bottom: 10px;
+  color: blue;
+}
+
+.prescription-text {
+  border-bottom: 1px solid blue;
+  cursor: pointer;
 }

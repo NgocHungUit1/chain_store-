@@ -274,6 +274,14 @@
             </mat-form-field>
           </div>
 
+          <div  [ngClass]="prescription.checked ? 'prescription-checked' : 'prescription'">
+              <mat-checkbox #prescription
+                            formControlName="prescription_id" >
+              </mat-checkbox>
+              <span [ngClass]="prescription.checked ? 'prescription-text' : ''"
+                  (click)="clickPrescription()"> Bán thuốc theo đơn </span>
+          </div>
+
           <div *ngIf="localItemInvoice?.is_return !== true; else titleHoaDon">
             <label class="mat-h2"> Hóa đơn </label>
           </div>
