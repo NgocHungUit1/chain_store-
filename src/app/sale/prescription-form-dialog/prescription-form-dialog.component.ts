@@ -9,6 +9,9 @@ import { UsingFilter } from '../../product/using.model';
 import { DoctorService } from '../../doctor/doctor.service';
 import { DoctorFilter } from '../../doctor/doctor.model';
 import { DoctorFormDialogComponent } from '../../doctor/doctor-form-dialog/doctor-form-dialog.component';
+import { MedicalFacilityFormDialogComponent } from '../medical-facility-form-dialog/medical-facility-form-dialog.component';
+import { MedicalFacilityService } from '../medical-facility.service';
+import { MedicalFacilityFilter } from '../medical-facility.model';
 
 @Component({
   selector: 'app-prescription-form-dialog',
@@ -35,12 +38,14 @@ export class PrescriptionFormDialogComponent implements OnInit {
   ];
 
   doctors = [];
+  medicalFacilitys = [];
 
   constructor(
     public dialogRef: MatDialogRef<PrescriptionFormDialogComponent>,
     public notifySer: NotifierService,
     public locationSer: LocationService,
     public doctorService: DoctorService,
+    public medicalFacilityService: MedicalFacilityService,
     private fb: FormBuilder,
     private service: PrescriptionService,
     private dialog: MatDialog,
@@ -89,6 +94,12 @@ export class PrescriptionFormDialogComponent implements OnInit {
     doctorFilter.pageSize = 50;
     this.doctorService.getList(doctorFilter).subscribe(res => {
       this.doctors = res.body;
+    });
+
+    const medicalFacilityFilter = new MedicalFacilityFilter();
+    medicalFacilityFilter.pageSize = 50;
+    this.medicalFacilityService.getList(medicalFacilityFilter).subscribe(res => {
+      this.medicalFacilitys = res.body;
     });
 
     this.initForm();
@@ -158,16 +169,43 @@ export class PrescriptionFormDialogComponent implements OnInit {
   }
 
   openDoctorFormDialog() {
+    const obj = {
+      doctor_id: this.form.controls['doctor_id'].value,
+    };
     const dialogRef = this.dialog.open(DoctorFormDialogComponent, {
+      data: obj,
       width: '70%',
       minWidth: '600px',
       minHeight: '80%',
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
+      if (result !== false && result !== undefined) {
+        this.doctors.push(result);
+        this.form.controls['doctor_id'].setValue(result.id);
+      }
     });
   }
+
+  openMedicalFacilityFormDialog() {
+    const obj = {
+      medical_facility_id: this.form.controls['medical_facility_id'].value,
+    };
+    const dialogRef = this.dialog.open(MedicalFacilityFormDialogComponent, {
+      data: obj,
+      width: '40%',
+      // minWidth: '600px',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== false && result !== undefined) {
+        this.medicalFacilitys.push(result);
+        this.form.controls['medical_facility_id'].setValue(result.id);
+      }
+    });
+  }
+
 
 
 }

@@ -1,4 +1,4 @@
-import { ApiFilterBase } from "../shared/base";
+import { ApiFilterBase } from '../shared/base';
 
 export class Placement {
   id: number;

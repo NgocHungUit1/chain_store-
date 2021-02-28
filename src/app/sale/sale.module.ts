@@ -22,6 +22,7 @@ import { SaleCustomerFormDialogComponent } from './sale-customer-form-dialog/sal
 import { ShowPricePipe, TotalPricePipe } from './cart.pipe';
 import { SaleExpensesDialogComponent } from './sale-expenses-dialog/sale-expenses-dialog.component';
 import { PrescriptionFormDialogComponent } from './prescription-form-dialog/prescription-form-dialog.component';
+import { MedicalFacilityFormDialogComponent } from './medical-facility-form-dialog/medical-facility-form-dialog.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { PrescriptionFormDialogComponent } from './prescription-form-dialog/pres
     ShowPricePipe,
     TotalPricePipe,
     SaleExpensesDialogComponent,
-    PrescriptionFormDialogComponent],
+    PrescriptionFormDialogComponent,
+    MedicalFacilityFormDialogComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(SaleRoutes),
