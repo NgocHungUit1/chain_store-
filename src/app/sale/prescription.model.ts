@@ -17,7 +17,8 @@ export class Prescription {
   note: string;
   status: string;
   address: string;
-
+  doctor: any;
+  medicalFacility: any;
 }
 
 

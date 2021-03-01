@@ -321,6 +321,7 @@ export class SaleMainComponent implements OnInit {
                   }
                 });
 
+                // tslint:disable-next-line:no-shadowed-variable
                 const list = this.listProduct;
                 this.listProduct = [];
                 this.listProduct = list;
@@ -1173,6 +1174,7 @@ export class SaleMainComponent implements OnInit {
       this.orderService.updateOrder(dataInvoice).subscribe(res => {
         if (res !== false) {
           if (typeof res === 'number' && this.autoPrint === true) {
+            this.resetDataSiderBar();
             this.printInvoice(res);
           }
           this.resetDataSiderBar();
@@ -1321,6 +1323,9 @@ export class SaleMainComponent implements OnInit {
     this.listProduct = [];
     this.prescription.checked = false;
     this.prescription_id = null;
+    setTimeout(() => {
+      this.listProduct = [];
+    }, 500);
   }
 
   /**

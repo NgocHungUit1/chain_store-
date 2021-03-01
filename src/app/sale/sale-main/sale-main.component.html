@@ -274,7 +274,8 @@
             </mat-form-field>
           </div>
 
-          <div  [ngClass]="prescription.checked ? 'prescription-checked' : 'prescription'">
+          <div *ngIf="localItemInvoice?.is_return !== true"
+               [ngClass]="prescription.checked ? 'prescription-checked' : 'prescription'">
               <mat-checkbox #prescription
                             formControlName="prescription_id" >
               </mat-checkbox>

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NotifierService } from 'angular-notifier';
@@ -9,15 +9,20 @@ import { Invoice, InvoiceDetail, InvoiceDetailFilter } from '../invoice.model';
 import { InvoiceService } from '../invoice.service';
 import { MedicineService } from '../../medicine/medicine.service';
 import { jsPDF } from 'jspdf';
+import { Product } from '../../product/product.model';
+import { PrescriptionService } from '../../sale/prescription.service';
+import { Prescription } from '../../sale/prescription.model';
 
 @Component({
   selector: 'app-invoice-tab-info',
   templateUrl: './invoice-tab-info.component.html',
   styleUrls: ['./invoice-tab-info.component.css']
 })
-export class InvoiceTabInfoComponent implements OnInit {
+export class InvoiceTabInfoComponent implements OnChanges {
 
   @Input() invoice: Invoice;
+  @Input() expandedElement: boolean;
+  @Output() reload: EventEmitter<any> = new EventEmitter();
 
   displayedColumns: string[] = ['product_no', 'product_name', 'amount', 'common_price', 'discount', 'price', 'total_price'];
 
@@ -52,6 +57,12 @@ export class InvoiceTabInfoComponent implements OnInit {
   isAdminStore: boolean;
 
   domPrint = '';
+  prescription: Prescription;
+
+  sexItems = {
+    '1': 'Nam',
+    '0': 'Nữ'
+  };
 
   constructor(
     private dialog: MatDialog,
@@ -61,30 +72,65 @@ export class InvoiceTabInfoComponent implements OnInit {
     private orderService: OrderService,
     private router: Router,
     private medicineService: MedicineService,
+    public prescriptionService: PrescriptionService,
   ) {
   }
 
-  ngOnInit(): void {
-    // console.log(this.invoice);
-    const invoiceData = this.invoice;
-    const detail = this.invoice.detail;
-    this.tongTienHang = invoiceData.total_price;
-    this.KhachDaTra = invoiceData.total_payment;
-    // tslint:disable-next-line:no-shadowed-variable
-    detail.forEach(element => {
-      this.tongSoLuong = this.tongSoLuong + element?.amount;
-    });
+  ngOnChanges(changes: SimpleChanges): void {
+    // console.log(this.expandedElement);
+    if (this.expandedElement) {
+      // console.log(this.invoice.prescription_id);
+      if (this.invoice.prescription_id !== null) {
+        this.prescriptionService.getDetail(this.invoice.prescription_id,
+          'doctor,medicalFacility').subscribe(res => {
+          // console.log(res);
+          this.prescription = res;
 
-    if (invoiceData.discount_type === 'price') {
-      this.giamGiaHoaDon = invoiceData.discount;
-    } else {
-      this.giamGiaHoaDon = this.tongTienHang * invoiceData.discount / 100;
-      this.giamGiaHoaDonText = '(' + invoiceData.discount + '%)';
+        });
+      }
+
+      const invoiceData = this.invoice;
+      const detail = this.invoice.detail;
+      this.tongTienHang = invoiceData.total_price;
+      this.KhachDaTra = invoiceData.total_payment;
+      // tslint:disable-next-line:no-shadowed-variable
+      detail.forEach(element => {
+        this.tongSoLuong = this.tongSoLuong + element?.amount;
+      });
+
+      if (invoiceData.discount_type === 'price') {
+        this.giamGiaHoaDon = invoiceData.discount;
+      } else {
+        this.giamGiaHoaDon = this.tongTienHang * invoiceData.discount / 100;
+        this.giamGiaHoaDonText = '(' + invoiceData.discount + '%)';
+      }
+
     }
-
     this.allPermission = sessionStorage.getItem('allPermission').split(',');
     this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
   }
+
+  // ngOnInit(): void {
+  //   // console.log(this.invoice);
+  //   const invoiceData = this.invoice;
+  //   const detail = this.invoice.detail;
+  //   this.tongTienHang = invoiceData.total_price;
+  //   this.KhachDaTra = invoiceData.total_payment;
+  //   // tslint:disable-next-line:no-shadowed-variable
+  //   detail.forEach(element => {
+  //     this.tongSoLuong = this.tongSoLuong + element?.amount;
+  //   });
+  //
+  //   if (invoiceData.discount_type === 'price') {
+  //     this.giamGiaHoaDon = invoiceData.discount;
+  //   } else {
+  //     this.giamGiaHoaDon = this.tongTienHang * invoiceData.discount / 100;
+  //     this.giamGiaHoaDonText = '(' + invoiceData.discount + '%)';
+  //   }
+  //
+  //   this.allPermission = sessionStorage.getItem('allPermission').split(',');
+  //   this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
+  // }
 
   deleteInvoice(invoice) {
     if (invoice['returns'].length > 0) {

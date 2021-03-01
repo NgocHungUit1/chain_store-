@@ -66,6 +66,91 @@
     </div>
   </div>
 
+  <!-- prescription -->
+  <div fxFlex="100" class="prescription p-" *ngIf="prescription !== undefined">
+    <div fxLayout="row wrap">
+      <h3>Thông tin đơn thuốc</h3>
+      <div fxFlex="100" class="invoice-info">
+        <div fxLayout="row wrap" class="invoice-info-row">
+          <div fxFlex="32" class="invoice-info-field">
+            <span class="invoice-field-label">Mã đơn thuốc :</span> <strong>{{prescription.no}}</strong>
+          </div>
+          <div fxFlex="2"></div>
+          <div fxFlex="32" class="invoice-info-field">
+            <span class="invoice-field-label">Giới tính :</span>
+            <label class="invoice-field-label">{{ sexItems[prescription.sex] }}</label>
+          </div>
+          <div fxFlex="2"></div>
+          <div fxFlex="32" class="invoice-info-field">
+            <span class="invoice-field-label">Địa chỉ :</span> {{ prescription.address }}
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" class="invoice-info-row">
+          <div fxFlex="32" class="invoice-info-field">
+            <span class="invoice-field-label">Bác sĩ kê đơn :</span> <strong>{{prescription?.doctor?.name}}</strong>
+          </div>
+          <div fxFlex="2"></div>
+          <div fxFlex="32" class="invoice-info-field">
+            <span class="invoice-field-label">Cân nặng :</span>
+            <label class="invoice-field-label">{{ prescription.weight }}</label>
+          </div>
+          <div fxFlex="2"></div>
+          <div fxFlex="32" class="invoice-info-field">
+            <span class="invoice-field-label">Người giám hộ :</span> {{ prescription.person }}
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" class="invoice-info-row">
+          <div fxFlex="32" class="invoice-info-field">
+            <span class="invoice-field-label">CS Khám bệnh :</span> <strong>{{ prescription?.medicalFacility?.name }}</strong>
+          </div>
+          <div fxFlex="2"></div>
+          <div fxFlex="32" class="invoice-info-field">
+            <span class="invoice-field-label">CMND/Căn cước :</span>
+            <label class="invoice-field-label">{{ prescription.cmnd }}</label>
+          </div>
+          <div fxFlex="2"></div>
+          <div fxFlex="32" class="invoice-info-field">
+            <span class="invoice-field-label">Điện thoại liên hệ :</span> {{ prescription.phone }}
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" class="invoice-info-row">
+          <div fxFlex="32" class="invoice-info-field">
+            <span class="invoice-field-label">Bệnh nhân :</span> <strong>{{ prescription?.name }}</strong>
+          </div>
+          <div fxFlex="2"></div>
+          <div fxFlex="32" class="invoice-info-field">
+            <span class="invoice-field-label">Thẻ Bảo hiểm y tế :</span>
+            <label class="invoice-field-label">{{ prescription.bhyt }}</label>
+          </div>
+          <div fxFlex="2"></div>
+          <div fxFlex="32" class="invoice-info-field">
+            <span class="invoice-field-label">Chuẩn đoán :</span> {{ prescription.note }}
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" class="invoice-info-row">
+          <div fxFlex="32" class="invoice-info-field">
+            <span class="invoice-field-label">Tuổi :</span> <strong>{{ prescription?.age }}</strong>
+          </div>
+          <div fxFlex="2"></div>
+          <div fxFlex="32" class="invoice-info-field">
+
+          </div>
+          <div fxFlex="2"></div>
+          <div fxFlex="32" class="invoice-info-field">
+
+          </div>
+        </div>
+
+      </div>
+
+
+    </div>
+  </div>
+
   <div fxFlex="100">
     <table mat-table [dataSource]="invoice.detail" class="">
 

@@ -50,6 +50,7 @@ export class Invoice {
   branch: Branch;
   expensesOrders: ExpensesOrder[];
   expenses_order_price: number;
+  prescription_id: string;
 }
 
 export class InvoiceFilter extends ApiFilterBase {
