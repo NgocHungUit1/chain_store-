@@ -210,6 +210,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
     mItemInvoice.branch_id = invoice.branch_id;
     mItemInvoice.today = invoice.today;
     mItemInvoice.time = invoice.time;
+    mItemInvoice.prescription_id = invoice.prescription_id;
     mItemInvoice.user = {
       id: invoice.user.id,
       email: invoice.user.email,

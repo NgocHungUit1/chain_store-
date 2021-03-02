@@ -247,7 +247,15 @@ export class SaleMainComponent implements OnInit {
     this.countProduct = 0;
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
       this.listProduct = [];
+      this.prescription.checked = false;
+      this.prescription_id = null;
     } else {
+
+      if (mItemInvoice.prescription_id !== undefined && mItemInvoice.prescription_id !== null) {
+        this.prescription.checked = true;
+        this.prescription_id = mItemInvoice.prescription_id;
+      }
+
       const listProductSubscribe = mItemInvoice.listProduct;
       this.countProduct = 0;
 

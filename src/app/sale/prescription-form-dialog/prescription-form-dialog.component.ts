@@ -105,6 +105,7 @@ export class PrescriptionFormDialogComponent implements OnInit {
     this.initForm();
 
     if (this.prescription_id !== null && this.prescription_id !== undefined) {
+      console.log('Load: ' + this.prescription_id);
       this.loadDetail(this.prescription_id);
     } else {
       this.service.getRenderNo().subscribe(no => {
@@ -205,7 +206,6 @@ export class PrescriptionFormDialogComponent implements OnInit {
       }
     });
   }
-
 
 
 }

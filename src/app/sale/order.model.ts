@@ -1,5 +1,5 @@
-import {Customer} from '../customer/customer.model';
-import {Product} from '../product/product.model';
+import { Customer } from '../customer/customer.model';
+import { Product } from '../product/product.model';
 
 export class Detail {
   product: Product;
@@ -63,6 +63,7 @@ export class ItemInvoice {
   created_at: string;
   today: string;
   time: string;
+  prescription_id: string;
 }
 
 export class ListInvoice {
