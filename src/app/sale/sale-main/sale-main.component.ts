@@ -28,6 +28,7 @@ import { ExpensesOrder, ExpensesOrderFilter } from '../../expenses-order/expense
 import { WarehouseExpensesComponent } from '../../warehouse/warehouse-expenses/warehouse-expenses.component';
 import { SaleExpensesDialogComponent } from '../sale-expenses-dialog/sale-expenses-dialog.component';
 import { PrescriptionFormDialogComponent } from '../prescription-form-dialog/prescription-form-dialog.component';
+import { log } from 'util';
 
 @Component({
   selector: 'app-sale-main',
@@ -49,6 +50,7 @@ export class SaleMainComponent implements OnInit {
     private userService: UserService,
     private optionStoreService: OptionStoreService,
     private expensesOrderService: ExpensesOrderService,
+    private elementRef: ElementRef
   ) {
 
   }
@@ -592,8 +594,9 @@ export class SaleMainComponent implements OnInit {
     this.handleExpenseOrder();
   }
 
-  inputAmountProduct(product_id, value) {
-    this.orderService.inputAmountProduct(product_id, value);
+  inputAmountProduct(product_id, event) {
+    event.target.value = Number(event.target.value);
+    this.orderService.inputAmountProduct(product_id, event.target.value);
   }
 
   inputAmountProductReturn(product_id, value) {

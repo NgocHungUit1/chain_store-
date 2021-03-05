@@ -15,6 +15,7 @@ import { Product } from '../product/product.model';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Customer } from '../customer/customer.model';
+import { element } from 'protractor';
 
 @Injectable({
   providedIn: 'root'
@@ -328,11 +329,8 @@ export class OrderService {
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
-    listItemInvoice.forEach(element => {
-      if (element.active === true) {
-        mItemInvoice = element;
-      }
-    });
+
+    mItemInvoice = listItemInvoice.find(element => element.active === true);
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
     } else {
       let listProduct = mItemInvoice.listProduct;

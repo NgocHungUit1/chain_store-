@@ -65,7 +65,6 @@ html .page-wrapper .page-content {
 
 .row-count-number {
   font-size: 15px;
-  padding: 0 10px;
   padding-top: 20px;
   min-width: 60px;
   text-align: right;
@@ -80,7 +79,7 @@ html .page-wrapper .page-content {
 
 .row-amount {
   font-size: 20px;
-  min-width: 100px;
+  min-width: 120px;
   max-width: 150px;
 }
 

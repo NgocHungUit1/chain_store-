@@ -60,7 +60,7 @@
               </div>
             </div>
 
-            <div fxFlex="12" class="row-amount">
+            <div fxFlex="13" class="row-amount">
 
               <div *ngIf="localItemInvoice?.is_return !== true; else changeAmount">
 
@@ -70,8 +70,9 @@
                             (click)="upAmountProduct(itemProduct.product,i)">
                       <mat-icon>keyboard_arrow_up</mat-icon>
                     </button>
-                    <input matInput type="number" tabindex="3" min="0" class="row-amount-number"
-                           (input)="inputAmountProduct(i,$event.target.value)" value="{{ itemProduct.amount }}">
+                    <input matInput tabindex="3" min="0" class="row-amount-number"
+                           (input)="inputAmountProduct(i,$event)" [value]="itemProduct?.amount"
+                           autocomplete="off">
                     <button matSuffix mat-icon-button class="row-button-edit-amount"
                             (click)="downAmountProduct(itemProduct.product,i)">
                       <mat-icon>keyboard_arrow_down</mat-icon>
@@ -89,9 +90,9 @@
                             (click)="upAmountProductReturn(itemProduct.product,i)">
                       <mat-icon>keyboard_arrow_up</mat-icon>
                     </button>
-                    <input matInput type="number" tabindex="3" min="0" max="{{ itemProduct?.max_amount_return }}"
+                    <input matInput tabindex="3" min="0" max="{{ itemProduct?.max_amount_return }}"
                            class="row-amount-number" (input)="inputAmountProductReturn(i,$event.target.value)"
-                           value="{{ itemProduct?.amount }}">
+                           value="{{ itemProduct?.amount }}" autocomplete="off">
                     <button matSuffix mat-icon-button class="row-button-edit-amount"
                             (click)="downAmountProduct(itemProduct.product,i)">
                       <mat-icon>keyboard_arrow_down</mat-icon>
@@ -103,7 +104,7 @@
               </ng-template>
 
             </div>
-            <div fxFlex="2"></div>
+            <div fxFlex="1"></div>
             <div fxFlex="13" class="row-edit-price">
               <div fxLayout="row wrap">
                 <div fxFlex="100">
@@ -276,10 +277,10 @@
 
           <div *ngIf="localItemInvoice?.is_return !== true"
                [ngClass]="prescription.checked ? 'prescription-checked' : 'prescription'">
-              <mat-checkbox #prescription
-                            formControlName="prescription_id" >
-              </mat-checkbox>
-              <span [ngClass]="prescription.checked ? 'prescription-text' : ''"
+            <mat-checkbox #prescription
+                          formControlName="prescription_id">
+            </mat-checkbox>
+            <span [ngClass]="prescription.checked ? 'prescription-text' : ''"
                   (click)="clickPrescription()"> Bán thuốc theo đơn </span>
           </div>
 
