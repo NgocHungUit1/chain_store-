@@ -246,9 +246,14 @@
                   <mat-icon>delete</mat-icon>
                 </button>
                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySupplier">
-                  <mat-option *ngFor="let supplier of filteredSuppliers | async" [value]="supplier">
-                    <span>
-                      {{supplier.name}}
+                  <mat-option style="height: 50px;
+                                      line-height: 24px;
+                                      word-break: break-word;
+                                      display: inline-block;
+                                      white-space: pre-wrap;"
+                              *ngFor="let supplier of filteredSuppliers | async" [value]="supplier">
+                    <span class="supplier-option">
+                      - {{supplier.name}}
                     </span>
                   </mat-option>
                 </mat-autocomplete>
