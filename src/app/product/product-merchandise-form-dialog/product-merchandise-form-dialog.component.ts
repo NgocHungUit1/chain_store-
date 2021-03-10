@@ -49,7 +49,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
     placements: 'Mã hàng',
     product_name: 'Tên hàng',
     sell_price: 'Giá bán',
-    original_price: 'Giá gốc',
+    original_price: 'Giá vốn',
     weight: 'Trọng lượng',
     base_unit: 'Đơn vị cơ bản',
     // Medicine
@@ -107,7 +107,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       placements: [[]],
       product_name: [null, Validators.required],
       sell_price: [null, Validators.required],
-      original_price: [null, Validators.required],
+      original_price: [0],
       weight: [null],
       base_unit: [null, Validators.required],
       medicine_id: [null],
