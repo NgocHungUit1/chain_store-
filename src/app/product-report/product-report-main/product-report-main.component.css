@@ -67,6 +67,11 @@ tr.example-element-row:not(.example-expanded-row):active {
   text-align: end;
 }
 
+.column-number-sumary {
+  text-align: end;
+  color: black;
+}
+
 .select-product {
   margin-left: 10px;
   font-size: 1rem;
@@ -98,6 +103,15 @@ tr.example-element-row:not(.example-expanded-row):active {
 
 .color-export {
   color: #0e68b4;
+}
+
+tr.mat-header-row:nth-child(1) {
+  height: 45px !important;
+  background-color: #dcf4fc;
+}
+
+tr.mat-header-row:nth-child(2) {
+  height: 45px !important;
 }
 
 

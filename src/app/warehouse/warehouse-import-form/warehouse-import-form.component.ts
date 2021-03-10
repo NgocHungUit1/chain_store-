@@ -600,11 +600,11 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     });
     // Tinh vao cong no
     if (discount_type === 'price') {
-      remainAmount = Number(paidAmount) - (Number(price) - Number(discount));
       totalAmount = Number(price) - Number(discount);
+      remainAmount = Number(paidAmount) - totalAmount;
     } else {
-      remainAmount = Math.round(Number(paidAmount) - (Number(price) - Number(price) * Number(discount) / 100));
       totalAmount = Math.round(Number(price) - Number(price) * Number(discount) / 100);
+      remainAmount = Math.round(Number(paidAmount) - totalAmount);
     }
 
     if (this.optionStore_transaction_expenses.value === 'yes') {
@@ -616,7 +616,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
             if (item.type === 'price') {
               item.price = item.value;
             } else {
-              item.price = price * (item.value / 100);
+              item.price = totalAmount * (item.value / 100);
             }
             this.expensesTransaction += item.price;
           }

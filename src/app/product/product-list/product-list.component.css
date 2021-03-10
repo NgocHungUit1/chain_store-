@@ -80,3 +80,8 @@ tr.example-element-row:not(.example-expanded-row):active {
 .mat-card {
   margin: 0px !important;
 }
+
+tr.mat-header-row:nth-child(1) {
+  height: 45px !important;
+  background-color: #dcf4fc;
+}

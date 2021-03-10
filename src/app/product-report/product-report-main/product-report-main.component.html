@@ -175,7 +175,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_sl_ban">
-                <th mat-header-cell class="column-number" *matHeaderCellDef>{{ sum_sl_ban | number }}</th>
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_sl_ban | number }}</th>
               </ng-container>
 
               <ng-container matColumnDef="doanh_thu">
@@ -187,7 +187,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_doanh_thu">
-                <th mat-header-cell class="column-number" *matHeaderCellDef>{{ sum_doanh_thu | number }}</th>
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_doanh_thu | number }}</th>
               </ng-container>
 
               <ng-container matColumnDef="sl_tra">
@@ -199,7 +199,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_sl_tra">
-                <th mat-header-cell class="column-number" *matHeaderCellDef>{{ sum_sl_tra | number }}</th>
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_sl_tra | number }}</th>
               </ng-container>
 
               <ng-container matColumnDef="gia_tri_tra">
@@ -211,7 +211,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_gia_tri_tra">
-                <th mat-header-cell class="column-number" *matHeaderCellDef>{{ sum_gia_tri_tra | number }}</th>
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_gia_tri_tra | number }}</th>
               </ng-container>
 
               <ng-container matColumnDef="doanh_thu_thuan">
@@ -223,7 +223,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_doanh_thu_thuan">
-                <th mat-header-cell class="column-number"
+                <th mat-header-cell class="column-number-sumary"
                     *matHeaderCellDef> {{ sum_doanh_thu - sum_gia_tri_tra | number }}</th>
               </ng-container>
 
@@ -236,7 +236,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_tong_gia_von">
-                <th mat-header-cell class="column-number" *matHeaderCellDef>{{ sum_tong_gia_von | number }}</th>
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_tong_gia_von | number }}</th>
               </ng-container>
 
               <ng-container matColumnDef="loi_nhuan">
@@ -248,7 +248,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_loi_nhuan">
-                <th mat-header-cell class="column-number" *matHeaderCellDef>
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>
                   {{ sum_doanh_thu - sum_gia_tri_tra - sum_tong_gia_von | number }}
                 </th>
               </ng-container>
@@ -266,7 +266,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_ty_suat">
-                <th mat-header-cell class="column-number" *matHeaderCellDef>
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>
                   {{ 100 * (sum_doanh_thu - sum_gia_tri_tra - sum_tong_gia_von) / sum_doanh_thu | number}}
                 </th>
               </ng-container>
@@ -281,7 +281,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_stock_so_luong">
-                <th mat-header-cell class="column-number" *matHeaderCellDef>{{ sum_stock_so_luong | number}}</th>
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_stock_so_luong | number}}</th>
               </ng-container>
 
               <ng-container matColumnDef="stock_gia_ban">
@@ -331,7 +331,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_stock_gia_tri_kho">
-                <th mat-header-cell class="column-number" *matHeaderCellDef>{{ sum_stock_gia_tri_kho | number }}</th>
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_stock_gia_tri_kho | number }}</th>
               </ng-container>
 
 
@@ -344,7 +344,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_ton_dau_ky">
-                <th mat-header-cell class="column-number" *matHeaderCellDef>{{ sum_ton_dau_ky | number }}</th>
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_ton_dau_ky | number }}</th>
               </ng-container>
 
 
@@ -357,7 +357,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_gia_tri_dau_ky">
-                <th mat-header-cell class="column-number" *matHeaderCellDef>{{ sum_gia_tri_dau_ky | number }}</th>
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_gia_tri_dau_ky | number }}</th>
               </ng-container>
 
 
@@ -370,7 +370,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_sl_nhap">
-                <th mat-header-cell class="column-number" *matHeaderCellDef>{{ sum_sl_nhap | number}}</th>
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_sl_nhap | number}}</th>
               </ng-container>
 
 
@@ -383,7 +383,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_gia_tri_nhap">
-                <th mat-header-cell class="column-number" *matHeaderCellDef>{{ sum_gia_tri_nhap | number }}</th>
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_gia_tri_nhap | number }}</th>
               </ng-container>
 
 
@@ -396,7 +396,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_sl_xuat">
-                <th mat-header-cell class="column-number" *matHeaderCellDef>{{ -1 * sum_sl_xuat | number}}</th>
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ -1 * sum_sl_xuat | number}}</th>
               </ng-container>
 
 
@@ -409,7 +409,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_gia_tri_xuat">
-                <th mat-header-cell class="column-number" *matHeaderCellDef>{{ -1 * sum_gia_tri_xuat | number }}</th>
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ -1 * sum_gia_tri_xuat | number }}</th>
               </ng-container>
 
 
@@ -422,7 +422,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_ton_cuoi_ky">
-                <th mat-header-cell class="column-number " *matHeaderCellDef>{{ sum_ton_cuoi_ky | number }}</th>
+                <th mat-header-cell class="column-number-sumary " *matHeaderCellDef>{{ sum_ton_cuoi_ky | number }}</th>
               </ng-container>
 
 
