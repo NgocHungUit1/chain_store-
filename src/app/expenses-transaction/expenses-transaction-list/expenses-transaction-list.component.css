@@ -60,3 +60,8 @@ tr.example-element-row:not(.example-expanded-row):active {
   font-weight: 700;
   background-color: #ebf5ea;
 }
+
+tr.mat-header-row:nth-child(1) {
+  height: 45px !important;
+  background-color: #dcf4fc;
+}

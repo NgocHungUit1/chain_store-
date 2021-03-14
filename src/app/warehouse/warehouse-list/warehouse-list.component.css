@@ -91,3 +91,8 @@ tr.example-element-row:not(.example-expanded-row):active {
 .red-warning {
   color: red;
 }
+
+tr.mat-header-row {
+  height: 45px !important;
+  background-color: #dcf4fc;
+}

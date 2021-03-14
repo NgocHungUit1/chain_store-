@@ -88,7 +88,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     placements: 'Vị trí',
     product_name: 'Tên thuốc',
     sell_price: 'Giá bán',
-    original_price: 'Giá gốc',
+    original_price: 'Giá vốn',
     weight: 'Trọng lượng',
     base_unit: 'Đơn vị cơ bản',
     // Medicine
@@ -158,7 +158,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       placements: [[]],
       product_name: [null, Validators.required],
       sell_price: [null, Validators.required],
-      original_price: [null, Validators.required],
+      original_price: [0],
       weight: [null],
       base_unit: ['viên', Validators.required],
       medicine_id: [null],

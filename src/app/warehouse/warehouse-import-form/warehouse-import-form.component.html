@@ -246,9 +246,14 @@
                   <mat-icon>delete</mat-icon>
                 </button>
                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySupplier">
-                  <mat-option *ngFor="let supplier of filteredSuppliers | async" [value]="supplier">
-                    <span>
-                      {{supplier.name}}
+                  <mat-option style="height: 50px;
+                                      line-height: 24px;
+                                      word-break: break-word;
+                                      display: inline-block;
+                                      white-space: pre-wrap;"
+                              *ngFor="let supplier of filteredSuppliers | async" [value]="supplier">
+                    <span class="supplier-option">
+                      - {{supplier.name}}
                     </span>
                   </mat-option>
                 </mat-autocomplete>
@@ -268,20 +273,6 @@
               </mat-form-field>
             </div>
 
-            <div fxFlex="100" *ngIf="expensesTransaction > 0 || optionStore_transaction_expenses?.value === 'yes' ">
-              <mat-form-field>
-                <span (click)="openWarehouseExpenses()" matPrefix>
-                  <mat-icon color="primary">list</mat-icon>
-                  Chi phí nhập trả NCC
-                </span>
-
-                <input class="text-right" matInput tabindex="5" formControlName="expenses_price"
-                       (click)="openWarehouseExpenses()"
-                       style="color: #0000ff"
-                       value="{{ form.get('expenses_price').value }}" readonly>
-              </mat-form-field>
-            </div>
-
             <div fxFlex="100">
               <!-- 2 truong hop  -->
               <mat-form-field *ngIf="form.get('discount_type').value == 'price'">
@@ -297,6 +288,21 @@
                        (click)="openDiscountDialogWarehouse();">
               </mat-form-field>
             </div>
+
+            <div fxFlex="100" *ngIf="expensesTransaction > 0 || optionStore_transaction_expenses?.value === 'yes' ">
+              <mat-form-field>
+                <span (click)="openWarehouseExpenses()" matPrefix>
+                  <mat-icon color="primary">list</mat-icon>
+                  Chi phí nhập trả NCC
+                </span>
+
+                <input class="text-right" matInput tabindex="5" formControlName="expenses_price"
+                       (click)="openWarehouseExpenses()"
+                       style="color: #0000ff"
+                       value="{{ form.get('expenses_price').value }}" readonly>
+              </mat-form-field>
+            </div>
+
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Tiền trả nhà cung cấp</mat-label>

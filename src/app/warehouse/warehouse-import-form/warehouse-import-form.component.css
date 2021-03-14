@@ -81,6 +81,11 @@
 
 }
 
+tr.mat-header-row {
+  height: 45px !important;
+  background-color: #dcf4fc;
+}
+
 /*quet ma vach*/
 
 @keyframes example {

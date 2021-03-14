@@ -32,3 +32,8 @@
 .column-number {
   text-align: end;
 }
+
+tr.mat-header-row:nth-child(1) {
+  height: 45px !important;
+  background-color: #dcf4fc;
+}
