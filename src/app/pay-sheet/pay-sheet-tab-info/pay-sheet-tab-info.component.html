@@ -85,6 +85,12 @@
       <mat-icon>edit</mat-icon>
       Cập nhật
     </button>
+
+    <button  *ngIf="paySheet?.status === 10" class="m-r-10" mat-raised-button color="primary" (click)="exportExel()">
+      <mat-icon>drive_file_move</mat-icon>
+      Xuất file
+    </button>
+
     <button class="m-r-10" mat-raised-button color="warn" (click)="cancelPaySheet()">
       <mat-icon>delete</mat-icon>
       Hủy bỏ

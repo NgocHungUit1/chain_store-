@@ -34,19 +34,27 @@
                 <td mat-cell *matCellDef="let element"> {{getNameSalaryType(element?.salary_type)}}</td>
               </ng-container>
 
-              <ng-container matColumnDef="total_net_salary">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['total_net_salary']}}</th>
+              <ng-container matColumnDef="main_salary">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['main_salary']}}</th>
                 <td mat-cell *matCellDef="let element">
                   <input class="input-custom" type="text" mask="separator" thousandSeparator=","
-                         [(ngModel)]="element.total_net_salary"
+                         [(ngModel)]="element.main_salary"
                          (click)="paySlipMainSalaryForm(element)" readonly>
                 </td>
+              </ng-container>
+
+              <ng-container matColumnDef="reward">
+              <th mat-header-cell *matHeaderCellDef> {{columnsHeader['reward']}}</th>
+              <td mat-cell *matCellDef="let element; let i=index;">
+                <input class="input-custom" type="text" mask="separator" thousandSeparator=","
+                       [(ngModel)]="element.reward" (focusout)="updatePaySlip(element)" [readOnly]="this.paySheet.status !== 9">
+              </td>
               </ng-container>
 
               <ng-container matColumnDef="total_need_pay_salary">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['total_need_pay_salary']}}</th>
                 <td mat-cell *matCellDef="let element">
-                  <b>{{ element?.total_net_salary - element?.total_payment | currency : 'VND' : ''}}</b>
+                  <b>{{ element?.total_net_salary | currency : 'VND' : ''}}</b>
                 </td>
               </ng-container>
 

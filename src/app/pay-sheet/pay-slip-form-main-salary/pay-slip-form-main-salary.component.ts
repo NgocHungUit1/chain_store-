@@ -81,8 +81,11 @@ export class PaySlipFormMainSalaryComponent implements OnInit {
     if (this.dataSource.length === 0) {
       return;
     }
+    // salary_type = 1: theo ca, 2: theo giờ, 3: theo ngày, 4 mặc định
+    const mainSalary = this.paySlip.salary_type === 1 ?  this.getTotal('total_need_pay_salary') : this.getTotalDay();
     const data = {
-      'total_net_salary': this.paySlip.salary_type === 1 ?  this.getTotal('total_need_pay_salary') : this.getTotalDay(),
+      'main_salary': mainSalary,
+      'total_net_salary': mainSalary + this.paySlip.reward, // cộng thêm phụ cấp tại đây
       'salary_detail': JSON.stringify({'mainSalary': this.dataSource})
     };
 

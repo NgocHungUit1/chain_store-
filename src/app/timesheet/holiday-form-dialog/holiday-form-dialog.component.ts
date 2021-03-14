@@ -24,12 +24,15 @@ export class HolidayFormDialogComponent implements OnInit {
     this.local_data = {...data};
     if (this.local_data.holiday_id) {
       this.holiday_id = this.local_data.holiday_id;
+    } else {
+      this.day = this.local_data.day;
     }
   }
   form: FormGroup;
   loading = false;
   local_data: any;
   holiday_id: string;
+  day;
 
   totalDay = 1;
 
@@ -40,8 +43,8 @@ export class HolidayFormDialogComponent implements OnInit {
   initForm() {
     this.form = this.fb.group({
       name: [null, Validators.required],
-      from_date: [moment().format('YYYY-MM-DD'), Validators.required],
-      to_date: [moment().format('YYYY-MM-DD'), Validators.required],
+      from_date: [this.day ? moment(this.day).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD'), Validators.required],
+      to_date: [this.day ? moment(this.day).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD'), Validators.required],
     });
   }
 
