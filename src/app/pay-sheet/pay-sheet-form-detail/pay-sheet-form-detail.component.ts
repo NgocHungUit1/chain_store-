@@ -10,6 +10,7 @@ import {PaySheetService} from '../pay-sheet.service';
 import {PaySheet} from '../pay-sheet.model';
 import moment from 'moment';
 import {PaySlipFormMainSalaryComponent} from '../pay-slip-form-main-salary/pay-slip-form-main-salary.component';
+import {PaySlipService} from '../../pay-slip/pay-slip.service';
 
 @Component({
   selector: 'app-pay-sheet-form-detail',
@@ -24,7 +25,8 @@ export class PaySheetFormDetailComponent implements OnInit {
     private router: Router,
     private fb: FormBuilder,
     private notifySer: NotifierService,
-    private paySheetService: PaySheetService
+    private paySheetService: PaySheetService,
+    private paySlipService: PaySlipService,
   ) {
     this.id = this.route.snapshot.paramMap.get('id');
   }
@@ -41,7 +43,8 @@ export class PaySheetFormDetailComponent implements OnInit {
     '#': '#',
     'employee': 'Nhân viên',
     'salary_type': 'Loại lương',
-    'total_net_salary': 'Lương chính',
+    'main_salary': 'Lương chính',
+    'reward': 'Thưởng',
     'total_need_pay_salary': 'Còn cần trả',
   };
 
@@ -49,7 +52,8 @@ export class PaySheetFormDetailComponent implements OnInit {
     '#',
     'employee',
     'salary_type',
-    'total_net_salary',
+    'main_salary',
+    'reward',
     'total_need_pay_salary',
   ];
   paySlipDataSource = [];
@@ -180,6 +184,23 @@ export class PaySheetFormDetailComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       this.loadPaySheet();
+    });
+  }
+
+  updatePaySlip(paySlip) {
+    if (this.paySheet.status !== 9) {
+      return;
+    }
+    const data = {
+      'reward': paySlip.reward,
+      'total_net_salary': paySlip.main_salary + paySlip.reward,
+    };
+
+    this.paySlipService.update(paySlip.id, data).subscribe(res => {
+      this.notifySer.notify('success', 'Cập nhật thanh toán lương thành công!');
+      paySlip.total_net_salary = res.total_net_salary;
+    }, (error) => {
+      this.notifySer.notify('error', 'Lỗi bất thường xảy ra.');
     });
   }
 

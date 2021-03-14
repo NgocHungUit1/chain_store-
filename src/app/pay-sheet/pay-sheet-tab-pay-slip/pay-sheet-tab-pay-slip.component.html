@@ -31,6 +31,7 @@
                 </td>
               </ng-container>
 
+
               <ng-container matColumnDef="total_need_pay_salary">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['total_need_pay_salary']}}</th>
                 <td mat-cell *matCellDef="let element">
@@ -44,6 +45,9 @@
                   <div class="button-row">
                     <button *ngIf="element?.status === 9" mat-raised-button color="primary" [disabled]="paySheet?.status !== 10" (click)="paySheetSalary(element)">
                       Thanh toán
+                    </button>
+                    <button *ngIf="element?.status === 10" mat-raised-button color="primary" [disabled]="paySheet?.status !== 10" (click)="printPaySlipEmployee(element)">
+                      <mat-icon>print</mat-icon>
                     </button>
                   </div>
                 </td>
@@ -61,7 +65,7 @@
         </div>
         <mat-toolbar-row>
           <span fxFlex="1 1 0%"></span>
-          <div class="button-row">
+          <div class="button-row" *ngIf="checkNotFinalPaySheet()">
             <button mat-raised-button color="primary" [disabled]="paySheet?.status !== 10" (click)="paySheetSalary()">
               <mat-icon>payments</mat-icon>
              Thanh toán tất cả

@@ -18,7 +18,8 @@ export class PaySheetTabInfoComponent implements OnInit {
   constructor(
     private notifySer: NotifierService,
     private paySheetService: PaySheetService
-  ) { }
+  ) {
+  }
 
   salaryPeriods: any[] = [
     {
@@ -66,5 +67,13 @@ export class PaySheetTabInfoComponent implements OnInit {
       return salaryType.title;
     }
     return '';
+  }
+
+  exportExel() {
+    this.paySheetService.export(this.paySheet.id).subscribe(res => {
+      const url = this.paySheetService.downloadFileExcel();
+      window.location.href = url;
+    });
+
   }
 }

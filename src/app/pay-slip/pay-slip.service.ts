@@ -59,7 +59,7 @@ export class PaySlipService {
 
   update(id: string, pos: any) {
     const url = environment.apiUrl + '/pay-slip/' + id;
-    return this.http.put(url, pos);
+    return this.http.put<any>(url, pos);
   }
 
   delete(id: string) {

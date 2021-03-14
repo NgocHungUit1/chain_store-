@@ -475,6 +475,7 @@ export class TimesheetMainComponent extends ListComponentBase implements OnInit 
       data = {
         action: 'Create',
         title: 'Thêm ngày lễ',
+        day: moment(day)
       };
     }
 

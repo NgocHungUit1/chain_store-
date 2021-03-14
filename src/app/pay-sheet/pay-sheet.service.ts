@@ -3,6 +3,8 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {HttpClient, HttpResponse} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {PaySheet, PaySheetFilter} from './pay-sheet.model';
+import {AuthService} from '../authentication/auth.service';
+import {ProductFilter} from '../product/product.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +18,10 @@ export class PaySheetService {
     this.loadPaySheet.next(action);
   }
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private auth: AuthService
+  ) { }
 
   getApiUrl(filter?: PaySheetFilter) {
     if (!filter.page) {
@@ -69,5 +74,16 @@ export class PaySheetService {
   delete(id: string) {
     const url = environment.apiUrl + '/pay-sheet/' + id;
     return this.http.delete(url);
+  }
+
+  export(id: number) {
+    const url = environment.apiUrl + '/pay-sheet/export?id=' + id;
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
+  downloadFileExcel() {
+    const _token = this.auth.getToken();
+    const url = environment.apiUrl + '/pay-sheet/download-file?token=' + _token;
+    return url;
   }
 }
