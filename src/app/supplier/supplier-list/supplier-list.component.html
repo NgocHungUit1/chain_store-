@@ -90,7 +90,7 @@
                        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
                     <mat-tab-group style="width: 100%;">
                       <mat-tab label="Thông tin">
-                        <app-supplier-tab-info [supplier]="element"></app-supplier-tab-info>
+                        <app-supplier-tab-info [supplier]="element" (reload)="loadData()" ></app-supplier-tab-info>
                       </mat-tab>
                       <mat-tab label="Dư nợ">
                         <app-supplier-tab-debt></app-supplier-tab-debt>

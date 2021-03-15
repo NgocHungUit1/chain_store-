@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment';
 import { Product, ProductFilter } from './product.model';
 import { AuthService } from '../authentication/auth.service';
 import { NotifierService } from 'angular-notifier';
+import { ResponseModel } from '../common/response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -190,6 +191,15 @@ export class ProductService {
   getListReport(filter?: ProductFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrlReport(filter);
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
+  /**
+   * id unit
+   * @param id
+   */
+  deleteUnit(id: string) {
+    const url = environment.apiUrl + '/product/delete-unit?id=' + id;
+    return this.http.post<ResponseModel>(url, {});
   }
 }
 

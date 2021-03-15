@@ -571,7 +571,27 @@ export class ProductMedicineDialogComponent implements OnInit {
   }
 
   removeUnit(i) {
-    this.units.removeAt(i);
+    // this.units.removeAt(i);
+    // if (this.units.length) {
+    //
+    // }
+    const data = this.units.getRawValue();
+    if (data[i].id) {
+      console.log(data[i].id);
+      this.productSer.deleteUnit(data[i].id).subscribe(res => {
+        if (res?.success === true) {
+          this.notifySer.notify('success', res?.message);
+          // this.reload.emit(null);
+          this.units.removeAt(i);
+        } else {
+          this.notifySer.notify('warning', res?.message);
+        }
+      });
+    } else {
+      this.units.removeAt(i);
+      this.notifySer.notify('success', 'Xóa đơn vị thành công');
+
+    }
   }
 
   addUnit() {

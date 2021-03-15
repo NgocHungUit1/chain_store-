@@ -71,6 +71,6 @@
     <button class="m-r-10" mat-raised-button color="primary" (click)="openSupplierFormDialog(this.supplier.id)"><mat-icon>edit</mat-icon> Cập nhật</button>
     <button class="m-r-10" mat-raised-button color="accent"  (click)="lock()" *ngIf="this.supplier.status == '10'"><mat-icon>lock</mat-icon> Ngừng hoạt động</button>
     <button class="m-r-10" mat-raised-button color="accent"  (click)="activate()" *ngIf="this.supplier.status == '9'"><mat-icon>lock_open</mat-icon> Kích hoạt</button>
-    <button class="m-r-10" mat-raised-button color="warn"><mat-icon>delete</mat-icon> Xóa</button>
+    <button class="m-r-10" mat-raised-button color="warn" (click)="clickDelete()"><mat-icon>delete</mat-icon> Xóa</button>
   </div>
 </div>

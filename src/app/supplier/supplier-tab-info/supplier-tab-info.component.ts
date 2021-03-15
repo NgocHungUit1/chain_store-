@@ -1,9 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {Supplier} from '../supplier.model';
-import {SupplierService} from '../supplier.service';
-import {SupplierFormDialogComponent} from '../supplier-form-dialog/supplier-form-dialog.component';
-import {NotifierService} from 'angular-notifier';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Supplier } from '../supplier.model';
+import { SupplierService } from '../supplier.service';
+import { SupplierFormDialogComponent } from '../supplier-form-dialog/supplier-form-dialog.component';
+import { NotifierService } from 'angular-notifier';
 
 
 @Component({
@@ -14,12 +14,14 @@ import {NotifierService} from 'angular-notifier';
 export class SupplierTabInfoComponent implements OnInit {
 
   @Input() supplier: Supplier;
+  @Output() reload: EventEmitter<any> = new EventEmitter();
 
   constructor(
     private supplierSer: SupplierService,
     private dialog: MatDialog,
     private notifyService: NotifierService
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
     //
@@ -62,6 +64,17 @@ export class SupplierTabInfoComponent implements OnInit {
     this.supplierSer.activate(this.supplier.id).subscribe(x => {
       this.supplier.status = '10';
       this.notifyService.notify('success', 'Đã kích hoạt thành công!');
+    });
+  }
+
+  clickDelete() {
+    this.supplierSer.delete(this.supplier.id).subscribe(res => {
+      if (res?.success === true) {
+        this.notifyService.notify('success', res?.message);
+        this.reload.emit(null);
+      } else {
+        this.notifyService.notify('warning', res?.message);
+      }
     });
   }
 

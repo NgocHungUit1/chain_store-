@@ -3,6 +3,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Supplier, SupplierFilter } from './supplier.model';
+import { ResponseModel } from '../common/response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +43,7 @@ export class SupplierService {
 
   getList(filter?: SupplierFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrl(filter);
-    return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
   getDetail(id: string, expand: string) {
@@ -73,6 +74,11 @@ export class SupplierService {
   lock(id) {
     const url = environment.apiUrl + '/supplier/lock?id=' + id;
     return this.http.post(url, {});
+  }
+
+  delete(id) {
+    const url = environment.apiUrl + '/supplier/delete-supplier?id=' + id;
+    return this.http.post<ResponseModel>(url, {});
   }
 }
 
