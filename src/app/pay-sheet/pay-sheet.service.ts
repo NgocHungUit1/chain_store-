@@ -83,7 +83,7 @@ export class PaySheetService {
 
   downloadFileExcel() {
     const _token = this.auth.getToken();
-    const url = environment.apiUrl + '/pay-sheet/download-file?token=' + _token;
+    const url = environment.apiUrl + '/pay-sheet/download-template?token=' + _token;
     return url;
   }
 }
