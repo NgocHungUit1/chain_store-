@@ -2,7 +2,7 @@
 <!-- Main wrapper - style you can find in pages.scss -->
 <!-- ============================================================== -->
 <div class="main-container" [dir]="dir"
-  [ngClass]="{'minisidebar': minisidebar, 'boxed': boxed, 'danger': danger, 'blue': blue, 'green': green, 'dark': dark, 'sidebar-opened': sidebarOpened, 'sidebar-closed': !sidebarOpened }">
+     [ngClass]="{'minisidebar': minisidebar, 'boxed': boxed, 'danger': danger, 'blue': blue, 'green': green, 'dark': dark, 'sidebar-opened': sidebarOpened, 'sidebar-closed': !sidebarOpened }">
   <!-- ============================================================== -->
   <!-- Topbar - style you can find in header.scss -->
   <!-- ==============================================================
@@ -33,7 +33,7 @@
     <!-- ============================================================== -->
 
     <button mat-icon-button (click)="snav.toggle()" fxShow.sm="true" fxShow.xs="true" fxShow.gt-lg="false"
-      fxShow="false">
+            fxShow="false">
       <mat-icon>menu</mat-icon>
     </button>
     <!-- ============================================================== -->
@@ -51,8 +51,20 @@
 
     <span fxFlex></span>
     <div style="width: 200px; margin-right: 10px;">
+      <button mat-button [matMenuTriggerFor]="menuDownload">
+        <mat-icon>cloud_download</mat-icon>
+        Tải công cụ hổ trợ
+      </button>
+      <mat-menu #menuDownload="matMenu">
+        <button (click)="clickDownloadDriver()" mat-menu-item><mat-icon>extension</mat-icon>Driver kết nối máy in bill</button>
+        <button (click)="clickVideoInstallDriver()" mat-menu-item><mat-icon>video_library</mat-icon>Hướng dẫn cài đặt Driver</button>
+        <button (click)="clickVideoUseBill()" mat-menu-item><mat-icon>video_library</mat-icon>Dùng máy in bill - mã vạch</button>
+      </mat-menu>
+    </div>
+    <div style="width: 200px; margin-right: 10px;">
       <mat-form-field>
-        <mat-select style="font-size: 16px;" tabindex="10" (selectionChange)="changeBranch($event)" [value]="branchLoginId">
+        <mat-select style="font-size: 16px;" tabindex="10" (selectionChange)="changeBranch($event)"
+                    [value]="branchLoginId">
           <mat-option *ngFor="let item of branchList" [value]="item.id">
             {{item.name}}
           </mat-option>
@@ -75,13 +87,13 @@
   <!-- End Topbar - style you can find in pages.scss -->
   <!-- ============================================================== -->
   <mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 0 : 0"
-    [ngClass]="{'minisidebar': minisidebar}">
+                         [ngClass]="{'minisidebar': minisidebar}">
     <!-- ============================================================== -->
     <!-- Sidebar - style you can find in sidebar.scss -->
     <!-- ============================================================== -->
     <mat-sidenav #snav id="snav" [mode]="mobileQuery.matches ? 'side' : 'over'" fixedTopGap="0"
-      [opened]="mobileQuery.matches" [disableClose]="mobileQuery.matches" (open)="sidebarOpened = true"
-      (close)="sidebarOpened = false">
+                 [opened]="mobileQuery.matches" [disableClose]="mobileQuery.matches" (open)="sidebarOpened = true"
+                 (close)="sidebarOpened = false">
       <app-sidebar></app-sidebar>
     </mat-sidenav>
     <!-- ============================================================== -->
@@ -110,7 +122,8 @@
           </mat-list-item>
           <mat-list-item>
             <mat-checkbox color="warn" [(ngModel)]="green" (change)="danger = blue = false" class="text-megna">Teal
-              Green</mat-checkbox>
+              Green
+            </mat-checkbox>
           </mat-list-item>
           <mat-list-item>
             <mat-checkbox color="warn" [(ngModel)]="blue" (change)="green = danger = false" class="text-info">Blue

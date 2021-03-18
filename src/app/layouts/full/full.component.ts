@@ -1,4 +1,3 @@
-
 import { MediaMatcher } from '@angular/cdk/layout';
 import { Router } from '@angular/router';
 import {
@@ -17,8 +16,8 @@ import { AppSidebarComponent } from './sidebar/sidebar.component';
 import { AppBreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { CustomerService } from '../../customer/customer.service';
-import {UserService} from '../../user/user.service';
-import {NotifierService} from 'angular-notifier';
+import { UserService } from '../../user/user.service';
+import { NotifierService } from 'angular-notifier';
 
 /** @title Responsive sidenav */
 @Component({
@@ -38,7 +37,7 @@ export class FullComponent implements OnDestroy {
   showHide: boolean;
   sidebarOpened;
 
-  name_store: string = "Admin";
+  name_store: string = 'Admin';
   branchList: any;
   branchLoginId: number;
 
@@ -64,9 +63,10 @@ export class FullComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.mobileQuery.removeListener(this._mobileQueryListener);
   }
+
   // Mini sidebar
   ngOnInit(): void {
-    this.userService.getRemainingExpiryDate().subscribe( day => {
+    this.userService.getRemainingExpiryDate().subscribe(day => {
       if (day < 4) {
         this.notifySer.notify('warning', 'Cửa hàng của bạn còn ' + day + ' ngày sử dụng, vui lòng liên hệ để gia hạn.');
       }
@@ -100,7 +100,7 @@ export class FullComponent implements OnDestroy {
     this.userService.updateBranchLogin(data).subscribe(res => {
       if (res === true) {
         this.notifySer.notify('success', 'Chuyển chi nhánh thành công.');
-        setTimeout(function() {
+        setTimeout(function () {
           location.reload();
         }, 500);
       } else {
@@ -109,4 +109,19 @@ export class FullComponent implements OnDestroy {
     }, (error) => {
     });
   }
+
+  public clickDownloadDriver() {
+    window.open('https://drive.google.com/file/d/1SV3I9RfnrbdsvC6n8wluBKrDaptf3r9l/view?usp=sharing', '_black');
+  }
+
+  public clickVideoInstallDriver() {
+    window.open('https://youtu.be/gSiGmhvGdmE', '_black');
+  }
+
+
+  public clickVideoUseBill() {
+    window.open('https://youtu.be/EGzEaS5jFOI', '_black');
+  }
+
+
 }
