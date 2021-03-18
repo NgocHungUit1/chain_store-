@@ -141,7 +141,7 @@ export class SaleMainComponent implements OnInit {
           if (element.type === 'price') {
             element.price = element.value;
           } else {
-            element.price = (element.value * this.sumPrice) / 100;
+            element.price = Math.round((element.value * this.sumPrice) / 100);
           }
           this.expenseOrder += element.price;
         }
@@ -755,7 +755,7 @@ export class SaleMainComponent implements OnInit {
         this.numberDiscount = discountSiderBar?.number;
         this.discount_type = 'price';
       } else {
-        this.numberDiscount = this.sumPrice * discountSiderBar?.number / 100;
+        this.numberDiscount = Math.round(this.sumPrice * discountSiderBar?.number / 100);
         this.discount_type = 'precent';
       }
       this.discount = discountSiderBar?.number;
