@@ -51,7 +51,7 @@ export class IdCodeFormDialogComponent implements OnInit {
         'yes'
       ],
       in_ten_cua_hang: [
-        'yes'
+        'no'
       ],
     });
 
@@ -73,7 +73,7 @@ export class IdCodeFormDialogComponent implements OnInit {
 
     const dialogRef = this.dialog.open(ViewIdCodeFormDialogComponent, {
       data: obj,
-      width: '300px',
+      width: '500px',
       minHeight: '70%',
     });
 

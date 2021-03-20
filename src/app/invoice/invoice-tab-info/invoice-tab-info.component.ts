@@ -277,13 +277,14 @@ export class InvoiceTabInfoComponent implements OnChanges {
         'p,table,div {' +
         'font-family: arial, sans-serif;' +
         '}' +
-        'table {' +
+        'table, th, td {' +
         // 'font-family: arial, sans-serif;' +
         'border-collapse: collapse;' +
+        'border: 1px solid black;' +
         'width: 100%;' +
         '}' +
         'td, th {' +
-        'border: 1px solid #dddddd;' +
+        'border: 1px solid black;' +
         'text-align: left;' +
         'padding: 8px;' +
         '}</style>' +

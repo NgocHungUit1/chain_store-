@@ -51,9 +51,15 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
     // <img id="barcode"/>
     this.productSerivce.getDetail(this.product_id).subscribe(res => {
       this.product = <Product>res;
+
+      if (this.product.product_name.length > 25) {
+        this.product.product_name = this.product.product_name.substring(0, 25) + '...';
+      }
+
       if (this.option.in_ten_cua_hang === 'yes') {
         this.customerService.getNameStore().subscribe(name => {
-          this.nameStore = name;
+          // this.nameStore = name;
+          this.nameStore = name.substring(0, 24);
         });
       }
       if (this.option.in_gia === 'yes') {
@@ -71,7 +77,7 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
       }
       JsBarcode('#barcode')
         .options({font: 'OCR-B'}) // Will affect all barcodes
-        .CODE128(barcode, {fontSize: 14, textMargin: 0, width: 1.3, height: 25})
+        .CODE128(barcode, {fontSize: 22, textMargin: 2, width: 3, height: 50, lineColor: '#000000', marginLeft: 0, marginRight: 0})
         // .blank(20) // Create space between the barcodes
         // .EAN5('12345', {height: 85, textPosition: 'top', fontSize: 16, marginTop: 15})
         .render();
@@ -81,16 +87,28 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
 
   generateImage() {
     const product_name = this.product?.product_name;
-    setTimeout(() => domtoimage.toPng(this.container.nativeElement)
-      .then(function (dataUrl) {
-        const img = new Image();
-        img.src = dataUrl;
+    const node = this.container.nativeElement;
+    const scale = 750 / node.offsetWidth;
+    // https://github.com/tsayen/dom-to-image/issues/69
+    // {
+    //   height: node.offsetHeight * scale,
+    //     width: node.offsetWidth * scale,
+    //   style: {
+    //   transform: 'scale(' + scale + ')',
+    //     transformOrigin: 'top left',
+    //     width: node.offsetWidth + 'px',
+    //     height: node.offsetHeight + 'px',
+    // }
+    // }
+    setTimeout(() => domtoimage.toPng(node).then(function (dataUrl) {
+      const img = new Image();
+      img.src = dataUrl;
 
-        const link = document.createElement('a');
-        link.download = product_name + '.png';
-        link.href = dataUrl;
-        link.click();
-      })
+      const link = document.createElement('a');
+      link.download = product_name + '.png';
+      link.href = dataUrl;
+      link.click();
+    })
       .catch(function (error) {
         console.error('oops, something went wrong!', error);
       }), 500);

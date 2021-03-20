@@ -1,9 +1,11 @@
 <div id="contentToConvert">
   <div id="image-print" #container>
-    <b class="name-store" *ngIf="nameStore !== undefined">{{ nameStore }}</b><br *ngIf="nameStore !== undefined">
+    <b class="name-store" *ngIf="nameStore !== undefined" >{{ nameStore }}</b>
+    <b class="name-store" *ngIf="nameStore == undefined"> &nbsp; </b>
+    <br>
     <p class="product-name">{{ this.product?.product_name }}</p>
     <img id="barcode" alt=""/><br>
-    <b *ngIf="money !== undefined">{{ money }}</b>
+    <b class="product-money" *ngIf="money !== undefined">{{ money }}</b>
   </div>
 </div>
 <br>
