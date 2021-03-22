@@ -26,6 +26,7 @@ import { LockscreenComponent } from './lockscreen/lockscreen.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { ExpirationComponent } from './expiration/expiration.component';
+import { MatMenuModule } from '@angular/material/menu';
 
 @NgModule({
     imports: [
@@ -38,7 +39,8 @@ import { ExpirationComponent } from './expiration/expiration.component';
         MatButtonModule,
         FlexLayoutModule,
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        MatMenuModule
     ],
     declarations: [
         ErrorComponent,
