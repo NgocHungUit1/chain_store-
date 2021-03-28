@@ -27,6 +27,8 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { ExpirationComponent } from './expiration/expiration.component';
 import { MatMenuModule } from '@angular/material/menu';
+import { TemporarilyLockedComponent } from './temporarily-locked/temporarily-locked.component';
+
 
 @NgModule({
     imports: [
@@ -48,7 +50,8 @@ import { MatMenuModule } from '@angular/material/menu';
         LockscreenComponent,
         LoginComponent,
         RegisterComponent,
-        ExpirationComponent
+        ExpirationComponent,
+        TemporarilyLockedComponent
     ]
 })
 export class AuthenticationModule { }
