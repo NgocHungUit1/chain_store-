@@ -26,7 +26,9 @@ import { LockscreenComponent } from './lockscreen/lockscreen.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { ExpirationComponent } from './expiration/expiration.component';
+import { MatMenuModule } from '@angular/material/menu';
 import { TemporarilyLockedComponent } from './temporarily-locked/temporarily-locked.component';
+
 
 @NgModule({
     imports: [
@@ -39,7 +41,8 @@ import { TemporarilyLockedComponent } from './temporarily-locked/temporarily-loc
         MatButtonModule,
         FlexLayoutModule,
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        MatMenuModule
     ],
     declarations: [
         ErrorComponent,

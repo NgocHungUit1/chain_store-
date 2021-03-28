@@ -16,6 +16,8 @@ import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operat
 import { of } from 'rxjs/internal/observable/of';
 import { ProductUploadDialogComponent } from '../product-upload-dialog/product-upload-dialog.component';
 import { MedicineService } from '../../medicine/medicine.service';
+import { GroupService } from '../group.service';
+import { Group, GroupFilter } from '../group.model';
 
 
 @Component({
@@ -39,6 +41,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     private dialog: MatDialog,
     private notifySer: NotifierService,
     private fb: FormBuilder,
+    private groupSer: GroupService,
   ) {
     super();
   }
@@ -49,7 +52,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
   apiFilter: ProductFilter;
   expandedElement: Product | null;
 
-  typeProductFilter: FormGroup;
+  productFilter: FormGroup;
 
   typeProductFilterList = [
     {
@@ -64,6 +67,8 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
 
 
   statusProductFilter: FormGroup;
+  groupProductFilter: FormGroup;
+  groups: Group[] = [];
 
   statusProductFilterList = [
     {
@@ -123,10 +128,9 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     filter.sort = this.route.snapshot.queryParams['sort'];
     // filter.expand = 'medicine,productUnits,productPlacements,group,images,quantity';
     filter.expand = 'quantity';
-    filter.product_type = this.typeProductFilter.controls['status'].value;
-    filter.status = this.statusProductFilter.controls['status'].value;
-
-
+    filter.product_type = this.productFilter.controls['type'].value;
+    filter.status = this.productFilter.controls['status'].value;
+    filter.group_id = this.productFilter.controls['group'].value;
     return filter;
   }
 
@@ -178,16 +182,22 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
 
   ngOnInit() {
 
-    this.typeProductFilter = this.fb.group({
-      status: [
+    this.productFilter = this.fb.group({
+      type: [
         ['medicine', 'merchandise']
       ],
-    });
-
-    this.statusProductFilter = this.fb.group({
       status: [
         [10, 9]
       ],
+      group: [null],
+    });
+
+
+    const groupFilter = new GroupFilter();
+    groupFilter.pageSize = 100;
+    // groupFilter.store_id = 1;
+    this.groupSer.getList(groupFilter).subscribe(res => {
+      this.groups = res.body;
     });
 
     this.apiFilter = this.buildFilterFromParams();
