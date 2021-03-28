@@ -3,6 +3,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Customer, CustomerFilter } from './customer.model';
+import { ResponseModel } from '../common/response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -82,8 +83,10 @@ export class CustomerService {
   }
 
   delete(id: string) {
-    const url = environment.apiUrl + '/customer/delete-customer';
-    return this.http.post(url, { customer_id: id });
+    // const url = environment.apiUrl + '/customer/delete-customer';
+    // return this.http.post(url, { customer_id: id });
+    const url = environment.apiUrl + '/customer/delete-customer?id=' + id;
+    return this.http.post<ResponseModel>(url, {});
   }
 
   getNameStore() {

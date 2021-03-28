@@ -99,6 +99,15 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
     this.isLoadingResults = true;
     this.service.getList(this.apiFilter).subscribe(res => {
       this.dataSource = res.body;
+      let stt = 0;
+      if (this.dataSource.length === 1) {
+        const arr = this.dataSource;
+        this.expandedElement = arr[0];
+      }
+      this.dataSource.forEach(elementData => {
+        stt++;
+        elementData.stt = this.pageSize * (this.page - 1) + stt;
+      });
       this.reloadFilter(res);
       this.isLoadingResults = false;
     });

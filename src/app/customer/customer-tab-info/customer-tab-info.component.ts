@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Customer } from '../customer.model';
 import { CustomerService } from '../customer.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -14,6 +14,7 @@ import { CustomerPopupDeleteDialogComponent } from '../customer-popup-delete-dia
 export class CustomerTabInfoComponent implements OnInit {
 
   @Input() customer: Customer;
+  @Output() reload: EventEmitter<any> = new EventEmitter();
 
   sexHeader = {
     '1': 'Nam',
@@ -88,6 +89,15 @@ export class CustomerTabInfoComponent implements OnInit {
     });
   }
 
-
+  clickDelete() {
+    this.customerSer.delete(this.customer.id).subscribe(res => {
+      if (res?.success === true) {
+        this.notifyService.notify('success', res?.message);
+        this.reload.emit(null);
+      } else {
+        this.notifyService.notify('warning', res?.message);
+      }
+    });
+  }
 
 }

@@ -107,7 +107,7 @@ export class ExpensesOrderListComponent extends ListComponentBase implements OnI
       }
       this.dataSource.forEach(elementData => {
         stt++;
-        elementData.stt = stt;
+        elementData.stt = this.pageSize * (this.page - 1) + stt;
       });
       this.reloadFilter(res);
       this.isLoadingResults = false;
