@@ -26,6 +26,7 @@ import { LockscreenComponent } from './lockscreen/lockscreen.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { ExpirationComponent } from './expiration/expiration.component';
+import { TemporarilyLockedComponent } from './temporarily-locked/temporarily-locked.component';
 
 @NgModule({
     imports: [
@@ -46,7 +47,8 @@ import { ExpirationComponent } from './expiration/expiration.component';
         LockscreenComponent,
         LoginComponent,
         RegisterComponent,
-        ExpirationComponent
+        ExpirationComponent,
+        TemporarilyLockedComponent
     ]
 })
 export class AuthenticationModule { }

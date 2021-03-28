@@ -6,6 +6,7 @@ import { LockscreenComponent } from './lockscreen/lockscreen.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import {ExpirationComponent} from './expiration/expiration.component';
+import {TemporarilyLockedComponent} from './temporarily-locked/temporarily-locked.component';
 export const AuthenticationRoutes: Routes = [
   {
     path: '',
@@ -33,6 +34,10 @@ export const AuthenticationRoutes: Routes = [
       {
         path: 'expiration',
         component: ExpirationComponent
+      },
+      {
+        path: 'temporarily-locked',
+        component: TemporarilyLockedComponent
       },
     ]
   }
