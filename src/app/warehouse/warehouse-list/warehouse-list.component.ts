@@ -12,11 +12,15 @@ import { Warehouse, WarehouseFilter } from '../warehouse.model';
 import { ProductUploadDialogComponent } from '../../product/product-upload-dialog/product-upload-dialog.component';
 import { WarehouseUploadDialogComponent } from '../warehouse-upload-dialog/warehouse-upload-dialog.component';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { debounceTime } from 'rxjs/operators';
+import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 import { InvoiceService } from '../../invoice/invoice.service';
 import { DatetimeDefaultFilterDialogComponent } from '../../invoice/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
 import { DatetimeChooseFilterDialogComponent } from '../../invoice/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
 import { DateFilter } from '../../invoice/invoice.model';
+import { Observable } from 'rxjs';
+import { Supplier } from '../../supplier/supplier.model';
+import { of } from 'rxjs/internal/observable/of';
+import { SupplierService } from '../../supplier/supplier.service';
 
 @Component({
   templateUrl: './warehouse-list.component.html',
@@ -38,6 +42,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     private notifyService: NotifierService,
     private service: InvoiceService,
     private fb: FormBuilder,
+    private supplierSer: SupplierService,
   ) {
     super();
   }
@@ -112,6 +117,11 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
   isRateLimitReached = false;
   codeSearch = null;
 
+  filteredSuppliers: Observable<Supplier[]>;
+
+  displaySupplier(supplier?: Supplier): string | undefined {
+    return (supplier === undefined || supplier === null) ? undefined : supplier.name;
+  }
 
   buildFilterFromParams(): WarehouseFilter {
     function write<K extends keyof WarehouseFilter>(arg: WarehouseFilter, key: K, value: WarehouseFilter[K]): void {
@@ -133,6 +143,9 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
     filter.status = this.orderStatusFilter.controls['status'].value;
+
+    const data = this.orderStatusFilter.controls['supplier']?.value;
+    filter.supplier_id = data?.id;
     return filter;
   }
 
@@ -181,6 +194,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
       status: [
         ['10', '9']
       ],
+      supplier: [null],
     });
 
     this.timeFilter = this.fb.group({
@@ -212,6 +226,33 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
         // this.service.setLoadProduct(false);
       }
     });
+
+    this.filteredSuppliers = this.orderStatusFilter.controls['supplier'].valueChanges.pipe(
+      startWith(''),
+      // delay emits
+      debounceTime(300),
+      // use switch map so as to cancel previous subscribed events, before creating new once
+      switchMap(value => {
+        if (value !== '') {
+          // lookup from github
+          return this.lookup(value);
+        } else {
+          // if no value is present, return null
+          return of(null);
+        }
+      })
+    );
+  }
+
+  lookup(value: string): Observable<Supplier[]> {
+    return this.supplierSer.autocomplete(value).pipe(
+      // map the item property of the github results as our return object
+      map(results => results),
+      // catch errors
+      catchError(_ => {
+        return of(null);
+      })
+    );
   }
 
   openUploadDialog() {

@@ -96,3 +96,8 @@ tr.mat-header-row {
   height: 45px !important;
   background-color: #dcf4fc;
 }
+
+form .mat-card-content {
+  padding-top: 10px;
+  padding-bottom: 15px;
+}

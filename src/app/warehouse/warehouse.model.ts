@@ -30,7 +30,7 @@ export class Warehouse {
 export class WarehouseFilter extends ApiFilterBase {
   id = '';
   no = '';
-  supplier_id = 0;
+  supplier_id = '';
   discount_amount = 0;
   total_price = 0;
   total_amount = 0;
