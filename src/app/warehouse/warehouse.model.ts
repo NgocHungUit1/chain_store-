@@ -31,6 +31,7 @@ export class WarehouseFilter extends ApiFilterBase {
   id = '';
   no = '';
   supplier_id = '';
+  product_id = '';
   discount_amount = 0;
   total_price = 0;
   total_amount = 0;

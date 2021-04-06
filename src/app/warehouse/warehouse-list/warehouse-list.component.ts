@@ -21,6 +21,8 @@ import { Observable } from 'rxjs';
 import { Supplier } from '../../supplier/supplier.model';
 import { of } from 'rxjs/internal/observable/of';
 import { SupplierService } from '../../supplier/supplier.service';
+import { Product } from '../../product/product.model';
+import { ProductService } from '../../product/product.service';
 
 @Component({
   templateUrl: './warehouse-list.component.html',
@@ -43,6 +45,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     private service: InvoiceService,
     private fb: FormBuilder,
     private supplierSer: SupplierService,
+    private productSer: ProductService
   ) {
     super();
   }
@@ -52,7 +55,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
   apiFilter: WarehouseFilter;
 
   searchProductForm = new FormControl();
-  orderStatusFilter: FormGroup;
+  orderFilter: FormGroup;
 
   timeFilter: FormGroup;
 
@@ -118,9 +121,14 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
   codeSearch = null;
 
   filteredSuppliers: Observable<Supplier[]>;
+  filteredProducts: Observable<Product[]>;
 
   displaySupplier(supplier?: Supplier): string | undefined {
     return (supplier === undefined || supplier === null) ? undefined : supplier.name;
+  }
+
+  displayProduct(product?: Product): string | undefined {
+    return (product === undefined || product === null) ? undefined : product.product_name;
   }
 
   buildFilterFromParams(): WarehouseFilter {
@@ -142,10 +150,12 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     filter.type = 'import';
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
-    filter.status = this.orderStatusFilter.controls['status'].value;
+    filter.status = this.orderFilter.controls['status'].value;
 
-    const data = this.orderStatusFilter.controls['supplier']?.value;
-    filter.supplier_id = data?.id;
+    const supplier = this.orderFilter.controls['supplier']?.value;
+    const product = this.orderFilter.controls['product']?.value;
+    filter.supplier_id = supplier?.id;
+    filter.product_id = product?.id;
     return filter;
   }
 
@@ -190,11 +200,12 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
 
     this.initDateFilter();
 
-    this.orderStatusFilter = this.fb.group({
+    this.orderFilter = this.fb.group({
       status: [
         ['10', '9']
       ],
       supplier: [null],
+      product: [null],
     });
 
     this.timeFilter = this.fb.group({
@@ -227,7 +238,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
       }
     });
 
-    this.filteredSuppliers = this.orderStatusFilter.controls['supplier'].valueChanges.pipe(
+    this.filteredSuppliers = this.orderFilter.controls['supplier'].valueChanges.pipe(
       startWith(''),
       // delay emits
       debounceTime(300),
@@ -235,7 +246,23 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
       switchMap(value => {
         if (value !== '') {
           // lookup from github
-          return this.lookup(value);
+          return this.lookupSupplier(value);
+        } else {
+          // if no value is present, return null
+          return of(null);
+        }
+      })
+    );
+
+    this.filteredProducts = this.orderFilter.controls['product'].valueChanges.pipe(
+      startWith(''),
+      // delay emits
+      debounceTime(300),
+      // use switch map so as to cancel previous subscribed events, before creating new once
+      switchMap(value => {
+        if (value !== '') {
+          // lookup from github
+          return this.lookupProduct(value);
         } else {
           // if no value is present, return null
           return of(null);
@@ -244,8 +271,19 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     );
   }
 
-  lookup(value: string): Observable<Supplier[]> {
+  lookupSupplier(value: string): Observable<Supplier[]> {
     return this.supplierSer.autocomplete(value).pipe(
+      // map the item property of the github results as our return object
+      map(results => results),
+      // catch errors
+      catchError(_ => {
+        return of(null);
+      })
+    );
+  }
+
+  lookupProduct(value: string): Observable<Supplier[]> {
+    return this.productSer.autocomplete(value).pipe(
       // map the item property of the github results as our return object
       map(results => results),
       // catch errors
@@ -266,7 +304,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     });
   }
 
-  orderStatusFilterChange() {
+  orderFilterChange() {
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
   }

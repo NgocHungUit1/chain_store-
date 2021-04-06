@@ -31,7 +31,7 @@
       </mat-card-content>
     </mat-card>
 
-    <form [formGroup]="orderStatusFilter">
+    <form [formGroup]="orderFilter">
 
       <mat-card class="time-filter-info">
 <!--        <mat-card-title class="title-time-filter">Trạng thái</mat-card-title>-->
@@ -39,7 +39,7 @@
 
           <mat-form-field>
             <mat-label>Đơn hàng</mat-label>
-            <mat-select formControlName="status" (selectionChange)="orderStatusFilterChange()" multiple>
+            <mat-select formControlName="status" (selectionChange)="orderFilterChange()" multiple>
               <mat-option *ngFor="let item of statusFilterList"
                           [value]="item.value">{{ item.name }}
               </mat-option>
@@ -52,13 +52,13 @@
       <mat-card class="time-filter-info">
         <mat-card-content>
           <mat-form-field>
-            <input type="text" matInput [formControl]="orderStatusFilter?.controls['supplier']"  placeholder="Nhà cung cấp"
+            <input type="text" matInput [formControl]="orderFilter?.controls['supplier']"  placeholder="Nhà cung cấp"
                    [matAutocomplete]="auto"  >
             <button mat-icon-button matPrefix>
               <mat-icon>search</mat-icon>
             </button>
-            <button mat-icon-button matSuffix (click)="this.orderStatusFilter.patchValue({supplier: null}); orderStatusFilterChange()"
-                    *ngIf="this.orderStatusFilter?.controls['supplier'].value "  >
+            <button mat-icon-button matSuffix (click)="this.orderFilter.patchValue({supplier: null}); orderFilterChange()"
+                    *ngIf="this.orderFilter?.controls['supplier'].value "  >
               <mat-icon>delete</mat-icon>
             </button>
             <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySupplier" >
@@ -66,11 +66,41 @@
                                       line-height: 24px;
                                       word-break: break-word;
                                       display: inline-block;
-                                      white-space: pre-wrap;" (click)="orderStatusFilterChange()"
+                                      white-space: pre-wrap;" (click)="orderFilterChange()"
                           *ngFor="let supplier of filteredSuppliers | async" [value]="supplier"
                            >
                     <span class="supplier-option">
                       - {{supplier.name}}
+                    </span>
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="time-filter-info">
+        <mat-card-content>
+          <mat-form-field>
+            <input type="text" matInput [formControl]="orderFilter?.controls['product']"  placeholder="Tên sản phẩm"
+                   [matAutocomplete]="autoProduct"  >
+            <button mat-icon-button matPrefix>
+              <mat-icon>search</mat-icon>
+            </button>
+            <button mat-icon-button matSuffix (click)="this.orderFilter.patchValue({product: null}); orderFilterChange()"
+                    *ngIf="this.orderFilter?.controls['product'].value "  >
+              <mat-icon>delete</mat-icon>
+            </button>
+            <mat-autocomplete #autoProduct="matAutocomplete" [displayWith]="displayProduct" >
+              <mat-option style="height: 50px;
+                                      line-height: 24px;
+                                      word-break: break-word;
+                                      display: inline-block;
+                                      white-space: pre-wrap;" (click)="orderFilterChange()"
+                          *ngFor="let product of filteredProducts | async" [value]="product"
+              >
+                    <span class="supplier-option">
+                      {{ product.product_no }} - {{ product.product_name}}
                     </span>
               </mat-option>
             </mat-autocomplete>
