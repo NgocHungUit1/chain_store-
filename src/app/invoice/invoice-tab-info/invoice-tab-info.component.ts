@@ -275,7 +275,9 @@ export class InvoiceTabInfoComponent implements OnChanges {
       let printContent = '<title>' + res?.invoice_no + '</title>';
       printContent += '<style> ' +
         'p,table,div {' +
-        'font-family: arial, sans-serif;' +
+        'font-family: Arial, sans-serif;' +
+        'font-size: 11px;' +
+        'margin: 4px;' +
         '}' +
         'table, th, td {' +
         // 'font-family: arial, sans-serif;' +
@@ -286,9 +288,9 @@ export class InvoiceTabInfoComponent implements OnChanges {
         'td, th {' +
         'border: 1px solid black;' +
         'text-align: left;' +
-        'padding: 8px;' +
+        'padding: 3px;' +
         '}</style>' +
-        '<section style="padding: 10px;">' +
+        '<section style="padding: 10px; font-size: 11px;">' +
         '<p style="text-align:center;">' + res?.store?.name + '</p>' +
         '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +

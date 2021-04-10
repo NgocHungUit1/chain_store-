@@ -807,7 +807,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       let printContent = '<title>' + res.no + '</title>';
       printContent += '<style> ' +
         'p,table,div {' +
-        'font-family: arial, sans-serif;' +
+        'font-family: Arial, sans-serif;' +
+        'font-size: 11px;' +
+        'margin: 4px;' +
         '}' +
         'table {' +
         'border-collapse: collapse;' +
@@ -816,17 +818,17 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         'td, th {' +
         'border: 1px solid #dddddd;' +
         'text-align: left;' +
-        'padding: 8px;' +
+        'padding: 3px;' +
         '}</style>' +
-        '<section style="padding: -5px;">' +
-        '<p style="text-align:left; margin: 10px;font-size: 13px">' + res?.store?.name + '</p>' +
+        '<section style="padding: 10px;font-size: 11px;">' +
+        '<p style="text-align:left; margin: 10px;font-size: 11px">' + res?.store?.name + '</p>' +
         // '<p style="text-align:left; margin: 10px">Địa chỉ: ' + res?.store?.address + '</p>' +
         // '<p style="text-align:left; margin: 5px;font-size: 13px">SĐT: ' + res?.store?.phone + '</p>' +
         '<p style="text-align:center; font-weight:600;margin: 10px;">HÓA ĐƠN NHẬP HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;margin: 10px;">Mã phiếu nhập: ' + res?.no + '</p> ' +
-        '<p style="text-align:left; margin: 8px;font-size: 13px">Ngày nhập: ' + res?.date + ' </p>' +
-        '<p style="text-align:left; margin: 8px;font-size: 13px">Người nhập: ' + res?.created_by + ' </p>' +
-        '<table style="font-size: 13px">' +
+        '<p style="text-align:left; margin: 8px;font-size: 11px">Ngày nhập: ' + res?.date + ' </p>' +
+        '<p style="text-align:left; margin: 8px;font-size: 11px">Người nhập: ' + res?.created_by + ' </p>' +
+        '<table style="font-size: 11px">' +
         '<tr>' +
         '<td style="font-weight: 600;"> Nhà cung cấp </td>' +
         '<td>' + res?.supplier?.name + '</td>' +
@@ -860,8 +862,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       printContent += '<p style="text-align:left;margin: 10px;">Chi tiết nhập hàng :</p>';
 
       const detail = res.warehoureItems;
-      printContent += '<table>';
-      printContent += '<tr style="text-align:center; font-size: 13px">';
+      printContent += '<table style="font-size: 11px">';
+      printContent += '<tr style="text-align:center;">';
       printContent += '<th>' + 'Mã hàng' + '</th>';
       printContent += '<th>' + 'Tên hàng' + '</th>';
       printContent += '<th>' + 'Đơn giá' + '</th>';
@@ -870,7 +872,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       printContent += '</tr>';
 
       detail.forEach(element => {
-        printContent += '<tr style="font-size: 13px" >';
+        printContent += '<tr style="font-size: 11px" >';
         printContent += '<td style="text-align:left;">' + element?.product?.product_no + '</td>';
         printContent += '<td style="text-align:left;">' + element?.product?.product_name + '<br>' +
           'Đơn vị : ' + element?.product_unit?.name + '<br>' +
