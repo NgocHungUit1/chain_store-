@@ -12,6 +12,7 @@ import { jsPDF } from 'jspdf';
 import { Product } from '../../product/product.model';
 import { PrescriptionService } from '../../sale/prescription.service';
 import { Prescription } from '../../sale/prescription.model';
+import { OptionStoreService } from '../../common/option-store.service';
 
 @Component({
   selector: 'app-invoice-tab-info',
@@ -73,6 +74,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
     private router: Router,
     private medicineService: MedicineService,
     public prescriptionService: PrescriptionService,
+    public optionStoreService: OptionStoreService
   ) {
   }
 
@@ -269,6 +271,25 @@ export class InvoiceTabInfoComponent implements OnChanges {
    * Print Invoice
    */
   printInvoice(invoice_id: number) {
+    let _font_size = '11px';
+    let _margin = '4px;';
+    let _padding = '3px;';
+    let _solo = 'text-align:left;';
+    this.optionStoreService.getValue('print_type').subscribe(res => {
+      // console.log(res);
+      if (res.value === 'K58') {
+        _font_size = '11px;';
+        _margin = '4px;';
+        _padding = '3px;';
+        _solo = 'text-align:left;';
+      } else { // A4
+        _font_size = '14px;';
+        _margin = '6px;';
+        _padding = '6px;';
+        _solo = 'text-align:left; min-width: 100px;';
+      }
+    });
+
     this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
       const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
       const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
@@ -276,8 +297,8 @@ export class InvoiceTabInfoComponent implements OnChanges {
       printContent += '<style> ' +
         'p,table,div {' +
         'font-family: Arial, sans-serif;' +
-        'font-size: 11px;' +
-        'margin: 4px;' +
+        'font-size: ' + _font_size +
+        'margin: ' + _margin +
         '}' +
         'table, th, td {' +
         // 'font-family: arial, sans-serif;' +
@@ -288,9 +309,9 @@ export class InvoiceTabInfoComponent implements OnChanges {
         'td, th {' +
         'border: 1px solid black;' +
         'text-align: left;' +
-        'padding: 3px;' +
+        'padding: ' + _padding +
         '}</style>' +
-        '<section style="padding: 10px; font-size: 11px;">' +
+        '<section style="padding: 10px; font-size: ' + _font_size + ' ">' +
         '<p style="text-align:center;">' + res?.store?.name + '</p>' +
         '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +
@@ -307,7 +328,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
         '<th style="text-align:center;">SL</th>';
 
       if (this.autoPrintInSoLo === true) {
-        printContent += '<th style="text-align:left;">Số lô</th>';
+        printContent += '<th style="' + _solo + '">Số lô</th>';
       }
 
       printContent += '<th style="text-align:center;">T.Tiền</th>' +

@@ -803,12 +803,24 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
    * @param id mainService
    */
   printWarehouse(id: string) {
+    let _font_size = '11px';
+    let _padding = '3px;';
+    this.optionStoreService.getValue('print_type').subscribe(res => {
+      if (res.value === 'K58') {
+        _font_size = '11px;';
+        _padding = '3px;';
+      } else { // A4
+        _font_size = '13px;';
+        _padding = '6px;';
+      }
+    });
+
     this.mainService.getDataWarehouseToPrint(id).subscribe(res => {
       let printContent = '<title>' + res.no + '</title>';
       printContent += '<style> ' +
         'p,table,div {' +
         'font-family: Arial, sans-serif;' +
-        'font-size: 11px;' +
+        'font-size: ' + _font_size +
         'margin: 4px;' +
         '}' +
         'table {' +
@@ -816,19 +828,17 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         'width: 100%;' +
         '}' +
         'td, th {' +
-        'border: 1px solid #dddddd;' +
+        'border: 1px solid #616161;' +
         'text-align: left;' +
-        'padding: 3px;' +
+        'padding: ' + _padding +
         '}</style>' +
-        '<section style="padding: 10px;font-size: 11px;">' +
-        '<p style="text-align:left; margin: 10px;font-size: 11px">' + res?.store?.name + '</p>' +
-        // '<p style="text-align:left; margin: 10px">Địa chỉ: ' + res?.store?.address + '</p>' +
-        // '<p style="text-align:left; margin: 5px;font-size: 13px">SĐT: ' + res?.store?.phone + '</p>' +
+        '<section style="padding: 10px;font-size: ' + _font_size + '">' +
+        '<p style="text-align:left; margin: 10px; font-size: ' + _font_size + '">' + res?.store?.name + '</p>' +
         '<p style="text-align:center; font-weight:600;margin: 10px;">HÓA ĐƠN NHẬP HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;margin: 10px;">Mã phiếu nhập: ' + res?.no + '</p> ' +
-        '<p style="text-align:left; margin: 8px;font-size: 11px">Ngày nhập: ' + res?.date + ' </p>' +
-        '<p style="text-align:left; margin: 8px;font-size: 11px">Người nhập: ' + res?.created_by + ' </p>' +
-        '<table style="font-size: 11px">' +
+        '<p style="text-align:left; margin: 8px; font-size: ' + _font_size + '">Ngày nhập: ' + res?.date + ' </p>' +
+        '<p style="text-align:left; margin: 8px; font-size: ' + _font_size + '">Người nhập: ' + res?.created_by + ' </p>' +
+        '<table style="font-size: ' + _font_size + '">' +
         '<tr>' +
         '<td style="font-weight: 600;"> Nhà cung cấp </td>' +
         '<td>' + res?.supplier?.name + '</td>' +
@@ -862,7 +872,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       printContent += '<p style="text-align:left;margin: 10px;">Chi tiết nhập hàng :</p>';
 
       const detail = res.warehoureItems;
-      printContent += '<table style="font-size: 11px">';
+      printContent += '<table style="font-size: ' + _font_size + '">';
       printContent += '<tr style="text-align:center;">';
       printContent += '<th>' + 'Mã hàng' + '</th>';
       printContent += '<th>' + 'Tên hàng' + '</th>';
@@ -872,12 +882,13 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       printContent += '</tr>';
 
       detail.forEach(element => {
-        printContent += '<tr style="font-size: 11px" >';
+        printContent += '<tr style="font-size: ' + _font_size + '">';
         printContent += '<td style="text-align:left;">' + element?.product?.product_no + '</td>';
         printContent += '<td style="text-align:left;">' + element?.product?.product_name + '<br>' +
           'Đơn vị : ' + element?.product_unit?.name + '<br>' +
           'SL : ' + element.quantity + '<br>';
         const parcels = element.parcels;
+
         if (parcels !== null && parcels !== undefined) {
           parcels.forEach(parcel => {
             printContent += 'Lô: ' + parcel['parcel_no'] + '-';
@@ -885,6 +896,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
             printContent += parcel['quantity'] + '<br>';
           });
         }
+
         printContent += '</td>';
         printContent += '<td style="text-align:right;">' + element.price + '</td>';
         printContent += '<td style="text-align:right;">' + element.discount + '</td>';

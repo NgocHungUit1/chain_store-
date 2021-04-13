@@ -430,7 +430,7 @@
             </mat-form-field>
           </div>
           <span mat-menu-item>
-            <mat-slide-toggle checked="true" (change)="onChangeSlideToggleTuDongInHoaDon($event)">Tự động in hóa đơn
+            <mat-slide-toggle [checked]="autoPrint" (change)="onChangeSlideToggleTuDongInHoaDon($event)">Tự động in hóa đơn
             </mat-slide-toggle>
             <mat-slide-toggle style="margin-left: 15px; " checked="false" (change)="onChangeSlideToggleInSoLo($event)"> In số lô
             </mat-slide-toggle>

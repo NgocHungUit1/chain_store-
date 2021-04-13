@@ -17,6 +17,14 @@
               <mat-icon>sync_alt</mat-icon>
             </button>
           </mat-radio-button>
+
+          <mat-radio-button class="radio-button-report-type" value="print">
+            Khổ giấy in
+            <button mat-icon-button aria-label="add">
+              <mat-icon>print</mat-icon>
+            </button>
+          </mat-radio-button>
+
 <!--          <mat-radio-button class="radio-button-report-type" value="partner">-->
 <!--            Đối tác-->
 <!--            <button mat-icon-button aria-label="add">-->
@@ -98,6 +106,22 @@
               </mat-card-content>
             </mat-card>
 
+<!--            chon kho giay in-->
+            <mat-card *ngIf=" settingsType === 'print' ">
+              <mat-card-content>
+                <mat-radio-group [(ngModel)]="printType"
+                                 class="type-radio-group" (change)="changePrintType()">
+                  <mat-radio-button class="radio-button-report-type" value="K58">
+                    Giấy K58 <i>(mặc định)</i>
+                  </mat-radio-button>
+
+                  <mat-radio-button class="radio-button-report-type" value="A4">
+                    Giấy A4
+                  </mat-radio-button>
+                </mat-radio-group>
+              </mat-card-content>
+
+            </mat-card>
 
           </div>
         </div>

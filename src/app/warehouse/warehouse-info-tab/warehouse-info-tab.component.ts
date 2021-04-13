@@ -6,6 +6,7 @@ import { WarehouseService } from '../warehouse.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { WarehouseProductService } from '../warehouse-product.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { OptionStoreService } from '../../common/option-store.service';
 
 @Component({
   selector: 'app-warehouse-info-tab',
@@ -47,12 +48,13 @@ export class WarehouseInfoTabComponent implements OnChanges {
   isAdminStore: boolean;
 
   constructor(
-    private modelSer: WarehouseService,
+    private mainService: WarehouseService,
     private warehouseProductService: WarehouseProductService,
     public notifySer: NotifierService,
     private route: ActivatedRoute,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    public optionStoreService: OptionStoreService
   ) {
   }
 
@@ -104,7 +106,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
 
   finish() {
     if (this.model.status === 9) {
-      this.modelSer.update(this.model.id, {status: 10}).subscribe(res => {
+      this.mainService.update(this.model.id, {status: 10}).subscribe(res => {
         const typeStr = res['type'] === 'import' ? 'nhập' : 'trả';
         this.model.status = res['status'];
         this.notifySer.notify('success', 'Hoàn thành đơn ' + typeStr + ' hàng');
@@ -123,7 +125,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
       this.notifySer.notify('error', 'Bạn không có quyền thực hiện chức năng này.');
       return;
     }
-    this.modelSer.delete(this.model.id).subscribe(res => {
+    this.mainService.delete(this.model.id).subscribe(res => {
       // console.log(res);
       // const typeStr = res['type'] === 'import' ? 'nhập' : 'trả';
       // this.notifySer.notify('warning', 'Đã xóa đơn ' + typeStr + ' hàng');
@@ -136,7 +138,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
   }
 
   reconnect(item) {
-    this.modelSer.reconnect(item.id).subscribe(res => {
+    this.mainService.reconnect(item.id).subscribe(res => {
       if (res['success']) {
         this.notifySer.notify('success', 'Cập nhật liên thông thành công.');
       } else if (res['message'] !== undefined) {
@@ -146,7 +148,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
   }
 
   connect(item) {
-    this.modelSer.connect(item.id).subscribe(res => {
+    this.mainService.connect(item.id).subscribe(res => {
       if (res['success']) {
         item.national_pharmacy_no = res['national_pharmacy_no'];
         this.notifySer.notify('success', 'Liên thông thành công.');
@@ -157,7 +159,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
   }
 
   disconnect(item) {
-    this.modelSer.disconnect(item.id).subscribe(res => {
+    this.mainService.disconnect(item.id).subscribe(res => {
       if (res['success']) {
         item.national_pharmacy_no = null;
         this.notifySer.notify('success', 'Gỡ liên thông thành công.');
@@ -185,12 +187,24 @@ export class WarehouseInfoTabComponent implements OnChanges {
    * @param id
    */
   printWarehouse(id: string) {
-    this.modelSer.getDataWarehouseToPrint(id).subscribe(res => {
+    let _font_size = '11px';
+    let _padding = '3px;';
+    this.optionStoreService.getValue('print_type').subscribe(res => {
+      if (res.value === 'K58') {
+        _font_size = '11px;';
+        _padding = '3px;';
+      } else { // A4
+        _font_size = '13px;';
+        _padding = '6px;';
+      }
+    });
+
+    this.mainService.getDataWarehouseToPrint(id).subscribe(res => {
       let printContent = '<title>' + res.no + '</title>';
       printContent += '<style> ' +
         'p,table,div {' +
         'font-family: Arial, sans-serif;' +
-        'font-size: 11px;' +
+        'font-size: ' + _font_size +
         'margin: 4px;' +
         '}' +
         'table {' +
@@ -198,19 +212,17 @@ export class WarehouseInfoTabComponent implements OnChanges {
         'width: 100%;' +
         '}' +
         'td, th {' +
-        'border: 1px solid #dddddd;' +
+        'border: 1px solid #616161;' +
         'text-align: left;' +
-        'padding: 3px;' +
+        'padding: ' + _padding +
         '}</style>' +
-        '<section style="padding: 10px;font-size: 11px;">' +
-        '<p style="text-align:left; margin: 10px; font-size: 11px">' + res?.store?.name + '</p>' +
-        // '<p style="text-align:left; margin: 10px; font-size: 13px">Địa chỉ: ' + res?.store?.address + '</p>' +
-        // '<p style="text-align:left; margin: 5px; font-size: 13px">SĐT: ' + res?.store?.phone + '</p>' +
+        '<section style="padding: 10px;font-size: ' + _font_size + '">' +
+        '<p style="text-align:left; margin: 10px; font-size: ' + _font_size + '">' + res?.store?.name + '</p>' +
         '<p style="text-align:center; font-weight:600;margin: 10px;">HÓA ĐƠN NHẬP HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;margin: 10px;">Mã phiếu nhập: ' + res?.no + '</p> ' +
-        '<p style="text-align:left; margin: 8px; font-size: 11px">Ngày nhập: ' + res?.date + ' </p>' +
-        '<p style="text-align:left; margin: 8px; font-size: 11px">Người nhập: ' + res?.created_by + ' </p>' +
-        '<table style="font-size: 11px">' +
+        '<p style="text-align:left; margin: 8px; font-size: ' + _font_size + '">Ngày nhập: ' + res?.date + ' </p>' +
+        '<p style="text-align:left; margin: 8px; font-size: ' + _font_size + '">Người nhập: ' + res?.created_by + ' </p>' +
+        '<table style="font-size: ' + _font_size + '">' +
         '<tr>' +
         '<td style="font-weight: 600;"> Nhà cung cấp </td>' +
         '<td>' + res?.supplier?.name + '</td>' +
@@ -244,7 +256,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
       printContent += '<p style="text-align:left;margin: 10px;">Chi tiết nhập hàng :</p>';
 
       const detail = res.warehoureItems;
-      printContent += '<table style="font-size: 11px">';
+      printContent += '<table style="font-size: ' + _font_size + '">';
       printContent += '<tr style="text-align:center;">';
       printContent += '<th>' + 'Mã hàng' + '</th>';
       printContent += '<th>' + 'Tên hàng' + '</th>';
@@ -254,7 +266,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
       printContent += '</tr>';
 
       detail.forEach(element => {
-        printContent += '<tr style="font-size: 11px">';
+        printContent += '<tr style="font-size: ' + _font_size + '">';
         printContent += '<td style="text-align:left;">' + element?.product?.product_no + '</td>';
         printContent += '<td style="text-align:left;">' + element?.product?.product_name + '<br>' +
           'Đơn vị : ' + element?.product_unit?.name + '<br>' +
@@ -294,7 +306,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
    * @param id
    */
   printWarehouseReturn(id: string) {
-    this.modelSer.getDataWarehouseToPrint(id).subscribe(res => {
+    this.mainService.getDataWarehouseToPrint(id).subscribe(res => {
       let printContent = '<title>' + res.no + '</title>';
       printContent += '<style> ' +
         'p,table,div {' +

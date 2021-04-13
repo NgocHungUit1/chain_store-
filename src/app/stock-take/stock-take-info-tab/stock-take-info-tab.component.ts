@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { StockTakeService } from '../stock-take.service';
 import { StockTakeItemService } from '../stock-take-item.service';
 import { StockTakeBalanceDialogComponent } from '../stock-take-balance-dialog/stock-take-balance-dialog.component';
+import { OptionStoreService } from '../../common/option-store.service';
 
 @Component({
   selector: 'app-stock-take-info-tab',
@@ -54,7 +55,8 @@ export class StockTakeInfoTabComponent implements OnChanges {
     public notifySer: NotifierService,
     private route: ActivatedRoute,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private optionStoreService: OptionStoreService,
   ) {
   }
 
@@ -142,16 +144,30 @@ export class StockTakeInfoTabComponent implements OnChanges {
   }
 
   printStockTake(id: string) {
-    this.stockTakeSer.getDataStockTakeToPrint(id).subscribe(res => {
-      console.log(res);
 
+    let _font_size = '11px';
+    let _padding = '3px;';
+    this.optionStoreService.getValue('print_type').subscribe(res => {
+      if (res.value === 'K58') {
+        _font_size = '11px;';
+        _padding = '3px;';
+      } else { // A4
+        _font_size = '13px;';
+        _padding = '6px;';
+      }
+    });
+
+    this.stockTakeSer.getDataStockTakeToPrint(id).subscribe(res => {
+      // console.log(res);
       // const address = (res?.customer?.address !== null && res?.customer?.address !== undefined) ? res?.customer?.address : '';
       // const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
       // const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
       let printContent = '<title>' + res?.no + '</title>';
+      let username = (res?.balance_by?.username) ? res?.balance_by?.username : '';
       printContent += '<style> ' +
         'p,table,div {' +
         'font-family: arial, sans-serif;' +
+        'font-size: ' + _font_size +
         '}' +
         'table {' +
         // 'font-family: arial, sans-serif;' +
@@ -161,7 +177,7 @@ export class StockTakeInfoTabComponent implements OnChanges {
         'td, th {' +
         'border: 1px solid #dddddd;' +
         'text-align: left;' +
-        'padding: 8px;' +
+        'padding: ' + _padding +
         '}</style>' +
         '<section style="padding: 10px;">' +
         '<p style="text-align:center; font-weight:600;">PHIẾU KIỂM KHO</p>' +
@@ -182,7 +198,7 @@ export class StockTakeInfoTabComponent implements OnChanges {
         '</tr>' +
         '<tr>' +
         '<td style="font-weight: 600;" >Người cân bằng </td>' +
-        '<td >' + res.balance_by.username + '</td>' +
+        '<td >' + username + '</td>' +
         '<td style="font-weight: 600;">Ngày cân bằng </td>' +
         '<td style="text-align:right;">' + res.balance_at + '</td>' +
         '</tr>' +
@@ -249,7 +265,7 @@ export class StockTakeInfoTabComponent implements OnChanges {
       WindowPrt.document.close();
       WindowPrt.focus();
       WindowPrt.print();
-      WindowPrt.close();
+      // WindowPrt.close();
     });
 
   }

@@ -55,6 +55,8 @@ export class SaleMainComponent implements OnInit {
 
   }
 
+  optionStore_auto_print: OptionStore = null;
+
   optionStore_transaction_expenses_order: OptionStore = null;
   expenseOrder = 0; // thu khac
   expenseOrders: ExpensesOrder[] = null;
@@ -133,6 +135,17 @@ export class SaleMainComponent implements OnInit {
 
   }
 
+  getAutoPrintValue() {
+    this.optionStoreService.getValue('auto_print').subscribe(res => {
+      this.optionStore_auto_print = res;
+      if (res.value === 'no') {
+        this.autoPrint = false;
+      } else {
+        this.autoPrint = true;
+      }
+    });
+  }
+
   handleExpenseOrder() {
     this.expenseOrder = 0;
     if (this.expenseOrders !== null) {
@@ -184,7 +197,6 @@ export class SaleMainComponent implements OnInit {
       }
     }
   }
-
 
   getNewItemInvoice() {
     let mItemInvoice = new ItemInvoice();
@@ -514,6 +526,7 @@ export class SaleMainComponent implements OnInit {
       this.branchList = res.body;
     });
 
+    this.getAutoPrintValue();
 
     this.orderService.subscribeLoadDetailPage.subscribe(action => {
       if (action === true) {
@@ -850,6 +863,139 @@ export class SaleMainComponent implements OnInit {
    * Print Invoice
    */
   printInvoice(invoice_id: number) {
+    let _font_size = '11px';
+    let _margin = '4px;';
+    let _padding = '10px;';
+    let _solo = 'text-align:left;';
+    this.optionStoreService.getValue('print_type').subscribe(res => {
+      // console.log(res);
+      if (res.value === 'K58') {
+        _font_size = '11px;';
+        _margin = '4px;';
+        _padding = '3px;';
+        _solo = 'text-align:left;';
+      } else { // A4
+        _font_size = '14px;';
+        _margin = '6px;';
+        _padding = '6px;';
+        _solo = 'text-align:left; min-width: 100px;';
+      }
+    });
+
+    this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
+      const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
+      const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
+      let printContent = '<title>' + res?.invoice_no + '</title>';
+      printContent += '<style> ' +
+        'p,table,div {' +
+        'font-family: Arial, sans-serif;' +
+        'font-size: ' + _font_size +
+        'margin: ' + _margin +
+        '}' +
+        'table, th, td {' +
+        // 'font-family: arial, sans-serif;' +
+        'border-collapse: collapse;' +
+        'border: 1px solid black;' +
+        'width: 100%;' +
+        '}' +
+        'td, th {' +
+        'border: 1px solid black;' +
+        'text-align: left;' +
+        'padding: ' + _padding +
+        '}</style>' +
+        '<section style="padding: 10px; font-size: ' + _font_size + ' ">' +
+        '<p style="text-align:center;">' + res?.store?.name + '</p>' +
+        '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
+        '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +
+        '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
+        '<p style="">Khách hàng: ' + customer_name + '</p>';
+
+      if (customer_phone !== '') {
+        printContent += '<p style="">SĐT: ' + customer_phone + '</p>';
+      }
+
+      printContent += '<table>' +
+        '<tr>' +
+        '<th>Đơn giá</th>' +
+        '<th style="text-align:center;">SL</th>';
+
+      if (this.autoPrintInSoLo === true) {
+        printContent += '<th style="' + _solo + '">Số lô</th>';
+      }
+
+      printContent += '<th style="text-align:center;">T.Tiền</th>' +
+        '</tr>';
+
+      const detail = res.detail;
+
+      /**
+       * Chi tiet don hang
+       */
+      // tslint:disable-next-line:no-shadowed-variable
+      detail.forEach(element => {
+        if (element?.base_unit == null) {
+          printContent += '<tr>' +
+            '<td>' + element.product?.product_name + '<br>' + element.price + '</td>' +
+            '<td style="text-align:center;">' + element.amount + '</td>';
+          if (this.autoPrintInSoLo === true) {
+            printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
+          }
+          printContent += '<td style="text-align:right;">' + element.total + '</td>' +
+            '</tr>';
+        } else {
+          printContent += '<tr>' +
+            '<td>' + element.product?.product_name + ' - ' + element?.base_unit + '<br>' + element.price + '</td>' +
+            '<td style="text-align:center;">' + element.amount + '</td>';
+          if (this.autoPrintInSoLo === true) {
+            printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
+          }
+          printContent += '<td style="text-align:right;">' + element.total + '</td>' +
+            '</tr>';
+        }
+      });
+
+      /**
+       * Tong tien hang
+       */
+      let colspan = 2;
+      if (this.autoPrintInSoLo === true) {
+        colspan = 3;
+      }
+      printContent += '<tr>' +
+        '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng tiền hàng :</td>' +
+        '<td style="text-align:right; font-weight:600;">' + res.total_price + '</td>' +
+        '</tr>';
+      printContent += '<tr>' +
+        '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Chiết khấu :</td>' +
+        '<td style="text-align:right; font-weight:600;">' + res.discount + '</td>' +
+        '</tr>';
+      printContent += '<tr>' +
+        '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng thanh toán :</td>' +
+        '<td style="text-align:right; font-weight:600;">' + res.sum_payment + '</td>' +
+        '</tr>';
+      if (res.debt !== null) {
+        printContent += '<tr>' +
+          '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Còn nợ :</td>' +
+          '<td style="text-align:right; font-weight:600;">' + res.debt + '</td>' +
+          '</tr>';
+      }
+      printContent += '</table>';
+      printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
+      // printContent += '<p style="text-align:left; font-size: 12px;font-style: italic;" >Hổ trợ : 0972 574 506</p>';
+
+      printContent += '</section>';
+
+      const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+      WindowPrt.document.write(printContent);
+      WindowPrt.document.close();
+      WindowPrt.focus();
+      WindowPrt.print();
+      // WindowPrt.close(); // lỗi tự đôngs
+    });
+
+  }
+
+  printInvoiceOld(invoice_id: number) {
     this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
       const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
       const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
@@ -922,7 +1068,7 @@ export class SaleMainComponent implements OnInit {
        * Tong tien hang
        */
       let colspan = 2;
-      if (this.autoPrintInSoLo == true) {
+      if (this.autoPrintInSoLo === true) {
         colspan = 3;
       }
       printContent += '<tr>' +
@@ -1364,6 +1510,12 @@ export class SaleMainComponent implements OnInit {
    */
   onChangeSlideToggleTuDongInHoaDon(e: any) {
     this.autoPrint = e.checked;
+    // console.log(this.optionStore_auto_print);
+    // console.log(this.autoPrint);
+      this.optionStore_auto_print.value = (this.autoPrint === false) ? 'no' : 'yes';
+      this.optionStoreService.update(this.optionStore_auto_print.id, this.optionStore_auto_print).subscribe(res => {
+        console.log(res);
+      });
   }
 
   /**
