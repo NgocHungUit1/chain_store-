@@ -132,8 +132,8 @@ const MENUITEMS = [
     roles: ['ADMIN'],
     children: [
       {state: 'day-report', name: 'Cuối ngày', type: 'link', icon: 'pie_chart', roles: ['ADMIN']},
-      {state: 'sale-report', name: 'Bán hàng', type: 'link', icon: 'table_chart', roles: ['ADMIN']},
       {state: 'product-report', name: 'Hàng hóa', type: 'link', icon: 'store', roles: ['ADMIN']},
+      {state: 'sale-report', name: 'Bán hàng', type: 'link', icon: 'table_chart', roles: ['ADMIN']},
     ]
   },
   // {

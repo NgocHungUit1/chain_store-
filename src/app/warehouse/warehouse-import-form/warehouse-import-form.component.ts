@@ -270,7 +270,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         if (this.optionStore_transaction_expenses.value === 'yes') {
           const filter = new ExpensesTransactionFilter();
           filter.status = '10';
-          filter.auto = '1';
+          // filter.auto = '1';
           this.expensesTransactionService.getList(filter).subscribe(resEx => {
             this.expensesTransactions = <ExpensesTransaction[]>resEx.body;
             this.recalculateWarehouse();
@@ -881,6 +881,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       printContent += '<th>' + 'Thành tiền' + '</th>';
       printContent += '</tr>';
 
+      // tslint:disable-next-line:no-shadowed-variable
       detail.forEach(element => {
         printContent += '<tr style="font-size: ' + _font_size + '">';
         printContent += '<td style="text-align:left;">' + element?.product?.product_no + '</td>';

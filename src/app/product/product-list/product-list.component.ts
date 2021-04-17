@@ -81,6 +81,17 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     },
   ];
 
+  stockFilterList = [
+    {
+      'value': 'empty',
+      'name': 'Hết hàng',
+    },
+    {
+      'value': 'have',
+      'name': 'Còn hàng',
+    },
+  ];
+
   columnsHeader = {
     '#': '#',
     // 'product_type': 'Phân loại',
@@ -131,6 +142,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     filter.product_type = this.productFilter.controls['type'].value;
     filter.status = this.productFilter.controls['status'].value;
     filter.group_id = this.productFilter.controls['group'].value;
+    filter.stock = this.productFilter.controls['stock'].value;
     return filter;
   }
 
@@ -190,8 +202,10 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
         [10, 9]
       ],
       group: [null],
+      stock: [
+        ['empty', 'have']
+      ],
     });
-
 
     const groupFilter = new GroupFilter();
     groupFilter.pageSize = 100;
