@@ -114,4 +114,9 @@ tr.mat-header-row:nth-child(2) {
   height: 45px !important;
 }
 
+.icon-info {
+  font-size: 15px;
+  color: #a0a0a0;
+}
+
 

@@ -270,7 +270,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         if (this.optionStore_transaction_expenses.value === 'yes') {
           const filter = new ExpensesTransactionFilter();
           filter.status = '10';
-          filter.auto = '1';
+          // filter.auto = '1';
           this.expensesTransactionService.getList(filter).subscribe(resEx => {
             this.expensesTransactions = <ExpensesTransaction[]>resEx.body;
             this.recalculateWarehouse();
@@ -331,24 +331,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     );
   }
 
-  // setUpExpensesTransactions() {
-  //   this.optionStoreService.getValue('transaction_expenses_transaction').subscribe(res => {
-  //     this.optionStore_transaction_expenses = res;
-  //     if (this.optionStore_transaction_expenses.value === 'yes') {
-  //       if ((this.form.get('status').value === '9' && this.updateModelId !== null) || this.updateModelId === null) {
-  //         const filter = new ExpensesTransactionFilter();
-  //         filter.status = '10';
-  //         filter.auto = '1';
-  //         this.expensesTransactionService.getList(filter).subscribe(resEx => {
-  //           this.expensesTransactions = <ExpensesTransaction[]>resEx.body;
-  //           this.recalculateWarehouse();
-  //         });
-  //       }
-  //
-  //     }
-  //   });
-  //   // console.log(this.expensesTransactions);
-  // }
 
   loadData(): void {
     this.isLoadingResults = true;
@@ -522,6 +504,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
    * @param product_id
    */
   handleAddProductToList(product_id) {
+
+    if (this.productDataSource.data.length >= 100) {
+      this.notifySer.notify('warning', 'Đơn nhập tối đa 100 sản phẩm!');
+      return;
+    }
+
     let productExits = 0;
     // tslint:disable-next-line:no-shadowed-variable
     this.data.forEach((element, index) => {
@@ -884,6 +872,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       printContent += '<th>' + 'Thành tiền' + '</th>';
       printContent += '</tr>';
 
+      // tslint:disable-next-line:no-shadowed-variable
       detail.forEach(element => {
         printContent += '<tr style="font-size: ' + _font_size + '">';
         printContent += '<td style="text-align:left;">' + element?.product?.product_no + '</td>';

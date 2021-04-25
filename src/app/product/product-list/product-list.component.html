@@ -9,7 +9,6 @@
 
     <form [formGroup]="productFilter">
       <mat-card class="time-filter-info">
-<!--        <mat-card-title class="title-time-filter">Phân loại</mat-card-title>-->
         <mat-card-content>
           <mat-form-field>
             <mat-label>Phân loại</mat-label>
@@ -23,7 +22,6 @@
       </mat-card>
 
       <mat-card class="time-filter-info">
-<!--        <mat-card-title class="title-time-filter">Trạng thái</mat-card-title>-->
         <mat-card-content>
           <mat-form-field>
             <mat-label>Trạng thái</mat-label>
@@ -37,13 +35,25 @@
       </mat-card>
 
       <mat-card class="time-filter-info">
-<!--        <mat-card-title class="title-time-filter">Nhóm hàng</mat-card-title>-->
         <mat-card-content>
           <mat-form-field>
             <mat-select placeholder="Nhóm hàng" formControlName="group" (selectionChange)="statusProductFilterChange()">
               <mat-option>-- Tất cả --</mat-option>
               <mat-option *ngFor="let group of groups" [value]="group.id">
                 {{group.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="time-filter-info">
+        <mat-card-content>
+          <mat-form-field>
+            <mat-label>Tồn kho</mat-label>
+            <mat-select formControlName="stock" (selectionChange)="typeProductFilterChange()" multiple>
+              <mat-option *ngFor="let item of stockFilterList"
+                          [value]="item.value">{{ item.name }}
               </mat-option>
             </mat-select>
           </mat-form-field>

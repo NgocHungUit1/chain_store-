@@ -83,6 +83,7 @@ export class ProductFilter extends ApiFilterBase {
   export = false;
   type_report = '';
   group_id = '';
+  stock = '';
 
   getModelSearch() {
     return 'ProductSearch';

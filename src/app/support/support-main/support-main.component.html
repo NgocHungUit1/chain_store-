@@ -1,0 +1,75 @@
+<mat-sidenav-container>
+  <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true">
+    <mat-toolbar class="dv-header">
+      <button mat-icon-button>
+        <mat-icon>filter_list</mat-icon>
+      </button>
+      <h3>Thiết lập</h3>
+    </mat-toolbar>
+
+    <mat-card class="time-filter-info">
+      <mat-card-content>
+        <mat-radio-group class="type-radio-group">
+
+
+
+        </mat-radio-group>
+
+      </mat-card-content>
+    </mat-card>
+
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar class="dv-header">
+      <button mat-icon-button (click)="leftside.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <h3>
+        Hổ trợ
+      </h3>
+
+      <span fxFlex="1 1 0%"></span>
+
+
+    </mat-toolbar>
+    <div fxLayout="row wrap">
+      <div fxFlex="100">
+
+        <div class="table-container">
+          <div class="table-loading-shade" *ngIf="isLoadingResults || isRateLimitReached">
+            <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+            <div class="table-rate-limit-reached" *ngIf="isRateLimitReached">
+              GitHub's API rate limit has been reached. It will be reset in one minute.
+            </div>
+          </div>
+
+          <div class=" table-responsive">
+
+
+            <mat-card >
+              <mat-card-content>
+                <mat-radio-group  class="type-radio-group">
+                  <mat-radio-button class="radio-button-report-type" value="K58">
+                    Giấy K58 <i>(mặc định)</i>
+                  </mat-radio-button>
+
+                  <mat-radio-button class="radio-button-report-type" value="A4">
+                    Giấy A4
+                  </mat-radio-button>
+                </mat-radio-group>
+              </mat-card-content>
+
+            </mat-card>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+
+
+
+

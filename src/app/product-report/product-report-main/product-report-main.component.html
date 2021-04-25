@@ -46,12 +46,27 @@
             </mat-radio-button>
             <mat-radio-button class="radio-button-report-type" value="stock">
               Giá trị kho
+              <mat-icon
+                class="icon-info"
+                matTooltip="Tất cả sản phẩm đang kinh doanh có số lượng tồn lớn hơn 0">
+                info
+              </mat-icon>
             </mat-radio-button>
             <mat-radio-button class="radio-button-report-type" value="export-import">
               Xuất nhập tồn
+              <mat-icon
+                class="icon-info"
+                matTooltip="Sản phẩm đang kinh doanh">
+                info
+              </mat-icon>
             </mat-radio-button>
             <mat-radio-button class="radio-button-report-type" value="export-import-detail">
               Xuất nhập tồn chi tiết
+              <mat-icon
+                class="icon-info"
+                matTooltip="Sản phẩm đang kinh doanh">
+                info
+              </mat-icon>
             </mat-radio-button>
 
           </mat-radio-group>
@@ -331,7 +346,8 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_stock_gia_tri_kho">
-                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_stock_gia_tri_kho | number }}</th>
+                <th mat-header-cell class="column-number-sumary"
+                    *matHeaderCellDef>{{ sum_stock_gia_tri_kho | number }}</th>
               </ng-container>
 
 
@@ -357,7 +373,8 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_gia_tri_dau_ky">
-                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_gia_tri_dau_ky | number }}</th>
+                <th mat-header-cell class="column-number-sumary"
+                    *matHeaderCellDef>{{ sum_gia_tri_dau_ky | number }}</th>
               </ng-container>
 
 
@@ -409,7 +426,8 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_gia_tri_xuat">
-                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ -1 * sum_gia_tri_xuat | number }}</th>
+                <th mat-header-cell class="column-number-sumary"
+                    *matHeaderCellDef>{{ -1 * sum_gia_tri_xuat | number }}</th>
               </ng-container>
 
 
@@ -435,12 +453,14 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_gia_tri_cuoi_ky">
-                <th mat-header-cell class="column-number color-export" *matHeaderCellDef>{{ sum_gia_tri_cuoi_ky | number }}</th>
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef>{{ sum_gia_tri_cuoi_ky | number }}</th>
               </ng-container>
 
 
               <ng-container matColumnDef="nhap_ncc">
-                <th mat-header-cell class="column-number color-import" *matHeaderCellDef> {{columnsHeader['nhap_ncc']}}</th>
+                <th mat-header-cell class="column-number color-import"
+                    *matHeaderCellDef> {{columnsHeader['nhap_ncc']}}</th>
                 <td mat-cell class="column-number color-import" *matCellDef="let element">
                   <span>
                     {{ 1 * element?.soLuongNhap | number }}
@@ -453,7 +473,8 @@
 
 
               <ng-container matColumnDef="nhap_kiem">
-                <th mat-header-cell class="column-number color-import" *matHeaderCellDef> {{columnsHeader['nhap_kiem']}}</th>
+                <th mat-header-cell class="column-number color-import"
+                    *matHeaderCellDef> {{columnsHeader['nhap_kiem']}}</th>
                 <td mat-cell class="column-number color-import" *matCellDef="let element">
                   <span>
                     {{ 1 * element?.soLuongKiemNhap | number }}
@@ -461,12 +482,14 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_nhap_kiem">
-                <th mat-header-cell class="column-number color-import" *matHeaderCellDef>{{ sum_sl_kiem_nhap | number }}</th>
+                <th mat-header-cell class="column-number color-import"
+                    *matHeaderCellDef>{{ sum_sl_kiem_nhap | number }}</th>
               </ng-container>
 
 
               <ng-container matColumnDef="nhap_tra_hang">
-                <th mat-header-cell class="column-number color-import" *matHeaderCellDef> {{columnsHeader['nhap_tra_hang']}}</th>
+                <th mat-header-cell class="column-number color-import"
+                    *matHeaderCellDef> {{columnsHeader['nhap_tra_hang']}}</th>
                 <td mat-cell class="column-number color-import" *matCellDef="let element">
                   <span>
                     {{ 1 * element?.soLuongTraHang | number }}
@@ -474,12 +497,14 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_nhap_tra_hang">
-                <th mat-header-cell class="column-number color-import" *matHeaderCellDef>{{ sum_sl_nhap_tra_hang | number }}</th>
+                <th mat-header-cell class="column-number color-import"
+                    *matHeaderCellDef>{{ sum_sl_nhap_tra_hang | number }}</th>
               </ng-container>
 
 
               <ng-container matColumnDef="nhap_chuyen">
-                <th mat-header-cell class="column-number color-import" *matHeaderCellDef> {{columnsHeader['nhap_chuyen']}}</th>
+                <th mat-header-cell class="column-number color-import"
+                    *matHeaderCellDef> {{columnsHeader['nhap_chuyen']}}</th>
                 <td mat-cell class="column-number color-import" *matCellDef="let element">
                   <span>
                     {{ 1 * element?.soLuongNhapChuyen | number }}
@@ -487,12 +512,14 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_nhap_chuyen">
-                <th mat-header-cell class="column-number color-import" *matHeaderCellDef>{{ sum_sl_nhap_chuyen | number }}</th>
+                <th mat-header-cell class="column-number color-import"
+                    *matHeaderCellDef>{{ sum_sl_nhap_chuyen | number }}</th>
               </ng-container>
 
 
               <ng-container matColumnDef="xuat_ban">
-                <th mat-header-cell class="column-number color-export" *matHeaderCellDef> {{columnsHeader['xuat_ban']}}</th>
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef> {{columnsHeader['xuat_ban']}}</th>
                 <td mat-cell class="column-number color-export" *matCellDef="let element">
                   <span>
                     {{ -1 * element?.soLuongXuat | number }}
@@ -500,12 +527,14 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_xuat_ban">
-                <th mat-header-cell class="column-number color-export" *matHeaderCellDef>{{ -1 * sum_sl_xuat | number }}</th>
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef>{{ -1 * sum_sl_xuat | number }}</th>
               </ng-container>
 
 
               <ng-container matColumnDef="xuat_kiem">
-                <th mat-header-cell class="column-number color-export" *matHeaderCellDef> {{columnsHeader['xuat_kiem']}}</th>
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef> {{columnsHeader['xuat_kiem']}}</th>
                 <td mat-cell class="column-number color-export" *matCellDef="let element">
                   <span>
                     {{ -1 * element?.soLuongKiemXuat | number }}
@@ -513,11 +542,13 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_xuat_kiem">
-                <th mat-header-cell class="column-number color-export" *matHeaderCellDef>{{ -1 * sum_sl_kiem_xuat | number }}</th>
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef>{{ -1 * sum_sl_kiem_xuat | number }}</th>
               </ng-container>
 
               <ng-container matColumnDef="xuat_chuyen">
-                <th mat-header-cell class="column-number color-export" *matHeaderCellDef> {{columnsHeader['xuat_chuyen']}}</th>
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef> {{columnsHeader['xuat_chuyen']}}</th>
                 <td mat-cell class="column-number color-export" *matCellDef="let element">
                   <span>
                     {{ -1 * element?.soLuongXuatChuyen | number }}
@@ -525,7 +556,8 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_xuat_chuyen">
-                <th mat-header-cell class="column-number color-export" *matHeaderCellDef>{{ -1 * sum_sl_xuat_chuyen | number }}</th>
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef>{{ -1 * sum_sl_xuat_chuyen | number }}</th>
               </ng-container>
 
               <ng-container matColumnDef="expandedDetail">
