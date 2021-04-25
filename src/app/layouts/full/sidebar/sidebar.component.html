@@ -11,7 +11,7 @@
             <span class="label label-{{ badge.type }}" *ngFor="let badge of menuitem.badge">{{ badge.value }}</span>
         </a>
 
-        <a class="" appAccordionToggle href="{{menuitem.state}}" *ngIf="menuitem.type === 'extLink'">
+        <a class="" appAccordionToggle routerLink="/{{menuitem.state}}" *ngIf="menuitem.type === 'extLink'">
             <mat-icon>{{ menuitem.icon }}</mat-icon>
             <span>{{ menuitem.name }}</span>
             <span fxFlex></span>
@@ -23,8 +23,8 @@
             <span fxFlex></span>
             <span class="label label-{{ badge.type }}" *ngFor="let badge of menuitem.badge">{{ badge.value }}</span>
         </a>
-        <a class="" appAccordionToggle href="javascript:;" *ngIf="menuitem.type === 'sub'">
-            <mat-icon>{{ menuitem.icon }}</mat-icon>
+        <a class="" [style]="styleNotBackground(menuitem.state)" appAccordionToggle href="javascript:;" *ngIf="menuitem.type === 'sub'">
+            <mat-icon [style]="styleIconNotBackground(menuitem.state)" >{{ menuitem.icon }}</mat-icon>
             <span>{{ menuitem.name }}</span>
             <span fxFlex></span>
             <span class="label label-{{ badge.type }}" *ngFor="let badge of menuitem.badge">{{ badge.value }}</span>
@@ -32,8 +32,8 @@
         </a>
         <mat-nav-list class="sub-item" *ngIf="menuitem.type === 'sub'">
             <mat-list-item *ngFor="let childitem of menuitem.children" routerLinkActive="selected">
-                <a [routerLink]="['/', menuitem.state, childitem.state ]" class="relative" routerLinkActive="selected">
-                    <mat-icon>{{ childitem.icon }}</mat-icon>
+                <a [style]="styleNotBackgroundSubItem(menuitem.state, childitem.state)" [routerLink]="['/', menuitem.state, childitem.state ]" class="relative" routerLinkActive="selected">
+                    <mat-icon [style]="styleNotBackgroundSubItem(menuitem.state, childitem.state, true)">{{ childitem.icon }}</mat-icon>
                     {{childitem.name}}
                 </a>
             </mat-list-item>

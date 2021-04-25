@@ -36,13 +36,20 @@
               </span>
               <mat-divider></mat-divider>
             </mat-option>
+            <mat-option style="min-height: 70px; line-height:25px !important;" value="-1"
+                        *ngIf="selectProduct.value && (filteredProducts | async)?.length === 0 && (filteredMedicines | async)?.length === 0">
+                <span fxFlex="100" style="margin-left: 5px; font-size: 13px;">
+                  Không tìm thấy kết quả.<br> Vui lòng kiểm tra lại tên hoặc thêm mới thuốc/ sản phẩm
+                </span>
+            </mat-option>
 
           </mat-autocomplete>
         </mat-form-field>
       </div>
       <span fxFlex="1 1 0%"></span>
 
-      <button mat-raised-button color="primary" [matMenuTriggerFor]="createMenu" style="margin-right: 10px"
+      <button mat-raised-button color="primary"  [matMenuTriggerFor]="createMenu" style="margin-right: 10px"
+              *ngIf="selectProduct.value && (filteredProducts | async)?.length === 0 && (filteredMedicines | async)?.length === 0"
               [disabled]="form?.controls['status'].value === '10'">
         <mat-icon>add</mat-icon>
         Thêm mới

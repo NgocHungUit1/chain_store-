@@ -141,6 +141,7 @@ export class ProductMedicineDialogComponent implements OnInit {
   selectedFiles: ImageSnippet[] = [];
 
   initForm() {
+    console.log(this.local_data);
     this.form = this.fb.group({
       product_no: [
         null,
@@ -156,7 +157,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       using_id: [null], // bỏ yêu cầu nhóm đường dùng
       group_id: [null],
       placements: [[]],
-      product_name: [null, Validators.required],
+      product_name: [this.local_data && this.local_data['product_name'] ? this.local_data['product_name'] : null, Validators.required],
       sell_price: [null, Validators.required],
       original_price: [0],
       weight: [null],

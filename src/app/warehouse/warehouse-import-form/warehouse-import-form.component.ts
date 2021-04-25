@@ -499,6 +499,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
    * @param product
    */
   onSelectedProduct(product) {
+    if (product === -1) {
+      return;
+    }
     if (this.form.controls['status'].value === '10') {
       this.notifySer.notify('warning', 'Đơn nhập hàng đã hoàn thành.');
       this.selectProduct.patchValue(null);
@@ -922,6 +925,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     obj.title = 'Thêm thuốc';
     obj.product_id = null;
     obj.copy_product_id = null;
+    obj.product_name = this.selectProduct.value;
+    console.log(obj);
     const dialogRef = this.dialog.open(ProductMedicineDialogComponent, {
       data: obj,
       width: '60%',
@@ -1005,6 +1010,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     obj.title = 'Thêm hàng hóa';
     obj.product_id = null;
     obj.copy_product_id = null;
+    obj.product_name = this.selectProduct.value;
     const dialogRef = this.dialog.open(ProductMerchandiseFormDialogComponent, {
       data: obj,
       width: '60%',
