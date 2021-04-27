@@ -71,7 +71,7 @@
                       <mat-icon>keyboard_arrow_up</mat-icon>
                     </button>
                     <input matInput tabindex="3" min="0" class="row-amount-number"
-                           (input)="inputAmountProduct(i,$event)" [value]="itemProduct?.amount"
+                           (change)="inputAmountProduct(i,$event)" [value]="itemProduct?.amount"
                            autocomplete="off">
                     <button matSuffix mat-icon-button class="row-button-edit-amount"
                             (click)="downAmountProduct(itemProduct.product,i)">
