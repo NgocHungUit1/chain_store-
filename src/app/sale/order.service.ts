@@ -25,6 +25,8 @@ export class OrderService {
 
   order_key_local = 'rs24_token_order_service';
 
+  rx20_history = 'rx20_history';
+
   constructor(private http: HttpClient) {
     this.getDataInvoiceActive();
   }
@@ -188,7 +190,7 @@ export class OrderService {
     this.loadDetailPage.next(action);
   }
 
-  addProduct(object: Product) {
+  addProduct(object: Product, amountProduct = 1) {
     const ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
@@ -202,7 +204,7 @@ export class OrderService {
       mProductInfo.product_unit_id = object.product_unit_id;
       mProductInfo.product_unit_value = object.product_unit_value;
       mProductInfo.base_unit = object.base_unit;
-      mProductInfo.amount = (object.amount === undefined || object.amount === null) ? 1 : object.amount;
+      mProductInfo.amount = (object.amount === undefined || object.amount === null) ? amountProduct : object.amount;
       listProduct.push(mProductInfo);
       mItemInvoice.listProduct = listProduct;
     } else {
@@ -212,7 +214,7 @@ export class OrderService {
       listProduct.forEach(eProductInfo => {
         if (eProductInfo.product_id === object.id && eProductInfo.product_unit_id === object.product_unit_id) {
           newItem = 0;
-          eProductInfo.amount = eProductInfo.amount + 1;
+          eProductInfo.amount = eProductInfo.amount + amountProduct;
         }
       });
       if (newItem === 1) {
@@ -222,7 +224,7 @@ export class OrderService {
         mProductInfo.product_unit_id = object.product_unit_id;
         mProductInfo.product_unit_value = object.product_unit_value;
         mProductInfo.base_unit = object.base_unit;
-        mProductInfo.amount = 1;
+        mProductInfo.amount = amountProduct;
         listProduct.push(mProductInfo);
       }
     }
@@ -443,6 +445,27 @@ export class OrderService {
   getReturns(invoice_id: number) {
     const url = environment.apiUrl + '/invoice/get-returns/';
     return this.http.post<any[]>(url, {invoice_id: invoice_id});
+  }
+
+  pushHistorySearch(product: any, store_id) {
+    let history = JSON.parse(localStorage.getItem(this.rx20_history + store_id));
+    if (history === null || history === undefined) {
+      history = [];
+    }
+    if (history.includes(product.id) !== true) {
+      history.unshift(product.id);
+    }
+
+    if (history.length > 10) {
+      // console.log(history.length);
+      history.splice(history.length - 1, 1);
+    }
+
+    localStorage.setItem(this.rx20_history + store_id, JSON.stringify(history));
+  }
+
+  getHistorySearch(store_id) {
+    return JSON.parse(localStorage.getItem(this.rx20_history + store_id));
   }
 
 }

@@ -8,7 +8,7 @@ import {
   OnDestroy,
   ViewChild,
   HostListener,
-  Directive
+  Directive, ElementRef
 } from '@angular/core';
 
 import { MenuItems } from '../../shared/menu-items/menu-items';
@@ -26,6 +26,7 @@ import { ItemInvoice } from '../../sale/order.model';
 import { NotifierService } from 'angular-notifier';
 import { SamplePrescriptionService } from '../../sample-prescription/sample-prescription.service';
 import { element } from 'protractor';
+import { CustomerService } from '../../customer/customer.service';
 
 /** @title Responsive sidenav */
 @Component({
@@ -54,10 +55,17 @@ export class CartComponent implements OnDestroy {
 
   selectProduct = new FormControl();
   public filteredProducts: Observable<Product[]>;
+  public productsHistory: Observable<Product[]>;
   listmItemInvoice: ItemInvoice[] = [];
 
   //
   activeLink = 0;
+
+  storeId: number;
+
+  amountProduct = 1;
+
+  @ViewChild('inputSearch') inputSearch: ElementRef;
 
   constructor(
     changeDetectorRef: ChangeDetectorRef,
@@ -68,7 +76,8 @@ export class CartComponent implements OnDestroy {
     private productSer: ProductService,
     private samplePrescriptionService: SamplePrescriptionService,
     private priceListSer: PriceListService,
-    private notifySer: NotifierService
+    private notifySer: NotifierService,
+    protected customerService: CustomerService
   ) {
     this.mobileQuery = media.matchMedia('(min-width: 768px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -80,6 +89,10 @@ export class CartComponent implements OnDestroy {
   }
 
   ngOnInit(): void {
+
+    this.customerService.getNameStore(0).subscribe(res => {
+      this.storeId = Number(res);
+    });
 
     this.orderService.subscribeObjectListInvoice.subscribe(listInvoice => {
       const listItemInvoice = listInvoice.itemInvoice;
@@ -133,6 +146,23 @@ export class CartComponent implements OnDestroy {
   }
 
   /**
+   * Tim kiem lich su san pham
+   * @param arr
+   */
+  lookupProductByHistory(arr: []): Observable<Product[]> {
+    return this.productSer.autocompleteUnitsByIds(arr).pipe(
+      // map the item property of the github results as our return object
+      map(results => {
+        return results;
+      }),
+      // catch errors
+      catchError(_ => {
+        return of(null);
+      })
+    );
+  }
+
+  /**
    * Don thuoc mau
    * @param value
    */
@@ -155,8 +185,16 @@ export class CartComponent implements OnDestroy {
    * @param product
    */
   onSelectedProduct(product) {
+
+    if (this.amountProduct === null) {
+      this.amountProduct = 1;
+    }
+
     if (this.iconChangeType === 'cached') { // tim san pham
-      if (product['quantity_of_stock'] > 0) {
+
+      this.orderService.pushHistorySearch(product, product.store_id);
+
+      if (product['quantity_of_stock'] > 0 && product['quantity_of_stock'] > this.amountProduct) {
         this.handlePriceListProduct(product);
       } else {
         this.notifySer.notify('warning', 'Không đủ tồn kho.');
@@ -176,6 +214,7 @@ export class CartComponent implements OnDestroy {
 
     }
     this.selectProduct.patchValue(null);
+    this.inputSearch.nativeElement.blur(); // un focus
 
   }
 
@@ -189,7 +228,7 @@ export class CartComponent implements OnDestroy {
     units = units.filter(element => element.quantity_of_stock > 0);
     product.productUnits = units;
 
-    this.orderService.addProduct(product);
+    this.orderService.addProduct(product, this.amountProduct);
   }
 
   addInvoice() {
@@ -217,6 +256,19 @@ export class CartComponent implements OnDestroy {
       this.iconChangeType = 'assignment';
       this.notifySer.notify('success', 'Tìm kiếm đơn thuốc mẫu.');
     }
+  }
+
+  focusInputSearch(event) {
+
+    if (this.selectProduct.value === '' || this.selectProduct.value === null) {
+      if (this.iconChangeType === 'cached') { // tim thuoc
+        const data = this.orderService.getHistorySearch(this.storeId);
+        // console.log(data);
+        this.productsHistory = this.lookupProductByHistory(data);
+      }
+
+    }
+
   }
 
 }

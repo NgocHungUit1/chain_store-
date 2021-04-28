@@ -510,7 +510,7 @@ export class SaleMainComponent implements OnInit {
   ngOnInit(): void {
     // this.optionStore_transaction_expenses_order.value = 'no';
     this.isLoadingResults = true;
-    this.allPermission = sessionStorage.getItem('allPermission').split(',');
+    this.allPermission = sessionStorage.getItem('allPermission')?.split(',');
     this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
     this.initFormSiderBar();
     /**
@@ -1562,9 +1562,9 @@ export class SaleMainComponent implements OnInit {
   public checkPermissionSaleDisable() {
     let indexPermission;
     if (this.localItemInvoice?.invoice_id < 0) {
-      indexPermission = this.allPermission.indexOf('Invoice.Sale-Order');
+      indexPermission = this.allPermission?.indexOf('Invoice.Sale-Order');
     } else {
-      indexPermission = this.allPermission.indexOf('Invoice.Update-Order');
+      indexPermission = this.allPermission?.indexOf('Invoice.Update-Order');
       if (!this.isAdminStore) {
         return true;
       }

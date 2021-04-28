@@ -276,11 +276,11 @@
           </div>
 
           <div *ngIf="localItemInvoice?.is_return !== true"
-               [ngClass]="prescription.checked ? 'prescription-checked' : 'prescription'">
+               [ngClass]="prescription?.checked ? 'prescription-checked' : 'prescription'">
             <mat-checkbox #prescription
                           formControlName="prescription_id">
             </mat-checkbox>
-            <span [ngClass]="prescription.checked ? 'prescription-text' : ''"
+            <span [ngClass]="prescription?.checked ? 'prescription-text' : ''"
                   (click)="clickPrescription()"> Bán thuốc theo đơn </span>
           </div>
 
