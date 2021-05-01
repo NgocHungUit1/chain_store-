@@ -194,7 +194,7 @@ export class CartComponent implements OnDestroy {
 
       this.orderService.pushHistorySearch(product, product.store_id);
 
-      if (product['quantity_of_stock'] > 0 && product['quantity_of_stock'] > this.amountProduct) {
+      if (product['quantity_of_stock'] > 0 && product['quantity_of_stock'] >= this.amountProduct) {
         this.handlePriceListProduct(product);
       } else {
         this.notifySer.notify('warning', 'Không đủ tồn kho.');
