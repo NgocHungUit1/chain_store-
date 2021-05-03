@@ -29,8 +29,20 @@
   min-width: 400px;
   margin-right: 5px;
 }
+
+.amount-product {
+  max-width: 60px;
+  margin-right: 5px;
+  outline: 0;
+  text-align: right;
+}
+
+.amount-product::placeholder {
+  color: white;
+}
+
 @media (min-width: 768px) {
   .navbar-header {
-      width: 70px;
+    width: 70px;
   }
 }

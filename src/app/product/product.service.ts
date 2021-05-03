@@ -112,6 +112,15 @@ export class ProductService {
     return this.http.get<Product[]>(url);
   }
 
+  /**
+   * Search Autocomplete With Units by array id product
+   * @param ids
+   */
+  autocompleteUnitsByIds(ids: []) {
+    const url = environment.apiUrl + '/product/autocomplete-units?ids=' + ids;
+    return this.http.get<Product[]>(url);
+  }
+
   // list for cart
   getApiUrlCart(filter?: ProductFilter) {
     if (!filter.page) {

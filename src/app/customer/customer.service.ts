@@ -17,7 +17,8 @@ export class CustomerService {
     this.loadCustomer.next(action);
   }
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+  }
 
   getApiUrl(filter?: CustomerFilter) {
     if (!filter.page) {
@@ -49,7 +50,7 @@ export class CustomerService {
 
   getList(filter?: CustomerFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrl(filter);
-    return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
   getDetail(id: string, expand: string) {
@@ -89,8 +90,8 @@ export class CustomerService {
     return this.http.post<ResponseModel>(url, {});
   }
 
-  getNameStore() {
-    const url = environment.apiUrl + '/customer/name-store';
+  getNameStore(show = 1) {
+    const url = environment.apiUrl + '/customer/name-store?show=' + show;
     return this.http.get<string>(url);
   }
 }
