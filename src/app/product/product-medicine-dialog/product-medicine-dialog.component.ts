@@ -50,7 +50,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     private dialog: MatDialog,
     // @Optional() is used to prevent error if no data is passed
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
-    // console.log(data);
+    console.log(data);
     this.local_data = {...data};
     this.action = this.local_data.action;
     this.title = this.local_data.title;
@@ -177,6 +177,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       max_quantity: [0],
       description: [null],
       note: [null],
+      quantity_of_stock: [0],
     });
   }
 
@@ -277,7 +278,7 @@ export class ProductMedicineDialogComponent implements OnInit {
   }
 
   loadProduct(id, copy: any = null) {
-    this.productSer.getDetail(id, 'medicine,images,productPlacements,productUnits').subscribe(product => {
+    this.productSer.getDetail(id, 'medicine,images,productPlacements,productUnits,quantity').subscribe(product => {
       const placements = [];
       product['productPlacements'].forEach(pPlacement => {
         placements.push(pPlacement.id);
@@ -289,6 +290,12 @@ export class ProductMedicineDialogComponent implements OnInit {
         medicine.manufacturer = product['manufacturer'];
       }
 
+      // console.log(product['quantity']);
+      if (product['quantity']) {
+        this.form.patchValue({
+          quantity_of_stock: numeral(product['quantity'].number).format('0,0'),
+        });
+      }
 
       if (copy === null) {
         this.form.patchValue({
@@ -392,6 +399,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       data.made_in = data.medicine.made_in;
       data.original_price = numeral(data.original_price).value();
       data.sell_price = numeral(data.sell_price).value();
+      data.quantity_of_stock = numeral(data.quantity_of_stock).value();
 
       if (typeof data.manufacturer === 'string') {
         data.manufacturer = null;

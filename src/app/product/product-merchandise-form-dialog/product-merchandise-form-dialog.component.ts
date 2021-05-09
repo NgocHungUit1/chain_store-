@@ -111,7 +111,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       weight: [null],
       base_unit: [null, Validators.required],
       medicine_id: [null],
-      quantity_of_stock: [null],
+      quantity_of_stock: [0],
       // Medicine
       // medicine: this.fb.group({
       //   registration_no: [null, Validators.required],
@@ -197,6 +197,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
 
       data.original_price = numeral(data.original_price).value();
       data.sell_price = numeral(data.sell_price).value();
+      data.quantity_of_stock = numeral(data.quantity_of_stock).value();
 
       if (this.product_id === null) {
         // Create New
@@ -313,11 +314,18 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
   }
 
   loadProduct(id, copy: any = null) {
-    this.productSer.getDetail(id, 'medicine,images,productPlacements,productUnits').subscribe(product => {
+    this.productSer.getDetail(id, 'medicine,images,productPlacements,productUnits,quantity').subscribe(product => {
       const placements = [];
       product['productPlacements'].forEach(pPlacement => {
         placements.push(pPlacement.id);
       });
+
+      // console.log(product['quantity']);
+      if (product['quantity']) {
+        this.form.patchValue({
+          quantity_of_stock: numeral(product['quantity'].number).format('0,0'),
+        });
+      }
 
       if (copy == null) {
         this.form.patchValue({

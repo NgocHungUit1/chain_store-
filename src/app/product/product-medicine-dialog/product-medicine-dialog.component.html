@@ -16,13 +16,15 @@
                 <mat-form-field>
                   <input type="text" (change)="onProductNoChange()" matInput [formControl]="form.controls['product_no']"
                          required placeholder="Mã hàng tự động">
+                  <mat-hint>Từ 5 đến 20 ký tự !</mat-hint>
                 </mat-form-field>
               </div>
             </div>
             <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field>
-                  <input type="text" matInput [formControl]="form.controls['barcode']" placeholder="Mã vạch" autocomplete="off"  autofocus >
+                  <input type="text" matInput [formControl]="form.controls['barcode']" placeholder="Mã vạch"
+                         autocomplete="off" autofocus>
                 </mat-form-field>
               </div>
             </div>
@@ -45,7 +47,8 @@
                       <span style="font-size: 13px;">
                         <b> {{ medicine.medicine_name }} </b> <br>
                         Nhà sản xuất: {{ medicine.manufacturer }}  <br>
-                        Mã thuốc: {{ medicine.medicine_no }} - Số đăng ký: {{ medicine.registration_no }}  - Đơn vị: {{ medicine.unit }}
+                        Mã thuốc: {{ medicine.medicine_no }} - Số đăng ký: {{ medicine.registration_no }}
+                        - Đơn vị: {{ medicine.unit }}
                       </span>
 
                     </mat-option>
@@ -102,6 +105,12 @@
                      placeholder="Đơn vị cơ bản " autocomplete="off">
             </mat-form-field>
 
+            <mat-form-field>
+              <input type="text" class="text-right" (keyup)="inputformatNumber($event)" matInput
+                     [formControl]="form.controls['quantity_of_stock']"
+                     placeholder="Tồn kho (đơn vị cơ bản)" autocomplete="off">
+            </mat-form-field>
+
           </div>
 
           <!-- Start Medicine -->
@@ -111,7 +120,8 @@
                 <div fxLayout="row wrap">
                   <div fxFlex="100">
                     <mat-form-field>
-                      <input type="text" matInput formControlName="registration_no" required placeholder="Số đăng ký " autocomplete="off">
+                      <input type="text" matInput formControlName="registration_no" required placeholder="Số đăng ký "
+                             autocomplete="off">
                     </mat-form-field>
                   </div>
                 </div>
@@ -126,14 +136,16 @@
                 <div fxLayout="row wrap">
                   <div fxFlex="100">
                     <mat-form-field>
-                      <input type="text" matInput formControlName="content" required placeholder="Hàm lượng " autocomplete="off">
+                      <input type="text" matInput formControlName="content" required placeholder="Hàm lượng "
+                             autocomplete="off">
                     </mat-form-field>
                   </div>
                 </div>
                 <div fxLayout="row wrap">
                   <div fxFlex="100">
                     <mat-form-field>
-                      <input type="text" matInput formControlName="packing" required placeholder="Quy cách đóng gói " autocomplete="off">
+                      <input type="text" matInput formControlName="packing" required placeholder="Quy cách đóng gói "
+                             autocomplete="off">
                     </mat-form-field>
                   </div>
                 </div>
@@ -260,7 +272,8 @@
             <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field>
-                  <input type="text" matInput [formControl]="form.controls['shortcut']" placeholder="Tên viết tắt" autocomplete="off">
+                  <input type="text" matInput [formControl]="form.controls['shortcut']" placeholder="Tên viết tắt"
+                         autocomplete="off">
                 </mat-form-field>
               </div>
             </div>
@@ -298,7 +311,7 @@
             <div fxLayout="row wrap">
               <div fxFlex="90">
                 <mat-form-field>
-                  <mat-select  placeholder="Đường dùng" [formControl]="form.controls['using_id']">
+                  <mat-select placeholder="Đường dùng" [formControl]="form.controls['using_id']">
                     <mat-option>--</mat-option>
                     <mat-option *ngFor="let using of usings" [value]="using.id">
                       {{using.name}}
@@ -389,14 +402,17 @@
       <mat-icon>open_in_full</mat-icon>
       Lưu và liên thông
     </button>
-<!--    <button mat-raised-button [disabled]="loading" (click)="submit('SaveAndMore');" mat-flat-button color="primary">-->
-<!--      <mat-icon>save</mat-icon>-->
-<!--      Lưu và Thêm mới-->
-<!--    </button>-->
-<!--    <button mat-raised-button [disabled]="loading" (click)="submit('SaveAndCopy');" mat-flat-button color="primary">-->
-<!--      <mat-icon>save</mat-icon>-->
-<!--      Lưu và Sao chép-->
-<!--    </button>-->
-    <button mat-raised-button type="button" (click)="closeDialog()"><mat-icon>cancel</mat-icon>Bỏ qua</button>
+    <!--    <button mat-raised-button [disabled]="loading" (click)="submit('SaveAndMore');" mat-flat-button color="primary">-->
+    <!--      <mat-icon>save</mat-icon>-->
+    <!--      Lưu và Thêm mới-->
+    <!--    </button>-->
+    <!--    <button mat-raised-button [disabled]="loading" (click)="submit('SaveAndCopy');" mat-flat-button color="primary">-->
+    <!--      <mat-icon>save</mat-icon>-->
+    <!--      Lưu và Sao chép-->
+    <!--    </button>-->
+    <button mat-raised-button type="button" (click)="closeDialog()">
+      <mat-icon>cancel</mat-icon>
+      Bỏ qua
+    </button>
   </div>
 </form>

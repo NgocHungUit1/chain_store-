@@ -55,7 +55,18 @@
               <div fxFlex="30">
                 <mat-form-field>
                   <input type="text" matInput [formControl]="form.controls['base_unit']" required
-                         placeholder="Đơn vị cơ bản">
+                         placeholder="Đơn vị cơ bản" autocomplete="off">
+                </mat-form-field>
+              </div>
+
+              <div fxFlex="2">
+              </div>
+
+              <div fxFlex="40">
+                <mat-form-field>
+                  <input type="text" class="text-right" (keyup)="inputformatNumber($event)" matInput
+                         [formControl]="form.controls['quantity_of_stock']"
+                         placeholder="Tồn kho (đơn vị cơ bản)" autocomplete="off">
                 </mat-form-field>
               </div>
             </div>
@@ -322,14 +333,17 @@
       <mat-icon>save</mat-icon>
       Lưu
     </button>
-    <button mat-raised-button [disabled]="loading" mat-flat-button color="primary">
-      <mat-icon>save</mat-icon>
-      Lưu và Thêm mới
-    </button>
-    <button mat-raised-button [disabled]="loading" mat-flat-button color="primary">
-      <mat-icon>save</mat-icon>
-      Lưu và Sao chép
-    </button>
+
+<!--    <button mat-raised-button [disabled]="loading" mat-flat-button color="primary">-->
+<!--      <mat-icon>save</mat-icon>-->
+<!--      Lưu và Thêm mới-->
+<!--    </button>-->
+<!--    -->
+<!--    <button mat-raised-button [disabled]="loading" mat-flat-button color="primary">-->
+<!--      <mat-icon>save</mat-icon>-->
+<!--      Lưu và Sao chép-->
+<!--    </button>-->
+
     <button mat-raised-button type="button" (click)="closeDialog()">
       <mat-icon>cancel</mat-icon>
       Bỏ qua
