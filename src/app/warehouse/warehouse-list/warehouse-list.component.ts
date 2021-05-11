@@ -56,6 +56,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
 
   searchProductForm = new FormControl();
   orderFilter: FormGroup;
+  productFilter: FormGroup;
 
   timeFilter: FormGroup;
 
@@ -153,7 +154,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     filter.status = this.orderFilter.controls['status'].value;
 
     const supplier = this.orderFilter.controls['supplier']?.value;
-    const product = this.orderFilter.controls['product']?.value;
+    const product = this.productFilter.controls['product']?.value;
     filter.supplier_id = supplier?.id;
     filter.product_id = product?.id;
     return filter;
@@ -208,6 +209,10 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
       product: [null],
     });
 
+    this.productFilter = this.fb.group({
+      product: [null],
+    });
+
     this.timeFilter = this.fb.group({
       typeTime: [
         'default'
@@ -254,7 +259,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
       })
     );
 
-    this.filteredProducts = this.orderFilter.controls['product'].valueChanges.pipe(
+    this.filteredProducts = this.productFilter.controls['product'].valueChanges.pipe(
       startWith(''),
       // delay emits
       debounceTime(300),

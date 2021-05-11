@@ -80,6 +80,12 @@ tr.example-element-row:not(.example-expanded-row):active {
   min-width: 215px;
 }
 
+.select-search {
+  margin-left: 10px;
+  font-size: 1rem;
+  width: 90px;
+}
+
 .title-time-filter {
   padding: 16px 0 0 20px;
 }
@@ -100,4 +106,8 @@ tr.mat-header-row {
 form .mat-card-content {
   padding-top: 10px;
   padding-bottom: 15px;
+}
+
+.mat-form-field {
+  color: black;
 }
