@@ -481,7 +481,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
    * @param product
    */
   onSelectedProduct(product) {
-    if (product === -1) {
+    if (product == -1) {
       return;
     }
     if (this.form.controls['status'].value === '10') {
