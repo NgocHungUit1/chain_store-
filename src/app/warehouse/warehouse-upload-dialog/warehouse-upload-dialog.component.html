@@ -36,6 +36,11 @@
   <p>- Các sản phẩm có cùng tên nhà cung cấp sẽ được gộp thành 1 đơn nhập hàng.</p>
   <p>- 1 file có nhiều nhà cung cấp sẽ được tách thành nhiều đơn nhập hàng.</p>
   <p>- 1 đơn nhập hàng có tối đa 100 sản phẩm.</p>
+  <p>- Có 1 số thay đổi trong file mẫu(vui lòng tải file mẫu mới nhất để kiểm tra):</p>
+  <p>&nbsp; + Các cột chữ màu đỏ là cột <span style="color: red;">bắt buộc</span> cho hệ thống</p>
+  <p>&nbsp; + Các cột chữ màu cam là cột <span style="color: red;">bắt buộc</span> để liên thông</p>
+  <p>&nbsp; + Các cột chữ màu đen là cột không bắt buộc</p>
+  <p>&nbsp; + Cột giá bán nếu không điền thì: gián bán = giá vốn * 1.1</p>
   <mat-dialog-actions align="end">
 
     <button mat-raised-button color="primary" [disabled]="submitted || selectedFile === null || !branchId"
