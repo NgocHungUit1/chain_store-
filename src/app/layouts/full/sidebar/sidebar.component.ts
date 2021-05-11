@@ -6,7 +6,7 @@ import {
   ViewChild,
   HostListener,
   Directive,
-  AfterViewInit
+  AfterViewInit, OnInit
 } from '@angular/core';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { MediaMatcher } from '@angular/cdk/layout';
@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
   templateUrl: './sidebar.component.html',
   styleUrls: []
 })
-export class AppSidebarComponent implements OnDestroy {
+export class AppSidebarComponent implements OnInit, OnDestroy {
   public config: PerfectScrollbarConfigInterface = {};
   mobileQuery: MediaQueryList;
 
@@ -45,5 +45,35 @@ export class AppSidebarComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.mobileQuery.removeListener(this._mobileQueryListener);
+  }
+
+  styleNotBackground(state) {
+    if (this.router.url === '/transaction/warehouse/create') {
+      if (state === 'transaction') {
+        return 'background: #ffffff; color: #67757c;';
+      }
+    }
+    return '';
+  }
+
+  styleIconNotBackground(state) {
+    if (this.router.url === '/transaction/warehouse/create') {
+      if (state === 'transaction') {
+        return 'color: #67757c;';
+      }
+    }
+    return '';
+  }
+
+  styleNotBackgroundSubItem(state, subState, isIcon = false) {
+    if (this.router.url === '/transaction/warehouse/create') {
+      if (state === 'transaction' && subState === 'warehouse') {
+        if (isIcon) {
+          return 'color: #99abb4;';
+        }
+        return 'color: #67757c;';
+      }
+    }
+    return '';
   }
 }
