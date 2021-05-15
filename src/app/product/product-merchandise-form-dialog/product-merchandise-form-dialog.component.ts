@@ -105,7 +105,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       using_id: [-1],
       group_id: [null],
       placements: [[]],
-      product_name: [null, Validators.required],
+      product_name: [this.local_data && this.local_data['product_name'] ? this.local_data['product_name'] : null, Validators.required],
       sell_price: [null, Validators.required],
       original_price: [0],
       weight: [null],
