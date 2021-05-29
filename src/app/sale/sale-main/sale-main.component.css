@@ -165,7 +165,7 @@ html .page-wrapper .page-content {
 .label-text {
   font-size: 15px;
   text-align: left;
-  padding-top: 18px;
+  /*padding-top: 18px;*/
 }
 
 .price-product-number {
@@ -186,7 +186,7 @@ html .page-wrapper .page-content {
 }
 
 .pricebook-action {
-  padding-bottom: 5px;
+  /*padding-bottom: 5px;*/
 }
 
 .branch-action {
@@ -210,7 +210,7 @@ html .page-wrapper .page-content {
 }
 
 .customer-need-number {
-  padding-top: 18px;
+  /*padding-top: 18px;*/
   color: #56ad51;
   font-size: 20px;
   text-align: right;
@@ -232,7 +232,7 @@ html .page-wrapper .page-content {
 }
 
 .order-note {
-  padding-top: 18px;
+  padding-top: 2px;
 }
 
 .amount-cell-sub {
