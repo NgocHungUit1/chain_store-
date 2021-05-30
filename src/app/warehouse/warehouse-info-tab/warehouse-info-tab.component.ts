@@ -7,6 +7,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { WarehouseProductService } from '../warehouse-product.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OptionStoreService } from '../../common/option-store.service';
+import { PopupDeleteDialogComponent } from '../../common/popup-delete-dialog/popup-delete-dialog.component';
 
 @Component({
   selector: 'app-warehouse-info-tab',
@@ -125,16 +126,44 @@ export class WarehouseInfoTabComponent implements OnChanges {
       this.notifySer.notify('error', 'Bạn không có quyền thực hiện chức năng này.');
       return;
     }
-    this.mainService.delete(this.model.id).subscribe(res => {
-      // console.log(res);
-      // const typeStr = res['type'] === 'import' ? 'nhập' : 'trả';
-      // this.notifySer.notify('warning', 'Đã xóa đơn ' + typeStr + ' hàng');
-      this.notifySer.notify('warning', 'Đã xóa đơn');
-      this.reload.emit(null);
-      setTimeout(function () {
-        location.reload();
-      }, 1000);
-    });
+
+
+    // console.log(this.model.status);
+    if (this.model.status === 10) {
+      const obj = {
+        action: 'Delete',
+        title: 'Xóa đơn nhập',
+        content: 'Bạn có chắc chắn muốn xóa đơn ' + this.model.no + '(Hoàn thành) này không?',
+      };
+
+      const dialogRef = this.dialog.open(PopupDeleteDialogComponent, {
+        data: obj,
+        width: '30%',
+        minHeight: '80%',
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result?.event === 'delete') {
+          this.mainService.delete(this.model.id).subscribe(res => {
+            this.notifySer.notify('success', 'Xóa hóa đơn thành công!');
+            this.reload.emit(null);
+            setTimeout(function () {
+              location.reload();
+            }, 1000);
+          });
+        }
+      });
+    } else {
+      this.mainService.delete(this.model.id).subscribe(res => {
+        this.notifySer.notify('success', 'Xóa hóa đơn thành công!');
+        this.reload.emit(null);
+        setTimeout(function () {
+          location.reload();
+        }, 1000);
+      });
+    }
+
+
+
   }
 
   reconnect(item) {

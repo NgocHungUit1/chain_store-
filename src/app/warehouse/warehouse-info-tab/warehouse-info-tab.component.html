@@ -217,7 +217,8 @@
         <!--</button>-->
         <button class="m-r-10" mat-raised-button color="danger"
                 [disabled]="checkPermissionDisable('Warehouse.Delete') || !isAdminStore"
-                (click)="delete()" *ngIf="model.status === 9">
+                (click)="delete()" >
+<!--          *ngIf="model.status === 9"-->
           <mat-icon>delete</mat-icon>
           Xóa
         </button>

@@ -52,6 +52,7 @@ export class ProductTabStockChangeComponent extends ListComponentBase implements
 
   methodLabels = {
     'import': 'Nhập hàng',
+    'delete-import': 'Xóa đơn nhập hàng',
     'return': 'Trả hàng nhập',
     'stock-take': 'Kiểm kho',
     'sale': 'Bán hàng',

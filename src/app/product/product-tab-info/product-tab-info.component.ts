@@ -227,7 +227,7 @@ export class ProductTabInfoComponent implements OnChanges {
   }
 
   checkPermissionDisable(permission) {
-    const indexPermission = this.allPermission.indexOf(permission);
+    const indexPermission = this.allPermission?.indexOf(permission);
     if (indexPermission !== -1) {
       return false;
     }
