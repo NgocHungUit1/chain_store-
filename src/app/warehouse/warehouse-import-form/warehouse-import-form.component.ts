@@ -142,6 +142,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       note: [null],
       branch_id: [null, Validators.required],
       expenses_price: [0],
+      action_change: [0],
     });
 
     const optionStorePromise = new Promise((resolve) => {
@@ -241,6 +242,14 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
               // this.expensesTransactions = <ExpensesTransaction[]>resEx.body;
               // this.recalculateWarehouse();
+            });
+          }
+
+          // Luu thong tin
+          if (this.updateModelId !== null && res['status'] === 10) {
+            // console.log(res['status']);
+            this.form.patchValue({
+              action_change: 1,
             });
           }
 
@@ -424,6 +433,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         data['total_amount'] = numeral(data['total_amount']).value();
         data['paid_amount'] = numeral(data['paid_amount']).value();
         data['expenses_price'] = numeral(data['expenses_price']).value();
+        data['action_change'] = numeral(data['action_change']).value(); // chuc nang cap nhat don hoan thanh
         data['expensesTransactions'] = this.expensesTransactions;
         if (this.form.controls['date'].value !== null && typeof this.form.controls['date'].value === 'object') {
           const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
@@ -484,19 +494,33 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     if (product == -1) {
       return;
     }
-    if (this.form.controls['status'].value === '10') {
-      this.notifySer.notify('warning', 'Đơn nhập hàng đã hoàn thành.');
-      this.selectProduct.patchValue(null);
+
+    if (product.product_type !== undefined) {
+      this.handleAddProductToList(product.id);
     } else {
-      if (product.product_type !== undefined) {
-        this.handleAddProductToList(product.id);
-      } else {
-        sessionStorage.setItem('medicine', JSON.stringify(product));
-        // this.openProductMedicineDialog('Add', {});
-        this.openWarehouseProductMedicineDialog('Add', {});
-        this.selectProduct.patchValue(null);
-      }
+      sessionStorage.setItem('medicine', JSON.stringify(product));
+      // this.openProductMedicineDialog('Add', {});
+      this.openWarehouseProductMedicineDialog('Add', {});
+      this.selectProduct.patchValue(null);
     }
+
+
+    /**
+     *  Xư ly luu cũ
+     */
+    // if (this.form.controls['status'].value === '10') {
+    //   this.notifySer.notify('warning', 'Đơn nhập hàng đã hoàn thành.');
+    //   this.selectProduct.patchValue(null);
+    // } else {
+    //   if (product.product_type !== undefined) {
+    //     this.handleAddProductToList(product.id);
+    //   } else {
+    //     sessionStorage.setItem('medicine', JSON.stringify(product));
+    //     // this.openProductMedicineDialog('Add', {});
+    //     this.openWarehouseProductMedicineDialog('Add', {});
+    //     this.selectProduct.patchValue(null);
+    //   }
+    // }
   }
 
   /**
