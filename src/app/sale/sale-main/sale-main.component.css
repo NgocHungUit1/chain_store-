@@ -202,7 +202,7 @@ html .page-wrapper .page-content {
 .customer-pay-text {
   font-size: 15px;
   text-align: left;
-  padding-top: 25px;
+  padding-top: 20px;
 }
 
 .customer-need-text {
@@ -219,6 +219,7 @@ html .page-wrapper .page-content {
 
 .customer-pay-number {
   font-size: 18px;
+  margin-top: -10px;
 }
 
 .excess-cash-number {
@@ -233,6 +234,28 @@ html .page-wrapper .page-content {
 
 .order-note {
   padding-top: 2px;
+}
+
+.ban-thuoc-theo-don {
+  margin-top: 15px;
+}
+
+.custom-slide-toggle {
+  margin-top: -15px;
+}
+
+.custom-title-invoice {
+  margin-top: -15px;
+}
+
+.note-pay {
+  margin-top: -15px;
+  font-weight: 600;
+}
+
+.order-discount {
+  margin-top: -10px;
+  margin-bottom: -10px;
 }
 
 .amount-cell-sub {

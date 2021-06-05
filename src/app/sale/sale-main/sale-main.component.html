@@ -161,7 +161,7 @@
 
           <div class="user-action">
             <div fxLayout="row wrap">
-              <div fxFlex="90">
+              <div fxFlex="49">
 
                 <mat-form-field>
                   <input class="input-search-user input-search" type="text" [formControl]="selectUser" matInput
@@ -181,11 +181,22 @@
 
               </div>
               <div fxFlex="2"></div>
-              <div fxFlex="8">
+              <div fxFlex="49">
                 <!--                <mat-form-field>-->
                 <!--                  <input matInput class="input-search" value="{{ today | date:'shortTime' }}" disabled>-->
                 <!--                </mat-form-field>-->
-
+                <mat-form-field>
+                  <button mat-icon-button matPrefix>
+                    <mat-icon>business</mat-icon>
+                  </button>
+                  <mat-select class="input-search" placeholder="Chọn chi nhánh" formControlName="branch_id"
+                              (selectionChange)="changeBranch($event)"
+                              [disabled]="localItemInvoice?.is_return === true">
+                    <mat-option *ngFor="let branch of branchList " [value]="branch.id">
+                      {{ branch.name }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
 
               </div>
             </div>
@@ -213,20 +224,20 @@
 
           </div>
 
-          <div class="branch-action">
-            <mat-form-field>
-              <button mat-button matPrefix>
-                <mat-icon>business</mat-icon>
-              </button>
-              <mat-select class="input-search" placeholder="Chọn chi nhánh" formControlName="branch_id"
-                          (selectionChange)="changeBranch($event)"
-                          [disabled]="localItemInvoice?.is_return === true">
-                <mat-option *ngFor="let branch of branchList " [value]="branch.id">
-                  {{ branch.name }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
+          <!--          <div class="branch-action">-->
+          <!--            <mat-form-field>-->
+          <!--              <button mat-icon-button matPrefix>-->
+          <!--                <mat-icon>business</mat-icon>-->
+          <!--              </button>-->
+          <!--              <mat-select class="input-search" placeholder="Chọn chi nhánh" formControlName="branch_id"-->
+          <!--                          (selectionChange)="changeBranch($event)"-->
+          <!--                          [disabled]="localItemInvoice?.is_return === true">-->
+          <!--                <mat-option *ngFor="let branch of branchList " [value]="branch.id">-->
+          <!--                  {{ branch.name }}-->
+          <!--                </mat-option>-->
+          <!--              </mat-select>-->
+          <!--            </mat-form-field>-->
+          <!--          </div>-->
 
           <div class="customer-action">
             <div fxLayout="row wrap">
@@ -235,7 +246,7 @@
                   <input class="input-search-customer input-search" type="text" [formControl]="selectCustomer" matInput
                          [matAutocomplete]="chooseProduct" placeholder="Tìm khách hàng "
                          [readonly]="localItemInvoice?.is_return == true">
-                  <button mat-button matPrefix>
+                  <button mat-icon-button matPrefix>
                     <mat-icon>search</mat-icon>
                   </button>
                   <mat-autocomplete #chooseProduct="matAutocomplete"
@@ -260,36 +271,52 @@
             </div>
           </div>
 
-          <div class="pricebook-action">
-            <mat-form-field>
-              <button mat-button matPrefix>
-                <mat-icon>bookmark_border</mat-icon>
-              </button>
-              <mat-select class="input-search" placeholder="Chọn bảng giá" (selectionChange)="choosePriceBook($event)"
-                          formControlName="priceBookID">
-                <mat-option *ngFor="let priceList of priceLists " [value]="priceList.id"
-                            [disabled]="localItemInvoice?.is_return == true">
-                  {{ priceList.name }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+
+          <div fxLayout="row wrap">
+            <div fxFlex="49">
+
+              <div class="ban-thuoc-theo-don" *ngIf="localItemInvoice?.is_return !== true"
+                   [ngClass]="prescription?.checked ? 'prescription-checked' : 'prescription'">
+                <mat-checkbox #prescription
+                              formControlName="prescription_id">
+                </mat-checkbox>
+                <span [ngClass]="prescription?.checked ? 'prescription-text' : ''"
+                      (click)="clickPrescription()"> Bán thuốc theo đơn </span>
+              </div>
+
+            </div>
+            <div fxFlex="2"></div>
+            <div fxFlex="49">
+
+              <div class="pricebook-action">
+                <mat-form-field>
+                  <button mat-icon-button matPrefix>
+                    <mat-icon>bookmark_border</mat-icon>
+                  </button>
+                  <mat-select class="input-search" placeholder="Chọn bảng giá"
+                              (selectionChange)="choosePriceBook($event)"
+                              formControlName="priceBookID">
+                    <mat-option *ngFor="let priceList of priceLists " [value]="priceList.id"
+                                [disabled]="localItemInvoice?.is_return == true">
+                      {{ priceList.name }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+            </div>
           </div>
 
-          <div *ngIf="localItemInvoice?.is_return !== true"
-               [ngClass]="prescription?.checked ? 'prescription-checked' : 'prescription'">
-            <mat-checkbox #prescription
-                          formControlName="prescription_id">
-            </mat-checkbox>
-            <span [ngClass]="prescription?.checked ? 'prescription-text' : ''"
-                  (click)="clickPrescription()"> Bán thuốc theo đơn </span>
+
+          <div class="custom-title-invoice">
+            <div *ngIf="localItemInvoice?.is_return !== true; else titleHoaDon">
+              <label class="mat-h3"> Hóa đơn </label>
+            </div>
+            <ng-template #titleHoaDon>
+              <label class="mat-h3 "> Trả hàng </label>
+            </ng-template>
           </div>
 
-          <div *ngIf="localItemInvoice?.is_return !== true; else titleHoaDon">
-            <label class="mat-h3"> Hóa đơn </label>
-          </div>
-          <ng-template #titleHoaDon>
-            <label class="mat-h3"> Trả hàng </label>
-          </ng-template>
 
           <mat-divider></mat-divider>
           <div class="order-detail">
@@ -386,7 +413,7 @@
               </div>
             </div>
           </div>
-          <b>Thanh toán = 0 sẽ mặc định thanh toán hết.</b>
+          <div class="note-pay">Thanh toán = 0 sẽ mặc định thanh toán hết.</div>
 
 
           <div class="excess-cash">
@@ -425,11 +452,12 @@
           <div class="order-note">
             <mat-form-field class="example-full-width">
               <mat-label>Ghi chú</mat-label>
-              <textarea matInput placeholder="" formControlName="noteSiderBar"
+              <textarea rows="1" matInput placeholder="" formControlName="noteSiderBar"
                         (keyup)="saveNoteSiderBar($event)"></textarea>
             </mat-form-field>
           </div>
-          <span mat-menu-item>
+
+          <span class="custom-slide-toggle" mat-menu-item>
             <mat-slide-toggle [checked]="autoPrint" (change)="onChangeSlideToggleTuDongInHoaDon($event)">Tự động in hóa đơn
             </mat-slide-toggle>
             <mat-slide-toggle style="margin-left: 15px; " checked="false" (change)="onChangeSlideToggleInSoLo($event)"> In số lô
