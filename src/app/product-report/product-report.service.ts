@@ -114,6 +114,29 @@ export class ProductReportService {
   }
 
   /**
+   * API for Report Tồn kho
+   *
+   */
+  getApiUrlReportExpirationDate(filter?: ProductFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/report/expiration-date?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+  getListReportExpirationDate(filter?: ProductFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrlReportExpirationDate(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
+  /**
    * Export report excel
    * @param filter
    */

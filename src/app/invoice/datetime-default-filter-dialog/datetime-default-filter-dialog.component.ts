@@ -59,6 +59,14 @@ export class DatetimeDefaultFilterDialogComponent implements OnInit {
     this.dialogRef.close({ 'title': 'Hôm  qua' });
   }
 
+  btnAllTime(): void {
+    const obj = new DateFilter();
+    obj.date_from = null;
+    obj.date_to = null;
+    this.invoiceService.setDateFilter(obj);
+    this.dialogRef.close({ 'title': 'Toàn thời gian' });
+  }
+
   btnTuanNay(): void {
     const today = new Date();
     const obj = new DateFilter();
@@ -84,9 +92,12 @@ export class DatetimeDefaultFilterDialogComponent implements OnInit {
   }
 
   btnThangNay(): void {
-    const today = new Date();
+    let today = new Date();
     const year = today.getFullYear();
     const month = today.getMonth();
+    if (this.local_data.typeReport === 'expiration-date') {
+      today = new Date(year, month, this.daysInMonth(month, year) - 1);
+    }
     const first = new Date(year, month, 1);
     const obj = new DateFilter();
     // tháng này
@@ -94,6 +105,10 @@ export class DatetimeDefaultFilterDialogComponent implements OnInit {
     obj.date_to = this.invoiceService.convertDateYYYYMMDD(today);
     this.invoiceService.setDateFilter(obj);
     this.dialogRef.close({ 'title': 'Tháng này' });
+  }
+
+  daysInMonth (month, year) {
+    return new Date(year, month, 0).getDate();
   }
 
   btnThangTruoc(): void {
