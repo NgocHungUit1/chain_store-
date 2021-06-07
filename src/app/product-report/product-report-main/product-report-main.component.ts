@@ -79,6 +79,8 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     '#': '#',
     'product_no': 'Mã hàng',
     'product_name': 'Tên hàng',
+    'total_staff_invoice': 'SL nhân viên bán',
+    'total_staff_return': 'SL nhân viên trả',
     'sl_ban': 'SL bán',
     'doanh_thu': 'Doanh thu',
     'sl_tra': 'SL trả',
@@ -111,6 +113,10 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     'xuat_kiem': 'X.kiểm',
     'xuat_chuyen': 'X.chuyển',
     // 'quantity_of_stock': 'Tồn kho'
+    'expiration_parcel_no': 'Lô',
+    'expiration_date': 'Hạn sử dụng',
+    'expiration_day_exits': 'Số ngày còn lại',
+    'expiration_quantity': 'Số lượng',
   };
 
   // for sale
@@ -186,6 +192,10 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
         'soLuongNhapChuyen,soLuongXuatChuyen,soLuongTraHang';
     }
 
+    if (typeReport === 'expiration-date') {
+      filter.expand = 'productUnit,quantity';
+    }
+
     // filter.expand = 'returnsDetailsBranch';
     // filter.expand = 'medicine,productUnits,productPlacements,group,images,quantity';
     filter.date_from = objDateFilter.date_from;
@@ -196,7 +206,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
 
   loadData(): void {
     const typeReport = this.reportType.controls['type'].value;
-    if (typeReport === 'sale' || typeReport === 'profit') {
+    if (typeReport === 'sale' || typeReport === 'profit' || typeReport === 'sale-staff') {
       this.isLoadingResults = true;
       this.service.getListReportSale(this.apiFilter).subscribe(res => {
         this.dataSource = res.body.data;
@@ -287,6 +297,21 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       });
     }
 
+    if (typeReport === 'expiration-date') {
+      this.isLoadingResults = true;
+      this.service.getListReportExpirationDate(this.apiFilter).subscribe(res => {
+        this.dataSource = res.body.data;
+        let stt = 0;
+        this.dataSource.forEach(elementData => {
+          stt++;
+          elementData.stt = stt;
+        });
+        this.reloadFilter(res);
+        // const url = this.service.getApiUrlReportSale(this.apiFilter);
+        this.isLoadingResults = false;
+      });
+    }
+
   }
 
   radioTimeChange(event: Event) {
@@ -306,7 +331,9 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
   }
 
   openTimeDefault() {
-    const obj = {};
+    const obj = {
+      'typeReport' : this.reportType.controls['type'].value
+    };
     const dialogRef = this.dialog.open(DatetimeDefaultFilterDialogComponent, {
       data: obj,
       width: '40%',
@@ -320,7 +347,12 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       const date = this.serviceInvoice.getDateFilter();
       const date_from = new Date(date.date_from);
       const date_to = new Date(date.date_to);
-      this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+      if (!date.date_from && !date.date_to) {
+        this.titleTimeChoose = this.convertDate(new Date()) + ' - ' + this.convertDate(new Date());
+
+      } else {
+        this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+      }
       this.timeFilter.patchValue({
         typeTime: 'default',
       });
@@ -461,6 +493,22 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
           'second_ton_cuoi_ky', 'second_gia_tri_cuoi_ky'];
       }
 
+      if (res.type === 'expiration-date') {
+        this.displayedColumns = ['#', 'product_no', 'product_name', 'expiration_parcel_no',
+          'expiration_date', 'expiration_day_exits', 'expiration_quantity'];
+        this.columnsToDisplay = ['#', 'product_no', 'product_name', 'expiration_parcel_no',
+          'expiration_date', 'expiration_day_exits', 'expiration_quantity'];
+        this.second_columnsToDisplay = [];
+      }
+
+      if (res.type === 'sale-staff') {
+        this.displayedColumns = ['#', 'product_no', 'product_name', 'total_staff_invoice', 'total_staff_return',
+          'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
+        this.columnsToDisplay = ['#', 'product_no', 'product_name', 'total_staff_invoice', 'total_staff_return',
+          'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
+        this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name', 'second_total_staff_invoice', 'second_total_staff_return',
+          'second_sl_ban', 'second_doanh_thu', 'second_sl_tra', 'second_gia_tri_tra', 'second_doanh_thu_thuan'];
+      }
 
       this.apiFilter = this.buildFilterFromParams();
       this.loadData();
@@ -527,7 +575,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
    */
   exportExcel() {
     const typeReport = this.reportType.controls['type'].value;
-    if (typeReport === 'sale' || typeReport === 'profit') {
+    if (typeReport === 'sale' || typeReport === 'profit' || typeReport === 'sale-staff') {
       const _apiFilter = this.apiFilter;
       _apiFilter.export = true;
       _apiFilter.type_report = typeReport;
@@ -567,6 +615,21 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       });
     }
 
+    if (typeReport === 'expiration-date') {
+      this.notifySer.notify('warning', 'Chưa hỗ trợ xuât file exel');
+      return;
+    }
+
   }
 
+  calculateDiff(dateSent) {
+    const currentDate = new Date();
+    dateSent = new Date(dateSent);
+    const days = Math.floor((Date.UTC(dateSent.getFullYear(), dateSent.getMonth(), dateSent.getDate()) - Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()) ) / (1000 * 60 * 60 * 24));
+    if (days >= 0) {
+      return days + 1;
+    }
+
+    return 'Hết hạn';
+  }
 }
