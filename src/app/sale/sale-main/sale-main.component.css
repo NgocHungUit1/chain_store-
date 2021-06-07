@@ -219,7 +219,7 @@ html .page-wrapper .page-content {
 
 .customer-pay-number {
   font-size: 18px;
-  margin-top: -10px;
+  /*margin-top: -10px;*/
 }
 
 .excess-cash-number {
@@ -245,11 +245,11 @@ html .page-wrapper .page-content {
 }
 
 .custom-title-invoice {
-  margin-top: -15px;
+  /*margin-top: -15px;*/
 }
 
 .note-pay {
-  margin-top: -15px;
+  margin-top: -10px;
   font-weight: 600;
 }
 
