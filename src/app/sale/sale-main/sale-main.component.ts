@@ -800,28 +800,28 @@ export class SaleMainComponent implements OnInit {
         customerPay: paymentSiderBar?.number
       });
     }
-    // this.form.controls['today'].enable();
-    // this.form.controls['time'].enable();
+    this.form.controls['today'].enable();
+    this.form.controls['time'].enable();
 
-    if (mItemInvoice.invoice_id > 0) {
+    if (Number(mItemInvoice.invoice_id) > 0) {
       const aDate = mItemInvoice.today.split('-');
       this.form.patchValue({
         today: new Date(aDate[0], aDate[1], aDate[2]),
         time: mItemInvoice.time,
         invoice_id: mItemInvoice.invoice_id
       });
-      // this.form.controls['today'].disable();
-      // this.form.controls['time'].disable();
+      this.form.controls['today'].disable();
+      this.form.controls['time'].disable();
     }
 
-    if (mItemInvoice.invoice_id === -1) {
-      const today = new Date();
-      const time = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
-      this.form.patchValue({
-        today: today,
-        time: time,
-      });
-    }
+    // if (Number(mItemInvoice.invoice_id) === -1) {
+    //   const today = new Date();
+    //   const time = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
+    //   this.form.patchValue({
+    //     today: today,
+    //     time: time,
+    //   });
+    // }
     this.handleExpenseOrder();
   }
 
@@ -1305,7 +1305,7 @@ export class SaleMainComponent implements OnInit {
       PaymentPrice: this.sumPrice - this.numberDiscount + this.expenseOrder, // tien thanh toan
       KhachNo: this.tienKhachNo,
       ExpenseOrders: this.expenseOrders,
-      // date_created: date_created,
+      date_created: date_created,
     };
 
     /**
