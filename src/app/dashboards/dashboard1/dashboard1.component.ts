@@ -109,11 +109,11 @@ export class Dashboard1Component {
                 strokeDashArray: 3,
             },
             plotOptions: {
-                bar: {
-                    horizontal: false,
-                    columnWidth: '30%',
-                    endingShape: 'flat'
-                },
+                // bar: {
+                //     horizontal: false,
+                //     columnWidth: '30%',
+                //     endingShape: 'flat'
+                // },
 
             },
             dataLabels: {
@@ -327,9 +327,9 @@ export class Dashboard1Component {
         tooltips: {
             enabled: false
         },
-        
+
         scales: {
-           
+
             xAxes: [{
                 display: false,
                  datasets: [{
@@ -341,7 +341,7 @@ export class Dashboard1Component {
                 display: false
             }]
         }
-        
+
     };
     public barChartColors: Array<any> = [
         {

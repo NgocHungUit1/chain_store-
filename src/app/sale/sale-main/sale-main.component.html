@@ -185,6 +185,15 @@
                 <!--                <mat-form-field>-->
                 <!--                  <input matInput class="input-search" value="{{ today | date:'shortTime' }}" disabled>-->
                 <!--                </mat-form-field>-->
+
+<!--                <mat-form-field>-->
+<!--                  <mat-label>Ngày</mat-label>-->
+<!--                  <input class="input-search" matInput  [matDatepicker]="date_picker"  formControlName="today"-->
+<!--                         required="required">-->
+<!--                  <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>-->
+<!--                  <mat-datepicker #date_picker></mat-datepicker>-->
+<!--                </mat-form-field>-->
+
                 <mat-form-field>
                   <button mat-icon-button matPrefix>
                     <mat-icon>business</mat-icon>
@@ -201,26 +210,26 @@
               </div>
             </div>
 
-<!--            <div fxLayout="row wrap">-->
-<!--              <div fxFlex="49">-->
-<!--                <mat-form-field>-->
-<!--                  <mat-label>Thời gian</mat-label>-->
-<!--                  <input matInput formControlName="time" type="time"-->
-<!--                         required="required">-->
-<!--                </mat-form-field>-->
-<!--              </div>-->
-<!--              <div fxFlex="2">-->
-<!--              </div>-->
-<!--              <div fxFlex="49">-->
-<!--                <mat-form-field>-->
-<!--                  <mat-label>Ngày</mat-label>-->
-<!--                  <input class="input-search" matInput [matDatepicker]="date_picker" formControlName="today"-->
-<!--                         required="required">-->
-<!--                  <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>-->
-<!--                  <mat-datepicker #date_picker></mat-datepicker>-->
-<!--                </mat-form-field>-->
-<!--              </div>-->
-<!--            </div>-->
+                        <div fxLayout="row wrap">
+                          <div fxFlex="49">
+                            <mat-form-field>
+                              <mat-label>Thời gian</mat-label>
+                              <input matInput formControlName="time" type="time"
+                                     required="required">
+                            </mat-form-field>
+                          </div>
+                          <div fxFlex="2">
+                          </div>
+                          <div fxFlex="49">
+                            <mat-form-field>
+                              <mat-label>Ngày</mat-label>
+                              <input class="input-search" matInput [matDatepicker]="date_picker" formControlName="today"
+                                     required="required">
+                              <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>
+                              <mat-datepicker #date_picker></mat-datepicker>
+                            </mat-form-field>
+                          </div>
+                        </div>
 
           </div>
 
@@ -317,8 +326,8 @@
             </ng-template>
           </div>
 
-
           <mat-divider></mat-divider>
+
           <div class="order-detail">
             <div fxLayout="row wrap" class="price-product">
               <div fxFlex="50" class="price-product-text ">
@@ -330,7 +339,7 @@
                 </ng-template>
               </div>
               <div fxFlex="50" class="price-product-number">
-                <input matInput type="text" value="{{ sumPrice | number}}">
+                <input matInput type="text" value="{{ sumPrice | number}}" autocomplete="off">
               </div>
             </div>
           </div>
@@ -358,7 +367,11 @@
             <div fxLayout="row wrap" class="price-product">
               <div fxFlex="50" class="price-product-text ">
                 <div>
-                  <span (click)="openExpensesOrder()"><mat-icon color="primary">list</mat-icon> Thu khác </span>
+                  <mat-label (click)="openExpensesOrder()">
+                    <mat-icon color="primary">list</mat-icon>
+                    <span>Thu khác</span>
+                  </mat-label>
+                  <!--                  <span (click)="openExpensesOrder()"><mat-icon color="primary">list</mat-icon> Thu khác </span>-->
                 </div>
 
               </div>

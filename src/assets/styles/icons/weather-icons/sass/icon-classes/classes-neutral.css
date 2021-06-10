@@ -1,0 +1,17 @@
+/* Error: Undefined variable.
+ *   ,
+ * 1 | .wi-cloud:before {content: $cloud;}
+ *   |                            ^^^^^^
+ *   '
+ *   src/assets/styles/icons/weather-icons/sass/icon-classes/classes-neutral.scss 1:28  root stylesheet */
+
+body::before {
+  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
+      "Droid Sans Mono", monospace, monospace;
+  white-space: pre;
+  display: block;
+  padding: 1em;
+  margin-bottom: 1em;
+  border-bottom: 2px solid black;
+  content: "Error: Undefined variable.\a   \2577 \a 1 \2502  .wi-cloud:before {content: $cloud;}\d\a   \2502                             ^^^^^^\a   \2575 \a   src/assets/styles/icons/weather-icons/sass/icon-classes/classes-neutral.scss 1:28  root stylesheet";
+}

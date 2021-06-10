@@ -1,0 +1,109 @@
+/*
+Template Name: Material Pro Admin
+Author: Wrappixel
+Email: niravjoshi87@gmail.com
+File: scss
+*/
+/*******************
+ Topbar
+*******************/
+.main-container .navbar-header .logo-text {
+  color: white;
+}
+
+.left-sidebar {
+  width: 17%;
+}
+.left-sidebar .dv-header {
+  padding-left: 16px;
+}
+
+.mat-select-panel {
+  font-size: 13px !important;
+}
+
+.table-container {
+  position: relative;
+  min-height: 500px;
+}
+
+.table-content {
+  position: relative;
+  max-height: 535px;
+  overflow: auto;
+}
+
+.table-loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 56px;
+  right: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-rate-limit-reached {
+  color: #980000;
+  max-width: 360px;
+  text-align: center;
+}
+
+/* Column Widths */
+.mat-column-number,
+.mat-column-state {
+  max-width: 64px;
+}
+
+.mat-column-created {
+  max-width: 124px;
+}
+
+.mat-dialog-content {
+  font-size: 1rem;
+}
+
+.product-image-container {
+  position: relative;
+  margin: 20px 20px 0px 0px;
+}
+
+.product-image-container .img-container {
+  height: 385px !important;
+}
+
+#snav .mat-nav-list .mat-list-item.selected > .mat-list-item-content > .mat-nav-list .mat-list-item.selected > .mat-list-item-content a.selected mat-icon {
+  color: #2f3d4a;
+}
+
+.mat-toolbar .select-product .mat-focused .mat-form-field-underline .mat-form-field-ripple {
+  background-color: #009688;
+}
+
+.select-product .mat-form-field-appearance-legacy .mat-form-field-underline {
+  bottom: 5px;
+  background-color: rgba(0, 0, 0, 0.42);
+}
+
+.select-product .mat-form-field-wrapper {
+  padding-bottom: 5px;
+}
+
+.warehouse-product-table .mat-form-field .mat-form-field-prefix, .mat-table .mat-form-field .mat-form-field-suffix {
+  display: none;
+}
+
+.warehouse-product-table .mat-form-field:hover .mat-form-field-prefix, .mat-table .mat-form-field:hover .mat-form-field-suffix {
+  display: block;
+}
+
+.cart .mat-toolbar .mat-tab-header {
+  border-bottom: none;
+}
+
+.cart .mat-toolbar .mat-tab-labels .mat-tab-label {
+  padding: 0 5px;
+}

@@ -1,0 +1,106 @@
+.dv-list-page, .dv-detail-page {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  margin: -15px;
+  font-size: 1rem;
+}
+.dv-list-page .dv-header, .dv-detail-page .dv-header {
+  flex: 0 0 auto;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: none;
+  height: 50px;
+  padding: 0px;
+}
+.dv-list-page .mat-paginator-outer-container, .dv-detail-page .mat-paginator-outer-container {
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+.dv-list-page .mat-cell, .dv-list-page .mat-footer-cell, .dv-detail-page .mat-cell, .dv-detail-page .mat-footer-cell {
+  font-size: 1rem;
+}
+.dv-list-page .dv-content, .dv-detail-page .dv-content {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+.dv-list-page .dv-content .dv-drawer-container, .dv-detail-page .dv-content .dv-drawer-container {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+.dv-list-page .dv-content .dv-drawer-container .dv-drawer-menu, .dv-detail-page .dv-content .dv-drawer-container .dv-drawer-menu {
+  width: 240px;
+}
+.dv-list-page .dv-content .dv-drawer-container .dv-drawer-menu .mat-drawer-inner-container, .dv-detail-page .dv-content .dv-drawer-container .dv-drawer-menu .mat-drawer-inner-container {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+.dv-list-page .dv-content .dv-drawer-container .dv-drawer-menu .mat-drawer-inner-container .dv-drawer-menu-content, .dv-detail-page .dv-content .dv-drawer-container .dv-drawer-menu .mat-drawer-inner-container .dv-drawer-menu-content {
+  flex: 1 1 auto;
+  margin: 0;
+  overflow: auto;
+  box-shadow: none !important;
+  border-radius: 0;
+}
+.dv-list-page .dv-content .dv-drawer-container .dv-drawer-menu .mat-drawer-inner-container .dv-drawer-menu-content .md-drppicker, .dv-detail-page .dv-content .dv-drawer-container .dv-drawer-menu .mat-drawer-inner-container .dv-drawer-menu-content .md-drppicker {
+  left: 5px !important;
+}
+.dv-list-page .dv-content .dv-drawer-container .dv-drawer-menu .mat-drawer-inner-container .dv-drawer-menu-footer, .dv-detail-page .dv-content .dv-drawer-container .dv-drawer-menu .mat-drawer-inner-container .dv-drawer-menu-footer {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dv-list-page .dv-content .dv-drawer-container .dv-drawer-content, .dv-detail-page .dv-content .dv-drawer-container .dv-drawer-content {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+}
+.dv-list-page .dv-content .dv-drawer-container .dv-drawer-content .dv-drawer-content-header, .dv-detail-page .dv-content .dv-drawer-container .dv-drawer-content .dv-drawer-content-header {
+  background: white;
+  flex: none;
+  font-size: 12px;
+  box-shadow: none;
+  border-top: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+.dv-list-page .dv-content .dv-drawer-container .dv-drawer-content .dv-drawer-content-header .dv-column-selector, .dv-detail-page .dv-content .dv-drawer-container .dv-drawer-content .dv-drawer-content-header .dv-column-selector {
+  width: 70px;
+}
+.dv-list-page .dv-content .dv-drawer-container .dv-drawer-content .dv-drawer-content-header .button-row button, .dv-list-page .dv-content .dv-drawer-container .dv-drawer-content .dv-drawer-content-header .button-row a, .dv-detail-page .dv-content .dv-drawer-container .dv-drawer-content .dv-drawer-content-header .button-row button, .dv-detail-page .dv-content .dv-drawer-container .dv-drawer-content .dv-drawer-content-header .button-row a {
+  margin-right: 10px;
+}
+.dv-list-page .dv-content .dv-drawer-container .dv-drawer-content .dv-drawer-content-data, .dv-detail-page .dv-content .dv-drawer-container .dv-drawer-content .dv-drawer-content-data {
+  flex: 1 1 auto;
+  overflow: auto;
+  box-shadow: none;
+  margin: 0;
+  padding: 0 12px 12px;
+  display: flex;
+  flex-direction: column;
+}
+.dv-list-page .dv-content .dv-drawer-container .dv-drawer-content .dv-drawer-content-footer, .dv-detail-page .dv-content .dv-drawer-container .dv-drawer-content .dv-drawer-content-footer {
+  background: white;
+  flex: none;
+  font-size: 12px;
+  box-shadow: none;
+  border-bottom: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  display: flex;
+}
+.dv-list-page .dv-content .dv-drawer-container .dv-drawer-content .dv-drawer-content-footer .mat-paginator, .dv-detail-page .dv-content .dv-drawer-container .dv-drawer-content .dv-drawer-content-footer .mat-paginator {
+  flex: auto;
+  font-size: 10px;
+}
+.dv-list-page .dv-content .dv-drawer-container .dv-drawer-content .dv-drawer-content-footer .mat-paginator .mat-paginator-container, .dv-detail-page .dv-content .dv-drawer-container .dv-drawer-content .dv-drawer-content-footer .mat-paginator .mat-paginator-container {
+  min-height: 48px;
+}
+.dv-list-page .dv-content .dv-drawer-container .dv-drawer-content .dv-drawer-content-footer .mat-paginator .mat-paginator-page-size-select, .dv-detail-page .dv-content .dv-drawer-container .dv-drawer-content .dv-drawer-content-footer .mat-paginator .mat-paginator-page-size-select {
+  margin: 4px 4px 0px 4px;
+}
+
+.dv-detail-page .dv-content .dv-drawer-container .dv-drawer-content .dv-drawer-content-data {
+  padding-top: 12px;
+}

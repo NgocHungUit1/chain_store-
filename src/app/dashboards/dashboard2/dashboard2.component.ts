@@ -402,11 +402,11 @@ export class Dashboard2Component implements AfterViewInit {
                 strokeDashArray: 3,
             },
             plotOptions: {
-                bar: {
-                    horizontal: false,
-                    columnWidth: '40%',
-                    endingShape: 'flat'
-                },
+                // bar: {
+                //     horizontal: false,
+                //     columnWidth: '40%',
+                //     endingShape: 'flat'
+                // },
 
             },
             dataLabels: {
