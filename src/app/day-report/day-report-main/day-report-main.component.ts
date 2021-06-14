@@ -150,7 +150,7 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'customer,payment,detail,priceBook,store,user,expensesOrders';
+    filter.expand = 'customer,payment,detail,priceBook,store,user,expensesOrders,createdFormat';
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
     filter.order_status = this.orderStatusFilter.controls['status'].value;
@@ -215,11 +215,11 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
         stt++;
         elementData.stt = stt; // tinh STT
 
-        const date = new Date(1000 * elementData.created_at).toJSON().slice(0, 16);
-        elementData.created_at = date.slice(8, 10) + '/'
-          + date.slice(5, 7) + '/'
-          + date.slice(0, 4) + ' '
-          + date.slice(11, 16);
+        // const date = new Date(1000 * elementData.created_at).toJSON().slice(0, 16);
+        // elementData.created_at = date.slice(8, 10) + '/'
+        //   + date.slice(5, 7) + '/'
+        //   + date.slice(0, 4) + ' '
+        //   + date.slice(11, 16);
 
         // tong tien khach hang da tra, tien giam gia
         let total_payment = 0;
