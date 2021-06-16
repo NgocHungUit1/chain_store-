@@ -87,11 +87,11 @@ tr.example-element-row:not(.example-expanded-row):active {
 }
 
 .title-time-filter {
-  padding: 16px 0 0 20px;
+  /*padding: 16px 0 0 20px;*/
 }
 
 .mat-card {
-  margin: 0px !important;
+  margin: 0px;
 }
 
 .red-warning {
@@ -111,3 +111,4 @@ form .mat-card-content {
 .mat-form-field {
   color: black;
 }
+

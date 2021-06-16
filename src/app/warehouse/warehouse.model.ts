@@ -46,6 +46,7 @@ export class WarehouseFilter extends ApiFilterBase {
   keyword = '';
   date_from = '';
   date_to = '';
+  order_national = '';
 
   getModelSearch() {
     return 'WarehouseSearch';

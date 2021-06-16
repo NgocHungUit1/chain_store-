@@ -48,6 +48,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
 
   isLoadingResults = true;
   isRateLimitReached = false;
+  toggleDropdownSearch = false;
 
   apiFilter: InvoiceFilter;
   expandedElement: Invoice | null;
@@ -376,4 +377,11 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     this.router.navigate(['/sale']);
   }
 
+  toggleDropdown() {
+    if (this.toggleDropdownSearch === false) {
+      this.toggleDropdownSearch = true;
+    } else {
+      this.toggleDropdownSearch = false;
+    }
+  }
 }

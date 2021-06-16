@@ -10,6 +10,31 @@ $mini-sidebar-width: 80px;
 /*******************
 Main sidebar
 ******************/
+.mat-sidenav {
+  .mat-card {
+    padding: 10px 0!important;
+    margin-bottom: 10px!important;
+
+    &:last-child {
+      margin-bottom: 0!important;
+    }
+
+    .mat-card-title {
+      font-size: $font-16;
+      font-weight: 700;
+      margin-bottom: 0;
+      padding: 0 12px;
+    }
+
+    .mat-card-content {
+      padding: 12px 12px 0;
+    }
+  }
+
+  //.mat-card-content {
+  //  padding: 16px;
+  //}
+}
 
 /*-- ==============================================================
  Small Desktop & above all (1024px)
