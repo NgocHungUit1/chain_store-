@@ -89,15 +89,14 @@
 
           <mat-form-field>
             <mat-label>Theo mã hóa đơn</mat-label>
-            <input matInput [formControl]="searchInvoiceForm" (keydown.enter)="toggleDropdown()" placeholder="" #input>
+            <input matInput [formControl]="searchInvoiceForm" placeholder="" #input>
             <button mat-icon-button matPrefix>
               <mat-icon>search</mat-icon>
             </button>
           </mat-form-field>
 
+          <form [formGroup]="productFilter" (click)="$event.stopPropagation();">
 
-
-          <!--<form [formGroup]="productFilter" (click)="$event.stopPropagation();">
             <mat-form-field>
               <input type="text" matInput [formControl]="productFilter?.controls['product']" placeholder="Tên sản phẩm"
                      [matAutocomplete]="autoProduct">
@@ -105,16 +104,16 @@
                 <mat-icon>search</mat-icon>
               </button>
               <button mat-icon-button matSuffix
-                      (click)="this.productFilter.patchValue({product: null}); orderFilterChange()"
+                      (click)="this.productFilter.patchValue({product: null}); filterChange()"
                       *ngIf="this.productFilter?.controls['product'].value ">
                 <mat-icon>delete</mat-icon>
               </button>
               <mat-autocomplete #autoProduct="matAutocomplete" [displayWith]="displayProduct">
-                <mat-option style="height: 50px;
+                <mat-option (click)="filterChange()" style="height: 50px;
                                       line-height: 24px;
                                       word-break: break-word;
                                       display: block;
-                                      white-space: pre-wrap;" (click)="orderFilterChange()"
+                                      white-space: pre-wrap;"
                             *ngFor="let product of filteredProducts | async" [value]="product">
                     <span class="supplier-option">
                       {{ product.product_no }} - {{ product.product_name}}
@@ -122,7 +121,8 @@
                 </mat-option>
               </mat-autocomplete>
             </mat-form-field>
-          </form>-->
+
+          </form>
 
         </div>
       </div>
