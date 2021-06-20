@@ -5,8 +5,8 @@ Email: niravjoshi87@gmail.com
 File: scss
 */
 
-/*============================================================== 
- For all pages 
+/*==============================================================
+ For all pages
  ============================================================== */
 
 /*******************
@@ -26,12 +26,14 @@ File: scss
 
 .mat-drawer-container {
   background: $bodycolor;
+  height: 100%;
 }
 
 html .page-wrapper {
   height: calc(100vh - 64px);
   .page-content {
-    padding: 15px;
+    padding: 15px 15px 0;
+    height: 100%;
   }
 }
 
