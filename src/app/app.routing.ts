@@ -43,6 +43,10 @@ export const AppRoutes: Routes = [
         path: 'report',
         loadChildren: () => import('./report/report.module').then(m => m.ReportModule)
       },
+      {
+        path: 'cash-flow',
+        loadChildren: () => import('./cash-flow/cash-flow.module').then(m => m.CashFlowModule)
+      },
       // {
       //     path: 'material',
       //     loadChildren:
