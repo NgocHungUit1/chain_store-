@@ -137,6 +137,29 @@ export class ProductReportService {
   }
 
   /**
+   * API for Report Tồn kho
+   *
+   */
+  getApiUrlReportSupplier(filter?: ProductFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/report/supplier?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+  getListReportSupplier(filter?: ProductFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrlReportSupplier(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
+  /**
    * Export report excel
    * @param filter
    */

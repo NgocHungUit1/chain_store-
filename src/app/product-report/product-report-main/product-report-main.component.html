@@ -87,6 +87,24 @@
               </mat-icon>
             </mat-radio-button>
 
+            <mat-radio-button class="radio-button-report-type" value="customer">
+              Khách hàng theo hàng bán
+              <mat-icon
+                class="icon-info"
+                matTooltip="Sản phẩm kinh doanh">
+                info
+              </mat-icon>
+            </mat-radio-button>
+
+            <mat-radio-button class="radio-button-report-type" value="supplier">
+              NCC theo hàng nhập
+              <mat-icon
+                class="icon-info"
+                matTooltip="Sản phẩm kinh doanh">
+                info
+              </mat-icon>
+            </mat-radio-button>
+
           </mat-radio-group>
         </form>
 
@@ -197,6 +215,18 @@
               </ng-container>
               <ng-container matColumnDef="second_product_name">
                 <th mat-header-cell *matHeaderCellDef></th>
+              </ng-container>
+
+              <ng-container matColumnDef="total_customer">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['total_customer']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                      {{ element.total_customer | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_total_customer">
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef></th>
               </ng-container>
 
               <ng-container matColumnDef="sl_ban">
@@ -652,6 +682,97 @@
               </ng-container>
 
               <!-- end sale-staff-->
+
+              <!-- supplier -->
+              <ng-container matColumnDef="supplier_total">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['supplier_total']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{element?.totalSupplier | number }}
+                  </span>
+                </td>
+              </ng-container>
+
+            <ng-container matColumnDef="second_supplier_total">
+              <th mat-header-cell class="column-number color-export"
+                  *matHeaderCellDef></th>
+            </ng-container>
+
+
+              <ng-container matColumnDef="supplier_total_import">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['supplier_total_import']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ element?.totalWarehouseImport | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_supplier_total_import">
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef>{{sum_supplier_total_import | number}}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="supplier_total_value_import">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['supplier_total_value_import']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ element?.totalWarehouseImport * element?.original_price | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_supplier_total_value_import">
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef>{{sum_supplier_total_value_import | number}}</th>
+              </ng-container>
+
+              <ng-container matColumnDef="supplier_total_return">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['supplier_total_return']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ -element?.totalWarehouseReturn | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_supplier_total_return">
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef>{{sum_supplier_total_return | number}}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="supplier_total_value_return">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['supplier_total_value_return']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                     {{ -(element?.totalWarehouseReturn * element?.original_price) | number}}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_sum_supplier_total_value_return">
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef>{{sum_supplier_total_value_return | number}}</th>
+              </ng-container>
+
+              <ng-container matColumnDef="supplier_value_pure">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['supplier_value_pure']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ getSupplierTotalPure(element?.totalWarehouseImport, element?.totalWarehouseReturn ) * element?.original_price | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_supplier_value_pure">
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef>{{sum_supplier_value_pure | number }}</th>
+              </ng-container>
+
+              <!-- end supplier-->
 
 
               <ng-container matColumnDef="expandedDetail">
