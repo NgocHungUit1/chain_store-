@@ -93,11 +93,11 @@ export class DashboardMainComponent implements OnInit {
         strokeDashArray: 3,
       },
       plotOptions: {
-        bar: {
-          horizontal: false,
-          columnWidth: '30%',
-          endingShape: 'flat'
-        },
+        // bar: {
+        //   horizontal: false,
+        //   columnWidth: '30%',
+        //   endingShape: 'flat'
+        // },
 
       },
       dataLabels: {
@@ -161,6 +161,7 @@ export class DashboardMainComponent implements OnInit {
     this.serviceDashBoard.getDataBarChart(from, to).subscribe(res => {
 
 
+      // @ts-ignore
       this.chartOptions = {
         series: [
           {
@@ -181,11 +182,11 @@ export class DashboardMainComponent implements OnInit {
           strokeDashArray: 3,
         },
         plotOptions: {
-          bar: {
-            horizontal: false,
-            columnWidth: '30%',
-            endingShape: 'flat'
-          },
+          // bar: {
+          //   horizontal: false,
+          //   columnWidth: '30%',
+          //   endingShape: 'flat'
+          // },
 
         },
         dataLabels: {

@@ -1,19 +1,24 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
-import { ListComponentBase } from '../../shared/base';
-import { MatDialog } from '@angular/material/dialog';
-import { NotifierService } from 'angular-notifier';
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { ActivatedRoute } from '@angular/router';
-import { MatTable } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { InvoiceFilter, Invoice, DateFilter } from '../invoice.model';
-import { InvoiceService } from '../invoice.service';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { DatetimeDefaultFilterDialogComponent } from '../datetime-default-filter-dialog/datetime-default-filter-dialog.component';
-import { DatetimeChooseFilterDialogComponent } from '../datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
-import { debounceTime } from 'rxjs/operators';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {Router} from '@angular/router';
+import {ListComponentBase} from '../../shared/base';
+import {MatDialog} from '@angular/material/dialog';
+import {NotifierService} from 'angular-notifier';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import {ActivatedRoute} from '@angular/router';
+import {MatTable} from '@angular/material/table';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
+import {InvoiceFilter, Invoice, DateFilter} from '../invoice.model';
+import {InvoiceService} from '../invoice.service';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {DatetimeDefaultFilterDialogComponent} from '../datetime-default-filter-dialog/datetime-default-filter-dialog.component';
+import {DatetimeChooseFilterDialogComponent} from '../datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
+import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
+import {Product} from '../../product/product.model';
+import {Observable} from 'rxjs';
+import {Supplier} from '../../supplier/supplier.model';
+import {of} from 'rxjs/internal/observable/of';
+import {ProductService} from '../../product/product.service';
 
 @Component({
   selector: 'app-invoice-list',
@@ -35,7 +40,8 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     private dialog: MatDialog,
     private notifySer: NotifierService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private productSer: ProductService
   ) {
     super();
   }
@@ -48,12 +54,14 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
 
   isLoadingResults = true;
   isRateLimitReached = false;
+  toggleDropdownSearch = false;
 
   apiFilter: InvoiceFilter;
   expandedElement: Invoice | null;
   timeFilter: FormGroup;
   orderStatusFilter: FormGroup;
   orderNationalFilter: FormGroup;
+  productFilter: FormGroup;
 
   currentDateFilter: DateFilter;
 
@@ -133,6 +141,12 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
 
   codeSearch = null;
 
+  filteredProducts: Observable<Product[]>;
+
+  displayProduct(product?: Product): string | undefined {
+    return (product === undefined || product === null) ? undefined : product.product_name;
+  }
+
   buildFilterFromParams(): InvoiceFilter {
     function write<K extends keyof InvoiceFilter>(arg: InvoiceFilter, key: K, value: InvoiceFilter[K]): void {
       arg[key] = value;
@@ -155,6 +169,9 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     filter.order_status = this.orderStatusFilter.controls['status'].value;
     filter.order_national = this.orderNationalFilter.controls['status'].value;
 
+    const product = this.productFilter.controls['product']?.value;
+    filter.product_id = product?.id;
+
     return filter;
   }
 
@@ -173,6 +190,9 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
       status: [
         ['yes', 'no']
       ],
+    });
+    this.productFilter = this.fb.group({
+      product: [null],
     });
   }
 
@@ -305,6 +325,21 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
       }
     });
 
+    this.filteredProducts = this.productFilter.controls['product'].valueChanges.pipe(
+      startWith(''),
+      // delay emits
+      debounceTime(300),
+      // use switch map so as to cancel previous subscribed events, before creating new once
+      switchMap(value => {
+        if (value !== '') {
+          // lookup from github
+          return this.lookupProduct(value);
+        } else {
+          // if no value is present, return null
+          return of(null);
+        }
+      })
+    );
   }
 
   applyFilter(event: Event) {
@@ -376,4 +411,27 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     this.router.navigate(['/sale']);
   }
 
+  lookupProduct(value: string): Observable<Supplier[]> {
+    return this.productSer.autocomplete(value).pipe(
+      // map the item property of the github results as our return object
+      map(results => results),
+      // catch errors
+      catchError(_ => {
+        return of(null);
+      })
+    );
+  }
+
+  filterChange() {
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
+  }
+
+  toggleDropdown() {
+    if (this.toggleDropdownSearch === false) {
+      this.toggleDropdownSearch = true;
+    } else {
+      this.toggleDropdownSearch = false;
+    }
+  }
 }

@@ -1,0 +1,20 @@
+/* Error: compound selectors may no longer be extended.
+ * Consider `@extend .wi-wind, .towards-0-deg` instead.
+ * See http://bit.ly/ExtendCompound for details.
+ * 
+ *     ,
+ * 727 |   @extend .wi-wind.towards-0-deg;
+ *     |           ^^^^^^^^^^^^^^^^^^^^^^
+ *     '
+ *   src/assets/styles/icons/weather-icons/sass/icon-classes/classes-wind-degrees.scss 727:11  root stylesheet */
+
+body::before {
+  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
+      "Droid Sans Mono", monospace, monospace;
+  white-space: pre;
+  display: block;
+  padding: 1em;
+  margin-bottom: 1em;
+  border-bottom: 2px solid black;
+  content: "Error: compound selectors may no longer be extended.\a Consider `@extend .wi-wind, .towards-0-deg` instead.\aSee http://bit.ly/ExtendCompound for details.\a\a     \2577 \a 727 \2502    @extend .wi-wind.towards-0-deg;\d\a     \2502            ^^^^^^^^^^^^^^^^^^^^^^\a     \2575 \a   src/assets/styles/icons/weather-icons/sass/icon-classes/classes-wind-degrees.scss 727:11  root stylesheet";
+}

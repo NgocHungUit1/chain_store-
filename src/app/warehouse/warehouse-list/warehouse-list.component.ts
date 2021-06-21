@@ -1,28 +1,28 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatTable } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { ListComponentBase } from '../../shared/base';
-import { ActivatedRoute } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { NotifierService } from 'angular-notifier';
-import { WarehouseService } from '../warehouse.service';
-import { Warehouse, WarehouseFilter } from '../warehouse.model';
-import { ProductUploadDialogComponent } from '../../product/product-upload-dialog/product-upload-dialog.component';
-import { WarehouseUploadDialogComponent } from '../warehouse-upload-dialog/warehouse-upload-dialog.component';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
-import { InvoiceService } from '../../invoice/invoice.service';
-import { DatetimeDefaultFilterDialogComponent } from '../../invoice/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
-import { DatetimeChooseFilterDialogComponent } from '../../invoice/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
-import { DateFilter } from '../../invoice/invoice.model';
-import { Observable } from 'rxjs';
-import { Supplier } from '../../supplier/supplier.model';
-import { of } from 'rxjs/internal/observable/of';
-import { SupplierService } from '../../supplier/supplier.service';
-import { Product } from '../../product/product.model';
-import { ProductService } from '../../product/product.service';
+import {Component, HostListener, OnInit, ViewChild} from '@angular/core';
+import {MatTable} from '@angular/material/table';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
+import {ListComponentBase} from '../../shared/base';
+import {ActivatedRoute} from '@angular/router';
+import {MatDialog} from '@angular/material/dialog';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import {NotifierService} from 'angular-notifier';
+import {WarehouseService} from '../warehouse.service';
+import {Warehouse, WarehouseFilter} from '../warehouse.model';
+import {ProductUploadDialogComponent} from '../../product/product-upload-dialog/product-upload-dialog.component';
+import {WarehouseUploadDialogComponent} from '../warehouse-upload-dialog/warehouse-upload-dialog.component';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
+import {InvoiceService} from '../../invoice/invoice.service';
+import {DatetimeDefaultFilterDialogComponent} from '../../invoice/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
+import {DatetimeChooseFilterDialogComponent} from '../../invoice/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
+import {DateFilter} from '../../invoice/invoice.model';
+import {Observable} from 'rxjs';
+import {Supplier} from '../../supplier/supplier.model';
+import {of} from 'rxjs/internal/observable/of';
+import {SupplierService} from '../../supplier/supplier.service';
+import {Product} from '../../product/product.model';
+import {ProductService} from '../../product/product.service';
 
 @Component({
   templateUrl: './warehouse-list.component.html',
@@ -57,6 +57,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
   searchProductForm = new FormControl();
   orderFilter: FormGroup;
   productFilter: FormGroup;
+  orderNationalFilter: FormGroup;
 
   timeFilter: FormGroup;
 
@@ -111,6 +112,17 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     },
   ];
 
+  orderNationalFilterList = [
+    {
+      'value': 'yes',
+      'name': 'Đã liên thông',
+    },
+    {
+      'value': 'no',
+      'name': 'Chưa liên thông',
+    },
+  ];
+
   dataSource = [];
   expandedElement: Warehouse | null;
 
@@ -120,6 +132,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
   isLoadingResults = true;
   isRateLimitReached = false;
   codeSearch = null;
+  toggleDropdownSearch = false;
 
   filteredSuppliers: Observable<Supplier[]>;
   filteredProducts: Observable<Product[]>;
@@ -152,6 +165,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
     filter.status = this.orderFilter.controls['status'].value;
+    filter.order_national = this.orderNationalFilter.controls['status'].value;
 
     const supplier = this.orderFilter.controls['supplier']?.value;
     const product = this.productFilter.controls['product']?.value;
@@ -216,6 +230,11 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     this.timeFilter = this.fb.group({
       typeTime: [
         'default'
+      ],
+    });
+    this.orderNationalFilter = this.fb.group({
+      status: [
+        ['yes', 'no']
       ],
     });
 
@@ -369,6 +388,14 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
       this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
     } else {
       this.titleTimeChoose = 'Lựa chọn khác';
+    }
+  }
+
+  toggleDropdown() {
+    if (this.toggleDropdownSearch === false) {
+      this.toggleDropdownSearch = true;
+    } else {
+      this.toggleDropdownSearch = false;
     }
   }
 }

@@ -425,9 +425,9 @@ export class SaleMainComponent implements OnInit {
     let priceBookID = null;
     let noteSiderBar = null;
     let branch_id = null;
-    // let time = null;
-    // const today = new Date();
-    // time = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
+    let time = null;
+    const today = new Date();
+    time = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     listItemInvoice.forEach(element => {
@@ -446,8 +446,8 @@ export class SaleMainComponent implements OnInit {
       noteSiderBar: [noteSiderBar],
       customerPay: [0],
       branch_id: [branch_id],
-      // time: [time],
-      // today: [today],
+      time: [time],
+      today: [today],
       invoice_id: [null],
       prescription_id: [null] // ban thuoc theo don
     });
@@ -800,21 +800,21 @@ export class SaleMainComponent implements OnInit {
         customerPay: paymentSiderBar?.number
       });
     }
-    // this.form.controls['today'].enable();
-    // this.form.controls['time'].enable();
+    this.form.controls['today'].enable();
+    this.form.controls['time'].enable();
 
-    if (mItemInvoice.invoice_id > 0) {
-      // const aDate = mItemInvoice.today.split('-');
+    if (Number(mItemInvoice.invoice_id) > 0) {
+      const aDate = mItemInvoice.today.split('-');
       this.form.patchValue({
-        // today: new Date(aDate[0], aDate[1], aDate[2]),
-        // time: mItemInvoice.time,
+        today: new Date(aDate[0], aDate[1], aDate[2]),
+        time: mItemInvoice.time,
         invoice_id: mItemInvoice.invoice_id
       });
-      // this.form.controls['today'].disable();
-      // this.form.controls['time'].disable();
+      this.form.controls['today'].disable();
+      this.form.controls['time'].disable();
     }
 
-    // if (mItemInvoice.invoice_id === -1) {
+    // if (Number(mItemInvoice.invoice_id) === -1) {
     //   const today = new Date();
     //   const time = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
     //   this.form.patchValue({
@@ -1194,7 +1194,7 @@ export class SaleMainComponent implements OnInit {
   payment() {
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
-    // let date_created = '';
+    let date_created = '';
     const data = this.form.getRawValue();
     let mItemInvoice = new ItemInvoice();
     listItemInvoice.forEach(element => {
@@ -1272,11 +1272,11 @@ export class SaleMainComponent implements OnInit {
       return;
     }
 
-    // if (data['today'] !== null && typeof data['today'] === 'object') {
-    //   // @ts-ignore
-    //   const effDate = new Date(data['today'].getTime() + (420 * 60 * 1000));
-    //   date_created = data['time'] + ' ' + effDate.toISOString().split('T')[0];
-    // }
+    if (data['today'] !== null && typeof data['today'] === 'object') {
+      // @ts-ignore
+      const effDate = new Date(data['today'].getTime() + (420 * 60 * 1000));
+      date_created = data['time'] + ' ' + effDate.toISOString().split('T')[0];
+    }
 
     let prescription_id = null;
     if (this.prescription.checked) {
@@ -1305,7 +1305,7 @@ export class SaleMainComponent implements OnInit {
       PaymentPrice: this.sumPrice - this.numberDiscount + this.expenseOrder, // tien thanh toan
       KhachNo: this.tienKhachNo,
       ExpenseOrders: this.expenseOrders,
-      // date_created: date_created,
+      date_created: date_created,
     };
 
     /**

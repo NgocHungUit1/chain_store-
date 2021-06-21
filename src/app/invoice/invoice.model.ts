@@ -70,6 +70,7 @@ export class InvoiceFilter extends ApiFilterBase {
   national_pharmacy_no = '';
   order_status = '';
   order_national = '';
+  product_id = '';
 
   getModelSearch() {
     return 'InvoiceSearch';
