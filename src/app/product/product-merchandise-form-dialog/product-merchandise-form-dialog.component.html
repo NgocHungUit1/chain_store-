@@ -129,7 +129,7 @@
               <div fxFlex="100">
 
                 <mat-accordion>
-                  <mat-expansion-panel style="margin: 10px 0px; border: 1px solid #ccc">
+                  <mat-expansion-panel [expanded]="true" style="margin: 10px 0px; border: 1px solid #ccc">
                     <mat-expansion-panel-header>
                       <mat-panel-title class="custom-mat-panel-title-description">
                         Đơn vị tính
@@ -161,7 +161,7 @@
                                 </td>
                                 <td>
                                   <mat-form-field style="width: 110px">
-                                    <input type="number" formControlName="unit_value" matInput
+                                    <input type="text" formControlName="unit_value" matInput
                                            class="text-right" min="0"
                                            (change)="changeUnitValue($event,i)"
                                            (keyup)="changeUnitValue($event,i)"
@@ -170,7 +170,7 @@
                                 </td>
                                 <td>
                                   <mat-form-field style="width: 110px">
-                                    <input type="number" formControlName="unit_price"
+                                    <input type="text" formControlName="unit_price"
                                            class="text-right"
                                            matInput placeholder="Giá bán">
                                   </mat-form-field>

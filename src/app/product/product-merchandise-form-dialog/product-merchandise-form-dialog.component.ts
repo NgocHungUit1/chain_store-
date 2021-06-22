@@ -1,15 +1,15 @@
-import { Component, Optional, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { NotifierService } from 'angular-notifier';
-import { ProductService } from '../product.service';
-import { GroupService } from '../group.service';
-import { Group, GroupFilter } from '../group.model';
-import { PlacementService } from '../placement.service';
-import { PlacementFilter } from '../placement.model';
-import { ProductGroupFormDialogComponent } from '../product-group-form-dialog/product-group-form-dialog.component';
-import { ProductPlacementFormDialogComponent } from '../product-placement-form-dialog/product-placement-form-dialog.component';
+import {Component, Optional, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {Observable} from 'rxjs';
+import {NotifierService} from 'angular-notifier';
+import {ProductService} from '../product.service';
+import {GroupService} from '../group.service';
+import {Group, GroupFilter} from '../group.model';
+import {PlacementService} from '../placement.service';
+import {PlacementFilter} from '../placement.model';
+import {ProductGroupFormDialogComponent} from '../product-group-form-dialog/product-group-form-dialog.component';
+import {ProductPlacementFormDialogComponent} from '../product-placement-form-dialog/product-placement-form-dialog.component';
 import * as numeral from 'numeral';
 
 class ImageSnippet {
@@ -163,6 +163,13 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
         });
       }
     });
+
+    this.form.controls.sell_price.valueChanges.subscribe(value => {
+      this.units.controls.forEach(item => {
+        // @ts-ignore
+        item.controls.unit_price.patchValue(numeral(numeral(value).value() * item.value.unit_value).format('0,0'));
+      });
+    });
   }
 
   closeDialog() {
@@ -198,6 +205,9 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       data.original_price = numeral(data.original_price).value();
       data.sell_price = numeral(data.sell_price).value();
       data.quantity_of_stock = numeral(data.quantity_of_stock).value();
+      data.units.forEach(item => {
+        item.unit_price = numeral(item.unit_price).value();
+      });
 
       if (this.product_id === null) {
         // Create New
@@ -336,8 +346,8 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
           using_id: product['using_id'],
           group_id: product['group_id'],
           product_name: product['product_name'],
-          sell_price: product['sell_price'],
-          original_price: product['original_price'],
+          sell_price: numeral(product['sell_price']).format('0,0'),
+          original_price: numeral(product['original_price']).format('0,0'),
           weight: product['weight'],
           base_unit: product['base_unit'],
           medicine_id: product['medicine_id'],
@@ -357,8 +367,8 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
           using_id: product['using_id'],
           group_id: product['group_id'],
           product_name: product['product_name'],
-          sell_price: product['sell_price'],
-          original_price: product['original_price'],
+          sell_price: numeral(product['sell_price']).format('0,0'),
+          original_price: numeral(product['original_price']).format('0,0'),
           weight: product['weight'],
           base_unit: product['base_unit'],
           medicine_id: product['medicine_id'],
@@ -382,7 +392,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
           const group = new FormGroup({
             unit_name: new FormControl(pUnit['name'], Validators.required),
             unit_value: new FormControl(pUnit['value'], Validators.required),
-            unit_price: new FormControl(pUnit['sell_price'], Validators.required),
+            unit_price: new FormControl(numeral(pUnit['sell_price']).format('0,0'), Validators.required),
             unit_no: new FormControl(pUnit['no']),
             id: new FormControl(pUnit['id'])
           });
@@ -484,7 +494,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
   changeUnitValue(event: any, i) {
     const value = event.target.value;
     this.units.controls[i].patchValue({
-      unit_price: value * this.form.controls['sell_price'].value,
+      unit_price: numeral(value * numeral(this.form.controls['sell_price'].value).value()).format('0,0'),
     });
   }
 
