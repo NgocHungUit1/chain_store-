@@ -73,6 +73,13 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
     // {isShow: true},
   ];
 
+  filterUnit = [
+    {name: 'viên', selelected: true},
+    {name: 'vỉ', selelected: false},
+    {name: 'hộp', selelected: false},
+    {name: 'lọ', selelected: false},
+  ];
+
   selectedFiles: ImageSnippet[] = [];
 
   constructor(
@@ -174,6 +181,13 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
 
   closeDialog() {
     this.dialogRef.close({event: 'Cancel'});
+  }
+
+  selectBaseUnit(unit: any, i) {
+    this.form.controls['base_unit'].patchValue(unit);
+    this.filterUnit.forEach(item => {
+      unit !== item.name ? item.selelected = false : item.selelected = true;
+    });
   }
 
   removeUnit(i) {

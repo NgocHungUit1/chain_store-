@@ -52,11 +52,19 @@
             </div>
 
             <div fxLayout="row wrap">
-              <div fxFlex="30">
+              <div fxFlex="50">
                 <mat-form-field>
                   <input type="text" matInput [formControl]="form.controls['base_unit']" required
                          placeholder="Đơn vị cơ bản" autocomplete="off">
                 </mat-form-field>
+                <mat-chip-list #chipList>
+                  <mat-chip *ngFor="let unit of filterUnit; index as i;"
+                            color="{{unit.selelected==true ? 'primary' : 'null'}}"
+                            selected="{{ unit.selected }}"
+                            (click)="selectBaseUnit(unit.name, i)">
+                    {{ unit.name }}
+                  </mat-chip>
+                </mat-chip-list>
               </div>
 
               <div fxFlex="2">

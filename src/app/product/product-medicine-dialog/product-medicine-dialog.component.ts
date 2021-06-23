@@ -137,8 +137,6 @@ export class ProductMedicineDialogComponent implements OnInit {
     'Saint Lucia', 'Kiribati'];
   filteredOptionsMadeIn: Observable<string[]>;
 
-  optionsUnit: string[] = ['viên', 'vỉ', 'hộp', 'lọ'];
-
   filterUnit = [
     {name: 'viên', selelected: true},
     {name: 'vỉ', selelected: false},
@@ -294,7 +292,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     });
   }
 
-  selectUnit(unit: any, i) {
+  selectBaseUnit(unit: any, i) {
     this.form.controls['base_unit'].patchValue(unit);
     this.filterUnit.forEach(item => {
       unit !== item.name ? item.selelected = false : item.selelected = true;

@@ -111,7 +111,7 @@
                 <mat-chip *ngFor="let unit of filterUnit; index as i;"
                           color="{{unit.selelected==true ? 'primary' : 'null'}}"
                           selected="{{ unit.selected }}"
-                          (click)="selectUnit(unit.name, i)">
+                          (click)="selectBaseUnit(unit.name, i)">
                   {{ unit.name }}
                 </mat-chip>
               </mat-chip-list>
