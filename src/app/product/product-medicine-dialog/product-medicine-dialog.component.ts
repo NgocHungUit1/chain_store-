@@ -104,8 +104,6 @@ export class ProductMedicineDialogComponent implements OnInit {
     unit_no: 'Mã đơn vị',
   };
 
-  allUnits: string[] = ['viên', 'vỉ', 'hộp', 'tuýp', 'ống'];
-
   imageButtons = [
     {isShow: true},
     {isShow: true},
@@ -138,6 +136,15 @@ export class ProductMedicineDialogComponent implements OnInit {
     'Maldives', 'Brunei', 'Malta', 'Bahamas', 'Belize', 'Iceland', 'Barbados', 'Vanuatu', 'Sao Tome & Principe', 'Samoa',
     'Saint Lucia', 'Kiribati'];
   filteredOptionsMadeIn: Observable<string[]>;
+
+  optionsUnit: string[] = ['viên', 'vỉ', 'hộp', 'lọ'];
+
+  filterUnit = [
+    {name: 'viên', selelected: true},
+    {name: 'vỉ', selelected: false},
+    {name: 'hộp', selelected: false},
+    {name: 'lọ', selelected: false},
+  ];
 
   selectedFiles: ImageSnippet[] = [];
 
@@ -253,7 +260,8 @@ export class ProductMedicineDialogComponent implements OnInit {
       startWith(''),
       map(value =>
         this._filterMadeIn(value)
-      ));
+      )
+    );
 
     if (sessionStorage.getItem('medicine') !== null) {
       const medicine = JSON.parse(sessionStorage.getItem('medicine'));
@@ -283,6 +291,13 @@ export class ProductMedicineDialogComponent implements OnInit {
     // console.log(value);
     this.units.controls[i].patchValue({
       unit_price: numeral(value * numeral(this.form.controls['sell_price'].value).value()).format('0,0'),
+    });
+  }
+
+  selectUnit(unit: any, i) {
+    this.form.controls['base_unit'].patchValue(unit);
+    this.filterUnit.forEach(item => {
+      unit !== item.name ? item.selelected = false : item.selelected = true;
     });
   }
 

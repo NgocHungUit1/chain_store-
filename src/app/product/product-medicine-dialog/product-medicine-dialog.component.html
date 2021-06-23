@@ -101,9 +101,21 @@
             </div>
 
             <mat-form-field>
-              <input type="text" matInput [formControl]="form.controls['base_unit']" required
+              <input type="text" matInput [formControl]="form.controls['base_unit']" [matChipInputFor]="chipList"
+                     required
                      placeholder="Đơn vị cơ bản " autocomplete="off">
             </mat-form-field>
+
+            <div class="p-b-10">
+              <mat-chip-list #chipList>
+                <mat-chip *ngFor="let unit of filterUnit; index as i;"
+                          color="{{unit.selelected==true ? 'primary' : 'null'}}"
+                          selected="{{ unit.selected }}"
+                          (click)="selectUnit(unit.name, i)">
+                  {{ unit.name }}
+                </mat-chip>
+              </mat-chip-list>
+            </div>
 
             <mat-form-field>
               <input type="text" class="text-right" (keyup)="inputformatNumber($event)" matInput
