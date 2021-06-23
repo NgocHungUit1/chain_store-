@@ -48,9 +48,10 @@
       </div>
       <span fxFlex="1 1 0%"></span>
 
+<!--      *ngIf="selectProduct.value && (filteredProducts | async)?.length === 0 && (filteredMedicines | async)?.length === 0"-->
+
       <button mat-raised-button color="primary"  [matMenuTriggerFor]="createMenu" style="margin-right: 10px"
-              *ngIf="selectProduct.value && (filteredProducts | async)?.length === 0 && (filteredMedicines | async)?.length === 0"
-              [disabled]="form?.controls['status'].value === '10'">
+              [disabled]="form?.controls['status'].value === '10' ">
         <mat-icon>add</mat-icon>
         Thêm mới
       </button>
