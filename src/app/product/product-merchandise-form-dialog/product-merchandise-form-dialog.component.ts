@@ -74,7 +74,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
   ];
 
   filterUnit = [
-    {name: 'viên', selelected: true},
+    {name: 'viên', selelected: false},
     {name: 'vỉ', selelected: false},
     {name: 'hộp', selelected: false},
     {name: 'lọ', selelected: false},

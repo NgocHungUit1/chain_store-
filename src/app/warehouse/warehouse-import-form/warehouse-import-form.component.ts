@@ -960,9 +960,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     obj.title = 'Thêm thuốc nhập hàng';
     obj.product_id = null;
     obj.copy_product_id = null;
-    const dialogRef = this.dialog.open(WarehouseProductMedicineDialogComponent, {
+    const dialogRef = this.dialog.open(ProductMedicineDialogComponent, {
       data: obj,
-      // width: '65%',
+      width: '60%',
       minWidth: '750px',
       minHeight: '80%',
     });
@@ -972,7 +972,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       if (result['event'] === 'Save') {
 
 
-        this.productSer.getDetail(result['data']['id'], 'productUnits').subscribe(res => {
+        /*this.productSer.getDetail(result['data']['id'], 'productUnits').subscribe(res => {
           // console.log(res);
           const warehouseProduct = new WarehouseProduct();
           warehouseProduct.product_id = res['id'];
@@ -1009,10 +1009,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
           this.recalculateWarehouse();
 
-        });
+        });*/
 
 
-        // this.handleAddProductToList(result['data']['id']);
+        this.handleAddProductToList(result['data']['id']);
       }
 
     });
