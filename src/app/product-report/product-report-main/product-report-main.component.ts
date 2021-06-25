@@ -1,26 +1,26 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ListComponentBase } from '../../shared/base';
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { ProductService } from '../../product/product.service';
-import { ActivatedRoute } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
-import { NotifierService } from 'angular-notifier';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { MatTable } from '@angular/material/table';
-import { Product, ProductFilter, ProductReport } from '../../product/product.model';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { debounceTime } from 'rxjs/operators';
-import { ProductMedicineDialogComponent } from '../../product/product-medicine-dialog/product-medicine-dialog.component';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {ListComponentBase} from '../../shared/base';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import {ProductService} from '../../product/product.service';
+import {ActivatedRoute} from '@angular/router';
+import {MatDialog} from '@angular/material/dialog';
+import {NotifierService} from 'angular-notifier';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {MatTable} from '@angular/material/table';
+import {Product, ProductFilter, ProductReport} from '../../product/product.model';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
+import {debounceTime} from 'rxjs/operators';
+import {ProductMedicineDialogComponent} from '../../product/product-medicine-dialog/product-medicine-dialog.component';
 // tslint:disable-next-line:max-line-length
-import { ProductMerchandiseFormDialogComponent } from '../../product/product-merchandise-form-dialog/product-merchandise-form-dialog.component';
-import { ProductUploadDialogComponent } from '../../product/product-upload-dialog/product-upload-dialog.component';
-import { InvoiceService } from '../../invoice/invoice.service';
-import { DateFilter } from '../../invoice/invoice.model';
+import {ProductMerchandiseFormDialogComponent} from '../../product/product-merchandise-form-dialog/product-merchandise-form-dialog.component';
+import {ProductUploadDialogComponent} from '../../product/product-upload-dialog/product-upload-dialog.component';
+import {InvoiceService} from '../../invoice/invoice.service';
+import {DateFilter} from '../../invoice/invoice.model';
 // tslint:disable-next-line:max-line-length
-import { DatetimeDefaultFilterDialogComponent } from '../../invoice/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
-import { DatetimeChooseFilterDialogComponent } from '../../invoice/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
-import { ProductReportService } from '../product-report.service';
+import {DatetimeDefaultFilterDialogComponent} from '../../invoice/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
+import {DatetimeChooseFilterDialogComponent} from '../../invoice/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
+import {ProductReportService} from '../product-report.service';
 
 @Component({
   selector: 'app-product-report-main',
@@ -81,6 +81,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     'product_name': 'Tên hàng',
     'total_staff_invoice': 'SL nhân viên bán',
     'total_staff_return': 'SL nhân viên trả',
+    'total_customer': 'SL Khách hàng',
     'sl_ban': 'SL bán',
     'doanh_thu': 'Doanh thu',
     'sl_tra': 'SL trả',
@@ -117,6 +118,12 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     'expiration_date': 'Hạn sử dụng',
     'expiration_day_exits': 'Số ngày còn lại',
     'expiration_quantity': 'Số lượng',
+    'supplier_total': 'SL NCC',
+    'supplier_total_import': 'SL nhập',
+    'supplier_total_value_import': 'Giá trị nhập',
+    'supplier_total_return': 'SL Trả',
+    'supplier_total_value_return': 'Giá trị trả',
+    'supplier_value_pure': 'Giá trị thuần',
   };
 
   // for sale
@@ -154,6 +161,13 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
   sum_sl_nhap_chuyen: number;
   sum_sl_xuat_chuyen: number;
   sum_sl_nhap_tra_hang: number;
+
+  // supplier
+  sum_supplier_total_import = 0;
+  sum_supplier_total_value_import = 0;
+  sum_supplier_total_return = 0;
+  sum_supplier_total_value_return = 0;
+  sum_supplier_value_pure = 0;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -196,6 +210,10 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       filter.expand = 'productUnit,quantity';
     }
 
+    if (typeReport === 'supplier') {
+      filter.expand = 'totalSupplier,totalWarehouseImport,totalWarehouseReturn';
+    }
+
     // filter.expand = 'returnsDetailsBranch';
     // filter.expand = 'medicine,productUnits,productPlacements,group,images,quantity';
     filter.date_from = objDateFilter.date_from;
@@ -206,7 +224,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
 
   loadData(): void {
     const typeReport = this.reportType.controls['type'].value;
-    if (typeReport === 'sale' || typeReport === 'profit' || typeReport === 'sale-staff') {
+    if (typeReport === 'sale' || typeReport === 'profit' || typeReport === 'sale-staff' || typeReport === 'customer') {
       this.isLoadingResults = true;
       this.service.getListReportSale(this.apiFilter).subscribe(res => {
         this.dataSource = res.body.data;
@@ -312,6 +330,27 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       });
     }
 
+    if (typeReport === 'supplier') {
+      this.isLoadingResults = true;
+      this.service.getListReportSupplier(this.apiFilter).subscribe(res => {
+        this.dataSource = res.body.data;
+        let stt = 0;
+        this.dataSource.forEach(elementData => {
+          stt++;
+          elementData.stt = stt;
+          this.sum_supplier_total_import = Number(res.body['sum_supplier_total_import']);
+          this.sum_supplier_total_value_import = Number(res.body['sum_supplier_total_value_import']);
+          this.sum_supplier_total_return = Number(res.body['sum_supplier_total_return']);
+          this.sum_supplier_total_value_return = Number(res.body['sum_supplier_total_value_return']);
+          this.sum_supplier_value_pure = Number(res.body['sum_supplier_value_pure']);
+        });
+
+        this.reloadFilter(res);
+        // const url = this.service.getApiUrlReportSale(this.apiFilter);
+        this.isLoadingResults = false;
+      });
+    }
+
   }
 
   radioTimeChange(event: Event) {
@@ -332,7 +371,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
 
   openTimeDefault() {
     const obj = {
-      'typeReport' : this.reportType.controls['type'].value
+      'typeReport': this.reportType.controls['type'].value
     };
     const dialogRef = this.dialog.open(DatetimeDefaultFilterDialogComponent, {
       data: obj,
@@ -510,6 +549,24 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
           'second_sl_ban', 'second_doanh_thu', 'second_sl_tra', 'second_gia_tri_tra', 'second_doanh_thu_thuan'];
       }
 
+      if (res.type === 'supplier') {
+        this.displayedColumns = ['#', 'product_no', 'product_name', 'supplier_total', 'supplier_total_import',
+          'supplier_total_value_import', 'supplier_total_return', 'supplier_total_value_return', 'supplier_value_pure'];
+        this.columnsToDisplay = ['#', 'product_no', 'product_name', 'supplier_total', 'supplier_total_import',
+          'supplier_total_value_import', 'supplier_total_return', 'supplier_total_value_return', 'supplier_value_pure'];
+        this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name', 'second_supplier_total', 'second_supplier_total_import',
+          'second_supplier_total_value_import', 'second_supplier_total_return', 'second_sum_supplier_total_value_return', 'second_supplier_value_pure'];
+      }
+
+      if (res.type === 'customer') {
+        this.displayedColumns = ['#', 'product_no', 'product_name', 'total_customer',
+          'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
+        this.columnsToDisplay = ['#', 'product_no', 'product_name', 'total_customer',
+          'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
+        this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name', 'second_total_customer',
+          'second_sl_ban', 'second_doanh_thu', 'second_sl_tra', 'second_gia_tri_tra', 'second_doanh_thu_thuan'];
+      }
+
       this.apiFilter = this.buildFilterFromParams();
       this.loadData();
 
@@ -575,7 +632,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
    */
   exportExcel() {
     const typeReport = this.reportType.controls['type'].value;
-    if (typeReport === 'sale' || typeReport === 'profit' || typeReport === 'sale-staff') {
+    if (typeReport === 'sale' || typeReport === 'profit' || typeReport === 'sale-staff' || typeReport === 'customer') {
       const _apiFilter = this.apiFilter;
       _apiFilter.export = true;
       _apiFilter.type_report = typeReport;
@@ -620,16 +677,38 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       return;
     }
 
+    if (typeReport === 'supplier') {
+      const _apiFilter = this.apiFilter;
+      _apiFilter.export = true;
+      _apiFilter.type_report = typeReport;
+      this.service.exportExcel(_apiFilter).subscribe(res => {
+        const url = this.service.downloadFileExcel(typeReport);
+        window.location.href = url;
+      });
+    }
+
   }
 
   calculateDiff(dateSent) {
     const currentDate = new Date();
     dateSent = new Date(dateSent);
-    const days = Math.floor((Date.UTC(dateSent.getFullYear(), dateSent.getMonth(), dateSent.getDate()) - Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()) ) / (1000 * 60 * 60 * 24));
+    const days = Math.floor((Date.UTC(dateSent.getFullYear(), dateSent.getMonth(), dateSent.getDate()) - Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate())) / (1000 * 60 * 60 * 24));
     if (days >= 0) {
       return days + 1;
     }
 
     return 'Hết hạn';
+  }
+
+  getSupplierTotalPure(totalImport, totalReturn) {
+    if (totalImport && totalReturn) {
+      return Number(totalImport) + Number(totalReturn);
+    } else if (totalImport && !totalReturn) {
+      return Number(totalImport);
+    } else if (!totalImport && totalReturn) {
+      return Number(totalReturn);
+    } else {
+      return 0;
+    }
   }
 }

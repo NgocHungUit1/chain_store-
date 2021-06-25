@@ -101,9 +101,21 @@
             </div>
 
             <mat-form-field>
-              <input type="text" matInput [formControl]="form.controls['base_unit']" required
+              <input type="text" matInput [formControl]="form.controls['base_unit']" [matChipInputFor]="chipList"
+                     required
                      placeholder="Đơn vị cơ bản " autocomplete="off">
             </mat-form-field>
+
+            <div class="p-b-10">
+              <mat-chip-list #chipList>
+                <mat-chip *ngFor="let unit of filterUnit; index as i;"
+                          color="{{unit.selelected==true ? 'primary' : 'null'}}"
+                          selected="{{ unit.selected }}"
+                          (click)="selectBaseUnit(unit.name, i)">
+                  {{ unit.name }}
+                </mat-chip>
+              </mat-chip-list>
+            </div>
 
             <mat-form-field>
               <input type="text" class="text-right" (keyup)="inputformatNumber($event)" matInput
@@ -216,7 +228,7 @@
                             </td>
                             <td>
                               <mat-form-field style="width: 110px">
-                                <input type="number" formControlName="unit_value" matInput class="text-right"
+                                <input type="text" formControlName="unit_value" matInput class="text-center"
                                        (change)="changeUnitValue($event,i)"
                                        (keyup)="changeUnitValue($event,i)"
                                        placeholder="Giá trị quy đổi">
@@ -224,7 +236,7 @@
                             </td>
                             <td>
                               <mat-form-field style="width: 110px">
-                                <input type="number" class="text-right" formControlName="unit_price"
+                                <input type="text" class="text-right" formControlName="unit_price"
                                        matInput placeholder="Giá bán">
                               </mat-form-field>
                             </td>
