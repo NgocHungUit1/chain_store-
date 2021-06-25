@@ -1,28 +1,28 @@
-import { Component, ElementRef, Inject, OnInit, Optional, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ProductService } from '../product.service';
-import { NotifierService } from 'angular-notifier';
-import { ProductGroupFormDialogComponent } from '../product-group-form-dialog/product-group-form-dialog.component';
-import { Group, GroupFilter } from '../group.model';
-import { GroupService } from '../group.service';
-import { ProductUsingFormDialogComponent } from '../product-using-form-dialog/product-using-form-dialog.component';
-import { ProductPlacementFormDialogComponent } from '../product-placement-form-dialog/product-placement-form-dialog.component';
-import { UsingFilter } from '../using.model';
-import { PlacementService } from '../placement.service';
-import { UsingService } from '../using.service';
-import { PlacementFilter } from '../placement.model';
-import { Medicine } from '../../medicine/medicine.model';
-import { Observable } from 'rxjs';
-import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
-import { MedicineService } from '../../medicine/medicine.service';
-import { of } from 'rxjs/internal/observable/of';
-import { ManufacturerService } from '../manufacturer.service';
-import { Manufacturer, ManufacturerFilter } from '../manufacturer.model';
-import { ProductManufacturerFormDialogComponent } from '../product-manufacturer-form-dialog/product-manufacturer-form-dialog.component';
+import {Component, ElementRef, Inject, OnInit, Optional, ViewChild} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {ProductService} from '../product.service';
+import {NotifierService} from 'angular-notifier';
+import {ProductGroupFormDialogComponent} from '../product-group-form-dialog/product-group-form-dialog.component';
+import {Group, GroupFilter} from '../group.model';
+import {GroupService} from '../group.service';
+import {ProductUsingFormDialogComponent} from '../product-using-form-dialog/product-using-form-dialog.component';
+import {ProductPlacementFormDialogComponent} from '../product-placement-form-dialog/product-placement-form-dialog.component';
+import {UsingFilter} from '../using.model';
+import {PlacementService} from '../placement.service';
+import {UsingService} from '../using.service';
+import {PlacementFilter} from '../placement.model';
+import {Medicine} from '../../medicine/medicine.model';
+import {Observable} from 'rxjs';
+import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
+import {MedicineService} from '../../medicine/medicine.service';
+import {of} from 'rxjs/internal/observable/of';
+import {ManufacturerService} from '../manufacturer.service';
+import {Manufacturer, ManufacturerFilter} from '../manufacturer.model';
+import {ProductManufacturerFormDialogComponent} from '../product-manufacturer-form-dialog/product-manufacturer-form-dialog.component';
 import * as numeral from 'numeral';
-import { log } from 'util';
-import { loadConfigurationFromPath } from 'tslint/lib/configuration';
+import {log} from 'util';
+import {loadConfigurationFromPath} from 'tslint/lib/configuration';
 
 
 class ImageSnippet {
@@ -50,7 +50,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     private dialog: MatDialog,
     // @Optional() is used to prevent error if no data is passed
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
-    console.log(data);
+    // console.log(data);
     this.local_data = {...data};
     this.action = this.local_data.action;
     this.title = this.local_data.title;
@@ -137,11 +137,17 @@ export class ProductMedicineDialogComponent implements OnInit {
     'Saint Lucia', 'Kiribati'];
   filteredOptionsMadeIn: Observable<string[]>;
 
+  filterUnit = [
+    {name: 'viên', selelected: true},
+    {name: 'vỉ', selelected: false},
+    {name: 'hộp', selelected: false},
+    {name: 'lọ', selelected: false},
+  ];
 
   selectedFiles: ImageSnippet[] = [];
 
   initForm() {
-    console.log(this.local_data);
+    // console.log(this.local_data);
     this.form = this.fb.group({
       product_no: [
         null,
@@ -252,7 +258,8 @@ export class ProductMedicineDialogComponent implements OnInit {
       startWith(''),
       map(value =>
         this._filterMadeIn(value)
-      ));
+      )
+    );
 
     if (sessionStorage.getItem('medicine') !== null) {
       const medicine = JSON.parse(sessionStorage.getItem('medicine'));
@@ -260,6 +267,13 @@ export class ProductMedicineDialogComponent implements OnInit {
       sessionStorage.removeItem('medicine');
       this.notifySer.notify('info', 'Cập nhật thêm thông tin sản phẩm');
     }
+
+    this.form.controls.sell_price.valueChanges.subscribe(value => {
+      this.units.controls.forEach(item => {
+        // @ts-ignore
+        item.controls.unit_price.patchValue(numeral(numeral(value).value() * item.value.unit_value).format('0,0'));
+      });
+    });
   }
 
   public _filterMadeIn(value: any): string[] {
@@ -272,15 +286,22 @@ export class ProductMedicineDialogComponent implements OnInit {
 
   changeUnitValue(event: any, i) {
     const value = event.target.value;
-    console.log(value);
+    // console.log(value);
     this.units.controls[i].patchValue({
-      unit_price: value * this.form.controls['sell_price'].value,
+      unit_price: numeral(value * numeral(this.form.controls['sell_price'].value).value()).format('0,0'),
+    });
+  }
+
+  selectBaseUnit(unit: any, i) {
+    this.form.controls['base_unit'].patchValue(unit);
+    this.filterUnit.forEach(item => {
+      unit !== item.name ? item.selelected = false : item.selelected = true;
     });
   }
 
   loadProduct(id, copy: any = null) {
     this.productSer.getDetail(id, 'medicine,images,productPlacements,productUnits,quantity').subscribe(product => {
-      console.log(product);
+      // console.log(product);
       const placements = [];
       product['productPlacements'].forEach(pPlacement => {
         placements.push(pPlacement.id);
@@ -308,8 +329,8 @@ export class ProductMedicineDialogComponent implements OnInit {
           using_id: product['using_id'],
           group_id: product['group_id'],
           product_name: product['product_name'],
-          sell_price: product['sell_price'],
-          original_price: product['original_price'],
+          sell_price: numeral(product['sell_price']).format('0,0'),
+          original_price: numeral(product['original_price']).format('0,0'),
           weight: product['weight'],
           base_unit: product['base_unit'],
           medicine_id: product['medicine_id'],
@@ -330,8 +351,8 @@ export class ProductMedicineDialogComponent implements OnInit {
           using_id: product['using_id'],
           group_id: product['group_id'],
           product_name: product['product_name'],
-          sell_price: product['sell_price'],
-          original_price: product['original_price'],
+          sell_price: numeral(product['sell_price']).format('0,0'),
+          original_price: numeral(product['original_price']).format('0,0'),
           weight: product['weight'],
           base_unit: product['base_unit'],
           medicine_id: product['medicine_id'],
@@ -350,7 +371,6 @@ export class ProductMedicineDialogComponent implements OnInit {
         });
       }
 
-
       product['productUnits'].forEach(pUnit => {
         /**
          * Chi hien thi unit is_base !== 1
@@ -359,13 +379,12 @@ export class ProductMedicineDialogComponent implements OnInit {
           const group = new FormGroup({
             unit_name: new FormControl(pUnit['name'], Validators.required),
             unit_value: new FormControl(pUnit['value'], Validators.required),
-            unit_price: new FormControl(pUnit['sell_price'], Validators.required),
+            unit_price: new FormControl(numeral(pUnit['sell_price']).format('0,0'), Validators.required),
             unit_no: new FormControl(pUnit['no']),
             id: new FormControl(pUnit['id'])
           });
           this.units.push(group);
         }
-
       });
 
       product['images'].forEach((pImage, index) => {
@@ -402,6 +421,10 @@ export class ProductMedicineDialogComponent implements OnInit {
       data.original_price = numeral(data.original_price).value();
       data.sell_price = numeral(data.sell_price).value();
       data.quantity_of_stock = numeral(data.quantity_of_stock).value();
+
+      data.units.forEach(item => {
+        item.unit_price = numeral(item.unit_price).value();
+      });
 
       if (typeof data.manufacturer === 'string') {
         data.manufacturer = null;
@@ -587,7 +610,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     // }
     const data = this.units.getRawValue();
     if (data[i].id) {
-      console.log(data[i].id);
+      // console.log(data[i].id);
       this.productSer.deleteUnit(data[i].id).subscribe(res => {
         if (res?.success === true) {
           this.notifySer.notify('success', res?.message);
@@ -704,5 +727,4 @@ export class ProductMedicineDialogComponent implements OnInit {
   inputformatNumber(event: any) {
     event.target.value = numeral(event.target.value).format('0,0');
   }
-
 }
