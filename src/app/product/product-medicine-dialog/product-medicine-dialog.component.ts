@@ -23,6 +23,7 @@ import {ProductManufacturerFormDialogComponent} from '../product-manufacturer-fo
 import * as numeral from 'numeral';
 import {log} from 'util';
 import {loadConfigurationFromPath} from 'tslint/lib/configuration';
+import {MatRadioChange} from '@angular/material/radio';
 
 
 class ImageSnippet {
@@ -143,6 +144,9 @@ export class ProductMedicineDialogComponent implements OnInit {
     {name: 'hộp', selelected: false},
     {name: 'lọ', selelected: false},
   ];
+
+  // public _radioConvert = null;
+  public _convertIndex = null;
 
   selectedFiles: ImageSnippet[] = [];
 
@@ -269,10 +273,25 @@ export class ProductMedicineDialogComponent implements OnInit {
     }
 
     this.form.controls.sell_price.valueChanges.subscribe(value => {
-      this.units.controls.forEach(item => {
-        // @ts-ignore
-        item.controls.unit_price.patchValue(numeral(numeral(value).value() * item.value.unit_value).format('0,0'));
-      });
+      const val = numeral(value).value();
+      // console.log(val);
+      // if (this._radioConvert === null) {
+        this.units.controls.forEach(item => {
+          // @ts-ignore
+          item.controls.unit_price.patchValue(numeral(val * item.value.unit_value).format('0,0'), {
+            emitEvent: false
+          });
+        });
+      // } else {
+      //   this.units.controls.forEach(item => {
+      //     if (this.units.controls.indexOf(item) !== Number(this._radioConvert)) {
+      //       // @ts-ignore
+      //       item.controls.unit_price.patchValue(numeral(val * item.value.unit_value).format('0,0'), {
+      //         emitEvent: false
+      //       });
+      //     }
+      //   });
+      // }
     });
   }
 
@@ -297,6 +316,24 @@ export class ProductMedicineDialogComponent implements OnInit {
     this.filterUnit.forEach(item => {
       unit !== item.name ? item.selelected = false : item.selelected = true;
     });
+  }
+
+  // onRadioChange(event: MatRadioChange) {
+  //   const value = event.value;
+  //   this._radioConvert = value;
+  //   this._convertIndex = value;
+  // }
+
+  changeBaseUnitValue(event: any, i) {
+    const value = numeral(event.target.value).value();
+    // console.log(this.units.controls[i].value);
+    this.units.controls[i].patchValue({
+      unit_price: numeral(value).format('0,0'),
+    });
+    if (i === Number(this._convertIndex)) {
+      // this._radioConvert = i;
+      this.form.controls.sell_price.patchValue(numeral(value / this.units.controls[i].value.unit_value).format('0,0'));
+    }
   }
 
   loadProduct(id, copy: any = null) {

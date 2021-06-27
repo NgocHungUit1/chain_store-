@@ -212,6 +212,7 @@
                     <ng-container formArrayName="units">
                       <table>
                         <thead style="text-align: left">
+                        <th></th>
                         <th>Tên đơn vị</th>
                         <th>Giá trị quy đổi</th>
                         <th>Giá bán</th>
@@ -221,6 +222,11 @@
                         <tbody>
                         <tr *ngFor="let _ of units.controls; index as i;">
                           <ng-container [formGroupName]="i">
+                            <td>
+                              <mat-radio-group (change)="_convertIndex = i" name="convert_base_unit">
+                                <mat-radio-button value="{{i}}"></mat-radio-button>
+                              </mat-radio-group>
+                            </td>
                             <td>
                               <mat-form-field style="width: 100px">
                                 <input type="text" formControlName="unit_name" matInput placeholder="Tên đơn vị">
@@ -237,6 +243,8 @@
                             <td>
                               <mat-form-field style="width: 110px">
                                 <input type="text" class="text-right" formControlName="unit_price"
+                                       (change)="changeBaseUnitValue($event, i)"
+                                       (keyup)="changeBaseUnitValue($event, i)"
                                        matInput placeholder="Giá bán">
                               </mat-form-field>
                             </td>
