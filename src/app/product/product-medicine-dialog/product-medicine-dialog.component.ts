@@ -274,24 +274,12 @@ export class ProductMedicineDialogComponent implements OnInit {
 
     this.form.controls.sell_price.valueChanges.subscribe(value => {
       const val = numeral(value).value();
-      // console.log(val);
-      // if (this._radioConvert === null) {
-        this.units.controls.forEach(item => {
-          // @ts-ignore
-          item.controls.unit_price.patchValue(numeral(val * item.value.unit_value).format('0,0'), {
-            emitEvent: false
-          });
+      this.units.controls.forEach(item => {
+        // @ts-ignore
+        item.controls.unit_price.patchValue(numeral(val * item.value.unit_value).format('0,0'), {
+          emitEvent: false
         });
-      // } else {
-      //   this.units.controls.forEach(item => {
-      //     if (this.units.controls.indexOf(item) !== Number(this._radioConvert)) {
-      //       // @ts-ignore
-      //       item.controls.unit_price.patchValue(numeral(val * item.value.unit_value).format('0,0'), {
-      //         emitEvent: false
-      //       });
-      //     }
-      //   });
-      // }
+      });
     });
   }
 
@@ -318,12 +306,6 @@ export class ProductMedicineDialogComponent implements OnInit {
     });
   }
 
-  // onRadioChange(event: MatRadioChange) {
-  //   const value = event.value;
-  //   this._radioConvert = value;
-  //   this._convertIndex = value;
-  // }
-
   changeBaseUnitValue(event: any, i) {
     const value = numeral(event.target.value).value();
     // console.log(this.units.controls[i].value);
@@ -331,7 +313,6 @@ export class ProductMedicineDialogComponent implements OnInit {
       unit_price: numeral(value).format('0,0'),
     });
     if (i === Number(this._convertIndex)) {
-      // this._radioConvert = i;
       this.form.controls.sell_price.patchValue(numeral(value / this.units.controls[i].value.unit_value).format('0,0'));
     }
   }
