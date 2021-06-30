@@ -26,7 +26,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
     'product_name': 'Tên hàng',
     'quantity': 'Tổng SL',
     'price': 'Đơn giá',
-    'discount': 'Giảm giá',
+    'discount': 'Chiết khấu',
     'amount': 'Thành tiền',
   };
   displayedColumns = [
@@ -261,7 +261,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
         '<tr>' +
         '<td style="font-weight: 600;">Trạng thái </td>' +
         '<td>' + res?.status + '</td>' +
-        '<td style="font-weight: 600;">Giảm giá </td>' +
+        '<td style="font-weight: 600;">Chiết khấu </td>' +
         '<td style="text-align:right;">' + res?.discount_amount + '</td>' +
         '</tr>';
       if (res?.expenses_price > 0) {
@@ -290,7 +290,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
       printContent += '<th>' + 'Mã hàng' + '</th>';
       printContent += '<th>' + 'Tên hàng' + '</th>';
       printContent += '<th>' + 'Đơn giá' + '</th>';
-      printContent += '<th>' + 'Giảm giá' + '</th>';
+      printContent += '<th>' + 'Chiết khấu' + '</th>';
       printContent += '<th>' + 'Thành tiền' + '</th>';
       printContent += '</tr>';
 
@@ -389,7 +389,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
       printContent += '<th>' + 'Mã hàng' + '</th>';
       printContent += '<th>' + 'Tên hàng' + '</th>';
       printContent += '<th>' + 'Đơn gía' + '</th>';
-      printContent += '<th>' + 'Giảm giá' + '</th>';
+      printContent += '<th>' + 'Chiết khẩu' + '</th>';
       printContent += '<th>' + 'Thành tiền' + '</th>';
       printContent += '</tr>';
 

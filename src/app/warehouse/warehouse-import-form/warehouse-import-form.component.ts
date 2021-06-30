@@ -92,7 +92,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'product_unit_id': 'Đơn vị',
     'quantity': 'Tổng SL',
     'price': 'Đơn giá',
-    'discount': 'Giảm giá',
+    'discount': 'Chiết khấu',//'Giảm giá',
     'amount': 'Thành tiền',
   };
 
@@ -586,10 +586,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     if (this.data[i] !== undefined) {
       const price = numeral(this.data[i]['price']).value();
       if (this.data[i]['discount_type'] === 'price') {
-        this.data[i]['amount'] = Math.round((price - this.data[i]['discount']) * this.data[i]['quantity']);
+        // this.data[i]['amount'] = Math.round((price - this.data[i]['discount']) * this.data[i]['quantity']);
+        this.data[i]['amount'] = Math.round((price * this.data[i]['quantity'] ) - this.data[i]['discount']);
       } else {
         this.data[i]['amount'] =
           Math.round((price - (price * this.data[i]['discount']) / 100) * this.data[i]['quantity']);
+        // this.data[i]['amount'] = Math.round((price * this.data[i]['quantity'] ) * ( 100 - this.data[i]['discount']) / 100);
       }
       this.recalculateWarehouse();
     }
@@ -863,7 +865,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         '<tr>' +
         '<td style="font-weight: 600;">Trạng thái </td>' +
         '<td>' + res?.status + '</td>' +
-        '<td style="font-weight: 600;">Giảm giá </td>' +
+        '<td style="font-weight: 600;">Chiết khấu </td>' +
         '<td style="text-align:right;">' + res?.discount_amount + '</td>' +
         '</tr>';
       if (res?.expenses_price > 0) {
@@ -892,7 +894,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       printContent += '<th>' + 'Mã hàng' + '</th>';
       printContent += '<th>' + 'Tên hàng' + '</th>';
       printContent += '<th>' + 'Đơn giá' + '</th>';
-      printContent += '<th>' + 'Giảm giá' + '</th>';
+      printContent += '<th>' + 'Chiết khấu' + '</th>';
       printContent += '<th>' + 'Thành tiền' + '</th>';
       printContent += '</tr>';
 
