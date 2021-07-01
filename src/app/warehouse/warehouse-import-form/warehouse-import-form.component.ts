@@ -609,7 +609,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       const item_discount = Number(item['discount']);
       quantity = Number(quantity) + item_quantity;
       if (item['discount_type'] === 'price') {
-        price = Number(price) + item_quantity * ((item_price - item_discount));
+        price = Number(price) + ((item_quantity * item_price) - item_discount);
       } else {
         const money = item_quantity * item_price * (1 - (item_discount / 100));
         price = Number(price) + money;
