@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
 import {
   FormBuilder,
   FormGroup,
   Validators,
   FormControl
 } from '@angular/forms';
-import { CustomValidators } from 'ngx-custom-validators';
+import {CustomValidators} from 'ngx-custom-validators';
+import {AuthService} from '../auth.service';
+import {NotifierService} from 'angular-notifier';
 
 
 @Component({
@@ -16,21 +18,32 @@ import { CustomValidators } from 'ngx-custom-validators';
 })
 export class ForgotComponent implements OnInit {
   public form: FormGroup;
+  email: FormControl;
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    public notifyService: NotifierService,
+    ) {
   }
 
   ngOnInit() {
+    this.email = new FormControl('', [Validators.required, Validators.email]);
+
     this.form = this.fb.group({
-      email: [
-        null,
-        // Validators.compose([Validators.required, CustomValidators.email])
-        Validators.compose([Validators.required])
-      ]
+      email: this.email
     });
   }
 
   onSubmit() {
-    this.router.navigate(['/authentication/login']);
+    // const userEmail = this.form.value;
+    // this.authService.passwordResetRequest(userEmail.email).subscribe((result) => {
+    //   // @ts-ignore
+    //   if (result && 'success' === result.status) {
+    //     this.notifyService.notify('success', 'THanh cong');
+    //   }
+    // }, (error) => {
+    //   this.notifyService.notify('danger', 'That bai');
+    // });
   }
 }

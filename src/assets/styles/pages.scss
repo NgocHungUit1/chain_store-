@@ -17,11 +17,12 @@ File: scss
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow: hidden;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
+  height: calc(100% - 15px);
+  overflow: hidden;
 }
 
 .mat-drawer-container {
@@ -31,10 +32,14 @@ File: scss
 
 html .page-wrapper {
   height: calc(100vh - 64px);
+
   .page-content {
     padding: 15px 15px 0;
-    height: 100%;
   }
+}
+
+.page-content {
+  height: 100%;
 }
 
 /*******************
@@ -45,24 +50,29 @@ html .page-wrapper {
   display: flex;
   background-size: cover;
   align-items: center;
+
   .mat-card {
     margin: 0px 15px;
   }
+
   .mat-form-field {
     width: 100%;
   }
+
   .login-register-box {
     max-width: 400px;
     min-width: 280px;
     margin: 0 auto;
     vertical-align: middle;
   }
+
   .support-text {
     margin-top: -15px;
     display: block;
     padding-bottom: 15px;
   }
 }
+
 .error-card {
   h1 {
     font-size: 210px;
@@ -77,6 +87,7 @@ html .page-wrapper {
   box-shadow: none;
   border: 1px solid $border;
 }
+
 /*******************
  Calendar page
 *******************/
@@ -84,6 +95,7 @@ html .page-wrapper {
   text-decoration: none;
   margin: 0 3px;
 }
+
 .cal-header {
   border-left: 1px solid #e1e1e1;
   border-right: 1px solid #e1e1e1;
@@ -96,6 +108,7 @@ html .page-wrapper {
     color: aqua;
   }
 }
+
 /*******************
  Mail page
 *******************/
@@ -103,45 +116,54 @@ html .page-wrapper {
   width: 20%;
   display: inline-block;
   overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
+
 /*******************
  Mail page
 *******************/
 .email-box {
   border: 1px solid $border;
 }
+
 .email-sidebar {
-  .mat-drawer-inner-container{
-    overflow:visible;
+  .mat-drawer-inner-container {
+    overflow: visible;
   }
+
   border-right: 1px solid $border;
   width: 300px;
+
   .d-flex {
     display: flex;
     padding: 15px 0px;
     cursor: pointer;
   }
+
   .selected {
     .d-flex {
       background: $light;
     }
   }
+
   .icon-avatar {
     width: 60px;
     text-align: center;
     flex-shrink: 0;
   }
+
   .mail-title {
     font-weight: 500;
   }
+
   .text-ellipsis {
     white-space: nowrap;
     overflow: hidden;
     max-width: 165px;
     text-overflow: ellipsis;
   }
+
   .avatar {
     width: 40px;
     border-radius: 100%;
@@ -151,28 +173,34 @@ html .page-wrapper {
 .email-right-panel {
   padding: 30px;
   background: $light;
+
   .avatar-lg {
     width: 100px;
     border-radius: 100%;
   }
+
   .row {
     overflow: hidden;
   }
+
   .col-md-2 {
     width: 20%;
     padding: 10px;
     float: $lft;
   }
 }
+
 .align-items-center {
   align-items: center;
 }
+
 .bottom-right {
   position: absolute !important;
   right: 40px;
   bottom: 40px;
   z-index: 10;
 }
+
 .chat-right-panel {
   .top-avatar {
     img {
@@ -181,17 +209,20 @@ html .page-wrapper {
     }
   }
 }
+
 .chat-middle-box {
   border-left: 1px solid $border;
   background: $white;
   margin-bottom: 0px !important;
 }
+
 .chat-footer {
   padding: 10px 15px !important;
   background: $white;
   border-top: 1px solid $border;
   border-left: 1px solid $border;
 }
+
 .chat-list {
   overflow: hidden;
   box-sizing: border-box;
@@ -199,6 +230,7 @@ html .page-wrapper {
   margin-bottom: 1rem;
   padding: 0 2rem;
   display: flex;
+
   &.even {
     -webkit-box-pack: end;
     -ms-flex-pack: end;
@@ -207,17 +239,20 @@ html .page-wrapper {
     text-align: right;
   }
 }
+
 .chat-block {
   display: flex;
   align-items: center;
   padding: 15px;
   background: $light;
   border-radius: 6px;
+
   img {
     vertical-align: middle;
     margin-right: 10px;
   }
 }
+
 .chat-date {
   font-size: 12px;
   color: $muted;
@@ -230,6 +265,7 @@ Chartistt chart css
   .ct-series-a .ct-bar {
     stroke: $success;
   }
+
   .ct-series-b .ct-bar {
     stroke: $info;
   }
@@ -237,52 +273,64 @@ Chartistt chart css
 
 .linearea {
   height: 280px;
+
   .ct-series-a .ct-area {
     fill-opacity: 0.05;
     fill: $success;
   }
+
   .ct-series-a .ct-line,
   .ct-series-a .ct-point {
     stroke: $success;
     stroke-width: 2px;
   }
+
   .ct-series-b .ct-area {
     fill: $info;
     fill-opacity: 0.1;
   }
+
   .ct-series-b .ct-line,
   .ct-series-b .ct-point {
     stroke: $info;
     stroke-width: 2px;
   }
+
   .ct-series-c .ct-area {
     fill: $danger;
     fill-opacity: 0.1;
   }
+
   .ct-series-c .ct-line,
   .ct-series-c .ct-point {
     stroke: $danger;
     stroke-width: 2px;
   }
+
   .ct-series-a .ct-point,
   .ct-series-b .ct-point,
   .ct-series-c .ct-point {
     stroke-width: 6px;
   }
 }
+
 .piechart {
   .ct-series-a .ct-slice-donut {
     stroke: $info;
   }
+
   .ct-series-b .ct-slice-donut {
     stroke: $success;
   }
+
   .ct-series-c .ct-slice-donut {
     stroke: $purple;
   }
+
   .ct-series-d .ct-slice-donut {
     stroke: $light;
   }
+
   .ct-series-e .ct-slice-donut {
     stroke: $warning;
   }
@@ -296,10 +344,13 @@ html {
     transform: scale(1.1);
     z-index: 1;
   }
+
   .price-listing {
     margin-bottom: 30px;
+
     .mat-list-item {
       height: auto;
+
       .mat-list-item-content {
         display: block;
         padding: 20px 0;
@@ -307,6 +358,7 @@ html {
     }
   }
 }
+
 /*******************
 Chartis tooltip scss
 ******************/
@@ -351,18 +403,20 @@ Chartis tooltip scss
 
 /*# sourceMappingURL=chartist-plugin-tooltip.css.map */
 .no-wrap {
-  td, .ng-star-inserted{
-  white-space:nowrap;
+  td, .ng-star-inserted {
+    white-space: nowrap;
+  }
 }
-}
+
 /*******************
 Smart table
 ******************/
 .smart-table tr td,
 .smart-table tr th {
   padding: 15px !important;
-  text-align:left;
+  text-align: left;
 }
+
 .ng2-smart-action-add-add {
   color: $white !important;
   background: $themecolor;
@@ -370,20 +424,25 @@ Smart table
   border-radius: $radius;
   white-space: nowrap;
 }
+
 .ng2-smart-pagination-nav {
   margin-left: auto;
 }
+
 .ng2-smart-pagination-nav .pagination > li > a {
   line-height: 1rem;
 }
+
 .ng2-smart-filter .form-control {
   border: 1px solid $border;
   border-radius: 0.25rem;
   min-height: 38px;
 }
-.form-control{
-  border:1px solid $border;
+
+.form-control {
+  border: 1px solid $border;
 }
+
 /**********************
 Overall Responsive table
 ***********************/
@@ -391,23 +450,28 @@ Overall Responsive table
 .responsive-table {
   display: flex;
   flex-direction: column;
-  overflow:auto;
+  overflow: auto;
+
   .mat-cell:first-of-type,
   .mat-footer-cell:first-of-type,
   .mat-header-cell:first-of-type {
     padding-left: 0;
   }
+
   .header-label {
     display: none;
   }
+
   .mat-table {
     overflow: auto;
     max-height: 100%;
   }
 }
-.table-responsive{
-  overflow:auto;
+
+.table-responsive {
+  overflow: auto;
 }
+
 .pagination {
   display: -ms-flexbox;
   display: flex;
@@ -471,9 +535,9 @@ Overall Responsive table
   border-color: $border;
 }
 
-.ticket-list{
+.ticket-list {
   td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
-    padding:0 15px!important;
+    padding: 0 15px !important;
   }
 }
 

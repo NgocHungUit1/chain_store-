@@ -4,7 +4,7 @@
 
 
 <div fxLayout="row wrap" style="height: 100%;">
-  <div fxFlex="74">
+  <div fxFlex="72.5">
     <div class="container-main-sale">
       <div class="product-cart">
 
@@ -149,8 +149,8 @@
 
     </div>
   </div>
-  <div fxFlex="0.5"></div>
-  <div fxFlex="25">
+  <div fxFlex=".5"></div>
+  <div fxFlex="27">
     <div class="container-action-sale">
       <!-- <app-sale-siderbar-order></app-sale-siderbar-order> -->
       <!---------------------------------------  SALE-SIDER-BAR-ORDER ------------------------------------------>
@@ -186,13 +186,13 @@
                 <!--                  <input matInput class="input-search" value="{{ today | date:'shortTime' }}" disabled>-->
                 <!--                </mat-form-field>-->
 
-<!--                <mat-form-field>-->
-<!--                  <mat-label>Ngày</mat-label>-->
-<!--                  <input class="input-search" matInput  [matDatepicker]="date_picker"  formControlName="today"-->
-<!--                         required="required">-->
-<!--                  <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>-->
-<!--                  <mat-datepicker #date_picker></mat-datepicker>-->
-<!--                </mat-form-field>-->
+                <!--                <mat-form-field>-->
+                <!--                  <mat-label>Ngày</mat-label>-->
+                <!--                  <input class="input-search" matInput  [matDatepicker]="date_picker"  formControlName="today"-->
+                <!--                         required="required">-->
+                <!--                  <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>-->
+                <!--                  <mat-datepicker #date_picker></mat-datepicker>-->
+                <!--                </mat-form-field>-->
 
                 <mat-form-field>
                   <button mat-icon-button matPrefix>
@@ -210,26 +210,26 @@
               </div>
             </div>
 
-                        <div fxLayout="row wrap">
-                          <div fxFlex="49">
-                            <mat-form-field>
-                              <mat-label>Thời gian</mat-label>
-                              <input matInput formControlName="time" type="time"
-                                     required="required">
-                            </mat-form-field>
-                          </div>
-                          <div fxFlex="2">
-                          </div>
-                          <div fxFlex="49">
-                            <mat-form-field>
-                              <mat-label>Ngày</mat-label>
-                              <input class="input-search" matInput [matDatepicker]="date_picker" formControlName="today"
-                                     required="required" >
-                              <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>
-                              <mat-datepicker #date_picker></mat-datepicker>
-                            </mat-form-field>
-                          </div>
-                        </div>
+            <div fxLayout="row wrap">
+              <div fxFlex="30">
+                <mat-form-field>
+                  <mat-label>Ngày</mat-label>
+                  <input class="input-search" matInput [matDatepicker]="date_picker" formControlName="today"
+                         required="required">
+                  <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>
+                  <mat-datepicker #date_picker></mat-datepicker>
+                </mat-form-field>
+              </div>
+              <div fxFlex="2">
+              </div>
+              <div fxFlex="30">
+                <mat-form-field>
+                  <mat-label>Thời gian</mat-label>
+                  <input matInput formControlName="time" type="time"
+                         required="required">
+                </mat-form-field>
+              </div>
+            </div>
 
           </div>
 
@@ -250,7 +250,7 @@
 
           <div class="customer-action">
             <div fxLayout="row wrap">
-              <div fxFlex="70">
+              <div fxFlex="90">
                 <mat-form-field>
                   <input class="input-search-customer input-search" type="text" [formControl]="selectCustomer" matInput
                          [matAutocomplete]="chooseProduct" placeholder="Tìm khách hàng "
@@ -265,38 +265,26 @@
                       <small>phone: {{customer.phone}}</small>
                     </mat-option>
                   </mat-autocomplete>
-                  <button mat-icon-button matSuffix (click)="this.selectCustomer.patchValue('');">
+                  <button *ngIf="isSelectedCustomer" mat-icon-button matSuffix (click)="this.selectCustomer.patchValue(''); isSelectedCustomer = false">
                     <mat-icon>delete</mat-icon>
+                  </button>
+                  <button *ngIf="!isSelectedCustomer" mat-icon-button matSuffix>
+                    <mat-icon (click)="openSaleCustomerFormDialogComponent()">add</mat-icon>
                   </button>
                 </mat-form-field>
               </div>
-              <div fxFlex="auto">
+              <!--<div fxFlex="10">
                 <div *ngIf="localItemInvoice?.is_return !== true">
                   <button mat-button matPrefix>
                     <mat-icon (click)="openSaleCustomerFormDialogComponent()">add</mat-icon>
                   </button>
                 </div>
-              </div>
+              </div>-->
             </div>
           </div>
 
-
           <div fxLayout="row wrap">
-            <div fxFlex="49">
-
-              <div class="ban-thuoc-theo-don" *ngIf="localItemInvoice?.is_return !== true"
-                   [ngClass]="prescription?.checked ? 'prescription-checked' : 'prescription'">
-                <mat-checkbox #prescription
-                              formControlName="prescription_id">
-                </mat-checkbox>
-                <span [ngClass]="prescription?.checked ? 'prescription-text' : ''"
-                      (click)="clickPrescription()"> Bán thuốc theo đơn </span>
-              </div>
-
-            </div>
-            <div fxFlex="2"></div>
-            <div fxFlex="49">
-
+            <div fxFlex="50">
               <div class="pricebook-action">
                 <mat-form-field>
                   <button mat-icon-button matPrefix>
@@ -311,6 +299,20 @@
                     </mat-option>
                   </mat-select>
                 </mat-form-field>
+              </div>
+            </div>
+          </div>
+
+          <div fxLayout="row wrap">
+            <div fxFlex="50">
+
+              <div class="ban-thuoc-theo-don" *ngIf="localItemInvoice?.is_return !== true"
+                   [ngClass]="prescription?.checked ? 'prescription-checked' : 'prescription'">
+                <mat-checkbox #prescription
+                              formControlName="prescription_id">
+                </mat-checkbox>
+                <span [ngClass]="prescription?.checked ? 'prescription-text' : ''"
+                      (click)="clickPrescription()"> Bán thuốc theo đơn </span>
               </div>
 
             </div>

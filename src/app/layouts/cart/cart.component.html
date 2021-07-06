@@ -18,9 +18,9 @@
         <b>
           <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
           <!-- Dark Logo icon -->
-          <img src="assets/images/logo-rx20.png" height="50" alt="homepage" class="dark-logo">
+          <img src="assets/images/logo-rx20.png" alt="homepage" class="dark-logo">
           <!-- Light Logo icon -->
-          <img src="assets/images/logo-rx20.png" height="50" alt="homepage" class="light-logo">
+          <img src="assets/images/logo-rx20.png" alt="homepage" class="light-logo">
         </b>
         <!--End Logo icon -->
       </a>
@@ -29,7 +29,7 @@
     <!-- sidebar toggle -->
     <!-- ============================================================== -->
 
-    <button mat-icon-button (click)="snav.toggle()" fxShow.sm="true" fxShow.xs="true" fxShow.gt-lg="false"
+    <button mat-icon-button (click)="snav.toggle()" fxShow.sm="false" fxShow.xs="false" fxShow.gt-lg="false"
             fxShow="false">
       <mat-icon>menu</mat-icon>
     </button>
@@ -37,7 +37,7 @@
     <!-- Search - style you can find in header.scss -->
     <!-- ============================================================== -->
 
-    <div class="select-product">
+    <div class="select-product search-wrapper">
       <mat-form-field>
         <input class="input-search-product" style="outline: 0;" type="text" [formControl]="selectProduct" matInput
                (focus)="focusInputSearch($event)" #inputSearch
@@ -176,7 +176,7 @@
     <!-- ============================================================== -->
     <!-- Sidebar - style you can find in sidebar.scss -->
     <!-- ============================================================== -->
-    <mat-sidenav #snav id="snav" [mode]="mobileQuery.matches ? 'side' : 'over'" fixedTopGap="0"
+    <mat-sidenav #snav id="snav" [mode]="mobileQuery.matches ? 'side' : 'over'" fixedTopGap="0" fxShow="false"
                  [opened]="mobileQuery.matches" [disableClose]="mobileQuery.matches" (open)="sidebarOpened = true"
                  (close)="sidebarOpened = false">
       <!-- <app-sidebar></app-sidebar> -->

@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
 import {
   FormBuilder,
   FormGroup,
   Validators,
   FormControl
 } from '@angular/forms';
-import {AuthService} from "../auth.service";
+import {AuthService} from '../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +22,8 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private authSer: AuthService,
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -43,6 +44,11 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
+    this.form.markAllAsTouched();
+    if (!this.form.valid) {
+      return;
+    }
+
     this.authSer.login(this.form.controls['uname'].value, this.form.controls['password'].value, true)
       .subscribe(response => {
         if (!response.success) {
