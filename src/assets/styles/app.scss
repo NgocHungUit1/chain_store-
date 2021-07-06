@@ -25,20 +25,21 @@ Global Styles
   box-sizing: border-box;
 }
 
-body {
-  font-family: $bodyfont;
-  margin: 0;
-  overflow-x: hidden;
-  color: $bodytext;
-  font-weight: 500;
-  background: $inverse;
-}
-
 html {
-  position: relative;
-  min-height: 100%;
   background: $white;
   font-size: 13px;
+  height: 100%;
+  position: relative;
+}
+
+body {
+  font-family: $bodyfont;
+  font-weight: 500;
+  background: $white;
+  color: $bodytext;
+  margin: 0;
+  height: 100%;
+  overflow-x: hidden;
 }
 
 a:hover, a:focus, a {

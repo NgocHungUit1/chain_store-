@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {Observable} from 'rxjs';
+import {User} from '../user/user.model';
 
 @Injectable({
   providedIn: 'root',
@@ -57,5 +58,26 @@ export class AuthService {
   checkStatus() {
     const url = environment.apiUrl + '/auth/login-status';
     return this.httpClient.get(url);
+  }
+
+  passwordResetRequest(email: string) {
+    // const url = environment.apiUrl + '/auth/password-reset-request';
+    // return this.httpClient.post(url, {email});
+    // return this.httpClient.post<any>(
+    //   environment.apiUrl + '/auth/password-reset-request', {email},
+    //   {
+    //     headers: {Accept: 'application/json', 'Authorization': 'Bearer ' + this.getToken()}
+    //   },
+    // )
+    //   .pipe(
+    //     map(
+    //       (result) => {
+    //         return result;
+    //       },
+    //       (error) => {
+    //         return error;
+    //       }
+    //     )
+    //   );
   }
 }

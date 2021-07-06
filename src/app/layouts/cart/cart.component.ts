@@ -1,6 +1,6 @@
-import { MediaMatcher } from '@angular/cdk/layout';
-import { Router } from '@angular/router';
-import { FormControl } from '@angular/forms';
+import {MediaMatcher} from '@angular/cdk/layout';
+import {Router} from '@angular/router';
+import {FormControl} from '@angular/forms';
 import {
   ChangeDetectorRef,
   Component,
@@ -11,28 +11,28 @@ import {
   Directive, ElementRef
 } from '@angular/core';
 
-import { MenuItems } from '../../shared/menu-items/menu-items';
+import {MenuItems} from '../../shared/menu-items/menu-items';
 
-import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
-import { Observable } from 'rxjs';
-import { Product } from '../../product/product.model';
-import { PriceListFilter } from '../../price-book/price-list.model';
-import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
-import { of } from 'rxjs/internal/observable/of';
-import { PriceListService } from '../../price-book/price-list.service';
-import { ProductService } from '../../product/product.service';
-import { OrderService } from '../../sale/order.service';
-import { ItemInvoice } from '../../sale/order.model';
-import { NotifierService } from 'angular-notifier';
-import { SamplePrescriptionService } from '../../sample-prescription/sample-prescription.service';
-import { element } from 'protractor';
-import { CustomerService } from '../../customer/customer.service';
+import {PerfectScrollbarConfigInterface} from 'ngx-perfect-scrollbar';
+import {Observable} from 'rxjs';
+import {Product} from '../../product/product.model';
+import {PriceListFilter} from '../../price-book/price-list.model';
+import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
+import {of} from 'rxjs/internal/observable/of';
+import {PriceListService} from '../../price-book/price-list.service';
+import {ProductService} from '../../product/product.service';
+import {OrderService} from '../../sale/order.service';
+import {ItemInvoice} from '../../sale/order.model';
+import {NotifierService} from 'angular-notifier';
+import {SamplePrescriptionService} from '../../sample-prescription/sample-prescription.service';
+import {element} from 'protractor';
+import {CustomerService} from '../../customer/customer.service';
 
 /** @title Responsive sidenav */
 @Component({
   selector: 'app-cart-layout',
   templateUrl: './cart.component.html',
-  styleUrls: ['./cart.component.css'],
+  // styleUrls: ['./cart.component.css'],
 })
 export class CartComponent implements OnDestroy {
 

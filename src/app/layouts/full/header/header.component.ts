@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
-import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
-import { Router } from "@angular/router";
-import { AuthService } from "../../../authentication/auth.service";
+import {Component, Input, OnInit} from '@angular/core';
+import {PerfectScrollbarConfigInterface} from 'ngx-perfect-scrollbar';
+import {Router} from '@angular/router';
+import {AuthService} from '../../../authentication/auth.service';
+import {MatDialog} from '@angular/material/dialog';
+import {UserService} from '../../../user/user.service';
+
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -9,6 +12,7 @@ import { AuthService } from "../../../authentication/auth.service";
 })
 export class AppHeaderComponent {
   public config: PerfectScrollbarConfigInterface = {};
+  userInfo: any = null;
 
 
   // This is for Notifications
@@ -77,9 +81,8 @@ export class AppHeaderComponent {
 
   constructor(
     private route: Router,
-    private authSer: AuthService
+    private authSer: AuthService,
   ) {
-
   }
 
   logout() {

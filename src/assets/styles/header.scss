@@ -9,62 +9,72 @@ File: scss
 /*******************
  Topbar
 *******************/
-mat-toolbar{
-    box-shadow: 1px 0px 10px rgba(0, 0, 0, 0.5);
-    
-    &.topbar{
-        padding: 0px 15px;
-    }
-    .navbar-header {
-        
-        text-align: center;
-        .navbar-brand {
-            display: flex;
-            line-height: 18px;
-            
-            align-items: center;
-            .dark-logo {
-                display: none;
-                
-            }
-            b {
-               margin-right: 5px;
-            }
-            img{
-                
-            }
-        }
-    }
-    
-    .app-search{
+mat-toolbar {
+  box-shadow: 1px 0px 10px rgba(0, 0, 0, 0.5);
+
+  &.topbar {
+    padding: 0px 15px;
+  }
+
+  .navbar-header {
+
+    text-align: center;
+
+    .navbar-brand {
+      display: flex;
+      line-height: 18px;
+
+      align-items: center;
+
+      .dark-logo {
         display: none;
-        width: 100%;
-        top: 0px;
-        left: 0px;
-        z-index: 1;
-        position: absolute;
-        .form-control{
-            line-height: 42px;
-            
-        }
-        .cl-srh-btn{
-            position: absolute;
-            top: 12px;
-            right: 15px;
-            font-size: 15px;
-            color:$bodytext;
-            cursor: pointer
-        }
+
+      }
+
+      b {
+        margin-right: 5px;
+      }
+
+      img {
+
+      }
     }
-    .profile-pic{
-        width: 40px;
-        height: 40px;
-        border-radius: 100%;
+  }
+
+  .app-search {
+    display: none;
+    width: 100%;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+    position: absolute;
+
+    .form-control {
+      line-height: 42px;
+
     }
-	.app-search.show-search {
-		display: block;
-	}
+
+    .cl-srh-btn {
+      position: absolute;
+      top: 12px;
+      right: 15px;
+      font-size: 15px;
+      color: $bodytext;
+      cursor: pointer
+    }
+  }
+
+  .profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+  }
+
+  .app-search.show-search {
+    display: block;
+  }
 }
+
 /*******************
  Topbar
 *******************/
@@ -86,3 +96,111 @@ mat-toolbar{
   flex: 1 0 auto;
 }
 
+/*******************
+ Cart
+*******************/
+.cart {
+  .topbar {
+    height: 50px;
+
+    .navbar-header {
+      width: 70px;
+    }
+
+    .navbar-brand img {
+      max-width: 50px;
+      max-height: 50px;
+    }
+  }
+
+  .select-product {
+    min-width: 390px;
+
+    .mat-form-field {
+      background-color: $white;
+      color: $megna;
+      border-radius: 4px;
+
+      .mat-form-field-wrapper {
+        padding-bottom: 0;
+
+        .mat-form-field-flex {
+          align-items: center;
+        }
+      }
+
+      .mat-form-field-infix, .mat-form-field-label {
+        font-size: 13px;
+      }
+
+      .mat-form-field-infix {
+        border-top: 0.44375em solid transparent;
+        border-bottom: 0.44375em solid transparent;
+        height: 37px;
+      }
+
+      &.mat-focused, &.mat-form-field-should-float {
+        .mat-form-field-infix {
+          border-top: 0.84375em solid transparent;
+          border-bottom: 0.24375em solid transparent;
+        }
+      }
+
+      .mat-form-field-underline {
+        display: none;
+      }
+    }
+  }
+
+  .amount-product {
+    background-color: $white;
+    color: $megna;
+    width: 70px;
+    height: 37px;
+    line-height: 1.25;
+    margin-left: 10px;
+    text-align: right;
+    border-radius: 4px;
+  }
+
+  .mat-tab-nav-bar {
+    margin-left: 15px;
+
+    .mat-tab-links {
+      .mat-tab-link {
+        padding: 9px 10px;
+        color: $white;
+        font-size: 14px;
+        height: 40px;
+        min-width: unset;
+        text-decoration: none;
+        opacity: 1;
+        transition: all .3s ease-in-out;
+
+        .mat-icon-button, .mat-icon {
+          width: 20px;
+          height: 20px;
+        }
+
+        .mat-icon-button {
+          margin-left: 5px;
+          line-height: 1;
+        }
+
+        .mat-icon {
+          font-size: 16px;
+          line-height: 1.25;
+        }
+
+        &.mat-tab-label-active, &:hover {
+          background-color: $white;
+          color: $megna;
+        }
+      }
+    }
+
+    .mat-ink-bar {
+      display: none;
+    }
+  }
+}
