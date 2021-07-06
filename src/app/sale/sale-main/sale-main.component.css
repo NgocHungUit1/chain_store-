@@ -1,11 +1,15 @@
 html .page-wrapper .page-content {
   padding: 0px;
 }
+.container-main-sale {
+  height: calc(100% - 15px);
+}
 
 .container-action-sale {
   background-color: #ffffff;
   position: relative;
   bottom: 0px;
+  height: calc(100% - 15px);
 }
 
 .product-cart {

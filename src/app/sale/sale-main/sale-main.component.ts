@@ -64,6 +64,7 @@ export class SaleMainComponent implements OnInit {
   selectProduct = new FormControl();
   public filteredProducts: Observable<Product[]>;
   isLoadingResults = true;
+  isSelectedCustomer = false;
 
   listProduct: any = [];
   countProduct = 0;
@@ -249,8 +250,10 @@ export class SaleMainComponent implements OnInit {
    */
   handleAddCustomerExist(mItemInvoice) {
     this.selectCustomer.patchValue('Khách lẻ');
+    this.isSelectedCustomer = true;
     if (mItemInvoice?.customer?.name !== undefined) {
       this.selectCustomer.patchValue(mItemInvoice?.customer?.name);
+      this.isSelectedCustomer = true;
     }
   }
 
@@ -667,6 +670,7 @@ export class SaleMainComponent implements OnInit {
     });
     this.orderService.setListInvoiceLocalStorage(listInvoice);
     this.selectCustomer.patchValue(customer.name);
+    this.isSelectedCustomer = true;
   }
 
   onSelectedUser(user) {
@@ -1582,17 +1586,19 @@ export class SaleMainComponent implements OnInit {
     const obj = {
       prescription_id: this.prescription_id
     };
-    const dialogRef = this.dialog.open(PrescriptionFormDialogComponent, {
-      data: obj,
-      width: '60%',
-      minHeight: '80%',
-    });
+    if (this.prescription.checked) {
+      const dialogRef = this.dialog.open(PrescriptionFormDialogComponent, {
+        data: obj,
+        width: '60%',
+        minHeight: '80%',
+      });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result !== undefined) {
-        this.prescription_id = result.id;
-      }
-    });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result !== undefined) {
+          this.prescription_id = result.id;
+        }
+      });
+    }
   }
 
 }

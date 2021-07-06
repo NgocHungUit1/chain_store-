@@ -265,18 +265,21 @@
                       <small>phone: {{customer.phone}}</small>
                     </mat-option>
                   </mat-autocomplete>
-                  <button mat-icon-button matSuffix (click)="this.selectCustomer.patchValue('');">
+                  <button *ngIf="isSelectedCustomer" mat-icon-button matSuffix (click)="this.selectCustomer.patchValue(''); isSelectedCustomer = false">
                     <mat-icon>delete</mat-icon>
+                  </button>
+                  <button *ngIf="!isSelectedCustomer" mat-icon-button matSuffix>
+                    <mat-icon (click)="openSaleCustomerFormDialogComponent()">add</mat-icon>
                   </button>
                 </mat-form-field>
               </div>
-              <div fxFlex="10">
+              <!--<div fxFlex="10">
                 <div *ngIf="localItemInvoice?.is_return !== true">
                   <button mat-button matPrefix>
                     <mat-icon (click)="openSaleCustomerFormDialogComponent()">add</mat-icon>
                   </button>
                 </div>
-              </div>
+              </div>-->
             </div>
           </div>
 
