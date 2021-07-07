@@ -47,10 +47,11 @@
         </mat-form-field>
       </div>
       <span fxFlex="1 1 0%"></span>
-      <!--*ngIf="selectProduct.value && (filteredProducts | async)?.length === 0 && (filteredMedicines | async)?.length === 0"-->
-      <button mat-raised-button color="primary"  [matMenuTriggerFor]="createMenu" style="margin-right: 10px"
 
-              [disabled]="form?.controls['status'].value === '10'">
+<!--      *ngIf="selectProduct.value && (filteredProducts | async)?.length === 0 && (filteredMedicines | async)?.length === 0"-->
+
+      <button mat-raised-button color="primary"  [matMenuTriggerFor]="createMenu" style="margin-right: 10px"
+              [disabled]="form?.controls['status'].value === '10' ">
         <mat-icon>add</mat-icon>
         Thêm mới
       </button>
@@ -291,13 +292,13 @@
             <div fxFlex="100">
               <!-- 2 truong hop  -->
               <mat-form-field *ngIf="form.get('discount_type').value == 'price'">
-                <span matPrefix>Giảm giá &nbsp;</span>
+                <span matPrefix>Chiết khấu &nbsp;</span>
                 <input class="text-right" matInput tabindex="6" value="{{ form.get('discount_amount').value | number }}"
                        (click)="openDiscountDialogWarehouse();">
               </mat-form-field>
 
               <mat-form-field *ngIf="form.get('discount_type').value == 'percent'">
-                <span matPrefix>Giảm giá &nbsp;</span>
+                <span matPrefix>Chiết khấu &nbsp;</span>
                 <input class="text-right" matInput tabindex="6"
                        value="{{ (form.get('total_price').value * form.get('discount_amount').value / 100) | number:'1.0-0' }} {{ '(' + form.get('discount_amount').value + '%)' }}"
                        (click)="openDiscountDialogWarehouse();">
