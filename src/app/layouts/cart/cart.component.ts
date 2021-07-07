@@ -8,7 +8,7 @@ import {
   OnDestroy,
   ViewChild,
   HostListener,
-  Directive, ElementRef
+  Directive, ElementRef, OnInit
 } from '@angular/core';
 
 import {MenuItems} from '../../shared/menu-items/menu-items';
@@ -34,7 +34,7 @@ import {CustomerService} from '../../customer/customer.service';
   templateUrl: './cart.component.html',
   // styleUrls: ['./cart.component.css'],
 })
-export class CartComponent implements OnDestroy {
+export class CartComponent implements OnInit, OnDestroy {
 
   mobileQuery: MediaQueryList;
   dir = 'ltr';
@@ -97,6 +97,7 @@ export class CartComponent implements OnDestroy {
     this.orderService.subscribeObjectListInvoice.subscribe(listInvoice => {
       const listItemInvoice = listInvoice.itemInvoice;
       this.listmItemInvoice = [];
+      // tslint:disable-next-line:no-shadowed-variable
       listItemInvoice.forEach(element => {
         if (element.active === true) {
           this.activeLink = element.invoice_id;

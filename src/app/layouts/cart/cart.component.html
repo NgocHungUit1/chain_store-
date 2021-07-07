@@ -141,8 +141,8 @@
            placeholder="SL:1" min="1" autocomplete="off"/>
 
     <nav mat-tab-nav-bar>
-      <a mat-tab-link *ngFor="let mItemInvoice of listmItemInvoice" (click)="activeLink = mItemInvoice.invoice_id"
-         [active]="activeLink == mItemInvoice.invoice_id" (click)="activeInvoice(mItemInvoice?.invoice_id)" mat-primary>
+      <a mat-tab-link mat-primary *ngFor="let mItemInvoice of listmItemInvoice" (click)="activeLink = mItemInvoice.invoice_id"
+         [active]="activeLink == mItemInvoice.invoice_id" (click)="activeInvoice(mItemInvoice?.invoice_id)">
         <span *ngIf="mItemInvoice?.invoice_id > 0">{{ mItemInvoice.invoice_name }}</span>
         <span
           *ngIf="mItemInvoice?.invoice_id < 0">{{ mItemInvoice.invoice_name + ' ' + (mItemInvoice?.invoice_id * -1) }}</span>

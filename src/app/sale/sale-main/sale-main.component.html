@@ -11,40 +11,45 @@
         <!----------------------------------------- SALE-DETAIL-ORDER ---------------------------------------->
 
         <div *ngFor="let itemProduct of listProduct; let i = index" class="product-item">
-          <div fxLayout="row wrap" class="row-item">
+          <div fxLayout="row wrap" fxLayoutAlign="center center" class="row-item">
 
             <div fxFlex="2" class="row-product-no">
-              <span style="padding-right: 10px">{{  countProduct - i  }}</span>
+              <!--<span style="padding-right: 10px">{{  countProduct - i  }}</span>-->
+              <span style="padding-right: 10px">{{  i + 1  }}</span>
             </div>
             <div fxFlex="auto">
-              <span class="row-text row-product-name" title="{{ itemProduct?.product?.product_name }}">
+              <div class="row-text row-product-name" title="{{ itemProduct?.product?.product_name }}">
 
-                <span
+                <!--<div
                   *ngIf="itemProduct?.product?.product_name.length > 50">{{ itemProduct?.product?.product_name | slice:0:50 }}
-                  ...</span>
-                <span
-                  *ngIf="itemProduct?.product?.product_name.length <= 50">{{ itemProduct.product?.product_name }}</span>
+                  ...</div>
+                <div
+                  *ngIf="itemProduct?.product?.product_name.length <= 50">{{ itemProduct.product?.product_name }}</div>-->
+                <div style="max-width: 330px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis">
+                  {{ itemProduct.product?.product_name }}</div>
 
                 <!-- <span *ngIf="itemProduct.product?.base_unit !== null"> - {{ itemProduct.product?.base_unit }}</span> -->
-              </span>
+              </div>
               <!-- <span class="row-text row-product-name" *ngIf="itemProduct.product?.base_unit !== null">
                 {{ itemProduct.product?.product_name+' - '+itemProduct.product?.base_unit }}
               </span> -->
-              <span class="row-product-note">
-                <span class="span-product-no">
-                  {{ itemProduct?.product?.product_no }}
-                </span>
+              <div class="span-product-no">
+                {{ itemProduct?.product?.product_no }}
+              </div>
+              <div class="row-product-note d-flex align-items-center">
                 <span *ngIf="itemProduct?.product?.note_detail_sale === undefined">Ghi chú liều
                   dùng</span>
-                <span *ngIf="itemProduct?.product?.note_detail_sale">{{ itemProduct?.product?.note_detail_sale }}</span>
+                <span class="product-note-txt"
+                      *ngIf="itemProduct?.product?.note_detail_sale">{{ itemProduct?.product?.note_detail_sale }}</span>
                 <button mat-icon-button>
                   <mat-icon class="row-icon-edit"
                             (click)="openNoteDetailOrderDialog(i,itemProduct?.product_unit_id,itemProduct?.product?.note_detail_sale)">
-                    edit</mat-icon>
+                    edit
+                  </mat-icon>
                 </button>
-              </span>
+              </div>
             </div>
-
+            <div fxFlex="2"></div>
             <div fxFlex="14" class="row-product-base-unit">
               <div fxLayout="row wrap">
                 <mat-form-field appearance="fill">
@@ -65,7 +70,7 @@
               <div *ngIf="localItemInvoice?.is_return !== true; else changeAmount">
 
                 <div fxLayout="row wrap">
-                  <mat-form-field style=" font-size: 20px; text-align: center;">
+                  <mat-form-field floatLabel="never" style=" font-size: 20px; text-align: center;">
                     <button matPrefix mat-icon-button class="row-button-edit-amount"
                             (click)="upAmountProduct(itemProduct.product,i)">
                       <mat-icon>keyboard_arrow_up</mat-icon>
@@ -85,7 +90,7 @@
 
                 <!-- change amount on return -->
                 <div fxLayout="row wrap">
-                  <mat-form-field style=" font-size: 20px; text-align: center;">
+                  <mat-form-field floatLabel="never" style=" font-size: 20px; text-align: center;">
                     <button matPrefix mat-icon-button class="row-button-edit-amount"
                             (click)="upAmountProductReturn(itemProduct.product,i)">
                       <mat-icon>keyboard_arrow_up</mat-icon>
@@ -109,7 +114,7 @@
               <div fxLayout="row wrap">
                 <div fxFlex="100">
 
-                  <mat-form-field style=" font-size: 20px; text-align: right;">
+                  <mat-form-field floatLabel="never" style=" font-size: 20px; text-align: right;">
                     <input matInput type="text" value="{{  itemProduct | showPrice | number }}" disabled="true"
                            style="color:black">
                     <button mat-icon-button matPrefix>
@@ -211,7 +216,7 @@
             </div>
 
             <div fxLayout="row wrap">
-              <div fxFlex="30">
+              <div fxFlex.gt-sm="30" fxFlex.gt-xs="49" fxFlex="100">
                 <mat-form-field>
                   <mat-label>Ngày</mat-label>
                   <input class="input-search" matInput [matDatepicker]="date_picker" formControlName="today"
@@ -222,7 +227,7 @@
               </div>
               <div fxFlex="2">
               </div>
-              <div fxFlex="30">
+              <div fxFlex.gt-sm="30" fxFlex.gt-xs="49" fxFlex="100">
                 <mat-form-field>
                   <mat-label>Thời gian</mat-label>
                   <input matInput formControlName="time" type="time"
@@ -250,7 +255,7 @@
 
           <div class="customer-action">
             <div fxLayout="row wrap">
-              <div fxFlex="90">
+              <div fxFlex="100">
                 <mat-form-field>
                   <input class="input-search-customer input-search" type="text" [formControl]="selectCustomer" matInput
                          [matAutocomplete]="chooseProduct" placeholder="Tìm khách hàng "
@@ -265,7 +270,8 @@
                       <small>phone: {{customer.phone}}</small>
                     </mat-option>
                   </mat-autocomplete>
-                  <button *ngIf="isSelectedCustomer" mat-icon-button matSuffix (click)="this.selectCustomer.patchValue(''); isSelectedCustomer = false">
+                  <button *ngIf="isSelectedCustomer" mat-icon-button matSuffix
+                          (click)="this.selectCustomer.patchValue(''); isSelectedCustomer = false">
                     <mat-icon>delete</mat-icon>
                   </button>
                   <button *ngIf="!isSelectedCustomer" mat-icon-button matSuffix>
@@ -283,8 +289,8 @@
             </div>
           </div>
 
-          <div fxLayout="row wrap">
-            <div fxFlex="50">
+          <div fxLayout="row wrap" fxLayoutAlign="center center">
+            <div fxFlex="49">
               <div class="pricebook-action">
                 <mat-form-field>
                   <button mat-icon-button matPrefix>
@@ -301,10 +307,8 @@
                 </mat-form-field>
               </div>
             </div>
-          </div>
-
-          <div fxLayout="row wrap">
-            <div fxFlex="50">
+            <div fxFlex="2"></div>
+            <div fxFlex="49" fxLayoutAlign="end center">
 
               <div class="ban-thuoc-theo-don" *ngIf="localItemInvoice?.is_return !== true"
                    [ngClass]="prescription?.checked ? 'prescription-checked' : 'prescription'">

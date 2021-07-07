@@ -22,7 +22,22 @@ html .page-wrapper .page-content {
   -webkit-flex: 1;
   -ms-flex: 1;
   flex: 1;
-  height: 400px;
+  height: calc(100% - 440px);
+}
+
+.product-cart .mat-input-element {
+  font-size: 15px;
+}
+
+.product-cart .mat-icon-button {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+}
+
+.product-cart .mat-icon-button .mat-icon {
+  font-size: 14px!important;
 }
 
 .product-list--icon {
@@ -64,21 +79,26 @@ html .page-wrapper .page-content {
 
 .row-text {
   padding-top: 10px;
-  position: absolute;
+  /*position: absolute;*/
 }
 
 .row-count-number {
   font-size: 15px;
-  padding-top: 20px;
+  /*padding-top: 20px;*/
   min-width: 60px;
   text-align: right;
 }
 
 .row-product-note {
-  padding-top: 20px;
-  position: absolute;
+  /*padding-top: 10px;*/
+  /*position: absolute;*/
   color: #666666;
   /* max-width: 45px; */
+}
+
+.row-product-note .product-note-txt {
+  display: inline-block;
+  max-width: 330px;
 }
 
 .row-amount {
@@ -93,7 +113,7 @@ html .page-wrapper .page-content {
 
 .row-product-no {
   font-size: 15px;
-  padding-top: 20px;
+  /*padding-top: 20px;*/
   /* min-width: 100px; */
   /* max-width: 150px; */
   /* width: 150px; */
@@ -103,6 +123,7 @@ html .page-wrapper .page-content {
 .span-product-no {
   font-size: 15px;
   color: black;
+  padding-top: 4px;
   padding-right: 4px;
 }
 
@@ -114,7 +135,7 @@ html .page-wrapper .page-content {
 
 .row-product-name {
   font-size: 15px;
-  margin-top: 5px;
+  /*margin-top: 5px;*/
 }
 
 .row-icon-edit {
@@ -126,8 +147,8 @@ html .page-wrapper .page-content {
 }
 
 .row-total-price {
-  padding-top: 28px;
-  font-size: 20px;
+  /*padding-top: 28px;*/
+  font-size: 15px;
   text-align: right;
   font-weight: 600;
 }
@@ -244,6 +265,10 @@ html .page-wrapper .page-content {
   /*margin-top: 15px;*/
 }
 
+.ban-thuoc-theo-don span {
+  font-size: 13px;
+}
+
 .custom-slide-toggle {
   margin-top: -15px;
 }
@@ -278,17 +303,35 @@ html .page-wrapper .page-content {
 .prescription {
   /*padding-left: 15px;*/
   font-size: 15px;
-  padding-bottom: 10px;
+  /*padding-bottom: 10px;*/
 }
 
 .prescription-checked {
-  padding-left: 15px;
+  /*padding-left: 15px;*/
   font-size: 15px;
-  padding-bottom: 10px;
+  /*padding-bottom: 10px;*/
   color: blue;
 }
 
-.prescription-text {
+.prescription span {
+  border-bottom: 1px solid transparent;
+  cursor: default;
+}
+
+.prescription-checked span.prescription-text {
   border-bottom: 1px solid blue;
   cursor: pointer;
 }
+
+.product-cart .mat-form-field:not(.mat-form-field-can-float) .mat-form-field-infix {
+  border-top: 0
+}
+
+.product-cart .mat-form-field:not(.mat-form-field-can-float) .mat-form-field-wrapper {
+  padding-bottom: 0;
+}
+
+.product-cart .mat-form-field:not(.mat-form-field-can-float) .mat-form-field-underline {
+  bottom: 0;
+}
+
