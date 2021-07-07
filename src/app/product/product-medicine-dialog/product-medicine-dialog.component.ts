@@ -141,8 +141,8 @@ export class ProductMedicineDialogComponent implements OnInit {
   filterUnit = [
     {name: 'viên', selelected: true},
     {name: 'vỉ', selelected: false},
-    {name: 'hộp', selelected: false},
-    {name: 'lọ', selelected: false},
+    {name: 'chai', selelected: false},
+    {name: 'cái', selelected: false},
   ];
 
   // public _radioConvert = null;
