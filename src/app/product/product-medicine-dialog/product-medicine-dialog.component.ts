@@ -138,6 +138,9 @@ export class ProductMedicineDialogComponent implements OnInit {
     'Saint Lucia', 'Kiribati'];
   filteredOptionsMadeIn: Observable<string[]>;
 
+  optionsManufacturer: string[] = [];
+  filteredOptionsManufacturer: Observable<string>[];
+
   filterUnit = [
     {name: 'viên', selelected: true},
     {name: 'vỉ', selelected: false},
@@ -219,7 +222,6 @@ export class ProductMedicineDialogComponent implements OnInit {
     this.manufacturerSer.getList(manufacturerFilter).subscribe(res => {
       this.manufacturers = res.body;
     });
-
 
     this.initForm();
 

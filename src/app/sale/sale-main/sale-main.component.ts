@@ -536,6 +536,9 @@ export class SaleMainComponent implements OnInit {
     this.allPermission = sessionStorage.getItem('allPermission')?.split(',');
     this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
     this.initFormSiderBar();
+    // this.form.controls.today.valueChanges.subscribe(x => {
+    // this.form.controls.today.patchValue(new Date(x));
+    // });
     /**
      * Load user login
      */
@@ -1297,8 +1300,14 @@ export class SaleMainComponent implements OnInit {
     }
 
     if (data['today'] !== null && typeof data['today'] === 'object') {
+      let effDate;
+      if (!(data['today'] instanceof Date)) {
+        effDate = data['today']._d;
+      } else {
+        effDate = new Date(data['today'].getTime() + (420 * 60 * 1000));
+      }
       // @ts-ignore
-      const effDate = new Date(data['today'].getTime() + (420 * 60 * 1000));
+      // const effDate = new Date(data['today'].getTime() + (420 * 60 * 1000));
       date_created = data['time'] + ' ' + effDate.toISOString().split('T')[0];
     }
 
