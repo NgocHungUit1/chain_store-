@@ -18,7 +18,7 @@
 
         <div fxLayout="row wrap" class="invoice-info-row">
           <div fxFlex="48" class="invoice-info-field">
-            <span class="invoice-field-label">Thời gian :</span> <strong>{{ invoice.created_at }}</strong>
+            <span class="invoice-field-label">Thời gian :</span> <strong>{{ invoice.created_at * 1000 | date: 'dd-MM-yyyy HH:mm' }}</strong>
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="invoice-info-field">
