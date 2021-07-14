@@ -49,9 +49,8 @@
       <span fxFlex="1 1 0%"></span>
 
 <!--      *ngIf="selectProduct.value && (filteredProducts | async)?.length === 0 && (filteredMedicines | async)?.length === 0"-->
-
-      <button mat-raised-button color="primary"  [matMenuTriggerFor]="createMenu" style="margin-right: 10px"
-              [disabled]="form?.controls['status'].value === '10' ">
+<!--      [disabled]="form?.controls['status'].value === '10' "-->
+      <button mat-raised-button color="primary"  [matMenuTriggerFor]="createMenu" style="margin-right: 10px">
         <mat-icon>add</mat-icon>
         Thêm mới
       </button>
@@ -157,9 +156,12 @@
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['price']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index">
                   <mat-form-field class="text-right">
+<!--                    <input matInput-->
+<!--                           [(ngModel)]="data[i]['price']"-->
+<!--                           (keyup)="priceChange($event,i)">-->
                     <input matInput
                            [(ngModel)]="data[i]['price']"
-                           (keyup)="priceChange($event,i)">
+                           (click)="openPriceDialog(i)" readonly>
                   </mat-form-field>
                   <!--                  <span>{{ element.price | currency : 'VND' : ''}} </span>-->
                 </td>
@@ -167,29 +169,32 @@
 
 
 <!--              [disabled]="form?.controls['status'].value === '10'"-->
-              <ng-container matColumnDef="discount">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['discount']}}</th>
-                <td mat-cell *matCellDef="let element; let i = index">
+<!--              <ng-container matColumnDef="discount">-->
+<!--                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['discount']}}</th>-->
+<!--                <td mat-cell *matCellDef="let element; let i = index">-->
 
-                  <mat-form-field *ngIf="element['discount_type'] == 'price'">
-                    <input matInput class="discount-input" [(ngModel)]="data[i]['discount']"
-                           value="{{ element['discount'] | number }}" (click)="openDiscountDialogWarehouseProduct(i);"
-                           readonly >
-                  </mat-form-field>
+<!--                  <mat-form-field *ngIf="element['discount_type'] == 'price'">-->
+<!--                    <input matInput class="discount-input" [(ngModel)]="data[i]['discount']"-->
+<!--                           value="{{ element['discount'] | number }}" (click)="openDiscountDialogWarehouseProduct(i);"-->
+<!--                           readonly >-->
+<!--                  </mat-form-field>-->
 
-<!--                  [disabled]="form?.controls['status'].value === '10'"-->
-                  <mat-form-field *ngIf="element['discount_type'] == 'percent'">
-                    <input matInput class="discount-input" [(ngModel)]="data[i]['discount']"
-                           value="{{ (element['price']*element['discount']/100) | number }}"
-                           (click)="openDiscountDialogWarehouseProduct(i);"
-                           title="{{ (element['price']*element['discount']/100) | number }} {{ '('+element['discount']+'%)' }}"
-                           readonly >
-                  </mat-form-field>
-                </td>
-              </ng-container>
+<!--&lt;!&ndash;                  [disabled]="form?.controls['status'].value === '10'"&ndash;&gt;-->
+<!--                  <mat-form-field *ngIf="element['discount_type'] == 'percent'">-->
+<!--                    <input matInput class="discount-input" [(ngModel)]="data[i]['discount']"-->
+<!--                           value="{{ (element['price']*element['discount']/100) | number }}"-->
+<!--                           (click)="openDiscountDialogWarehouseProduct(i);"-->
+<!--                           title="{{ (element['price']*element['discount']/100) | number }} {{ '('+element['discount']+'%)' }}"-->
+<!--                           readonly >-->
+<!--                  </mat-form-field>-->
+<!--                </td>-->
+<!--              </ng-container>-->
 
               <ng-container matColumnDef="amount">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['amount']}}</th>
+                <th mat-header-cell *matHeaderCellDef
+                    matTooltip="(Đơn giá * Số lượng) - Tiền CK">
+                  {{columnsHeader['amount']}}
+                </th>
                 <td mat-cell *matCellDef="let element">
                   <b>{{ element.amount | currency : 'VND' : ''}} </b>
                 </td>

@@ -33,8 +33,7 @@ import { OptionStoreService } from '../../common/option-store.service';
 import { OptionStore } from '../../common/option-store.model';
 import { WarehouseExpensesComponent } from '../warehouse-expenses/warehouse-expenses.component';
 import { WarehouseParcelListDialogComponent } from '../warehouse-parcel-list-dialog/warehouse-parcel-list-dialog.component';
-import { WarehouseProductMedicineDialogComponent } from '../warehouse-product-medicine-dialog/warehouse-product-medicine-dialog.component';
-import { element } from 'protractor';
+import { WarehouseFormPriceDialogComponent } from '../warehouse-form-price-dialog/warehouse-form-price-dialog.component';
 
 @Component({
   selector: 'app-warehouse-import-form',
@@ -90,10 +89,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'product_name': 'Tên hàng',
     // 'product_parcel': 'Lô',
     'product_unit_id': 'Đơn vị',
-    'quantity': 'Tổng SL',
-    'price': 'Đơn giá',
-    'discount': 'Chiết khấu',//'Giảm giá',
-    'amount': 'Thành tiền',
+    'quantity': 'Tổng SL (6)',
+    'price': 'Giá nhập',
+    // 'discount': 'Chiết khấu',//'Giảm giá',
+    'amount': 'Thành tiền (12)',
   };
 
   displayedColumns: string[] = [];
@@ -104,7 +103,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'product_unit_id',
     'quantity',
     'price',
-    'discount',
+    // 'discount',
     'amount',
     'actions'
   ];
@@ -361,6 +360,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         warehouseProduct.product_unit_id = item.product_unit_id;
         warehouseProduct.productUnits = item.productUnits !== undefined ? item.productUnits : [];
         warehouseProduct.product_parcels = item.productParcels !== undefined ? item.productParcels : [];
+        warehouseProduct.vat = (item.vat !== null) ? item.vat : 0;
+        warehouseProduct.vat_type = (item.vat_type !== null) ? item.vat_type : 'price';
 
         if (item.productParcels !== undefined && item.productParcels.length > 0) {
           this.parcels = this.parcels.concat(item.productParcels);
@@ -586,13 +587,22 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     if (this.data[i] !== undefined) {
       const price = numeral(this.data[i]['price']).value();
       if (this.data[i]['discount_type'] === 'price') {
-        // this.data[i]['amount'] = Math.round((price - this.data[i]['discount']) * this.data[i]['quantity']);
-        this.data[i]['amount'] = Math.round((price * this.data[i]['quantity'] ) - this.data[i]['discount']);
+        this.data[i]['amount'] = Math.round((price * this.data[i]['quantity']) - this.data[i]['discount']);
       } else {
         this.data[i]['amount'] =
           Math.round((price - (price * this.data[i]['discount']) / 100) * this.data[i]['quantity']);
-        // this.data[i]['amount'] = Math.round((price * this.data[i]['quantity'] ) * ( 100 - this.data[i]['discount']) / 100);
       }
+
+      // tính thue suat
+      const vat = numeral(this.data[i]['vat']).value();
+      if (vat !== 0) {
+        if (this.data[i]['vat_type'] === 'price') {
+          this.data[i]['amount'] = this.data[i]['amount'] + vat;
+        } else {
+          this.data[i]['amount'] = this.data[i]['amount'] + (this.data[i]['amount'] * vat) / 100;
+        }
+      }
+
       this.recalculateWarehouse();
     }
   }
@@ -607,14 +617,36 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       const item_quantity = numeral(item['quantity']).value();
       const item_price = numeral(item['price']).value();
       const item_discount = Number(item['discount']);
+      const vat = numeral(item['vat']).value();
+      const vat_type = item['vat_type'];
+      let money = 0;
       quantity = Number(quantity) + item_quantity;
       if (item['discount_type'] === 'price') {
-        price = Number(price) + ((item_quantity * item_price) - item_discount);
+        money = ((item_quantity * item_price) - item_discount);
+        // tinh thue suat
+        if (vat !== 0) {
+          if (vat_type === 'price') {
+            money = money + vat;
+          } else {
+            money = money + (money * vat) / 100;
+          }
+        }
+        price = Number(price) + money;
       } else {
-        const money = item_quantity * item_price * (1 - (item_discount / 100));
+        money = item_quantity * item_price * (1 - (item_discount / 100));
+        // tinh thue suat
+        if (vat !== 0) {
+          if (vat_type === 'price') {
+            money = money + vat;
+          } else {
+            money = money + (money * vat) / 100;
+          }
+        }
         price = Number(price) + money;
       }
+
     });
+
     // Tinh vao cong no
     if (discount_type === 'price') {
       totalAmount = Number(price) - Number(discount);
@@ -793,7 +825,34 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         }
       });
     }
+  }
 
+  openPriceDialog(i) {
+    if (this.data[i] !== undefined) {
+
+      const dialogRef = this.dialog.open(WarehouseFormPriceDialogComponent, {
+        width: '30%',
+        minHeight: '65%',
+        data: {
+          price: this.data[i]['price'],
+          discount: this.data[i]['discount'],
+          discount_type: this.data[i]['discount_type'],
+          vat: this.data[i]['vat'],
+          vat_type: this.data[i]['vat_type'],
+        }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result !== null) {
+          this.data[i]['price'] = numeral(result.price).value();
+          this.data[i]['discount'] = numeral(result.discount).value();
+          this.data[i]['discount_type'] = result.discount_type;
+          this.data[i]['vat'] = numeral(result.vat).value();
+          this.data[i]['vat_type'] = result.vat_type;
+          this.recalculateItem(i);
+        }
+      });
+    }
   }
 
   openSupplierFormDialog() {
