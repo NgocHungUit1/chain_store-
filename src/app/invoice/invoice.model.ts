@@ -43,7 +43,7 @@ export class Invoice {
   order_status: string;
   user: User;
   created_by: string;
-  created_at: string;
+  created_at: any;
   stt: number; // for view
   status: number; // for view
   national_pharmacy_no: string; // for view

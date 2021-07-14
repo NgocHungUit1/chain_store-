@@ -137,6 +137,10 @@ export class SaleMainComponent implements OnInit {
     return fail;
   }
 
+  /*log(value) {
+    console.log('Log Value: ', value);
+  }*/
+
   async loadData() {
     const mItemInvoice = this.getNewItemInvoice();
 
@@ -833,7 +837,7 @@ export class SaleMainComponent implements OnInit {
     if (Number(mItemInvoice.invoice_id) > 0) {
       const aDate = mItemInvoice.today.split('-');
       this.form.patchValue({
-        today: new Date(aDate[0], aDate[1], aDate[2]),
+        today: new Date(aDate[0], aDate[1] - 1, aDate[2]),
         time: mItemInvoice.time,
         invoice_id: mItemInvoice.invoice_id
       });
