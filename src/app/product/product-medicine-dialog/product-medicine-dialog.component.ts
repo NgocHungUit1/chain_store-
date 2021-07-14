@@ -141,6 +141,8 @@ export class ProductMedicineDialogComponent implements OnInit {
   optionsManufacturer: string[] = [];
   filteredOptionsManufacturer: Observable<string>[];
 
+  optionsUnit: string[] = ['viên', 'vỉ', 'chai', 'cái'];
+  filteredOptionsUnit: Observable<string[]>;
   filterUnit = [
     {name: 'viên', selelected: true},
     {name: 'vỉ', selelected: false},
@@ -293,9 +295,19 @@ export class ProductMedicineDialogComponent implements OnInit {
     return [];
   }
 
+  public _filterUnit(value: any): string[] {
+    return this.optionsUnit.filter(option => option.toLowerCase().includes(value.unit_name));
+  }
+
+  /*changeUnitName(i) {
+    this.filteredOptionsUnit = this.units.controls[i].valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterUnit(value))
+    );
+  }*/
+
   changeUnitValue(event: any, i) {
     const value = event.target.value;
-    // console.log(value);
     this.units.controls[i].patchValue({
       unit_price: numeral(value * numeral(this.form.controls['sell_price'].value).value()).format('0,0'),
     });
@@ -649,6 +661,12 @@ export class ProductMedicineDialogComponent implements OnInit {
 
   addUnit() {
     const index = this.units.length + 1;
+    // let unitName: string;
+    // const list = this.filterUnit.filter(item => item.selelected === false);
+    // const newIndex = index - 1;
+    // if (list.length > 0 && newIndex < list.length) {
+    //   unitName = list[newIndex].name;
+    // }
 
     const group = new FormGroup({
       unit_name: new FormControl('', Validators.required),

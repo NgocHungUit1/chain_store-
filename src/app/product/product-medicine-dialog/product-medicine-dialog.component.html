@@ -165,7 +165,7 @@
                   <div fxFlex="90">
                     <mat-form-field>
                       <mat-select placeholder="Hãng sản xuất" formControlName="manufacturer">
-                        <mat-option>--</mat-option>
+                        <mat-option>&#45;&#45;</mat-option>
                         <mat-option *ngFor="let manufacturer of manufacturers" [value]="manufacturer.id">
                           {{manufacturer.name}}
                         </mat-option>
@@ -182,7 +182,6 @@
                   <div fxFlex="100">
                     <mat-form-field>
                       <input type="text"
-                             placeholder="Pick one"
                              aria-label="Number"
                              matInput
                              formControlName="made_in"
@@ -229,7 +228,14 @@
                             </td>
                             <td>
                               <mat-form-field style="width: 100px">
-                                <input type="text" formControlName="unit_name" matInput placeholder="Tên đơn vị">
+                                <input type="text" formControlName="unit_name"
+                                       matInput placeholder="Tên đơn vị"
+                                       [matAutocomplete]="autoUnit">
+                                <mat-autocomplete #autoUnit="matAutocomplete">
+                                  <mat-option *ngFor="let option of filteredOptionsUnit | async" [value]="option">
+                                    {{ option }}
+                                  </mat-option>
+                                </mat-autocomplete>
                               </mat-form-field>
                             </td>
                             <td>
