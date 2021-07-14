@@ -560,6 +560,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         // warehouseProduct.amount = 0; // (res['original_price'] !== null) ? res['original_price'] : 0;
         warehouseProduct.productUnits = res['productUnits'];
         warehouseProduct.product_parcels = [];
+        warehouseProduct.vat = 0;
+        warehouseProduct.vat_type = 'price';
 
         if (res['productUnits'].length > 0) {
           res['productUnits'].sort((a, b) => (a.value > b.value) ? 1 : -1);

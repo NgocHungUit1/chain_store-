@@ -50,11 +50,11 @@ export class WarehouseFormPriceDialogComponent implements OnInit {
       discount: [
         numeral(this.discount).format('0,0')
       ],
-      discount_type: ['price'],
+      discount_type: [this.discount_type],
       vat: [
         numeral(this.vat).format('0,0')
       ],
-      vat_type: ['price'],
+      vat_type: [this.vat_type],
     });
 
     this.form.valueChanges.subscribe(res => {
