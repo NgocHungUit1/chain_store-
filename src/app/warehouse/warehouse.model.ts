@@ -70,6 +70,8 @@ export class WarehouseProduct {
   product_parcels: object[];
   productParcelsForView: object[];
   productParcelsForViewHtml: string;
+  vat: number;
+  vat_type: string;
 }
 
 export class WarehouseProductFilter extends ApiFilterBase {

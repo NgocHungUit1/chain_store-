@@ -1,0 +1,64 @@
+<!--<h1 mat-dialog-title>Đơn giá</h1>-->
+<div mat-dialog-content>
+  <form [formGroup]="form">
+
+    <mat-label style="font-size: 16px">Đơn giá (7)</mat-label>
+    <div fxLayout="row wrap" class="row-wrap">
+      <div fxFlex="auto">
+        <mat-form-field style="text-align: right; font-size: 16px">
+          <input matInput  tabindex="1" formControlName="price" (keyup)="inputformatNumber($event)" min="0" autocomplete="off">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <mat-label style="font-size: 16px">Chiết khấu (8)</mat-label>
+    <div fxLayout="row wrap" class="row-wrap">
+      <div fxFlex="102px">
+        <mat-button-toggle-group formControlName="discount_type" >
+          <mat-button-toggle value="price" >VNĐ</mat-button-toggle>
+          <mat-button-toggle value="percent" >%</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+      <div fxFlex="auto">
+        <mat-form-field style="text-align: right; font-size: 16px">
+          <input matInput  tabindex="2" formControlName="discount" (keyup)="inputformatNumber($event)" autocomplete="off">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <mat-label style="font-size: 16px">Thuế suất (10)</mat-label>
+    <div fxLayout="row wrap" class="row-wrap">
+      <div fxFlex="103px">
+        <mat-button-toggle-group formControlName="vat_type">
+          <mat-button-toggle value="price">VNĐ</mat-button-toggle>
+          <mat-button-toggle value="percent">%</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+      <div fxFlex="auto">
+        <mat-form-field style="text-align: right; font-size: 16px">
+          <input matInput  tabindex="3" formControlName="vat" (keyup)="inputformatNumber($event)"  autocomplete="off">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <mat-chip-list #chipList>
+      <mat-chip *ngFor="let item of filterVAT; index as i;"
+                color="{{item.selelected==true ? 'primary' : 'null'}}"
+                selected="{{ item.selected }}"
+                (click)="selectBaseVAT(item,i)"
+                >
+        {{ item.name }}
+      </mat-chip>
+    </mat-chip-list>
+
+
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" tabindex="3" (click)="submit()">
+    <mat-icon>save</mat-icon>Lưu
+  </button>
+  <button mat-raised-button (click)="onNoClick()" tabindex="-1">
+    <mat-icon>cancel</mat-icon>Bỏ qua
+  </button>
+</div>

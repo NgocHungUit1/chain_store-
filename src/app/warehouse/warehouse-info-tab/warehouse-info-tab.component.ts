@@ -27,6 +27,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
     'quantity': 'Tổng SL',
     'price': 'Đơn giá',
     'discount': 'Chiết khấu',
+    'vat': 'Thuế suất',
     'amount': 'Thành tiền',
   };
   displayedColumns = [
@@ -36,6 +37,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
     'quantity',
     'price',
     'discount',
+    'vat',
     'amount',
     // 'actions'
   ];
@@ -291,6 +293,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
       printContent += '<th>' + 'Tên hàng' + '</th>';
       printContent += '<th>' + 'Đơn giá' + '</th>';
       printContent += '<th>' + 'Chiết khấu' + '</th>';
+      printContent += '<th>' + 'Thuế suất' + '</th>';
       printContent += '<th>' + 'Thành tiền' + '</th>';
       printContent += '</tr>';
 
@@ -313,6 +316,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
         printContent += '</td>';
         printContent += '<td style="text-align:right;">' + element.price + '</td>';
         printContent += '<td style="text-align:right;">' + element.discount + '</td>';
+        printContent += '<td style="text-align:right;">' + element.vat + '</td>';
         printContent += '<td style="text-align:right;">' + element.amount + '</td>';
         printContent += '</tr>';
       });

@@ -83,6 +83,13 @@
             <td mat-cell class="column-left" *matCellDef="let element"> {{ element.discountText }}</td>
           </ng-container>
 
+          <ng-container matColumnDef="vat" >
+            <th mat-header-cell class="column-left" *matHeaderCellDef> {{columnsHeader['vat']}}</th>
+            <td mat-cell class="column-left" *matCellDef="let element">
+              {{ element.vat | number }} <span *ngIf="element.vat_type == 'percent'">%</span>
+            </td>
+          </ng-container>
+
           <ng-container matColumnDef="amount">
             <th mat-header-cell class="column-left" *matHeaderCellDef> {{columnsHeader['amount']}}</th>
             <td mat-cell class="column-left" *matCellDef="let element">

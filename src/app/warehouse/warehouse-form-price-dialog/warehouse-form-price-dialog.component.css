@@ -1,0 +1,26 @@
+.mat-button-toggle {
+  width: 50px;
+}
+
+.mat-button-toggle-group {
+  height: 32px;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.mat-lable {
+  font-size: 16px;
+}
+
+.mat-dialog-content {
+  overflow: hidden;
+}
+
+.row-wrap {
+  margin-top: -10px;
+}
+
+.mat-button-toggle-checked{
+  background-color: #3c9788;
+  color: white!important;
+}
