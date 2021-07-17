@@ -12,22 +12,24 @@ import { DemoMaterialModule } from '../demo-material-module';
 import { PriceBookListComponent } from './price-book-list/price-book-list.component';
 import { CreatePriceListFormDialogComponent } from './create-price-list-form-dialog/create-price-list-form-dialog.component';
 import { SetupCommonPriceDialogComponent } from './setup-common-price-dialog/setup-common-price-dialog.component';
+import {InputSelectAllModule} from '../common/input-select-all/input-select-all.module';
 
 
 
 @NgModule({
   declarations: [PriceBookListComponent, CreatePriceListFormDialogComponent, SetupCommonPriceDialogComponent],
-  imports: [
-    CommonModule,
-    RouterModule.forChild(PriceBookRoutes),
-    FormsModule,
-    ReactiveFormsModule,
-    FlexLayoutModule,
-    QuillModule.forRoot(),
-    DragulaModule.forRoot(),
-    PerfectScrollbarModule,
-    Ng2SearchPipeModule,
-    DemoMaterialModule
-  ]
+    imports: [
+        CommonModule,
+        RouterModule.forChild(PriceBookRoutes),
+        FormsModule,
+        ReactiveFormsModule,
+        FlexLayoutModule,
+        QuillModule.forRoot(),
+        DragulaModule.forRoot(),
+        PerfectScrollbarModule,
+        Ng2SearchPipeModule,
+        DemoMaterialModule,
+        InputSelectAllModule
+    ]
 })
 export class PriceBookModule { }

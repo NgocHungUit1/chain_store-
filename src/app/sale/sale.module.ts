@@ -23,6 +23,7 @@ import { ShowPricePipe, TotalPricePipe } from './cart.pipe';
 import { SaleExpensesDialogComponent } from './sale-expenses-dialog/sale-expenses-dialog.component';
 import { PrescriptionFormDialogComponent } from './prescription-form-dialog/prescription-form-dialog.component';
 import { MedicalFacilityFormDialogComponent } from './medical-facility-form-dialog/medical-facility-form-dialog.component';
+import {InputSelectAllModule} from '../common/input-select-all/input-select-all.module';
 
 @NgModule({
   declarations: [
@@ -39,19 +40,20 @@ import { MedicalFacilityFormDialogComponent } from './medical-facility-form-dial
     SaleExpensesDialogComponent,
     PrescriptionFormDialogComponent,
     MedicalFacilityFormDialogComponent],
-  imports: [
-    CommonModule,
-    RouterModule.forChild(SaleRoutes),
-    FormsModule,
-    ReactiveFormsModule,
-    FlexLayoutModule,
-    QuillModule.forRoot(),
-    DragulaModule.forRoot(),
-    PerfectScrollbarModule,
-    Ng2SearchPipeModule,
-    DemoMaterialModule,
-    AngularImageViewerModule
-  ],
+    imports: [
+        CommonModule,
+        RouterModule.forChild(SaleRoutes),
+        FormsModule,
+        ReactiveFormsModule,
+        FlexLayoutModule,
+        QuillModule.forRoot(),
+        DragulaModule.forRoot(),
+        PerfectScrollbarModule,
+        Ng2SearchPipeModule,
+        DemoMaterialModule,
+        AngularImageViewerModule,
+        InputSelectAllModule
+    ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SaleModule {
