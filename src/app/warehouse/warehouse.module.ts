@@ -21,6 +21,7 @@ import { WarehouseExpensesComponent } from './warehouse-expenses/warehouse-expen
 import { ShowValueExpensesPipe } from './warehouse.pipe';
 import { WarehouseParcelListDialogComponent } from './warehouse-parcel-list-dialog/warehouse-parcel-list-dialog.component';
 import { WarehouseProductMedicineDialogComponent } from './warehouse-product-medicine-dialog/warehouse-product-medicine-dialog.component';
+import {InputSelectAllModule} from '../common/input-select-all/input-select-all.module';
 
 @NgModule({
   declarations: [
@@ -37,18 +38,19 @@ import { WarehouseProductMedicineDialogComponent } from './warehouse-product-med
     WarehouseParcelListDialogComponent,
     WarehouseProductMedicineDialogComponent
   ],
-  imports: [
-    CommonModule,
-    RouterModule.forChild(WarehouseRoutes),
-    FormsModule,
-    ReactiveFormsModule,
-    FlexLayoutModule,
-    QuillModule.forRoot(),
-    DragulaModule.forRoot(),
-    PerfectScrollbarModule,
-    Ng2SearchPipeModule,
-    DemoMaterialModule
-  ],
+    imports: [
+        CommonModule,
+        RouterModule.forChild(WarehouseRoutes),
+        FormsModule,
+        ReactiveFormsModule,
+        FlexLayoutModule,
+        QuillModule.forRoot(),
+        DragulaModule.forRoot(),
+        PerfectScrollbarModule,
+        Ng2SearchPipeModule,
+        DemoMaterialModule,
+        InputSelectAllModule
+    ],
   entryComponents: [
     WarehouseParcelFormDialogComponent
   ]
