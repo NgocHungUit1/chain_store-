@@ -1,118 +1,123 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpResponse} from '@angular/common/http';
 import {Observable, BehaviorSubject, of, throwError} from 'rxjs';
-import { environment } from '../../environments/environment';
-import { User, UserFilter } from './user.model';
+import {environment} from '../../environments/environment';
+import {User, UserFilter} from './user.model';
 import {catchError, map} from 'rxjs/operators';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class UserService {
 
-    private loadUser: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-    subscribeLoadUser: Observable<boolean> = this.loadUser.asObservable();
+  private loadUser: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  subscribeLoadUser: Observable<boolean> = this.loadUser.asObservable();
 
-    setLoadUser(action: boolean) {
-      this.loadUser.next(action);
+  setLoadUser(action: boolean) {
+    this.loadUser.next(action);
+  }
+
+  constructor(private http: HttpClient) {
+  }
+
+  getApiUrl(filter?: UserFilter) {
+    if (!filter.page) {
+      filter.page = 1;
     }
 
-    constructor(private http: HttpClient) {
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
     }
 
-    getApiUrl(filter?: UserFilter) {
-        if (!filter.page) {
-            filter.page = 1;
-        }
+    let url = '/user?per-page=' + filter.pageSize;
 
-        if (!filter.pageSize) {
-            filter.pageSize = 20;
-        }
+    url += '&' + filter.toFilterString();
+    return url;
+  }
 
-        let url = '/user?per-page=' + filter.pageSize;
+  getStateUrl(filter?: UserFilter) {
 
-        url += '&' + filter.toFilterString();
-        return url;
+    let url = '/user/list';
+    if (!filter.page) {
+      filter.page = 1;
     }
-
-    getStateUrl(filter?: UserFilter) {
-
-        let url = '/user/list';
-        if (!filter.page) {
-            filter.page = 1;
-        }
-        if (!filter.pageSize) {
-            filter.pageSize = 20;
-        }
-        url += '?' + filter.toFilterString();
-        return url;
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
     }
+    url += '?' + filter.toFilterString();
+    return url;
+  }
 
-    getList(filter?: UserFilter): Observable<HttpResponse<any>> {
-        const url = environment.apiUrl + this.getApiUrl(filter);
-        return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
-    }
+  getList(filter?: UserFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrl(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
 
-    public getUser(id: string): Observable<User> {
-        const url = environment.apiUrl + '/user/' + id;
-        return this.http.get<User>(url);
-    }
+  public getUser(id: string): Observable<User> {
+    const url = environment.apiUrl + '/user/' + id;
+    return this.http.get<User>(url);
+  }
 
-    update(id: string, pos: any) {
-        const url = environment.apiUrl + '/user/' + id;
-        return this.http.put(url, pos).pipe(
-          map(results => {
-            return results;
-          }),
-          // catch errors
-          catchError(err => throwError(err))
-        );
-    }
+  update(id: string, pos: any) {
+    const url = environment.apiUrl + '/user/' + id;
+    return this.http.put(url, pos).pipe(
+      map(results => {
+        return results;
+      }),
+      // catch errors
+      catchError(err => throwError(err))
+    );
+  }
 
-    create(data) {
-        const url = environment.apiUrl + '/user';
-        return this.http.post(url, data).pipe(
-          map(results => {
-            return results;
-          }),
-          // catch errors
-          catchError(err => throwError(err))
-        );
-    }
+  create(data) {
+    const url = environment.apiUrl + '/user';
+    return this.http.post(url, data).pipe(
+      map(results => {
+        return results;
+      }),
+      // catch errors
+      catchError(err => throwError(err))
+    );
+  }
 
-    delete(id: string) {
-      const url = environment.apiUrl + '/user/' + id;
-      return this.http.delete(url);
-    }
+  delete(id: string) {
+    const url = environment.apiUrl + '/user/' + id;
+    return this.http.delete(url);
+  }
 
   autocomplete(term: string) {
-        const url = environment.apiUrl + '/user/autocomplete?term=' + term;
-        return this.http.get<User[]>(url);
-    }
+    const url = environment.apiUrl + '/user/autocomplete?term=' + term;
+    return this.http.get<User[]>(url);
+  }
 
-    getUserLogin() {
-        const url = environment.apiUrl + '/user/login';
-        return this.http.get<User>(url);
-    }
+  getUserLogin() {
+    const url = environment.apiUrl + '/user/login';
+    return this.http.get<User>(url);
+  }
 
-    activate(id) {
-      const url = environment.apiUrl + '/user/activate?id=' + id;
-      return this.http.post(url, {});
-    }
+  activate(id) {
+    const url = environment.apiUrl + '/user/activate?id=' + id;
+    return this.http.post(url, {});
+  }
 
-    lock(id) {
-      const url = environment.apiUrl + '/user/lock?id=' + id;
-      return this.http.post(url, {});
-    }
+  lock(id) {
+    const url = environment.apiUrl + '/user/lock?id=' + id;
+    return this.http.post(url, {});
+  }
+
+  getUserRole() {
+    const url = environment.apiUrl + '/user/roles';
+    return this.http.get<any>(url);
+  }
 
   getStoreRoleList() {
     const url = environment.apiUrl + '/user/store-role-list';
-    return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
   getStoreBranchList() {
     const url = environment.apiUrl + '/user/branch-list';
-    return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
   getBranchLogin() {
