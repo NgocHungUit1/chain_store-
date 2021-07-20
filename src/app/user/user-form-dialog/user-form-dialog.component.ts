@@ -11,20 +11,6 @@ import {UserService} from '../user.service';
   styleUrls: ['./user-form-dialog.component.css']
 })
 export class UserFormDialogComponent implements OnInit {
-
-  constructor(
-    public dialogRef: MatDialogRef<UserFormDialogComponent>,
-    public notifySer: NotifierService,
-    private fb: FormBuilder,
-    private userService: UserService,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: Object
-  ) {
-
-    this.local_data = {...data};
-    if (this.local_data.user_id) {
-      this.user_id = this.local_data.user_id;
-    }
-  }
   form: FormGroup;
   loading = false;
   local_data: any;
@@ -42,6 +28,21 @@ export class UserFormDialogComponent implements OnInit {
       'title': 'Đang hoạt động'
     }
   ];
+
+  constructor(
+    public dialogRef: MatDialogRef<UserFormDialogComponent>,
+    public notifySer: NotifierService,
+    private fb: FormBuilder,
+    private userService: UserService,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: Object
+  ) {
+
+    this.local_data = {...data};
+    if (this.local_data.user_id) {
+      this.user_id = this.local_data.user_id;
+      this.checkChangePassword = this.local_data.update_pw;
+    }
+  }
 
 
 

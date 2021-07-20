@@ -4,6 +4,9 @@ import {Router} from '@angular/router';
 import {AuthService} from '../../../authentication/auth.service';
 import {MatDialog} from '@angular/material/dialog';
 import {UserService} from '../../../user/user.service';
+import {UserFormDialogComponent} from '../../../user/user-form-dialog/user-form-dialog.component';
+import {NotifierService} from 'angular-notifier';
+import {User} from '../../../user/user.model';
 
 @Component({
   selector: 'app-header',
@@ -11,6 +14,8 @@ import {UserService} from '../../../user/user.service';
   styleUrls: []
 })
 export class AppHeaderComponent {
+  @Input() user: User;
+
   public config: PerfectScrollbarConfigInterface = {};
   userInfo: any = null;
 
@@ -80,9 +85,39 @@ export class AppHeaderComponent {
   ];
 
   constructor(
+    private dialog: MatDialog,
     private route: Router,
     private authSer: AuthService,
+    private userService: UserService,
+    private notifyService: NotifierService
   ) {
+  }
+
+  loadUser(id) {
+    this.userService.getUser(id).subscribe(res => {
+      this.user = res;
+    });
+  }
+
+  openUserFormDialog() {
+    const obj = {
+      action: 'Update',
+      title: 'Cập nhật tài khoản',
+      user_id: this.authSer.getUserProfile(),
+      update_pw: true
+    };
+
+    const dialogRef = this.dialog.open(UserFormDialogComponent, {
+      data: obj,
+      width: '50%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadUser(result.id);
+      }
+    });
   }
 
   logout() {
