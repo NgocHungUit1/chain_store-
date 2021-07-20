@@ -11,26 +11,13 @@ import {UserService} from '../user.service';
   styleUrls: ['./user-form-dialog.component.css']
 })
 export class UserFormDialogComponent implements OnInit {
-
-  constructor(
-    public dialogRef: MatDialogRef<UserFormDialogComponent>,
-    public notifySer: NotifierService,
-    private fb: FormBuilder,
-    private userService: UserService,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: Object
-  ) {
-
-    this.local_data = {...data};
-    if (this.local_data.user_id) {
-      this.user_id = this.local_data.user_id;
-    }
-  }
   form: FormGroup;
   loading = false;
   local_data: any;
   user_id: string;
   checkChangePassword = false;
   storeRoles: any;
+  userRole: string[];
 
   statusItems: any[] = [
     {
@@ -43,10 +30,33 @@ export class UserFormDialogComponent implements OnInit {
     }
   ];
 
+  constructor(
+    public dialogRef: MatDialogRef<UserFormDialogComponent>,
+    public notifySer: NotifierService,
+    private fb: FormBuilder,
+    private userService: UserService,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: Object
+  ) {
 
+    this.local_data = {...data};
+    if (this.local_data.user_id) {
+      this.user_id = this.local_data.user_id;
+      this.checkChangePassword = this.local_data.update_pw;
+    }
+  }
 
-  onNoClick(): void {
-    this.dialogRef.close();
+  ngOnInit(): void {
+
+    this.initForm();
+
+    this.getStoreRoleList();
+
+    this.loadUserRole();
+
+    if (this.user_id !== null && this.user_id !== undefined) {
+      this.loadUser(this.user_id);
+    }
+
   }
 
   initForm() {
@@ -61,7 +71,7 @@ export class UserFormDialogComponent implements OnInit {
         [Validators.minLength(6), Validators.required, Validators.maxLength(32)]
       ],
       password_confirm: [null, this.user_id ?
-      null : [Validators.required]
+        null : [Validators.required]
       ],
       phone_number: [null, Validators.compose([
         Validators.required, Validators.maxLength(20)
@@ -79,35 +89,6 @@ export class UserFormDialogComponent implements OnInit {
     }, {validators: this.checkPasswordConfirm});
   }
 
-  checkPasswordConfirm(group: FormGroup) {
-    const password = group.get('password').value;
-    const passwordConfirm = group.get('password_confirm').value;
-    if (passwordConfirm != null) {
-      if (password === passwordConfirm) {
-        group.controls['password_confirm'].setErrors(
-          null
-        );
-      } else {
-        group.controls['password_confirm'].setErrors(
-          {passwordNotMatch: true}
-        );
-      }
-    }
-    return password === passwordConfirm ? null : {passwordNotMatch: true};
-  }
-
-  ngOnInit(): void {
-
-    this.initForm();
-
-    this.getStoreRoleList();
-
-    if (this.user_id !== null && this.user_id !== undefined) {
-      this.loadUser(this.user_id);
-    }
-
-  }
-
   loadUser(id) {
     this.userService.getUser(id).subscribe(user => {
       this.form.patchValue({
@@ -115,8 +96,20 @@ export class UserFormDialogComponent implements OnInit {
         phone_number: user['phone_number'],
         email: user['email'],
         status: user['status'],
-        store_role_id: user['storeRole'] ?  user['storeRole']['id'] : null,
+        store_role_id: user['storeRole'] ? user['storeRole']['id'] : null,
       });
+    });
+  }
+
+  loadUserRole() {
+    this.userService.getUserRole().subscribe(res => {
+      this.userRole = res.roles;
+    });
+  }
+
+  getStoreRoleList() {
+    this.userService.getStoreRoleList().subscribe(res => {
+      this.storeRoles = res.body;
     });
   }
 
@@ -168,10 +161,24 @@ export class UserFormDialogComponent implements OnInit {
     this.checkChangePassword = !this.checkChangePassword;
   }
 
-  getStoreRoleList() {
-    this.userService.getStoreRoleList().subscribe(res => {
-      this.storeRoles = res.body;
-    });
+  checkPasswordConfirm(group: FormGroup) {
+    const password = group.get('password').value;
+    const passwordConfirm = group.get('password_confirm').value;
+    if (passwordConfirm != null) {
+      if (password === passwordConfirm) {
+        group.controls['password_confirm'].setErrors(
+          null
+        );
+      } else {
+        group.controls['password_confirm'].setErrors(
+          {passwordNotMatch: true}
+        );
+      }
+    }
+    return password === passwordConfirm ? null : {passwordNotMatch: true};
   }
 
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
 }

@@ -150,7 +150,6 @@ export class ProductMedicineDialogComponent implements OnInit {
     {name: 'cái', selelected: false},
   ];
 
-  // public _radioConvert = null;
   public _convertIndex = null;
 
   selectedFiles: ImageSnippet[] = [];
