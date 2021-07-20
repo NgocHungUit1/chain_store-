@@ -17,7 +17,7 @@ export class UserFormDialogComponent implements OnInit {
   user_id: string;
   checkChangePassword = false;
   storeRoles: any;
-  userRole: string[];
+  userRole: string;
 
   statusItems: any[] = [
     {
