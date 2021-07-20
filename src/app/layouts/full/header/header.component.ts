@@ -13,7 +13,7 @@ import {User} from '../../../user/user.model';
   templateUrl: './header.component.html',
   styleUrls: []
 })
-export class AppHeaderComponent {
+export class AppHeaderComponent implements OnInit {
   @Input() user: User;
 
   public config: PerfectScrollbarConfigInterface = {};
@@ -93,9 +93,19 @@ export class AppHeaderComponent {
   ) {
   }
 
+  ngOnInit() {
+    this.loadUserLogin();
+  }
+
   loadUser(id) {
     this.userService.getUser(id).subscribe(res => {
       this.user = res;
+    });
+  }
+
+  loadUserLogin() {
+    this.userService.getUserLogin().subscribe(res => {
+      this.userInfo = res;
     });
   }
 
@@ -103,7 +113,7 @@ export class AppHeaderComponent {
     const obj = {
       action: 'Update',
       title: 'Cập nhật tài khoản',
-      user_id: this.authSer.getUserProfile(),
+      user_id: this.userInfo.id,
       update_pw: true
     };
 
