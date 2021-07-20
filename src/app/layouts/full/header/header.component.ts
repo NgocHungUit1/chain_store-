@@ -18,6 +18,7 @@ export class AppHeaderComponent implements OnInit {
 
   public config: PerfectScrollbarConfigInterface = {};
   userInfo: any = null;
+  userLogin: any;
 
 
   // This is for Notifications
@@ -105,7 +106,7 @@ export class AppHeaderComponent implements OnInit {
 
   loadUserLogin() {
     this.userService.getUserLogin().subscribe(res => {
-      this.userInfo = res;
+      this.userLogin = res;
     });
   }
 
@@ -113,7 +114,8 @@ export class AppHeaderComponent implements OnInit {
     const obj = {
       action: 'Update',
       title: 'Cập nhật tài khoản',
-      user_id: this.userInfo.id,
+      user_id: this.userLogin.id,
+      // user_id: this.authSer.getUserProfile(),
       update_pw: true
     };
 
