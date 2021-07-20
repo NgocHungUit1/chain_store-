@@ -124,6 +124,13 @@ const MENUITEMS = [
       {state: 'settings', name: 'Thiết lập', type: 'link', icon: 'settings', roles: ['ADMIN']},
     ]
   },
+  // {
+  //   state: 'cash-flow',
+  //   name: 'Sổ quỹ',
+  //   type: 'link',
+  //   icon: 'attach_money',
+  //   roles: ['ADMIN'],
+  // },
   {
     state: 'report',
     name: 'Báo cáo',

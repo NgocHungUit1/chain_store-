@@ -13,19 +13,31 @@
       <button mat-icon-button (click)="leftside.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
-      <h3>Danh sách chi nhánh</h3>
+      <h3>Sổ quỹ</h3>
+
       <span fxFlex="1 1 0%"></span>
-      <button mat-raised-button color="primary" (click)="openBranchFormDialog()" style="margin-right: 10px">
+
+      <button mat-raised-button color="primary" [matMenuTriggerFor]="createMenu" style="margin-right: 10px">
         <mat-icon>add</mat-icon>
-        Thêm mới
+        Lập phiếu
       </button>
+      <mat-menu #createMenu="matMenu">
+        <button mat-menu-item (click)="onCashFlowPaymentDialog()">
+          <mat-icon>add</mat-icon>
+          <span>Lập phiếu thu</span>
+        </button>
+        <button mat-menu-item (click)="onCashFlowPaymentDialog()" >
+          <mat-icon>add</mat-icon>
+          <span>Lập phiếu chi</span>
+        </button>
+      </mat-menu>
+
       <div class="diva-column-select">
         <button mat-raised-button color="primary" (click)="selectColumn.toggle();">
           <mat-icon>menu</mat-icon>
         </button>
         <mat-select [(ngModel)]="displayedColumns" #selectColumn [multiple]="true"
                     style="width: 100%; display: inline-flex; margin-left: -20px; color: white" placeholder="Chọn cột">
-          <mat-select-trigger></mat-select-trigger>
           <mat-option *ngFor="let column of columnsToDisplay" [value]="column">{{columnsHeader[column]}}</mat-option>
         </mat-select>
       </div>
