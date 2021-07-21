@@ -9,8 +9,6 @@ import {User} from '../user/user.model';
 })
 export class AuthService {
   auth_token_key = 'rs24_token';
-  private readonly USER_KEY = 'user';
-  private readonly USER_PROFILE_KEY = 'user_profile';
 
   constructor(
     private httpClient: HttpClient,
@@ -27,22 +25,6 @@ export class AuthService {
 
   public clearToken() {
     return localStorage.removeItem(this.auth_token_key);
-  }
-
-  public setUser(user) {
-    localStorage.setItem(this.USER_KEY, user);
-  }
-
-  public getUser(): User {
-    return localStorage.getItem(this.USER_KEY) ? JSON.parse(localStorage.getItem(this.USER_KEY)) : null;
-  }
-
-  public setUserProfile(user) {
-    return localStorage.setItem(this.USER_PROFILE_KEY, user);
-  }
-
-  public getUserProfile() {
-    return localStorage.getItem(this.USER_PROFILE_KEY);
   }
 
   public getAuthStatus(): Observable<any> {
