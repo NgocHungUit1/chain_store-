@@ -55,7 +55,7 @@ export class LoginComponent implements OnInit {
           this.wrong = true;
           this.wrongMessage = response.message;
         } else {
-          // this.authSer.setUserProfile(response.user_id);
+          this.authSer.setUserProfile(response.user_id);
           this.authSer.setToken(response.token);
           this.router.navigate(['/']).then(() => {
             window.location.reload();
