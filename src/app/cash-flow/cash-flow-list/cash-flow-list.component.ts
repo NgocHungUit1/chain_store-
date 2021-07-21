@@ -11,6 +11,8 @@ import { Branch, BranchFilter } from '../../branch/branch.model';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { BranchFormDialogComponent } from '../../branch/branch-form-dialog/branch-form-dialog.component';
+import { CashFlowPaymentDialogComponent } from '../cash-flow-payment-dialog/cash-flow-payment-dialog.component';
+import { CashFlowReceiptDialogComponent } from '../cash-flow-receipt-dialog/cash-flow-receipt-dialog.component';
 
 @Component({
   selector: 'app-cash-flow-list',
@@ -18,13 +20,13 @@ import { BranchFormDialogComponent } from '../../branch/branch-form-dialog/branc
   styleUrls: ['./cash-flow-list.component.css'],
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ]
 })
-export class CashFlowListComponent extends ListComponentBase implements OnInit  {
+export class CashFlowListComponent extends ListComponentBase implements OnInit {
 
   constructor(
     private service: CashFlowService,
@@ -35,7 +37,7 @@ export class CashFlowListComponent extends ListComponentBase implements OnInit  
     super();
   }
 
-  @ViewChild(MatTable, { static: true }) table: MatTable<any>;
+  @ViewChild(MatTable, {static: true}) table: MatTable<any>;
 
   apiFilter: CashFlowFilter;
 
@@ -44,7 +46,7 @@ export class CashFlowListComponent extends ListComponentBase implements OnInit  
     'name': 'Tên chi nhánh',
     'address': 'Địa chỉ',
     'phone_number': 'Điện thoại',
-    'total_employee' : 'Số lượng người dùng',
+    'total_employee': 'Số lượng người dùng',
     'status': 'Trạng thái',
   };
 
@@ -128,5 +130,30 @@ export class CashFlowListComponent extends ListComponentBase implements OnInit  
     // });
   }
 
+  onCashFlowPaymentDialog() {
+    const dialogRef = this.dialog.open(CashFlowPaymentDialogComponent, {
+      width: '60%',
+      minHeight: '70%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadData();
+      }
+    });
+  }
+
+  onCashFlowReceiptDialog() {
+    const dialogRef = this.dialog.open(CashFlowReceiptDialogComponent, {
+      width: '60%',
+      minHeight: '70%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadData();
+      }
+    });
+  }
 
 }

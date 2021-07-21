@@ -10,12 +10,16 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { DemoMaterialModule } from '../demo-material-module';
 import { CashFlowRoutes } from './cash-flow.routing';
+import { CashFlowReceiptDialogComponent } from './cash-flow-receipt-dialog/cash-flow-receipt-dialog.component';
+import { CashFlowPaymentDialogComponent } from './cash-flow-payment-dialog/cash-flow-payment-dialog.component';
 
 
 
 @NgModule({
   declarations: [
-    CashFlowListComponent
+    CashFlowListComponent,
+    CashFlowReceiptDialogComponent,
+    CashFlowPaymentDialogComponent
   ],
   imports: [
     CommonModule,
