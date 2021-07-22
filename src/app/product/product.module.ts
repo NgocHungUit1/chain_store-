@@ -25,6 +25,7 @@ import { ProductUploadDialogComponent } from './product-upload-dialog/product-up
 import { ProductStockChangeDialogComponent } from './product-stock-change-dialog/product-stock-change-dialog.component';
 import { IdCodeFormDialogComponent } from './id-code-form-dialog/id-code-form-dialog.component';
 import { ViewIdCodeFormDialogComponent } from './view-id-code-form-dialog/view-id-code-form-dialog.component';
+import {InputSelectAllModule} from '../common/input-select-all/input-select-all.module';
 
 @NgModule({
   declarations: [
@@ -44,19 +45,20 @@ import { ViewIdCodeFormDialogComponent } from './view-id-code-form-dialog/view-i
     IdCodeFormDialogComponent,
     ViewIdCodeFormDialogComponent
   ],
-  imports: [
-    CommonModule,
-    RouterModule.forChild(ProductRoutes),
-    FormsModule,
-    ReactiveFormsModule,
-    FlexLayoutModule,
-    QuillModule.forRoot(),
-    DragulaModule.forRoot(),
-    PerfectScrollbarModule,
-    Ng2SearchPipeModule,
-    DemoMaterialModule,
-    AngularImageViewerModule
-  ],
+    imports: [
+        CommonModule,
+        RouterModule.forChild(ProductRoutes),
+        FormsModule,
+        ReactiveFormsModule,
+        FlexLayoutModule,
+        QuillModule.forRoot(),
+        DragulaModule.forRoot(),
+        PerfectScrollbarModule,
+        Ng2SearchPipeModule,
+        DemoMaterialModule,
+        AngularImageViewerModule,
+        InputSelectAllModule
+    ],
   entryComponents: [
     ProductMedicineDialogComponent,
     ProductGroupFormDialogComponent,
