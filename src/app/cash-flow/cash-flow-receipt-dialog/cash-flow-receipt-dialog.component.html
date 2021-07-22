@@ -2,22 +2,105 @@
 <div mat-dialog-content>
   <form [formGroup]="form">
     <div fxLayout="row">
-      <div fxLayout="row wrap">
+
         <div fxFlex="48">
-          <div fxLayout="row wrap">
+
+            <div fxLayout="row wrap">
+              <div fxFlex="100">
+                <mat-form-field>
+                  <input type="text"  matInput [formControl]="form.controls['no']"
+                         required placeholder="Mã phiếu tự động">
+                  <mat-hint>Từ 5 đến 20 ký tự !</mat-hint>
+                </mat-form-field>
+              </div>
+
+              <div fxFlex="100">
+                <mat-form-field>
+                  <input type="text"  matInput [formControl]="form.controls['no']"
+                         required placeholder="Thời gian">
+                </mat-form-field>
+              </div>
+
+              <div fxFlex="100">
+                <mat-form-field >
+                  <mat-label>Loại tiền</mat-label>
+                  <mat-select formControlName="type_money" >
+                    <mat-option value="money">Tiền mặt</mat-option>
+                    <mat-option value="bank">Ngân hàng</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <div fxFlex="100">
+                <mat-form-field>
+                  <input type="text"  matInput [formControl]="form.controls['value']"
+                         required placeholder="Giá trị">
+                </mat-form-field>
+              </div>
+
+              <div fxFlex="100">
+                <mat-form-field>
+                  <textarea type="text"  matInput formControlName="note"
+                             placeholder="Ghi chú"></textarea>
+                </mat-form-field>
+              </div>
+
+            </div>
 
 
-          </div>
+
         </div>
 
         <div fxFlex="4"></div>
         <div fxFlex="48">
           <div fxLayout="row wrap">
 
+            <div fxFlex="100">
+<!--              <mat-form-field>-->
+<!--                <input type="text"  matInput [formControl]="form.controls['type_money']"-->
+<!--                       required placeholder="Đối tượng nộp">-->
+<!--              </mat-form-field>-->
+
+              <mat-form-field >
+                <mat-label>Đối tượng nộp</mat-label>
+                <mat-select formControlName="doi_tuong_nop" >
+                  <mat-option *ngFor="let value of doi_tuong_nop_value" [value]="value">{{ doi_tuong_nop_label[value] }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+
+            <div fxFlex="100">
+
+              <mat-form-field>
+                <input type="text" matInput formControlName="nguoi_nop_id"
+                       placeholder="Người nộp"
+                       [matAutocomplete]="auto">
+                <button mat-icon-button matPrefix>
+                  <mat-icon>search</mat-icon>
+                </button>
+                <button mat-icon-button matSuffix (click)="this.form.patchValue({nguoi_nop_id: null});"
+                        *ngIf="this.form?.controls['nguoi_nop_id'].value ">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySupplier">
+                  <mat-option style="height: 50px;
+                                      line-height: 24px;
+                                      word-break: break-word;
+                                      display: inline-block;
+                                      white-space: pre-wrap;"
+                              *ngFor="let supplier of filteredSuppliers | async" [value]="supplier">
+                    <span>
+                      {{supplier.name}}
+                    </span>
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+
+            </div>
 
           </div>
         </div>
-      </div>
     </div>
 
   </form>
