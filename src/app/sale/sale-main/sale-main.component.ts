@@ -845,14 +845,14 @@ export class SaleMainComponent implements OnInit {
       this.form.controls['time'].disable();
     }
 
-    // if (Number(mItemInvoice.invoice_id) === -1) {
-    //   const today = new Date();
-    //   const time = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
-    //   this.form.patchValue({
-    //     today: today,
-    //     time: time,
-    //   });
-    // }
+    if (Number(mItemInvoice.invoice_id) === -1) {
+      const today = new Date();
+      const time = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
+      this.form.patchValue({
+        today: today,
+        time: time,
+      });
+    }
     this.handleExpenseOrder();
   }
 
