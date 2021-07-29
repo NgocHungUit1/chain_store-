@@ -28,6 +28,11 @@ import { CashFlowReceiptDialogComponent } from '../cash-flow-receipt-dialog/cash
 })
 export class CashFlowListComponent extends ListComponentBase implements OnInit {
 
+  typeHeader = {
+    'receipt': 'Phiếu thu',
+    'payment': 'Phiếu chi',
+  };
+
   constructor(
     private service: CashFlowService,
     private dialog: MatDialog,
@@ -43,28 +48,25 @@ export class CashFlowListComponent extends ListComponentBase implements OnInit {
 
   columnsHeader = {
     '#': '#',
-    'name': 'Tên chi nhánh',
-    'address': 'Địa chỉ',
-    'phone_number': 'Điện thoại',
-    'total_employee': 'Số lượng người dùng',
-    'status': 'Trạng thái',
+    'no': 'Mã Phiếu',
+    'created_at': 'Thời gian',
+    'type': 'Loại phiếu',
+    'value': 'Giá trị',
   };
 
   displayedColumns: string[] = [
     '#',
-    'name',
-    'address',
-    'phone_number',
-    'total_employee',
-    'status',
+    'no',
+    'created_at',
+    'type',
+    'value',
   ];
   columnsToDisplay: string[] = [
     '#',
-    'name',
-    'address',
-    'phone_number',
-    'total_employee',
-    'status',
+    'no',
+    'created_at',
+    'type',
+    'value',
   ];
 
   dataSource = [];
@@ -91,7 +93,7 @@ export class CashFlowListComponent extends ListComponentBase implements OnInit {
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'province,district,ward,user';
+    filter.expand = 'createdFormat,code';
     return filter;
   }
 
@@ -99,6 +101,15 @@ export class CashFlowListComponent extends ListComponentBase implements OnInit {
     this.isLoadingResults = true;
     this.service.getList(this.apiFilter).subscribe(res => {
       this.dataSource = res.body;
+      let stt = 0;
+      if (this.dataSource.length === 1) {
+        const arr = this.dataSource;
+        this.expandedElement = arr[0];
+      }
+      this.dataSource.forEach(elementData => {
+        stt++;
+        elementData.stt = this.pageSize * (this.page - 1) + stt;
+      });
       this.reloadFilter(res);
       this.isLoadingResults = false;
     });

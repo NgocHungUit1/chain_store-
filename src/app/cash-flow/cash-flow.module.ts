@@ -12,6 +12,7 @@ import { DemoMaterialModule } from '../demo-material-module';
 import { CashFlowRoutes } from './cash-flow.routing';
 import { CashFlowReceiptDialogComponent } from './cash-flow-receipt-dialog/cash-flow-receipt-dialog.component';
 import { CashFlowPaymentDialogComponent } from './cash-flow-payment-dialog/cash-flow-payment-dialog.component';
+import { CashFlowTabInfoComponent } from './cash-flow-tab-info/cash-flow-tab-info.component';
 
 
 
@@ -19,7 +20,8 @@ import { CashFlowPaymentDialogComponent } from './cash-flow-payment-dialog/cash-
   declarations: [
     CashFlowListComponent,
     CashFlowReceiptDialogComponent,
-    CashFlowPaymentDialogComponent
+    CashFlowPaymentDialogComponent,
+    CashFlowTabInfoComponent
   ],
   imports: [
     CommonModule,

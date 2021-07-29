@@ -15,10 +15,27 @@
               </div>
 
               <div fxFlex="100">
-                <mat-form-field>
-                  <input type="text"  matInput [formControl]="form.controls['no']"
-                         required placeholder="Thời gian">
-                </mat-form-field>
+                <div fxLayout="row">
+                  <div fxFlex="50">
+                    <mat-form-field>
+                      <mat-label>Ngày</mat-label>
+                      <input class="input-search" matInput [matDatepicker]="date_picker" formControlName="today"
+                             required="required">
+                      <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>
+                      <mat-datepicker #date_picker></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                  <div fxFlex="2">
+                  </div>
+                  <div fxFlex="48">
+                    <mat-form-field>
+                      <mat-label>Thời gian</mat-label>
+                      <input matInput formControlName="time" type="time"
+                             required="required">
+                    </mat-form-field>
+                  </div>
+                </div>
+
               </div>
 
               <div fxFlex="100">
@@ -33,7 +50,9 @@
 
               <div fxFlex="100">
                 <mat-form-field>
-                  <input type="text"  matInput [formControl]="form.controls['value']"
+                  <input style="text-align: right;"
+                         type="text" (keyup)="inputformatNumber($event)" matInput
+                         formControlName="value" autocomplete="off"
                          required placeholder="Giá trị">
                 </mat-form-field>
               </div>
@@ -56,48 +75,24 @@
           <div fxLayout="row wrap">
 
             <div fxFlex="100">
-<!--              <mat-form-field>-->
-<!--                <input type="text"  matInput [formControl]="form.controls['type_money']"-->
-<!--                       required placeholder="Đối tượng nộp">-->
-<!--              </mat-form-field>-->
-
-              <mat-form-field >
-                <mat-label>Đối tượng nộp</mat-label>
-                <mat-select formControlName="doi_tuong_nop" >
-                  <mat-option *ngFor="let value of doi_tuong_nop_value" [value]="value">{{ doi_tuong_nop_label[value] }}</mat-option>
-                </mat-select>
+              <mat-form-field>
+                <input type="text" matInput formControlName="ten_nguoi_nop"
+                       required placeholder="Tên người nộp" autocomplete="off">
               </mat-form-field>
-            </div>
-
+              </div>
 
             <div fxFlex="100">
 
-              <mat-form-field>
-                <input type="text" matInput formControlName="nguoi_nop_id"
-                       placeholder="Người nộp"
-                       [matAutocomplete]="auto">
-                <button mat-icon-button matPrefix>
-                  <mat-icon>search</mat-icon>
-                </button>
-                <button mat-icon-button matSuffix (click)="this.form.patchValue({nguoi_nop_id: null});"
-                        *ngIf="this.form?.controls['nguoi_nop_id'].value ">
-                  <mat-icon>delete</mat-icon>
-                </button>
-                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySupplier">
-                  <mat-option style="height: 50px;
-                                      line-height: 24px;
-                                      word-break: break-word;
-                                      display: inline-block;
-                                      white-space: pre-wrap;"
-                              *ngFor="let supplier of filteredSuppliers | async" [value]="supplier">
-                    <span>
-                      {{supplier.name}}
-                    </span>
-                  </mat-option>
-                </mat-autocomplete>
+              <mat-form-field >
+                <mat-label>Đối tượng nộp</mat-label>
+                <mat-select required formControlName="doi_tuong_nop" >
+                  <mat-option *ngFor="let value of doi_tuong_nop_value" [value]="value">{{ doi_tuong_nop_label[value] }}</mat-option>
+                </mat-select>
               </mat-form-field>
 
             </div>
+
+
 
           </div>
         </div>

@@ -4,6 +4,7 @@ import {Observable, BehaviorSubject, of, throwError} from 'rxjs';
 import { environment } from '../../environments/environment';
 import {catchError, map} from 'rxjs/operators';
 import { CashFlow, CashFlowFilter } from './cash-flow.model';
+import { Branch } from '../branch/branch.model';
 
 @Injectable({
   providedIn: 'root'
@@ -84,19 +85,15 @@ export class CashFlowService {
     return this.http.get<CashFlow[]>(url);
   }
 
-
-
-  activate(id) {
-    const url = environment.apiUrl + '/user/activate?id=' + id;
-    return this.http.post(url, {});
+  getRenderNo() {
+    const url = environment.apiUrl + '/cash-flow/render-no';
+    return this.http.get<string>(url);
   }
 
-  lock(id) {
-    const url = environment.apiUrl + '/user/lock?id=' + id;
-    return this.http.post(url, {});
+  getDetail(id: string) {
+    const url = environment.apiUrl + '/cash-flow/' + id;
+    return this.http.get<CashFlow>(url);
   }
-
-
 }
 
 

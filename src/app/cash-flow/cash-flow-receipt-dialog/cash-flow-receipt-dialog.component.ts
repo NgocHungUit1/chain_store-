@@ -7,6 +7,8 @@ import { Supplier } from '../../supplier/supplier.model';
 import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/internal/observable/of';
 import { SupplierService } from '../../supplier/supplier.service';
+import { CashFlowService } from '../cash-flow.service';
+import * as numeral from 'numeral';
 
 @Component({
   selector: 'app-cash-flow-receipt-dialog',
@@ -18,8 +20,7 @@ export class CashFlowReceiptDialogComponent implements OnInit {
   form: FormGroup;
   loading = false;
   local_data: any;
-
-  filteredSuppliers: Observable<Supplier[]>;
+  cash_flow_id: string = null;
 
   doi_tuong_nop_value: string[] = [
     'customer',
@@ -35,16 +36,30 @@ export class CashFlowReceiptDialogComponent implements OnInit {
     'orther': 'Khác',
   };
 
+  fieldLabels = {
+    no: 'Mã phiếu',
+    phone: 'Điện thoại',
+    type_money: 'Loại tiền',
+    method: 'Phương thức',
+    doi_tuong_nop: 'Đối tượng nộp',
+    nguoi_nop_id: 'Người nộp',
+    ten_nguoi_nop: 'Tên người nộp',
+    tai_khoan_nhan_id: 'Tài khoản nhận',
+    tai_khoan_gui_id: 'Tài khoản gửi',
+    value: 'Giá trị'
+  };
 
   constructor(
     public dialogRef: MatDialogRef<CashFlowReceiptDialogComponent>,
     public notifySer: NotifierService,
     public supplierService: SupplierService,
+    public cashFlowService: CashFlowService,
     private fb: FormBuilder,
     private dialog: MatDialog,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object
   ) {
-    this.local_data = { ...data };
+    this.local_data = {...data};
+    this.cash_flow_id = this.local_data.id;
   }
 
 
@@ -54,66 +69,100 @@ export class CashFlowReceiptDialogComponent implements OnInit {
 
 
   initForm() {
-
-    // id	int Auto Increment
-    // no	varchar(30) NULL
-    // type	varchar(10) NULL	loai chung tu phieu thu phieu chi
-    // value	int NULL	giá trị
-    // phone	varchar(20) NULL
-    // type_money	varchar(10) NULL	tiền mặt, ngân hàng
-    // method	varchar(10) NULL	phương thức: chuyển khoản, thẻ
-    // doi_tuong_nop	varchar(10) NULL	đối tượng nộp: khách hàng, nhà cung cấp, nhân viên, khác
-    // nguoi_nop_id	int NULL	 id người nộp
-    // tai_khoan_nhan_id	int NULL	id tai khoan nhan
-    // tai_khoan_gui_id	int NULL	id tai khoan gui
-    // parent_id	int NULL	id hóa đơn
-    // parent_table	int NULL	table hóa đơn
-    // note	varchar(200) NULL
-    // address	varchar(200) NULL	địa chỉ
-    // status
-    //
+    let time = null;
+    const today = new Date();
+    time = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
     this.form = this.fb.group({
       no: [null, [Validators.required, Validators.maxLength(50)]],
-      status: [10, Validators.required],
+      type: ['receipt'],
       phone: [null],
-      type_money: [null],
-      method: [null],
-      doi_tuong_nop: [null],
+      type_money: ['money'],
+      doi_tuong_nop: [null, [Validators.required]],
       nguoi_nop_id: [null],
-      tai_khoan_nhan_id: [null],
-      tai_khoan_gui_id: [null],
+      ten_nguoi_nop: [null],
+      parent_table: [null],
+      value: [null],
       note: [null],
+      today: [today],
+      time: [time]
     });
+
+
+    this.cashFlowService.getRenderNo().subscribe(cash_flow_no => {
+      if (this.form.controls['no'].value === null) {
+        this.form.patchValue({no: cash_flow_no});
+      }
+    });
+
+    if (this.cash_flow_id !== null && this.cash_flow_id !== undefined) {
+      this.loadCashFlow(this.cash_flow_id);
+    }
   }
 
-  displaySupplier(supplier?: Supplier): string | undefined {
-    return (supplier === undefined || supplier === null) ? undefined : supplier.name;
-  }
 
   ngOnInit(): void {
     this.initForm();
-    
-    this.filteredSuppliers = this.form.controls['nguoi_nop_id'].valueChanges.pipe(
-      startWith(''),
-      // delay emits
-      debounceTime(300),
-      // use switch map so as to cancel previous subscribed events, before creating new once
-      switchMap(value => {
-        if (value !== '') {
-          // lookup from github
-          return this.lookupSupplier(value);
-        } else {
-          // if no value is present, return null
-          return of(null);
-        }
-      })
-    );
 
   }
 
-  submit() {
-    if (this.form.valid) {
+  loadCashFlow(id) {
+    this.cashFlowService.getDetail(id).subscribe(cashFlow => {
+      // @ts-ignore
+      const today = new Date(1000 * cashFlow['created_at']);
+      const time = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
 
+      this.form.patchValue({
+        no: cashFlow['no'],
+        type: cashFlow['type'],
+        type_money: cashFlow['type_money'],
+        doi_tuong_nop: cashFlow['doi_tuong_nop'],
+        nguoi_nop_id: cashFlow['nguoi_nop_id'],
+        ten_nguoi_nop: cashFlow['ten_nguoi_nop'],
+        value: numeral(cashFlow['value']).format('0,0'),
+        note: cashFlow['note'],
+        today: today,
+        time: time,
+        parent_table: cashFlow['parent_table']
+      });
+
+    });
+  }
+
+  submit() {
+    let date_created = '';
+    if (this.form.valid) {
+      const data = this.form.getRawValue();
+
+      if (data['today'] !== null && typeof data['today'] === 'object') {
+        let effDate;
+        if (!(data['today'] instanceof Date)) {
+          effDate = data['today']._d;
+        } else {
+          effDate = new Date(data['today'].getTime() + (420 * 60 * 1000));
+        }
+        // @ts-ignore
+        date_created = data['time'] + ' ' + effDate.toISOString().split('T')[0];
+      }
+
+      data.value = numeral(data.value).value();
+      data.date_created = date_created;
+
+      if (this.cash_flow_id === null || this.cash_flow_id === undefined) {
+        this.cashFlowService.create(data).subscribe(cashFlow => {
+          this.notifySer.notify('success', 'Thêm thành công!');
+          this.dialogRef.close({event: 'save', data: cashFlow});
+        });
+      } else {
+        this.cashFlowService.update(this.cash_flow_id, data).subscribe(cashFlow => {
+          this.notifySer.notify('success', 'Cập nhật thành công!');
+          this.dialogRef.close({event: 'save', data: cashFlow});
+        });
+      }
+
+    } else {
+      // Form errors
+      const controls = Object.entries(this.form.controls);
+      const hasError = this.checkToShowControlError(controls);
     }
   }
 
@@ -128,7 +177,29 @@ export class CashFlowReceiptDialogComponent implements OnInit {
     );
   }
 
+  checkToShowControlError(controls) {
+    const count = controls.length;
+    let hasError = false;
+    for (let i = 0; i < count; i++) {
+      const fieldName = controls[i][0];
+      const fieldControl = controls[i][1];
+      if (fieldControl['errors'] !== null) {
+        this.notifySer.notify('error', 'Lỗi thông tin trường ' + this.fieldLabels[fieldName]);
+        hasError = true;
+        break;
+      }
+    }
 
+    return hasError;
+  }
+
+  /**
+   * Format input number
+   * @Nghia
+   */
+  inputformatNumber(event: any) {
+    event.target.value = numeral(event.target.value).format('0,0');
+  }
 
 
 }

@@ -1,0 +1,67 @@
+<div fxLayout="row wrap" *ngIf="cashFlow !== null" class="m-b-20">
+
+  <div fxFlex="100">
+    <div fxLayout="row wrap">
+      <div fxFlex="100" class="product-info">
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Mã phiếu: </span> {{cashFlow.no}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Tên người nộp: </span> {{cashFlow?.ten_nguoi_nop}}
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Thời gian: </span> {{ cashFlow.created_at * 1000 | date }}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Đối tượng nộp: </span> {{ doi_tuong_nop_label[cashFlow?.doi_tuong_nop] }}
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Giá trị: </span> {{ cashFlow.value | number }}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Loại phiếu: </span> {{ typeHeader[cashFlow.type] }}
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Loại tiền: </span> {{ typeMoneyHeader[cashFlow.type_money] }}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Ghi chú: </span> {{ cashFlow.note }}
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" *ngIf="cashFlow.parent_table !== null && cashFlow.parent_table !== undefined">
+          <div fxFlex="100">
+            Phiếu chi tự động được tạo gắn với {{ parentTableHeader[cashFlow.parent_table] }}
+            <span style="color:blue;"> {{cashFlow.code}} </span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+  <div fxFlex="100" align="end">
+    <button class="m-r-10" mat-raised-button color="primary" (click)="openCashFlowReceiptDialog()">
+      <mat-icon>edit</mat-icon>
+      Cập nhật
+    </button>
+    <button class="m-r-10" mat-raised-button color="warn" (click)="clickDelete()">
+      <mat-icon>delete</mat-icon>
+      Xóa
+    </button>
+  </div>
+</div>
