@@ -46,7 +46,7 @@ export const MY_FORMATS = {
   selector: 'app-sale-main',
   encapsulation: ViewEncapsulation.None,
   templateUrl: './sale-main.component.html',
-  styleUrls: ['./sale-main.component.css'],
+  styleUrls: ['./sale-main.component.scss'],
   providers: [
     {
       provide: DateAdapter,
@@ -56,9 +56,8 @@ export const MY_FORMATS = {
     {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS},
   ],
 })
+
 export class SaleMainComponent implements OnInit {
-
-
   constructor(
     private fb: FormBuilder,
     private dialog: MatDialog,
@@ -119,6 +118,8 @@ export class SaleMainComponent implements OnInit {
 
   allPermission: any;
   isAdminStore: boolean;
+
+  panelOpenState = false;
 
   prescription_id: null; // ban theo don thuoc
   @ViewChild('prescription') prescription;

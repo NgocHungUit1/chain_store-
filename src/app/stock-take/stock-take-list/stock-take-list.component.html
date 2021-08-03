@@ -83,7 +83,7 @@
         </button>
         <mat-select [(ngModel)]="displayedColumns" #selectColumn [multiple]="true"
                     style="width: 100%; display: inline-flex; margin-left: -20px; color: white" placeholder="Chọn cột">
-          <mat-select-trigger></mat-select-trigger>
+          <!--<mat-select-trigger></mat-select-trigger>-->
           <mat-option *ngFor="let column of columnsToDisplay" [value]="column">{{columnsHeader[column]}}</mat-option>
         </mat-select>
       </div>

@@ -161,7 +161,7 @@
       <!---------------------------------------  SALE-SIDER-BAR-ORDER ------------------------------------------>
 
 
-      <div class="main-sale-siderbar-order">
+      <div class="main-sale-sidebar-order">
         <form [formGroup]="form">
 
           <div class="user-action">
@@ -323,14 +323,14 @@
           </div>
 
 
-          <div class="custom-title-invoice">
+          <!--<div class="custom-title-invoice">
             <div *ngIf="localItemInvoice?.is_return !== true; else titleHoaDon">
               <label class="mat-h3"> Hóa đơn </label>
             </div>
             <ng-template #titleHoaDon>
               <label class="mat-h3 "> Trả hàng </label>
             </ng-template>
-          </div>
+          </div>-->
 
           <mat-divider></mat-divider>
 
@@ -351,17 +351,17 @@
           </div>
 
           <div class="order-discount">
-            <div fxLayout="row wrap" class="price-discount">
+            <div fxLayout="row wrap" fxLayoutAlign="start center" class="price-discount">
               <div fxFlex="50" class="price-discount-text ">
                 <span>Giảm giá </span>
               </div>
               <div fxFlex="50" class="price-discount-number">
-                <mat-form-field style="text-align: right">
-                  <button mat-icon-button matPrefix>
+                <mat-form-field floatLabel="never" style="text-align: right">
+                  <!--<button mat-icon-button matPrefix>
                     <mat-icon class="row-edit-price-discount-number" (click)="openDiscountSiderBar()">edit
                     </mat-icon>
-                  </button>
-                  <input matInput type="text" value="{{ numberDiscount | number}}" [disabled]="true"
+                  </button>-->
+                  <input matInput type="text" class="price-discount-value" value="{{ numberDiscount | number}}" (click)="openDiscountSiderBar()" [readonly]="true"
                          style="color:black">
                 </mat-form-field>
               </div>
@@ -370,7 +370,7 @@
 
           <div class="order-detail"
                *ngIf="localItemInvoice?.is_return !== true && optionStore_transaction_expenses_order?.value === 'yes' ">
-            <div fxLayout="row wrap" class="price-product">
+            <div fxLayout="row wrap" fxLayoutAlign="start center" class="price-product">
               <div fxFlex="50" class="price-product-text ">
                 <div>
                   <mat-label (click)="openExpensesOrder()">
@@ -390,17 +390,17 @@
           <div class="customer-need">
 
             <div *ngIf="localItemInvoice?.is_return !== true; else khachCanTra">
-              <div fxLayout="row wrap" class="customer-need">
+              <div fxLayout="row wrap" fxLayoutAlign="start center" class="customer-need">
                 <div fxFlex="50" class="customer-need-text label-text">
                   <span>Khách cần trả</span>
                 </div>
                 <div fxFlex="50" class="customer-need-number">
-                  <input matInput type="text" value="{{ sumPrice - numberDiscount + expenseOrder | number}}">
+                  <input matInput type="text" value="{{ sumPrice - numberDiscount + expenseOrder | number}}" [readonly]="true">
                 </div>
               </div>
             </div>
             <ng-template #khachCanTra>
-              <div fxLayout="row wrap" class="customer-need">
+              <div fxLayout="row wrap" fxLayoutAlign="start center" class="customer-need">
                 <div fxFlex="50" class="customer-need-text label-text">
                   <span>Cần trả khách</span>
                 </div>
@@ -415,12 +415,12 @@
           </div>
 
           <div class="customer-pay" *ngIf="localItemInvoice?.is_return !== true">
-            <div fxLayout="row wrap" class="customer-pay">
+            <div fxLayout="row wrap" fxLayoutAlign="start center" class="customer-pay">
               <div fxFlex="50" class="customer-pay-text ">
                 <span>Khách thanh toán</span>
               </div>
               <div fxFlex="50" class="customer-pay-number">
-                <mat-form-field style="text-align: right">
+                <mat-form-field floatLabel="never" style="text-align: right">
                   <button mat-icon-button matPrefix>
                     <mat-icon class="row-edit-customer-pay-number">
                       credit_card

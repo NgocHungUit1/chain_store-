@@ -1,6 +1,7 @@
 html .page-wrapper .page-content {
   padding: 0px;
 }
+
 .container-main-sale {
   height: calc(100% - 15px);
 }
@@ -37,7 +38,7 @@ html .page-wrapper .page-content {
 }
 
 .product-cart .mat-icon-button .mat-icon {
-  font-size: 14px!important;
+  font-size: 14px !important;
 }
 
 .product-list--icon {
@@ -183,7 +184,7 @@ html .page-wrapper .page-content {
 }
 
 .price-product-text {
-  font-size: 15px;
+  font-size: 14px;
   text-align: left;
 }
 
@@ -194,7 +195,7 @@ html .page-wrapper .page-content {
 }
 
 .price-product-number {
-  font-size: 18px;
+  font-size: 15px;
   text-align: right;
 }
 
@@ -219,15 +220,30 @@ html .page-wrapper .page-content {
 }
 
 .price-discount-text {
-  font-size: 15px;
+  font-size: 14px;
   text-align: left;
-  padding-top: 25px;
+  /*padding-top: 25px;*/
+}
+
+.price-discount-number {
+  font-size: 15px;
 }
 
 .customer-pay-text {
   font-size: 15px;
   text-align: left;
-  padding-top: 20px;
+  /*padding-top: 20px;*/
+}
+
+.price-discount-number .mat-form-field-infix,
+.customer-pay-number .mat-form-field-infix {
+  padding: 0.2375em 0;
+}
+
+.customer-pay,
+.customer-need,
+.excess-cash {
+  margin-top: 10px;
 }
 
 .customer-need-text {
@@ -248,13 +264,9 @@ html .page-wrapper .page-content {
 }
 
 .excess-cash-number {
-  padding-top: 18px;
+  /*padding-top: 18px;*/
   font-size: 18px;
   text-align: right;
-}
-
-.price-discount-number {
-  font-size: 18px;
 }
 
 .order-note {
@@ -278,13 +290,14 @@ html .page-wrapper .page-content {
 }
 
 .note-pay {
-  margin-top: -10px;
+  margin-top: 10px;
   font-weight: 600;
 }
 
 .order-discount {
-  margin-top: -10px;
-  margin-bottom: -10px;
+  margin-top: 10px;
+  /*margin-top: -10px;*/
+  /*margin-bottom: -10px;*/
 }
 
 .amount-cell-sub {
@@ -298,6 +311,10 @@ html .page-wrapper .page-content {
 
 .input-search {
   font-size: 15px;
+}
+
+.user-action .input-search {
+  font-size: 13px;
 }
 
 .prescription {
@@ -323,14 +340,17 @@ html .page-wrapper .page-content {
   cursor: pointer;
 }
 
-.product-cart .mat-form-field:not(.mat-form-field-can-float) .mat-form-field-infix {
-  border-top: 0
-}
-
+.container-action-sale .mat-form-field:not(.mat-form-field-can-float) .mat-form-field-wrapper,
 .product-cart .mat-form-field:not(.mat-form-field-can-float) .mat-form-field-wrapper {
   padding-bottom: 0;
 }
 
+.container-action-sale .mat-form-field:not(.mat-form-field-can-float) .mat-form-field-infix,
+.product-cart .mat-form-field:not(.mat-form-field-can-float) .mat-form-field-infix {
+  border-top: 0
+}
+
+.container-action-sale .mat-form-field:not(.mat-form-field-can-float) .mat-form-field-underline,
 .product-cart .mat-form-field:not(.mat-form-field-can-float) .mat-form-field-underline {
   bottom: 0;
 }

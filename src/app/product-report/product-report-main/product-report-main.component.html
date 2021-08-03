@@ -52,6 +52,15 @@
                 info
               </mat-icon>
             </mat-radio-button>
+
+            <mat-radio-button class="radio-button-report-type" value="expiration-date">
+              Hạn sử dụng
+              <mat-icon
+                class="icon-info"
+                matTooltip="Sản phẩm kinh doanh sắp hết hạn">
+                info
+              </mat-icon>
+            </mat-radio-button>
             <mat-radio-button class="radio-button-report-type" value="export-import">
               Xuất nhập tồn
               <mat-icon
@@ -65,15 +74,6 @@
               <mat-icon
                 class="icon-info"
                 matTooltip="Sản phẩm đang kinh doanh">
-                info
-              </mat-icon>
-            </mat-radio-button>
-
-            <mat-radio-button class="radio-button-report-type" value="expiration-date">
-              Hạn sử dụng
-              <mat-icon
-                class="icon-info"
-                matTooltip="Sản phẩm kinh doanh sắp hết hạn">
                 info
               </mat-icon>
             </mat-radio-button>
@@ -168,7 +168,7 @@
         </button>
         <mat-select [(ngModel)]="displayedColumns" #selectColumn [multiple]="true"
                     style="width: 100%; display: inline-flex; margin-left: -20px; color: white" placeholder="Chọn cột">
-          <mat-select-trigger></mat-select-trigger>
+          <!--<mat-select-trigger></mat-select-trigger>-->
           <mat-option *ngFor="let column of columnsToDisplay" [value]="column">{{columnsHeader[column]}}</mat-option>
         </mat-select>
       </div>
@@ -694,10 +694,10 @@
                 </td>
               </ng-container>
 
-            <ng-container matColumnDef="second_supplier_total">
-              <th mat-header-cell class="column-number color-export"
-                  *matHeaderCellDef></th>
-            </ng-container>
+              <ng-container matColumnDef="second_supplier_total">
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef></th>
+              </ng-container>
 
 
               <ng-container matColumnDef="supplier_total_import">
@@ -763,7 +763,7 @@
                     *matHeaderCellDef> {{columnsHeader['supplier_value_pure']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                    {{ getSupplierTotalPure(element?.totalWarehouseImport, element?.totalWarehouseReturn ) * element?.original_price | number }}
+                    {{ getSupplierTotalPure(element?.totalWarehouseImport, element?.totalWarehouseReturn) * element?.original_price | number }}
                   </span>
                 </td>
               </ng-container>
