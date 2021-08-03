@@ -41,7 +41,7 @@
       <mat-form-field>
         <input class="input-search-product" style="outline: 0;" type="text" [formControl]="selectProduct" matInput
                (focus)="focusInputSearch($event)" #inputSearch
-               [matAutocomplete]="chooseProduct" [placeholder]="placeholderSearch" />
+               [matAutocomplete]="chooseProduct" [placeholder]="placeholderSearch"/>
         <button mat-icon-button matPrefix>
           <mat-icon>search</mat-icon>
         </button>
@@ -52,9 +52,10 @@
           <mat-option fxLayout="row" *ngFor="let product of filteredProducts | async" [value]="product"
                       style="min-height: 70px; line-height:25px !important;"
                       title="{{ product.product_name }}">
-            <img *ngIf="iconChangeType === 'cached'" fxFlex="25" class="example-option-img " aria-hidden [src]="product.default_image" width="22">
+            <img *ngIf="iconChangeType === 'cached'" fxFlex="25" class="example-option-img " aria-hidden
+                 [src]="product.default_image" width="22">
 
-            <span  fxFlex="75" style="margin-left: 5px;" class="m-l-10"
+            <span fxFlex="75" style="margin-left: 5px;" class="m-l-10"
                   *ngIf="product.base_unit !== null && iconChangeType === 'cached'">
               <b style="font-size: 12px;">{{ product.product_name  }}</b>
               <br>
@@ -62,13 +63,13 @@
               -Tồn:{{ product.product_unit_quantity_of_stock }}
             </span>
 
-            <span  fxFlex="75" class="m-l-10" *ngIf="product.base_unit == null && iconChangeType === 'cached'">
+            <span fxFlex="75" class="m-l-10" *ngIf="product.base_unit == null && iconChangeType === 'cached'">
               <b style="font-size: 12px;">{{ product.product_name }}</b>
               <br>
               {{ product.product_no }} &nbsp;Giá: {{ product.sell_price | number }}
             </span>
 
-<!--            Don thuoc mau-->
+            <!--            Don thuoc mau-->
             <span *ngIf="iconChangeType === 'assignment'" fxFlex="100" style="margin-left: 5px;" class="m-l-10">
               <b style="font-size: 12px;">{{ product.product_name  }}</b>
               <br>
@@ -78,7 +79,7 @@
           </mat-option>
 
 
-<!--          Danh sach san pham history-->
+          <!--          Danh sach san pham history-->
           <mat-option *ngIf="productsHistory | async"
                       style="line-height: 25px !important;text-align: center; color: #908c88;">
             Tìm kiếm gần đây ...
@@ -87,17 +88,18 @@
                       style="min-height: 70px; line-height:25px !important;"
                       title="{{ product.product_name }}">
 
-            <img *ngIf="iconChangeType === 'cached'" fxFlex="25" class="example-option-img " aria-hidden [src]="product.default_image" width="22">
+            <img *ngIf="iconChangeType === 'cached'" fxFlex="25" class="example-option-img " aria-hidden
+                 [src]="product.default_image" width="22">
 
-            <span  fxFlex="75" style="margin-left: 5px;" class="m-l-10"
-                   *ngIf="product.base_unit !== null && iconChangeType === 'cached'">
+            <span fxFlex="75" style="margin-left: 5px;" class="m-l-10"
+                  *ngIf="product.base_unit !== null && iconChangeType === 'cached'">
               <b style="font-size: 12px;">{{ product.product_name  }}</b>
               <br>
               {{ product.product_no }} &nbsp;Giá: {{ product.sell_price | number }} {{ product.base_unit }}
               -Tồn:{{ product.product_unit_quantity_of_stock }}
             </span>
 
-            <span  fxFlex="75" class="m-l-10" *ngIf="product.base_unit == null && iconChangeType === 'cached'">
+            <span fxFlex="75" class="m-l-10" *ngIf="product.base_unit == null && iconChangeType === 'cached'">
               <b style="font-size: 12px;">{{ product.product_name }}</b>
               <br>
               {{ product.product_no }} &nbsp;Giá: {{ product.sell_price | number }}
@@ -135,13 +137,14 @@
       <mat-icon>add</mat-icon>
     </button> -->
 
-<!--    So luong nhap hang-->
+    <!--    So luong nhap hang-->
     <input class="amount-product" matInput [(ngModel)]="amountProduct"
            type="number" matTooltip="Số lượng cộng dồn, mặc định bằng 1"
            placeholder="SL:1" min="1" autocomplete="off"/>
 
     <nav mat-tab-nav-bar>
-      <a mat-tab-link mat-primary *ngFor="let mItemInvoice of listmItemInvoice" (click)="activeLink = mItemInvoice.invoice_id"
+      <a mat-tab-link mat-primary *ngFor="let mItemInvoice of listmItemInvoice"
+         (click)="activeLink = mItemInvoice.invoice_id"
          [active]="activeLink == mItemInvoice.invoice_id" (click)="activeInvoice(mItemInvoice?.invoice_id)">
         <span *ngIf="mItemInvoice?.invoice_id > 0">{{ mItemInvoice.invoice_name }}</span>
         <span
