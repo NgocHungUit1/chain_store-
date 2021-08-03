@@ -22,11 +22,11 @@
         Lập phiếu
       </button>
       <mat-menu #createMenu="matMenu">
-        <button mat-menu-item (click)="onCashFlowPaymentDialog()">
+        <button mat-menu-item (click)="onCashFlowReceiptDialog()">
           <mat-icon>add</mat-icon>
           <span>Lập phiếu thu</span>
         </button>
-        <button mat-menu-item (click)="onCashFlowPaymentDialog()" >
+        <button mat-menu-item (click)="onCashFlowPaymentDialog()">
           <mat-icon>add</mat-icon>
           <span>Lập phiếu chi</span>
         </button>
@@ -60,36 +60,29 @@
 
               <ng-container matColumnDef="#">
                 <th mat-header-cell *matHeaderCellDef> #</th>
-                <td mat-cell *matCellDef="let element"> {{element.id}}</td>
+                <td mat-cell *matCellDef="let element"> {{element.stt}}</td>
               </ng-container>
 
-              <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['name']}}</th>
-                <td mat-cell *matCellDef="let element"> {{element.name}}</td>
+              <ng-container matColumnDef="no">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['no']}}</th>
+                <td mat-cell *matCellDef="let element"> {{element.no}}</td>
               </ng-container>
 
-              <ng-container matColumnDef="address">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['address']}}</th>
-                <td mat-cell *matCellDef="let element"> {{element?.fullAddress}}</td>
+              <ng-container matColumnDef="created_at">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['created_at']}}</th>
+                <td mat-cell *matCellDef="let element"> {{element?.createdFormat}}</td>
               </ng-container>
 
-              <ng-container matColumnDef="phone_number">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['phone_number']}}</th>
-                <td mat-cell *matCellDef="let element"> {{element.phone_number}}</td>
+              <ng-container matColumnDef="type">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['type']}}</th>
+                <td mat-cell *matCellDef="let element"> {{ typeHeader[element.type] }}</td>
               </ng-container>
 
-              <ng-container matColumnDef="total_employee">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['total_employee']}}</th>
-                <td mat-cell *matCellDef="let element"> {{element?.totalEmployee}}</td>
+              <ng-container matColumnDef="value">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['value']}}</th>
+                <td mat-cell *matCellDef="let element"> {{ element?.value | number }}</td>
               </ng-container>
 
-              <ng-container matColumnDef="status">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['status']}}</th>
-                <td mat-cell *matCellDef="let element">
-                  <label *ngIf="element?.status == '9'" class="label label-warning">Ngưng hoạt động</label>
-                  <label *ngIf="element?.status == '10'" class="label label-success">Hoạt động</label>
-                </td>
-              </ng-container>
 
               <ng-container matColumnDef="expandedDetail">
                 <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
@@ -97,7 +90,8 @@
                        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
                     <mat-tab-group style="width: 100%;">
                       <mat-tab label="Thông tin">
-                        <app-branch-tab-info [branch]="element"></app-branch-tab-info>
+                        <!--                        <app-branch-tab-info [branch]="element"></app-branch-tab-info>-->
+                        <app-cash-flow-tab-info [cashFlow]="element"></app-cash-flow-tab-info>
                       </mat-tab>
                     </mat-tab-group>
                   </div>

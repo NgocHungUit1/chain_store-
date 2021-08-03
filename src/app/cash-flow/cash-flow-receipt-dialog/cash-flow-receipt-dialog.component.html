@@ -2,22 +2,100 @@
 <div mat-dialog-content>
   <form [formGroup]="form">
     <div fxLayout="row">
-      <div fxLayout="row wrap">
+
         <div fxFlex="48">
-          <div fxLayout="row wrap">
+
+            <div fxLayout="row wrap">
+              <div fxFlex="100">
+                <mat-form-field>
+                  <input type="text"  matInput [formControl]="form.controls['no']"
+                         required placeholder="Mã phiếu tự động">
+                  <mat-hint>Từ 5 đến 20 ký tự !</mat-hint>
+                </mat-form-field>
+              </div>
+
+              <div fxFlex="100">
+                <div fxLayout="row">
+                  <div fxFlex="50">
+                    <mat-form-field>
+                      <mat-label>Ngày</mat-label>
+                      <input class="input-search" matInput [matDatepicker]="date_picker" formControlName="today"
+                             required="required">
+                      <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>
+                      <mat-datepicker #date_picker></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                  <div fxFlex="2">
+                  </div>
+                  <div fxFlex="48">
+                    <mat-form-field>
+                      <mat-label>Thời gian</mat-label>
+                      <input matInput formControlName="time" type="time"
+                             required="required">
+                    </mat-form-field>
+                  </div>
+                </div>
+
+              </div>
+
+              <div fxFlex="100">
+                <mat-form-field >
+                  <mat-label>Loại tiền</mat-label>
+                  <mat-select formControlName="type_money" >
+                    <mat-option value="money">Tiền mặt</mat-option>
+                    <mat-option value="bank">Ngân hàng</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <div fxFlex="100">
+                <mat-form-field>
+                  <input style="text-align: right;"
+                         type="text" (keyup)="inputformatNumber($event)" matInput
+                         formControlName="value" autocomplete="off"
+                         required placeholder="Giá trị">
+                </mat-form-field>
+              </div>
+
+              <div fxFlex="100">
+                <mat-form-field>
+                  <textarea type="text"  matInput formControlName="note"
+                             placeholder="Ghi chú"></textarea>
+                </mat-form-field>
+              </div>
+
+            </div>
 
 
-          </div>
+
         </div>
 
         <div fxFlex="4"></div>
         <div fxFlex="48">
           <div fxLayout="row wrap">
 
+            <div fxFlex="100">
+              <mat-form-field>
+                <input type="text" matInput formControlName="ten_nguoi_nop"
+                       required placeholder="Tên người nộp" autocomplete="off">
+              </mat-form-field>
+              </div>
+
+            <div fxFlex="100">
+
+              <mat-form-field >
+                <mat-label>Đối tượng nộp</mat-label>
+                <mat-select required formControlName="doi_tuong_nop" >
+                  <mat-option *ngFor="let value of doi_tuong_nop_value" [value]="value">{{ doi_tuong_nop_label[value] }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+            </div>
+
+
 
           </div>
         </div>
-      </div>
     </div>
 
   </form>
