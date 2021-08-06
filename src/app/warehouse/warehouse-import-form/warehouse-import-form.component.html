@@ -160,8 +160,11 @@
 <!--                           [(ngModel)]="data[i]['price']"-->
 <!--                           (keyup)="priceChange($event,i)">-->
                     <input matInput appInputSelectAll
-                           [(ngModel)]="data[i]['price']"
-                           (click)="openPriceDialog(i)" readonly>
+                           [(ngModel)]="data[i]['price']">
+                    <button mat-icon-button matPrefix
+                            (click)="openPriceDialog(i)">
+                      <mat-icon>add</mat-icon>
+                    </button>
                   </mat-form-field>
                   <!--                  <span>{{ element.price | currency : 'VND' : ''}} </span>-->
                 </td>
@@ -270,7 +273,7 @@
                   <mat-option style="height: 50px;
                                       line-height: 24px;
                                       word-break: break-word;
-                                      display: inline-block;
+                                      display: block;
                                       white-space: pre-wrap;"
                               *ngFor="let supplier of filteredSuppliers | async" [value]="supplier">
                     <span class="supplier-option">
