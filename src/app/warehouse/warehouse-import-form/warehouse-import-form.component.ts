@@ -89,10 +89,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'product_name': 'Tên hàng',
     // 'product_parcel': 'Lô',
     'product_unit_id': 'Đơn vị',
-    'quantity': 'Tổng SL (6)',
+    'quantity': 'Tổng SL',
     'price': 'Giá nhập',
     // 'discount': 'Chiết khấu',//'Giảm giá',
-    'amount': 'Thành tiền (12)',
+    'amount': 'Thành tiền',
   };
 
   displayedColumns: string[] = [];

@@ -160,7 +160,7 @@
 <!--                           [(ngModel)]="data[i]['price']"-->
 <!--                           (keyup)="priceChange($event,i)">-->
                     <input matInput appInputSelectAll
-                           [(ngModel)]="data[i]['price']">
+                           [(ngModel)]="data[i]['price']" (keyup)="priceChange($event,i)">
                     <button mat-icon-button matPrefix
                             (click)="openPriceDialog(i)">
                       <mat-icon>add</mat-icon>
