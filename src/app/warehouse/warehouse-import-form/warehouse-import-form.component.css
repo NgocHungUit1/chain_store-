@@ -1,8 +1,16 @@
+.dv-list-page {
+  height: 100%;
+}
+
 .warehouse-info {
   margin: 0px;
   border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 0px;
-  min-height: 839px;
+  /*min-height: 839px;*/
+}
+
+.warehouse-info .mat-card-content {
+  padding-bottom: 0;
 }
 
 .select-product {
@@ -141,5 +149,11 @@ tr.mat-header-row {
   border-radius: 23px;
   border: 2px solid white;
   margin-left: 10px;
-  margin-top: 10px;
+  /*margin-top: 10px;*/
+}
+
+@media only screen and (min-width: 1400px) {
+  .table-content {
+    max-height: 750px;
+  }
 }

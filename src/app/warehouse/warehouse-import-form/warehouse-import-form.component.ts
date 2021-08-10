@@ -1,44 +1,45 @@
-import { Component, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { MatSort } from '@angular/material/sort';
-import { MatPaginator } from '@angular/material/paginator';
-import { NotifierService } from 'angular-notifier';
-import { MatDialog } from '@angular/material/dialog';
-import { ListComponentBase } from '../../shared/base';
-import { WarehouseProductService } from '../warehouse-product.service';
-import { Warehouse, WarehouseProduct, WarehouseProductFilter } from '../warehouse.model';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs/index';
-import { Supplier } from '../../supplier/supplier.model';
-import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
-import { of } from 'rxjs/internal/observable/of';
-import { SupplierService } from '../../supplier/supplier.service';
-import { WarehouseService } from '../warehouse.service';
-import { Product } from '../../product/product.model';
-import { ProductService } from '../../product/product.service';
-import { WarehouseParcelFormDialogComponent } from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
-import { WarehouseDiscountDialogComponent } from '../warehouse-discount-dialog/warehouse-discount-dialog.component';
-import { SupplierFormDialogComponent } from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
-import { ProductMedicineDialogComponent } from '../../product/product-medicine-dialog/product-medicine-dialog.component';
+import {Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {MatTable, MatTableDataSource} from '@angular/material/table';
+import {MatSort} from '@angular/material/sort';
+import {MatPaginator} from '@angular/material/paginator';
+import {NotifierService} from 'angular-notifier';
+import {MatDialog} from '@angular/material/dialog';
+import {ListComponentBase} from '../../shared/base';
+import {WarehouseProductService} from '../warehouse-product.service';
+import {Warehouse, WarehouseProduct, WarehouseProductFilter} from '../warehouse.model';
+import {ActivatedRoute, Router} from '@angular/router';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {Observable} from 'rxjs/index';
+import {Supplier} from '../../supplier/supplier.model';
+import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
+import {of} from 'rxjs/internal/observable/of';
+import {SupplierService} from '../../supplier/supplier.service';
+import {WarehouseService} from '../warehouse.service';
+import {Product} from '../../product/product.model';
+import {ProductService} from '../../product/product.service';
+import {WarehouseParcelFormDialogComponent} from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
+import {WarehouseDiscountDialogComponent} from '../warehouse-discount-dialog/warehouse-discount-dialog.component';
+import {SupplierFormDialogComponent} from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
+import {ProductMedicineDialogComponent} from '../../product/product-medicine-dialog/product-medicine-dialog.component';
 // tslint:disable-next-line:max-line-length
-import { ProductMerchandiseFormDialogComponent } from '../../product/product-merchandise-form-dialog/product-merchandise-form-dialog.component';
-import { UserService } from '../../user/user.service';
+import {ProductMerchandiseFormDialogComponent} from '../../product/product-merchandise-form-dialog/product-merchandise-form-dialog.component';
+import {UserService} from '../../user/user.service';
 import * as numeral from 'numeral';
-import { MedicineService } from '../../medicine/medicine.service';
-import { Medicine } from '../../medicine/medicine.model';
-import { ExpensesTransaction, ExpensesTransactionFilter } from '../../expenses-transaction/expenses-transaction.model';
-import { ExpensesTransactionService } from '../../expenses-transaction/expenses-transaction.service';
-import { OptionStoreService } from '../../common/option-store.service';
-import { OptionStore } from '../../common/option-store.model';
-import { WarehouseExpensesComponent } from '../warehouse-expenses/warehouse-expenses.component';
-import { WarehouseParcelListDialogComponent } from '../warehouse-parcel-list-dialog/warehouse-parcel-list-dialog.component';
-import { WarehouseFormPriceDialogComponent } from '../warehouse-form-price-dialog/warehouse-form-price-dialog.component';
+import {MedicineService} from '../../medicine/medicine.service';
+import {Medicine} from '../../medicine/medicine.model';
+import {ExpensesTransaction, ExpensesTransactionFilter} from '../../expenses-transaction/expenses-transaction.model';
+import {ExpensesTransactionService} from '../../expenses-transaction/expenses-transaction.service';
+import {OptionStoreService} from '../../common/option-store.service';
+import {OptionStore} from '../../common/option-store.model';
+import {WarehouseExpensesComponent} from '../warehouse-expenses/warehouse-expenses.component';
+import {WarehouseParcelListDialogComponent} from '../warehouse-parcel-list-dialog/warehouse-parcel-list-dialog.component';
+import {WarehouseFormPriceDialogComponent} from '../warehouse-form-price-dialog/warehouse-form-price-dialog.component';
 
 @Component({
   selector: 'app-warehouse-import-form',
   templateUrl: './warehouse-import-form.component.html',
-  styleUrls: ['./warehouse-import-form.component.css']
+  styleUrls: ['./warehouse-import-form.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class WarehouseImportFormComponent extends ListComponentBase implements OnInit {
 
@@ -568,9 +569,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           warehouseProduct.product_unit_id = res['productUnits'][0]['id'];
           warehouseProduct.price = res['productUnits'][0]['original_price'];
         }
+        this.data.unshift(warehouseProduct);
 
-        const newData = this.data.concat([warehouseProduct]);
-        this.data = newData;
+        // const newData = this.data.concat([warehouseProduct]);
+        // this.data = newData;
         this.data.forEach(element => {
           element.price = numeral(element.price).format('0,0');
         });

@@ -127,3 +127,7 @@ File: scss
     padding: 0 5px;
   }
 }
+
+.mat-form-field-hide-placeholder .mat-form-field-infix {
+  border-top: 0;
+}
