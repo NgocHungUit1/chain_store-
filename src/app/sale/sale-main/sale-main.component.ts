@@ -305,7 +305,7 @@ export class SaleMainComponent implements OnInit {
       this.listProduct = [];
 
       listProductSubscribe.forEach(eProductInfo => {
-        this.listProduct.unshift(eProductInfo);
+        this.listProduct.push(eProductInfo);
         this.countProduct++;
       });
 
