@@ -205,7 +205,7 @@ export class OrderService {
       mProductInfo.product_unit_value = object.product_unit_value;
       mProductInfo.base_unit = object.base_unit;
       mProductInfo.amount = (object.amount === undefined || object.amount === null) ? amountProduct : object.amount;
-      listProduct.push(mProductInfo);
+      listProduct.unshift(mProductInfo);
       mItemInvoice.listProduct = listProduct;
     } else {
       const listProduct = mItemInvoice.listProduct;
@@ -225,7 +225,7 @@ export class OrderService {
         mProductInfo.product_unit_value = object.product_unit_value;
         mProductInfo.base_unit = object.base_unit;
         mProductInfo.amount = amountProduct;
-        listProduct.push(mProductInfo);
+        listProduct.unshift(mProductInfo);
       }
     }
     this.setListInvoiceLocalStorage(ListInvoice);
