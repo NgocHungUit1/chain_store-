@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { Product, ProductFilter } from './product.model';
-import { AuthService } from '../authentication/auth.service';
-import { NotifierService } from 'angular-notifier';
-import { ResponseModel } from '../common/response.model';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpResponse} from '@angular/common/http';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {environment} from '../../environments/environment';
+import {Product, ProductFilter} from './product.model';
+import {AuthService} from '../authentication/auth.service';
+import {NotifierService} from 'angular-notifier';
+import {ResponseModel} from '../common/response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -209,6 +209,20 @@ export class ProductService {
   deleteUnit(id: string) {
     const url = environment.apiUrl + '/product/delete-unit?id=' + id;
     return this.http.post<ResponseModel>(url, {});
+  }
+
+  /**
+   * Export report excel
+   * @param filter
+   */
+  exportExcel(filter?: ProductFilter) {
+    const url = environment.apiUrl + '/product/export?' + filter.toFilterString();
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
+  downloadFileExcel() {
+    const _token = this.auth.getToken();
+    return environment.apiUrl + '/product/download-product?token=' + _token;
   }
 }
 

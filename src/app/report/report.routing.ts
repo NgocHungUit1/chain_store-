@@ -16,6 +16,10 @@ export const ReportRoutes: Routes = [
         path: 'product-report',
         loadChildren: () => import('../product-report/product-report.module').then(m => m.ProductReportModule)
       },
+      {
+        path: 'debt-report',
+        loadChildren: () => import('../debt-report/debt-report.module').then(m => m.DebtReportModule)
+      },
     ]
   }
 ];

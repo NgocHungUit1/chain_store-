@@ -84,6 +84,10 @@
         <mat-icon>cloud_upload</mat-icon>
         Tải lên từ Excel
       </button>
+      <button mat-raised-button color="primary" (click)="exportExcel()" style="margin-right: 10px">
+        <mat-icon>cloud_download</mat-icon>
+        Xuất Excel
+      </button>
       <button mat-raised-button color="primary" [matMenuTriggerFor]="createMenu" style="margin-right: 10px">
         <mat-icon>add</mat-icon>
         Thêm mới

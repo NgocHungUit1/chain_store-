@@ -46,8 +46,8 @@ export class Product {
   end_price: string; // use for setup price detail
   stt: number; // for view
   product_unit_id: number; // for unit
-  product_unit_value: number; //for unit
-  product_unit_quantity_of_stock: number; //for unit
+  product_unit_value: number; // for unit
+  product_unit_quantity_of_stock: number; // for unit
   amount: number;
   quantity: Quantity;
 }
@@ -121,8 +121,8 @@ export class ProductReport {
   end_price: string; // use for setup price detail
   stt: number; // for view
   product_unit_id: number; // for unit
-  product_unit_value: number; //for unit
-  product_unit_quantity_of_stock: number; //for unit
+  product_unit_value: number; // for unit
+  product_unit_quantity_of_stock: number; // for unit
   amount: number;
   quantity: Quantity;
   sl_ban: number;

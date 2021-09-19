@@ -1,23 +1,22 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatTable } from '@angular/material/table';
-import { MatSort } from '@angular/material/sort';
-import { Product, ProductFilter } from '../product.model';
-import { ActivatedRoute } from '@angular/router';
-import { ProductService } from '../product.service';
-import { ListComponentBase } from '../../shared/base';
-import { ProductMedicineDialogComponent } from '../product-medicine-dialog/product-medicine-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
-import { NotifierService } from 'angular-notifier';
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { ProductMerchandiseFormDialogComponent } from '../product-merchandise-form-dialog/product-merchandise-form-dialog.component';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
-import { of } from 'rxjs/internal/observable/of';
-import { ProductUploadDialogComponent } from '../product-upload-dialog/product-upload-dialog.component';
-import { MedicineService } from '../../medicine/medicine.service';
-import { GroupService } from '../group.service';
-import { Group, GroupFilter } from '../group.model';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatTable} from '@angular/material/table';
+import {MatSort} from '@angular/material/sort';
+import {Product, ProductFilter} from '../product.model';
+import {ActivatedRoute} from '@angular/router';
+import {ProductService} from '../product.service';
+import {ListComponentBase} from '../../shared/base';
+import {ProductMedicineDialogComponent} from '../product-medicine-dialog/product-medicine-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
+import {NotifierService} from 'angular-notifier';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import {ProductMerchandiseFormDialogComponent} from '../product-merchandise-form-dialog/product-merchandise-form-dialog.component';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {debounceTime} from 'rxjs/operators';
+import {ProductUploadDialogComponent} from '../product-upload-dialog/product-upload-dialog.component';
+import {MedicineService} from '../../medicine/medicine.service';
+import {GroupService} from '../group.service';
+import {Group, GroupFilter} from '../group.model';
 
 
 @Component({
@@ -139,6 +138,28 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     filter.sort = this.route.snapshot.queryParams['sort'];
     // filter.expand = 'medicine,productUnits,productPlacements,group,images,quantity';
     filter.expand = 'quantity';
+    filter.product_type = this.productFilter.controls['type'].value;
+    filter.status = this.productFilter.controls['status'].value;
+    filter.group_id = this.productFilter.controls['group'].value;
+    filter.stock = this.productFilter.controls['stock'].value;
+    return filter;
+  }
+
+  buildExportFilterFromParams(): ProductFilter {
+    function write<K extends keyof ProductFilter>(arg: ProductFilter, key: K, value: ProductFilter[K]): void {
+      arg[key] = value;
+    }
+
+    const filter = new ProductFilter();
+
+    const objectKeys = Object.keys(filter) as Array<keyof ProductFilter>;
+
+    for (const attr of objectKeys) {
+      write(filter, attr, this.route.snapshot.queryParams['ProductSearch[' + attr + ']']);
+    }
+    filter.page = this.route.snapshot.queryParams['page'];
+    filter.pageSize = this.route.snapshot.queryParams['pageSize'];
+    filter.sort = this.route.snapshot.queryParams['sort'];
     filter.product_type = this.productFilter.controls['type'].value;
     filter.status = this.productFilter.controls['status'].value;
     filter.group_id = this.productFilter.controls['group'].value;
@@ -298,6 +319,14 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
       if (result) {
         this.loadData();
       }
+    });
+  }
+
+  exportExcel() {
+    // debugger;
+    this.apiFilter = this.buildFilterFromParams();
+    this.service.exportExcel(this.apiFilter).subscribe(res => {
+      window.location.href = this.service.downloadFileExcel();
     });
   }
 }
