@@ -15,10 +15,11 @@ export class Supplier {
   province: Location;
   district: Location;
   ward: Location;
+  stt: number; // for view
 }
 
 
-export class SupplierFilter extends ApiFilterBase{
+export class SupplierFilter extends ApiFilterBase {
   id = '';
   name = '';
   company_name = '';
@@ -32,9 +33,16 @@ export class SupplierFilter extends ApiFilterBase{
   page = 1;
   pageSize = 15;
   sort = '';
+  date_from = '';
+  date_to = '';
 
   getModelSearch() {
     return 'SupplierSearch';
   }
 
+}
+
+export class DateFilter {
+  date_from: string;
+  date_to: string;
 }

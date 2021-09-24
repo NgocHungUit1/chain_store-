@@ -1,0 +1,94 @@
+<mat-sidenav-container>
+  <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true">
+    <mat-toolbar class="dv-header">
+      <button mat-icon-button>
+        <mat-icon>filter_list</mat-icon>
+      </button>
+      <h3>Lọc và tìm kiếm</h3>
+    </mat-toolbar>
+
+    <mat-card class="time-filter-info" style="margin: 0;">
+      <mat-card-title class="title-time-filter">Thời gian</mat-card-title>
+      <mat-card-content>
+        <form [formGroup]="timeFilter">
+          <mat-radio-group (change)="radioTimeChange($event)" formControlName="typeTime">
+            <mat-radio-button style="display: inline; " value="default"
+                              (click)="openTimeDefault()">{{ titleTimeDefault }}
+              <button mat-icon-button aria-label="add">
+                <mat-icon>swap_vert</mat-icon>
+              </button>
+            </mat-radio-button>
+            <mat-radio-button style="display: inline; " value="choose" (click)="openTimeChoose()">{{ titleTimeChoose }}
+              <button mat-icon-button aria-label="add">
+                <mat-icon>date_range</mat-icon>
+              </button>
+            </mat-radio-button>
+
+          </mat-radio-group>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar class="dv-header">
+      <button mat-icon-button (click)="leftside.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <h3>Công nợ phải trả</h3>
+    </mat-toolbar>
+    <div fxLayout="row wrap">
+      <div fxFlex="100">
+        <div class="table-container">
+          <div class="table-loading-shade" *ngIf="isLoadingResults || isRateLimitReached">
+            <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+            <div class="table-rate-limit-reached" *ngIf="isRateLimitReached">
+              GitHub's API rate limit has been reached. It will be reset in one minute.
+            </div>
+          </div>
+
+          <div class=" table-responsive">
+            <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="mat-elevation-z8">
+              <ng-container matColumnDef="#">
+                <th mat-header-cell *matHeaderCellDef> #</th>
+                <td mat-cell *matCellDef="let element; let i = index;"> {{ (page - 1) * pageSize + element.stt }} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="supplier">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['supplier']}}</th>
+                <td mat-cell *matCellDef="let element"> </td>
+              </ng-container>
+
+              <ng-container matColumnDef="debt_begin">
+                <th mat-header-cell class="text-right" *matHeaderCellDef> {{columnsHeader['debt_begin']}}</th>
+                <td mat-cell class="text-right" *matCellDef="let element"> </td>
+              </ng-container>
+
+              <ng-container matColumnDef="debt_increase">
+                <th mat-header-cell class="text-right" *matHeaderCellDef> {{columnsHeader['debt_increase']}}</th>
+                <td mat-cell class="text-right" *matCellDef="let element"> </td>
+              </ng-container>
+
+              <ng-container matColumnDef="debt_decrease">
+                <th mat-header-cell class="text-right" *matHeaderCellDef> {{columnsHeader['debt_decrease']}}</th>
+                <td mat-cell class="text-right" *matCellDef="let element">  </td>
+              </ng-container>
+
+              <ng-container matColumnDef="debt_end">
+                <th mat-header-cell class="text-right" *matHeaderCellDef> {{columnsHeader['debt_end']}}</th>
+                <td mat-cell class="text-right" *matCellDef="let element"> </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+              <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" class="example-element-row"
+                  [class.example-expanded-row]="expandedElement === element"
+                  (click)="expandedElement = expandedElement === element ? null : element">
+              </tr>
+            </table>
+          </div>
+          <mat-paginator #paginator [length]="pageTotalCount" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+                         (page)="onMatPageChange($event)" [pageIndex]="page - 1" showFirstLastButtons></mat-paginator>
+        </div>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

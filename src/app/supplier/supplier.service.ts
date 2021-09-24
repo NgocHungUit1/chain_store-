@@ -1,16 +1,32 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { Supplier, SupplierFilter } from './supplier.model';
-import { ResponseModel } from '../common/response.model';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpResponse} from '@angular/common/http';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {environment} from '../../environments/environment';
+import {DateFilter, Supplier, SupplierFilter} from './supplier.model';
+import {ResponseModel} from '../common/response.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SupplierService {
 
+  public dateFilter: BehaviorSubject<DateFilter> = new BehaviorSubject<DateFilter>(null);
+  subscribeDateFilter: Observable<DateFilter> = this.dateFilter.asObservable();
+
   constructor(private http: HttpClient) {
+  }
+
+  setDateFilter(obj: DateFilter) {
+    this.dateFilter.next(obj);
+  }
+
+  getDateFilter() {
+    return this.dateFilter.value;
+  }
+
+  convertDateYYYYMMDD(date: Date) {
+    const month = date.getMonth() + 1;
+    return date.getFullYear() + '-' + month + '-' + date.getDate();
   }
 
   getApiUrl(filter?: SupplierFilter) {
@@ -79,6 +95,26 @@ export class SupplierService {
   delete(id) {
     const url = environment.apiUrl + '/supplier/delete-supplier?id=' + id;
     return this.http.post<ResponseModel>(url, {});
+  }
+
+  getApiUrlReportDebtForSuppliers(filter?: SupplierFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/report/suppliers-debt?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
+  getReportDebtForSuppliers(filter?: SupplierFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrlReportDebtForSuppliers(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 }
 
