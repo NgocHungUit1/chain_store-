@@ -183,6 +183,26 @@ export class InvoiceService {
     const url = environment.apiUrl + this.getStateUrlInvoiceDetailList(filter);
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
+
+  getApiUrlReportDebtForCustomers(filter?: InvoiceFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/report/customers-debt?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
+  getReportDebtForCustomers(filter?: InvoiceFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrlReportDebtForCustomers(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
 }
 
 

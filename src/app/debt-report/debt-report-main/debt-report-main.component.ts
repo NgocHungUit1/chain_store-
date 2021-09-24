@@ -4,11 +4,11 @@ import {ActivatedRoute} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {NotifierService} from 'angular-notifier';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {DateFilter} from '../../invoice/invoice.model';
+import {DateFilter, Invoice, InvoiceFilter} from '../../invoice/invoice.model';
 import {DatetimeChooseFilterDialogComponent} from '../../invoice/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
 import {DatetimeDefaultFilterDialogComponent} from '../../invoice/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
 import {PaymentService} from '../../payment/payment.service';
-import {Payment, PaymentFilter} from '../../payment/payment.model';
+import {InvoiceService} from '../../invoice/invoice.service';
 
 @Component({
   selector: 'app-debt-report-main',
@@ -22,6 +22,7 @@ export class DebtReportMainComponent extends ListComponentBase implements OnInit
     private dialog: MatDialog,
     private notifySer: NotifierService,
     private paymentService: PaymentService,
+    private invoiceService: InvoiceService,
     private fb: FormBuilder) {
     super();
   }
@@ -33,7 +34,7 @@ export class DebtReportMainComponent extends ListComponentBase implements OnInit
   isRateLimitReached = false;
 
   currentDateFilter: DateFilter;
-  apiFilter: PaymentFilter = new PaymentFilter();
+  apiFilter: InvoiceFilter;
   timeFilter: FormGroup;
   reportType: FormGroup;
 
@@ -51,11 +52,12 @@ export class DebtReportMainComponent extends ListComponentBase implements OnInit
     '#', 'customer', 'debt_begin', 'debt_end'
   ];
 
-  dataSource: Payment[] = [];
+  dataSource: Invoice[] = [];
 
   ngOnInit(): void {
     this.initDateFilter();
     this.buildFromTimeFilter();
+    this.apiFilter = this.buildFilterFromParams();
     this.loadData();
   }
 
@@ -63,25 +65,17 @@ export class DebtReportMainComponent extends ListComponentBase implements OnInit
     const typeReport = this.reportType.controls['type'].value;
     if (typeReport === 'customers') {
       this.isLoadingResults = true;
-      this.paymentService.getListReportForCustomers(this.apiFilter).subscribe(res => {
-        this.dataSource = res.body.data;
-        this.isLoadingResults = false;
-      });
-    }
-
-    /*if (typeReport === 'suppliers') {
-      this.isLoadingResults = true;
-      this.paymentService.getListReportForSuppliers(this.apiFilter).subscribe(res => {
+      this.invoiceService.getReportDebtForCustomers(this.apiFilter).subscribe(res => {
         this.dataSource = res.body.data;
         let stt = 0;
         this.dataSource.forEach(elementData => {
           stt++;
-          // elementData.stt = stt;
+          elementData.stt = stt;
         });
         this.reloadFilter(res);
         this.isLoadingResults = false;
       });
-    }*/
+    }
   }
 
   initDateFilter() {
@@ -92,15 +86,15 @@ export class DebtReportMainComponent extends ListComponentBase implements OnInit
     const obj = new DateFilter();
     // tháng này
 
-    obj.date_from = this.paymentService.convertDateYYYYMMDD(first);
-    obj.date_to = this.paymentService.convertDateYYYYMMDD(today);
+    obj.date_from = this.invoiceService.convertDateYYYYMMDD(first);
+    obj.date_to = this.invoiceService.convertDateYYYYMMDD(today);
 
     const date_from = new Date(obj.date_from);
     const date_to = new Date(obj.date_to);
     this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
 
     this.currentDateFilter = obj;
-    this.paymentService.setDateFilter(obj);
+    this.invoiceService.setDateFilter(obj);
   }
 
   buildFromTimeFilter() {
@@ -114,19 +108,31 @@ export class DebtReportMainComponent extends ListComponentBase implements OnInit
     });
   }
 
-  buildFilterFromParams(): PaymentFilter {
-    function write<K extends keyof PaymentFilter>(arg: PaymentFilter, key: K, value: PaymentFilter[K]): void {
+  buildFilterFromParams(): InvoiceFilter {
+    function write<K extends keyof InvoiceFilter>(arg: InvoiceFilter, key: K, value: InvoiceFilter[K]): void {
       arg[key] = value;
     }
 
     const typeReport = this.reportType.controls['type'].value;
-    const objDateFilter = this.paymentService.getDateFilter();
-    const filter = new PaymentFilter();
-    const objectKeys = Object.keys(filter) as Array<keyof PaymentFilter>;
+    const objDateFilter = this.invoiceService.getDateFilter();
+    const filter = new InvoiceFilter();
+
+    const objectKeys = Object.keys(filter) as Array<keyof InvoiceFilter>;
+
+    for (const attr of objectKeys) {
+      write(filter, attr, this.route.snapshot.queryParams['InvoiceSearch[' + attr + ']']);
+    }
+
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
+    filter.sort = this.route.snapshot.queryParams['sort'];
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
+
+    if (typeReport === 'customers') {
+      filter.expand = 'customer,debtBegin,debtEnd';
+    }
+
     return filter;
   }
 
@@ -137,7 +143,7 @@ export class DebtReportMainComponent extends ListComponentBase implements OnInit
 
   radioTimeChange(event: Event) {
     if (this.timeFilter.controls['typeTime'].value === 'choose') {
-      const date = this.paymentService.getDateFilter();
+      const date = this.invoiceService.getDateFilter();
       const date_from = new Date(date.date_from);
       const date_to = new Date(date.date_to);
       this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
@@ -160,7 +166,7 @@ export class DebtReportMainComponent extends ListComponentBase implements OnInit
       if (result?.title !== undefined) {
         this.titleTimeDefault = result?.title;
       }
-      const date = this.paymentService.getDateFilter();
+      const date = this.invoiceService.getDateFilter();
       const date_from = new Date(date.date_from);
       const date_to = new Date(date.date_to);
       if (!date.date_from && !date.date_to) {
@@ -191,7 +197,7 @@ export class DebtReportMainComponent extends ListComponentBase implements OnInit
       this.timeFilter.patchValue({
         typeTime: 'choose',
       });
-      const date = this.paymentService.getDateFilter();
+      const date = this.invoiceService.getDateFilter();
       const date_from = new Date(date.date_from);
       const date_to = new Date(date.date_to);
       this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
