@@ -96,3 +96,7 @@ tr.mat-header-row:nth-child(1) {
 .radio-button-report-type:last-child {
   margin-bottom: 0;
 }
+
+.summary-row-number {
+  color: #000;
+}

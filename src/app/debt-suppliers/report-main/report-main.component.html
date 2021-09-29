@@ -46,7 +46,7 @@
             </div>
           </div>
 
-          <div class=" table-responsive">
+          <div class="table-content table-responsive">
             <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="mat-elevation-z8">
               <ng-container matColumnDef="#">
                 <th mat-header-cell *matHeaderCellDef> #</th>
@@ -78,9 +78,32 @@
                 <td mat-cell class="text-right" *matCellDef="let element"> {{ element.congNo?.congNoCuoiKy || 0 | number }} </td>
               </ng-container>
 
-              <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+              <!-- Item second-header -->
+              <ng-container matColumnDef="summaryRow_#">
+                <th mat-header-cell *matHeaderCellDef></th>
+              </ng-container>
+              <ng-container matColumnDef="summaryRow_supplier">
+                <th mat-header-cell *matHeaderCellDef></th>
+              </ng-container>
+              <ng-container matColumnDef="summaryRow_debt_begin">
+                <th mat-header-cell class="summary-row-number text-right" *matHeaderCellDef>{{ sumCongNoDauKy || 0 | number }}</th>
+              </ng-container>
+              <ng-container matColumnDef="summaryRow_debt_increase">
+                <th mat-header-cell class="summary-row-number text-right" *matHeaderCellDef>{{ sumCongNoTang || 0 | number }}</th>
+              </ng-container>
+              <ng-container matColumnDef="summaryRow_debt_decrease">
+                <th mat-header-cell class="summary-row-number text-right" *matHeaderCellDef>{{ sumCongNoGiam || 0 | number }}</th>
+              </ng-container>
+              <ng-container matColumnDef="summaryRow_debt_end">
+                <th mat-header-cell class="summary-row-number text-right" *matHeaderCellDef>{{ sumCongNoCuoiKy || 0 | number }}</th>
+              </ng-container>
+              <!-- Item second-header -->
+
+              <tr mat-header-row class="" *matHeaderRowDef="columnsToDisplay"></tr>
+              <tr mat-header-row *matHeaderRowDef="summaryRowDisplay" class="example-second-header-row">
               <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" class="example-element-row"
                   [class.example-expanded-row]="expandedElement === element"
+
                   (click)="expandedElement = expandedElement === element ? null : element">
               </tr>
             </table>

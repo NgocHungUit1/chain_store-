@@ -50,8 +50,16 @@ export class ReportMainComponent extends ListComponentBase implements OnInit {
     '#', 'customer', 'debt_begin', 'debt_increase', 'debt_decrease', 'debt_end'
   ];
 
-  // dataSource: Invoice[] = [];
+  summaryRowDisplay: string[] = [
+    'summaryRow_#', 'summaryRow_customer', 'summaryRow_debt_begin', 'summaryRow_debt_increase', 'summaryRow_debt_decrease', 'summaryRow_debt_end'
+  ];
+
   dataSource: Customer[] = [];
+
+  sumCongNoDauKy = 0;
+  sumCongNoCuoiKy = 0;
+  sumCongNoTang = 0;
+  sumCongNoGiam = 0;
 
   ngOnInit(): void {
     this.initDateFilter();
@@ -64,6 +72,11 @@ export class ReportMainComponent extends ListComponentBase implements OnInit {
     this.isLoadingResults = true;
     this.customerService.getReportDebtForCustomers(this.apiFilter).subscribe(res => {
       this.dataSource = res.body.data;
+      this.sumCongNoDauKy = res.body.sumCongNoDauKy;
+      this.sumCongNoCuoiKy = res.body.sumCongNoCuoiKy;
+      this.sumCongNoTang = res.body.sumCongNoTang;
+      this.sumCongNoGiam = res.body.sumCongNoGiam;
+
       let stt = 0;
       this.dataSource.forEach(elementData => {
         stt++;
