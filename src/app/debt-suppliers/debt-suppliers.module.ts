@@ -11,11 +11,15 @@ import {PerfectScrollbarModule} from 'ngx-perfect-scrollbar';
 import {ChartsModule} from 'ng2-charts';
 import {ReportMainComponent} from './report-main/report-main.component';
 import {DebtSuppliersRoutes} from './debt-suppliers.routing';
+import { DatetimeDefaultFilterDialogComponent } from './datetime-default-filter-dialog/datetime-default-filter-dialog.component';
+import { DatetimeChooseFilterDialogComponent } from './datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
 
 
 @NgModule({
   declarations: [
-    ReportMainComponent
+    ReportMainComponent,
+    DatetimeDefaultFilterDialogComponent,
+    DatetimeChooseFilterDialogComponent
   ],
   imports: [
     CommonModule,

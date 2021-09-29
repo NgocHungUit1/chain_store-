@@ -5,10 +5,9 @@ import {MatDialog} from '@angular/material/dialog';
 import {NotifierService} from 'angular-notifier';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {SupplierService} from '../../supplier/supplier.service';
-import {DateFilter} from '../../invoice/invoice.model';
-import {Supplier, SupplierFilter} from '../../supplier/supplier.model';
-import {DatetimeDefaultFilterDialogComponent} from '../../invoice/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
-import {DatetimeChooseFilterDialogComponent} from '../../invoice/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
+import {DateFilter, Supplier, SupplierFilter} from '../../supplier/supplier.model';
+import {DatetimeDefaultFilterDialogComponent} from '../datetime-default-filter-dialog/datetime-default-filter-dialog.component';
+import {DatetimeChooseFilterDialogComponent} from '../datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
 
 @Component({
   selector: 'app-report-main',
@@ -58,6 +57,7 @@ export class ReportMainComponent extends ListComponentBase implements OnInit {
     this.initDateFilter();
     this.buildFromTimeFilter();
     this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
   }
 
   loadData(): void {
@@ -119,7 +119,7 @@ export class ReportMainComponent extends ListComponentBase implements OnInit {
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
-    filter.expand = 'supplier,debtBegin,debtEnd,debtIncrease';
+    filter.expand = 'congNo';
 
     return filter;
   }
@@ -165,8 +165,8 @@ export class ReportMainComponent extends ListComponentBase implements OnInit {
         typeTime: 'default',
       });
 
-      // this.apiFilter = this.buildFilterFromParams();
-      // this.loadData();
+      this.apiFilter = this.buildFilterFromParams();
+      this.loadData();
     });
   }
 
@@ -188,8 +188,8 @@ export class ReportMainComponent extends ListComponentBase implements OnInit {
       const date_to = new Date(date.date_to);
       this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
 
-      // this.apiFilter = this.buildFilterFromParams();
-      // this.loadData();
+      this.apiFilter = this.buildFilterFromParams();
+      this.loadData();
     });
   }
 }

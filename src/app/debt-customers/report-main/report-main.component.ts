@@ -4,10 +4,10 @@ import {ActivatedRoute} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {NotifierService} from 'angular-notifier';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {DateFilter, Invoice, InvoiceFilter} from '../../invoice/invoice.model';
-import {DatetimeChooseFilterDialogComponent} from '../../invoice/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
-import {DatetimeDefaultFilterDialogComponent} from '../../invoice/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
-import {InvoiceService} from '../../invoice/invoice.service';
+import {CustomerService} from '../../customer/customer.service';
+import {Customer, CustomerFilter, DateFilter} from '../../customer/customer.model';
+import {DatetimeChooseFilterDialogComponent} from '../../customer/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
+import {DatetimeDefaultFilterDialogComponent} from '../../customer/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
 
 @Component({
   selector: 'app-report-main',
@@ -20,7 +20,7 @@ export class ReportMainComponent extends ListComponentBase implements OnInit {
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private notifySer: NotifierService,
-    private invoiceService: InvoiceService,
+    private customerService: CustomerService,
     private fb: FormBuilder) {
     super();
   }
@@ -31,7 +31,7 @@ export class ReportMainComponent extends ListComponentBase implements OnInit {
   isRateLimitReached = false;
 
   currentDateFilter: DateFilter;
-  apiFilter: InvoiceFilter;
+  apiFilter: CustomerFilter;
   timeFilter: FormGroup;
 
   titleTimeDefault = 'Tháng này';
@@ -50,7 +50,8 @@ export class ReportMainComponent extends ListComponentBase implements OnInit {
     '#', 'customer', 'debt_begin', 'debt_increase', 'debt_decrease', 'debt_end'
   ];
 
-  dataSource: Invoice[] = [];
+  // dataSource: Invoice[] = [];
+  dataSource: Customer[] = [];
 
   ngOnInit(): void {
     this.initDateFilter();
@@ -61,14 +62,14 @@ export class ReportMainComponent extends ListComponentBase implements OnInit {
 
   loadData(): void {
     this.isLoadingResults = true;
-    this.invoiceService.getReportDebtForCustomers(this.apiFilter).subscribe(res => {
+    this.customerService.getReportDebtForCustomers(this.apiFilter).subscribe(res => {
       this.dataSource = res.body.data;
       let stt = 0;
       this.dataSource.forEach(elementData => {
         stt++;
         elementData.stt = stt;
       });
-      this.reloadFilter(res);
+      // this.reloadFilter(res);
       this.isLoadingResults = false;
     });
   }
@@ -81,15 +82,15 @@ export class ReportMainComponent extends ListComponentBase implements OnInit {
     const obj = new DateFilter();
     // tháng này
 
-    obj.date_from = this.invoiceService.convertDateYYYYMMDD(first);
-    obj.date_to = this.invoiceService.convertDateYYYYMMDD(today);
+    obj.date_from = this.customerService.convertDateYYYYMMDD(first);
+    obj.date_to = this.customerService.convertDateYYYYMMDD(today);
 
     const date_from = new Date(obj.date_from);
     const date_to = new Date(obj.date_to);
     this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
 
     this.currentDateFilter = obj;
-    this.invoiceService.setDateFilter(obj);
+    this.customerService.setDateFilter(obj);
   }
 
   buildFromTimeFilter() {
@@ -100,18 +101,18 @@ export class ReportMainComponent extends ListComponentBase implements OnInit {
     });
   }
 
-  buildFilterFromParams(): InvoiceFilter {
-    function write<K extends keyof InvoiceFilter>(arg: InvoiceFilter, key: K, value: InvoiceFilter[K]): void {
+  buildFilterFromParams(): CustomerFilter {
+    function write<K extends keyof CustomerFilter>(arg: CustomerFilter, key: K, value: CustomerFilter[K]): void {
       arg[key] = value;
     }
 
-    const objDateFilter = this.invoiceService.getDateFilter();
-    const filter = new InvoiceFilter();
+    const objDateFilter = this.customerService.getDateFilter();
+    const filter = new CustomerFilter();
 
-    const objectKeys = Object.keys(filter) as Array<keyof InvoiceFilter>;
+    const objectKeys = Object.keys(filter) as Array<keyof CustomerFilter>;
 
     for (const attr of objectKeys) {
-      write(filter, attr, this.route.snapshot.queryParams['InvoiceSearch[' + attr + ']']);
+      write(filter, attr, this.route.snapshot.queryParams['CustomerSearch[' + attr + ']']);
     }
 
     filter.page = this.route.snapshot.queryParams['page'];
@@ -119,7 +120,7 @@ export class ReportMainComponent extends ListComponentBase implements OnInit {
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
-    filter.expand = 'customer,debtBegin,debtEnd,debtIncrease';
+    filter.expand = 'congNo';
 
     return filter;
   }
@@ -131,7 +132,7 @@ export class ReportMainComponent extends ListComponentBase implements OnInit {
 
   radioTimeChange(event: Event) {
     if (this.timeFilter.controls['typeTime'].value === 'choose') {
-      const date = this.invoiceService.getDateFilter();
+      const date = this.customerService.getDateFilter();
       const date_from = new Date(date.date_from);
       const date_to = new Date(date.date_to);
       this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
@@ -152,7 +153,7 @@ export class ReportMainComponent extends ListComponentBase implements OnInit {
       if (result?.title !== undefined) {
         this.titleTimeDefault = result?.title;
       }
-      const date = this.invoiceService.getDateFilter();
+      const date = this.customerService.getDateFilter();
       const date_from = new Date(date.date_from);
       const date_to = new Date(date.date_to);
       if (!date.date_from && !date.date_to) {
@@ -183,7 +184,7 @@ export class ReportMainComponent extends ListComponentBase implements OnInit {
       this.timeFilter.patchValue({
         typeTime: 'choose',
       });
-      const date = this.invoiceService.getDateFilter();
+      const date = this.customerService.getDateFilter();
       const date_from = new Date(date.date_from);
       const date_to = new Date(date.date_to);
       this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);

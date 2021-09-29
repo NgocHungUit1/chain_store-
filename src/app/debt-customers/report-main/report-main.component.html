@@ -56,27 +56,27 @@
 
               <ng-container matColumnDef="customer">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['customer']}}</th>
-                <td mat-cell *matCellDef="let element"> {{ element.customer?.name || 'Khách lẻ'}}</td>
+                <td mat-cell *matCellDef="let element"> {{ element.name || 'Khách lẻ'}}</td>
               </ng-container>
 
               <ng-container matColumnDef="debt_begin">
                 <th mat-header-cell class="text-right" *matHeaderCellDef> {{columnsHeader['debt_begin']}}</th>
-                <td mat-cell class="text-right" *matCellDef="let element"> {{ element.debtBegin?.debt || 0 | number}}</td>
+                <td mat-cell class="text-right" *matCellDef="let element"> {{ element.congNo?.congNoDauKy || 0 | number}}</td>
               </ng-container>
 
               <ng-container matColumnDef="debt_increase">
                 <th mat-header-cell class="text-right" *matHeaderCellDef> {{columnsHeader['debt_increase']}}</th>
-                <td mat-cell class="text-right" *matCellDef="let element"> {{ element.debtIncrease?.debt || 0 | number}}</td>
+                <td mat-cell class="text-right" *matCellDef="let element"> {{ element.congNo?.congNoTang || 0 | number}}</td>
               </ng-container>
 
               <ng-container matColumnDef="debt_decrease">
                 <th mat-header-cell class="text-right" *matHeaderCellDef> {{columnsHeader['debt_decrease']}}</th>
-                <td mat-cell class="text-right" *matCellDef="let element"> {{ element.debtIncrease?.debt + element.debtBegin?.debt || 0 | number }} </td>
+                <td mat-cell class="text-right" *matCellDef="let element"> {{ element.congNo?.congNoGiam || 0 | number }} </td>
               </ng-container>
 
               <ng-container matColumnDef="debt_end">
                 <th mat-header-cell class="text-right" *matHeaderCellDef> {{columnsHeader['debt_end']}}</th>
-                <td mat-cell class="text-right" *matCellDef="let element"> {{ element.debtEnd?.debt || 0 | number}}</td>
+                <td mat-cell class="text-right" *matCellDef="let element"> {{ element.congNo?.congNoCuoiKy || 0 | number}}</td>
               </ng-container>
 
               <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>

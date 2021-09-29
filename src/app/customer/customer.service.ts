@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { Customer, CustomerFilter } from './customer.model';
-import { ResponseModel } from '../common/response.model';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpResponse} from '@angular/common/http';
+import {Observable, BehaviorSubject} from 'rxjs';
+import {environment} from '../../environments/environment';
+import {Customer, CustomerFilter, DateFilter} from './customer.model';
+import {ResponseModel} from '../common/response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +13,24 @@ export class CustomerService {
   private loadCustomer: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   subscribeLoadCustomer: Observable<boolean> = this.loadCustomer.asObservable();
 
+  public dateFilter: BehaviorSubject<DateFilter> = new BehaviorSubject<DateFilter>(null);
+  subscribeDateFilter: Observable<DateFilter> = this.dateFilter.asObservable();
+
   setLoadCustmer(action: boolean) {
     this.loadCustomer.next(action);
+  }
+
+  setDateFilter(obj: DateFilter) {
+    this.dateFilter.next(obj);
+  }
+
+  getDateFilter() {
+    return this.dateFilter.value;
+  }
+
+  convertDateYYYYMMDD(date: Date) {
+    const month = date.getMonth() + 1;
+    return date.getFullYear() + '-' + month + '-' + date.getDate();
   }
 
   constructor(private http: HttpClient) {
@@ -93,5 +109,25 @@ export class CustomerService {
   getNameStore(show = 1) {
     const url = environment.apiUrl + '/customer/name-store?show=' + show;
     return this.http.get<string>(url);
+  }
+
+  getApiUrlReportDebtForCustomers(filter?: CustomerFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/report/customers-debt?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
+  getReportDebtForCustomers(filter?: CustomerFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrlReportDebtForCustomers(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 }

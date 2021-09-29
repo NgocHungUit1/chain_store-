@@ -14,6 +14,8 @@ import { CustomerFormDialogComponent } from './customer-form-dialog/customer-for
 import { CustomerTabInfoComponent } from './customer-tab-info/customer-tab-info.component';
 import { CustomerTabDebtComponent } from './customer-tab-debt/customer-tab-debt.component';
 import { CustomerPopupDeleteDialogComponent } from './customer-popup-delete-dialog/customer-popup-delete-dialog.component';
+import {DatetimeChooseFilterDialogComponent} from './datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
+import {DatetimeDefaultFilterDialogComponent} from './datetime-default-filter-dialog/datetime-default-filter-dialog.component';
 
 
 
@@ -23,7 +25,9 @@ import { CustomerPopupDeleteDialogComponent } from './customer-popup-delete-dial
     CustomerFormDialogComponent,
     CustomerTabInfoComponent,
     CustomerTabDebtComponent,
-    CustomerPopupDeleteDialogComponent
+    CustomerPopupDeleteDialogComponent,
+    DatetimeDefaultFilterDialogComponent,
+    DatetimeChooseFilterDialogComponent
   ],
   imports: [
     CommonModule,

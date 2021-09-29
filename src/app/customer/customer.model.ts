@@ -17,6 +17,7 @@ export class Customer {
   province: Location;
   district: Location;
   ward: Location;
+  stt: number; // for view
 }
 
 
@@ -36,9 +37,16 @@ export class CustomerFilter extends ApiFilterBase {
   page = 1;
   pageSize = 15;
   sort = '';
+  date_from = '';
+  date_to = '';
 
   getModelSearch() {
     return 'CustomerSearch';
   }
 
+}
+
+export class DateFilter {
+  date_from: string;
+  date_to: string;
 }

@@ -1,6 +1,6 @@
-import { Component, OnInit, Inject, Optional } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {Component, OnInit, Inject, Optional} from '@angular/core';
+import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-warehouse-discount-dialog',
@@ -17,7 +17,7 @@ export class WarehouseDiscountDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<WarehouseDiscountDialogComponent>,
     private fb: FormBuilder,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
-    this.local_data = { ...data };
+    this.local_data = {...data};
     this.discount_amount = this.local_data.discount_amount;
     this.discount_type = this.local_data.discount_type;
   }
@@ -61,7 +61,11 @@ export class WarehouseDiscountDialogComponent implements OnInit {
 
     this.form.valueChanges.subscribe(res => {
       if (res.type === 'percent' && res.number > 100) {
-        this.form.patchValue({ number: 100 });
+        this.form.patchValue({number: 100});
+      }
+
+      if (res.number < 0) {
+        this.form.patchValue({number: 0});
       }
     });
   }
