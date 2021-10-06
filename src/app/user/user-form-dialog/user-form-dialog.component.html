@@ -114,14 +114,14 @@
   <h3>Thông tin tài khoản kết nối liên thông</h3>
   <div fxLayout="row wrap">
     <div fxFlex="48">
-      <mat-form-field appearance="outline">
+      <mat-form-field class="npl-info" appearance="fill" >
         <mat-label>Tài khoản</mat-label>
         <input matInput value="{{ nationalPharmacyLoginUsername }}" readonly>
       </mat-form-field>
     </div>
     <div fxFlex="4"></div>
     <div fxFlex="48">
-      <mat-form-field appearance="outline">
+      <mat-form-field class="npl-info" appearance="fill">
         <mat-label>Mật khẩu</mat-label>
         <input matInput [type]="hidePassword ? 'password' : 'text'" value="{{ nationalPharmacyLoginPassword }}" readonly>
         <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
