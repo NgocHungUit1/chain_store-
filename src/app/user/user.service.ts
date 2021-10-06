@@ -145,6 +145,10 @@ export class UserService {
     return this.http.get<boolean>(url);
   }
 
+  getNationalPharmacyInfo() {
+    const url = environment.apiUrl + '/user/national-pharmacy-info';
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
 }
 
 

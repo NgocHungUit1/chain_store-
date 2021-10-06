@@ -41,9 +41,12 @@
             <mat-form-field>
               <mat-label>Mật khẩu xác nhận</mat-label>
               <input matInput type="password" tabindex="3" formControlName="password_confirm">
-              <mat-error *ngIf="form.controls['password_confirm'].hasError('required')">Mật khẩu xác nhận không được bỏ trống</mat-error>
+              <mat-error *ngIf="form.controls['password_confirm'].hasError('required')">Mật khẩu xác nhận không được bỏ
+                trống
+              </mat-error>
               <mat-error *ngIf="!form.controls['password_confirm'].hasError('required')
-                  && form.hasError('passwordNotMatch') ">Mật khẩu xác nhận không đúng</mat-error>
+                  && form.hasError('passwordNotMatch') ">Mật khẩu xác nhận không đúng
+              </mat-error>
             </mat-form-field>
 
           </div>
@@ -107,6 +110,26 @@
     </div>
 
   </form>
+  <mat-divider></mat-divider>
+  <h3>Thông tin tài khoản kết nối liên thông</h3>
+  <div fxLayout="row wrap">
+    <div fxFlex="48">
+      <mat-form-field appearance="outline">
+        <mat-label>Tài khoản kết nối</mat-label>
+        <input matInput value="{{ nationalPharmacyLoginUsername }}" readonly>
+      </mat-form-field>
+    </div>
+    <div fxFlex="4"></div>
+    <div fxFlex="48">
+      <mat-form-field appearance="outline">
+        <mat-label>Mật khẩu kết nối</mat-label>
+        <input matInput [type]="hidePassword ? 'password' : 'text'" value="{{ nationalPharmacyLoginPassword }}" readonly>
+        <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
+          <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+  </div>
 </div>
 <div mat-dialog-actions align="end">
   <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="7" (click)="submit()">

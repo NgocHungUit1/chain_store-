@@ -18,6 +18,9 @@ export class UserFormDialogComponent implements OnInit {
   checkChangePassword = false;
   storeRoles: any;
   userRole: string;
+  nationalPharmacyLoginUsername: string;
+  nationalPharmacyLoginPassword: string;
+  hidePassword = true;
 
   statusItems: any[] = [
     {
@@ -57,6 +60,7 @@ export class UserFormDialogComponent implements OnInit {
       this.loadUser(this.user_id);
     }
 
+    this.getNationalPharmacyInfo();
   }
 
   initForm() {
@@ -110,6 +114,15 @@ export class UserFormDialogComponent implements OnInit {
   getStoreRoleList() {
     this.userService.getStoreRoleList().subscribe(res => {
       this.storeRoles = res.body;
+    });
+  }
+
+  getNationalPharmacyInfo() {
+    this.userService.getNationalPharmacyInfo().subscribe(res => {
+      // @ts-ignore
+      this.nationalPharmacyLoginUsername = res.body.username;
+      // @ts-ignore
+      this.nationalPharmacyLoginPassword = res.body.password;
     });
   }
 
