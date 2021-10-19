@@ -27,15 +27,15 @@ import * as xlsx from 'xlsx';
   styleUrls: ['./price-book-list.component.css'],
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ]
 })
 export class PriceBookListComponent extends ListComponentBase implements OnInit {
 
-  @ViewChild('epltable', { static: false }) epltable: ElementRef;
+  @ViewChild('epltable', {static: false}) epltable: ElementRef;
 
   public priceListForm: FormGroup;
   public priceLists: PriceList[] = [];
@@ -51,12 +51,11 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     private priceListSer: PriceListService,
     private priceListProductSer: PriceListProductService,
     private productSer: ProductService,
-
   ) {
     super();
   }
 
-  @ViewChild(MatTable, { static: true }) table: MatTable<any>;
+  @ViewChild(MatTable, {static: true}) table: MatTable<any>;
   @ViewChild('selectColumn') selectColumn;
 
 
@@ -101,6 +100,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     function write<K extends keyof PriceListProductFilter>(arg: PriceListProductFilter, key: K, value: PriceListProductFilter[K]): void {
       arg[key] = value;
     }
+
     const aPriceLists = this.priceListForm.controls['priceLists'].value;
     this.setPriceListChoose(aPriceLists); // luu cho bien price list chon
 
@@ -116,6 +116,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.expand = 'product,pricelistproduct,productUnit';
+    filter.textSearchProduct = this.priceListForm.controls['textSearchProduct'].value;
     return filter;
   }
 
@@ -134,6 +135,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
   initPriceListForm() {
     this.priceListForm = this.fb.group({
       priceLists: [null],
+      textSearchProduct: [null],
     });
   }
 
@@ -223,11 +225,17 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     );
 
     this.priceListForm.valueChanges.subscribe(res => {
+      console.log(res);
       this.priceLists.forEach(element => {
         if (element.id == res.priceLists) {
           this.namePriceListChoose = element.name;
         }
       });
+
+      if (res.textSearchProduct) {
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+      }
     });
   }
 
@@ -279,7 +287,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
 
   }
 
-  /** 
+  /**
    * https://levelup.gitconnected.com/export-data-to-excel-sheet-in-angular-8-7a8e0342643d
    */
   exportExcel() {
@@ -294,8 +302,10 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
    * chua tim dc cach xu ly tot hon
    */
   async handleExcel(res) {
-    await this.setDataExports(res)
-    setTimeout(() => { this.downloadExcel() }, 800);
+    await this.setDataExports(res);
+    setTimeout(() => {
+      this.downloadExcel();
+    }, 800);
     // await this.downloadExcel();
   }
 

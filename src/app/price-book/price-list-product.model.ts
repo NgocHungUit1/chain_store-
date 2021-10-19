@@ -28,6 +28,7 @@ export class PriceListProductFilter extends ApiFilterBase {
   page = 1;
   pageSize = 15;
   sort = '';
+  textSearchProduct = '';
 
   getModelSearch() {
     return 'PriceListProductSearch';

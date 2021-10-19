@@ -32,6 +32,19 @@
             </div>
 
           </div>
+
+          <div fxLayout="row wrap">
+            <div fxFlex="100">
+              <mat-form-field>
+                <input type="text" formControlName="textSearchProduct" matInput
+                       placeholder="Tìm hàng hóa theo mã hoặc tên">
+                <button mat-icon-button matPrefix>
+                  <mat-icon>search</mat-icon>
+                </button>
+              </mat-form-field>
+            </div>
+          </div>
+
         </form>
       </mat-card-content>
     </mat-card>
@@ -47,7 +60,7 @@
       <div class="select-product">
         <mat-form-field>
           <input type="text" [formControl]="selectProduct" matInput [matAutocomplete]="chooseProduct"
-            placeholder="Tìm hàng hóa theo mã hoặc tên">
+            placeholder="Thêm hàng hóa theo mã hoặc tên">
           <button mat-icon-button matPrefix>
             <mat-icon>search</mat-icon>
           </button>
