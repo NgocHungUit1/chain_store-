@@ -1,9 +1,9 @@
-import {Component, Inject, OnInit, Optional} from '@angular/core';
-import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
-import {Observable} from 'rxjs/Observable';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {NotifierService} from 'angular-notifier';
-import {UserService} from '../user.service';
+import { Component, Inject, OnInit, Optional } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { NotifierService } from 'angular-notifier';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-user-form-dialog',
@@ -17,7 +17,7 @@ export class UserFormDialogComponent implements OnInit {
   user_id: string;
   checkChangePassword = false;
   storeRoles: any;
-  userRole: string;
+  userRoles: string[];
   nationalPharmacyLoginUsername: string;
   nationalPharmacyLoginPassword: string;
   hidePassword = true;
@@ -107,8 +107,12 @@ export class UserFormDialogComponent implements OnInit {
 
   loadUserRole() {
     this.userService.getUserRole().subscribe(res => {
-      this.userRole = res.roles;
+      this.userRoles = res.roles;
     });
+  }
+
+  checkRole(role: string) {
+    return this.userRoles?.includes(role);
   }
 
   getStoreRoleList() {

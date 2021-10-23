@@ -9,7 +9,7 @@
           <div fxFlex="100">
             <mat-form-field>
               <mat-label>Tên đăng nhập</mat-label>
-              <input matInput tabindex="1" formControlName="username" [attr.readonly]="userRole == 'SALE'">
+              <input matInput tabindex="1" formControlName="username" [attr.readonly]="checkRole('SALE')">
               <mat-error *ngIf="form.controls['username'].hasError('required')">Tên tài khoản không được bỏ trống
               </mat-error>
               <mat-error *ngIf="form.controls['username'].hasError('ajaxValidator')
@@ -73,7 +73,7 @@
             </mat-form-field>
           </div>
 
-          <div *ngIf="userRole == 'ADMIN'" fxFlex="100">
+          <div *ngIf="checkRole('ADMIN')" fxFlex="100">
             <div fxLayout="row wrap">
               <div fxFlex="48">
                 <mat-form-field>

@@ -53,6 +53,15 @@ export class UserService {
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
+  getListShort(): Observable<HttpResponse<any>> {
+    const filter = new UserFilter();
+    filter.page = 1;
+    filter.pageSize = 100;
+
+    const url = environment.apiUrl + this.getApiUrl(filter);
+    return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
+  }
+
   public getUser(id: string): Observable<User> {
     const url = environment.apiUrl + '/user/' + id;
     return this.http.get<User>(url);

@@ -12,6 +12,8 @@ import { DateFilter, Invoice, InvoiceFilter } from '../../invoice/invoice.model'
 import { debounceTime } from 'rxjs/operators';
 import { DatetimeDefaultFilterDialogComponent } from '../../invoice/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
 import { DatetimeChooseFilterDialogComponent } from '../../invoice/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
+import { User } from '../../user/user.model';
+import { UserService } from '../../user/user.service';
 
 @Component({
   selector: 'app-day-report-main',
@@ -26,7 +28,8 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
     private dialog: MatDialog,
     private notifySer: NotifierService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    public userService: UserService,
   ) {
     super();
   }
@@ -45,9 +48,10 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
   timeFilter: FormGroup;
   orderStatusFilter: FormGroup;
   orderNationalFilter: FormGroup;
+  userFilter: FormGroup;
 
   currentDateFilter: DateFilter;
-
+  users: User[];
   searchInvoiceForm = new FormControl();
 
   // second column
@@ -155,7 +159,7 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
     filter.date_to = objDateFilter.date_to;
     filter.order_status = this.orderStatusFilter.controls['status'].value;
     filter.order_national = this.orderNationalFilter.controls['status'].value;
-
+    filter.users = this.userFilter.controls['user'].value;
     return filter;
   }
 
@@ -176,6 +180,13 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
       status: [
         ['yes', 'no']
       ],
+    });
+    this.userFilter = this.fb.group({
+      user: [ null],
+    });
+
+    this.userService.getListShort().subscribe( res => {
+       this.users = res.body;
     });
   }
 
