@@ -1,9 +1,10 @@
-import {Component, Inject, OnInit, Optional} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {NotifierService} from 'angular-notifier';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
-import {MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter} from '@angular/material-moment-adapter';
+import { Component, Inject, OnInit, Optional } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { NotifierService } from 'angular-notifier';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
+import { ProductService } from '../../product/product.service';
 
 export const MY_FORMATS = {
   parse: {
@@ -34,15 +35,20 @@ export class WarehouseParcelFormDialogComponent implements OnInit {
   public form: FormGroup;
   local_data: any;
   parcels: object[];
+  product_id: any = null;
+
+  parcelRecommend: object = null;
 
   constructor(
     public dialogRef: MatDialogRef<WarehouseParcelFormDialogComponent>,
     public notifySer: NotifierService,
+    public productService: ProductService,
     private fb: FormBuilder,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.data = {...data};
     this.parcels = this.data.parcels;
+    this.product_id = this.data.product_id;
   }
 
   onNoClick(): void {
@@ -67,6 +73,26 @@ export class WarehouseParcelFormDialogComponent implements OnInit {
       ],
       quantity: [1],
       expiration_date: [expiration_date_value, Validators.required],
+    });
+
+    if (this.product_id) {
+      this.productService.getParcel(this.product_id).subscribe(res => {
+        console.log(res);
+        if (res) {
+          this.parcelRecommend = res;
+        }
+      });
+    }
+  }
+
+  chooseParcel() {
+    // @ts-ignore
+    const parcel_no = this.parcelRecommend?.parcel_no;
+    // @ts-ignore
+    const expiration_date = this.parcelRecommend?.expiration_date;
+    this.form.patchValue({
+      parcel_no: parcel_no,
+      expiration_date: expiration_date
     });
   }
 

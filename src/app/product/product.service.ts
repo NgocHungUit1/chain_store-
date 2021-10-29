@@ -224,6 +224,11 @@ export class ProductService {
     const _token = this.auth.getToken();
     return environment.apiUrl + '/product/download-product?token=' + _token;
   }
+
+  getParcel(id: string) {
+    const url = environment.apiUrl + '/product/get-parcel?id=' + id;
+    return this.http.get(url);
+  }
 }
 
 

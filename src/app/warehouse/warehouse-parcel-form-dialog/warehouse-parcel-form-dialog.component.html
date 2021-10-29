@@ -14,6 +14,10 @@
       <input matInput tabindex="3" type="number" placeholder="Số lượng hàng hóa trong lô" min="1"
              [formControl]="this.form.controls['quantity']" autocomplete="off">
     </mat-form-field>
+
+    <button mat-button  *ngIf="parcelRecommend" (click)="chooseParcel()" style="border: 1px solid;">
+      Lô đã lưu trước đó : {{ parcelRecommend?.parcel_no }}
+    </button>
   </form>
 </div>
 <div mat-dialog-actions align="end">

@@ -201,9 +201,9 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
     this.units.controls[i].patchValue({
       unit_price: numeral(value).format('0,0'),
     });
-    if (i === Number(this._convertIndex)) {
-      this.form.controls.sell_price.patchValue(numeral(value / this.units.controls[i].value.unit_value).format('0,0'));
-    }
+    // if (i === Number(this._convertIndex)) {
+    //   this.form.controls.sell_price.patchValue(numeral(value / this.units.controls[i].value.unit_value).format('0,0'));
+    // }
   }
 
   removeUnit(i) {

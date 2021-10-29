@@ -209,7 +209,7 @@
                     <ng-container formArrayName="units">
                       <table>
                         <thead style="text-align: left">
-                        <th></th>
+<!--                        <th></th>-->
                         <th>Tên đơn vị</th>
                         <th>Giá trị quy đổi</th>
                         <th>Giá bán</th>
@@ -219,15 +219,16 @@
                         <tbody>
                         <tr *ngFor="let _ of units.controls; index as i;">
                           <ng-container [formGroupName]="i">
-                            <td>
-                              <mat-radio-group (change)="_convertIndex = i" name="convert_base_unit">
-                                <mat-radio-button value="{{i}}"></mat-radio-button>
-                              </mat-radio-group>
-                            </td>
-                            <td>
+<!--                            <td>-->
+<!--                              <mat-radio-group (change)="_convertIndex = i" name="convert_base_unit">-->
+<!--                                <mat-radio-button value="{{i}}"></mat-radio-button>-->
+<!--                              </mat-radio-group>-->
+<!--                            </td>-->
+                            <td style="padding-right: 10px;">
                               <mat-form-field style="width: 100px">
+<!--                                placeholder="Tên đơn vị"-->
                                 <input type="text" formControlName="unit_name"
-                                       matInput placeholder="Tên đơn vị"
+                                       matInput
                                        [matAutocomplete]="autoUnit">
                                 <mat-autocomplete #autoUnit="matAutocomplete">
                                   <mat-option *ngFor="let option of filteredOptionsUnit | async" [value]="option">
@@ -236,28 +237,30 @@
                                 </mat-autocomplete>
                               </mat-form-field>
                             </td>
-                            <td>
+                            <td style="padding-right: 10px;">
                               <mat-form-field style="width: 110px">
-                                <input matInput appInputSelectAll type="text" formControlName="unit_value" class="text-center"
+<!--                                placeholder="Giá trị quy đổi"-->
+                                <input matInput appInputSelectAll type="text" formControlName="unit_value"
+                                       class="text-right"
                                        (change)="changeUnitValue($event,i)"
-                                       (keyup)="changeUnitValue($event,i)"
-                                       placeholder="Giá trị quy đổi">
+                                       (keyup)="changeUnitValue($event,i)">
                               </mat-form-field>
                             </td>
-                            <td>
+                            <td style="padding-right: 10px;">
                               <mat-form-field style="width: 110px">
+<!--                                placeholder="Giá bán"-->
                                 <input matInput appInputSelectAll type="text" class="text-right" formControlName="unit_price"
                                        (change)="changeBaseUnitValue($event, i)"
-                                       (keyup)="changeBaseUnitValue($event, i)"
-                                       placeholder="Giá bán">
+                                       (keyup)="changeBaseUnitValue($event, i)">
                               </mat-form-field>
                             </td>
-                            <td>
+                            <td style="padding-right: 10px;">
                               <mat-form-field style="width: 120px">
-                                <input type="text" formControlName="unit_no" matInput placeholder="Mã hàng">
+<!--                                placeholder="Mã hàng"-->
+                                <input type="text" formControlName="unit_no" matInput >
                               </mat-form-field>
                             </td>
-                            <td>
+                            <td >
                               <a (click)="removeUnit(i)">
                                 <mat-icon>delete</mat-icon>
                               </a>

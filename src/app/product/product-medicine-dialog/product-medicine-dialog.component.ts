@@ -1,29 +1,29 @@
-import {Component, ElementRef, Inject, OnInit, Optional, ViewChild} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {ProductService} from '../product.service';
-import {NotifierService} from 'angular-notifier';
-import {ProductGroupFormDialogComponent} from '../product-group-form-dialog/product-group-form-dialog.component';
-import {Group, GroupFilter} from '../group.model';
-import {GroupService} from '../group.service';
-import {ProductUsingFormDialogComponent} from '../product-using-form-dialog/product-using-form-dialog.component';
-import {ProductPlacementFormDialogComponent} from '../product-placement-form-dialog/product-placement-form-dialog.component';
-import {UsingFilter} from '../using.model';
-import {PlacementService} from '../placement.service';
-import {UsingService} from '../using.service';
-import {PlacementFilter} from '../placement.model';
-import {Medicine} from '../../medicine/medicine.model';
-import {Observable} from 'rxjs';
-import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
-import {MedicineService} from '../../medicine/medicine.service';
-import {of} from 'rxjs/internal/observable/of';
-import {ManufacturerService} from '../manufacturer.service';
-import {Manufacturer, ManufacturerFilter} from '../manufacturer.model';
-import {ProductManufacturerFormDialogComponent} from '../product-manufacturer-form-dialog/product-manufacturer-form-dialog.component';
+import { Component, ElementRef, Inject, OnInit, Optional, ViewChild } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ProductService } from '../product.service';
+import { NotifierService } from 'angular-notifier';
+import { ProductGroupFormDialogComponent } from '../product-group-form-dialog/product-group-form-dialog.component';
+import { Group, GroupFilter } from '../group.model';
+import { GroupService } from '../group.service';
+import { ProductUsingFormDialogComponent } from '../product-using-form-dialog/product-using-form-dialog.component';
+import { ProductPlacementFormDialogComponent } from '../product-placement-form-dialog/product-placement-form-dialog.component';
+import { UsingFilter } from '../using.model';
+import { PlacementService } from '../placement.service';
+import { UsingService } from '../using.service';
+import { PlacementFilter } from '../placement.model';
+import { Medicine } from '../../medicine/medicine.model';
+import { Observable } from 'rxjs';
+import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
+import { MedicineService } from '../../medicine/medicine.service';
+import { of } from 'rxjs/internal/observable/of';
+import { ManufacturerService } from '../manufacturer.service';
+import { Manufacturer, ManufacturerFilter } from '../manufacturer.model';
+import { ProductManufacturerFormDialogComponent } from '../product-manufacturer-form-dialog/product-manufacturer-form-dialog.component';
 import * as numeral from 'numeral';
-import {log} from 'util';
-import {loadConfigurationFromPath} from 'tslint/lib/configuration';
-import {MatRadioChange} from '@angular/material/radio';
+import { log } from 'util';
+import { loadConfigurationFromPath } from 'tslint/lib/configuration';
+import { MatRadioChange } from '@angular/material/radio';
 
 
 class ImageSnippet {
@@ -325,9 +325,9 @@ export class ProductMedicineDialogComponent implements OnInit {
     this.units.controls[i].patchValue({
       unit_price: numeral(value).format('0,0'),
     });
-    if (i === Number(this._convertIndex)) {
-      this.form.controls.sell_price.patchValue(numeral(value / this.units.controls[i].value.unit_value).format('0,0'));
-    }
+    // if (i === Number(this._convertIndex)) {
+    //   this.form.controls.sell_price.patchValue(numeral(value / this.units.controls[i].value.unit_value).format('0,0'));
+    // }
   }
 
   loadProduct(id, copy: any = null) {

@@ -719,7 +719,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     const dialogRef = this.dialog.open(WarehouseParcelFormDialogComponent, {
       width: '35%',
       minHeight: '80%',
-      data: {parcels: this.parcels}
+      data: {
+        parcels: this.parcels,
+        product_id: this.data[index]['product_id']
+      }
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result !== false && result !== undefined) {

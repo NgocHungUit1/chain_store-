@@ -153,7 +153,7 @@
                         <ng-container formArrayName="units">
                           <table>
                             <thead style="text-align: left">
-                            <th></th>
+<!--                            <th></th>-->
                             <th>Tên đơn vị</th>
                             <th>Giá trị quy đổi</th>
                             <th>Giá bán</th>
@@ -163,39 +163,43 @@
                             <tbody>
                             <tr *ngFor="let _ of units.controls; index as i;">
                               <ng-container [formGroupName]="i">
-                                <td>
-                                  <mat-radio-group (change)="_convertIndex = i" name="convert_base_unit">
-                                    <mat-radio-button value="{{i}}"></mat-radio-button>
-                                  </mat-radio-group>
-                                </td>
-                                <td>
+<!--                                <td>-->
+<!--                                  <mat-radio-group (change)="_convertIndex = i" name="convert_base_unit">-->
+<!--                                    <mat-radio-button value="{{i}}"></mat-radio-button>-->
+<!--                                  </mat-radio-group>-->
+<!--                                </td>-->
+                                <td style="padding-right: 10px;">
                                   <mat-form-field style="width: 110px">
-                                    <input type="text" formControlName="unit_name" matInput placeholder="Tên đơn vị">
+<!--                                    placeholder="Tên đơn vị"-->
+                                    <input type="text" formControlName="unit_name" matInput >
                                   </mat-form-field>
                                 </td>
-                                <td>
+                                <td style="padding-right: 10px;">
                                   <mat-form-field style="width: 110px">
+<!--                                    placeholder="Giá trị quy đổi"-->
                                     <input type="text" formControlName="unit_value" matInput appInputSelectAll
                                            class="text-right" min="0"
                                            (change)="changeUnitValue($event,i)"
                                            (keyup)="changeUnitValue($event,i)"
-                                           placeholder="Giá trị quy đổi">
+                                           >
                                   </mat-form-field>
                                 </td>
-                                <td>
+                                <td style="padding-right: 10px;">
                                   <mat-form-field style="width: 110px">
+<!--                                    placeholder="Giá bán"-->
                                     <input type="text" formControlName="unit_price"
                                            (change)="changeBaseUnitValue($event, i)"
                                            (keyup)="changeBaseUnitValue($event, i)"
                                            class="text-right"
-                                           matInput appInputSelectAll placeholder="Giá bán">
+                                           matInput appInputSelectAll >
                                   </mat-form-field>
                                 </td>
-                                <td>
+                                <td style="padding-right: 10px;">
                                   <mat-form-field style="width: 120px">
+<!--                                    placeholder="Mã hàng"-->
                                     <input type="text" formControlName="unit_no"
                                            class="text-center"
-                                           matInput placeholder="Mã hàng">
+                                           matInput >
                                   </mat-form-field>
                                 </td>
                                 <td>
