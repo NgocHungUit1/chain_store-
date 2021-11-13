@@ -1,34 +1,35 @@
-import {Component, ElementRef, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
-import {FormControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {MatDialog} from '@angular/material/dialog';
-import {NotifierService} from 'angular-notifier';
-import {Observable} from 'rxjs';
-import {Product} from '../../product/product.model';
-import {OrderService} from '../order.service';
-import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
-import {of} from 'rxjs/internal/observable/of';
-import {PriceList, PriceListFilter} from '../../price-book/price-list.model';
-import {PriceListService} from '../../price-book/price-list.service';
-import {NoteDetailOrderDialogComponent} from '../note-detail-order-dialog/note-detail-order-dialog.component';
-import {PriceDetailOrderDialogComponent} from '../price-detail-order-dialog/price-detail-order-dialog.component';
-import {PriceListProductService} from '../../price-book/price-list-product.service';
-import {ItemInvoice} from '../order.model';
-import {Customer} from '../../customer/customer.model';
-import {SaleCustomerFormDialogComponent} from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
-import {PaymentSiderbarDialogComponent} from '../payment-siderbar-dialog/payment-siderbar-dialog.component';
-import {DiscountSiderbarDialogComponent} from '../discount-siderbar-dialog/discount-siderbar-dialog.component';
-import {CustomerService} from '../../customer/customer.service';
-import {UserService} from '../../user/user.service';
-import {User} from '../../user/user.model';
+import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { NotifierService } from 'angular-notifier';
+import { Observable } from 'rxjs';
+import { Product } from '../../product/product.model';
+import { OrderService } from '../order.service';
+import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
+import { of } from 'rxjs/internal/observable/of';
+import { PriceList, PriceListFilter } from '../../price-book/price-list.model';
+import { PriceListService } from '../../price-book/price-list.service';
+import { NoteDetailOrderDialogComponent } from '../note-detail-order-dialog/note-detail-order-dialog.component';
+import { PriceDetailOrderDialogComponent } from '../price-detail-order-dialog/price-detail-order-dialog.component';
+import { PriceListProductService } from '../../price-book/price-list-product.service';
+import { ItemInvoice } from '../order.model';
+import { Customer } from '../../customer/customer.model';
+import { SaleCustomerFormDialogComponent } from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
+import { PaymentSiderbarDialogComponent } from '../payment-siderbar-dialog/payment-siderbar-dialog.component';
+import { DiscountSiderbarDialogComponent } from '../discount-siderbar-dialog/discount-siderbar-dialog.component';
+import { CustomerService } from '../../customer/customer.service';
+import { UserService } from '../../user/user.service';
+import { User } from '../../user/user.model';
 import * as numeral from 'numeral';
-import {OptionStoreService} from '../../common/option-store.service';
-import {OptionStore} from '../../common/option-store.model';
-import {ExpensesOrderService} from '../../expenses-order/expenses-order.service';
-import {ExpensesOrder, ExpensesOrderFilter} from '../../expenses-order/expenses-order.model';
-import {SaleExpensesDialogComponent} from '../sale-expenses-dialog/sale-expenses-dialog.component';
-import {PrescriptionFormDialogComponent} from '../prescription-form-dialog/prescription-form-dialog.component';
-import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
-import {MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter} from '@angular/material-moment-adapter';
+import { OptionStoreService } from '../../common/option-store.service';
+import { OptionStore } from '../../common/option-store.model';
+import { ExpensesOrderService } from '../../expenses-order/expenses-order.service';
+import { ExpensesOrder, ExpensesOrderFilter } from '../../expenses-order/expenses-order.model';
+import { SaleExpensesDialogComponent } from '../sale-expenses-dialog/sale-expenses-dialog.component';
+import { PrescriptionFormDialogComponent } from '../prescription-form-dialog/prescription-form-dialog.component';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
+import { DatePipe} from '@angular/common';
 
 export const MY_FORMATS = {
   parse: {
@@ -48,6 +49,7 @@ export const MY_FORMATS = {
   templateUrl: './sale-main.component.html',
   styleUrls: ['./sale-main.component.scss'],
   providers: [
+    DatePipe,
     {
       provide: DateAdapter,
       useClass: MomentDateAdapter,
@@ -59,6 +61,7 @@ export const MY_FORMATS = {
 
 export class SaleMainComponent implements OnInit {
   constructor(
+    public dp: DatePipe,
     private fb: FormBuilder,
     private dialog: MatDialog,
     private notifySer: NotifierService,
@@ -84,6 +87,8 @@ export class SaleMainComponent implements OnInit {
   public filteredProducts: Observable<Product[]>;
   isLoadingResults = true;
   isSelectedCustomer = false;
+
+  showList = false;
 
   listProduct: any = [];
   countProduct = 0;
@@ -849,10 +854,12 @@ export class SaleMainComponent implements OnInit {
     if (Number(mItemInvoice.invoice_id) === -1) {
       const today = new Date();
       const time = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
-      this.form.patchValue({
-        today: today,
-        time: time,
-      });
+      if (!this.form.controls['today'].value) {
+        this.form.patchValue({
+          today: today,
+          time: time,
+        });
+      }
     }
     this.handleExpenseOrder();
   }
@@ -1312,8 +1319,8 @@ export class SaleMainComponent implements OnInit {
         effDate = new Date(data['today'].getTime() + (420 * 60 * 1000));
       }
       // @ts-ignore
-      // const effDate = new Date(data['today'].getTime() + (420 * 60 * 1000));
-      date_created = data['time'] + ' ' + effDate.toISOString().split('T')[0];
+      // date_created = data['time'] + ' ' + effDate.toISOString().split('T')[0];
+      date_created = data['time'] + ' ' + this.dp.transform(effDate, 'yyyy-MM-dd');
     }
 
     let prescription_id = null;

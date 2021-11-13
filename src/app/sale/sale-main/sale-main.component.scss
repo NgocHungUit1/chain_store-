@@ -24,11 +24,16 @@ html .page-wrapper .page-content {
   -webkit-flex: 1;
   -ms-flex: 1;
   flex: 1;
-  height: calc(100% - 440px);
-  max-height: 480px;
+  height: calc(100%);
+
+
+  /*&.fixed-list {
+    height: calc(100% - 440px) ;
+    max-height: 480px;
+  }*/
 
   @media only screen and (max-width: 1349px) {
-    max-height: 300px;
+    //max-height: 300px;
   }
 
   .mat-input-element {
@@ -129,6 +134,37 @@ html .page-wrapper .page-content {
   }
 }
 
+
+.sale-list-product {
+  position: fixed;
+  left: 5px;
+  bottom: 55px;
+  width: 0px;
+  height: 0px;
+  opacity: 0;
+  border: 1px solid #e0e0e0;
+  border-top: 0;
+  transition: all .3s ease-in-out;
+
+  &.opened {
+    width: 71%;
+    height: 440px;
+    opacity: 1;
+  }
+}
+
+.show-list-btn {
+  position: fixed;
+  z-index: 1;
+  bottom: 10px;
+  width: 40px;
+  height: 40px;
+  line-height: 1;
+
+  .mat-button-wrapper {
+    padding: 0;
+  }
+}
 /*  sale detail order  */
 
 .product-list {

@@ -6,7 +6,7 @@
 <div fxLayout="row wrap" style="height: 100%;">
   <div fxFlex="72.5">
     <div class="container-main-sale">
-      <div class="product-cart">
+      <div class="product-cart" [class.fixed-list]="showList">
 
         <!----------------------------------------- SALE-DETAIL-ORDER ---------------------------------------->
 
@@ -149,8 +149,17 @@
 
         <!--------------------------------------- END SALE-DETAIL-ORDER ------------------------------------------>
 
+
+        <button mat-fab color="primary" matTooltip="Danh sách sản phẩm" matTooltipPosition="right"
+                class="show-list-btn"
+                style="" (click)="showList = !showList;">
+          <mat-icon *ngIf="showList">zoom_out </mat-icon>
+          <mat-icon *ngIf="!showList">zoom_in</mat-icon>
+        </button>
+
+
       </div>
-      <app-sale-list-product></app-sale-list-product>
+      <app-sale-list-product class="sale-list-product" [class.opened]="showList"></app-sale-list-product>
 
     </div>
   </div>
@@ -361,7 +370,8 @@
                     <mat-icon class="row-edit-price-discount-number" (click)="openDiscountSiderBar()">edit
                     </mat-icon>
                   </button>-->
-                  <input matInput type="text" class="price-discount-value" value="{{ numberDiscount | number}}" (click)="openDiscountSiderBar()" [readonly]="true"
+                  <input matInput type="text" class="price-discount-value" value="{{ numberDiscount | number}}"
+                         (click)="openDiscountSiderBar()" [readonly]="true"
                          style="color:black">
                 </mat-form-field>
               </div>
@@ -395,7 +405,8 @@
                   <span>Khách cần trả</span>
                 </div>
                 <div fxFlex="50" class="customer-need-number">
-                  <input matInput type="text" value="{{ sumPrice - numberDiscount + expenseOrder | number}}" [readonly]="true">
+                  <input matInput type="text" value="{{ sumPrice - numberDiscount + expenseOrder | number}}"
+                         [readonly]="true">
                 </div>
               </div>
             </div>
