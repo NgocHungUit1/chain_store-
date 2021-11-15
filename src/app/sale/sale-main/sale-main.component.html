@@ -4,7 +4,7 @@
 
 
 <div fxLayout="row wrap" style="height: 100%;">
-  <div fxFlex="72.5">
+  <div fxFlex="72.5" class="main-sale">
     <div class="container-main-sale">
       <div class="product-cart" [class.fixed-list]="showList">
 
@@ -371,7 +371,7 @@
                     </mat-icon>
                   </button>-->
                   <input matInput type="text" class="price-discount-value" value="{{ numberDiscount | number}}"
-                         (click)="openDiscountSiderBar()" [readonly]="true"
+                         (click)="openDiscountSiderBar()" [readonly]="true" autocomplete="off"
                          style="color:black">
                 </mat-form-field>
               </div>
@@ -392,7 +392,7 @@
 
               </div>
               <div fxFlex="50" class="price-product-number">
-                <input matInput type="text" (click)="openExpensesOrder()" value="{{ expenseOrder | number}}">
+                <input matInput type="text" (click)="openExpensesOrder()" value="{{ expenseOrder | number}}" autocomplete="off">
               </div>
             </div>
           </div>
@@ -406,7 +406,7 @@
                 </div>
                 <div fxFlex="50" class="customer-need-number">
                   <input matInput type="text" value="{{ sumPrice - numberDiscount + expenseOrder | number}}"
-                         [readonly]="true">
+                         [readonly]="true" autocomplete="off">
                 </div>
               </div>
             </div>
@@ -417,7 +417,7 @@
                 </div>
                 <div fxFlex="50" class="customer-need-number">
                   <input matInput type="text" *ngIf="(sumPrice - numberDiscount) <= 0"
-                         value="{{ (sumPrice - numberDiscount)*-1 | number}}">
+                         value="{{ (sumPrice - numberDiscount)*-1 | number}}" autocomplete="off">
                 </div>
               </div>
             </ng-template>
@@ -438,7 +438,7 @@
                     </mat-icon>
                   </button>
                   <input matInput appInputSelectAll type="text" style="color:black" formControlName="customerPay"
-                         (keyup)="inputformatNumber($event)">
+                         (keyup)="inputformatNumber($event)" autocomplete="off">
                 </mat-form-field>
               </div>
             </div>

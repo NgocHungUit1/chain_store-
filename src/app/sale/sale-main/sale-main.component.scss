@@ -2,6 +2,12 @@ html .page-wrapper .page-content {
   padding: 0;
 }
 
+.main-sale {
+  @media only screen and (max-width: 1366px) {
+    max-height: 695px;
+  }
+}
+
 .container-main-sale {
   height: calc(100% - 15px);
 }
@@ -236,7 +242,11 @@ html .page-wrapper .page-content {
   }
 
   .note-pay {
-    font-weight: 600;
+    font-weight: 400;
+    font-size: 12px;
+    font-style: italic;
+    color: red;
+    text-align: right;
   }
 
   .order-note {

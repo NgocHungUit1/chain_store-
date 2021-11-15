@@ -19,6 +19,8 @@ import {Observable} from 'rxjs';
 import {Supplier} from '../../supplier/supplier.model';
 import {of} from 'rxjs/internal/observable/of';
 import {ProductService} from '../../product/product.service';
+import {Customer} from '../../customer/customer.model';
+import {CustomerService} from '../../customer/customer.service';
 
 @Component({
   selector: 'app-invoice-list',
@@ -41,7 +43,8 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     private notifySer: NotifierService,
     private fb: FormBuilder,
     private router: Router,
-    private productSer: ProductService
+    private productSer: ProductService,
+    private customerSer: CustomerService,
   ) {
     super();
   }
@@ -62,6 +65,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   orderStatusFilter: FormGroup;
   orderNationalFilter: FormGroup;
   productFilter: FormGroup;
+  customerFilter: FormGroup;
 
   currentDateFilter: DateFilter;
 
@@ -142,9 +146,14 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   codeSearch = null;
 
   filteredProducts: Observable<Product[]>;
+  filteredCustomers: Observable<Customer[]>;
 
   displayProduct(product?: Product): string | undefined {
     return (product === undefined || product === null) ? undefined : product.product_name;
+  }
+
+  displayCustomer(customer?: Customer): string | undefined {
+    return (customer === undefined || customer === null) ? undefined : customer.name;
   }
 
   buildFilterFromParams(): InvoiceFilter {
@@ -172,6 +181,9 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     const product = this.productFilter.controls['product']?.value;
     filter.product_id = product?.id;
 
+    const customer = this.customerFilter.controls['customer']?.value;
+    filter.customer_id = customer?.id;
+
     return filter;
   }
 
@@ -193,6 +205,9 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     });
     this.productFilter = this.fb.group({
       product: [null],
+    });
+    this.customerFilter = this.fb.group({
+      customer: [null],
     });
   }
 
@@ -340,6 +355,22 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
         }
       })
     );
+
+    this.filteredCustomers = this.customerFilter.controls['customer'].valueChanges.pipe(
+      startWith(''),
+      // delay emits
+      debounceTime(300),
+      // use switch map so as to cancel previous subscribed events, before creating new once
+      switchMap(value => {
+        if (value !== '') {
+          // lookup from github
+          return this.lookupCustomer(value);
+        } else {
+          // if no value is present, return null
+          return of(null);
+        }
+      })
+    );
   }
 
   applyFilter(event: Event) {
@@ -413,6 +444,17 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
 
   lookupProduct(value: string): Observable<Supplier[]> {
     return this.productSer.autocomplete(value).pipe(
+      // map the item property of the github results as our return object
+      map(results => results),
+      // catch errors
+      catchError(_ => {
+        return of(null);
+      })
+    );
+  }
+
+  lookupCustomer(value: string): Observable<Customer[]> {
+    return this.customerSer.autocomplete(value).pipe(
       // map the item property of the github results as our return object
       map(results => results),
       // catch errors

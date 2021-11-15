@@ -80,7 +80,8 @@
       </div>-->
 
       <div class="header-filter-search" style="display: flex; flex: 1; align-items: center">
-        <button mat-button matPrefix (click)="toggleDropdown()" class="mat-flat-button" [ngClass]="{'mat-primary': toggleDropdownSearch}">
+        <button mat-button matPrefix (click)="toggleDropdown()" class="mat-flat-button"
+                [ngClass]="{'mat-primary': toggleDropdownSearch}">
           <mat-icon>search</mat-icon>
           Tìm kiếm ...
         </button>
@@ -88,8 +89,8 @@
         <div *ngIf="toggleDropdownSearch" class="dropdown-search-content">
 
           <mat-form-field>
-            <mat-label>Theo mã hóa đơn</mat-label>
-            <input matInput [formControl]="searchInvoiceForm" placeholder="" #input>
+            <mat-label>Mã hóa đơn</mat-label>
+            <input matInput [formControl]="searchInvoiceForm" placeholder="" autocomplete="off">
             <button mat-icon-button matPrefix>
               <mat-icon>search</mat-icon>
             </button>
@@ -99,7 +100,7 @@
 
             <mat-form-field>
               <input type="text" matInput [formControl]="productFilter?.controls['product']" placeholder="Tên sản phẩm"
-                     [matAutocomplete]="autoProduct">
+                     [matAutocomplete]="autoProduct" autocomplete="off">
               <button mat-icon-button matPrefix>
                 <mat-icon>search</mat-icon>
               </button>
@@ -124,6 +125,36 @@
 
           </form>
 
+          <form [formGroup]="customerFilter" (click)="$event.stopPropagation();">
+
+            <mat-form-field>
+              <input type="text" matInput [formControl]="customerFilter?.controls['customer']"
+                     placeholder="Tên khách hàng"
+                     [matAutocomplete]="autoCustomer" autocomplete="off">
+              <button mat-icon-button matPrefix>
+                <mat-icon>search</mat-icon>
+              </button>
+              <button mat-icon-button matSuffix
+                      (click)="this.customerFilter.patchValue({customer: null}); filterChange()"
+                      *ngIf="this.customerFilter?.controls['customer'].value ">
+                <mat-icon>delete</mat-icon>
+              </button>
+              <mat-autocomplete #autoCustomer="matAutocomplete" [displayWith]="displayCustomer">
+                <mat-option (click)="filterChange()" style="height: 50px;
+                                      line-height: 24px;
+                                      word-break: break-word;
+                                      display: block;
+                                      white-space: pre-wrap;"
+                            *ngFor="let customer of filteredCustomers | async" [value]="customer">
+                    <span class="supplier-option">
+                       <span>{{ customer.name}}</span><span *ngIf="customer.phone"> - {{ customer.phone}}</span>
+                    </span>
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+
+          </form>
+
         </div>
       </div>
 
@@ -138,7 +169,8 @@
             <mat-icon>menu</mat-icon>
           </button>
           <mat-select [(ngModel)]="displayedColumns" #selectColumn [multiple]="true"
-                      style="width: 100%; display: inline-flex; margin-left: -20px; color: white" placeholder="Chọn cột">
+                      style="width: 100%; display: inline-flex; margin-left: -20px; color: white"
+                      placeholder="Chọn cột">
             <!--<mat-select-trigger></mat-select-trigger>-->
             <mat-option *ngFor="let column of columnsToDisplay" [value]="column">{{columnsHeader[column]}}</mat-option>
           </mat-select>
