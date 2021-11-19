@@ -1,35 +1,35 @@
-import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { NotifierService } from 'angular-notifier';
-import { Observable } from 'rxjs';
-import { Product } from '../../product/product.model';
-import { OrderService } from '../order.service';
-import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
-import { of } from 'rxjs/internal/observable/of';
-import { PriceList, PriceListFilter } from '../../price-book/price-list.model';
-import { PriceListService } from '../../price-book/price-list.service';
-import { NoteDetailOrderDialogComponent } from '../note-detail-order-dialog/note-detail-order-dialog.component';
-import { PriceDetailOrderDialogComponent } from '../price-detail-order-dialog/price-detail-order-dialog.component';
-import { PriceListProductService } from '../../price-book/price-list-product.service';
-import { ItemInvoice } from '../order.model';
-import { Customer } from '../../customer/customer.model';
-import { SaleCustomerFormDialogComponent } from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
-import { PaymentSiderbarDialogComponent } from '../payment-siderbar-dialog/payment-siderbar-dialog.component';
-import { DiscountSiderbarDialogComponent } from '../discount-siderbar-dialog/discount-siderbar-dialog.component';
-import { CustomerService } from '../../customer/customer.service';
-import { UserService } from '../../user/user.service';
-import { User } from '../../user/user.model';
+import {Component, ElementRef, HostListener, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {FormControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {MatDialog} from '@angular/material/dialog';
+import {NotifierService} from 'angular-notifier';
+import {Observable} from 'rxjs';
+import {Product} from '../../product/product.model';
+import {OrderService} from '../order.service';
+import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
+import {of} from 'rxjs/internal/observable/of';
+import {PriceList, PriceListFilter} from '../../price-book/price-list.model';
+import {PriceListService} from '../../price-book/price-list.service';
+import {NoteDetailOrderDialogComponent} from '../note-detail-order-dialog/note-detail-order-dialog.component';
+import {PriceDetailOrderDialogComponent} from '../price-detail-order-dialog/price-detail-order-dialog.component';
+import {PriceListProductService} from '../../price-book/price-list-product.service';
+import {ItemInvoice} from '../order.model';
+import {Customer} from '../../customer/customer.model';
+import {SaleCustomerFormDialogComponent} from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
+import {PaymentSiderbarDialogComponent} from '../payment-siderbar-dialog/payment-siderbar-dialog.component';
+import {DiscountSiderbarDialogComponent} from '../discount-siderbar-dialog/discount-siderbar-dialog.component';
+import {CustomerService} from '../../customer/customer.service';
+import {UserService} from '../../user/user.service';
+import {User} from '../../user/user.model';
 import * as numeral from 'numeral';
-import { OptionStoreService } from '../../common/option-store.service';
-import { OptionStore } from '../../common/option-store.model';
-import { ExpensesOrderService } from '../../expenses-order/expenses-order.service';
-import { ExpensesOrder, ExpensesOrderFilter } from '../../expenses-order/expenses-order.model';
-import { SaleExpensesDialogComponent } from '../sale-expenses-dialog/sale-expenses-dialog.component';
-import { PrescriptionFormDialogComponent } from '../prescription-form-dialog/prescription-form-dialog.component';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
-import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
-import { DatePipe} from '@angular/common';
+import {OptionStoreService} from '../../common/option-store.service';
+import {OptionStore} from '../../common/option-store.model';
+import {ExpensesOrderService} from '../../expenses-order/expenses-order.service';
+import {ExpensesOrder, ExpensesOrderFilter} from '../../expenses-order/expenses-order.model';
+import {SaleExpensesDialogComponent} from '../sale-expenses-dialog/sale-expenses-dialog.component';
+import {PrescriptionFormDialogComponent} from '../prescription-form-dialog/prescription-form-dialog.component';
+import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
+import {MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter} from '@angular/material-moment-adapter';
+import {DatePipe} from '@angular/common';
 
 export const MY_FORMATS = {
   parse: {
@@ -128,6 +128,9 @@ export class SaleMainComponent implements OnInit {
 
   prescription_id: null; // ban theo don thuoc
   @ViewChild('prescription') prescription;
+  @ViewChild('customerSearch') customerSearch: ElementRef;
+  @ViewChild('customerPayment') customerPayment: ElementRef;
+  @ViewChild('showListProd') showListProd: ElementRef;
 
   /**
    *  So sanh danh sach cu
@@ -1642,6 +1645,33 @@ export class SaleMainComponent implements OnInit {
     }
   }
 
+  @HostListener('window:keydown', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    if (event.keyCode === 112) {
+      event.preventDefault();
+      !1 === this.showList ? this.showList = !0 : this.showList = !1;
+    }
+
+    if (event.keyCode === 113) {
+      event.preventDefault();
+      this.customerPayment.nativeElement.focus();
+    }
+
+    if (event.keyCode === 115) {
+      event.preventDefault();
+      this.customerSearch.nativeElement.focus();
+    }
+
+    if (event.keyCode === 117) {
+      event.preventDefault();
+      this.openDiscountSiderBar();
+    }
+
+    if (event.keyCode === 118) {
+      event.preventDefault();
+      this.payment();
+    }
+  }
 }
 
 

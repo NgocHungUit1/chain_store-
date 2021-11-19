@@ -151,7 +151,7 @@
 
 
         <button mat-fab color="primary" matTooltip="Danh sách sản phẩm" matTooltipPosition="right"
-                class="show-list-btn"
+                class="show-list-btn" #showListProd
                 style="" (click)="showList = !showList;">
           <mat-icon *ngIf="showList">zoom_out </mat-icon>
           <mat-icon *ngIf="!showList">zoom_in</mat-icon>
@@ -267,8 +267,8 @@
               <div fxFlex="100">
                 <mat-form-field>
                   <input class="input-search-customer input-search" type="text" [formControl]="selectCustomer" matInput
-                         [matAutocomplete]="chooseProduct" placeholder="Tìm khách hàng "
-                         [readonly]="localItemInvoice?.is_return == true">
+                         [matAutocomplete]="chooseProduct" placeholder="Tìm khách hàng (F4)"
+                         [readonly]="localItemInvoice?.is_return == true" #customerSearch>
                   <button mat-icon-button matPrefix>
                     <mat-icon>search</mat-icon>
                   </button>
@@ -362,7 +362,7 @@
           <div class="order-discount">
             <div fxLayout="row wrap" fxLayoutAlign="start center" class="price-discount">
               <div fxFlex="50" class="price-discount-text ">
-                <span>Giảm giá </span>
+                <span>Giảm giá (F6)</span>
               </div>
               <div fxFlex="50" class="price-discount-number">
                 <mat-form-field floatLabel="never" style="text-align: right">
@@ -428,7 +428,7 @@
           <div class="customer-pay" *ngIf="localItemInvoice?.is_return !== true">
             <div fxLayout="row wrap" fxLayoutAlign="start center" class="customer-pay">
               <div fxFlex="50" class="customer-pay-text ">
-                <span>Khách thanh toán</span>
+                <span>Khách thanh toán (F2)</span>
               </div>
               <div fxFlex="50" class="customer-pay-number">
                 <mat-form-field floatLabel="never" style="text-align: right">
@@ -438,7 +438,7 @@
                     </mat-icon>
                   </button>
                   <input matInput appInputSelectAll type="text" style="color:black" formControlName="customerPay"
-                         (keyup)="inputformatNumber($event)" autocomplete="off">
+                         (keyup)="inputformatNumber($event)" autocomplete="off" #customerPayment>
                 </mat-form-field>
               </div>
             </div>
@@ -498,7 +498,7 @@
           <div *ngIf="localItemInvoice?.is_return !== true; else buttonThanhToan">
             <button mat-button class="payment-button btn-success {{checkPermissionSaleDisable() ? 'disable' : ''}}"
                     [disabled]="checkPermissionSaleDisable()" (click)="payment()">
-              <span>Thanh toán</span>
+              <span>Thanh toán (F7)</span>
             </button>
           </div>
           <ng-template #buttonThanhToan>
