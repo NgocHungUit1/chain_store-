@@ -1319,7 +1319,8 @@ export class SaleMainComponent implements OnInit {
       if (!(data['today'] instanceof Date)) {
         effDate = data['today']._d;
       } else {
-        effDate = new Date(data['today'].getTime() + (420 * 60 * 1000));
+        // effDate = new Date(data['today'].getTime() + (420 * 60 * 1000));
+        effDate = new Date(data['today'].getTime());
       }
       // @ts-ignore
       // date_created = data['time'] + ' ' + effDate.toISOString().split('T')[0];
