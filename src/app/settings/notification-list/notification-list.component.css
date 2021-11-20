@@ -1,0 +1,92 @@
+.dv-content .mat-card-top {
+  margin: 0px;
+  height: 100%;
+}
+
+.dv-content .mat-sidenav-container {
+  height: 100%
+}
+
+.user-profile {
+  text-align: center;
+  padding: 10px;
+}
+.user-profile h4 {
+  line-height: 0px
+}
+.user-profile .profile-pic {
+  width: 100px;
+  height: 100px;
+  border-radius: 100%;
+}
+.setting-title {
+  display: inline-block;;
+}
+.mat-column-created_at {
+  flex: 2 1 0px;
+}
+.mat-column-title {
+  flex: 5 1 0px;
+}
+.mat-column-description {
+  flex: 4 1 0px;
+}
+.mat-row.active {
+  background-color: whitesmoke;
+}
+table {
+  width: 100%;
+}
+
+tr.example-detail-row {
+  height: 0;
+}
+
+tr.example-element-row:not(.example-expanded-row):hover {
+  background: whitesmoke;
+}
+
+tr.example-element-row:not(.example-expanded-row):active {
+  background: #efefef;
+}
+
+.example-element-row td {
+  border-bottom-width: 0;
+}
+
+.example-element-detail {
+  overflow: hidden;
+  display: flex;
+}
+
+.example-element-diagram {
+  min-width: 80px;
+  border: 2px solid black;
+  padding: 8px;
+  font-weight: lighter;
+  margin: 8px 0;
+  height: auto;
+}
+
+.example-element-symbol {
+  font-weight: bold;
+  font-size: 40px;
+  line-height: normal;
+}
+
+.example-element-description {
+  padding: 16px;
+}
+
+.example-element-description-attribution {
+  opacity: 0.5;
+}
+.example-expanded-row {
+  font-weight: 700;
+  background-color: #ebf5ea;
+}
+
+tr.mat-header-row:nth-child(1) {
+  height: 45px !important;
+  background-color: #dcf4fc;
+}

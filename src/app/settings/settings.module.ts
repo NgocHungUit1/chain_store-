@@ -10,9 +10,17 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { DemoMaterialModule } from '../demo-material-module';
 import { SettingsRoutes } from './settings.routing';
+import {SettingProfileComponent} from './setting-profile/setting-profile.component';
+import {NotificationListComponent} from './notification-list/notification-list.component';
+import {SettingSidenavComponent} from './setting-sidenav/setting-sidenav.component';
 
 @NgModule({
-  declarations: [SettingsMainComponent],
+  declarations: [
+    SettingsMainComponent,
+    SettingProfileComponent,
+    NotificationListComponent,
+    SettingSidenavComponent
+  ],
   imports: [
     CommonModule,
     RouterModule.forChild(SettingsRoutes),

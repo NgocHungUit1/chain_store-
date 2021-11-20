@@ -1,0 +1,16 @@
+<div class="user-profile">
+  <img src="../../../assets/images/users/1.jpg" alt="user" class="profile-pic">
+  <h4 *ngIf="profile">{{this.profile['full_name']}}</h4>
+</div>
+<mat-nav-list>
+  <mat-list-item [class.active]="currentRouteLink.indexOf('/setting/profile') !== -1">
+    <a routerLink="/setting/profile" class="setting-link" >
+      <mat-icon>person_outline</mat-icon><span>Thông tin tài khoản</span>
+    </a>
+  </mat-list-item>
+  <mat-list-item [class.active]="currentRouteLink.indexOf('/setting/notification') !== -1">
+    <a routerLink="/setting/notification" class="setting-link" >
+      <mat-icon>notifications_none</mat-icon><span>Thông báo</span><span matBadge="{{countUnread}}" matBadgeOverlap="false" matBadgeColor="warn" matBadgePosition="above after"></span>
+    </a>
+  </mat-list-item>
+</mat-nav-list>
