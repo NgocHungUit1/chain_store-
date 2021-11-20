@@ -1,0 +1,144 @@
+<mat-sidenav-container
+  [ngClass]="{ 'side-panel-opened': sidePanelOpened, 'side-panel-closed': !sidePanelOpened }">
+  <mat-sidenav #noteslist [mode]="isOver() ? 'over' : 'side'" [opened]="!isOver()" (open)="sidePanelOpened = true"
+               (close)="sidePanelOpened = false">
+    <app-setting-sidenav #sidenav></app-setting-sidenav>
+  </mat-sidenav>
+
+  <mat-toolbar>
+    <button (click)="noteslist.toggle()" class="mr-1" mat-icon-button>
+      <mat-icon>menu</mat-icon>
+    </button>
+    <h4 class="setting-title">Thông báo của bạn</h4>
+    <span fxFlex="1 1 0%"></span>
+    <button style="margin-left: 10px" mat-raised-button color="primary" (click)="loadData()">
+      <mat-icon>refresh</mat-icon>
+      Làm mới
+    </button>
+    <button mat-icon-button (click)="filterDrawer.toggle()">
+      <mat-icon>filter_list</mat-icon>
+    </button>
+  </mat-toolbar>
+  <div class="dv-content">
+    <mat-drawer-container class="dv-drawer-container">
+      <mat-drawer #filterDrawer [mode]="'over'" position="end" class="dv-drawer-menu" fxLayout="column">
+        <mat-card class="dv-drawer-menu-content">
+          <mat-card-content>
+            <form #filterFormWrapper name="filterForm">
+              <mat-label>Lọc và Tìm kiếm</mat-label>
+              <mat-form-field appearance="outline" floatLabel="never">
+                <input matInput [(ngModel)]="apiFilter.search_string" name="search_string">
+                <mat-hint>{{columnsHeader['agent_name']}}, {{columnsHeader['id']}}</mat-hint>
+              </mat-form-field>
+              <hr>
+              <mat-label>Trạng thái</mat-label>
+              <mat-form-field class="filter" floatLabel="never">
+                <mat-select [(ngModel)]="apiFilter.is_read" name="is_read">
+                  <mat-option value=""></mat-option>
+                  <mat-option value="1">Đã đọc</mat-option>
+                  <mat-option value="0">Chưa đọc</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </form>
+          </mat-card-content>
+        </mat-card>
+        <mat-toolbar class="dv-drawer-menu-footer">
+          <div class="button-row">
+            <button mat-raised-button color="primary" (click)="filterDrawer.toggle(); onFilterSubmit()">Lọc
+            </button>
+            <button mat-raised-button (click)="onFilterClear()">Xóa</button>
+          </div>
+        </mat-toolbar>
+      </mat-drawer>
+
+      <mat-drawer-content class="dv-drawer-content">
+        <div fxLayout="row wrap">
+          <div fxFlex="100">
+            <div class="table-container">
+              <div class="table-loading-shade" *ngIf="loading">
+                <mat-spinner *ngIf="loading"></mat-spinner>
+              </div>
+              <div class="table-responsive">
+                <table mat-table [dataSource]="dataSource" matSort
+                       (matSortChange)="onMatSortChange($event)">
+                  <ng-container matColumnDef="created_at">
+                    <th mat-header-cell *matHeaderCellDef>
+                      <div mat-sort-header>{{columnsHeader['created_at']}}</div>
+                    </th>
+                    <td mat-cell *matCellDef="let ba">
+                      {{ba.notification.created_at * 1000 | date:'dd/MM/yyyy'}}
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="title">
+                    <th mat-header-cell *matHeaderCellDef>
+                      <div mat-sort-header>{{columnsHeader['title']}}</div>
+                    </th>
+                    <td mat-cell *matCellDef="let ba">
+                      {{ba.notification.title.replace('{contract_count}', ba.agentCount)}}
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="description">
+                    <th mat-header-cell *matHeaderCellDef>
+                      <div mat-sort-header>{{columnsHeader['description']}}</div>
+                    </th>
+                    <td mat-cell *matCellDef="let ba">
+                      {{ba.notification.description.replace('{contract_count}', ba.agentCount)}}
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="is_read">
+                    <th mat-header-cell *matHeaderCellDef>
+                      <div mat-sort-header>{{columnsHeader['is_read']}}</div>
+                    </th>
+                    <td mat-cell *matCellDef="let ba">
+                      <button mat-raised-button color="primary" (click)="makeAsRead(ba)" *ngIf="!ba.is_read">
+                        <mat-icon>spellcheck</mat-icon>
+                        Đã đọc
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>
+                    </th>
+                    <td mat-cell *matCellDef="let ba; let i=index">
+                      <button
+                        mat-raised-button color="accent"
+                        (click)="makeAsRead(ba, true)"
+                      >
+                        <mat-icon>pageview</mat-icon>
+                        Xem
+                      </button>
+                      <button mat-icon-button [matMenuTriggerFor]="menuActions">
+                        <mat-icon>more_vert</mat-icon>
+                      </button>
+                      <mat-menu #menuActions="matMenu">
+                        <button type="button" mat-menu-item (click)="delete(ba)" color="danger">
+                          <mat-icon>cancel</mat-icon>
+                          Hủy
+                        </button>
+                      </mat-menu>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="displayColumns; sticky:true"></tr>
+                  <tr mat-row *matRowDef="let ba; columns: displayColumns" [class.active]="!ba.is_read"></tr>
+                </table>
+              </div>
+              <mat-paginator #paginator showFirstLastButtons [length]="pageTotalCount"
+                             [pageSize]="pageSize"
+                             [pageSizeOptions]="pageSizeOptions"
+                             (page)="onMatPageChange($event)"
+                             [pageIndex]="page - 1"
+
+              >
+              </mat-paginator>
+            </div>
+          </div>
+        </div>
+      </mat-drawer-content>
+    </mat-drawer-container>
+  </div>
+</mat-sidenav-container>

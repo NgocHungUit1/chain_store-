@@ -2,41 +2,53 @@
 <!-- Notification - style you can find in header.scss -->
 <!-- ============================================================== -->
 
-<!--<button [matMenuTriggerFor]="notification" mat-icon-button class="m-r-10">-->
-<!--    <mat-icon>message</mat-icon>-->
-<!--    <div class="notify">-->
-<!--        <span class="heartbit"></span>-->
-<!--        <span class="point"></span>-->
-<!--    </div>-->
-<!--</button>-->
-<!--<mat-menu #notification="matMenu" class="mymegamenu">-->
-<!--    <div class="mailbox">-->
-<!--        <ul>-->
-<!--            <li>-->
-<!--                <div class="drop-title">Notifications </div>-->
-<!--            </li>-->
-<!--            <li>-->
-<!--                <div class="message-center">-->
-<!--                    <perfect-scrollbar [config]="config">-->
-<!--                        &lt;!&ndash; Message &ndash;&gt;-->
-<!--                        <a href="#" *ngFor="let notification of notifications">-->
-<!--                            <div class="round {{notification.round}}">-->
-<!--                                <i class="{{notification.icon}}"></i>-->
-<!--                            </div>-->
-<!--                            <div class="mail-content">-->
-<!--                                <h5>{{notification.title}}</h5>-->
-<!--                                <span class="mail-desc">{{notification.subject}}</span>-->
-<!--                                <span class="time">{{notification.time}}</span>-->
-<!--                            </div>-->
-<!--                        </a>-->
+<button [matMenuTriggerFor]="notification" mat-icon-button class="m-r-10 notification-button">
+  <mat-icon *ngIf="countUnread == 0">notifications_none</mat-icon>
+  <mat-icon *ngIf="countUnread > 0">notifications_active</mat-icon>
+  <div class="notify" *ngIf="countUnread > 0">
+    <span class="heartbit"></span>
+    <span class="point"></span>
+  </div>
+</button>
+<mat-menu #notification="matMenu" class="mymegamenu">
+  <div class="mailbox">
+    <ul>
+      <li>
+        <div class="drop-title">Có <span class="message-count">{{countUnread}}</span> thông báo mới</div>
+      </li>
+      <li>
+        <div class="message-center">
+          <perfect-scrollbar [config]="config">
+            <!-- Message -->
+            <a (click)="makeAsRead(notiUser, true)" *ngFor="let notiUser of notifications"
+               [class.read-message]="notiUser.is_read">
+              <div class="round {{notiClass[notiUser.notification.notification_type]}}">
+                <mat-icon>{{notiIcon[notiUser.notification.notification_type]}}</mat-icon>
+              </div>
+              <div class="notify" *ngIf="!notiUser.is_read">
+                <span class="heartbit"></span>
+                <span class="point"></span>
+              </div>
+              <div class="mail-content">
+                <h5>{{notiUser.notification.title}}</h5>
+                <span class="mail-desc">{{notiUser.notification.description}}</span>
+                <span class="time">{{notiUser.notification.created_at * 1000 | date:'dd/MM/yyyy'}}</span>
+              </div>
+            </a>
 
-<!--                    </perfect-scrollbar>-->
-<!--                </div>-->
-<!--            </li>-->
-
-<!--        </ul>-->
-<!--    </div>-->
-<!--</mat-menu>-->
+          </perfect-scrollbar>
+        </div>
+      </li>
+      <li>
+        <div class="drop-bottom">
+          <a mat-button routerLink="/setting/notification">
+            <mat-icon>read_more</mat-icon>
+            Xem tất cả thông báo</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+</mat-menu>
 
 <!-- ============================================================== -->
 <!-- Profile - style you can find in header.scss -->
@@ -82,21 +94,27 @@
 <!-- Profile - style you can find in header.scss -->
 <!-- ============================================================== -->
 <button [matMenuTriggerFor]="profile" mat-icon-button class="m-r-5">
-    <img src="assets/images/users/doctor.jpg" alt="user" class="profile-pic"> </button>
+  <img src="assets/images/users/doctor.jpg" alt="user" class="profile-pic"></button>
 <mat-menu #profile="matMenu" class="mymegamenu">
-<!--    <button mat-menu-item>-->
-<!--        <mat-icon>settings</mat-icon> Thiết lập-->
-<!--    </button>-->
-<!--    <button mat-menu-item>-->
-<!--        <mat-icon>account_box</mat-icon> Profile-->
-<!--    </button>-->
-<!--    <button mat-menu-item>-->
-<!--        <mat-icon>notifications_off</mat-icon> Disable notifications-->
-<!--    </button>-->
-  <button mat-menu-item (click)="openUserFormDialog()">
-    <mat-icon>vpn_key</mat-icon> Thông tin tài khoản
+  <!--    <button mat-menu-item>-->
+  <!--        <mat-icon>settings</mat-icon> Thiết lập-->
+  <!--    </button>-->
+  <!--    <button mat-menu-item>-->
+  <!--        <mat-icon>account_box</mat-icon> Profile-->
+  <!--    </button>-->
+  <!--    <button mat-menu-item>-->
+  <!--        <mat-icon>notifications_off</mat-icon> Disable notifications-->
+  <!--    </button>-->
+  <a mat-menu-item routerLink="/setting/profile">
+    <mat-icon>person</mat-icon>
+    Thông tin tài khoản
+  </a>
+  <button mat-menu-item routerLink="/setting/notification">
+    <mat-icon>circle_notifications</mat-icon>
+    Thông báo của tôi
   </button>
-    <button mat-menu-item (click)="logout()">
-        <mat-icon>exit_to_app</mat-icon> Đăng xuất
-    </button>
+  <button mat-menu-item (click)="logout()">
+    <mat-icon>exit_to_app</mat-icon>
+    Đăng xuất
+  </button>
 </mat-menu>

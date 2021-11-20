@@ -47,6 +47,10 @@ export const AppRoutes: Routes = [
         path: 'cash-flow',
         loadChildren: () => import('./cash-flow/cash-flow.module').then(m => m.CashFlowModule)
       },
+      {
+        path: 'setting',
+        loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule)
+      },
       // {
       //     path: 'material',
       //     loadChildren:

@@ -1,0 +1,94 @@
+
+<div class="dv-content">
+  <mat-card class="mat-card-top ">
+    <mat-sidenav-container
+      [ngClass]="{ 'side-panel-opened': sidePanelOpened, 'side-panel-closed': !sidePanelOpened }">
+      <mat-sidenav #noteslist [mode]="isOver() ? 'over' : 'side'" [opened]="!isOver()" (open)="sidePanelOpened = true"
+                   (close)="sidePanelOpened = false">
+        <app-setting-sidenav></app-setting-sidenav>
+      </mat-sidenav>
+
+      <mat-toolbar class="no-shadow">
+        <div fxLayout="row" fxFlex="100" fxLayoutAlign="center center">
+          <button (click)="noteslist.toggle()" class="mr-1" mat-icon-button>
+            <mat-icon>short_text</mat-icon>
+          </button>
+          <h4 class="setting-title">Hồ sơ cá nhân</h4>
+          <span fxFlex="1 1 0%"></span>
+        </div>
+      </mat-toolbar>
+      <mat-card-content class="chat-middle-box">
+        <form [formGroup]="form">
+          <div fxLayout="row wrap">
+            <div fxFlex="100">
+              <div fxLayout="row wrap">
+
+                <div fxFlex="100">
+                  <mat-form-field>
+                    <mat-label>Tên đăng nhập</mat-label>
+                    <input matInput tabindex="1" formControlName="username">
+                    <mat-error *ngIf="form.controls['username'].hasError('required')">Tên tài khoản không được bỏ trống
+                    </mat-error>
+                    <mat-error *ngIf="form.controls['username'].hasError('ajaxValidator')
+                    && form.controls['username'].touched">{{ form.controls['username'].getError('ajaxValidator')?.value}}</mat-error>
+                  </mat-form-field>
+                </div>
+
+                <div fxFlex="100">
+                  <mat-form-field>
+                    <mat-label>Email</mat-label>
+                    <input matInput tabindex="4" formControlName="email">
+                    <mat-error *ngIf="form.controls['email'].hasError('required')">Email không được bỏ trống</mat-error>
+                    <mat-error *ngIf="form.controls['email'].hasError('email')">Email không đúng định dạng</mat-error>
+                    <mat-error *ngIf="form.controls['email'].hasError('ajaxValidator')
+                    && form.controls['email'].touched">{{ form.controls['email'].getError('ajaxValidator')?.value}}</mat-error>
+                  </mat-form-field>
+                </div>
+
+                <div fxFlex="100">
+                  <mat-form-field>
+                    <mat-label>Số điện thoại</mat-label>
+                    <input matInput tabindex="5" formControlName="phone_number">
+                    <mat-error *ngIf="form.controls['phone_number'].hasError('required')">Số điện thoại không được bỏ trống
+                    </mat-error>
+                    <mat-error *ngIf="form.controls['phone_number'].hasError('ajaxValidator')
+                    && form.controls['phone_number'].touched">{{ form.controls['phone_number'].getError('ajaxValidator')?.value}}</mat-error>
+                  </mat-form-field>
+                </div>
+
+                <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                  <mat-form-field style="width: 100%">
+                    <input matInput type="password" placeholder="Mật khẩu hiện tại" [formControl]="form.controls['current_password']">
+                  </mat-form-field>
+                </div>
+                <!-- column -->
+                <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                  <mat-form-field style="width: 100%">
+                    <input matInput type="password" placeholder="Mật khẩu mới" [formControl]="form.controls['password']">
+                  </mat-form-field>
+                  <small *ngIf="this.form.errors?.requiredPassword && (form.controls['password'].touched || form.controls['password'].dirty)" class="text-danger support-text">Bạn phải nhập mật khẩu.</small>
+                </div>
+                <!-- col full-->
+                <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                  <mat-form-field style="width: 100%">
+                    <input matInput placeholder="Nhập lại mật khẩu mới" [formControl]="form.controls['confirmPassword']" type="password">
+                  </mat-form-field>
+                  <small *ngIf="form.controls['confirmPassword'].hasError('required') && form.controls['confirmPassword'].touched" class="text-danger support-text">Bạn phải nhập lại mật khẩu.</small>
+                  <small *ngIf="form.controls['confirmPassword'].errors?.equalTo" class="text-danger support-text">Mật khẩu không giống.</small>
+                </div>
+
+                <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="6" (click)="submit()">
+                  <mat-icon>save</mat-icon>
+                  Lưu
+                </button>
+
+              </div>
+            </div>
+
+          </div>
+
+        </form>
+      </mat-card-content>
+    </mat-sidenav-container>
+  </mat-card>
+</div>

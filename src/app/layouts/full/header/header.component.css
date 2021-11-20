@@ -1,0 +1,22 @@
+.message-center .mat-icon {
+    margin-top: 9px;
+}
+.drop-title, .drop-bottom {
+  text-align: center;
+}
+.message-count {
+  font-size: 1.2rem;
+}
+.message-count, .message-center a:not(.read-message) .mail-content h5 {
+  color: #009688;
+}
+.read-message > .mail-content > h5 {
+  font-weight: 200;
+}
+.notification-button .mat-icon {
+  font-size: 21px;
+}
+.message-center .notify {
+  right: 5px;
+  top: -18px;
+}
