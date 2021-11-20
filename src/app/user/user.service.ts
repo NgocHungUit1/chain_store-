@@ -158,6 +158,16 @@ export class UserService {
     const url = environment.apiUrl + '/user/national-pharmacy-info';
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
+
+  getProfile(): Observable<{}> {
+    const url = environment.apiUrl + '/user/get-profile';
+    return this.http.get<{}>(url);
+  }
+
+  updateProfile(data) {
+    const url = environment.apiUrl + '/user/update-profile';
+    return this.http.post<boolean>(url, data);
+  }
 }
 
 

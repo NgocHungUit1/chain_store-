@@ -7,11 +7,13 @@ import {UserService} from '../../../user/user.service';
 import {UserFormDialogComponent} from '../../../user/user-form-dialog/user-form-dialog.component';
 import {NotifierService} from 'angular-notifier';
 import {User} from '../../../user/user.model';
+import {NotificationUser, NotificationUserFilter} from '../../../notification/notification-user.model';
+import {NotificationUserService} from '../../../notification/notification-user.service';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: []
+  styleUrls: ['./header.component.css']
 })
 export class AppHeaderComponent implements OnInit{
   @Input() user: User;
@@ -22,74 +24,24 @@ export class AppHeaderComponent implements OnInit{
 
 
   // This is for Notifications
-  notifications: Object[] = [
-    {
-      round: 'round-danger',
-      icon: 'ti-link',
-      title: 'Luanch Admin',
-      subject: 'Just see the my new admin!',
-      time: '9:30 AM'
-    },
-    {
-      round: 'round-success',
-      icon: 'ti-calendar',
-      title: 'Event today',
-      subject: 'Just a reminder that you have event',
-      time: '9:10 AM'
-    },
-    {
-      round: 'round-info',
-      icon: 'ti-settings',
-      title: 'Settings',
-      subject: 'You can customize this template as you want',
-      time: '9:08 AM'
-    },
-    {
-      round: 'round-primary',
-      icon: 'ti-user',
-      title: 'Pavan kumar',
-      subject: 'Just see the my admin!',
-      time: '9:00 AM'
-    }
+  notifications: NotificationUser[] = [
   ];
-
-  // This is for Mymessages
-  mymessages: Object[] = [
-    {
-      useravatar: 'assets/images/users/1.jpg',
-      status: 'online',
-      from: 'Pavan kumar',
-      subject: 'Just see the my admin!',
-      time: '9:30 AM'
-    },
-    {
-      useravatar: 'assets/images/users/2.jpg',
-      status: 'busy',
-      from: 'Sonu Nigam',
-      subject: 'I have sung a song! See you at',
-      time: '9:10 AM'
-    },
-    {
-      useravatar: 'assets/images/users/2.jpg',
-      status: 'away',
-      from: 'Arijit Sinh',
-      subject: 'I am a singer!',
-      time: '9:08 AM'
-    },
-    {
-      useravatar: 'assets/images/users/4.jpg',
-      status: 'offline',
-      from: 'Pavan kumar',
-      subject: 'Just see the my admin!',
-      time: '9:00 AM'
-    }
-  ];
+  countUnread = 0;
+  notiClass = {
+    'contract_expired_alert': 'round-danger',
+    'contract_nearly_alert': 'round-warning',
+  };
+  notiIcon = {
+    'contract_expired_alert': 'priority_high',
+    'contract_nearly_alert': 'running_with_errors',
+  };
 
   constructor(
     private dialog: MatDialog,
     private route: Router,
     private authSer: AuthService,
     private userService: UserService,
+    private notiUserService: NotificationUserService,
     private notifyService: NotifierService
   ) {
   }
@@ -98,6 +50,7 @@ export class AppHeaderComponent implements OnInit{
     this.userService.getUserLogin().subscribe(res => {
       this.userLogin = res;
     });
+    this.loadNotification();
   }
 
   loadUser(id) {
@@ -137,6 +90,43 @@ export class AppHeaderComponent implements OnInit{
     this.authSer.logout().subscribe(res => {
       if (res) {
         this.route.navigate(['/', 'authentication', 'login']);
+      }
+    });
+  }
+
+  loadNotification() {
+    const notiUserFilter = new NotificationUserFilter();
+    notiUserFilter.expand = 'notification,agentCount';
+    notiUserFilter.sort = '-created_at';
+    this.notiUserService.getList(notiUserFilter).subscribe(res => {
+      this.notifications = res.body;
+    });
+    this.notiUserService.countUnread().subscribe(res => {
+      this.countUnread = res;
+    });
+  }
+
+  makeAsRead(item, view = false) {
+    this.notiUserService.update(item.id, {is_read: 1}).subscribe(x => {
+      if (x) {
+        this.notifyService.notify('success', 'Đã xem thông báo!');
+        item.is_read = 1;
+        this.loadNotification();
+
+        if (view) {
+          // if (item.notification.notification_type === 'contract_nearly_vietlott') {
+          //   this.router.navigate(['/', 'contract-vietlott', 'list', 'nearly']);
+          // }
+          // if (item.notification.notification_type === 'contract_nearly_partner') {
+          //   this.router.navigate(['/', 'contract-partner', 'list', 'nearly']);
+          // }
+          // if (item.notification.notification_type === 'contract_expired_vietlott') {
+          //   this.router.navigate(['/', 'contract-vietlott', 'list', 'expired']);
+          // }
+          // if (item.notification.notification_type === 'contract_expired_partner') {
+          //   this.router.navigate(['/', 'contract-partner', 'list', 'expired']);
+          // }
+        }
       }
     });
   }
