@@ -46,7 +46,7 @@ export class CartComponent implements OnInit, OnDestroy {
   danger: boolean = false;
   showHide: boolean;
   sidebarOpened;
-  placeholderSearch = 'Tìm sản phẩm';
+  placeholderSearch = 'Tìm sản phẩm (F3)';
   iconChangeType = 'cached';
   public showSearch = false;
 
@@ -272,4 +272,11 @@ export class CartComponent implements OnInit, OnDestroy {
 
   }
 
+  @HostListener('window:keydown', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    if (event.keyCode === 114) {
+      event.preventDefault();
+      this.inputSearch.nativeElement.focus();
+    }
+  }
 }
