@@ -1533,6 +1533,7 @@ export class SaleMainComponent implements OnInit {
     this.listProduct = [];
     this.prescription.checked = false;
     this.prescription_id = null;
+    this.discount = 0;
     setTimeout(() => {
       this.listProduct = [];
     }, 500);
