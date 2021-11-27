@@ -1534,8 +1534,11 @@ export class SaleMainComponent implements OnInit {
     this.prescription.checked = false;
     this.prescription_id = null;
     this.discount = 0;
+    this.numberDiscount = 0;
     setTimeout(() => {
       this.listProduct = [];
+      this.discount = 0;
+      this.numberDiscount = 0;
     }, 500);
   }
 
