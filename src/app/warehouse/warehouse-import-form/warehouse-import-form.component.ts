@@ -34,6 +34,7 @@ import {OptionStore} from '../../common/option-store.model';
 import {WarehouseExpensesComponent} from '../warehouse-expenses/warehouse-expenses.component';
 import {WarehouseParcelListDialogComponent} from '../warehouse-parcel-list-dialog/warehouse-parcel-list-dialog.component';
 import {WarehouseFormPriceDialogComponent} from '../warehouse-form-price-dialog/warehouse-form-price-dialog.component';
+import { SearchProductDialogComponent } from '../../common/search-product-dialog/search-product-dialog.component';
 
 @Component({
   selector: 'app-warehouse-import-form',
@@ -1001,13 +1002,27 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     });
   }
 
+  openSearchProductDialog() {
+
+    const dialogRef = this.dialog.open(SearchProductDialogComponent, {
+      width: '80%',
+      minWidth: '750px',
+      minHeight: '85%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result['event'] === 'Choose') {
+        this.handleAddProductToList(result['product_id']);
+      }
+    });
+  }
+
   openProductMedicineDialog(action, obj) {
     obj.action = action;
     obj.title = 'Thêm thuốc';
     obj.product_id = null;
     obj.copy_product_id = null;
     obj.product_name = this.selectProduct.value;
-    console.log(obj);
     const dialogRef = this.dialog.open(ProductMedicineDialogComponent, {
       data: obj,
       width: '60%',

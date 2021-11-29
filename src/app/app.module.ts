@@ -36,6 +36,7 @@ import { AngularImageViewerModule } from 'angular-x-image-viewer';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { PopupDeleteDialogComponent } from './common/popup-delete-dialog/popup-delete-dialog.component';
+import { SearchProductDialogComponent } from './common/search-product-dialog/search-product-dialog.component';
 // import { InputSelectAllDirective } from './common/input-select-all/input-select-all.directive';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
@@ -56,6 +57,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     AppBreadcrumbComponent,
     AppHeaderCartComponent,
     PopupDeleteDialogComponent,
+    SearchProductDialogComponent,
   ],
   imports: [
     BrowserModule,
