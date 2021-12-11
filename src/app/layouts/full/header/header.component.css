@@ -20,3 +20,6 @@
   right: 5px;
   top: -18px;
 }
+.message-center .mail-content:hover {
+  cursor: pointer;
+}
