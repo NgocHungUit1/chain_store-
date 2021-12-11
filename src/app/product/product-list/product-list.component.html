@@ -197,11 +197,11 @@
               <ng-container matColumnDef="quantity">
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['quantity']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
-                  <span *ngIf="element.quantity !== null;else quantityNull">
+                  <span *ngIf="element.quantity !== null && element.quantity.number > 0;else quantityNull" class="label" [class.label-success]="element.quantity.number >= element.min_quantity" [class.label-warning]="element.quantity.number < element.min_quantity">
                     {{ element.quantity.number | number }}
                   </span>
                   <ng-template #quantityNull>
-                    <span>0</span>
+                    <span class="label label-danger">0</span>
                   </ng-template>
                 </td>
               </ng-container>

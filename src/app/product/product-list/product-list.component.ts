@@ -242,6 +242,13 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
       ],
     });
 
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const code = urlParams.get('quota_stock');
+    if (code !== undefined && code !== null && code.length > 0 ) {
+      this.productFilter.patchValue({quota_stock: [code]});
+    }
+
     const groupFilter = new GroupFilter();
     groupFilter.pageSize = 100;
     // groupFilter.store_id = 1;
