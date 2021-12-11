@@ -91,6 +91,17 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     },
   ];
 
+  quotaStockFilterList = [
+    {
+      'value': 'lower',
+      'name': 'Thiếu định mức',
+    },
+    {
+      'value': 'upper',
+      'name': 'Vượt định mức',
+    },
+  ];
+
   columnsHeader = {
     '#': '#',
     // 'product_type': 'Phân loại',
@@ -142,6 +153,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     filter.status = this.productFilter.controls['status'].value;
     filter.group_id = this.productFilter.controls['group'].value;
     filter.stock = this.productFilter.controls['stock'].value;
+    filter.quota_stock = this.productFilter.controls['quota_stock'].value;
     return filter;
   }
 
@@ -225,6 +237,8 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
       group: [null],
       stock: [
         ['empty', 'have']
+      ],
+      quota_stock: [
       ],
     });
 

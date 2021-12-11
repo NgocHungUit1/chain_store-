@@ -59,6 +59,19 @@
           </mat-form-field>
         </mat-card-content>
       </mat-card>
+
+      <mat-card class="time-filter-info">
+        <mat-card-content>
+          <mat-form-field>
+            <mat-label>Định mức</mat-label>
+            <mat-select formControlName="quota_stock" (selectionChange)="typeProductFilterChange()" multiple>
+              <mat-option *ngFor="let item of quotaStockFilterList"
+                          [value]="item.value">{{ item.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
     </form>
 
   </mat-sidenav>
