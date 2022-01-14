@@ -155,7 +155,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
     optionStorePromise.then(() => {
 
-
       this.allPermission = sessionStorage.getItem('allPermission').split(',');
       this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
 
@@ -241,8 +240,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
                 }
               });
 
-              // this.expensesTransactions = <ExpensesTransaction[]>resEx.body;
-              // this.recalculateWarehouse();
             });
           }
 
@@ -252,15 +249,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
             this.form.patchValue({
               action_change: 1,
             });
+            this.form.controls['date'].disable();
+            this.form.controls['no'].disable();
           }
 
-          this.form.controls['date'].disable();
-          this.form.controls['no'].disable();
           this.form.controls['status'].disable();
           this.form.controls['quantity'].disable();
-          // this.form.controls['total_price'].disable();
-          // this.form.controls['remain_amount'].disable();
-          // this.form.controls['expenses_price'].disable();
 
           this.loadData();
         });
@@ -288,17 +282,13 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         }
       }
 
-      // this.setUpExpensesTransactions();
-
       const product_id = localStorage.getItem('product_id');
       if (product_id !== null) {
         this.handleAddProductToList(product_id);
         localStorage.removeItem('product_id');
       }
 
-
     });
-
 
   }
 

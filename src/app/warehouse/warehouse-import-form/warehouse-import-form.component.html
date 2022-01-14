@@ -48,16 +48,11 @@
       </div>
 
       <button style="margin-left: 10px;"
-              mat-mini-fab color="primary" (click)="openSearchProductDialog();" >
+              mat-mini-fab color="primary" (click)="openSearchProductDialog();">
         <mat-icon>list</mat-icon>
       </button>
 
       <span fxFlex="1 1 0%"></span>
-
-<!--      *ngIf="selectProduct.value && (filteredProducts | async)?.length === 0 && (filteredMedicines | async)?.length === 0"-->
-<!--      [disabled]="form?.controls['status'].value === '10' "-->
-
-
 
       <button mat-raised-button color="primary" [matMenuTriggerFor]="createMenu" style="margin-right: 10px">
         <mat-icon>add</mat-icon>
@@ -93,7 +88,8 @@
 
               <ng-container matColumnDef="product_name">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_name']}}</th>
-                <td mat-cell *matCellDef="let element; let i = index" title="{{ element.product.product_name }}" style="padding-top: 8px;">
+                <td mat-cell *matCellDef="let element; let i = index" title="{{ element.product.product_name }}"
+                    style="padding-top: 8px;">
 
                   <span class="span-product-no">Mã hàng : {{ element.product.product_no }}</span>
 
@@ -104,13 +100,10 @@
                     <p *ngIf="element.product.product_name.length <= 45">{{ element.product.product_name }}</p>
                   </strong>
 
-<!--                  [disabled]="form?.controls['status'].value === '10'"-->
                   <button mat-icon-button matPrefix aria-label="add" (click)="openParcelListDialog(i);">
                     <mat-icon>list</mat-icon>
                   </button>
 
-
-<!--                  [disabled]="form?.controls['status'].value === '10'"-->
                   <mat-form-field class="parcel-field">
                     <mat-select multiple [(ngModel)]="data[i]['product_parcels']"
                                 (selectionChange)="onParcelSelectedChange(i, $event.value)"
@@ -122,7 +115,6 @@
 
                   </mat-form-field>
 
-<!--                  [disabled]="form?.controls['status'].value === '10'"-->
                   <button mat-icon-button matSuffix aria-label="add" (click)="openParcelFormDialog(i);">
                     <mat-icon>add</mat-icon>
                   </button>
@@ -130,8 +122,6 @@
                 </td>
               </ng-container>
 
-
-<!--              [disabled]="form?.controls['status'].value === '10'"-->
               <ng-container matColumnDef="product_unit_id">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_unit_id']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index">
@@ -144,7 +134,6 @@
                 </td>
               </ng-container>
 
-<!--              form?.controls['status'].value === '10'-->
               <ng-container matColumnDef="quantity">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['quantity']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index">
@@ -155,19 +144,14 @@
                            autocomplete="off" (keyup)="quantityChange($event,i)">
 
                   </mat-form-field>
-                  <!--                  <span>{{ element.quantity | currency : 'VND' : ''}} </span>-->
                 </td>
               </ng-container>
 
-
-<!--              [disabled]="form?.controls['status'].value === '10'"-->
               <ng-container matColumnDef="price">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['price']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index">
                   <mat-form-field class="text-right">
-<!--                    <input matInput-->
-<!--                           [(ngModel)]="data[i]['price']"-->
-<!--                           (keyup)="priceChange($event,i)">-->
+
                     <input matInput appInputSelectAll
                            [(ngModel)]="data[i]['price']" (keyup)="priceChange($event,i)">
                     <button mat-icon-button matPrefix
@@ -175,32 +159,9 @@
                       <mat-icon>add</mat-icon>
                     </button>
                   </mat-form-field>
-                  <!--                  <span>{{ element.price | currency : 'VND' : ''}} </span>-->
+
                 </td>
               </ng-container>
-
-
-<!--              [disabled]="form?.controls['status'].value === '10'"-->
-<!--              <ng-container matColumnDef="discount">-->
-<!--                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['discount']}}</th>-->
-<!--                <td mat-cell *matCellDef="let element; let i = index">-->
-
-<!--                  <mat-form-field *ngIf="element['discount_type'] == 'price'">-->
-<!--                    <input matInput class="discount-input" [(ngModel)]="data[i]['discount']"-->
-<!--                           value="{{ element['discount'] | number }}" (click)="openDiscountDialogWarehouseProduct(i);"-->
-<!--                           readonly >-->
-<!--                  </mat-form-field>-->
-
-<!--&lt;!&ndash;                  [disabled]="form?.controls['status'].value === '10'"&ndash;&gt;-->
-<!--                  <mat-form-field *ngIf="element['discount_type'] == 'percent'">-->
-<!--                    <input matInput class="discount-input" [(ngModel)]="data[i]['discount']"-->
-<!--                           value="{{ (element['price']*element['discount']/100) | number }}"-->
-<!--                           (click)="openDiscountDialogWarehouseProduct(i);"-->
-<!--                           title="{{ (element['price']*element['discount']/100) | number }} {{ '('+element['discount']+'%)' }}"-->
-<!--                           readonly >-->
-<!--                  </mat-form-field>-->
-<!--                </td>-->
-<!--              </ng-container>-->
 
               <ng-container matColumnDef="amount">
                 <th mat-header-cell *matHeaderCellDef
@@ -212,7 +173,6 @@
                 </td>
               </ng-container>
 
-<!--              [disabled]="form.controls['status'].value === '10'"-->
               <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef style="width: 45px;"></th>
                 <td mat-cell *matCellDef="let element; let i = index">
@@ -243,7 +203,8 @@
             <div fxFlex="80">
               <mat-form-field>
                 <span matPrefix>Ngày nhập &nbsp;</span>
-                <input class="text-right" matInput [matDatepicker]="date_picker" [formControl]="form?.controls['date']">
+                <input class="text-right" matInput [matDatepicker]="date_picker"
+                       formControlName="date">
                 <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>
                 <mat-datepicker #date_picker></mat-datepicker>
               </mat-form-field>
@@ -251,9 +212,9 @@
 
             <div fxFlex="100">
               <mat-form-field>
-                <mat-label>Chi nhánh nhập</mat-label>
-                <mat-select [formControl]="form?.controls['branch_id']" placeholder="Chọn chi nhánh"
-                            [disabled]="form?.controls['status'].value === '10'">
+<!--                <mat-label>Chi nhánh nhập</mat-label>-->
+<!--                placeholder="Chọn chi nhánh"-->
+                <mat-select formControlName="branch_id" [disabled]="form?.controls['status'].value === '10'">
                   <mat-option *ngFor="let branch of branchList" value="{{branch.id}}">{{branch.name}}</mat-option>
                 </mat-select>
               </mat-form-field>
@@ -269,7 +230,7 @@
             </div>
             <div fxFlex="90">
               <mat-form-field>
-                <input type="text" matInput [formControl]="form?.controls['supplier']" placeholder="Nhà cung cấp"
+                <input type="text" matInput formControlName="supplier" placeholder="Nhà cung cấp"
                        [matAutocomplete]="auto">
                 <button mat-icon-button matPrefix>
                   <mat-icon>search</mat-icon>
@@ -291,7 +252,8 @@
               </mat-form-field>
             </div>
             <div fxFlex="10">
-              <button mat-button aria-label="add" (click)="openSupplierFormDialog()" style="min-width: unset; padding: 0">
+              <button mat-button aria-label="add" (click)="openSupplierFormDialog()"
+                      style="min-width: unset; padding: 0">
                 <mat-icon>add</mat-icon>
               </button>
             </div>
@@ -308,7 +270,8 @@
               <!-- 2 truong hop  -->
               <mat-form-field *ngIf="form.get('discount_type').value == 'price'">
                 <span matPrefix>Chiết khấu &nbsp;</span>
-                <input appInputSelectAll class="text-right" matInput tabindex="6" value="{{ form.get('discount_amount').value | number }}"
+                <input appInputSelectAll class="text-right" matInput tabindex="6"
+                       value="{{ form.get('discount_amount').value | number }}"
                        (click)="openDiscountDialogWarehouse();">
               </mat-form-field>
 
@@ -341,7 +304,6 @@
                        value="{{ form.get('paid_amount').value }}" (change)="recalculateWarehouse();">
                 <button mat-raised-button color="primary" matSuffix (click)="paidAmount()">
                   Trả đủ
-                  <!--                  <mat-icon>delete</mat-icon>-->
                 </button>
               </mat-form-field>
             </div>
@@ -355,7 +317,8 @@
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Ghi chú</mat-label>
-                <textarea matInput tabindex="9" formControlName="note" rows="3"></textarea>
+                <textarea matInput tabindex="9"
+                          formControlName="note" rows="3"></textarea>
               </mat-form-field>
             </div>
             <div fxFlex="100">
@@ -387,7 +350,6 @@
               </button>
             </div>
             <p>Sau khi hoàn thành sẽ cộng số lượng vào tồn kho.</p>
-
 
           </div>
         </form>
