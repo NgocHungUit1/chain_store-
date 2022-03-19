@@ -76,7 +76,7 @@
                 <th mat-header-cell style="text-align:center" *matHeaderCellDef> {{ columnsHeader['amount'] }}</th>
                 <td mat-cell style="text-align:center" *matCellDef="let element; let i = index">
                   <mat-form-field>
-                    <input matInput appInputSelectAll type="text" class="amount" style="text-align:center"
+                    <input matInput type="text" class="amount" style="text-align:center"
                            [value]="element['amount']"
                            [(ngModel)]="data[i]['amount']"
                            autocomplete="off">
