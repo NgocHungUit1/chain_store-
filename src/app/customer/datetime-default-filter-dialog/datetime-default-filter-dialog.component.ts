@@ -4,6 +4,7 @@ import {NotifierService} from 'angular-notifier';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {CustomerService} from '../customer.service';
 import {DateFilter} from '../../invoice/invoice.model';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-datetime-default-filter-dialog',
@@ -141,4 +142,17 @@ export class DatetimeDefaultFilterDialogComponent implements OnInit {
     return new Date(d.setDate(diff));
   }
 
+  btn3ThangTruoc() {
+    const obj = new DateFilter();
+    obj.date_to = moment().format("YYYY-MM-DD");
+    obj.date_from = moment().subtract(3, 'months').format("YYYY-MM-DD");
+    this.dialogRef.close(obj);
+  }
+
+  btn6ThangTruoc(){
+    const obj = new DateFilter();
+    obj.date_to = moment().format("YYYY-MM-DD");
+    obj.date_from = moment().subtract(6, 'months').format("YYYY-MM-DD");
+    this.dialogRef.close(obj);
+  }
 }

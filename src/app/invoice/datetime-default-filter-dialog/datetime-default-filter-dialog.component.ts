@@ -5,6 +5,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { DateFilter } from '../invoice.model';
 import { InvoiceService } from '../invoice.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-datetime-default-filter-dialog',
@@ -140,6 +141,21 @@ export class DatetimeDefaultFilterDialogComponent implements OnInit {
     const day = d.getDay(),
       diff = d.getDate() - day - 1 + (day === 0 ? -6 : 1); // adjust when day is sunday
     return new Date(d.setDate(diff));
+  }
+
+  btn3ThangTruoc() {
+    const obj = new DateFilter();
+    obj.date_to = moment().format("YYYY-MM-DD");
+    obj.date_from = moment().subtract(3, 'months').format("YYYY-MM-DD");
+    this.invoiceService.setDateFilter(obj);
+    this.dialogRef.close({ 'title': '3 Tháng trước' });
+  }
+
+  btn6ThangTruoc(){
+    const obj = new DateFilter();
+    obj.date_to = moment().format("YYYY-MM-DD");
+    obj.date_from = moment().subtract(6, 'months').format("YYYY-MM-DD");
+    this.dialogRef.close({ 'title': '6 Tháng trước' });
   }
 
 }

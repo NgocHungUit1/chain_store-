@@ -22,7 +22,9 @@ import {WarehouseDiscountDialogComponent} from '../warehouse-discount-dialog/war
 import {SupplierFormDialogComponent} from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
 import {ProductMedicineDialogComponent} from '../../product/product-medicine-dialog/product-medicine-dialog.component';
 // tslint:disable-next-line:max-line-length
-import {ProductMerchandiseFormDialogComponent} from '../../product/product-merchandise-form-dialog/product-merchandise-form-dialog.component';
+import {
+  ProductMerchandiseFormDialogComponent
+} from '../../product/product-merchandise-form-dialog/product-merchandise-form-dialog.component';
 import {UserService} from '../../user/user.service';
 import * as numeral from 'numeral';
 import {MedicineService} from '../../medicine/medicine.service';
@@ -34,7 +36,7 @@ import {OptionStore} from '../../common/option-store.model';
 import {WarehouseExpensesComponent} from '../warehouse-expenses/warehouse-expenses.component';
 import {WarehouseParcelListDialogComponent} from '../warehouse-parcel-list-dialog/warehouse-parcel-list-dialog.component';
 import {WarehouseFormPriceDialogComponent} from '../warehouse-form-price-dialog/warehouse-form-price-dialog.component';
-import { SearchProductDialogComponent } from '../../common/search-product-dialog/search-product-dialog.component';
+import {SearchProductDialogComponent} from '../../common/search-product-dialog/search-product-dialog.component';
 
 @Component({
   selector: 'app-warehouse-import-form',
@@ -449,8 +451,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
             this.notifySer.notify('error', 'Bạn không có quyền thực hiện chức năng này.');
             return;
           }
-          delete data['date'];
-          delete data['supplier'];
+          //delete data['date'];
+          //delete data['supplier'];
           this.mainService.update(this.updateModelId, data).subscribe(res => {
             this.notifySer.notify('success', 'Lưu thành công.');
             if (status === 9) {

@@ -21,6 +21,7 @@ import {of} from 'rxjs/internal/observable/of';
 import {ProductService} from '../../product/product.service';
 import {Customer} from '../../customer/customer.model';
 import {CustomerService} from '../../customer/customer.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-invoice-list',
@@ -78,7 +79,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   KhachHangTra = 0;
 
   //
-  titleTimeDefault = 'Tháng này';
+  titleTimeDefault = '3 tháng trước';
   titleTimeChoose = 'Lựa chọn khác';
 
   columnsHeader = {
@@ -227,8 +228,10 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     const obj = new DateFilter();
     // tháng này
 
-    obj.date_from = this.service.convertDateYYYYMMDD(first);
-    obj.date_to = this.service.convertDateYYYYMMDD(today);
+    obj.date_to = moment().format("YYYY-MM-DD");
+    obj.date_from = moment().subtract(3, 'months').format("YYYY-MM-DD");
+    // obj.date_from = this.service.convertDateYYYYMMDD(first);
+    // obj.date_to = this.service.convertDateYYYYMMDD(today);
 
     const date_from = new Date(obj.date_from);
     const date_to = new Date(obj.date_to);
