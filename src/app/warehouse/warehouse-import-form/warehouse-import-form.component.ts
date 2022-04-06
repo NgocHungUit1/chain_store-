@@ -445,6 +445,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         }
         this.data.forEach(element => {
           element.price = numeral(element.price).value();
+          element.amount = numeral(element.amount).value();
+          element.discount = numeral(element.discount).value();
+          element.vat = numeral(element.vat).value();
         });
         data['items'] = this.data;
         // console.log(this.data);
