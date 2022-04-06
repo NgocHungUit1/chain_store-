@@ -37,6 +37,8 @@ import {WarehouseExpensesComponent} from '../warehouse-expenses/warehouse-expens
 import {WarehouseParcelListDialogComponent} from '../warehouse-parcel-list-dialog/warehouse-parcel-list-dialog.component';
 import {WarehouseFormPriceDialogComponent} from '../warehouse-form-price-dialog/warehouse-form-price-dialog.component';
 import {SearchProductDialogComponent} from '../../common/search-product-dialog/search-product-dialog.component';
+import * as moment from 'moment';
+
 
 @Component({
   selector: 'app-warehouse-import-form',
@@ -430,9 +432,16 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         data['expenses_price'] = numeral(data['expenses_price']).value();
         data['action_change'] = numeral(data['action_change']).value(); // chuc nang cap nhat don hoan thanh
         data['expensesTransactions'] = this.expensesTransactions;
-        if (this.form.controls['date'].value !== null && typeof this.form.controls['date'].value === 'object') {
-          const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
-          data['date'] = effDate.toISOString().split('T')[0];
+        if (this.form.controls['date'].value !== null ) {
+          if(typeof this.form.controls['date'].value === 'object'){
+            const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
+            data['date'] = effDate.toISOString().split('T')[0];
+          }else{
+            // @@ NGHIA
+            const effDate = this.form.controls['date'].value;
+            data['date'] = effDate.split('T')[0];
+            data['date'] = moment(data['date'], "YYYY-MM-DD").add(1, 'days').format("YYYY-MM-DD");
+          }
         }
         this.data.forEach(element => {
           element.price = numeral(element.price).value();
@@ -1031,6 +1040,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   openWarehouseProductMedicineDialog(action, obj) {
+    return;
     obj.action = action;
     obj.title = 'Thêm thuốc nhập hàng';
     obj.product_id = null;
