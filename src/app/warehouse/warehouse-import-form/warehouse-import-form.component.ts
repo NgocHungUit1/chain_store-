@@ -1043,7 +1043,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   openWarehouseProductMedicineDialog(action, obj) {
-    return;
     obj.action = action;
     obj.title = 'Thêm thuốc nhập hàng';
     obj.product_id = null;
