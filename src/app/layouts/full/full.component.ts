@@ -110,6 +110,10 @@ export class FullComponent implements OnDestroy {
     });
   }
 
+  public clickHelp() {
+    window.open('https://rx20.vn/huong-dan-su-dung/', '_black');
+  }
+
   public clickDownloadDriver() {
     window.open('https://drive.google.com/file/d/1SV3I9RfnrbdsvC6n8wluBKrDaptf3r9l/view?usp=sharing', '_black');
   }

@@ -51,15 +51,21 @@
 
     <span fxFlex></span>
     <div style="width: 200px; margin-right: 10px;">
-      <button mat-button [matMenuTriggerFor]="menuDownload">
-        <mat-icon>cloud_download</mat-icon>
-        Tải công cụ hổ trợ
+
+      <button mat-button (click)="clickHelp()">
+        <mat-icon>help</mat-icon>
+        Hướng dẫn sử dụng
       </button>
-      <mat-menu #menuDownload="matMenu">
-        <button (click)="clickDownloadDriver()" mat-menu-item><mat-icon>extension</mat-icon>Driver kết nối máy in bill</button>
-        <button (click)="clickVideoInstallDriver()" mat-menu-item><mat-icon>video_library</mat-icon>Hướng dẫn cài đặt Driver</button>
-        <button (click)="clickVideoUseBill()" mat-menu-item><mat-icon>video_library</mat-icon>Dùng máy in bill - mã vạch</button>
-      </mat-menu>
+
+<!--      <button mat-button [matMenuTriggerFor]="menuDownload">-->
+<!--        <mat-icon>cloud_download</mat-icon>-->
+<!--        Tải công cụ hổ trợ-->
+<!--      </button>-->
+<!--      <mat-menu #menuDownload="matMenu">-->
+<!--        <button (click)="clickDownloadDriver()" mat-menu-item><mat-icon>extension</mat-icon>Driver kết nối máy in bill</button>-->
+<!--        <button (click)="clickVideoInstallDriver()" mat-menu-item><mat-icon>video_library</mat-icon>Hướng dẫn cài đặt Driver</button>-->
+<!--        <button (click)="clickVideoUseBill()" mat-menu-item><mat-icon>video_library</mat-icon>Dùng máy in bill - mã vạch</button>-->
+<!--      </mat-menu>-->
     </div>
     <div style="width: 200px; margin-right: 10px;">
       <mat-form-field>
