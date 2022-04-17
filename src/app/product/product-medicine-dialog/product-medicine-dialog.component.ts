@@ -155,7 +155,6 @@ export class ProductMedicineDialogComponent implements OnInit {
   selectedFiles: ImageSnippet[] = [];
 
   initForm() {
-    // console.log(this.local_data);
     this.form = this.fb.group({
       product_no: [
         null,
@@ -172,7 +171,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       group_id: [null],
       placements: [[]],
       product_name: [this.local_data && this.local_data['product_name'] ? this.local_data['product_name'] : null, Validators.required],
-      sell_price: [null, Validators.required],
+      sell_price: [0, Validators.required],
       original_price: [0],
       weight: [null],
       base_unit: ['viên', Validators.required],
@@ -321,18 +320,13 @@ export class ProductMedicineDialogComponent implements OnInit {
 
   changeBaseUnitValue(event: any, i) {
     const value = numeral(event.target.value).value();
-    // console.log(this.units.controls[i].value);
     this.units.controls[i].patchValue({
       unit_price: numeral(value).format('0,0'),
     });
-    // if (i === Number(this._convertIndex)) {
-    //   this.form.controls.sell_price.patchValue(numeral(value / this.units.controls[i].value.unit_value).format('0,0'));
-    // }
   }
 
   loadProduct(id, copy: any = null) {
     this.productSer.getDetail(id, 'medicine,images,productPlacements,productUnits,quantity').subscribe(product => {
-      // console.log(product);
       const placements = [];
       product['productPlacements'].forEach(pPlacement => {
         placements.push(pPlacement.id);
