@@ -307,7 +307,7 @@ export class ProductMedicineDialogComponent implements OnInit {
   changeUnitValue(event: any, i) {
     const value = event.target.value;
     this.units.controls[i].patchValue({
-      unit_price: numeral(value * numeral(this.form.controls['sell_price'].value).value()).format('0,0'),
+      unit_price: numeral(value * numeral(this.form.controls['sell_price'].value).value()).value(),
     });
   }
 
@@ -321,7 +321,7 @@ export class ProductMedicineDialogComponent implements OnInit {
   changeBaseUnitValue(event: any, i) {
     const value = numeral(event.target.value).value();
     this.units.controls[i].patchValue({
-      unit_price: numeral(value).format('0,0'),
+      unit_price: numeral(value).value(),
     });
   }
 
@@ -341,7 +341,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       // console.log(product['quantity']);
       if (product['quantity']) {
         this.form.patchValue({
-          quantity_of_stock: numeral(product['quantity'].number).format('0,0'),
+          quantity_of_stock: numeral(product['quantity'].number).value(),
         });
       }
 
@@ -354,8 +354,8 @@ export class ProductMedicineDialogComponent implements OnInit {
           using_id: product['using_id'],
           group_id: product['group_id'],
           product_name: product['product_name'],
-          sell_price: numeral(product['sell_price']).format('0,0'),
-          original_price: numeral(product['original_price']).format('0,0'),
+          sell_price: numeral(product['sell_price']).value(),
+          original_price: numeral(product['original_price']).value(),
           weight: product['weight'],
           base_unit: product['base_unit'],
           medicine_id: product['medicine_id'],
@@ -376,8 +376,8 @@ export class ProductMedicineDialogComponent implements OnInit {
           using_id: product['using_id'],
           group_id: product['group_id'],
           product_name: product['product_name'],
-          sell_price: numeral(product['sell_price']).format('0,0'),
-          original_price: numeral(product['original_price']).format('0,0'),
+          sell_price: numeral(product['sell_price']).value(),
+          original_price: numeral(product['original_price']).value(),
           weight: product['weight'],
           base_unit: product['base_unit'],
           medicine_id: product['medicine_id'],
@@ -404,7 +404,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           const group = new FormGroup({
             unit_name: new FormControl(pUnit['name'], Validators.required),
             unit_value: new FormControl(pUnit['value'], Validators.required),
-            unit_price: new FormControl(numeral(pUnit['sell_price']).format('0,0'), Validators.required),
+            unit_price: new FormControl(numeral(pUnit['sell_price']).value(), Validators.required),
             unit_no: new FormControl(pUnit['no']),
             id: new FormControl(pUnit['id'])
           });
