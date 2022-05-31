@@ -34,9 +34,9 @@
             <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field>
-                  <input type="text" matInput appInputSelectAll [formControl]="form.controls['original_price']"
+                  <input type="number" matInput  [formControl]="form.controls['original_price']"
                          class="text-right"
-                         (keyup)="inputformatNumber($event)" placeholder="Giá vốn" autocomplete="off">
+                          placeholder="Giá vốn" autocomplete="off">
                 </mat-form-field>
               </div>
             </div>
@@ -44,9 +44,9 @@
             <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field>
-                  <input type="text" matInput appInputSelectAll [formControl]="form.controls['sell_price']"
+                  <input type="number" matInput  [formControl]="form.controls['sell_price']"
                          class="text-right"
-                         (keyup)="inputformatNumber($event)" required placeholder="Giá bán cơ bản" autocomplete="off">
+                         required placeholder="Giá bán cơ bản" autocomplete="off">
                 </mat-form-field>
               </div>
             </div>
@@ -72,7 +72,7 @@
 
               <div fxFlex="40">
                 <mat-form-field>
-                  <input type="text" class="text-right" (keyup)="inputformatNumber($event)" matInput appInputSelectAll
+                  <input type="number" class="text-right"  matInput
                          [formControl]="form.controls['quantity_of_stock']"
                          placeholder="Tồn kho (đơn vị cơ bản)" autocomplete="off">
                 </mat-form-field>
@@ -177,7 +177,7 @@
                                 <td style="padding-right: 10px;">
                                   <mat-form-field style="width: 110px">
 <!--                                    placeholder="Giá trị quy đổi"-->
-                                    <input type="text" formControlName="unit_value" matInput appInputSelectAll
+                                    <input type="number" formControlName="unit_value" matInput
                                            class="text-right" min="0"
                                            (change)="changeUnitValue($event,i)"
                                            (keyup)="changeUnitValue($event,i)"
@@ -187,11 +187,11 @@
                                 <td style="padding-right: 10px;">
                                   <mat-form-field style="width: 110px">
 <!--                                    placeholder="Giá bán"-->
-                                    <input type="text" formControlName="unit_price"
+                                    <input type="number" formControlName="unit_price"
                                            (change)="changeBaseUnitValue($event, i)"
                                            (keyup)="changeBaseUnitValue($event, i)"
                                            class="text-right"
-                                           matInput appInputSelectAll >
+                                           matInput  >
                                   </mat-form-field>
                                 </td>
                                 <td style="padding-right: 10px;">

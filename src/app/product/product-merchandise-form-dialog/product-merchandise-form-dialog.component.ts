@@ -115,7 +115,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       group_id: [null],
       placements: [[]],
       product_name: [this.local_data && this.local_data['product_name'] ? this.local_data['product_name'] : null, Validators.required],
-      sell_price: [null, Validators.required],
+      sell_price: [0, Validators.required],
       original_price: [0],
       weight: [null],
       base_unit: [null, Validators.required],
@@ -197,13 +197,9 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
 
   changeBaseUnitValue(event: any, i) {
     const value = numeral(event.target.value).value();
-    // console.log(this.units.controls[i].value);
     this.units.controls[i].patchValue({
-      unit_price: numeral(value).format('0,0'),
+      unit_price: numeral(value).value(),
     });
-    // if (i === Number(this._convertIndex)) {
-    //   this.form.controls.sell_price.patchValue(numeral(value / this.units.controls[i].value.unit_value).format('0,0'));
-    // }
   }
 
   removeUnit(i) {
@@ -216,14 +212,12 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
 
   addUnit() {
     const index = this.units.length + 1;
-
     const group = new FormGroup({
       unit_name: new FormControl('', Validators.required),
       unit_value: new FormControl(0, Validators.required),
       unit_price: new FormControl(0, Validators.required),
       unit_no: new FormControl(this.form.controls['product_no'].value + '-' + index)
     });
-
     this.units.push(group);
   }
 
@@ -231,7 +225,6 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
     if (this.form.valid) {
       this.loading = true;
       const data = this.form.getRawValue();
-
       data.original_price = numeral(data.original_price).value();
       data.sell_price = numeral(data.sell_price).value();
       data.quantity_of_stock = numeral(data.quantity_of_stock).value();
@@ -266,13 +259,10 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
           this.dialogRef.close({event: action, data: product});
         });
       }
-
     } else {
-
       // Form errors
       let controls = Object.entries(this.form.controls);
       let hasError = this.checkToShowControlError(controls);
-
       if (!hasError) {
         controls = Object.entries(this.units.controls);
 
@@ -295,7 +285,6 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
        */
       const formData = new FormData();
       formData.append('product_id', product['id']);
-
       this.selectedFiles.forEach(imageSnip => {
         if (imageSnip.id.length === 0) {
           formData.append('files[]', imageSnip.file);
@@ -334,22 +323,17 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
   }
 
   checkToShowControlError(controls) {
-
     const count = controls.length;
     let hasError = false;
-
     for (let i = 0; i < count; i++) {
       const fieldName = controls[i][0];
       const fieldControl = controls[i][1];
-
       if (fieldControl['errors'] !== null) {
-
         this.notifySer.notify('error', 'Lỗi thông tin trường ' + this.fieldLabels[fieldName]);
         hasError = true;
         break;
       }
     }
-
     return hasError;
   }
 
@@ -360,10 +344,9 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
         placements.push(pPlacement.id);
       });
 
-      // console.log(product['quantity']);
       if (product['quantity']) {
         this.form.patchValue({
-          quantity_of_stock: numeral(product['quantity'].number).format('0,0'),
+          quantity_of_stock: product['quantity'].number,
         });
       }
 
@@ -376,8 +359,8 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
           using_id: product['using_id'],
           group_id: product['group_id'],
           product_name: product['product_name'],
-          sell_price: numeral(product['sell_price']).format('0,0'),
-          original_price: numeral(product['original_price']).format('0,0'),
+          sell_price: product['sell_price'],
+          original_price: product['original_price'],
           weight: product['weight'],
           base_unit: product['base_unit'],
           medicine_id: product['medicine_id'],
@@ -397,8 +380,8 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
           using_id: product['using_id'],
           group_id: product['group_id'],
           product_name: product['product_name'],
-          sell_price: numeral(product['sell_price']).format('0,0'),
-          original_price: numeral(product['original_price']).format('0,0'),
+          sell_price: product['sell_price'],
+          original_price: product['sell_price'],
           weight: product['weight'],
           base_unit: product['base_unit'],
           medicine_id: product['medicine_id'],
@@ -422,7 +405,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
           const group = new FormGroup({
             unit_name: new FormControl(pUnit['name'], Validators.required),
             unit_value: new FormControl(pUnit['value'], Validators.required),
-            unit_price: new FormControl(numeral(pUnit['sell_price']).format('0,0'), Validators.required),
+            unit_price: new FormControl(numeral(pUnit['sell_price']).value(), Validators.required),
             unit_no: new FormControl(pUnit['no']),
             id: new FormControl(pUnit['id'])
           });
@@ -524,7 +507,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
   changeUnitValue(event: any, i) {
     const value = event.target.value;
     this.units.controls[i].patchValue({
-      unit_price: numeral(value * numeral(this.form.controls['sell_price'].value).value()).format('0,0'),
+      unit_price: numeral(value * numeral(this.form.controls['sell_price'].value).value()).value(),
     });
   }
 

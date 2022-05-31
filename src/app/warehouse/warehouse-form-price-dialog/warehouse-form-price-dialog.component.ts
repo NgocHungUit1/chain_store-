@@ -19,6 +19,7 @@ export class WarehouseFormPriceDialogComponent implements OnInit {
 
   filterVAT = [
     {name: 'VAT 10%', selelected: false, vat: 10, vat_type: 'percent'},
+    {name: 'VAT 8%', selelected: false, vat: 8, vat_type: 'percent'},
     {name: 'VAT 5%', selelected: false, vat: 5, vat_type: 'percent'},
     {name: 'VAT 0%', selelected: false, vat: 0, vat_type: 'percent'},
   ];
@@ -42,10 +43,10 @@ export class WarehouseFormPriceDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
+    // console.log(numeral(this.price)._value);
     this.form = this.fb.group({
       price: [
-        numeral(this.price).format('0,0')
+        numeral(this.price)._value
       ],
       discount: [
         numeral(this.discount).format('0,0')

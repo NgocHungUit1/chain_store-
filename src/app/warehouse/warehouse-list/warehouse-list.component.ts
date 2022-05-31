@@ -23,6 +23,7 @@ import {of} from 'rxjs/internal/observable/of';
 import {SupplierService} from '../../supplier/supplier.service';
 import {Product} from '../../product/product.model';
 import {ProductService} from '../../product/product.service';
+import * as moment from 'moment';
 
 @Component({
   templateUrl: './warehouse-list.component.html',
@@ -61,7 +62,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
 
   timeFilter: FormGroup;
 
-  titleTimeDefault = 'Tháng này';
+  titleTimeDefault = '3 tháng trước';
   titleTimeChoose = 'Lựa chọn khác';
 
   currentDateFilter: DateFilter;
@@ -180,10 +181,12 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     const month = today.getMonth();
     const first = new Date(year, month, 1);
     const obj = new DateFilter();
-    // tháng này
+    // 3 tháng trước
 
-    obj.date_from = this.service.convertDateYYYYMMDD(first);
-    obj.date_to = this.service.convertDateYYYYMMDD(today);
+    obj.date_to = moment().format("YYYY-MM-DD");
+    obj.date_from = moment().subtract(3, 'months').format("YYYY-MM-DD");
+    // obj.date_from = this.service.convertDateYYYYMMDD(first);
+    // obj.date_to = this.service.convertDateYYYYMMDD(today);
 
     const date_from = new Date(obj.date_from);
     const date_to = new Date(obj.date_to);

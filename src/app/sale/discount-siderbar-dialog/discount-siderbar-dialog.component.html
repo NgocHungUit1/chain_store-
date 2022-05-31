@@ -1,29 +1,32 @@
 <h1 mat-dialog-title>Giảm giá</h1>
 <div mat-dialog-content>
-    <form [formGroup]="form">
-        <div fxLayout="row wrap">
-            <div fxFlex="50">
-                <mat-form-field style="text-align: right">
-                    <input matInput appInputSelectAll type="text" (keyup)="inputformatNumber($event)" tabindex="1" formControlName="number" autocomplete="off">
-                </mat-form-field>
-            </div>
-            <div fxFlex="50" class="form-radio-field">
-                <mat-radio-group tabindex="2" formControlName="type">
-                    <mat-radio-button *ngFor=" let typeItem of typeItems" [value]="typeItem.id" (click)="updateEvent()"
-                        (mouseover)="updateEvent()" (mouseout)="updateEvent()">
-                        {{typeItem.title}}
-                    </mat-radio-button>
-                </mat-radio-group>
-            </div>
-        </div>
+  <form [formGroup]="form">
+    <div fxLayout="row wrap">
+      <div fxFlex="50">
+        <mat-form-field style="text-align: right;font-size: 1.5rem;">
+          <input matInput type="text" (keyup)="inputformatNumber($event)" tabindex="1" formControlName="number"
+                 autocomplete="off">
+        </mat-form-field>
+      </div>
+      <div fxFlex="50" class="form-radio-field">
+        <mat-radio-group tabindex="2" formControlName="type">
+          <mat-radio-button *ngFor=" let typeItem of typeItems" [value]="typeItem.id" (click)="updateEvent()"
+                            (mouseover)="updateEvent()" (mouseout)="updateEvent()">
+            {{typeItem.title}}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+    </div>
 
-    </form>
+  </form>
 </div>
 <div mat-dialog-actions>
-    <button mat-raised-button color="primary" tabindex="3" (click)="submit()">
-        <mat-icon>check</mat-icon> Xác nhận
-    </button>
-    <button mat-raised-button (click)="onNoClick()" tabindex="-1">
-        <mat-icon>cancel</mat-icon> Bỏ qua
-    </button>
+  <button mat-raised-button color="primary" tabindex="3" (click)="submit()">
+    <mat-icon>check</mat-icon>
+    Xác nhận
+  </button>
+  <button mat-raised-button (click)="onNoClick()" tabindex="-1">
+    <mat-icon>cancel</mat-icon>
+    Bỏ qua
+  </button>
 </div>

@@ -95,22 +95,13 @@ export class NotificationListComponent extends ListComponentBase implements OnIn
   makeAsRead(item, view = false) {
     this.mainSer.update(item.id, {is_read: 1}).subscribe(x => {
       if (x) {
-        this.notifier.notify('success', 'Đã xem thông báo!');
+        // this.notifier.notify('success', 'Đã xem thông báo!');
         item.is_read = 1;
         this.sidenav.loadNotification();
 
         if (view) {
-          if (item.notification.notification_type === 'contract_nearly_vietlott') {
-            this.router.navigate(['/', 'contract-vietlott', 'list', 'nearly']);
-          }
-          if (item.notification.notification_type === 'contract_nearly_partner') {
-            this.router.navigate(['/', 'contract-partner', 'list', 'nearly']);
-          }
-          if (item.notification.notification_type === 'contract_expired_vietlott') {
-            this.router.navigate(['/', 'contract-vietlott', 'list', 'expired']);
-          }
-          if (item.notification.notification_type === 'contract_expired_partner') {
-            this.router.navigate(['/', 'contract-partner', 'list', 'expired']);
+          if (item.notification.notification_type === 'lower_stock') {
+            this.router.navigateByUrl('/store/product?quota_stock=lower');
           }
         }
       }
@@ -119,7 +110,7 @@ export class NotificationListComponent extends ListComponentBase implements OnIn
 
   delete(item) {
     this.mainSer.delete(item.id).subscribe(x => {
-      this.notifier.notify('warning', 'Xóa thành công!');
+      this.notifier.notify('warning', 'Đã xóa thông báo!');
       this.loadData();
     });
   }

@@ -155,7 +155,6 @@ export class ProductMedicineDialogComponent implements OnInit {
   selectedFiles: ImageSnippet[] = [];
 
   initForm() {
-    // console.log(this.local_data);
     this.form = this.fb.group({
       product_no: [
         null,
@@ -172,7 +171,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       group_id: [null],
       placements: [[]],
       product_name: [this.local_data && this.local_data['product_name'] ? this.local_data['product_name'] : null, Validators.required],
-      sell_price: [null, Validators.required],
+      sell_price: [0, Validators.required],
       original_price: [0],
       weight: [null],
       base_unit: ['viên', Validators.required],
@@ -308,7 +307,7 @@ export class ProductMedicineDialogComponent implements OnInit {
   changeUnitValue(event: any, i) {
     const value = event.target.value;
     this.units.controls[i].patchValue({
-      unit_price: numeral(value * numeral(this.form.controls['sell_price'].value).value()).format('0,0'),
+      unit_price: numeral(value * numeral(this.form.controls['sell_price'].value).value()).value(),
     });
   }
 
@@ -321,18 +320,13 @@ export class ProductMedicineDialogComponent implements OnInit {
 
   changeBaseUnitValue(event: any, i) {
     const value = numeral(event.target.value).value();
-    // console.log(this.units.controls[i].value);
     this.units.controls[i].patchValue({
-      unit_price: numeral(value).format('0,0'),
+      unit_price: numeral(value).value(),
     });
-    // if (i === Number(this._convertIndex)) {
-    //   this.form.controls.sell_price.patchValue(numeral(value / this.units.controls[i].value.unit_value).format('0,0'));
-    // }
   }
 
   loadProduct(id, copy: any = null) {
     this.productSer.getDetail(id, 'medicine,images,productPlacements,productUnits,quantity').subscribe(product => {
-      // console.log(product);
       const placements = [];
       product['productPlacements'].forEach(pPlacement => {
         placements.push(pPlacement.id);
@@ -347,7 +341,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       // console.log(product['quantity']);
       if (product['quantity']) {
         this.form.patchValue({
-          quantity_of_stock: numeral(product['quantity'].number).format('0,0'),
+          quantity_of_stock: numeral(product['quantity'].number).value(),
         });
       }
 
@@ -360,8 +354,8 @@ export class ProductMedicineDialogComponent implements OnInit {
           using_id: product['using_id'],
           group_id: product['group_id'],
           product_name: product['product_name'],
-          sell_price: numeral(product['sell_price']).format('0,0'),
-          original_price: numeral(product['original_price']).format('0,0'),
+          sell_price: numeral(product['sell_price']).value(),
+          original_price: numeral(product['original_price']).value(),
           weight: product['weight'],
           base_unit: product['base_unit'],
           medicine_id: product['medicine_id'],
@@ -382,8 +376,8 @@ export class ProductMedicineDialogComponent implements OnInit {
           using_id: product['using_id'],
           group_id: product['group_id'],
           product_name: product['product_name'],
-          sell_price: numeral(product['sell_price']).format('0,0'),
-          original_price: numeral(product['original_price']).format('0,0'),
+          sell_price: numeral(product['sell_price']).value(),
+          original_price: numeral(product['original_price']).value(),
           weight: product['weight'],
           base_unit: product['base_unit'],
           medicine_id: product['medicine_id'],
@@ -410,7 +404,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           const group = new FormGroup({
             unit_name: new FormControl(pUnit['name'], Validators.required),
             unit_value: new FormControl(pUnit['value'], Validators.required),
-            unit_price: new FormControl(numeral(pUnit['sell_price']).format('0,0'), Validators.required),
+            unit_price: new FormControl(numeral(pUnit['sell_price']).value(), Validators.required),
             unit_no: new FormControl(pUnit['no']),
             id: new FormControl(pUnit['id'])
           });

@@ -59,6 +59,19 @@
           </mat-form-field>
         </mat-card-content>
       </mat-card>
+
+      <mat-card class="time-filter-info">
+        <mat-card-content>
+          <mat-form-field>
+            <mat-label>Định mức</mat-label>
+            <mat-select formControlName="quota_stock" (selectionChange)="typeProductFilterChange()" multiple>
+              <mat-option *ngFor="let item of quotaStockFilterList"
+                          [value]="item.value">{{ item.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
     </form>
 
   </mat-sidenav>
@@ -184,11 +197,11 @@
               <ng-container matColumnDef="quantity">
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['quantity']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
-                  <span *ngIf="element.quantity !== null;else quantityNull">
+                  <span *ngIf="element.quantity !== null && element.quantity.number > 0;else quantityNull" class="label" [class.label-success]="element.quantity.number >= element.min_quantity" [class.label-warning]="element.quantity.number < element.min_quantity">
                     {{ element.quantity.number | number }}
                   </span>
                   <ng-template #quantityNull>
-                    <span>0</span>
+                    <span class="label label-danger">0</span>
                   </ng-template>
                 </td>
               </ng-container>

@@ -22,7 +22,9 @@ import {WarehouseDiscountDialogComponent} from '../warehouse-discount-dialog/war
 import {SupplierFormDialogComponent} from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
 import {ProductMedicineDialogComponent} from '../../product/product-medicine-dialog/product-medicine-dialog.component';
 // tslint:disable-next-line:max-line-length
-import {ProductMerchandiseFormDialogComponent} from '../../product/product-merchandise-form-dialog/product-merchandise-form-dialog.component';
+import {
+  ProductMerchandiseFormDialogComponent
+} from '../../product/product-merchandise-form-dialog/product-merchandise-form-dialog.component';
 import {UserService} from '../../user/user.service';
 import * as numeral from 'numeral';
 import {MedicineService} from '../../medicine/medicine.service';
@@ -34,6 +36,9 @@ import {OptionStore} from '../../common/option-store.model';
 import {WarehouseExpensesComponent} from '../warehouse-expenses/warehouse-expenses.component';
 import {WarehouseParcelListDialogComponent} from '../warehouse-parcel-list-dialog/warehouse-parcel-list-dialog.component';
 import {WarehouseFormPriceDialogComponent} from '../warehouse-form-price-dialog/warehouse-form-price-dialog.component';
+import {SearchProductDialogComponent} from '../../common/search-product-dialog/search-product-dialog.component';
+import * as moment from 'moment';
+
 
 @Component({
   selector: 'app-warehouse-import-form',
@@ -154,7 +159,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
     optionStorePromise.then(() => {
 
-
       this.allPermission = sessionStorage.getItem('allPermission').split(',');
       this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
 
@@ -240,8 +244,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
                 }
               });
 
-              // this.expensesTransactions = <ExpensesTransaction[]>resEx.body;
-              // this.recalculateWarehouse();
             });
           }
 
@@ -251,15 +253,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
             this.form.patchValue({
               action_change: 1,
             });
+            this.form.controls['date'].disable();
+            this.form.controls['no'].disable();
           }
 
-          this.form.controls['date'].disable();
-          this.form.controls['no'].disable();
           this.form.controls['status'].disable();
           this.form.controls['quantity'].disable();
-          // this.form.controls['total_price'].disable();
-          // this.form.controls['remain_amount'].disable();
-          // this.form.controls['expenses_price'].disable();
 
           this.loadData();
         });
@@ -287,17 +286,13 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         }
       }
 
-      // this.setUpExpensesTransactions();
-
       const product_id = localStorage.getItem('product_id');
       if (product_id !== null) {
         this.handleAddProductToList(product_id);
         localStorage.removeItem('product_id');
       }
 
-
     });
-
 
   }
 
@@ -437,12 +432,22 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         data['expenses_price'] = numeral(data['expenses_price']).value();
         data['action_change'] = numeral(data['action_change']).value(); // chuc nang cap nhat don hoan thanh
         data['expensesTransactions'] = this.expensesTransactions;
-        if (this.form.controls['date'].value !== null && typeof this.form.controls['date'].value === 'object') {
-          const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
-          data['date'] = effDate.toISOString().split('T')[0];
+        if (this.form.controls['date'].value !== null ) {
+          if(typeof this.form.controls['date'].value === 'object'){
+            const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
+            data['date'] = effDate.toISOString().split('T')[0];
+          }else{
+            // @@ NGHIA
+            const effDate = this.form.controls['date'].value;
+            data['date'] = effDate.split('T')[0];
+            data['date'] = moment(data['date'], "YYYY-MM-DD").add(1, 'days').format("YYYY-MM-DD");
+          }
         }
         this.data.forEach(element => {
           element.price = numeral(element.price).value();
+          element.amount = numeral(element.amount).value();
+          element.discount = numeral(element.discount).value();
+          element.vat = numeral(element.vat).value();
         });
         data['items'] = this.data;
         // console.log(this.data);
@@ -458,8 +463,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
             this.notifySer.notify('error', 'Bạn không có quyền thực hiện chức năng này.');
             return;
           }
-          delete data['date'];
-          delete data['supplier'];
+          //delete data['date'];
+          //delete data['supplier'];
           this.mainService.update(this.updateModelId, data).subscribe(res => {
             this.notifySer.notify('success', 'Lưu thành công.');
             if (status === 9) {
@@ -1001,13 +1006,27 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     });
   }
 
+  openSearchProductDialog() {
+
+    const dialogRef = this.dialog.open(SearchProductDialogComponent, {
+      width: '80%',
+      minWidth: '750px',
+      minHeight: '85%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result['event'] === 'Choose') {
+        this.handleAddProductToList(result['product_id']);
+      }
+    });
+  }
+
   openProductMedicineDialog(action, obj) {
     obj.action = action;
     obj.title = 'Thêm thuốc';
     obj.product_id = null;
     obj.copy_product_id = null;
     obj.product_name = this.selectProduct.value;
-    console.log(obj);
     const dialogRef = this.dialog.open(ProductMedicineDialogComponent, {
       data: obj,
       width: '60%',

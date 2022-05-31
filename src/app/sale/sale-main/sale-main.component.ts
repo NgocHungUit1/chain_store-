@@ -1533,8 +1533,19 @@ export class SaleMainComponent implements OnInit {
     this.listProduct = [];
     this.prescription.checked = false;
     this.prescription_id = null;
+    this.discount = 0;
+    this.numberDiscount = 0;
     setTimeout(() => {
       this.listProduct = [];
+      this.discount = 0;
+      this.numberDiscount = 0;
+
+      const today = new Date();
+      const time = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
+      this.form.patchValue({
+        time: time,
+      });
+
     }, 500);
   }
 
