@@ -321,7 +321,9 @@
                           formControlName="note" rows="3"></textarea>
               </mat-form-field>
             </div>
-            <p>Bạn đang cập nhật lại đơn đã hoàn thành, phân mềm sẽ xóa thông tin thẻ kho cũ và cập nhật mới lại trong đơn này </p>
+            <p *ngIf="updateModelId !== null && model !== null && model['status'] === 10">
+              Bạn đang cập nhật lại đơn đã hoàn thành, phần mềm sẽ xóa thông tin thẻ kho cũ và cập nhật mới theo đơn này
+            </p>
             <div fxFlex="100">
               <button *ngIf="updateModelId === null || (model !== null && model['status'] === 9)" mat-raised-button
                       color="accent" fxFlex="45" tabindex="10" [disabled]="this.form.invalid" (click)="submit(9)">
@@ -338,7 +340,7 @@
                       [disabled]="this.form.invalid || checkPermissionDisable('Warehouse.Update') || !isAdminStore"
                       tabindex="11">
                 <mat-icon>check</mat-icon>
-                Lưu
+                Lưu sửa đổi
               </button>
             </div>
 
