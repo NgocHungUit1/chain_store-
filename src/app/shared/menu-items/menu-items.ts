@@ -59,7 +59,7 @@ const MENUITEMS = [
     roles: ['ADMIN', 'WAREHOUSE', 'SALE'],
     // badge: [{type: 'red', value: '17'}],
     children: [
-      {state: 'medicine', name: 'Danh mục thuốc', type: 'link', icon: 'list', roles: ['ADMIN', 'WAREHOUSE', 'SALE']},
+      // {state: 'medicine', name: 'Danh mục thuốc', type: 'link', icon: 'list', roles: ['ADMIN', 'WAREHOUSE', 'SALE']},
       {state: 'product', name: 'Sản phẩm', type: 'link', icon: 'local_pharmacy', roles: ['ADMIN', 'WAREHOUSE']},
       {state: 'sample-prescription', name: 'Đơn thuốc mẫu', type: 'link', icon: 'list_alt', roles: ['ADMIN', 'SALE']},
       {state: 'price-book', name: 'Thiết lập giá', type: 'link', icon: 'loyalty', roles: ['ADMIN', 'WAREHOUSE']},

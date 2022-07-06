@@ -20,10 +20,6 @@ export class ProductStockChangeDialogComponent extends ListComponentBase impleme
   local_data: any;
   product_id: string;
 
-
-
-
-
   constructor(
     public notifySer: NotifierService,
     private route: ActivatedRoute,
@@ -53,6 +49,7 @@ export class ProductStockChangeDialogComponent extends ListComponentBase impleme
 
   methodLabels = {
     'import': 'Nhập hàng',
+    'delete-import': 'Xóa đơn nhập hàng',
     'return': 'Trả hàng nhập',
     'stock-take': 'Kiểm kho',
     'sale': 'Bán hàng',
@@ -95,7 +92,7 @@ export class ProductStockChangeDialogComponent extends ListComponentBase impleme
     }
 
     filter.page = this.route.snapshot.queryParams['page'];
-    filter.pageSize = this.route.snapshot.queryParams['pageSize'];
+    filter.pageSize = 10; //this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.product_id = this.product_id;
     filter.expand = '';

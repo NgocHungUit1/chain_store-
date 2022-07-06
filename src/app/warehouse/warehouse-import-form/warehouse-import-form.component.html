@@ -300,7 +300,7 @@
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Tiền trả nhà cung cấp</mat-label>
-                <input matInput tabindex="7" formControlName="paid_amount" (keyup)="inputformatNumber($event)"
+                <input matInput tabindex="7" formControlName="paid_amount" (keyup)="inputformatNumber($event)" required
                        value="{{ form.get('paid_amount').value }}" (change)="recalculateWarehouse();">
                 <button mat-raised-button color="primary" matSuffix (click)="paidAmount()">
                   Trả đủ
@@ -321,6 +321,7 @@
                           formControlName="note" rows="3"></textarea>
               </mat-form-field>
             </div>
+            <p>Bạn đang cập nhật lại đơn đã hoàn thành, phân mềm sẽ xóa thông tin thẻ kho cũ và cập nhật mới lại trong đơn này </p>
             <div fxFlex="100">
               <button *ngIf="updateModelId === null || (model !== null && model['status'] === 9)" mat-raised-button
                       color="accent" fxFlex="45" tabindex="10" [disabled]="this.form.invalid" (click)="submit(9)">
