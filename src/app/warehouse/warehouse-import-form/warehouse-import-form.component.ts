@@ -128,6 +128,21 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   filteredProducts: Observable<Product[]>;
   filteredMedicines: Observable<Medicine[]>;
 
+  fieldLabels = {
+    no: 'Mã phiếu',
+    supplier: 'nhà cung cấp',
+    status: 'trạng thái',
+    type: 'loại',
+    quantity: 'sô luọng',
+    total_price: 'tổng tiền',
+    total_amount: '',
+    discount_amount: 'giảm giá',
+    discount_type: 'loại giảm giá',
+    paid_amount: 'tiền trả',
+    remain_amount: 'tiền thừa',
+    branch_id: 'chi nhánh',
+  };
+
   ngOnInit() {
 
     const date = new FormControl(new Date());
@@ -249,7 +264,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
           // Luu thong tin
           if (this.updateModelId !== null && res['status'] === 10) {
-            // console.log(res['status']);
+            console.log(res['status']);
             this.form.patchValue({
               action_change: 1,
             });
@@ -405,7 +420,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
     const promise = new Promise((resolve, reject) => {
       const list = this.data;
-      // console.log(list);
       if (list.length > 0) {
         list.forEach(element => {
           if (element.quantity === 0) {
@@ -422,6 +436,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     });
 
     promise.then(() => {
+      // console.log(this.form.valid);
+      // console.log(this.form.controls);
       if (this.form.valid) {
         data['supplier_id'] = data['supplier']['id'];
         data['quantity'] = numeral(data['quantity']).value();
@@ -433,10 +449,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         data['action_change'] = numeral(data['action_change']).value(); // chuc nang cap nhat don hoan thanh
         data['expensesTransactions'] = this.expensesTransactions;
         if (this.form.controls['date'].value !== null ) {
-          if(typeof this.form.controls['date'].value === 'object'){
+          if (typeof this.form.controls['date'].value === 'object'){
             const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
             data['date'] = effDate.toISOString().split('T')[0];
-          }else{
+          } else {
             // @@ NGHIA
             const effDate = this.form.controls['date'].value;
             data['date'] = effDate.split('T')[0];
@@ -465,7 +481,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           }
           //delete data['date'];
           //delete data['supplier'];
-          this.mainService.update(this.updateModelId, data).subscribe(res => {
+          this.mainService.update(this.updateModelId, data).subscribe(res => { //
             this.notifySer.notify('success', 'Lưu thành công.');
             if (status === 9) {
               this.model = res;
@@ -486,11 +502,31 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
           });
         }
+      } else {
+        // Form errors
+        const controls = Object.entries(this.form.controls);
+        const hasError = this.checkToShowControlError(controls);
       }
 
     }).catch(() => {
       console.log('rejected');
     });
+  }
+
+  checkToShowControlError(controls) {
+    const count = controls.length;
+    let hasError = false;
+    for (let i = 0; i < count; i++) {
+      const fieldName = controls[i][0];
+      const fieldControl = controls[i][1];
+      if (fieldControl['errors'] !== null) {
+        this.notifySer.notify('error', 'Lỗi thông tin trường ' + this.fieldLabels[fieldName]);
+        hasError = true;
+        break;
+      }
+    }
+
+    return hasError;
   }
 
   /**

@@ -132,8 +132,8 @@ export class ProductTabStockChangeComponent extends ListComponentBase implements
     const dialogRef = this.dialog.open(ProductStockChangeDialogComponent, {
       data: obj,
       width: '80%',
-      // minHeight: '80%',
-      maxHeight: '500px'
+      minHeight: '80%',
+      // maxHeight: '500px'
     });
 
     dialogRef.afterClosed().subscribe(result => {
