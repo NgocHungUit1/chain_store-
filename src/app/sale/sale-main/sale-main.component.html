@@ -2,31 +2,41 @@
   <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
 </div>
 
-
-<div fxLayout="row wrap" style="height: 100%;">
+<div fxLayout="row wrap" style="height: 100%">
   <div fxFlex="72.5" class="main-sale">
     <div class="container-main-sale">
       <div class="product-cart" [class.fixed-list]="showList">
-
         <!----------------------------------------- SALE-DETAIL-ORDER ---------------------------------------->
 
-        <div *ngFor="let itemProduct of listProduct; let i = index" class="product-item">
-          <div fxLayout="row wrap" fxLayoutAlign="center center" class="row-item">
-
+        <div
+          *ngFor="let itemProduct of listProduct; let i = index"
+          class="product-item">
+          <div
+            fxLayout="row wrap"
+            fxLayoutAlign="center center"
+            class="row-item">
             <div fxFlex="2" class="row-product-no">
               <!--<span style="padding-right: 10px">{{  countProduct - i  }}</span>-->
-              <span style="padding-right: 10px">{{  i + 1  }}</span>
+              <span style="padding-right: 10px">{{ i + 1 }}</span>
             </div>
             <div fxFlex="auto">
-              <div class="row-text row-product-name" title="{{ itemProduct?.product?.product_name }}">
-
+              <div
+                class="row-text row-product-name"
+                title="{{ itemProduct?.product?.product_name }}">
                 <!--<div
                   *ngIf="itemProduct?.product?.product_name.length > 50">{{ itemProduct?.product?.product_name | slice:0:50 }}
                   ...</div>
                 <div
                   *ngIf="itemProduct?.product?.product_name.length <= 50">{{ itemProduct.product?.product_name }}</div>-->
-                <div style="max-width: 330px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis">
-                  {{ itemProduct.product?.product_name }}</div>
+                <div
+                  style="
+                    max-width: 330px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                  ">
+                  {{ itemProduct.product?.product_name }}
+                </div>
 
                 <!-- <span *ngIf="itemProduct.product?.base_unit !== null"> - {{ itemProduct.product?.base_unit }}</span> -->
               </div>
@@ -37,28 +47,46 @@
                 {{ itemProduct?.product?.product_no }}
               </div>
               <div class="row-product-note d-flex align-items-center">
-                <span *ngIf="itemProduct?.product?.note_detail_sale === undefined">Ghi chú liều
-                  dùng</span>
-                <span class="product-note-txt"
-                      *ngIf="itemProduct?.product?.note_detail_sale">{{ itemProduct?.product?.note_detail_sale }}</span>
+                <span
+                  *ngIf="itemProduct?.product?.note_detail_sale === undefined"
+                  >Ghi chú liều dùng</span
+                >
+                <span
+                  class="product-note-txt"
+                  *ngIf="itemProduct?.product?.note_detail_sale"
+                  >{{ itemProduct?.product?.note_detail_sale }}</span
+                >
                 <button mat-icon-button>
-                  <mat-icon class="row-icon-edit"
-                            (click)="openNoteDetailOrderDialog(i,itemProduct?.product_unit_id,itemProduct?.product?.note_detail_sale)">
+                  <mat-icon
+                    class="row-icon-edit"
+                    (click)="
+                      openNoteDetailOrderDialog(
+                        i,
+                        itemProduct?.product_unit_id,
+                        itemProduct?.product?.note_detail_sale
+                      )
+                    ">
                     edit
                   </mat-icon>
                 </button>
               </div>
             </div>
             <div fxFlex="2"></div>
-            <div fxFlex="14" class="row-product-base-unit">
+            <div fxFlex="8" class="row-product-base-unit">
               <div fxLayout="row wrap">
                 <mat-form-field appearance="fill">
-                  <mat-label>Đơn vị</mat-label>
-                  <mat-select [(value)]="itemProduct.product_unit_id"
-                              (selectionChange)="onChangeProductUnit($event,itemProduct,i)">
-                    <mat-option *ngFor="let unit of itemProduct.product?.productUnits" [value]="unit.id"
-                                [disabled]="localItemInvoice?.is_return == true">
-                      {{ unit.name }} - Tồn: {{ unit.quantity_of_stock }}
+                  <!-- <mat-label>Đơn vị</mat-label> -->
+                  <mat-select
+                    [(value)]="itemProduct.product_unit_id"
+                    (selectionChange)="
+                      onChangeProductUnit($event, itemProduct, i)
+                    ">
+                    <mat-option
+                      *ngFor="let unit of itemProduct.product?.productUnits"
+                      [value]="unit.id"
+                      [disabled]="localItemInvoice?.is_return == true">
+                      {{ unit.name }}
+                      <!-- - Tồn: {{ unit.quantity_of_stock }} -->
                     </mat-option>
                   </mat-select>
                 </mat-form-field>
@@ -66,102 +94,135 @@
             </div>
 
             <div fxFlex="13" class="row-amount">
-
-              <div *ngIf="localItemInvoice?.is_return !== true; else changeAmount">
-
+              <div
+                *ngIf="localItemInvoice?.is_return !== true; else changeAmount">
                 <div fxLayout="row wrap">
-                  <mat-form-field floatLabel="never" style=" font-size: 20px; text-align: center;">
-                    <button matPrefix mat-icon-button class="row-button-edit-amount"
-                            (click)="upAmountProduct(itemProduct.product,i)">
+                  <mat-form-field
+                    floatLabel="never"
+                    style="font-size: 20px; text-align: center">
+                    <button
+                      matPrefix
+                      mat-icon-button
+                      class="row-button-edit-amount"
+                      (click)="upAmountProduct(itemProduct.product, i)">
                       <mat-icon>keyboard_arrow_up</mat-icon>
                     </button>
-                    <input matInput tabindex="3" min="0" class="row-amount-number"
-                           style="caret-color: red;"
-                           (change)="inputAmountProduct(i,$event)" [value]="itemProduct?.amount"
-                           autocomplete="off">
-                    <button matSuffix mat-icon-button class="row-button-edit-amount"
-                            (click)="downAmountProduct(itemProduct.product,i)">
+                    <input
+                      matInput
+                      tabindex="3"
+                      min="0"
+                      class="row-amount-number"
+                      style="caret-color: red"
+                      (change)="inputAmountProduct(i, $event)"
+                      [value]="itemProduct?.amount"
+                      autocomplete="off" />
+                    <button
+                      matSuffix
+                      mat-icon-button
+                      class="row-button-edit-amount"
+                      (click)="downAmountProduct(itemProduct.product, i)">
                       <mat-icon>keyboard_arrow_down</mat-icon>
                     </button>
                   </mat-form-field>
                 </div>
-
               </div>
               <ng-template #changeAmount>
-
                 <!-- change amount on return -->
                 <div fxLayout="row wrap">
-                  <mat-form-field floatLabel="never" style=" font-size: 20px; text-align: center;">
-                    <button matPrefix mat-icon-button class="row-button-edit-amount"
-                            (click)="upAmountProductReturn(itemProduct.product,i)">
+                  <mat-form-field
+                    floatLabel="never"
+                    style="font-size: 20px; text-align: center">
+                    <button
+                      matPrefix
+                      mat-icon-button
+                      class="row-button-edit-amount"
+                      (click)="upAmountProductReturn(itemProduct.product, i)">
                       <mat-icon>keyboard_arrow_up</mat-icon>
                     </button>
-                    <input matInput tabindex="3" min="0" max="{{ itemProduct?.max_amount_return }}"
-                           class="row-amount-number" (input)="inputAmountProductReturn(i,$event.target.value)"
-                           value="{{ itemProduct?.amount }}" autocomplete="off">
-                    <button matSuffix mat-icon-button class="row-button-edit-amount"
-                            (click)="downAmountProduct(itemProduct.product,i)">
+                    <input
+                      matInput
+                      tabindex="3"
+                      min="0"
+                      max="{{ itemProduct?.max_amount_return }}"
+                      class="row-amount-number"
+                      (input)="inputAmountProductReturn(i, $event.target.value)"
+                      value="{{ itemProduct?.amount }}"
+                      autocomplete="off" />
+                    <button
+                      matSuffix
+                      mat-icon-button
+                      class="row-button-edit-amount"
+                      (click)="downAmountProduct(itemProduct.product, i)">
                       <mat-icon>keyboard_arrow_down</mat-icon>
                     </button>
                   </mat-form-field>
-                  <span class="amount-cell-sub">/{{ itemProduct?.max_amount_return }}</span>
+                  <span class="amount-cell-sub"
+                    >/{{ itemProduct?.max_amount_return }}</span
+                  >
                 </div>
-
               </ng-template>
-
             </div>
             <div fxFlex="1"></div>
             <div fxFlex="13" class="row-edit-price">
               <div fxLayout="row wrap">
                 <div fxFlex="100">
-
-                  <mat-form-field floatLabel="never" style=" font-size: 20px; text-align: right;">
-                    <input matInput type="text" value="{{  itemProduct | showPrice | number }}" disabled="true"
-                           style="color:black">
+                  <mat-form-field
+                    floatLabel="never"
+                    style="font-size: 20px; text-align: right">
+                    <input
+                      matInput
+                      type="text"
+                      value="{{ itemProduct | showPrice | number }}"
+                      disabled="true"
+                      style="color: black" />
                     <button mat-icon-button matPrefix>
-                      <mat-icon class="row-icon-edit-price"
-                                (click)="openPriceDetailOrderDialog(i,itemProduct.product,itemProduct.common_price)">
+                      <mat-icon
+                        class="row-icon-edit-price"
+                        (click)="
+                          openPriceDetailOrderDialog(
+                            i,
+                            itemProduct.product,
+                            itemProduct.common_price
+                          )
+                        ">
                         edit
                       </mat-icon>
                     </button>
                   </mat-form-field>
-
                 </div>
-
               </div>
-
             </div>
             <div fxFlex="12" class="row-total-price">
-
               <span>
                 {{ itemProduct | totalPrice | number }}
               </span>
-
             </div>
             <div fxFlex="6" class="row-count-number">
-
               <button mat-icon-button (click)="deleleProduct(i)">
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
           </div>
-
         </div>
 
         <!--------------------------------------- END SALE-DETAIL-ORDER ------------------------------------------>
 
-
-        <button mat-fab color="primary" matTooltip="Danh sách sản phẩm" matTooltipPosition="right"
-                class="show-list-btn" #showListProd
-                style="" (click)="showList = !showList;">
+        <button
+          mat-fab
+          color="primary"
+          matTooltip="Danh sách sản phẩm"
+          matTooltipPosition="right"
+          class="show-list-btn"
+          #showListProd
+          style=""
+          (click)="showList = !showList">
           <mat-icon *ngIf="showList">zoom_out </mat-icon>
           <mat-icon *ngIf="!showList">zoom_in</mat-icon>
         </button>
-
-
       </div>
-      <app-sale-list-product class="sale-list-product" [class.opened]="showList"></app-sale-list-product>
-
+      <app-sale-list-product
+        class="sale-list-product"
+        [class.opened]="showList"></app-sale-list-product>
     </div>
   </div>
   <div fxFlex=".5"></div>
@@ -170,355 +231,487 @@
       <!-- <app-sale-siderbar-order></app-sale-siderbar-order> -->
       <!---------------------------------------  SALE-SIDER-BAR-ORDER ------------------------------------------>
 
-
       <div class="main-sale-sidebar-order">
-        <form [formGroup]="form">
+        <form [formGroup]="form" style="height: 100%">
+          <div
+            class="d-flex"
+            style="
+              flex-direction: column;
+              justify-content: space-between;
+              height: 100%;
+            ">
+            <!-- top -->
+            <div class="sidebar-order-top">
+              <div class="user-action">
+                <div fxLayout="row wrap">
+                  <div fxFlex="49">
+                    <mat-form-field>
+                      <input
+                        class="input-search-user input-search"
+                        type="text"
+                        [formControl]="selectUser"
+                        matInput
+                        [matAutocomplete]="chooseUser"
+                        placeholder="Tìm nhân viên "
+                        [readonly]="localItemInvoice?.is_return == true" />
+                      <button mat-icon-button matPrefix>
+                        <mat-icon>search</mat-icon>
+                      </button>
+                      <mat-autocomplete
+                        #chooseUser="matAutocomplete"
+                        (optionSelected)="onSelectedUser($event.option.value)">
+                        <mat-option
+                          *ngFor="let user of filteredUsers | async"
+                          [value]="user">
+                          <span>{{ user.username }}</span> |
+                          <small>email: {{ user.email }}</small>
+                        </mat-option>
+                      </mat-autocomplete>
+                    </mat-form-field>
+                  </div>
+                  <div fxFlex="2"></div>
+                  <div fxFlex="49">
+                    <div fxLayout="row wrap flex-end">
+                      <div fxFlex.gt-sm="40" fxFlex.gt-xs="49" fxFlex="100">
+                        <mat-form-field class="date-picker">
+                          <input
+                            class="input-search"
+                            matInput
+                            [matDatepicker]="date_picker"
+                            formControlName="today"
+                            placeholder="Ngày"
+                            required="required"
+                            readonly />
+                          <mat-datepicker-toggle
+                            matSuffix
+                            [for]="date_picker"></mat-datepicker-toggle>
+                          <mat-datepicker #date_picker></mat-datepicker>
+                        </mat-form-field>
+                      </div>
+                      <div fxFlex="2"></div>
+                      <div fxFlex.gt-sm="50" fxFlex.gt-xs="49" fxFlex="100">
+                        <mat-form-field class="date-picker">
+                          <input
+                            class="input-search"
+                            matInput
+                            formControlName="time"
+                            type="time"
+                            placeholder="Thời gian"
+                            required="required"
+                            readonly />
+                        </mat-form-field>
+                      </div>
+                    </div>
 
-          <div class="user-action">
-            <div fxLayout="row wrap">
-              <div fxFlex="49">
-
-                <mat-form-field>
-                  <input class="input-search-user input-search" type="text" [formControl]="selectUser" matInput
-                         [matAutocomplete]="chooseUser" placeholder="Tìm nhân viên "
-                         [readonly]="localItemInvoice?.is_return == true">
-                  <button mat-icon-button matPrefix>
-                    <mat-icon>search</mat-icon>
-                  </button>
-                  <mat-autocomplete #chooseUser="matAutocomplete"
-                                    (optionSelected)="onSelectedUser($event.option.value)">
-                    <mat-option *ngFor="let user of filteredUsers | async" [value]="user">
-                      <span>{{user.username}}</span> |
-                      <small>email: {{user.email}}</small>
-                    </mat-option>
-                  </mat-autocomplete>
-                </mat-form-field>
-
-              </div>
-              <div fxFlex="2"></div>
-              <div fxFlex="49">
-                <!--                <mat-form-field>-->
-                <!--                  <input matInput class="input-search" value="{{ today | date:'shortTime' }}" disabled>-->
-                <!--                </mat-form-field>-->
-
-                <!--                <mat-form-field>-->
-                <!--                  <mat-label>Ngày</mat-label>-->
-                <!--                  <input class="input-search" matInput  [matDatepicker]="date_picker"  formControlName="today"-->
-                <!--                         required="required">-->
-                <!--                  <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>-->
-                <!--                  <mat-datepicker #date_picker></mat-datepicker>-->
-                <!--                </mat-form-field>-->
-
-                <mat-form-field>
-                  <button mat-icon-button matPrefix>
-                    <mat-icon>business</mat-icon>
-                  </button>
-                  <mat-select class="input-search" placeholder="Chọn chi nhánh" formControlName="branch_id"
-                              (selectionChange)="changeBranch($event)"
-                              [disabled]="localItemInvoice?.is_return === true">
-                    <mat-option *ngFor="let branch of branchList " [value]="branch.id">
-                      {{ branch.name }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-
-              </div>
-            </div>
-
-            <div fxLayout="row wrap">
-              <div fxFlex.gt-sm="30" fxFlex.gt-xs="49" fxFlex="100">
-                <mat-form-field>
-                  <mat-label>Ngày</mat-label>
-                  <input class="input-search" matInput [matDatepicker]="date_picker" formControlName="today"
-                         required="required">
-                  <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>
-                  <mat-datepicker #date_picker></mat-datepicker>
-                </mat-form-field>
-              </div>
-              <div fxFlex="2">
-              </div>
-              <div fxFlex.gt-sm="30" fxFlex.gt-xs="49" fxFlex="100">
-                <mat-form-field>
-                  <mat-label>Thời gian</mat-label>
-                  <input matInput formControlName="time" type="time"
-                         required="required">
-                </mat-form-field>
-              </div>
-            </div>
-
-          </div>
-
-          <!--          <div class="branch-action">-->
-          <!--            <mat-form-field>-->
-          <!--              <button mat-icon-button matPrefix>-->
-          <!--                <mat-icon>business</mat-icon>-->
-          <!--              </button>-->
-          <!--              <mat-select class="input-search" placeholder="Chọn chi nhánh" formControlName="branch_id"-->
-          <!--                          (selectionChange)="changeBranch($event)"-->
-          <!--                          [disabled]="localItemInvoice?.is_return === true">-->
-          <!--                <mat-option *ngFor="let branch of branchList " [value]="branch.id">-->
-          <!--                  {{ branch.name }}-->
-          <!--                </mat-option>-->
-          <!--              </mat-select>-->
-          <!--            </mat-form-field>-->
-          <!--          </div>-->
-
-          <div class="customer-action">
-            <div fxLayout="row wrap">
-              <div fxFlex="100">
-                <mat-form-field>
-                  <input class="input-search-customer input-search" type="text" [formControl]="selectCustomer" matInput
-                         [matAutocomplete]="chooseProduct" placeholder="Tìm khách hàng (F4)"
-                         [readonly]="localItemInvoice?.is_return == true" #customerSearch>
-                  <button mat-icon-button matPrefix>
-                    <mat-icon>search</mat-icon>
-                  </button>
-                  <mat-autocomplete #chooseProduct="matAutocomplete"
-                                    (optionSelected)="onSelectedCustomer($event.option.value)">
-                    <mat-option *ngFor="let customer of filteredCustomers | async" [value]="customer">
-                      <span>{{customer.name}}</span> |
-                      <small>phone: {{customer.phone}}</small>
-                    </mat-option>
-                  </mat-autocomplete>
-                  <button *ngIf="isSelectedCustomer" mat-icon-button matSuffix
-                          (click)="this.selectCustomer.patchValue(''); isSelectedCustomer = false">
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                  <button *ngIf="!isSelectedCustomer" mat-icon-button matSuffix>
-                    <mat-icon (click)="openSaleCustomerFormDialogComponent()">add</mat-icon>
-                  </button>
-                </mat-form-field>
-              </div>
-              <!--<div fxFlex="10">
-                <div *ngIf="localItemInvoice?.is_return !== true">
-                  <button mat-button matPrefix>
-                    <mat-icon (click)="openSaleCustomerFormDialogComponent()">add</mat-icon>
-                  </button>
+                    <!-- <mat-form-field>
+                    <button mat-icon-button matPrefix>
+                      <mat-icon>business</mat-icon>
+                    </button>
+                    <mat-select class="input-search" placeholder="Chọn chi nhánh" formControlName="branch_id"
+                                (selectionChange)="changeBranch($event)"
+                                [disabled]="localItemInvoice?.is_return === true">
+                      <mat-option *ngFor="let branch of branchList " [value]="branch.id">
+                        {{ branch.name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field> -->
+                  </div>
                 </div>
-              </div>-->
-            </div>
-          </div>
-
-          <div fxLayout="row wrap" fxLayoutAlign="center center">
-            <div fxFlex="49">
-              <div class="pricebook-action">
-                <mat-form-field>
-                  <button mat-icon-button matPrefix>
-                    <mat-icon>bookmark_border</mat-icon>
-                  </button>
-                  <mat-select class="input-search" placeholder="Chọn bảng giá"
-                              (selectionChange)="choosePriceBook($event)"
-                              formControlName="priceBookID">
-                    <mat-option *ngFor="let priceList of priceLists " [value]="priceList.id"
-                                [disabled]="localItemInvoice?.is_return == true">
-                      {{ priceList.name }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-            </div>
-            <div fxFlex="2"></div>
-            <div fxFlex="49" fxLayoutAlign="end center">
-
-              <div class="ban-thuoc-theo-don" *ngIf="localItemInvoice?.is_return !== true"
-                   [ngClass]="prescription?.checked ? 'prescription-checked' : 'prescription'">
-                <mat-checkbox #prescription
-                              formControlName="prescription_id">
-                </mat-checkbox>
-                <span [ngClass]="prescription?.checked ? 'prescription-text' : ''"
-                      (click)="clickPrescription()"> Bán thuốc theo đơn </span>
               </div>
 
-            </div>
-          </div>
-
-
-          <!--<div class="custom-title-invoice">
-            <div *ngIf="localItemInvoice?.is_return !== true; else titleHoaDon">
-              <label class="mat-h3"> Hóa đơn </label>
-            </div>
-            <ng-template #titleHoaDon>
-              <label class="mat-h3 "> Trả hàng </label>
-            </ng-template>
-          </div>-->
-
-          <mat-divider></mat-divider>
-
-          <div class="order-detail">
-            <div fxLayout="row wrap" class="price-product">
-              <div fxFlex="50" class="price-product-text ">
-                <div *ngIf="localItemInvoice?.is_return !== true; else tongTienHang">
-                  <span matBadge="{{ countProduct }}" matBadgeOverlap="false">Tổng tiền hàng </span>
+              <div class="customer-action">
+                <div fxLayout="row wrap">
+                  <div fxFlex="100">
+                    <mat-form-field>
+                      <input
+                        class="input-search-customer input-search"
+                        type="text"
+                        [formControl]="selectCustomer"
+                        matInput
+                        [matAutocomplete]="chooseProduct"
+                        placeholder="Tìm khách hàng (F4)"
+                        [readonly]="localItemInvoice?.is_return == true"
+                        #customerSearch />
+                      <button mat-icon-button matPrefix>
+                        <mat-icon>search</mat-icon>
+                      </button>
+                      <mat-autocomplete
+                        #chooseProduct="matAutocomplete"
+                        (optionSelected)="
+                          onSelectedCustomer($event.option.value)
+                        ">
+                        <mat-option
+                          *ngFor="let customer of filteredCustomers | async"
+                          [value]="customer">
+                          <span
+                            >{{ customer.name }} -
+                            <small>{{ customer.phone }}</small></span
+                          >
+                        </mat-option>
+                      </mat-autocomplete>
+                      <button
+                        *ngIf="isSelectedCustomer"
+                        mat-icon-button
+                        matSuffix
+                        (click)="
+                          this.selectCustomer.patchValue('');
+                          isSelectedCustomer = false
+                        ">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                      <button
+                        *ngIf="!isSelectedCustomer"
+                        mat-icon-button
+                        matSuffix>
+                        <mat-icon
+                          (click)="openSaleCustomerFormDialogComponent()"
+                          >add</mat-icon
+                        >
+                      </button>
+                    </mat-form-field>
+                  </div>
+                  <!--<div fxFlex="10">
+                  <div *ngIf="localItemInvoice?.is_return !== true">
+                    <button mat-button matPrefix>
+                      <mat-icon (click)="openSaleCustomerFormDialogComponent()">add</mat-icon>
+                    </button>
+                  </div>
+                </div>-->
                 </div>
-                <ng-template #tongTienHang>
-                  <span matBadge="{{ countProduct }}" matBadgeOverlap="false">Tổng tiền hàng trả </span>
+              </div>
+
+              <div fxLayout="row wrap" fxLayoutAlign="center center">
+                <div fxFlex="49">
+                  <div class="pricebook-action">
+                    <mat-form-field>
+                      <button mat-icon-button matPrefix>
+                        <mat-icon>bookmark_border</mat-icon>
+                      </button>
+                      <mat-select
+                        class="input-search"
+                        placeholder="Chọn bảng giá"
+                        (selectionChange)="choosePriceBook($event)"
+                        formControlName="priceBookID">
+                        <mat-option
+                          *ngFor="let priceList of priceLists"
+                          [value]="priceList.id"
+                          [disabled]="localItemInvoice?.is_return == true">
+                          {{ priceList.name }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div fxFlex="2"></div>
+                <div fxFlex="49" fxLayoutAlign="end center">
+                  <div
+                    class="ban-thuoc-theo-don"
+                    *ngIf="localItemInvoice?.is_return !== true"
+                    [ngClass]="
+                      prescription?.checked
+                        ? 'prescription-checked'
+                        : 'prescription'
+                    ">
+                    <mat-checkbox
+                      #prescription
+                      formControlName="prescription_id">
+                    </mat-checkbox>
+                    <span
+                      [ngClass]="
+                        prescription?.checked ? 'prescription-text' : ''
+                      "
+                      (click)="clickPrescription()">
+                      Bán thuốc theo đơn
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!--<div class="custom-title-invoice">
+              <div *ngIf="localItemInvoice?.is_return !== true; else titleHoaDon">
+                <label class="mat-h3"> Hóa đơn </label>
+              </div>
+              <ng-template #titleHoaDon>
+                <label class="mat-h3 "> Trả hàng </label>
+              </ng-template>
+            </div>-->
+
+              <!-- <mat-divider></mat-divider> -->
+
+              <div class="order-detail">
+                <div fxLayout="row wrap" class="price-product">
+                  <div fxFlex="50" class="price-product-text">
+                    <div
+                      *ngIf="
+                        localItemInvoice?.is_return !== true;
+                        else tongTienHang
+                      ">
+                      <span
+                        matBadge="{{ countProduct }}"
+                        matBadgeOverlap="false"
+                        >Tổng tiền hàng
+                      </span>
+                    </div>
+                    <ng-template>
+                      <span
+                        matBadge="{{ countProduct }}"
+                        matBadgeOverlap="false"
+                        >Tổng tiền hàng trả
+                      </span>
+                    </ng-template>
+                  </div>
+                  <div fxFlex="50" class="price-product-number">
+                    <input
+                      matInput
+                      type="text"
+                      value="{{ sumPrice | number }}"
+                      autocomplete="off" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="order-discount">
+                <div
+                  fxLayout="row wrap"
+                  fxLayoutAlign="start center"
+                  class="price-discount">
+                  <div fxFlex="50" class="price-discount-text">
+                    <span>Giảm giá (F6)</span>
+                  </div>
+                  <div fxFlex="50" class="price-discount-number">
+                    <mat-form-field
+                      floatLabel="never"
+                      style="text-align: right">
+                      <!--<button mat-icon-button matPrefix>
+                      <mat-icon class="row-edit-price-discount-number" (click)="openDiscountSiderBar()">edit
+                      </mat-icon>
+                    </button>-->
+                      <input
+                        matInput
+                        type="text"
+                        class="price-discount-value"
+                        value="{{ numberDiscount | number }}"
+                        (click)="openDiscountSiderBar()"
+                        [readonly]="true"
+                        autocomplete="off"
+                        style="color: black" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+
+              <div style="margin-top: 1rem">
+                <div
+                  *ngIf="
+                    localItemInvoice?.is_return !== true &&
+                    optionStore_transaction_expenses_order?.value === 'yes'
+                  "
+                  fxLayout="row wrap"
+                  fxLayoutAlign="start center"
+                  class="price-product"
+                  style="display: flex; align-items: center">
+                  <div fxFlex="50" class="price-product-text">
+                    <div>
+                      <mat-label
+                        (click)="openExpensesOrder()"
+                        style="display: flex; align-items: center">
+                        <mat-icon color="primary">list</mat-icon>
+                        <span>Thu khác</span>
+                      </mat-label>
+                      <!--                  <span (click)="openExpensesOrder()"><mat-icon color="primary">list</mat-icon> Thu khác </span>-->
+                    </div>
+                  </div>
+                  <div fxFlex="50" class="price-product-number">
+                    <input
+                      matInput
+                      type="text"
+                      (click)="openExpensesOrder()"
+                      value="{{ expenseOrder | number }}"
+                      autocomplete="off" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="customer-need">
+                <div
+                  *ngIf="
+                    localItemInvoice?.is_return !== true;
+                    else khachCanTra
+                  ">
+                  <div
+                    fxLayout="row wrap"
+                    fxLayoutAlign="start center"
+                    class="customer-need">
+                    <div fxFlex="50" class="customer-need-text label-text">
+                      <span>Khách cần trả</span>
+                    </div>
+                    <div fxFlex="50" class="customer-need-number">
+                      <input
+                        matInput
+                        type="text"
+                        value="{{
+                          sumPrice - numberDiscount + expenseOrder | number
+                        }}"
+                        [readonly]="true"
+                        autocomplete="off" />
+                    </div>
+                  </div>
+                </div>
+                <ng-template #khachCanTra>
+                  <div
+                    fxLayout="row wrap"
+                    fxLayoutAlign="start center"
+                    class="customer-need">
+                    <div fxFlex="50" class="customer-need-text label-text">
+                      <span>Cần trả khách</span>
+                    </div>
+                    <div fxFlex="50" class="customer-need-number">
+                      <input
+                        matInput
+                        type="text"
+                        *ngIf="sumPrice - numberDiscount <= 0"
+                        value="{{ (sumPrice - numberDiscount) * -1 | number }}"
+                        autocomplete="off" />
+                    </div>
+                  </div>
                 </ng-template>
               </div>
-              <div fxFlex="50" class="price-product-number">
-                <input matInput type="text" value="{{ sumPrice | number}}" autocomplete="off">
-              </div>
-            </div>
-          </div>
 
-          <div class="order-discount">
-            <div fxLayout="row wrap" fxLayoutAlign="start center" class="price-discount">
-              <div fxFlex="50" class="price-discount-text ">
-                <span>Giảm giá (F6)</span>
+              <div
+                class="customer-pay"
+                *ngIf="localItemInvoice?.is_return !== true">
+                <div
+                  fxLayout="row wrap"
+                  fxLayoutAlign="start center"
+                  class="customer-pay">
+                  <div fxFlex="50" class="customer-pay-text">
+                    <span>Khách thanh toán (F2)</span>
+                  </div>
+                  <div fxFlex="50" class="customer-pay-number">
+                    <mat-form-field
+                      floatLabel="never"
+                      style="text-align: right">
+                      <button mat-icon-button matPrefix>
+                        <mat-icon class="row-edit-customer-pay-number">
+                          credit_card
+                        </mat-icon>
+                      </button>
+                      <input
+                        matInput
+                        type="text"
+                        style="color: black"
+                        formControlName="customerPay"
+                        (keyup)="inputformatNumber($event)"
+                        autocomplete="off"
+                        #customerPayment />
+                    </mat-form-field>
+                  </div>
+                </div>
               </div>
-              <div fxFlex="50" class="price-discount-number">
-                <mat-form-field floatLabel="never" style="text-align: right">
-                  <!--<button mat-icon-button matPrefix>
-                    <mat-icon class="row-edit-price-discount-number" (click)="openDiscountSiderBar()">edit
-                    </mat-icon>
-                  </button>-->
-                  <input matInput type="text" class="price-discount-value" value="{{ numberDiscount | number}}"
-                         (click)="openDiscountSiderBar()" [readonly]="true" autocomplete="off"
-                         style="color:black">
+              <div class="note-pay">
+                Thanh toán = 0 sẽ mặc định thanh toán hết.
+              </div>
+
+              <div class="excess-cash">
+                <div
+                  *ngIf="
+                    localItemInvoice?.is_return !== true;
+                    else is_return_tienThuaTraKhach
+                  ">
+                  <div fxLayout="row wrap" class="excess-cash">
+                    <div fxFlex="50" class="cexcess-cash-text label-text">
+                      <span
+                        *ngIf="tienThuaTraKhach > 0; else textTienThuaTraKhach">
+                        Tiền thừa trả khách
+                      </span>
+                      <ng-template #textTienThuaTraKhach>
+                        <span> Nợ </span>
+                      </ng-template>
+                    </div>
+                    <div fxFlex="50" class="excess-cash-number">
+                      <span
+                        *ngIf="
+                          tienThuaTraKhach > 0;
+                          else templateTienThuaTraKhach
+                        ">
+                        {{ tienThuaTraKhach | number }}
+                      </span>
+                      <ng-template #templateTienThuaTraKhach>
+                        <span>
+                          {{ tienKhachNo | number }}
+                        </span>
+                      </ng-template>
+                    </div>
+                  </div>
+                </div>
+                <ng-template #is_return_tienThuaTraKhach> </ng-template>
+              </div>
+
+              <div class="order-note">
+                <mat-form-field class="example-full-width">
+                  <mat-label>Ghi chú</mat-label>
+                  <textarea
+                    rows="1"
+                    matInput
+                    placeholder=""
+                    formControlName="noteSiderBar"
+                    (keyup)="saveNoteSiderBar($event)"></textarea>
                 </mat-form-field>
               </div>
+
+              <span class="custom-slide-toggle" mat-menu-item>
+                <mat-slide-toggle
+                  [checked]="autoPrint"
+                  (change)="onChangeSlideToggleTuDongInHoaDon($event)"
+                  >Tự động in hóa đơn
+                </mat-slide-toggle>
+                <mat-slide-toggle
+                  style="margin-left: 15px"
+                  checked="false"
+                  (change)="onChangeSlideToggleInSoLo($event)">
+                  In số lô
+                </mat-slide-toggle>
+              </span>
             </div>
-          </div>
+            <!-- top -->
 
-          <div class="order-detail"
-               *ngIf="localItemInvoice?.is_return !== true && optionStore_transaction_expenses_order?.value === 'yes' ">
-            <div fxLayout="row wrap" fxLayoutAlign="start center" class="price-product">
-              <div fxFlex="50" class="price-product-text ">
-                <div>
-                  <mat-label (click)="openExpensesOrder()">
-                    <mat-icon color="primary">list</mat-icon>
-                    <span>Thu khác</span>
-                  </mat-label>
-                  <!--                  <span (click)="openExpensesOrder()"><mat-icon color="primary">list</mat-icon> Thu khác </span>-->
-                </div>
+            <!-- bottom -->
+            <div class="sidebar-order-bottom">
+              <div
+                *ngIf="
+                  localItemInvoice?.is_return !== true;
+                  else buttonThanhToan
+                "
+                style="margin-top: auto">
+                <button
+                  mat-button
+                  class="payment-button btn-success {{
+                    checkPermissionSaleDisable() ? 'disable' : ''
+                  }}"
+                  [disabled]="checkPermissionSaleDisable()"
+                  (click)="payment()">
+                  <span>Thanh toán (F7)</span>
+                </button>
+              </div>
+              <ng-template #buttonThanhToan>
+                <button
+                  mat-button
+                  class="payment-button btn-success"
+                  (click)="returns()">
+                  <span>Trả hàng</span>
+                </button>
+              </ng-template>
 
-              </div>
-              <div fxFlex="50" class="price-product-number">
-                <input matInput type="text" (click)="openExpensesOrder()" value="{{ expenseOrder | number}}" autocomplete="off">
-              </div>
+              <span class="support-content">
+                <mat-icon>phone</mat-icon> Hỗ trợ khách hàng 0972 574 506
+              </span>
             </div>
+            <!-- bottom -->
           </div>
-
-          <div class="customer-need">
-
-            <div *ngIf="localItemInvoice?.is_return !== true; else khachCanTra">
-              <div fxLayout="row wrap" fxLayoutAlign="start center" class="customer-need">
-                <div fxFlex="50" class="customer-need-text label-text">
-                  <span>Khách cần trả</span>
-                </div>
-                <div fxFlex="50" class="customer-need-number">
-                  <input matInput type="text" value="{{ sumPrice - numberDiscount + expenseOrder | number}}"
-                         [readonly]="true" autocomplete="off">
-                </div>
-              </div>
-            </div>
-            <ng-template #khachCanTra>
-              <div fxLayout="row wrap" fxLayoutAlign="start center" class="customer-need">
-                <div fxFlex="50" class="customer-need-text label-text">
-                  <span>Cần trả khách</span>
-                </div>
-                <div fxFlex="50" class="customer-need-number">
-                  <input matInput type="text" *ngIf="(sumPrice - numberDiscount) <= 0"
-                         value="{{ (sumPrice - numberDiscount)*-1 | number}}" autocomplete="off">
-                </div>
-              </div>
-            </ng-template>
-
-
-          </div>
-
-          <div class="customer-pay" *ngIf="localItemInvoice?.is_return !== true">
-            <div fxLayout="row wrap" fxLayoutAlign="start center" class="customer-pay">
-              <div fxFlex="50" class="customer-pay-text ">
-                <span>Khách thanh toán (F2)</span>
-              </div>
-              <div fxFlex="50" class="customer-pay-number">
-                <mat-form-field floatLabel="never" style="text-align: right">
-                  <button mat-icon-button matPrefix>
-                    <mat-icon class="row-edit-customer-pay-number">
-                      credit_card
-                    </mat-icon>
-                  </button>
-                  <input matInput type="text" style="color:black" formControlName="customerPay"
-                         (keyup)="inputformatNumber($event)" autocomplete="off" #customerPayment>
-                </mat-form-field>
-              </div>
-            </div>
-          </div>
-          <div class="note-pay">Thanh toán = 0 sẽ mặc định thanh toán hết.</div>
-
-
-          <div class="excess-cash">
-            <div *ngIf="localItemInvoice?.is_return !== true; else is_return_tienThuaTraKhach">
-              <div fxLayout="row wrap" class="excess-cash">
-                <div fxFlex="50" class="cexcess-cash-text label-text">
-                  <span *ngIf=" tienThuaTraKhach > 0; else textTienThuaTraKhach">
-                    Tiền thừa trả khách
-                  </span>
-                  <ng-template #textTienThuaTraKhach>
-                    <span>
-                      Nợ
-                    </span>
-                  </ng-template>
-                </div>
-                <div fxFlex="50" class="excess-cash-number">
-
-                  <span *ngIf=" tienThuaTraKhach > 0; else templateTienThuaTraKhach">
-                    {{ tienThuaTraKhach | number }}
-                  </span>
-                  <ng-template #templateTienThuaTraKhach>
-                    <span>
-                      {{   tienKhachNo | number }}
-                    </span>
-                  </ng-template>
-
-                </div>
-              </div>
-            </div>
-            <ng-template #is_return_tienThuaTraKhach>
-
-            </ng-template>
-
-          </div>
-
-          <div class="order-note">
-            <mat-form-field class="example-full-width">
-              <mat-label>Ghi chú</mat-label>
-              <textarea rows="1" matInput placeholder="" formControlName="noteSiderBar"
-                        (keyup)="saveNoteSiderBar($event)"></textarea>
-            </mat-form-field>
-          </div>
-
-          <span class="custom-slide-toggle" mat-menu-item>
-            <mat-slide-toggle [checked]="autoPrint" (change)="onChangeSlideToggleTuDongInHoaDon($event)">Tự động in hóa đơn
-            </mat-slide-toggle>
-            <mat-slide-toggle style="margin-left: 15px; " checked="false" (change)="onChangeSlideToggleInSoLo($event)"> In số lô
-            </mat-slide-toggle>
-          </span>
-
-
-          <div *ngIf="localItemInvoice?.is_return !== true; else buttonThanhToan">
-            <button mat-button class="payment-button btn-success {{checkPermissionSaleDisable() ? 'disable' : ''}}"
-                    [disabled]="checkPermissionSaleDisable()" (click)="payment()">
-              <span>Thanh toán (F7)</span>
-            </button>
-          </div>
-          <ng-template #buttonThanhToan>
-            <button mat-button class="payment-button btn-success" (click)="returns()">
-              <span>Trả hàng</span>
-            </button>
-          </ng-template>
-
-          <span class="support-content">
-            <mat-icon>phone</mat-icon> Hỗ trợ khách hàng  0972 574 506
-          </span>
-
         </form>
-
       </div>
-
 
       <!--------------------------------------- END SALE-SIDER-BAR-ORDER ------------------------------------------>
     </div>
-
   </div>
 </div>
