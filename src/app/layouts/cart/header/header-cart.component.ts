@@ -131,7 +131,9 @@ export class AppHeaderCartComponent {
   }
 
   goToInvoices() {
-    this.route.navigate(['/transaction/invoice']);
+    // this.route.navigate(['/transaction/invoice']);
+    window.location.href = '/transaction/invoice';
+
   }
 
 }
