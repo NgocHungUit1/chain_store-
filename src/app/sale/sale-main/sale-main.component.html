@@ -19,7 +19,7 @@
               <!--<span style="padding-right: 10px">{{  countProduct - i  }}</span>-->
               <span style="padding-right: 10px">{{ i + 1 }}</span>
             </div>
-            <div fxFlex="auto">
+            <div fxFlex="40">
               <div
                 class="row-text row-product-name"
                 title="{{ itemProduct?.product?.product_name }}">
@@ -321,7 +321,7 @@
 
               <div class="customer-action">
                 <div fxLayout="row wrap">
-                  <div fxFlex="100">
+                  <div fxFlex="60">
                     <mat-form-field>
                       <input
                         class="input-search-customer input-search"
@@ -370,6 +370,29 @@
                       </button>
                     </mat-form-field>
                   </div>
+                  <div fxFlex="2"></div>
+
+                  <div fxFlex="38">
+                    <div class="pricebook-action">
+                      <mat-form-field>
+                        <button mat-icon-button matPrefix>
+                          <mat-icon>bookmark_border</mat-icon>
+                        </button>
+                        <mat-select
+                          class="input-search"
+                          placeholder="Chọn bảng giá"
+                          (selectionChange)="choosePriceBook($event)"
+                          formControlName="priceBookID">
+                          <mat-option
+                            *ngFor="let priceList of priceLists"
+                            [value]="priceList.id"
+                            [disabled]="localItemInvoice?.is_return == true">
+                            {{ priceList.name }}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                  </div>
                   <!--<div fxFlex="10">
                   <div *ngIf="localItemInvoice?.is_return !== true">
                     <button mat-button matPrefix>
@@ -382,28 +405,6 @@
 
               <div fxLayout="row wrap" fxLayoutAlign="center center">
                 <div fxFlex="49">
-                  <div class="pricebook-action">
-                    <mat-form-field>
-                      <button mat-icon-button matPrefix>
-                        <mat-icon>bookmark_border</mat-icon>
-                      </button>
-                      <mat-select
-                        class="input-search"
-                        placeholder="Chọn bảng giá"
-                        (selectionChange)="choosePriceBook($event)"
-                        formControlName="priceBookID">
-                        <mat-option
-                          *ngFor="let priceList of priceLists"
-                          [value]="priceList.id"
-                          [disabled]="localItemInvoice?.is_return == true">
-                          {{ priceList.name }}
-                        </mat-option>
-                      </mat-select>
-                    </mat-form-field>
-                  </div>
-                </div>
-                <div fxFlex="2"></div>
-                <div fxFlex="49" fxLayoutAlign="end center">
                   <div
                     class="ban-thuoc-theo-don"
                     *ngIf="localItemInvoice?.is_return !== true"
@@ -425,6 +426,8 @@
                     </span>
                   </div>
                 </div>
+                <div fxFlex="2"></div>
+                <div fxFlex="49" fxLayoutAlign="end center"></div>
               </div>
 
               <!--<div class="custom-title-invoice">
@@ -452,7 +455,7 @@
                         >Tổng tiền hàng
                       </span>
                     </div>
-                    <ng-template>
+                    <ng-template #tongTienHang>
                       <span
                         matBadge="{{ countProduct }}"
                         matBadgeOverlap="false"
