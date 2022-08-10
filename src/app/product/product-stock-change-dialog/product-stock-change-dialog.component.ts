@@ -53,6 +53,7 @@ export class ProductStockChangeDialogComponent extends ListComponentBase impleme
     'return': 'Trả hàng nhập',
     'stock-take': 'Kiểm kho',
     'sale': 'Bán hàng',
+    'delete-sale': 'Hủy bỏ phiếu bán hàng',
     'return-sale': 'Trả hàng bán',
     'move-from': 'Chuyển hàng đi',
     'move-to': 'Chuyển hàng đến',
