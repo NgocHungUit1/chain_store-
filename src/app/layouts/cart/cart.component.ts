@@ -1,6 +1,6 @@
-import {MediaMatcher} from '@angular/cdk/layout';
-import {Router} from '@angular/router';
-import {FormControl} from '@angular/forms';
+import { MediaMatcher } from '@angular/cdk/layout';
+import { Router } from '@angular/router';
+import { FormControl } from '@angular/forms';
 import {
   ChangeDetectorRef,
   Component,
@@ -8,25 +8,33 @@ import {
   OnDestroy,
   ViewChild,
   HostListener,
-  Directive, ElementRef, OnInit
+  Directive,
+  ElementRef,
+  OnInit,
 } from '@angular/core';
 
-import {MenuItems} from '../../shared/menu-items/menu-items';
+import { MenuItems } from '../../shared/menu-items/menu-items';
 
-import {PerfectScrollbarConfigInterface} from 'ngx-perfect-scrollbar';
-import {Observable} from 'rxjs';
-import {Product} from '../../product/product.model';
-import {PriceListFilter} from '../../price-book/price-list.model';
-import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
-import {of} from 'rxjs/internal/observable/of';
-import {PriceListService} from '../../price-book/price-list.service';
-import {ProductService} from '../../product/product.service';
-import {OrderService} from '../../sale/order.service';
-import {ItemInvoice} from '../../sale/order.model';
-import {NotifierService} from 'angular-notifier';
-import {SamplePrescriptionService} from '../../sample-prescription/sample-prescription.service';
-import {element} from 'protractor';
-import {CustomerService} from '../../customer/customer.service';
+import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
+import { Observable } from 'rxjs';
+import { Product } from '../../product/product.model';
+import { PriceListFilter } from '../../price-book/price-list.model';
+import {
+  catchError,
+  debounceTime,
+  map,
+  startWith,
+  switchMap,
+} from 'rxjs/operators';
+import { of } from 'rxjs/internal/observable/of';
+import { PriceListService } from '../../price-book/price-list.service';
+import { ProductService } from '../../product/product.service';
+import { OrderService } from '../../sale/order.service';
+import { ItemInvoice } from '../../sale/order.model';
+import { NotifierService } from 'angular-notifier';
+import { SamplePrescriptionService } from '../../sample-prescription/sample-prescription.service';
+import { element } from 'protractor';
+import { CustomerService } from '../../customer/customer.service';
 
 /** @title Responsive sidenav */
 @Component({
@@ -35,7 +43,6 @@ import {CustomerService} from '../../customer/customer.service';
   // styleUrls: ['./cart.component.css'],
 })
 export class CartComponent implements OnInit, OnDestroy {
-
   mobileQuery: MediaQueryList;
   dir = 'ltr';
   green: boolean = true;
@@ -89,7 +96,6 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-
     this.customerService.getNameStore(0).subscribe(res => {
       this.storeId = Number(res);
     });
@@ -125,7 +131,6 @@ export class CartComponent implements OnInit, OnDestroy {
         }
       })
     );
-
   }
 
   /**
@@ -186,16 +191,19 @@ export class CartComponent implements OnInit, OnDestroy {
    * @param product
    */
   onSelectedProduct(product) {
-
     if (this.amountProduct === null) {
       this.amountProduct = 1;
     }
 
-    if (this.iconChangeType === 'cached') { // tim san pham
+    if (this.iconChangeType === 'cached') {
+      // tim san pham
 
       this.orderService.pushHistorySearch(product, product.store_id);
 
-      if (product['quantity_of_stock'] > 0 && product['quantity_of_stock'] >= this.amountProduct) {
+      if (
+        product['quantity_of_stock'] > 0 &&
+        product['quantity_of_stock'] >= this.amountProduct
+      ) {
         this.handlePriceListProduct(product);
       } else {
         this.notifySer.notify('warning', 'Không đủ tồn kho.');
@@ -205,25 +213,27 @@ export class CartComponent implements OnInit, OnDestroy {
       /**
        * product.id  === sample.id
        */
-      this.samplePrescriptionService.getDetailForCart(product.id).subscribe(res => {
-        // tslint:disable-next-line:no-shadowed-variable
-        res.forEach(element => {
-          // console.log(element);
-          this.handlePriceListProduct(element);
+      this.samplePrescriptionService
+        .getDetailForCart(product.id)
+        .subscribe(res => {
+          // tslint:disable-next-line:no-shadowed-variable
+          res.forEach(element => {
+            // console.log(element);
+            this.handlePriceListProduct(element);
+          });
         });
-      });
-
     }
     this.selectProduct.patchValue(null);
     this.inputSearch.nativeElement.blur(); // un focus
-
   }
 
   handlePriceListProduct(product: Product) {
     let units = product.productUnits;
     // tslint:disable-next-line:no-shadowed-variable
     units.forEach(element => {
-      element.quantity_of_stock = Math.floor(product.quantity_of_stock / element.value);
+      element.quantity_of_stock = Math.floor(
+        product.quantity_of_stock / element.value
+      );
     });
     // tslint:disable-next-line:no-shadowed-variable
     units = units.filter(element => element.quantity_of_stock > 0);
@@ -260,16 +270,14 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   focusInputSearch(event) {
-
     if (this.selectProduct.value === '' || this.selectProduct.value === null) {
-      if (this.iconChangeType === 'cached') { // tim thuoc
+      if (this.iconChangeType === 'cached') {
+        // tim thuoc
         const data = this.orderService.getHistorySearch(this.storeId);
         // console.log(data);
         this.productsHistory = this.lookupProductByHistory(data);
       }
-
     }
-
   }
 
   @HostListener('window:keydown', ['$event'])

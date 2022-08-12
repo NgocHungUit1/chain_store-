@@ -1,35 +1,63 @@
-import {Component, ElementRef, HostListener, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
-import {FormControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {MatDialog} from '@angular/material/dialog';
-import {NotifierService} from 'angular-notifier';
-import {Observable} from 'rxjs';
-import {Product} from '../../product/product.model';
-import {OrderService} from '../order.service';
-import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
-import {of} from 'rxjs/internal/observable/of';
-import {PriceList, PriceListFilter} from '../../price-book/price-list.model';
-import {PriceListService} from '../../price-book/price-list.service';
-import {NoteDetailOrderDialogComponent} from '../note-detail-order-dialog/note-detail-order-dialog.component';
-import {PriceDetailOrderDialogComponent} from '../price-detail-order-dialog/price-detail-order-dialog.component';
-import {PriceListProductService} from '../../price-book/price-list-product.service';
-import {ItemInvoice} from '../order.model';
-import {Customer} from '../../customer/customer.model';
-import {SaleCustomerFormDialogComponent} from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
-import {PaymentSiderbarDialogComponent} from '../payment-siderbar-dialog/payment-siderbar-dialog.component';
-import {DiscountSiderbarDialogComponent} from '../discount-siderbar-dialog/discount-siderbar-dialog.component';
-import {CustomerService} from '../../customer/customer.service';
-import {UserService} from '../../user/user.service';
-import {User} from '../../user/user.model';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild,
+  ViewEncapsulation,
+} from '@angular/core';
+import {
+  FormControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { NotifierService } from 'angular-notifier';
+import { Observable } from 'rxjs';
+import { Product } from '../../product/product.model';
+import { OrderService } from '../order.service';
+import {
+  catchError,
+  debounceTime,
+  map,
+  startWith,
+  switchMap,
+} from 'rxjs/operators';
+import { of } from 'rxjs/internal/observable/of';
+import { PriceList, PriceListFilter } from '../../price-book/price-list.model';
+import { PriceListService } from '../../price-book/price-list.service';
+import { NoteDetailOrderDialogComponent } from '../note-detail-order-dialog/note-detail-order-dialog.component';
+import { PriceDetailOrderDialogComponent } from '../price-detail-order-dialog/price-detail-order-dialog.component';
+import { PriceListProductService } from '../../price-book/price-list-product.service';
+import { ItemInvoice } from '../order.model';
+import { Customer } from '../../customer/customer.model';
+import { SaleCustomerFormDialogComponent } from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
+import { PaymentSiderbarDialogComponent } from '../payment-siderbar-dialog/payment-siderbar-dialog.component';
+import { DiscountSiderbarDialogComponent } from '../discount-siderbar-dialog/discount-siderbar-dialog.component';
+import { CustomerService } from '../../customer/customer.service';
+import { UserService } from '../../user/user.service';
+import { User } from '../../user/user.model';
 import * as numeral from 'numeral';
-import {OptionStoreService} from '../../common/option-store.service';
-import {OptionStore} from '../../common/option-store.model';
-import {ExpensesOrderService} from '../../expenses-order/expenses-order.service';
-import {ExpensesOrder, ExpensesOrderFilter} from '../../expenses-order/expenses-order.model';
-import {SaleExpensesDialogComponent} from '../sale-expenses-dialog/sale-expenses-dialog.component';
-import {PrescriptionFormDialogComponent} from '../prescription-form-dialog/prescription-form-dialog.component';
-import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
-import {MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter} from '@angular/material-moment-adapter';
-import {DatePipe} from '@angular/common';
+import { OptionStoreService } from '../../common/option-store.service';
+import { OptionStore } from '../../common/option-store.model';
+import { ExpensesOrderService } from '../../expenses-order/expenses-order.service';
+import {
+  ExpensesOrder,
+  ExpensesOrderFilter,
+} from '../../expenses-order/expenses-order.model';
+import { SaleExpensesDialogComponent } from '../sale-expenses-dialog/sale-expenses-dialog.component';
+import { PrescriptionFormDialogComponent } from '../prescription-form-dialog/prescription-form-dialog.component';
+import {
+  DateAdapter,
+  MAT_DATE_FORMATS,
+  MAT_DATE_LOCALE,
+} from '@angular/material/core';
+import {
+  MAT_MOMENT_DATE_ADAPTER_OPTIONS,
+  MomentDateAdapter,
+} from '@angular/material-moment-adapter';
+import { DatePipe } from '@angular/common';
 
 export const MY_FORMATS = {
   parse: {
@@ -53,12 +81,11 @@ export const MY_FORMATS = {
     {
       provide: DateAdapter,
       useClass: MomentDateAdapter,
-      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS]
+      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
     },
-    {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS},
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
-
 export class SaleMainComponent implements OnInit {
   constructor(
     public dp: DatePipe,
@@ -73,9 +100,7 @@ export class SaleMainComponent implements OnInit {
     private optionStoreService: OptionStoreService,
     private expensesOrderService: ExpensesOrderService,
     private elementRef: ElementRef
-  ) {
-
-  }
+  ) {}
 
   optionStore_auto_print: OptionStore = null;
 
@@ -139,7 +164,10 @@ export class SaleMainComponent implements OnInit {
   compareEqualListProduct(listProductUnitIdChoose) {
     let fail = 1;
     listProductUnitIdChoose.forEach((value, index) => {
-      if (this.listProductUnitIdChooseOld[index] === undefined || this.listProductUnitIdChooseOld[index] !== value) {
+      if (
+        this.listProductUnitIdChooseOld[index] === undefined ||
+        this.listProductUnitIdChooseOld[index] !== value
+      ) {
         fail = 0;
       }
     });
@@ -166,7 +194,6 @@ export class SaleMainComponent implements OnInit {
     await this.handlePaymentSiderBar(mItemInvoice);
 
     this.localItemInvoice = mItemInvoice;
-
   }
 
   getAutoPrintValue() {
@@ -198,33 +225,38 @@ export class SaleMainComponent implements OnInit {
 
   getDataExpenseOrder() {
     if (this.optionStore_transaction_expenses_order == null) {
-      this.optionStoreService.getValue('transaction_expenses_order').subscribe(res => {
-        this.optionStore_transaction_expenses_order = res;
-        if (this.optionStore_transaction_expenses_order?.value === 'yes') {
-          const expensesOrderFilter = new ExpensesOrderFilter();
-          expensesOrderFilter.status = '10';
-          expensesOrderFilter.auto = '1';
-          if (this.expenseOrders == null) {
-            this.expensesOrderService.getList(expensesOrderFilter).subscribe(expensesOrders => {
-              this.expenseOrders = <ExpensesOrder[]>expensesOrders.body;
+      this.optionStoreService
+        .getValue('transaction_expenses_order')
+        .subscribe(res => {
+          this.optionStore_transaction_expenses_order = res;
+          if (this.optionStore_transaction_expenses_order?.value === 'yes') {
+            const expensesOrderFilter = new ExpensesOrderFilter();
+            expensesOrderFilter.status = '10';
+            expensesOrderFilter.auto = '1';
+            if (this.expenseOrders == null) {
+              this.expensesOrderService
+                .getList(expensesOrderFilter)
+                .subscribe(expensesOrders => {
+                  this.expenseOrders = <ExpensesOrder[]>expensesOrders.body;
+                  this.handleExpenseOrder();
+                });
+            } else {
               this.handleExpenseOrder();
-            });
-          } else {
-            this.handleExpenseOrder();
+            }
           }
-        }
-
-      });
+        });
     } else {
       if (this.optionStore_transaction_expenses_order?.value === 'yes') {
         const expensesOrderFilter = new ExpensesOrderFilter();
         expensesOrderFilter.status = '10';
         expensesOrderFilter.auto = '1';
         if (this.expenseOrders == null) {
-          this.expensesOrderService.getList(expensesOrderFilter).subscribe(expensesOrders => {
-            this.expenseOrders = <ExpensesOrder[]>expensesOrders.body;
-            this.handleExpenseOrder();
-          });
+          this.expensesOrderService
+            .getList(expensesOrderFilter)
+            .subscribe(expensesOrders => {
+              this.expenseOrders = <ExpensesOrder[]>expensesOrders.body;
+              this.handleExpenseOrder();
+            });
         } else {
           this.handleExpenseOrder();
         }
@@ -253,15 +285,13 @@ export class SaleMainComponent implements OnInit {
     const listItemInvoice = listInvoice.itemInvoice;
     listItemInvoice.forEach(element => {
       if (element.active === true) {
-
         if (element.user === undefined || element.user === null) {
           element.user = this.user;
           this.orderService.setListInvoiceLocalStorage(listInvoice);
-
         }
         this.selectUser.patchValue(element.user?.username);
         this.form.patchValue({
-          'userID': element.user?.id
+          userID: element.user?.id,
         });
       }
     });
@@ -282,8 +312,8 @@ export class SaleMainComponent implements OnInit {
    * Add customer exist
    */
   handleAddCustomerExist(mItemInvoice) {
-    this.selectCustomer.patchValue('Khách lẻ');
-    this.isSelectedCustomer = true;
+    // this.selectCustomer.patchValue('Khách lẻ');
+    // this.isSelectedCustomer = true;
     if (mItemInvoice?.customer?.name !== undefined) {
       this.selectCustomer.patchValue(mItemInvoice?.customer?.name);
       this.isSelectedCustomer = true;
@@ -295,13 +325,18 @@ export class SaleMainComponent implements OnInit {
    */
   handleDetailOrder(mItemInvoice) {
     this.countProduct = 0;
-    if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
+    if (
+      mItemInvoice.listProduct === undefined ||
+      mItemInvoice.listProduct.length === 0
+    ) {
       this.listProduct = [];
       this.prescription.checked = false;
       this.prescription_id = null;
     } else {
-
-      if (mItemInvoice.prescription_id !== undefined && mItemInvoice.prescription_id !== null) {
+      if (
+        mItemInvoice.prescription_id !== undefined &&
+        mItemInvoice.prescription_id !== null
+      ) {
         this.prescription.checked = true;
         this.prescription_id = mItemInvoice.prescription_id;
       }
@@ -323,7 +358,11 @@ export class SaleMainComponent implements OnInit {
       const priceBookID = mItemInvoice.price_book_id; // this.orderService.getPriceBookID();
       const list = this.listProduct;
 
-      if (priceBookID !== null && Array.isArray(list) && this.listProduct !== null) {
+      if (
+        priceBookID !== null &&
+        Array.isArray(list) &&
+        this.listProduct !== null
+      ) {
         const listProductUnitIdChoose = list.map(obj => obj.product_unit_id);
         // debugger;
         // debugger;
@@ -332,67 +371,75 @@ export class SaleMainComponent implements OnInit {
          *
          * this.common_idOld !== priceBookID
          */
-        if (this.compareEqualListProduct(listProductUnitIdChoose) === 0 || this.changePriceBook === true) {
+        if (
+          this.compareEqualListProduct(listProductUnitIdChoose) === 0 ||
+          this.changePriceBook === true
+        ) {
           this.listProductUnitIdChooseOld = listProductUnitIdChoose;
           this.common_idOld = priceBookID;
           const common_id = priceBookID;
           /**
            * tien hanh xu ly add common_price vao list
            */
-          this.priceListProductSer.getListProductCommon(common_id, listProductUnitIdChoose).subscribe(resCommon => {
-            if (Array.isArray(resCommon)) {
-              const priceListProductCommonExist = resCommon;
-              //
-// debugger;
-              /**
-               * group = [ product_id] => [
-               *          id,price,price_list_id,product_id
-               *          ]
-               * code group array by key
-               */
-              const group = priceListProductCommonExist.reduce((r, a) => {
-                r[a.product_unit_id] = [...r[a.product_unit_id] || [], a];
-                return r;
-              }, {});
+          this.priceListProductSer
+            .getListProductCommon(common_id, listProductUnitIdChoose)
+            .subscribe(resCommon => {
+              if (Array.isArray(resCommon)) {
+                const priceListProductCommonExist = resCommon;
+                //
+                // debugger;
+                /**
+                 * group = [ product_id] => [
+                 *          id,price,price_list_id,product_id
+                 *          ]
+                 * code group array by key
+                 */
+                const group = priceListProductCommonExist.reduce((r, a) => {
+                  r[a.product_unit_id] = [...(r[a.product_unit_id] || []), a];
+                  return r;
+                }, {});
 
-              /**
-               * Tien hanh sumPrice , cap nhat common_price, neu khong co common_price se cho sell_price
-               */
-              this.sumPrice = 0;
-              if (this.listProduct !== null) {
-                this.listProduct.forEach(elementData => {
-                  // debugger;
-                  if (group[elementData.product_unit_id] !== undefined) {
-                    elementData.common_price = group[elementData.product_unit_id][0]['price'];
-                    if (elementData.product.end_price === undefined) {
-                      this.sumPrice += group[elementData.product_unit_id][0]['price'] * elementData.amount; // gia chung * so luong
-                    } else {
-                      this.sumPrice += elementData.product.end_price * elementData.amount; // gia chung * so luong
-                    }
-                  } else {
-                    elementData.common_price = elementData.product.sell_price;
-                    if (elementData.product.end_price === undefined) {
-                      this.sumPrice += elementData.product.sell_price * elementData.amount; // gia ban * so luong
-                    } else {
-                      this.sumPrice += elementData.product.end_price * elementData.amount; // gia ban * so luong
-                    }
-                  }
-                });
-
-                // tslint:disable-next-line:no-shadowed-variable
-                const list = this.listProduct;
-                this.listProduct = [];
-                this.listProduct = list;
-              } else {
+                /**
+                 * Tien hanh sumPrice , cap nhat common_price, neu khong co common_price se cho sell_price
+                 */
                 this.sumPrice = 0;
-              }
+                if (this.listProduct !== null) {
+                  this.listProduct.forEach(elementData => {
+                    // debugger;
+                    if (group[elementData.product_unit_id] !== undefined) {
+                      elementData.common_price =
+                        group[elementData.product_unit_id][0]['price'];
+                      if (elementData.product.end_price === undefined) {
+                        this.sumPrice +=
+                          group[elementData.product_unit_id][0]['price'] *
+                          elementData.amount; // gia chung * so luong
+                      } else {
+                        this.sumPrice +=
+                          elementData.product.end_price * elementData.amount; // gia chung * so luong
+                      }
+                    } else {
+                      elementData.common_price = elementData.product.sell_price;
+                      if (elementData.product.end_price === undefined) {
+                        this.sumPrice +=
+                          elementData.product.sell_price * elementData.amount; // gia ban * so luong
+                      } else {
+                        this.sumPrice +=
+                          elementData.product.end_price * elementData.amount; // gia ban * so luong
+                      }
+                    }
+                  });
 
-            }
-          });
+                  // tslint:disable-next-line:no-shadowed-variable
+                  const list = this.listProduct;
+                  this.listProduct = [];
+                  this.listProduct = list;
+                } else {
+                  this.sumPrice = 0;
+                }
+              }
+            });
           this.listProduct.reverse();
           this.changePriceBook = false;
-
-
         } else {
           /**
            * Truong hop: khong thay doi vs sl , pricebook
@@ -400,10 +447,13 @@ export class SaleMainComponent implements OnInit {
            *          product_id, product[],common_price, amount
            *          ]
            */
-          const groupProductIdCommonPrice = (listProductOLD !== null) ? listProductOLD.reduce((r, a) => {
-            r[a.product_id] = [...r[a.product_id] || [], a];
-            return r;
-          }, {}) : [];
+          const groupProductIdCommonPrice =
+            listProductOLD !== null
+              ? listProductOLD.reduce((r, a) => {
+                  r[a.product_id] = [...(r[a.product_id] || []), a];
+                  return r;
+                }, {})
+              : [];
 
           /**
            * Tien hanh sumPrice , cap nhat common_price, neu khong co common_price se cho sell_price
@@ -412,31 +462,40 @@ export class SaleMainComponent implements OnInit {
           this.sumPrice = 0;
           if (this.listProduct !== null) {
             this.listProduct.forEach(elementData => {
-              if (groupProductIdCommonPrice[elementData.product_unit_id] !== undefined) {
+              if (
+                groupProductIdCommonPrice[elementData.product_unit_id] !==
+                undefined
+              ) {
                 if (elementData.product.end_price !== undefined) {
                   elementData.common_price = elementData.product.end_price;
-                  this.sumPrice += elementData.product.end_price * elementData.amount;
+                  this.sumPrice +=
+                    elementData.product.end_price * elementData.amount;
                 } else {
-                  elementData.common_price = groupProductIdCommonPrice[elementData.product_unit_id][0]['common_price'];
-                  this.sumPrice += groupProductIdCommonPrice[elementData.product_unit_id][0]['common_price'] * elementData.amount;
+                  elementData.common_price =
+                    groupProductIdCommonPrice[elementData.product_unit_id][0][
+                      'common_price'
+                    ];
+                  this.sumPrice +=
+                    groupProductIdCommonPrice[elementData.product_unit_id][0][
+                      'common_price'
+                    ] * elementData.amount;
                 }
               } else {
                 if (elementData.product.end_price !== undefined) {
                   elementData.common_price = elementData.product.end_price;
-                  this.sumPrice += elementData.product.end_price * elementData.amount;
+                  this.sumPrice +=
+                    elementData.product.end_price * elementData.amount;
                 } else {
                   elementData.common_price = elementData.product.sell_price;
-                  this.sumPrice += elementData.product.sell_price * elementData.amount;
+                  this.sumPrice +=
+                    elementData.product.sell_price * elementData.amount;
                 }
-
               }
             });
           } else {
             this.sumPrice = 0;
           }
-
         }
-
       }
       this.handleExpenseOrder();
     }
@@ -463,7 +522,10 @@ export class SaleMainComponent implements OnInit {
     let branch_id = null;
     let time = null;
     const today = new Date();
-    time = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
+    time =
+      ('0' + today.getHours()).slice(-2) +
+      ':' +
+      ('0' + today.getMinutes()).slice(-2);
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     listItemInvoice.forEach(element => {
@@ -485,7 +547,7 @@ export class SaleMainComponent implements OnInit {
       time: [time],
       today: [today],
       invoice_id: [null],
-      prescription_id: [null] // ban thuoc theo don
+      prescription_id: [null], // ban thuoc theo don
     });
 
     if (this.form.controls['branch_id'].value == null) {
@@ -493,7 +555,6 @@ export class SaleMainComponent implements OnInit {
         this.form.controls['branch_id'].setValue(branchLogin);
       });
     }
-
   }
 
   /**
@@ -524,20 +585,25 @@ export class SaleMainComponent implements OnInit {
   }
 
   public changeBranch(event) {
-    const data = {'branch_store_id': event.value};
-    this.userService.updateBranchLogin(data).subscribe(res => {
-      if (res === true) {
-        this.notifySer.notify('success', 'Chuyển chi nhánh thành công.');
-        this.resetDataSiderBar();
-        this.orderService.initListInvoice();
-        setTimeout(function () {
-          location.reload();
-        }, 500);
-      } else {
-        this.notifySer.notify('error', 'Đã có lỗi xảy ra, vui lòng kiểm tra lại.');
-      }
-    }, (error) => {
-    });
+    const data = { branch_store_id: event.value };
+    this.userService.updateBranchLogin(data).subscribe(
+      res => {
+        if (res === true) {
+          this.notifySer.notify('success', 'Chuyển chi nhánh thành công.');
+          this.resetDataSiderBar();
+          this.orderService.initListInvoice();
+          setTimeout(function () {
+            location.reload();
+          }, 500);
+        } else {
+          this.notifySer.notify(
+            'error',
+            'Đã có lỗi xảy ra, vui lòng kiểm tra lại.'
+          );
+        }
+      },
+      error => {}
+    );
   }
 
   /**
@@ -577,7 +643,6 @@ export class SaleMainComponent implements OnInit {
     });
     this.isLoadingResults = false;
 
-
     /**
      * Tim kiem khach hang
      */
@@ -615,9 +680,7 @@ export class SaleMainComponent implements OnInit {
         }
       })
     );
-
   }
-
 
   /**
    * ********************************************** SALE DETAIL ORDER ***********************************************
@@ -655,11 +718,15 @@ export class SaleMainComponent implements OnInit {
     this.orderService.inputAmountProductReturn(product_id, value);
   }
 
-  openNoteDetailOrderDialog(i: any, product_unit_id: string, note_detail_sale: string) {
+  openNoteDetailOrderDialog(
+    i: any,
+    product_unit_id: string,
+    note_detail_sale: string
+  ) {
     const obj = {
       i: i,
       product_unit_id: product_unit_id,
-      note_detail_sale: note_detail_sale
+      note_detail_sale: note_detail_sale,
     };
     const dialogRef = this.dialog.open(NoteDetailOrderDialogComponent, {
       data: obj,
@@ -676,7 +743,7 @@ export class SaleMainComponent implements OnInit {
     const obj = {
       i: i,
       product: product,
-      common_price: common_price
+      common_price: common_price,
     };
 
     const dialogRef = this.dialog.open(PriceDetailOrderDialogComponent, {
@@ -685,16 +752,13 @@ export class SaleMainComponent implements OnInit {
       minHeight: '80%',
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-
-    });
+    dialogRef.afterClosed().subscribe(result => {});
   }
 
   /**
    * ******************************************* END SALE DETAIL ORDER *******************************************
    * *******************************************  SALE SIDER BAR ORDER *******************************************
    */
-
 
   onSelectedCustomer(customer) {
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
@@ -717,22 +781,20 @@ export class SaleMainComponent implements OnInit {
         element.user = {
           id: user?.id,
           username: user?.username,
-          email: user?.email
+          email: user?.email,
         };
 
         this.user.id = user?.id;
         this.user.username = user?.username;
         this.user.email = user?.email;
-
       }
     });
     this.orderService.setListInvoiceLocalStorage(listInvoice);
     this.selectUser.patchValue(user?.username);
     this.form.patchValue({
-      'userID': user?.id
+      userID: user?.id,
     });
   }
-
 
   lookupCustomer(value: string): Observable<Customer[]> {
     if (value !== null) {
@@ -745,7 +807,6 @@ export class SaleMainComponent implements OnInit {
         })
       );
     }
-
   }
 
   lookupUser(value: string): Observable<User[]> {
@@ -801,14 +862,15 @@ export class SaleMainComponent implements OnInit {
    * Xu ly giam gia siderbar
    */
   handleDiscountSiderBar(mItemInvoice) {
-
     const discountSiderBar = mItemInvoice.discountSiderBar;
     if (discountSiderBar !== undefined) {
       if (discountSiderBar?.type === 'price') {
         this.numberDiscount = discountSiderBar?.number;
         this.discount_type = 'price';
       } else {
-        this.numberDiscount = Math.round(this.sumPrice * discountSiderBar?.number / 100);
+        this.numberDiscount = Math.round(
+          (this.sumPrice * discountSiderBar?.number) / 100
+        );
         this.discount_type = 'precent';
       }
       this.discount = discountSiderBar?.number;
@@ -837,7 +899,7 @@ export class SaleMainComponent implements OnInit {
     const paymentSiderBar = mItemInvoice.paymentSiderBar;
     if (paymentSiderBar !== undefined) {
       this.form.patchValue({
-        customerPay: paymentSiderBar?.number
+        customerPay: paymentSiderBar?.number,
       });
     }
     this.form.controls['today'].enable();
@@ -848,7 +910,7 @@ export class SaleMainComponent implements OnInit {
       this.form.patchValue({
         today: new Date(aDate[0], aDate[1] - 1, aDate[2]),
         time: mItemInvoice.time,
-        invoice_id: mItemInvoice.invoice_id
+        invoice_id: mItemInvoice.invoice_id,
       });
       this.form.controls['today'].disable();
       this.form.controls['time'].disable();
@@ -856,7 +918,10 @@ export class SaleMainComponent implements OnInit {
 
     if (Number(mItemInvoice.invoice_id) === -1) {
       const today = new Date();
-      const time = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
+      const time =
+        ('0' + today.getHours()).slice(-2) +
+        ':' +
+        ('0' + today.getMinutes()).slice(-2);
       if (!this.form.controls['today'].value) {
         this.form.patchValue({
           today: today,
@@ -884,13 +949,12 @@ export class SaleMainComponent implements OnInit {
    *  Chinh sua thu them
    */
   openExpensesOrder() {
-
     const dialogRef = this.dialog.open(SaleExpensesDialogComponent, {
       width: '50%',
       minHeight: '80%',
       data: {
         expenses: this.expenseOrders,
-      }
+      },
     });
     dialogRef.afterClosed().subscribe(result => {
       // console.log(result);
@@ -916,7 +980,8 @@ export class SaleMainComponent implements OnInit {
         _margin = '4px;';
         _padding = '3px;';
         _solo = 'text-align:left;';
-      } else { // A4
+      } else {
+        // A4
         _font_size = '14px;';
         _margin = '6px;';
         _padding = '6px;';
@@ -925,14 +990,23 @@ export class SaleMainComponent implements OnInit {
     });
 
     this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
-      const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
-      const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
+      const customer_name =
+        res?.customer?.name !== null && res?.customer?.name !== undefined
+          ? res?.customer?.name
+          : 'Khách lẻ';
+      const customer_phone =
+        res?.customer?.phone !== null && res?.customer?.phone !== undefined
+          ? res?.customer?.phone
+          : '';
       let printContent = '<title>' + res?.invoice_no + '</title>';
-      printContent += '<style> ' +
+      printContent +=
+        '<style> ' +
         'p,table,div {' +
         'font-family: Arial, sans-serif;' +
-        'font-size: ' + _font_size +
-        'margin: ' + _margin +
+        'font-size: ' +
+        _font_size +
+        'margin: ' +
+        _margin +
         '}' +
         'table, th, td {' +
         // 'font-family: arial, sans-serif;' +
@@ -943,20 +1017,32 @@ export class SaleMainComponent implements OnInit {
         'td, th {' +
         'border: 1px solid black;' +
         'text-align: left;' +
-        'padding: ' + _padding +
+        'padding: ' +
+        _padding +
         '}</style>' +
-        '<section style="padding: 10px; font-size: ' + _font_size + ' ">' +
-        '<p style="text-align:center;">' + res?.store?.name + '</p>' +
+        '<section style="padding: 10px; font-size: ' +
+        _font_size +
+        ' ">' +
+        '<p style="text-align:center;">' +
+        res?.store?.name +
+        '</p>' +
         '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
-        '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +
-        '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
-        '<p style="">Khách hàng: ' + customer_name + '</p>';
+        '<p style="text-align:center; font-weight:600;">Số HĐ: ' +
+        res?.invoice_no +
+        '</p>' +
+        '<p style="text-align:center;"> ' +
+        res?.created_at +
+        ' </p>' +
+        '<p style="">Khách hàng: ' +
+        customer_name +
+        '</p>';
 
       if (customer_phone !== '') {
         printContent += '<p style="">SĐT: ' + customer_phone + '</p>';
       }
 
-      printContent += '<table>' +
+      printContent +=
+        '<table>' +
         '<tr>' +
         '<th>Đơn giá</th>' +
         '<th style="text-align:center;">SL</th>';
@@ -965,8 +1051,7 @@ export class SaleMainComponent implements OnInit {
         printContent += '<th style="' + _solo + '">Số lô</th>';
       }
 
-      printContent += '<th style="text-align:center;">T.Tiền</th>' +
-        '</tr>';
+      printContent += '<th style="text-align:center;">T.Tiền</th>' + '</tr>';
 
       const detail = res.detail;
 
@@ -976,22 +1061,46 @@ export class SaleMainComponent implements OnInit {
       // tslint:disable-next-line:no-shadowed-variable
       detail.forEach(element => {
         if (element?.base_unit == null) {
-          printContent += '<tr>' +
-            '<td>' + element.product?.product_name + '<br>' + element.price + '</td>' +
-            '<td style="text-align:center;">' + element.amount + '</td>';
+          printContent +=
+            '<tr>' +
+            '<td>' +
+            element.product?.product_name +
+            '<br>' +
+            element.price +
+            '</td>' +
+            '<td style="text-align:center;">' +
+            element.amount +
+            '</td>';
           if (this.autoPrintInSoLo === true) {
-            printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
+            printContent +=
+              '<td style="text-align:left;">' + element.so_lo + '</td>';
           }
-          printContent += '<td style="text-align:right;">' + element.total + '</td>' +
+          printContent +=
+            '<td style="text-align:right;">' +
+            element.total +
+            '</td>' +
             '</tr>';
         } else {
-          printContent += '<tr>' +
-            '<td>' + element.product?.product_name + ' - ' + element?.base_unit + '<br>' + element.price + '</td>' +
-            '<td style="text-align:center;">' + element.amount + '</td>';
+          printContent +=
+            '<tr>' +
+            '<td>' +
+            element.product?.product_name +
+            ' - ' +
+            element?.base_unit +
+            '<br>' +
+            element.price +
+            '</td>' +
+            '<td style="text-align:center;">' +
+            element.amount +
+            '</td>';
           if (this.autoPrintInSoLo === true) {
-            printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
+            printContent +=
+              '<td style="text-align:left;">' + element.so_lo + '</td>';
           }
-          printContent += '<td style="text-align:right;">' + element.total + '</td>' +
+          printContent +=
+            '<td style="text-align:right;">' +
+            element.total +
+            '</td>' +
             '</tr>';
         }
       });
@@ -1003,46 +1112,77 @@ export class SaleMainComponent implements OnInit {
       if (this.autoPrintInSoLo === true) {
         colspan = 3;
       }
-      printContent += '<tr>' +
-        '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng tiền hàng :</td>' +
-        '<td style="text-align:right; font-weight:600;">' + res.total_price + '</td>' +
+      printContent +=
+        '<tr>' +
+        '<td style="text-align:right; font-weight:600;" colspan="' +
+        colspan +
+        '">Tổng tiền hàng :</td>' +
+        '<td style="text-align:right; font-weight:600;">' +
+        res.total_price +
+        '</td>' +
         '</tr>';
-      printContent += '<tr>' +
-        '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Chiết khấu :</td>' +
-        '<td style="text-align:right; font-weight:600;">' + res.discount + '</td>' +
+      printContent +=
+        '<tr>' +
+        '<td style="text-align:right; font-weight:600;" colspan="' +
+        colspan +
+        '">Chiết khấu :</td>' +
+        '<td style="text-align:right; font-weight:600;">' +
+        res.discount +
+        '</td>' +
         '</tr>';
-      printContent += '<tr>' +
-        '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng thanh toán :</td>' +
-        '<td style="text-align:right; font-weight:600;">' + res.sum_payment + '</td>' +
+      printContent +=
+        '<tr>' +
+        '<td style="text-align:right; font-weight:600;" colspan="' +
+        colspan +
+        '">Tổng thanh toán :</td>' +
+        '<td style="text-align:right; font-weight:600;">' +
+        res.sum_payment +
+        '</td>' +
         '</tr>';
       if (res.debt !== null) {
-        printContent += '<tr>' +
-          '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Còn nợ :</td>' +
-          '<td style="text-align:right; font-weight:600;">' + res.debt + '</td>' +
+        printContent +=
+          '<tr>' +
+          '<td style="text-align:right; font-weight:600;" colspan="' +
+          colspan +
+          '">Còn nợ :</td>' +
+          '<td style="text-align:right; font-weight:600;">' +
+          res.debt +
+          '</td>' +
           '</tr>';
       }
       printContent += '</table>';
-      printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
+      printContent +=
+        '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
       // printContent += '<p style="text-align:left; font-size: 12px;font-style: italic;" >Hổ trợ : 0972 574 506</p>';
 
       printContent += '</section>';
 
-      const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+      const WindowPrt = window.open(
+        '',
+        '',
+        'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0'
+      );
       WindowPrt.document.write(printContent);
       WindowPrt.document.close();
       WindowPrt.focus();
       WindowPrt.print();
       // WindowPrt.close(); // lỗi tự đôngs
     });
-
   }
 
   printInvoiceOld(invoice_id: number) {
     this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
-      const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
-      const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
+      const customer_name =
+        res?.customer?.name !== null && res?.customer?.name !== undefined
+          ? res?.customer?.name
+          : 'Khách lẻ';
+      const customer_phone =
+        res?.customer?.phone !== null && res?.customer?.phone !== undefined
+          ? res?.customer?.phone
+          : '';
       let printContent = '<title>' + res?.invoice_no + '</title>';
-      printContent += '<style> ' +
+      printContent +=
+        '<style> ' +
         'p,table,div {' +
         'font-family: arial, sans-serif;' +
         'font-size: 11px;' +
@@ -1060,15 +1200,24 @@ export class SaleMainComponent implements OnInit {
         'padding: 3px;' +
         '}</style>' +
         '<section style="padding: 10px;font-size: 11px;">' +
-        '<p style="text-align:center;">' + res?.store?.name + '</p>' +
+        '<p style="text-align:center;">' +
+        res?.store?.name +
+        '</p>' +
         '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
-        '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +
-        '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
-        '<p style="">Khách hàng: ' + customer_name + '</p>';
+        '<p style="text-align:center; font-weight:600;">Số HĐ: ' +
+        res?.invoice_no +
+        '</p>' +
+        '<p style="text-align:center;"> ' +
+        res?.created_at +
+        ' </p>' +
+        '<p style="">Khách hàng: ' +
+        customer_name +
+        '</p>';
       if (customer_phone !== '') {
         printContent += '<p style="">SĐT: ' + customer_phone + '</p>';
       }
-      printContent += '<table>' +
+      printContent +=
+        '<table>' +
         '<tr>' +
         '<th>Đơn giá</th>' +
         '<th style="text-align:center;">SL</th>';
@@ -1076,8 +1225,7 @@ export class SaleMainComponent implements OnInit {
       if (this.autoPrintInSoLo === true) {
         printContent += '<th style="text-align:left;">Số lô</th>';
       }
-      printContent += '<th style="text-align:center;">T.Tiền</th>' +
-        '</tr>';
+      printContent += '<th style="text-align:center;">T.Tiền</th>' + '</tr>';
 
       const detail = res.detail;
 
@@ -1086,22 +1234,46 @@ export class SaleMainComponent implements OnInit {
        */
       detail.forEach(element => {
         if (element?.base_unit == null) {
-          printContent += '<tr>' +
-            '<td>' + element.product?.product_name + '<br>' + element.price + '</td>' +
-            '<td style="text-align:center;">' + element.amount + '</td>';
+          printContent +=
+            '<tr>' +
+            '<td>' +
+            element.product?.product_name +
+            '<br>' +
+            element.price +
+            '</td>' +
+            '<td style="text-align:center;">' +
+            element.amount +
+            '</td>';
           if (this.autoPrintInSoLo === true) {
-            printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
+            printContent +=
+              '<td style="text-align:left;">' + element.so_lo + '</td>';
           }
-          printContent += '<td style="text-align:right;">' + element.total + '</td>' +
+          printContent +=
+            '<td style="text-align:right;">' +
+            element.total +
+            '</td>' +
             '</tr>';
         } else {
-          printContent += '<tr>' +
-            '<td>' + element.product?.product_name + ' - ' + element?.base_unit + '<br>' + element.price + '</td>' +
-            '<td style="text-align:center;">' + element.amount + '</td>';
+          printContent +=
+            '<tr>' +
+            '<td>' +
+            element.product?.product_name +
+            ' - ' +
+            element?.base_unit +
+            '<br>' +
+            element.price +
+            '</td>' +
+            '<td style="text-align:center;">' +
+            element.amount +
+            '</td>';
           if (this.autoPrintInSoLo === true) {
-            printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
+            printContent +=
+              '<td style="text-align:left;">' + element.so_lo + '</td>';
           }
-          printContent += '<td style="text-align:right;">' + element.total + '</td>' +
+          printContent +=
+            '<td style="text-align:right;">' +
+            element.total +
+            '</td>' +
             '</tr>';
         }
       });
@@ -1113,37 +1285,61 @@ export class SaleMainComponent implements OnInit {
       if (this.autoPrintInSoLo === true) {
         colspan = 3;
       }
-      printContent += '<tr>' +
-        '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng tiền hàng :</td>' +
-        '<td style="text-align:right; font-weight:600;">' + res.total_price + '</td>' +
+      printContent +=
+        '<tr>' +
+        '<td style="text-align:right; font-weight:600;" colspan="' +
+        colspan +
+        '">Tổng tiền hàng :</td>' +
+        '<td style="text-align:right; font-weight:600;">' +
+        res.total_price +
+        '</td>' +
         '</tr>';
-      printContent += '<tr>' +
-        '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Chiết khấu :</td>' +
-        '<td style="text-align:right; font-weight:600;">' + res.discount + '</td>' +
+      printContent +=
+        '<tr>' +
+        '<td style="text-align:right; font-weight:600;" colspan="' +
+        colspan +
+        '">Chiết khấu :</td>' +
+        '<td style="text-align:right; font-weight:600;">' +
+        res.discount +
+        '</td>' +
         '</tr>';
-      printContent += '<tr>' +
-        '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng thanh toán :</td>' +
-        '<td style="text-align:right; font-weight:600;">' + res.sum_payment + '</td>' +
+      printContent +=
+        '<tr>' +
+        '<td style="text-align:right; font-weight:600;" colspan="' +
+        colspan +
+        '">Tổng thanh toán :</td>' +
+        '<td style="text-align:right; font-weight:600;">' +
+        res.sum_payment +
+        '</td>' +
         '</tr>';
       if (res.debt !== null) {
-        printContent += '<tr>' +
-          '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Còn nợ :</td>' +
-          '<td style="text-align:right; font-weight:600;">' + res.debt + '</td>' +
+        printContent +=
+          '<tr>' +
+          '<td style="text-align:right; font-weight:600;" colspan="' +
+          colspan +
+          '">Còn nợ :</td>' +
+          '<td style="text-align:right; font-weight:600;">' +
+          res.debt +
+          '</td>' +
           '</tr>';
       }
       printContent += '</table>';
-      printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
+      printContent +=
+        '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
       // printContent += '<p style="text-align:left; font-size: 12px;font-style: italic;" >Hổ trợ : 0972 574 506</p>';
       printContent += '</section>';
 
-      const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+      const WindowPrt = window.open(
+        '',
+        '',
+        'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0'
+      );
       WindowPrt.document.write(printContent);
       WindowPrt.document.close();
       WindowPrt.focus();
       WindowPrt.print();
       // WindowPrt.close();
     });
-
   }
 
   /**
@@ -1151,10 +1347,17 @@ export class SaleMainComponent implements OnInit {
    */
   printReturns(returns_id: number) {
     this.orderService.getDataReturnsToPrint(returns_id).subscribe(res => {
-      const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
-      const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
+      const customer_name =
+        res?.customer?.name !== null && res?.customer?.name !== undefined
+          ? res?.customer?.name
+          : 'Khách lẻ';
+      const customer_phone =
+        res?.customer?.phone !== null && res?.customer?.phone !== undefined
+          ? res?.customer?.phone
+          : '';
       let printContent = '<title>' + res?.return_no + '</title>';
-      printContent += '<style>table {' +
+      printContent +=
+        '<style>table {' +
         // 'font-family: arial, sans-serif;' +
         'border-collapse: collapse;' +
         'border: 1px solid black;' +
@@ -1166,15 +1369,24 @@ export class SaleMainComponent implements OnInit {
         'padding: 8px;' +
         '}</style>' +
         '<section style="padding: 10px;">' +
-        '<p style="text-align:center;">Địa chỉ : ' + res?.store?.name + '</p>' +
+        '<p style="text-align:center;">Địa chỉ : ' +
+        res?.store?.name +
+        '</p>' +
         '<p style="text-align:center; font-weight:600;">HÓA ĐƠN TRẢ HÀNG</p>' +
-        '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.return_no + '</p>' +
-        '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
-        '<p style="">Khách hàng: ' + customer_name + '</p>';
+        '<p style="text-align:center; font-weight:600;">Số HĐ: ' +
+        res?.return_no +
+        '</p>' +
+        '<p style="text-align:center;"> ' +
+        res?.created_at +
+        ' </p>' +
+        '<p style="">Khách hàng: ' +
+        customer_name +
+        '</p>';
       if (customer_phone !== '') {
         printContent += '<p style="">SĐT: ' + customer_phone + '</p>';
       }
-      printContent += '<table>' +
+      printContent +=
+        '<table>' +
         '<tr>' +
         '<th>Đơn giá</th>' +
         '<th style="text-align:center;">SL</th>' +
@@ -1188,16 +1400,36 @@ export class SaleMainComponent implements OnInit {
        */
       detail.forEach(element => {
         if (element?.base_unit == null) {
-          printContent += '<tr>' +
-            '<td>' + element.product?.product_name + '<br>' + element.price + '</td>' +
-            '<td style="text-align:center;">' + element.amount + '</td>' +
-            '<td style="text-align:right;">' + element.total + '</td>' +
+          printContent +=
+            '<tr>' +
+            '<td>' +
+            element.product?.product_name +
+            '<br>' +
+            element.price +
+            '</td>' +
+            '<td style="text-align:center;">' +
+            element.amount +
+            '</td>' +
+            '<td style="text-align:right;">' +
+            element.total +
+            '</td>' +
             '</tr>';
         } else {
-          printContent += '<tr>' +
-            '<td>' + element.product?.product_name + ' - ' + element?.base_unit + '<br>' + element.price + '</td>' +
-            '<td style="text-align:center;">' + element.amount + '</td>' +
-            '<td style="text-align:right;">' + element.total + '</td>' +
+          printContent +=
+            '<tr>' +
+            '<td>' +
+            element.product?.product_name +
+            ' - ' +
+            element?.base_unit +
+            '<br>' +
+            element.price +
+            '</td>' +
+            '<td style="text-align:center;">' +
+            element.amount +
+            '</td>' +
+            '<td style="text-align:right;">' +
+            element.total +
+            '</td>' +
             '</tr>';
         }
       });
@@ -1205,30 +1437,43 @@ export class SaleMainComponent implements OnInit {
       /**
        * Tong tien hang
        */
-      printContent += '<tr>' +
+      printContent +=
+        '<tr>' +
         '<td style="text-align:right; font-weight:600;" colspan="2">Tổng tiền hàng :</td>' +
-        '<td style="text-align:right; font-weight:600;">' + res.total_price + '</td>' +
+        '<td style="text-align:right; font-weight:600;">' +
+        res.total_price +
+        '</td>' +
         '</tr>';
-      printContent += '<tr>' +
+      printContent +=
+        '<tr>' +
         '<td style="text-align:right; font-weight:600;" colspan="2">Chiết khấu :</td>' +
-        '<td style="text-align:right; font-weight:600;">' + res.discount + '</td>' +
+        '<td style="text-align:right; font-weight:600;">' +
+        res.discount +
+        '</td>' +
         '</tr>';
-      printContent += '<tr>' +
+      printContent +=
+        '<tr>' +
         '<td style="text-align:right; font-weight:600;" colspan="2">Tổng thanh toán :</td>' +
-        '<td style="text-align:right; font-weight:600;">' + res.total + '</td>' +
+        '<td style="text-align:right; font-weight:600;">' +
+        res.total +
+        '</td>' +
         '</tr>';
       printContent += '</table>';
-      printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
+      printContent +=
+        '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
       printContent += '</section>';
 
-      const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+      const WindowPrt = window.open(
+        '',
+        '',
+        'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0'
+      );
       WindowPrt.document.write(printContent);
       WindowPrt.document.close();
       WindowPrt.focus();
       WindowPrt.print();
       // WindowPrt.close();
     });
-
   }
 
   // ------------------------------------------------------ PAYMENT ----------------------------------------------------------//
@@ -1256,7 +1501,10 @@ export class SaleMainComponent implements OnInit {
       mItemInvoice.user = this.user;
     }
 
-    if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
+    if (
+      mItemInvoice.listProduct === undefined ||
+      mItemInvoice.listProduct.length === 0
+    ) {
       this.notifySer.notify('warning', 'Chưa chọn sản phẩm !');
       return;
     }
@@ -1269,7 +1517,10 @@ export class SaleMainComponent implements OnInit {
       const product_unit = units.find(ele => ele.id === product_unit_id);
       // console.log(product_unit);
       if (element.amount > product_unit.quantity_of_stock) {
-        this.notifySer.notify('warning', 'Không đủ số lượng tồn kho sản phẩm ' + element.product.product_name);
+        this.notifySer.notify(
+          'warning',
+          'Không đủ số lượng tồn kho sản phẩm ' + element.product.product_name
+        );
         needReturn = 1;
       }
       // console.log(product_unit);
@@ -1285,7 +1536,10 @@ export class SaleMainComponent implements OnInit {
       let discount = 0;
       let discount_type = 'price';
       if (element.product.end_price === undefined) {
-        price = (element.common_price !== undefined) ? element.common_price : element.product.sell_price;
+        price =
+          element.common_price !== undefined
+            ? element.common_price
+            : element.product.sell_price;
       } else {
         price = element.product.end_price;
       }
@@ -1324,7 +1578,8 @@ export class SaleMainComponent implements OnInit {
       }
       // @ts-ignore
       // date_created = data['time'] + ' ' + effDate.toISOString().split('T')[0];
-      date_created = data['time'] + ' ' + this.dp.transform(effDate, 'yyyy-MM-dd');
+      date_created =
+        data['time'] + ' ' + this.dp.transform(effDate, 'yyyy-MM-dd');
     }
 
     let prescription_id = null;
@@ -1378,7 +1633,10 @@ export class SaleMainComponent implements OnInit {
       });
     } else {
       if (!this.isAdminStore) {
-        this.notifySer.notify('error', 'Bạn không có quyền thực hiện chức năng này.');
+        this.notifySer.notify(
+          'error',
+          'Bạn không có quyền thực hiện chức năng này.'
+        );
         return;
       }
       this.orderService.updateOrder(dataInvoice).subscribe(res => {
@@ -1398,7 +1656,6 @@ export class SaleMainComponent implements OnInit {
       });
     }
     this.handleExpenseOrder();
-
   }
 
   /**
@@ -1429,7 +1686,10 @@ export class SaleMainComponent implements OnInit {
       mItemInvoice.user = this.user;
     }
 
-    if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
+    if (
+      mItemInvoice.listProduct === undefined ||
+      mItemInvoice.listProduct.length === 0
+    ) {
       this.notifySer.notify('warning', 'Chưa chọn sản phẩm !');
       return;
     }
@@ -1453,7 +1713,10 @@ export class SaleMainComponent implements OnInit {
       let discount = 0;
       let discount_type = 'price';
       if (element.product.end_price === undefined) {
-        price = (element.common_price !== undefined) ? element.common_price : element.product.sell_price;
+        price =
+          element.common_price !== undefined
+            ? element.common_price
+            : element.product.sell_price;
       } else {
         price = element.product.end_price;
       }
@@ -1478,7 +1741,6 @@ export class SaleMainComponent implements OnInit {
           base_unit: element.base_unit,
         });
       }
-
     });
 
     /**
@@ -1517,9 +1779,7 @@ export class SaleMainComponent implements OnInit {
       this.orderService.setLoadProduct(false);
       this.orderService.setLoadDetailPage(true);
     });
-
   }
-
 
   async resetDataSiderBar() {
     await this.orderService.removeActive();
@@ -1541,11 +1801,13 @@ export class SaleMainComponent implements OnInit {
       this.numberDiscount = 0;
 
       const today = new Date();
-      const time = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
+      const time =
+        ('0' + today.getHours()).slice(-2) +
+        ':' +
+        ('0' + today.getMinutes()).slice(-2);
       this.form.patchValue({
         time: time,
       });
-
     }, 500);
   }
 
@@ -1572,10 +1834,12 @@ export class SaleMainComponent implements OnInit {
     this.autoPrint = e.checked;
     // console.log(this.optionStore_auto_print);
     // console.log(this.autoPrint);
-    this.optionStore_auto_print.value = (this.autoPrint === false) ? 'no' : 'yes';
-    this.optionStoreService.update(this.optionStore_auto_print.id, this.optionStore_auto_print).subscribe(res => {
-      console.log(res);
-    });
+    this.optionStore_auto_print.value = this.autoPrint === false ? 'no' : 'yes';
+    this.optionStoreService
+      .update(this.optionStore_auto_print.id, this.optionStore_auto_print)
+      .subscribe(res => {
+        console.log(res);
+      });
   }
 
   /**
@@ -1606,7 +1870,6 @@ export class SaleMainComponent implements OnInit {
       }
     });
     this.orderService.setListInvoiceLocalStorage(listInvoice);
-
   }
 
   /**
@@ -1615,8 +1878,15 @@ export class SaleMainComponent implements OnInit {
    */
   inputformatNumber(event: any) {
     event.target.value = numeral(event.target.value).format('0,0');
-    this.tienThuaTraKhach = numeral(this.form.controls['customerPay'].value).value() - this.sumPrice + this.numberDiscount;
-    this.tienKhachNo = this.sumPrice - this.numberDiscount - numeral(this.form.controls['customerPay'].value).value() + this.expenseOrder;
+    this.tienThuaTraKhach =
+      numeral(this.form.controls['customerPay'].value).value() -
+      this.sumPrice +
+      this.numberDiscount;
+    this.tienKhachNo =
+      this.sumPrice -
+      this.numberDiscount -
+      numeral(this.form.controls['customerPay'].value).value() +
+      this.expenseOrder;
   }
 
   public checkPermissionSaleDisable() {
@@ -1640,7 +1910,7 @@ export class SaleMainComponent implements OnInit {
    */
   clickPrescription() {
     const obj = {
-      prescription_id: this.prescription_id
+      prescription_id: this.prescription_id,
     };
     if (this.prescription.checked) {
       const dialogRef = this.dialog.open(PrescriptionFormDialogComponent, {
@@ -1661,7 +1931,7 @@ export class SaleMainComponent implements OnInit {
   keyEvent(event: KeyboardEvent) {
     if (event.keyCode === 112) {
       event.preventDefault();
-      !1 === this.showList ? this.showList = !0 : this.showList = !1;
+      !1 === this.showList ? (this.showList = !0) : (this.showList = !1);
     }
 
     if (event.keyCode === 113) {
@@ -1685,5 +1955,3 @@ export class SaleMainComponent implements OnInit {
     }
   }
 }
-
-

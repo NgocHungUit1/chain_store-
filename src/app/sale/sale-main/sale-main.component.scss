@@ -4,19 +4,19 @@ html .page-wrapper .page-content {
 
 .main-sale {
   @media only screen and (max-width: 1366px) {
-    max-height: 695px;
+    max-height: 715px;
   }
 }
 
 .container-main-sale {
-  height: calc(100% - 15px);
+  height: calc(100% - 12px);
 }
 
 .container-action-sale {
   background-color: #ffffff;
   position: relative;
   bottom: 0;
-  height: calc(100% - 15px);
+  height: calc(100% - 12px);
 }
 
 /*  sale detail order  */
@@ -32,7 +32,6 @@ html .page-wrapper .page-content {
   flex: 1;
   height: calc(100%);
 
-
   /*&.fixed-list {
     height: calc(100% - 440px) ;
     max-height: 480px;
@@ -43,7 +42,7 @@ html .page-wrapper .page-content {
   }
 
   .mat-input-element {
-    font-size: 15px;
+    font-size: 12px;
   }
 
   .mat-icon-button {
@@ -53,7 +52,7 @@ html .page-wrapper .page-content {
     line-height: 24px;
 
     .mat-icon {
-      font-size: 14px !important;
+      font-size: 12px !important;
     }
   }
 
@@ -73,7 +72,7 @@ html .page-wrapper .page-content {
       }
 
       &-product-no {
-        font-size: 15px;
+        font-size: 12px;
         padding-right: 5px;
       }
 
@@ -82,7 +81,7 @@ html .page-wrapper .page-content {
       }
 
       &-product-name {
-        font-size: 15px;
+        font-size: 12px;
       }
 
       &-product-note {
@@ -95,7 +94,7 @@ html .page-wrapper .page-content {
       }
 
       &-count-number {
-        font-size: 15px;
+        font-size: 12px;
         min-width: 60px;
         text-align: right;
       }
@@ -117,7 +116,7 @@ html .page-wrapper .page-content {
       }
 
       &-icon-edit {
-        font-size: 15px;
+        font-size: 12px;
       }
 
       &-icon-edit-price {
@@ -125,21 +124,20 @@ html .page-wrapper .page-content {
       }
 
       &-total-price {
-        font-size: 15px;
+        font-size: 12px;
         text-align: right;
         font-weight: 600;
       }
     }
 
     .span-product-no {
-      font-size: 15px;
+      font-size: 12px;
       color: black;
       padding-top: 4px;
       padding-right: 4px;
     }
   }
 }
-
 
 .sale-list-product {
   position: fixed;
@@ -150,7 +148,7 @@ html .page-wrapper .page-content {
   opacity: 0;
   border: 1px solid #e0e0e0;
   border-top: 0;
-  transition: all .3s ease-in-out;
+  transition: all 0.3s ease-in-out;
 
   &.opened {
     width: 71%;
@@ -198,30 +196,38 @@ html .page-wrapper .page-content {
 
   .ban-thuoc-theo-don {
     span {
-      font-size: 13px;
+      font-size: 12px;
     }
   }
 
-  .custom-title-invoice, .customer-pay, .customer-need, .excess-cash, .order-discount, .note-pay {
+  .custom-title-invoice,
+  .customer-pay,
+  .customer-need,
+  .excess-cash,
+  .order-discount,
+  .note-pay {
     margin-top: 10px;
   }
 
   .order-detail {
-    margin-top: 18px;
+    margin-top: 2rem;
   }
 
-  .price-product-text, .price-discount-text {
-    font-size: 14px;
+  .price-product-text,
+  .price-discount-text {
+    font-size: 12px;
     text-align: left;
   }
 
-  .price-product-number, .price-discount-number {
-    font-size: 15px;
+  .price-product-number,
+  .price-discount-number {
+    font-size: 12px;
     text-align: right;
   }
 
-  .label-text, .customer-pay-text {
-    font-size: 15px;
+  .label-text,
+  .customer-pay-text {
+    font-size: 12px;
     text-align: left;
   }
 
@@ -236,7 +242,8 @@ html .page-wrapper .page-content {
     font-weight: 600;
   }
 
-  .customer-pay-number, .excess-cash-number {
+  .customer-pay-number,
+  .excess-cash-number {
     font-size: 18px;
     text-align: right;
   }
@@ -254,7 +261,7 @@ html .page-wrapper .page-content {
   }
 
   .custom-slide-toggle {
-    margin-top: -15px;
+    margin-top: -12px;
   }
 
   .payment-button {
@@ -297,15 +304,15 @@ html .page-wrapper .page-content {
 }
 
 .input-search {
-  font-size: 15px;
+  font-size: 12px;
 }
 
 .user-action .input-search {
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .prescription {
-  font-size: 15px;
+  font-size: 12px;
 
   span {
     border-bottom: 1px solid transparent;
@@ -313,7 +320,7 @@ html .page-wrapper .page-content {
   }
 
   &-checked {
-    font-size: 15px;
+    font-size: 12px;
     color: blue;
 
     span.prescription-text {
@@ -323,18 +330,93 @@ html .page-wrapper .page-content {
   }
 }
 
-.price-discount-number .mat-form-field-infix, .customer-pay-number .mat-form-field-infix {
+.price-discount-number .mat-form-field-infix,
+.customer-pay-number .mat-form-field-infix {
   padding: 0.2375em 0;
 }
 
-.container-action-sale .mat-form-field:not(.mat-form-field-can-float) .mat-form-field-wrapper, .product-cart .mat-form-field:not(.mat-form-field-can-float) .mat-form-field-wrapper {
+.container-action-sale
+  .mat-form-field:not(.mat-form-field-can-float)
+  .mat-form-field-wrapper,
+.product-cart
+  .mat-form-field:not(.mat-form-field-can-float)
+  .mat-form-field-wrapper {
   padding-bottom: 0;
 }
 
-.container-action-sale .mat-form-field:not(.mat-form-field-can-float) .mat-form-field-infix, .product-cart .mat-form-field:not(.mat-form-field-can-float) .mat-form-field-infix {
+.container-action-sale
+  .mat-form-field:not(.mat-form-field-can-float)
+  .mat-form-field-infix,
+.product-cart
+  .mat-form-field:not(.mat-form-field-can-float)
+  .mat-form-field-infix {
   border-top: 0;
 }
 
-.container-action-sale .mat-form-field:not(.mat-form-field-can-float) .mat-form-field-underline, .product-cart .mat-form-field:not(.mat-form-field-can-float) .mat-form-field-underline {
+.container-action-sale
+  .mat-form-field:not(.mat-form-field-can-float)
+  .mat-form-field-underline,
+.product-cart
+  .mat-form-field:not(.mat-form-field-can-float)
+  .mat-form-field-underline {
   bottom: 0;
+}
+
+.cart {
+  .mat-form-field {
+    &.mat-focused,
+    &.mat-form-field-should-float {
+      .mat-form-field-infix {
+        border-top: 0.44375em solid transparent;
+        border-bottom: 0.24375em solid transparent;
+      }
+    }
+  }
+
+  .mat-form-field-appearance-fill .mat-select-arrow-wrapper {
+    transform: unset;
+  }
+
+  .mat-form-field-appearance-legacy.mat-form-field-can-float.mat-form-field-should-float
+    .mat-form-field-label,
+  .mat-form-field-appearance-legacy.mat-form-field-can-float
+    .mat-input-server:focus
+    + .mat-form-field-label-wrapper
+    .mat-form-field-label {
+    display: none;
+  }
+
+  .main-sale-sidebar-order {
+    .md-datepicker-button {
+      display: none;
+    }
+
+    .mat-form-field {
+      &.date-picker {
+        .mat-form-field-suffix {
+          display: none;
+        }
+      }
+    }
+
+    .customer-action {
+      .mat-form-field-infix {
+        border: 0;
+      }
+    }
+
+    .pricebook-action {
+      .mat-form-field-wrapper {
+        padding-bottom: 0;
+      }
+
+      .mat-form-field-appearance-legacy .mat-form-field-underline {
+        bottom: 0;
+      }
+
+      .mat-form-field-infix {
+        border: 0;
+      }
+    }
+  }
 }

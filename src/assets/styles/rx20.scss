@@ -5,7 +5,6 @@ Email: niravjoshi87@gmail.com
 File: scss
 */
 
-
 /*******************
  Topbar
 *******************/
@@ -15,7 +14,6 @@ File: scss
       color: white;
     }
   }
-
 }
 
 .left-sidebar {
@@ -84,11 +82,23 @@ File: scss
   height: 385px !important;
 }
 
-#snav .mat-nav-list .mat-list-item.selected > .mat-list-item-content > .mat-nav-list .mat-list-item.selected > .mat-list-item-content a.selected mat-icon {
+#snav
+  .mat-nav-list
+  .mat-list-item.selected
+  > .mat-list-item-content
+  > .mat-nav-list
+  .mat-list-item.selected
+  > .mat-list-item-content
+  a.selected
+  mat-icon {
   color: #2f3d4a;
 }
 
-.mat-toolbar .select-product .mat-focused .mat-form-field-underline .mat-form-field-ripple {
+.mat-toolbar
+  .select-product
+  .mat-focused
+  .mat-form-field-underline
+  .mat-form-field-ripple {
   background-color: #009688;
 }
 
@@ -107,12 +117,14 @@ File: scss
 
 .warehouse-product-table {
   .mat-form-field {
-    .mat-form-field-prefix, .mat-form-field-suffix {
+    .mat-form-field-prefix,
+    .mat-form-field-suffix {
       display: none;
     }
 
     &:hover {
-      .mat-form-field-prefix, .mat-form-field-suffix {
+      .mat-form-field-prefix,
+      .mat-form-field-suffix {
         display: block;
       }
     }
@@ -130,5 +142,5 @@ File: scss
 }
 
 .mat-form-field-hide-placeholder .mat-form-field-infix {
-  border-top: 0;
+  // border-top: 0;
 }

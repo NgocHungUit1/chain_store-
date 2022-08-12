@@ -1,8 +1,19 @@
 <!-- ============================================================== -->
 <!-- Main wrapper - style you can find in pages.scss -->
 <!-- ============================================================== -->
-<div class="main-container cart" [dir]="dir"
-     [ngClass]="{'minisidebar': minisidebar, 'boxed': boxed, 'danger': danger, 'blue': blue, 'green': green, 'dark': dark, 'sidebar-opened': sidebarOpened, 'sidebar-closed': !sidebarOpened }">
+<div
+  class="main-container cart"
+  [dir]="dir"
+  [ngClass]="{
+    minisidebar: minisidebar,
+    boxed: boxed,
+    danger: danger,
+    blue: blue,
+    green: green,
+    dark: dark,
+    'sidebar-opened': sidebarOpened,
+    'sidebar-closed': !sidebarOpened
+  }">
   <!-- ============================================================== -->
   <!-- Topbar - style you can find in header.scss -->
   <!-- ==============================================================
@@ -18,9 +29,15 @@
         <b>
           <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
           <!-- Dark Logo icon -->
-          <img src="assets/images/Rx20_16x16_op1-1207.png" alt="homepage" class="dark-logo">
+          <img
+            src="assets/images/Rx20_16x16_op1-1207.png"
+            alt="homepage"
+            class="dark-logo" />
           <!-- Light Logo icon -->
-          <img src="assets/images/Rx20_16x16_op1-1207.png" alt="homepage" class="light-logo">
+          <img
+            src="assets/images/Rx20_16x16_op1-1207.png"
+            alt="homepage"
+            class="light-logo" />
         </b>
         <!--End Logo icon -->
       </a>
@@ -29,8 +46,13 @@
     <!-- sidebar toggle -->
     <!-- ============================================================== -->
 
-    <button mat-icon-button (click)="snav.toggle()" fxShow.sm="false" fxShow.xs="false" fxShow.gt-lg="false"
-            fxShow="false">
+    <button
+      mat-icon-button
+      (click)="snav.toggle()"
+      fxShow.sm="false"
+      fxShow.xs="false"
+      fxShow.gt-lg="false"
+      fxShow="false">
       <mat-icon>menu</mat-icon>
     </button>
     <!-- ============================================================== -->
@@ -39,77 +61,121 @@
 
     <div class="select-product search-wrapper">
       <mat-form-field>
-        <input class="input-search-product" style="outline: 0;" type="text" [formControl]="selectProduct" matInput
-               (focus)="focusInputSearch($event)" #inputSearch
-               [matAutocomplete]="chooseProduct" [placeholder]="placeholderSearch"/>
+        <input
+          class="input-search-product"
+          style="outline: 0"
+          type="text"
+          [formControl]="selectProduct"
+          matInput
+          (focus)="focusInputSearch($event)"
+          #inputSearch
+          [matAutocomplete]="chooseProduct"
+          [placeholder]="placeholderSearch" />
         <button mat-icon-button matPrefix>
           <mat-icon>search</mat-icon>
         </button>
-        <button mat-icon-button matSuffix (click)="changeTypeSearch();">
+        <button mat-icon-button matSuffix (click)="changeTypeSearch()">
           <mat-icon>{{ iconChangeType }}</mat-icon>
         </button>
-        <mat-autocomplete #chooseProduct="matAutocomplete" (optionSelected)="onSelectedProduct($event.option.value)">
-          <mat-option fxLayout="row" *ngFor="let product of filteredProducts | async" [value]="product"
-                      style="min-height: 70px; line-height:25px !important;"
-                      title="{{ product.product_name }}">
-            <img *ngIf="iconChangeType === 'cached'" fxFlex="25" class="example-option-img " aria-hidden
-                 [src]="product.default_image" width="22">
+        <mat-autocomplete
+          #chooseProduct="matAutocomplete"
+          (optionSelected)="onSelectedProduct($event.option.value)">
+          <mat-option
+            fxLayout="row"
+            *ngFor="let product of filteredProducts | async"
+            [value]="product"
+            style="min-height: 70px; line-height: 25px !important"
+            title="{{ product.product_name }}">
+            <img
+              *ngIf="iconChangeType === 'cached'"
+              fxFlex="25"
+              class="example-option-img"
+              aria-hidden
+              [src]="product.default_image"
+              width="22" />
 
-            <span fxFlex="75" style="margin-left: 5px;" class="m-l-10"
-                  *ngIf="product.base_unit !== null && iconChangeType === 'cached'">
-              <b style="font-size: 12px;">{{ product.product_name  }}</b>
-              <br>
-              {{ product.product_no }} &nbsp;Giá: {{ product.sell_price | number }} {{ product.base_unit }}
-              -Tồn:{{ product.product_unit_quantity_of_stock }}
+            <span
+              fxFlex="75"
+              style="margin-left: 5px"
+              class="m-l-10"
+              *ngIf="product.base_unit !== null && iconChangeType === 'cached'">
+              <b style="font-size: 12px">{{ product.product_name }}</b>
+              <br />
+              {{ product.product_no }} &nbsp;Giá:
+              {{ product.sell_price | number }} {{ product.base_unit }} -Tồn:{{
+                product.product_unit_quantity_of_stock
+              }}
             </span>
 
-            <span fxFlex="75" class="m-l-10" *ngIf="product.base_unit == null && iconChangeType === 'cached'">
-              <b style="font-size: 12px;">{{ product.product_name }}</b>
-              <br>
-              {{ product.product_no }} &nbsp;Giá: {{ product.sell_price | number }}
+            <span
+              fxFlex="75"
+              class="m-l-10"
+              *ngIf="product.base_unit == null && iconChangeType === 'cached'">
+              <b style="font-size: 12px">{{ product.product_name }}</b>
+              <br />
+              {{ product.product_no }} &nbsp;Giá:
+              {{ product.sell_price | number }}
             </span>
 
             <!--            Don thuoc mau-->
-            <span *ngIf="iconChangeType === 'assignment'" fxFlex="100" style="margin-left: 5px;" class="m-l-10">
-              <b style="font-size: 12px;">{{ product.product_name  }}</b>
-              <br>
+            <span
+              *ngIf="iconChangeType === 'assignment'"
+              fxFlex="100"
+              style="margin-left: 5px"
+              class="m-l-10">
+              <b style="font-size: 12px">{{ product.product_name }}</b>
+              <br />
               {{ product.product_no }}
             </span>
-
           </mat-option>
-
 
           <!--          Danh sach san pham history-->
-          <mat-option *ngIf="productsHistory | async"
-                      style="line-height: 25px !important;text-align: center; color: #908c88;">
+          <mat-option
+            *ngIf="productsHistory | async"
+            style="
+              line-height: 25px !important;
+              text-align: center;
+              color: #908c88;
+            ">
             Tìm kiếm gần đây ...
           </mat-option>
-          <mat-option *ngFor="let product of productsHistory | async" [value]="product"
-                      style="min-height: 70px; line-height:25px !important;"
-                      title="{{ product.product_name }}">
+          <mat-option
+            *ngFor="let product of productsHistory | async"
+            [value]="product"
+            style="min-height: 70px; line-height: 25px !important"
+            title="{{ product.product_name }}">
+            <img
+              *ngIf="iconChangeType === 'cached'"
+              fxFlex="25"
+              class="example-option-img"
+              aria-hidden
+              [src]="product.default_image"
+              width="22" />
 
-            <img *ngIf="iconChangeType === 'cached'" fxFlex="25" class="example-option-img " aria-hidden
-                 [src]="product.default_image" width="22">
-
-            <span fxFlex="75" style="margin-left: 5px;" class="m-l-10"
-                  *ngIf="product.base_unit !== null && iconChangeType === 'cached'">
-              <b style="font-size: 12px;">{{ product.product_name  }}</b>
-              <br>
-              {{ product.product_no }} &nbsp;Giá: {{ product.sell_price | number }} {{ product.base_unit }}
-              -Tồn:{{ product.product_unit_quantity_of_stock }}
+            <span
+              fxFlex="75"
+              style="margin-left: 5px"
+              class="m-l-10"
+              *ngIf="product.base_unit !== null && iconChangeType === 'cached'">
+              <b style="font-size: 12px">{{ product.product_name }}</b>
+              <br />
+              {{ product.product_no }} &nbsp;Giá:
+              {{ product.sell_price | number }} {{ product.base_unit }} -Tồn:{{
+                product.product_unit_quantity_of_stock
+              }}
             </span>
 
-            <span fxFlex="75" class="m-l-10" *ngIf="product.base_unit == null && iconChangeType === 'cached'">
-              <b style="font-size: 12px;">{{ product.product_name }}</b>
-              <br>
-              {{ product.product_no }} &nbsp;Giá: {{ product.sell_price | number }}
+            <span
+              fxFlex="75"
+              class="m-l-10"
+              *ngIf="product.base_unit == null && iconChangeType === 'cached'">
+              <b style="font-size: 12px">{{ product.product_name }}</b>
+              <br />
+              {{ product.product_no }} &nbsp;Giá:
+              {{ product.sell_price | number }}
             </span>
-
           </mat-option>
-
         </mat-autocomplete>
-
-
       </mat-form-field>
     </div>
 
@@ -138,26 +204,44 @@
     </button> -->
 
     <!--    So luong nhap hang-->
-    <input class="amount-product" matInput [(ngModel)]="amountProduct"
-           type="number" matTooltip="Số lượng cộng dồn, mặc định bằng 1"
-           placeholder="SL:1" min="1" autocomplete="off"/>
+    <input
+      class="amount-product"
+      matInput
+      [(ngModel)]="amountProduct"
+      type="number"
+      matTooltip="Số lượng cộng dồn, mặc định bằng 1"
+      placeholder="SL:1"
+      min="1"
+      autocomplete="off" />
 
     <nav mat-tab-nav-bar>
-      <a mat-tab-link mat-primary *ngFor="let mItemInvoice of listmItemInvoice"
-         (click)="activeLink = mItemInvoice.invoice_id"
-         [active]="activeLink == mItemInvoice.invoice_id" (click)="activeInvoice(mItemInvoice?.invoice_id)">
-        <span *ngIf="mItemInvoice?.invoice_id > 0">{{ mItemInvoice.invoice_name }}</span>
-        <span
-          *ngIf="mItemInvoice?.invoice_id < 0">{{ mItemInvoice.invoice_name + ' ' + (mItemInvoice?.invoice_id * -1) }}</span>
-        <button mat-icon-button (click)="deleteInvoice(mItemInvoice?.invoice_id)">
+      <a
+        mat-tab-link
+        mat-primary
+        *ngFor="let mItemInvoice of listmItemInvoice"
+        (click)="activeLink = mItemInvoice.invoice_id"
+        [active]="activeLink == mItemInvoice.invoice_id"
+        (click)="activeInvoice(mItemInvoice?.invoice_id)">
+        <span *ngIf="mItemInvoice?.invoice_id > 0">{{
+          mItemInvoice.invoice_name
+        }}</span>
+        <span *ngIf="mItemInvoice?.invoice_id < 0">{{
+          mItemInvoice.invoice_name + ' ' + mItemInvoice?.invoice_id * -1
+        }}</span>
+        <button
+          mat-icon-button
+          (click)="deleteInvoice(mItemInvoice?.invoice_id)">
           <mat-icon>close</mat-icon>
         </button>
       </a>
     </nav>
-    <button mat-button mat-icon-button (click)="addInvoice()" class="btn-add-invoice-tab">
+    <button
+      mat-button
+      mat-icon-button
+      (click)="addInvoice()"
+      class="btn-add-invoice-tab">
       <mat-icon>add</mat-icon>
     </button>
-
 
     <span fxFlex></span>
     <!-- ============================================================== -->
@@ -167,21 +251,33 @@
     <!-- ============================================================== -->
     <!-- Right sidebar toggle - style you can find in rightsidebar.component.scss -->
     <!-- ============================================================== -->
-    <button (click)="end.toggle()" mat-icon-button class="ml-xs overflow-visible">
+    <button
+      (click)="end.toggle()"
+      mat-icon-button
+      class="ml-xs overflow-visible">
       <mat-icon>settings</mat-icon>
     </button>
   </mat-toolbar>
   <!-- ============================================================== -->
   <!-- End Topbar - style you can find in pages.scss -->
   <!-- ============================================================== -->
-  <mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 0 : 0"
-                         [ngClass]="{'minisidebar': minisidebar}">
+  <mat-sidenav-container
+    class="example-sidenav-container"
+    [style.marginTop.px]="mobileQuery.matches ? 0 : 0"
+    [ngClass]="{ minisidebar: minisidebar }">
     <!-- ============================================================== -->
     <!-- Sidebar - style you can find in sidebar.scss -->
     <!-- ============================================================== -->
-    <mat-sidenav #snav id="snav" [mode]="mobileQuery.matches ? 'side' : 'over'" fixedTopGap="0" fxShow="false"
-                 [opened]="mobileQuery.matches" [disableClose]="mobileQuery.matches" (open)="sidebarOpened = true"
-                 (close)="sidebarOpened = false">
+    <mat-sidenav
+      #snav
+      id="snav"
+      [mode]="mobileQuery.matches ? 'side' : 'over'"
+      fixedTopGap="0"
+      fxShow="false"
+      [opened]="mobileQuery.matches"
+      [disableClose]="mobileQuery.matches"
+      (open)="sidebarOpened = true"
+      (close)="sidebarOpened = false">
       <!-- <app-sidebar></app-sidebar> -->
     </mat-sidenav>
     <!-- ============================================================== -->
@@ -190,35 +286,64 @@
     <!-- ============================================================== -->
     <!-- Right Sidebar - style you can find in rightsidebar.component.scss -->
     <!-- ============================================================== -->
-    <mat-sidenav #end position="end" class="chat-panel" mode="over" opened="false">
+    <mat-sidenav
+      #end
+      position="end"
+      class="chat-panel"
+      mode="over"
+      opened="false">
       <div class="scroll">
         <mat-nav-list>
-
-          <h3 mat-subheader class="text-uppercase font-weight-bold">Settings</h3>
+          <h3 mat-subheader class="text-uppercase font-weight-bold">
+            Settings
+          </h3>
           <mat-list-item>
-            <mat-slide-toggle color="warn" (change)="dir = (dir == 'rtl' ? 'ltr' : 'rtl')">RTL
+            <mat-slide-toggle
+              color="warn"
+              (change)="dir = dir == 'rtl' ? 'ltr' : 'rtl'"
+              >RTL
             </mat-slide-toggle>
           </mat-list-item>
           <mat-list-item>
-            <mat-slide-toggle color="warn" [(ngModel)]="boxed">Boxed Layout</mat-slide-toggle>
+            <mat-slide-toggle color="warn" [(ngModel)]="boxed"
+              >Boxed Layout</mat-slide-toggle
+            >
           </mat-list-item>
           <mat-divider></mat-divider>
           <h3 mat-subheader class="text-uppercase font-weight-bold">Colors</h3>
           <mat-list-item>
-            <mat-checkbox color="warn" [(ngModel)]="danger" (change)="green = blue = false" class="text-danger">Red
+            <mat-checkbox
+              color="warn"
+              [(ngModel)]="danger"
+              (change)="green = blue = false"
+              class="text-danger"
+              >Red
             </mat-checkbox>
           </mat-list-item>
           <mat-list-item>
-            <mat-checkbox color="warn" [(ngModel)]="green" (change)="danger = blue = false" class="text-megna">Teal
-              Green
+            <mat-checkbox
+              color="warn"
+              [(ngModel)]="green"
+              (change)="danger = blue = false"
+              class="text-megna"
+              >Teal Green
             </mat-checkbox>
           </mat-list-item>
           <mat-list-item>
-            <mat-checkbox color="warn" [(ngModel)]="blue" (change)="green = danger = false" class="text-info">Blue
+            <mat-checkbox
+              color="warn"
+              [(ngModel)]="blue"
+              (change)="green = danger = false"
+              class="text-info"
+              >Blue
             </mat-checkbox>
           </mat-list-item>
           <mat-list-item>
-            <mat-checkbox color="warn" [(ngModel)]="dark" (change)="green = blue = danger = false">Dark
+            <mat-checkbox
+              color="warn"
+              [(ngModel)]="dark"
+              (change)="green = blue = danger = false"
+              >Dark
             </mat-checkbox>
           </mat-list-item>
         </mat-nav-list>
@@ -231,13 +356,10 @@
     <mat-sidenav-content class="page-wrapper-cart">
       <!-- <app-breadcrumb></app-breadcrumb> -->
       <div class="page-content">
-
         <router-outlet>
           <app-spinner></app-spinner>
         </router-outlet>
-
       </div>
-
     </mat-sidenav-content>
     <!-- ============================================================== -->
     <!-- Page container - style you can find in pages.scss -->
