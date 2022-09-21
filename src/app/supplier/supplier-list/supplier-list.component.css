@@ -65,3 +65,9 @@ tr.mat-header-row:nth-child(1) {
   height: 45px !important;
   background-color: #dcf4fc;
 }
+
+.select-product {
+  margin-left: 10px;
+  font-size: 1rem;
+  min-width: 215px;
+}
