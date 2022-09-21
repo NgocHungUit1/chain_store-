@@ -14,6 +14,17 @@
         <mat-icon>menu</mat-icon>
       </button>
       <h3>Danh sách nhà cung cấp</h3>
+
+      <div class="select-product">
+        <mat-form-field>
+          <mat-label>Tìm kiếm</mat-label>
+          <input matInput [formControl]="searchForm" placeholder="" #input autocomplete="off">
+          <button mat-icon-button matPrefix>
+            <mat-icon>search</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+
       <span fxFlex="1 1 0%"></span>
       <button mat-raised-button color="primary" (click)="openSupplierFormDialog()" style="margin-right: 10px">
         <mat-icon>add</mat-icon>
@@ -48,7 +59,7 @@
 
               <ng-container matColumnDef="#">
                 <th mat-header-cell *matHeaderCellDef> #</th>
-                <td mat-cell *matCellDef="let element"> {{element.id}}</td>
+                <td mat-cell *matCellDef="let element; let i = index;"> {{ (page - 1) * pageSize + element.stt }} </td>
               </ng-container>
 
               <ng-container matColumnDef="name">

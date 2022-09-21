@@ -228,10 +228,12 @@
                        matTooltipPosition="left" required>
               </mat-form-field>
             </div>
-            <div fxFlex="90">
+            <div fxFlex="100">
               <mat-form-field>
                 <input type="text" matInput formControlName="supplier" placeholder="Nhà cung cấp"
-                       [matAutocomplete]="auto">
+                       [value]="(form.controls['supplier'].value)?.name + '-' + (form.controls['supplier'].value)?.phone_number"
+                       (click)="openSearchSupplierDialog()">
+<!--                [matAutocomplete]="auto"-->
                 <button mat-icon-button matPrefix>
                   <mat-icon>search</mat-icon>
                 </button>
@@ -239,24 +241,24 @@
                         *ngIf="this.form?.controls['supplier'].value && this.updateModelId === null">
                   <mat-icon>delete</mat-icon>
                 </button>
-                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySupplier">
-                  <mat-option style="word-break: break-word;
-                                      display: block;
-                                      white-space: pre-wrap;"
-                              *ngFor="let supplier of filteredSuppliers | async" [value]="supplier">
-                    <span class="supplier-option">
-                      - {{supplier.name}}
-                    </span>
-                  </mat-option>
-                </mat-autocomplete>
+<!--                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySupplier">-->
+<!--                  <mat-option style="word-break: break-word;-->
+<!--                                      display: block;-->
+<!--                                      white-space: pre-wrap;"-->
+<!--                              *ngFor="let supplier of filteredSuppliers | async" [value]="supplier">-->
+<!--                    <span class="supplier-option">-->
+<!--                      - {{supplier.name}}-->
+<!--                    </span>-->
+<!--                  </mat-option>-->
+<!--                </mat-autocomplete>-->
               </mat-form-field>
             </div>
-            <div fxFlex="10">
-              <button mat-button aria-label="add" (click)="openSupplierFormDialog()"
-                      style="min-width: unset; padding: 0">
-                <mat-icon>add</mat-icon>
-              </button>
-            </div>
+<!--            <div fxFlex="10">-->
+<!--              <button mat-button aria-label="add" (click)="openSupplierFormDialog()"-->
+<!--                      style="min-width: unset; padding: 0">-->
+<!--                <mat-icon>add</mat-icon>-->
+<!--              </button>-->
+<!--            </div>-->
 
             <div fxFlex="100">
               <mat-form-field>

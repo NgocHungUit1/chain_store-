@@ -38,6 +38,7 @@ import {WarehouseParcelListDialogComponent} from '../warehouse-parcel-list-dialo
 import {WarehouseFormPriceDialogComponent} from '../warehouse-form-price-dialog/warehouse-form-price-dialog.component';
 import {SearchProductDialogComponent} from '../../common/search-product-dialog/search-product-dialog.component';
 import * as moment from 'moment';
+import {SearchSupplierDialogComponent} from '../../common/search-supplier-dialog/search-supplier-dialog.component';
 
 
 @Component({
@@ -183,21 +184,21 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
       this.displayedColumns = this.columnsToDisplay;
 
-      this.filteredSuppliers = this.form.controls['supplier'].valueChanges.pipe(
-        startWith(''),
-        // delay emits
-        debounceTime(300),
-        // use switch map so as to cancel previous subscribed events, before creating new once
-        switchMap(value => {
-          if (value !== '') {
-            // lookup from github
-            return this.lookup(value);
-          } else {
-            // if no value is present, return null
-            return of(null);
-          }
-        })
-      );
+      // this.filteredSuppliers = this.form.controls['supplier'].valueChanges.pipe(
+      //   startWith(''),
+      //   // delay emits
+      //   debounceTime(300),
+      //   // use switch map so as to cancel previous subscribed events, before creating new once
+      //   switchMap(value => {
+      //     if (value !== '') {
+      //       // lookup from github
+      //       return this.lookup(value);
+      //     } else {
+      //       // if no value is present, return null
+      //       return of(null);
+      //     }
+      //   })
+      // );
 
       this.selectProduct.valueChanges.subscribe(value => {
         setTimeout(res => {
@@ -448,15 +449,15 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         data['expenses_price'] = numeral(data['expenses_price']).value();
         data['action_change'] = numeral(data['action_change']).value(); // chuc nang cap nhat don hoan thanh
         data['expensesTransactions'] = this.expensesTransactions;
-        if (this.form.controls['date'].value !== null ) {
-          if (typeof this.form.controls['date'].value === 'object'){
+        if (this.form.controls['date'].value !== null) {
+          if (typeof this.form.controls['date'].value === 'object') {
             const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
             data['date'] = effDate.toISOString().split('T')[0];
           } else {
             // @@ NGHIA
             const effDate = this.form.controls['date'].value;
             data['date'] = effDate.split('T')[0];
-            data['date'] = moment(data['date'], "YYYY-MM-DD").add(1, 'days').format("YYYY-MM-DD");
+            data['date'] = moment(data['date'], 'YYYY-MM-DD').add(1, 'days').format('YYYY-MM-DD');
           }
         }
         this.data.forEach(element => {
@@ -1043,7 +1044,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   openSearchProductDialog() {
-
     const dialogRef = this.dialog.open(SearchProductDialogComponent, {
       width: '80%',
       minWidth: '750px',
@@ -1053,6 +1053,22 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     dialogRef.afterClosed().subscribe(result => {
       if (result['event'] === 'Choose') {
         this.handleAddProductToList(result['product_id']);
+      }
+    });
+  }
+
+  openSearchSupplierDialog() {
+    const dialogRef = this.dialog.open(SearchSupplierDialogComponent, {
+      width: '80%',
+      height: '750px',
+      // minWidth: '750px',
+      // minHeight: '70%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result['event'] === 'Choose') {
+        this.form.patchValue({'supplier': result['supplier']});
+        //this.handleAddProductToList(result['product_id']);
       }
     });
   }

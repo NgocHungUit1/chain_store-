@@ -35,6 +35,7 @@ export class SupplierFilter extends ApiFilterBase {
   sort = '';
   date_from = '';
   date_to = '';
+  keyword = '';
 
   getModelSearch() {
     return 'SupplierSearch';

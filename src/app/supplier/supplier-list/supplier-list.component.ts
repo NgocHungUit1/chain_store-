@@ -10,6 +10,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { SupplierFormDialogComponent } from '../supplier-form-dialog/supplier-form-dialog.component';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { NotifierService } from 'angular-notifier';
+import {FormControl} from '@angular/forms';
+import {debounceTime} from 'rxjs/operators';
 
 @Component({
   templateUrl: './supplier-list.component.html',
@@ -36,6 +38,7 @@ export class SupplierListComponent extends ListComponentBase implements OnInit {
   @ViewChild(MatTable, { static: true }) table: MatTable<any>;
 
   apiFilter: SupplierFilter;
+  searchForm = new FormControl();
 
   columnsHeader = {
     '#': '#',
@@ -96,6 +99,11 @@ export class SupplierListComponent extends ListComponentBase implements OnInit {
     this.isLoadingResults = true;
     this.service.getList(this.apiFilter).subscribe(res => {
       this.dataSource = res.body;
+      let stt = 0;
+      this.dataSource.forEach(elementData => {
+        stt++;
+        elementData.stt = stt;
+      });
       this.reloadFilter(res);
       this.isLoadingResults = false;
     });
@@ -104,6 +112,17 @@ export class SupplierListComponent extends ListComponentBase implements OnInit {
   ngOnInit() {
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
+
+    this.searchForm.valueChanges.pipe(debounceTime(800)).subscribe(res => {
+      if (res !== '') {
+        this.apiFilter = this.buildFilterFromParams();
+        this.apiFilter.keyword = res;
+        this.loadData();
+      } else {
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+      }
+    });
   }
 
   openSupplierFormDialog() {
