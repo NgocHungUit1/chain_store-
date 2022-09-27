@@ -83,15 +83,15 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
       const data = res.body;
       // tslint:disable-next-line:no-shadowed-variable
       data.forEach(element => {
-        // console.log(element);
         const productUnits = element.productUnits;
         // let quantity_of_stock = '';
         // productUnits.forEach(unit => {
         //   quantity_of_stock += unit.name + '-' + unit.quantity_of_stock + ' ';
         // });
         // element.quantity_of_stock = element.base + '-' + element.quantity_of_stock;
+        let soton = (element.quantity?.number) ? element.quantity?.number : 0;
         element.quantity_of_stock = element.quantity?.number;
-        element.text_quantity_of_stock = element.base_unit + '-' + element.quantity?.number;
+        element.text_quantity_of_stock = element.base_unit + '-' + soton;
 
       });
       this.dataSource = data;

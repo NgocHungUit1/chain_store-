@@ -231,7 +231,7 @@
             <div fxFlex="100">
               <mat-form-field>
                 <input type="text" matInput formControlName="supplier" placeholder="Nhà cung cấp"
-                       [value]="(form.controls['supplier'].value)?.name + '-' + (form.controls['supplier'].value)?.phone_number"
+                       [value]="(form.controls['supplier'].value)?.name"
                        (click)="openSearchSupplierDialog()">
 <!--                [matAutocomplete]="auto"-->
                 <button mat-icon-button matPrefix>
