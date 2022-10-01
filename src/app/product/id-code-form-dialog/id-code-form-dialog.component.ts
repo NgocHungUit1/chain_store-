@@ -74,7 +74,7 @@ export class IdCodeFormDialogComponent implements OnInit {
     const dialogRef = this.dialog.open(ViewIdCodeFormDialogComponent, {
       data: obj,
       width: '500px',
-      minHeight: '70%',
+      minHeight: '60%',
     });
 
     dialogRef.afterClosed().subscribe(result => {

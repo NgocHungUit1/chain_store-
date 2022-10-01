@@ -62,7 +62,7 @@
           Bỏ qua
         </button>
         <br>
-        <small>Lưu ý: Trong trường hợp Mã vạch được in không đọc được, vui lòng sử dụng Mẫu giấy lớn hơn hoặc rút ngắn mã hàng (tên hàng).</small>
+        <small class="m-t-10">Lưu ý: Trong trường hợp Mã vạch được in không đọc được, vui lòng sử dụng Mẫu giấy lớn hơn hoặc rút ngắn mã hàng (tên hàng).</small>
       </div>
     </div>
 
@@ -97,6 +97,17 @@
           <img mat-card-md-image src="assets/images/id-code-form/2_nhan_doi.jpg">
           <span class="text-card">Mẫu giấy cuộn 2 nhãn (Khổ giấy in nhãn 74x22mm)</span>
           <button mat-raised-button class="button-card" color="primary" (click)="openViewIdCodeFormDialog('74x22')">
+            <mat-icon>format_align_justify</mat-icon>
+            Xem mã in
+          </button>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-content>
+          <img mat-card-md-image src="assets/images/id-code-form/1_nhan-35x22.jpg">
+          <span class="text-card">Mẫu giấy cuộn 1 nhãn (Khổ giấy in nhãn 35x22mm/1.37x0.9 Inch)</span>
+          <button mat-raised-button class="button-card" (click)="openViewIdCodeFormDialog('35x22')" color="primary">
             <mat-icon>format_align_justify</mat-icon>
             Xem mã in
           </button>

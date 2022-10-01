@@ -223,6 +223,33 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
         } // END '74x22'
 
 
+        if (type === '35x22') {
+          const format = [40, 22];
+          const pdf = new jsPDF('l', 'mm', format);
+          let position = 2;
+          let height = 18;
+          if (product_name.length > 40) {
+            position = 1;
+            height = 20;
+          }
+          const so_trang = Math.floor(so_luong);
+
+          if (so_trang > 0) {
+            for (let i = 1; i <= so_trang; i++) {
+              pdf.addImage(img.src, 'PNG', 2, position, 35, height);
+              // pdf.addImage(img.src, 'PNG', 35, position, 35, height);
+              // pdf.addImage(img.src, 'PNG', 70, position, 35, height);
+              if (so_trang - i > 0) {
+                pdf.addPage(format, 'l');
+              }
+            }
+          }
+
+          pdf.save(product_name + '.pdf');
+
+        } // END '35x22'
+
+
         // pdf.addImage(img.src, 'PNG', 0, position, 35, height);
         // pdf.addImage(img.src, 'PNG', 35, position, 35, height);
         // pdf.addImage(img.src, 'PNG', 70, position, 35, height);
