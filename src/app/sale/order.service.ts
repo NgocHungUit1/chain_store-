@@ -83,6 +83,7 @@ export class OrderService {
     itemInvoice.invoice_name = 'Hóa đơn';
     itemInvoice.active = true;
     itemInvoice.is_return = false;
+    itemInvoice.new = true;
     listItemInvoice.push(itemInvoice);
     data.itemInvoice = listItemInvoice;
     this.setListInvoiceLocalStorage(data);

@@ -64,6 +64,7 @@ export class ItemInvoice {
   today: string;
   time: string;
   prescription_id: string;
+  new: boolean;
 }
 
 export class ListInvoice {

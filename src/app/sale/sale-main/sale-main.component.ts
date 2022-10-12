@@ -902,6 +902,16 @@ export class SaleMainComponent implements OnInit {
         customerPay: paymentSiderBar?.number,
       });
     }
+
+    // xu ly thay doi tab new thanh time hien tai
+      let time = null;
+      const today = new Date();
+      time = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
+      this.form.patchValue({
+        today: today,
+        time: time,
+      });
+
     this.form.controls['today'].enable();
     this.form.controls['time'].enable();
 
