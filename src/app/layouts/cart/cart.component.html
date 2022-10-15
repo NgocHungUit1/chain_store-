@@ -80,7 +80,7 @@
         <mat-autocomplete
           #chooseProduct="matAutocomplete"
           (optionSelected)="onSelectedProduct($event.option.value)">
-          <mat-option
+          <mat-option class="option-search"
             fxLayout="row"
             *ngFor="let product of filteredProducts | async"
             [value]="product"
@@ -88,15 +88,15 @@
             title="{{ product.product_name }}">
             <img
               *ngIf="iconChangeType === 'cached'"
-              fxFlex="25"
+              fxFlex="20"
               class="example-option-img"
               aria-hidden
               [src]="product.default_image"
               width="22" />
 
             <span
-              fxFlex="75"
-              style="margin-left: 5px"
+              fxFlex="80"
+              style="margin-left: 5px; font-size: 12px;"
               class="m-l-10"
               *ngIf="product.base_unit !== null && iconChangeType === 'cached'">
               <b style="font-size: 12px">{{ product.product_name }}</b>
@@ -108,7 +108,8 @@
             </span>
 
             <span
-              fxFlex="75"
+              fxFlex="80"
+              style="margin-left: 5px; font-size: 12px;"
               class="m-l-10"
               *ngIf="product.base_unit == null && iconChangeType === 'cached'">
               <b style="font-size: 12px">{{ product.product_name }}</b>
@@ -121,7 +122,7 @@
             <span
               *ngIf="iconChangeType === 'assignment'"
               fxFlex="100"
-              style="margin-left: 5px"
+              style="margin-left: 5px; font-size: 12px;"
               class="m-l-10">
               <b style="font-size: 12px">{{ product.product_name }}</b>
               <br />
@@ -130,7 +131,7 @@
           </mat-option>
 
           <!--          Danh sach san pham history-->
-          <mat-option
+          <mat-option class="option-search"
             *ngIf="productsHistory | async"
             style="
               line-height: 25px !important;
@@ -139,22 +140,22 @@
             ">
             Tìm kiếm gần đây ...
           </mat-option>
-          <mat-option
+          <mat-option class="option-search"
             *ngFor="let product of productsHistory | async"
             [value]="product"
             style="min-height: 70px; line-height: 25px !important"
             title="{{ product.product_name }}">
             <img
               *ngIf="iconChangeType === 'cached'"
-              fxFlex="25"
+              fxFlex="20"
               class="example-option-img"
               aria-hidden
               [src]="product.default_image"
               width="22" />
 
             <span
-              fxFlex="75"
-              style="margin-left: 5px"
+              fxFlex="80"
+              style="margin-left: 5px; font-size: 12px;"
               class="m-l-10"
               *ngIf="product.base_unit !== null && iconChangeType === 'cached'">
               <b style="font-size: 12px">{{ product.product_name }}</b>
@@ -166,7 +167,8 @@
             </span>
 
             <span
-              fxFlex="75"
+              fxFlex="80"
+              style="margin-left: 5px; font-size: 12px;"
               class="m-l-10"
               *ngIf="product.base_unit == null && iconChangeType === 'cached'">
               <b style="font-size: 12px">{{ product.product_name }}</b>

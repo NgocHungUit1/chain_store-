@@ -275,6 +275,7 @@
                       <div fxFlex.gt-sm="40" fxFlex.gt-xs="49" fxFlex="100">
                         <mat-form-field class="date-picker">
                           <input
+                            (input)="changeDateTime($event,'date')"
                             class="input-search"
                             matInput
                             [matDatepicker]="date_picker"
@@ -292,6 +293,7 @@
                       <div fxFlex.gt-sm="50" fxFlex.gt-xs="49" fxFlex="100">
                         <mat-form-field class="date-picker">
                           <input
+                            (input)="changeDateTime($event,'time')"
                             class="input-search"
                             matInput
                             formControlName="time"

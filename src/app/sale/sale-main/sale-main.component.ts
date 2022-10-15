@@ -58,6 +58,7 @@ import {
   MomentDateAdapter,
 } from '@angular/material-moment-adapter';
 import { DatePipe } from '@angular/common';
+import * as moment from 'moment';
 
 export const MY_FORMATS = {
   parse: {
@@ -904,6 +905,7 @@ export class SaleMainComponent implements OnInit {
     }
 
     // xu ly thay doi tab new thanh time hien tai
+    if (mItemInvoice?.new === true) {
       let time = null;
       const today = new Date();
       time = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
@@ -911,6 +913,8 @@ export class SaleMainComponent implements OnInit {
         today: today,
         time: time,
       });
+      mItemInvoice.new = false;
+    }
 
     this.form.controls['today'].enable();
     this.form.controls['time'].enable();
@@ -953,6 +957,24 @@ export class SaleMainComponent implements OnInit {
         this.onSelectedCustomer(result);
       }
     });
+  }
+
+  changeDateTime(event, type = 'date') {
+    // const listInvoice = this.orderService.getListInvoiceLocalStorage();
+    // const listItemInvoice = listInvoice.itemInvoice;
+    // listItemInvoice.forEach(element => {
+    //   if (element.active === true) {
+    //     element.new = false;
+    //     if (type === 'date') {
+    //       element.date = event.target.value;
+    //     }
+    //     if (type === 'time') {
+    //       element.time = event.target.value;
+    //     }
+    //   }
+    // });
+    // listInvoice.itemInvoice = listItemInvoice;
+    // this.orderService.setListInvoiceLocalStorage(listInvoice);
   }
 
   /**
