@@ -103,7 +103,7 @@
                     <div fxFlex="90">
                       <mat-form-field>
                         <mat-select (selectionChange)="updateForm($event.value)" tabindex="8" formControlName="user_id"
-                                    placeholder="Người dùng hệ thống" required>
+                                    placeholder="Tài khoản đăng nhập" required>
                           <mat-option *ngFor="let user of users" [value]="user.id">
                             {{user.username}}
                           </mat-option>

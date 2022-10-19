@@ -84,12 +84,12 @@ export class WarehouseService {
 
   connect(id) {
     const url = environment.apiUrl + '/warehouse/connect?id=' + id;
-    return this.http.post(url, {});
+    return this.http.post<any>(url, {});
   }
 
   disconnect(id) {
     const url = environment.apiUrl + '/warehouse/disconnect?id=' + id;
-    return this.http.post(url, {});
+    return this.http.post<any>(url, {});
   }
 
   reconnect(id) {

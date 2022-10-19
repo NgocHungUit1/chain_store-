@@ -17,6 +17,9 @@ import {ProductUploadDialogComponent} from '../product-upload-dialog/product-upl
 import {MedicineService} from '../../medicine/medicine.service';
 import {GroupService} from '../group.service';
 import {Group, GroupFilter} from '../group.model';
+import {SelectionModel} from '@angular/cdk/collections';
+import {Warehouse} from '../../warehouse/warehouse.model';
+import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 
 
 @Component({
@@ -119,9 +122,11 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     'merchandise': 'Hàng hóa',
   };
 
-  displayedColumns: string[] = ['#', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'quantity', 'status'];
-  columnsToDisplay: string[] = ['#', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'quantity', 'status'];
+  displayedColumns: string[] = ['select', '#', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'quantity', 'status'];
+  columnsToDisplay: string[] = ['select', '#', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'quantity', 'status'];
   dataSource: Product[] = [];
+  selection = new SelectionModel<Product>(true, []);
+  toggleMore = false;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -131,6 +136,96 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
 
   searchProductForm = new FormControl();
   codeSearch = null;
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource?.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  toggleAllRows() {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+      return;
+    }
+    this.selection.select(...this.dataSource);
+  }
+
+  /** The label for the checkbox on the passed row */
+  checkboxLabel(row?: Product): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row?.id + 1}`;
+  }
+
+  lockSelect(){
+    const obj = {
+      action: 'Delete',
+      title: 'Xác nhận tạm ngừng danh sách đã chọn .',
+      content: '',
+    };
+
+    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
+      data: obj,
+      width: '30%',
+      minHeight: '60%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.event === 'confirm') {
+        let itemsProcessed = 0;
+        this.selection.selected.forEach((item, index, array) => {
+          this.service.lock(item.id).subscribe(res => {
+            // if (res?.success) {
+            //
+            // } else {
+            //   this.notifySer.notify('warning', res?.message);
+            // }
+            itemsProcessed++;
+            if (itemsProcessed === array.length) {
+              this.refreshData();
+            }
+          });
+
+        });
+      }
+    });
+  }
+
+  activateSelect() {
+    const obj = {
+      action: 'Delete',
+      title: 'Xác nhận kích hoạt danh sách đã chọn .',
+      content: '',
+    };
+
+    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
+      data: obj,
+      width: '30%',
+      minHeight: '60%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.event === 'confirm') {
+        let itemsProcessed = 0;
+        this.selection.selected.forEach((item, index, array) => {
+          this.service.activate(item.id).subscribe(res => {
+            // if (res?.success) {
+            //
+            // } else {
+            //   this.notifySer.notify('warning', res?.message);
+            // }
+            itemsProcessed++;
+            if (itemsProcessed === array.length) {
+              this.refreshData();
+            }
+          });
+
+        });
+      }
+    });
+  }
 
   buildFilterFromParams(): ProductFilter {
     function write<K extends keyof ProductFilter>(arg: ProductFilter, key: K, value: ProductFilter[K]): void {
@@ -279,6 +374,21 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
         this.service.setLoadProduct(false);
       }
     });
+
+    this.selection.changed.subscribe(res => {
+      if (this.selection.selected.length > 0) {
+        this.toggleMore = true;
+      } else {
+        this.toggleMore = false;
+      }
+    });
+
+  }
+
+  refreshData() {
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
+    this.selection.clear();
   }
 
   openProductMedicineDialog(action, obj) {

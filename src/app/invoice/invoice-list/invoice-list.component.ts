@@ -22,6 +22,8 @@ import {ProductService} from '../../product/product.service';
 import {Customer} from '../../customer/customer.model';
 import {CustomerService} from '../../customer/customer.service';
 import * as moment from 'moment';
+import {SelectionModel} from '@angular/cdk/collections';
+import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 
 @Component({
   selector: 'app-invoice-list',
@@ -94,16 +96,17 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
     'national_pharmacy_no': 'Mã phiếu DQG',
   };
 
-  displayedColumns: string[] = [
+  displayedColumns: string[] = ['select',
     '#', 'invoice_no', 'created_at', 'returns', 'customer', 'national_pharmacy_no', 'total_price',
     'discount', 'payment'
   ];
-  columnsToDisplay: string[] = [
+  columnsToDisplay: string[] = ['select',
     '#', 'invoice_no', 'created_at', 'returns', 'customer', 'national_pharmacy_no', 'total_price',
     'discount', 'payment'
   ];
   dataSource: Invoice[] = [];
-
+  selection = new SelectionModel<Invoice>(true, []);
+  toggleMore = false;
 
   statusItems: any[] = [
     {
@@ -139,7 +142,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
   ];
 
   // for second column
-  second_columnsToDisplay: string[] = [
+  second_columnsToDisplay: string[] = ['select',
     'second_#', 'second_invoice_no', 'second_created_at', 'second_returns', 'second_customer', 'second_national_no',
     'second_total_price', 'second_discount', 'second_payment'
   ];
@@ -148,6 +151,142 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
 
   filteredProducts: Observable<Product[]>;
   filteredCustomers: Observable<Customer[]>;
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource?.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  toggleAllRows() {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+      return;
+    }
+    this.selection.select(...this.dataSource);
+  }
+
+  /** The label for the checkbox on the passed row */
+  checkboxLabel(row?: Invoice): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row?.id + 1}`;
+  }
+
+  connectSelect() {
+    this._connectSelect();
+  }
+
+  _connectSelect() {
+    const obj = {
+      action: 'Connect',
+      title: 'Xác nhận liên thông danh sách đã chọn .',
+      content: '',
+    };
+
+    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
+      data: obj,
+      width: '30%',
+      minHeight: '60%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.event === 'confirm') {
+        let itemsProcessed = 0;
+        this.selection.selected.forEach((item, index, array) => {
+          this.service.connect(item.id).subscribe(res => {
+            if (res?.success) {
+            } else {
+              this.notifySer.notify('warning', res?.message);
+            }
+            itemsProcessed++;
+            if (itemsProcessed === array.length) {
+              this.refreshData();
+            }
+          });
+
+        });
+      }
+    });
+  }
+
+  disconnectSelect() {
+    this._disconnectSelect();
+  }
+
+  _disconnectSelect() {
+    const obj = {
+      action: 'Connect',
+      title: 'Xác nhận gỡ liên thông danh sách đã chọn .',
+      content: '',
+    };
+
+    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
+      data: obj,
+      width: '30%',
+      minHeight: '60%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.event === 'confirm') {
+        let itemsProcessed = 0;
+        this.selection.selected.forEach((item, index, array) => {
+          setTimeout(() => {
+            this.service.disconnect(item.id).subscribe(res => {
+              // if (res?.success) {
+              // } else {
+              //   this.notifySer.notify('warning', res?.message);
+              // }
+              itemsProcessed++;
+              if (itemsProcessed === array.length) {
+                this.refreshData();
+              }
+            });
+          }, this.timeOutSelect);
+
+        });
+      }
+    });
+  }
+
+  deleteSelect() {
+    this._deleteSelect();
+  }
+
+  _deleteSelect() {
+    const obj = {
+      action: 'Delete',
+      title: 'Xác nhận xóa danh sách đã chọn .',
+      content: 'Thông tin sản phẩm đã xác nhận hoàn thành trước đó sẽ được hệ thống tạo thẻ kho xóa đi !',
+    };
+
+    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
+      data: obj,
+      width: '30%',
+      minHeight: '60%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.event === 'confirm') {
+        let itemsProcessed = 0;
+        this.selection.selected.forEach((item, index, array) => {
+          this.service.delete(item.id).subscribe(res => {
+            // if (res?.success) {
+            //
+            // } else {
+            //   this.notifySer.notify('warning', res?.message);
+            // }
+            itemsProcessed++;
+            if (itemsProcessed === array.length) {
+              this.notifySer.notify('success', 'Xóa danh sách thành công.');
+              this.refreshData();
+            }
+          });
+
+        });
+      }
+    });
+  }
 
   displayProduct(product?: Product): string | undefined {
     return (product === undefined || product === null) ? undefined : product.product_name;
@@ -374,6 +513,20 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
         }
       })
     );
+
+    this.selection.changed.subscribe(res => {
+      if (this.selection.selected.length > 0) {
+        this.toggleMore = true;
+      } else {
+        this.toggleMore = false;
+      }
+    });
+  }
+
+  refreshData() {
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
+    this.selection.clear();
   }
 
   applyFilter(event: Event) {

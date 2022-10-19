@@ -16,7 +16,7 @@ import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operator
 import {InvoiceService} from '../../invoice/invoice.service';
 import {DatetimeDefaultFilterDialogComponent} from '../../invoice/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
 import {DatetimeChooseFilterDialogComponent} from '../../invoice/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
-import {DateFilter} from '../../invoice/invoice.model';
+import {DateFilter, Invoice} from '../../invoice/invoice.model';
 import {Observable} from 'rxjs';
 import {Supplier} from '../../supplier/supplier.model';
 import {of} from 'rxjs/internal/observable/of';
@@ -24,6 +24,9 @@ import {SupplierService} from '../../supplier/supplier.service';
 import {Product} from '../../product/product.model';
 import {ProductService} from '../../product/product.service';
 import * as moment from 'moment';
+import {SelectionModel} from '@angular/cdk/collections';
+import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
+
 
 @Component({
   templateUrl: './warehouse-list.component.html',
@@ -79,7 +82,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     'status': 'Trạng thái',
   };
 
-  displayedColumns: string[] = [
+  displayedColumns: string[] = ['select',
     '#',
     'date',
     'supplier_id',
@@ -90,7 +93,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     'status',
     'national_pharmacy_no',
   ];
-  columnsToDisplay: string[] = [
+  columnsToDisplay: string[] = ['select',
     '#',
     'date',
     'supplier_id',
@@ -126,6 +129,8 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
 
   dataSource = [];
   expandedElement: Warehouse | null;
+  selection = new SelectionModel<Warehouse>(true, []);
+  toggleMore = false;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -137,6 +142,180 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
 
   filteredSuppliers: Observable<Supplier[]>;
   filteredProducts: Observable<Product[]>;
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource?.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  toggleAllRows() {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+      return;
+    }
+    this.selection.select(...this.dataSource);
+  }
+
+  /** The label for the checkbox on the passed row */
+  checkboxLabel(row?: Warehouse): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row?.id + 1}`;
+  }
+
+  finishSelect() {
+    this._finishSelect();
+  }
+
+  _finishSelect() {
+    const obj = {
+      action: 'Connect',
+      title: 'Xác nhận hoàn thành danh sách đã chọn .',
+      content: 'Thẻ kho sẽ được tạo cho sản phẩm khi xác nhận thành công',
+    };
+
+    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
+      data: obj,
+      width: '30%',
+      minHeight: '60%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.event === 'confirm') {
+        let itemsProcessed = 0;
+        this.selection.selected.forEach((item, index, array) => {
+          if (item.status === 9) {
+            this.mainService.update(item.id, {status: 10}).subscribe(res => {
+              // if (res?.success) {
+              // } else {
+              //   this.notifyService.notify('warning', res?.message);
+              // }
+            });
+          }
+
+          itemsProcessed++;
+          if (itemsProcessed === array.length) {
+            this.notifyService.notify('success', 'Hoàn thành danh sách thành công.');
+            this.refreshData();
+          }
+        });
+      }
+    });
+  }
+
+  connectSelect() {
+    this._connectSelect();
+  }
+
+  _connectSelect() {
+    const obj = {
+      action: 'Connect',
+      title: 'Xác nhận liên thông danh sách đã chọn .',
+      content: '',
+    };
+
+    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
+      data: obj,
+      width: '30%',
+      minHeight: '60%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.event === 'confirm') {
+        let itemsProcessed = 0;
+        this.selection.selected.forEach((item, index, array) => {
+          this.mainService.connect(item.id).subscribe(res => {
+            if (res?.success) {
+            } else {
+              this.notifyService.notify('warning', res?.message);
+            }
+            itemsProcessed++;
+            if (itemsProcessed === array.length) {
+              this.refreshData();
+            }
+          });
+
+        });
+      }
+    });
+  }
+
+  disconnectSelect() {
+    this._disconnectSelect();
+  }
+
+  _disconnectSelect() {
+    const obj = {
+      action: 'Connect',
+      title: 'Xác nhận gỡ liên thông danh sách đã chọn .',
+      content: '',
+    };
+
+    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
+      data: obj,
+      width: '30%',
+      minHeight: '60%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.event === 'confirm') {
+        let itemsProcessed = 0;
+        this.selection.selected.forEach((item, index, array) => {
+          setTimeout(() => {
+            this.mainService.disconnect(item.id).subscribe(res => {
+              // if (res?.success) {
+              // } else {
+              //   this.notifySer.notify('warning', res?.message);
+              // }
+              itemsProcessed++;
+              if (itemsProcessed === array.length) {
+                this.refreshData();
+              }
+            });
+          }, this.timeOutSelect);
+        });
+      }
+    });
+  }
+
+  deleteSelect() {
+    this._deleteSelect();
+  }
+
+  _deleteSelect() {
+    const obj = {
+      action: 'Delete',
+      title: 'Xác nhận xóa danh sách đã chọn .',
+      content: 'Thông tin sản phẩm đã xác nhận hoàn thành trước đó sẽ được hệ thống tạo thẻ kho xóa đi !',
+    };
+
+    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
+      data: obj,
+      width: '30%',
+      minHeight: '60%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.event === 'confirm') {
+        let itemsProcessed = 0;
+        this.selection.selected.forEach((item, index, array) => {
+          this.mainService.delete(item.id).subscribe(res => {
+            // if (res?.success) {
+            //
+            // } else {
+            //   this.notifySer.notify('warning', res?.message);
+            // }
+            itemsProcessed++;
+            if (itemsProcessed === array.length) {
+              this.notifyService.notify('success', 'Xóa danh sách thành công.');
+              this.refreshData();
+            }
+          });
+
+        });
+      }
+    });
+  }
 
   displaySupplier(supplier?: Supplier): string | undefined {
     return (supplier === undefined || supplier === null) ? undefined : supplier.name;
@@ -183,8 +362,8 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     const obj = new DateFilter();
     // 3 tháng trước
 
-    obj.date_to = moment().format("YYYY-MM-DD");
-    obj.date_from = moment().subtract(3, 'months').format("YYYY-MM-DD");
+    obj.date_to = moment().format('YYYY-MM-DD');
+    obj.date_from = moment().subtract(3, 'months').format('YYYY-MM-DD');
     // obj.date_from = this.service.convertDateYYYYMMDD(first);
     // obj.date_to = this.service.convertDateYYYYMMDD(today);
 
@@ -296,6 +475,21 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
         }
       })
     );
+
+    this.selection.changed.subscribe(res => {
+      if (this.selection.selected.length > 0) {
+        this.toggleMore = true;
+      } else {
+        this.toggleMore = false;
+      }
+    });
+
+  }
+
+  refreshData() {
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
+    this.selection.clear();
   }
 
   lookupSupplier(value: string): Observable<Supplier[]> {

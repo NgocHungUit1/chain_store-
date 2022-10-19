@@ -80,6 +80,18 @@
       <button mat-icon-button (click)="leftside.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
+
+      <div class="header-filter group-button" *ngIf="toggleMore" >
+        <button mat-raised-button color="warn" (click)="lockSelect()" class="m-r-5">
+          <mat-icon>lock</mat-icon>
+          Tạm ngừng
+        </button>
+        <button mat-raised-button color="accent" (click)="activateSelect()" class="m-r-5">
+          <mat-icon>lock_open</mat-icon>
+          Kích hoạt
+        </button>
+      </div>
+
       <h3>Sản phẩm</h3>
 
       <div class="select-product">
@@ -151,6 +163,24 @@
           </div>
           <div class=" table-responsive">
             <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="mat-elevation-z8">
+
+              <!-- Checkbox Column -->
+              <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef>
+                  <mat-checkbox (change)="$event ? toggleAllRows() : null"
+                                [checked]="selection.hasValue() && isAllSelected()"
+                                [indeterminate]="selection.hasValue() && !isAllSelected()"
+                                [aria-label]="checkboxLabel()">
+                  </mat-checkbox>
+                </th>
+                <td mat-cell *matCellDef="let row">
+                  <mat-checkbox (click)="$event.stopPropagation()"
+                                (change)="$event ? selection.toggle(row) : null"
+                                [checked]="selection.isSelected(row)"
+                                [aria-label]="checkboxLabel(row)">
+                  </mat-checkbox>
+                </td>
+              </ng-container>
 
               <ng-container matColumnDef="#">
                 <th mat-header-cell *matHeaderCellDef> #</th>

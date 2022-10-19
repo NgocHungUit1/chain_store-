@@ -63,6 +63,8 @@ export class ListComponentBase {
   page = 1; // current page
   pageSizeOptions = [5, 10, 20, 30, 40, 50];
 
+  timeOutSelect = 400;
+
   banks = [
     {
       'code': 'VietBank',

@@ -94,7 +94,7 @@ export class InvoiceService {
     // const url = environment.apiUrl + '/invoice/delete/' + id;
     // return this.http.delete(url);
     const url = environment.apiUrl + '/invoice/delete-invoice';
-    return this.http.post(url, {invoice_id: id});
+    return this.http.post<any>(url, {invoice_id: id});
   }
 
   autocomplete(term: string) {
@@ -129,12 +129,12 @@ export class InvoiceService {
 
   connect(id) {
     const url = environment.apiUrl + '/invoice/connect?id=' + id;
-    return this.http.post(url, {});
+    return this.http.post<any>(url, {});
   }
 
   disconnect(id) {
     const url = environment.apiUrl + '/invoice/disconnect?id=' + id;
-    return this.http.post(url, {});
+    return this.http.post<any>(url, {});
   }
 
   reconnect(id) {

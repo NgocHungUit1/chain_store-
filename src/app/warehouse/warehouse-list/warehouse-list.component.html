@@ -98,6 +98,26 @@
       <button mat-icon-button (click)="leftside.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
+
+      <div class="header-filter group-button" *ngIf="toggleMore" >
+        <button mat-raised-button color="accent" (click)="finishSelect()" class="m-r-5">
+          <mat-icon>check</mat-icon>
+          Hoàn thành
+        </button>
+        <button mat-raised-button color="accent" (click)="connectSelect()" class="m-r-5">
+          <mat-icon>sync</mat-icon>
+          Liên thông
+        </button>
+        <button mat-raised-button color="accent" (click)="disconnectSelect()" class="m-r-5">
+          <mat-icon>close_fullscreen</mat-icon>
+          Gỡ liên thông
+        </button>
+        <button mat-raised-button color="warn" (click)="deleteSelect()" class="m-r-5">
+          <mat-icon>delete</mat-icon>
+          Xóa
+        </button>
+      </div>
+
       <h3>Hóa đơn nhập</h3>
       <div class="header-filter-search" style="display: flex; flex: 1; align-items: center">
         <button mat-button matPrefix (click)="toggleDropdown()" class="mat-flat-button" [ngClass]="{'mat-primary': toggleDropdownSearch}">
@@ -281,6 +301,24 @@
           </div>
           <div class="table-responsive">
             <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="">
+
+              <!-- Checkbox Column -->
+              <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef>
+                  <mat-checkbox (change)="$event ? toggleAllRows() : null"
+                                [checked]="selection.hasValue() && isAllSelected()"
+                                [indeterminate]="selection.hasValue() && !isAllSelected()"
+                                [aria-label]="checkboxLabel()">
+                  </mat-checkbox>
+                </th>
+                <td mat-cell *matCellDef="let row">
+                  <mat-checkbox (click)="$event.stopPropagation()"
+                                (change)="$event ? selection.toggle(row) : null"
+                                [checked]="selection.isSelected(row)"
+                                [aria-label]="checkboxLabel(row)">
+                  </mat-checkbox>
+                </td>
+              </ng-container>
 
               <ng-container matColumnDef="#">
                 <th mat-header-cell *matHeaderCellDef> #</th>
