@@ -127,6 +127,11 @@
               </button>
             </ng-template>
 
+            <button class="m-r-10" mat-raised-button color="warn" (click)="delete()">
+              <mat-icon>delete</mat-icon>
+              Xóa
+            </button>
+
             <button mat-icon-button [matMenuTriggerFor]="menuActions"
                     [disabled]="checkPermissionDisable('Warehouse.Update') || !isAdminStore">
               <mat-icon>more_vert</mat-icon>
@@ -179,6 +184,11 @@
                 Kích hoạt
               </button>
             </ng-template>
+
+            <button class="m-r-10" mat-raised-button color="warn" (click)="delete()">
+              <mat-icon>delete</mat-icon>
+              Xóa
+            </button>
 
             <button mat-icon-button [matMenuTriggerFor]="menuActions"
                     [disabled]="checkPermissionDisable('Warehouse.Update') || !isAdminStore">

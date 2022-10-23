@@ -227,6 +227,40 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     });
   }
 
+  deleteSelect() {
+    const obj = {
+      action: 'Delete',
+      title: 'Xác nhận xóa danh sách đã chọn .',
+      content: '',
+    };
+
+    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
+      data: obj,
+      width: '30%',
+      minHeight: '60%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.event === 'confirm') {
+        let itemsProcessed = 0;
+        this.selection.selected.forEach((item, index, array) => {
+          setTimeout(() => {
+            this.service.delete(item.id).subscribe(res => {
+              // if (res?.success) {
+              //
+              // } else {
+              //   this.notifySer.notify('warning', res?.message);
+              // }
+              itemsProcessed++;
+              if (itemsProcessed === array.length) {
+                this.refreshData();
+              }
+            });
+          }, this.timeOutSelect);
+        });
+      }
+    });
+  }
+
   buildFilterFromParams(): ProductFilter {
     function write<K extends keyof ProductFilter>(arg: ProductFilter, key: K, value: ProductFilter[K]): void {
       arg[key] = value;

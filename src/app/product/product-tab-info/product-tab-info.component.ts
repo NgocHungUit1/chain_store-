@@ -9,6 +9,7 @@ import { NotifierService } from 'angular-notifier';
 import { IdCodeFormDialogComponent } from '../id-code-form-dialog/id-code-form-dialog.component';
 import { MedicineService } from '../../medicine/medicine.service';
 import { Router } from '@angular/router';
+import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 
 const JsBarcode = require('jsbarcode');
 
@@ -195,6 +196,31 @@ export class ProductTabInfoComponent implements OnChanges {
       this.product.status = '9';
       this.notifySer.notify('success', 'Đã tạm ngừng thành công!');
     });
+  }
+
+  delete() {
+
+    const obj = {
+      action: 'Delete',
+      title: 'Xác nhận sản phẩm "' + this.product.product_name  + '"  đã chọn .',
+      content: '',
+    };
+
+    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
+      data: obj,
+      width: '30%',
+      minHeight: '60%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.event === 'confirm') {
+        this.productSer.delete(this.product.id).subscribe(x => {
+          this.product.status = '9';
+          this.notifySer.notify('success', 'Đã xóa thành công!');
+          this.reload.emit(null);
+        });
+      }
+    });
+
   }
 
   activate() {
