@@ -1,0 +1,73 @@
+<div fxLayout="row wrap" *ngIf="group !== null" class="m-b-20">
+  <div fxFlex="100">
+    <h3 style="color: #009688">{{group.no}}</h3>
+  </div>
+  <div fxFlex="100">
+    <div fxLayout="row wrap">
+      <div fxFlex="58" class="product-info">
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Mã nhóm hàng:</span> <strong>{{group.no}}</strong>
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Mã ngắn:</span> {{group.short}}
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Tên nhóm hàng:</span> <strong>{{group?.name}}</strong>
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Alias:</span> {{group?.alias}}
+          </div>
+        </div>
+
+
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Mô tả:</span> <strong>{{group?.description}}</strong>
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Ghi chú:</span> {{group?.note}}
+          </div>
+        </div>
+
+
+
+      </div>
+
+      <div fxFlex="2"></div>
+
+      <div fxFlex="40" class="product-info">
+
+
+
+      </div>
+
+    </div>
+  </div>
+  <div fxFlex="100" align="end">
+    <button class="m-r-10" mat-raised-button color="primary"
+            (click)="openGroupFormDialog(this.group.id, null)">
+      <mat-icon>edit</mat-icon>
+      Cập nhật
+    </button>
+    <!--    <button class="m-r-10" mat-raised-button color="accent" (click)="lock()" *ngIf="this.group.status == '9'">-->
+    <!--      <mat-icon>lock</mat-icon>-->
+    <!--      Ngừng hoạt động-->
+    <!--    </button>-->
+    <!--    <button class="m-r-10" mat-raised-button color="accent" (click)="activate()" *ngIf="this.group.status == '10'">-->
+    <!--      <mat-icon>lock_open</mat-icon>-->
+    <!--      Kích hoạt-->
+    <!--    </button>-->
+    <button class="m-r-10" mat-raised-button color="warn"
+            (click)="clickDelete()">
+      <mat-icon>delete</mat-icon>
+      Xóa
+    </button>
+  </div>
+</div>

@@ -16,6 +16,10 @@ export const StoreRoutes: Routes = [
         path: 'sample-prescription',
         loadChildren: () => import('../sample-prescription/sample-prescription.module').then(m => m.SamplePrescriptionModule)
       },
+      {
+        path: 'group',
+        loadChildren: () => import('../group/group.module').then(m => m.GroupModule)
+      },
     ]
   }
 ];

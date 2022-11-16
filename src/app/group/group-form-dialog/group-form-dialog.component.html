@@ -1,0 +1,68 @@
+<h1 mat-dialog-title *ngIf="!(group_id !== null && group_id !== undefined)">Thông tin nhóm hàng</h1>
+<h1 mat-dialog-title *ngIf="group_id !== null && group_id !== undefined">Cập nhật thông tin nhóm hàng</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <div fxLayout="row">
+      <div fxLayout="row wrap">
+        <div fxFlex="100">
+          <div fxLayout="row wrap">
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Mã nhóm hàng</mat-label>
+                <input matInput tabindex="1" formControlName="no" autocomplete="off" required>
+              </mat-form-field>
+            </div>
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Tên nhóm hàng</mat-label>
+                <input matInput tabindex="2" formControlName="name" required>
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Mã ngắn</mat-label>
+                <input matInput tabindex="3" formControlName="short">
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Alias</mat-label>
+                <input matInput tabindex="3" formControlName="alias">
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Mô tả</mat-label>
+                <input matInput tabindex="3" formControlName="description" autocomplete="off" >
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
+                <mat-label>Ghi chú</mat-label>
+                <input matInput tabindex="3" formControlName="note" autocomplete="off" >
+              </mat-form-field>
+            </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary"  tabindex="14" (click)="submit()">
+    <mat-icon>save</mat-icon>
+    Lưu
+  </button>
+  <button mat-raised-button (click)="onNoClick()" tabindex="-1">
+    <mat-icon>cancel</mat-icon>
+    Bỏ qua
+  </button>
+</div>
