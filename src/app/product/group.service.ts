@@ -27,6 +27,21 @@ export class GroupService {
     return url;
   }
 
+  getGroupReportApiUrl(filter?: GroupFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/group/report?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
   getStateUrl(filter?: GroupFilter) {
 
     let url = '/group/list';
@@ -42,6 +57,11 @@ export class GroupService {
 
   getList(filter?: GroupFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrl(filter);
+    return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
+  }
+
+  getReportList(filter?: GroupFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getGroupReportApiUrl(filter);
     return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
   }
 
