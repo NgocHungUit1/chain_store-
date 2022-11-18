@@ -155,6 +155,7 @@ export class DatetimeDefaultFilterDialogComponent implements OnInit {
     const obj = new DateFilter();
     obj.date_to = moment().format("YYYY-MM-DD");
     obj.date_from = moment().subtract(6, 'months').format("YYYY-MM-DD");
+    this.invoiceService.setDateFilter(obj);
     this.dialogRef.close({ 'title': '6 Tháng trước' });
   }
 

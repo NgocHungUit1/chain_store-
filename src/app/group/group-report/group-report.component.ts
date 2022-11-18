@@ -18,6 +18,7 @@ import { DateFilter } from '../../invoice/invoice.model';
 import { InvoiceService } from '../../invoice/invoice.service';
 import { DatetimeChooseFilterDialogComponent } from '../../invoice/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
 import { DatetimeDefaultFilterDialogComponent } from '../../invoice/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
+import * as moment from 'moment/moment';
 
 
 @Component({
@@ -87,7 +88,7 @@ export class GroupReportComponent extends ListComponentBase implements OnInit {
   timeFilter: FormGroup;
   currentDateFilter: DateFilter;
 
-  titleTimeDefault = 'Tháng này';
+  titleTimeDefault = '3 tháng trước';
   titleTimeChoose = 'Lựa chọn khác';
 
   expandedElement: Group | null;
@@ -165,9 +166,6 @@ export class GroupReportComponent extends ListComponentBase implements OnInit {
       const date_from = new Date(date.date_from);
       const date_to = new Date(date.date_to);
       this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
-
-      this.apiFilter = this.buildFilterFromParams();
-      this.loadData();
     });
   }
 
@@ -178,7 +176,7 @@ export class GroupReportComponent extends ListComponentBase implements OnInit {
 
     const filter = new GroupFilter();
     const objectKeys = Object.keys(filter) as Array<keyof GroupFilter>;
-    // const objDateFilter = this.serviceInvoice.getDateFilter();
+    const objDateFilter = this.serviceInvoice.getDateFilter();
 
     for (const attr of objectKeys) {
       write(filter, attr, this.route.snapshot.queryParams['GroupFilterSearch[' + attr + ']']);
@@ -187,12 +185,31 @@ export class GroupReportComponent extends ListComponentBase implements OnInit {
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.expand = 'branch';
-
-
-    filter.date_from = '2021-1-11';
-    filter.date_to = '2022-12-11';
+    filter.date_from = objDateFilter?.date_from;
+    filter.date_to = objDateFilter?.date_to;
 
     return filter;
+  }
+
+  initDateFilter() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const first = new Date(year, month, 1);
+    const obj = new DateFilter();
+    // 3 tháng trước
+
+    obj.date_to = moment().format('YYYY-MM-DD');
+    obj.date_from = moment().subtract(3, 'months').format('YYYY-MM-DD');
+    // obj.date_from = this.service.convertDateYYYYMMDD(first);
+    // obj.date_to = this.service.convertDateYYYYMMDD(today);
+
+    const date_from = new Date(obj.date_from);
+    const date_to = new Date(obj.date_to);
+    this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+
+    this.currentDateFilter = obj;
+    this.serviceInvoice.setDateFilter(obj);
   }
 
   loadData(): void {
@@ -210,12 +227,21 @@ export class GroupReportComponent extends ListComponentBase implements OnInit {
   }
 
   ngOnInit(): void {
-    this.refreshData();
+    this.initDateFilter();
 
     this.timeFilter = this.fb.group({
       typeTime: [
         'default'
       ],
+    });
+    this.refreshData();
+
+    this.serviceInvoice.subscribeDateFilter.subscribe(obj => {
+      if (JSON.stringify(this.currentDateFilter) !== JSON.stringify(obj)) {
+        this.currentDateFilter = obj;
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+      }
     });
 
     this.searchKeyWord.valueChanges.pipe(debounceTime(800)).subscribe(res => {
@@ -234,17 +260,17 @@ export class GroupReportComponent extends ListComponentBase implements OnInit {
     this.loadData();
   }
 
-  openGroupFormDialog() {
-    const dialogRef = this.dialog.open(GroupFormDialogComponent, {
-      width: '600px',
-      minHeight: '80%',
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loadData();
-      }
-    });
-  }
+  // openGroupFormDialog() {
+  //   const dialogRef = this.dialog.open(GroupFormDialogComponent, {
+  //     width: '600px',
+  //     minHeight: '80%',
+  //   });
+  //
+  //   dialogRef.afterClosed().subscribe(result => {
+  //     if (result) {
+  //       this.loadData();
+  //     }
+  //   });
+  // }
 
 }
