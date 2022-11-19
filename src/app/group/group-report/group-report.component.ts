@@ -215,7 +215,7 @@ export class GroupReportComponent extends ListComponentBase implements OnInit {
   loadData(): void {
     this.isLoadingResults = true;
     this.service.getReportList(this.apiFilter).subscribe(res => {
-      this.dataSource = res.body;
+      this.dataSource = res.body.data;
       let stt = 0;
       this.dataSource.forEach(elementData => {
         stt++;
