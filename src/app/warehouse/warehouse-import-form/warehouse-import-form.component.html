@@ -4,7 +4,7 @@
       <button mat-icon-button routerLink="/transaction/warehouse">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <h3> Nhập hàng</h3>
+      <label class="font-18"> Nhập hàng</label>
       <div class="select-product">
         <mat-form-field>
           <input type="text" [formControl]="selectProduct" matInput [matAutocomplete]="chooseProduct"
@@ -79,7 +79,7 @@
             </div>
           </div>
           <div class="table-content table-responsive">
-            <table mat-table [dataSource]="productDataSource" class="table warehouse-product-table no-wrap">
+            <table mat-table [dataSource]="productDataSource" class="table warehouse-product-table no-wrap ">
 
               <ng-container matColumnDef="#">
                 <th mat-header-cell *matHeaderCellDef style="width: 55px;"> #</th>
@@ -176,8 +176,8 @@
               <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef style="width: 45px;"></th>
                 <td mat-cell *matCellDef="let element; let i = index">
-                  <button mat-icon-button (click)="removeProduct(i)">
-                    <mat-icon>delete</mat-icon>
+                  <button mat-icon-button color="warn" (click)="removeProduct(i)">
+                    <mat-icon>close</mat-icon>
                   </button>
                 </td>
               </ng-container>

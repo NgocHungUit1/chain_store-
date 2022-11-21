@@ -19,19 +19,24 @@
   min-width: 450px;
 }
 
+.mat-column-- {
+  max-width: 30px;
+  padding-left: 10px !important;
+}
+
 .mat-column-quantity, .mat-column-price {
   max-width: 32px;
-  text-align: right;
+  text-align: right !important;
 }
 
 .mat-column-discount {
   max-width: 35px;
-  text-align: right;
+  text-align: right !important;
 }
 
 .mat-column-amount {
   max-width: 35px;
-  text-align: right;
+  text-align: right !important;
 }
 
 .mat-column-product_unit_id {

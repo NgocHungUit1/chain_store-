@@ -141,7 +141,7 @@ const MENUITEMS = [
       {state: 'day-report', name: 'Cuối ngày', type: 'link', icon: 'pie_chart', roles: ['ADMIN']},
       {state: 'product-report', name: 'Hàng hóa', type: 'link', icon: 'store', roles: ['ADMIN']},
       {state: 'group-report', name: 'Doanh thu nhóm hàng', type: 'link', icon: 'store', roles: ['ADMIN']},
-      {state: 'sale-report', name: 'Bán hàng', type: 'link', icon: 'table_chart', roles: ['ADMIN']},
+      //{state: 'sale-report', name: 'Bán hàng', type: 'link', icon: 'table_chart', roles: ['ADMIN']},
       // {state: 'debt-report', name: 'Công nợ', type: 'link', icon: 'money', roles: ['ADMIN']},
       {state: 'debt-customers', name: 'Công nợ thu', type: 'link', icon: 'money_on', roles: ['ADMIN']},
       {state: 'debt-suppliers', name: 'Công nợ trả', type: 'link', icon: 'money_off', roles: ['ADMIN']},

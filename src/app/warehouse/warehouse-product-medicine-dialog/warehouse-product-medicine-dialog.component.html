@@ -19,14 +19,7 @@
                 </mat-form-field>
               </div>
             </div>
-            <div fxLayout="row wrap">
-              <div fxFlex="100">
-                <mat-form-field>
-                  <input type="text" matInput [formControl]="form.controls['barcode']" placeholder="Mã vạch"
-                         autocomplete="off" autofocus>
-                </mat-form-field>
-              </div>
-            </div>
+
             <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field>
@@ -324,6 +317,16 @@
                 </button>
               </div>
             </div>
+
+            <div fxLayout="row wrap">
+              <div fxFlex="100">
+                <mat-form-field>
+                  <input type="text" matInput [formControl]="form.controls['barcode']" placeholder="Mã vạch"
+                         autocomplete="off" autofocus>
+                </mat-form-field>
+              </div>
+            </div>
+
           </div>
           <div fxFlex.gt-sm="2%" fxFlex="100"></div>
           <div fxFlex.gt-sm="49%" fxFlex="100">

@@ -1189,3 +1189,28 @@ Dropdown Search
     font-size: 14px;
   }
 }
+
+//.table-custom {
+//  thead{
+//    th:nth-child(1) {
+//      height: 45px !important;
+//      font-size: 12px !important;
+//      padding-left: 10px !important;
+//      //width: 30px !important;
+//      //background-color: red !important;
+//    }
+//  }
+//  tbody {
+//    td:nth-child(1), td:nth-child(2)  {
+//      font-size: 12px !important;
+//      padding-left: 10px !important;
+//      width: 20px;
+//      //background-color: blue !important;
+//    }
+//  }
+//}
+
+.mat-column-select {
+  width: 35px;
+  padding-left: 10px !important;
+}

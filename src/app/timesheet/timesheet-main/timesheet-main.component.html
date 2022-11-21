@@ -4,7 +4,7 @@
       <button mat-icon-button>
         <mat-icon>filter_list</mat-icon>
       </button>
-      <h3>Lọc và tìm kiếm</h3>
+      <label class="font-18">Lọc và tìm kiếm</label>
     </mat-toolbar>
     <mat-card>
       <mat-calendar
@@ -77,7 +77,7 @@
       <button mat-icon-button (click)="leftside.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
-      <h3>Bảng chấm công</h3>
+      <label class="font-18">Bảng chấm công</label>
       <div class=m-l-20>
         <mat-button-toggle-group (change)="changDateTypeTimeSheet()" [(ngModel)]="typeDateTimeSheet">
           <mat-button-toggle *ngFor="let item of listTypeDate" value="{{item?.id}}">{{item.name}}</mat-button-toggle>

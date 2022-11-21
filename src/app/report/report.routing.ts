@@ -11,10 +11,10 @@ export const ReportRoutes: Routes = [
         path: 'day-report',
         loadChildren: () => import('../day-report/day-report.module').then(m => m.DayReportModule)
       },
-      {
-        path: 'sale-report',
-        loadChildren: () => import('../sale-report/sale-report.module').then(m => m.SaleReportModule)
-      },
+      // { @@
+      //   path: 'sale-report',
+      //   loadChildren: () => import('../sale-report/sale-report.module').then(m => m.SaleReportModule)
+      // },
       {
         path: 'product-report',
         loadChildren: () => import('../product-report/product-report.module').then(m => m.ProductReportModule)
