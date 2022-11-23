@@ -77,6 +77,10 @@ $custom-typography: mat-typography-config(
   .mat-form-field-underline {
     display: none;
   }
+  .mat-select-value {
+    text-align: right;
+    padding-right: 10px;
+  }
 }
 
 .mat-form-field-hide-placeholder .mat-form-field-infix {
