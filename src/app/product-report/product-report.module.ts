@@ -11,10 +11,11 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { ChartsModule } from 'ng2-charts';
 import { ProductReportMainComponent } from './product-report-main/product-report-main.component';
 import { ProductReportRoutes } from './product-report.routing';
+import { StockReportComponent } from './stock-report/stock-report.component';
 
 
 @NgModule({
-  declarations: [ProductReportMainComponent],
+  declarations: [ProductReportMainComponent, StockReportComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(ProductReportRoutes),

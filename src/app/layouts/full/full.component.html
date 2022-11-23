@@ -24,7 +24,7 @@
         </b>
         <!--End Logo icon -->
         <!-- Logo text -->
-        <span class="logo-text" fxshow="false" fxshow.gt-xs="" style="display: block; padding-top: 6px;">
+        <span class="logo-text" fxshow="false" fxshow.gt-xs="" style="display: block; ">
           {{ name_store }} </span>
       </a>
     </div>
@@ -68,7 +68,7 @@
 <!--      </mat-menu>-->
     </div>
     <div style="width: 200px; margin-right: 10px;">
-      <mat-form-field>
+      <mat-form-field class="branch-list">
         <mat-select style="font-size: 16px;" tabindex="10" (selectionChange)="changeBranch($event)"
                     [value]="branchLoginId">
           <mat-option *ngFor="let item of branchList" [value]="item.id">

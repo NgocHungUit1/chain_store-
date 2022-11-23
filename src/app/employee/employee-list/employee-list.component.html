@@ -48,7 +48,7 @@
 
               <ng-container matColumnDef="#">
                 <th mat-header-cell *matHeaderCellDef> #</th>
-                <td mat-cell *matCellDef="let element"> {{element.id}}</td>
+                <td mat-cell *matCellDef="let element; let i = index;"> {{element.stt}}</td>
               </ng-container>
 
               <ng-container matColumnDef="name">

@@ -61,6 +61,7 @@ const MENUITEMS = [
     children: [
       // {state: 'medicine', name: 'Danh mục thuốc', type: 'link', icon: 'list', roles: ['ADMIN', 'WAREHOUSE', 'SALE']},
       {state: 'product', name: 'Sản phẩm', type: 'link', icon: 'local_pharmacy', roles: ['ADMIN', 'WAREHOUSE']},
+      {state: 'group', name: 'Nhóm hàng', type: 'link', icon: 'local_pharmacy', roles: ['ADMIN', 'WAREHOUSE', 'SALE']},
       {state: 'sample-prescription', name: 'Đơn thuốc mẫu', type: 'link', icon: 'list_alt', roles: ['ADMIN', 'SALE']},
       {state: 'price-book', name: 'Thiết lập giá', type: 'link', icon: 'loyalty', roles: ['ADMIN', 'WAREHOUSE']},
       {state: 'stock-take', name: 'Kiểm kho', type: 'link', icon: 'check_circle_outline', roles: ['ADMIN', 'WAREHOUSE']},
@@ -140,6 +141,7 @@ const MENUITEMS = [
     children: [
       {state: 'day-report', name: 'Cuối ngày', type: 'link', icon: 'pie_chart', roles: ['ADMIN']},
       {state: 'product-report', name: 'Hàng hóa', type: 'link', icon: 'store', roles: ['ADMIN']},
+      //{state: 'stock-report', name: 'Tồn kho', type: 'link', icon: 'store', roles: ['ADMIN']},
       {state: 'group-report', name: 'Doanh thu nhóm hàng', type: 'link', icon: 'store', roles: ['ADMIN']},
       //{state: 'sale-report', name: 'Bán hàng', type: 'link', icon: 'table_chart', roles: ['ADMIN']},
       // {state: 'debt-report', name: 'Công nợ', type: 'link', icon: 'money', roles: ['ADMIN']},

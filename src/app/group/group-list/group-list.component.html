@@ -83,15 +83,39 @@
                 <td mat-cell *matCellDef="let element"> {{element?.description}}</td>
               </ng-container>
 
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef> </th>
+                <td mat-cell *matCellDef="let element">
+                  <button class="m-r-10" mat-raised-button color="primary"
+                          (click)="openGroupFormDialogUpdate(element.id)">
+                    <mat-icon>edit</mat-icon>
+                    Cập nhật
+                  </button>
+                  <!--    <button class="m-r-10" mat-raised-button color="accent" (click)="lock()" *ngIf="this.group.status == '9'">-->
+                  <!--      <mat-icon>lock</mat-icon>-->
+                  <!--      Ngừng hoạt động-->
+                  <!--    </button>-->
+                  <!--    <button class="m-r-10" mat-raised-button color="accent" (click)="activate()" *ngIf="this.group.status == '10'">-->
+                  <!--      <mat-icon>lock_open</mat-icon>-->
+                  <!--      Kích hoạt-->
+                  <!--    </button>-->
+                  <button class="m-r-10" mat-raised-button color="warn"
+                          (click)="clickDelete(element.id)">
+                    <mat-icon>delete</mat-icon>
+                    Xóa
+                  </button>
+                </td>
+              </ng-container>
+
               <ng-container matColumnDef="expandedDetail">
                 <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
                   <div class="example-element-detail"
                        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-                    <mat-tab-group style="width: 100%;">
-                      <mat-tab label="Thông tin">
-                        <app-group-tab-info [group]="element" (reload)="loadData()"></app-group-tab-info>
-                      </mat-tab>
-                    </mat-tab-group>
+<!--                    <mat-tab-group style="width: 100%;">-->
+<!--                      <mat-tab label="Thông tin">-->
+<!--                        <app-group-tab-info [group]="element" (reload)="loadData()"></app-group-tab-info>-->
+<!--                      </mat-tab>-->
+<!--                    </mat-tab-group>-->
                   </div>
                 </td>
               </ng-container>

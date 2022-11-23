@@ -3,6 +3,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { GroupFilter } from "./group.model";
+import {ResponseModel} from '../common/response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -78,6 +79,11 @@ export class GroupService {
   create(data) {
     const url = environment.apiUrl + '/group';
     return this.http.post(url, data);
+  }
+
+  delete(id: number) {
+    const url = environment.apiUrl + '/group/' + id;
+    return this.http.delete<ResponseModel>(url, {});
   }
 }
 

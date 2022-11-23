@@ -45,26 +45,26 @@ export class GroupListComponent extends ListComponentBase implements OnInit {
 
   columnsHeader = {
     '#': '#',
-    'no': 'Mã nhóm hàng',
+    // 'no': 'Mã nhóm hàng',
     'name': 'Tên nhóm hàng',
-    'alias': 'alias',
-    'description': 'Mô tả',
+    // 'alias': 'alias',
+    // 'description': 'Mô tả',
   };
 
 
   displayedColumns: string[] = [
     '#',
-    'no',
+    // 'no',
     'name',
-    'alias',
-    'description',
+    // 'alias',
+    'actions',
   ];
   columnsToDisplay: string[] = [
     '#',
-    'no',
+    // 'no',
     'name',
-    'alias',
-    'description',
+    // 'alias',
+    'actions',
   ];
 
   dataSource = [];
@@ -138,6 +138,37 @@ export class GroupListComponent extends ListComponentBase implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.loadData();
+      }
+    });
+  }
+
+  openGroupFormDialogUpdate(id) {
+    const obj = {
+      action: 'Update',
+      title: 'Cập nhật khách hàng',
+      group_id: id,
+    };
+
+    const dialogRef = this.dialog.open(GroupFormDialogComponent, {
+      data: obj,
+      width: '600px',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadData();
+      }
+    });
+  }
+
+  clickDelete(id) {
+    this.service.delete(id).subscribe(res => {
+      if (res?.success === true) {
+        this.notifyService.notify('success', res?.message);
+        this.loadData();
+      } else {
+        this.notifyService.notify('warning', res?.message);
       }
     });
   }

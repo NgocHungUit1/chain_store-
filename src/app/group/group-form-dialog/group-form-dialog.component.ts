@@ -32,12 +32,12 @@ export class GroupFormDialogComponent implements OnInit {
     form: FormGroup;
 
     fieldLabels = {
-        no: 'Mã nhóm hàng',
+        // no: 'Mã nhóm hàng',
         name: 'Tên nhóm hàng',
-        short: 'Mã ngắn',
-        note: 'Ghi chú',
-        description: 'Mô tả',
-        alias: 'alias',
+        // short: 'Mã ngắn',
+        // note: 'Ghi chú',
+        // description: 'Mô tả',
+        // alias: 'alias',
     };
 
 
@@ -47,12 +47,12 @@ export class GroupFormDialogComponent implements OnInit {
 
     initForm() {
         this.form = this.fb.group({
-            no: [null, Validators.required],
+            // no: [null, Validators.required],
             name: [null, [Validators.required]],
-            short: [null],
-            alias: [null],
-            note: [null],
-            description: [null],
+            // short: [null],
+            // alias: [null],
+            // note: [null],
+            // description: [null],
         });
     }
 
@@ -62,11 +62,11 @@ export class GroupFormDialogComponent implements OnInit {
         if (this.group_id !== null && this.group_id !== undefined) {
             this.loadModel(this.group_id);
         } else {
-            this.groupService.getNo().subscribe(no => {
-                this.form.patchValue({
-                    'no': no,
-                });
-            });
+            // this.groupService.getNo().subscribe(no => {
+            //     this.form.patchValue({
+            //         'no': no,
+            //     });
+            // });
         }
     }
 
@@ -74,12 +74,12 @@ export class GroupFormDialogComponent implements OnInit {
         this.groupService.getDetail(id, '').subscribe(group => {
             this.form.patchValue({
                 id: group['id'],
-                no: group['no'],
+                // no: group['no'],
                 name: group['name'],
-                short: group['short'],
-                alias: group['alias'],
-                description: group['description'],
-                note: group['note'],
+                // short: group['short'],
+                // alias: group['alias'],
+                // description: group['description'],
+                // note: group['note'],
             });
 
         });

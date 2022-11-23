@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import {DebtCustomersModule} from '../debt-customers/debt-customers.module';
 import {DebtSuppliersModule} from '../debt-suppliers/debt-suppliers.module';
 import {GroupReportComponent} from '../group/group-report/group-report.component';
+import {StockReportComponent} from '../product-report/stock-report/stock-report.component';
 
 export const ReportRoutes: Routes = [
   {
@@ -18,6 +19,10 @@ export const ReportRoutes: Routes = [
       {
         path: 'product-report',
         loadChildren: () => import('../product-report/product-report.module').then(m => m.ProductReportModule)
+      },
+      {
+        path: 'stock-report',
+        component: StockReportComponent,
       },
       {
         path: 'group-report',

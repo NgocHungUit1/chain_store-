@@ -1,0 +1,789 @@
+<mat-sidenav-container>
+  <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true">
+    <mat-toolbar class="dv-header">
+      <button mat-icon-button>
+        <mat-icon>filter_list</mat-icon>
+      </button>
+      <label class="font-18">Lọc và tìm kiếm</label>
+    </mat-toolbar>
+
+    <mat-card class="time-filter-info">
+      <mat-card-title class="title-time-filter">Thời gian</mat-card-title>
+      <mat-card-content>
+
+        <form [formGroup]="timeFilter">
+          <mat-radio-group (change)="radioTimeChange($event)" formControlName="typeTime">
+            <mat-radio-button style="display: inline; " value="default">{{ titleTimeDefault }}
+              <button mat-icon-button aria-label="add" (click)="openTimeDefault()">
+                <mat-icon>format_line_spacing</mat-icon>
+              </button>
+            </mat-radio-button>
+            <mat-radio-button style="display: inline; " value="choose">{{ titleTimeChoose }}
+              <button mat-icon-button aria-label="add" (click)="openTimeChoose()">
+                <mat-icon>date_range</mat-icon>
+              </button>
+            </mat-radio-button>
+
+          </mat-radio-group>
+        </form>
+
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="time-filter-info">
+      <mat-card-title class="title-time-filter">Mối quan tâm</mat-card-title>
+      <mat-card-content>
+        <form [formGroup]="reportType">
+          <mat-radio-group
+            class="type-radio-group"
+            (change)="radioTimeChange($event)"
+            formControlName="type">
+<!--            <mat-radio-button class="radio-button-report-type" value="sale">-->
+<!--              Bán hàng-->
+<!--            </mat-radio-button>-->
+<!--            <mat-radio-button class="radio-button-report-type" value="profit">-->
+<!--              Lợi nhuận-->
+<!--            </mat-radio-button>-->
+            <mat-radio-button class="radio-button-report-type" value="stock">
+              Giá trị kho
+              <mat-icon
+                class="icon-info"
+                matTooltip="Tất cả sản phẩm đang kinh doanh có số lượng tồn lớn hơn 0">
+                info
+              </mat-icon>
+            </mat-radio-button>
+
+            <mat-radio-button class="radio-button-report-type" value="expiration-date">
+              Hạn sử dụng
+              <mat-icon
+                class="icon-info"
+                matTooltip="Sản phẩm kinh doanh sắp hết hạn">
+                info
+              </mat-icon>
+            </mat-radio-button>
+            <mat-radio-button class="radio-button-report-type" value="export-import">
+              Xuất nhập tồn
+              <mat-icon
+                class="icon-info"
+                matTooltip="Sản phẩm đang kinh doanh">
+                info
+              </mat-icon>
+            </mat-radio-button>
+            <mat-radio-button class="radio-button-report-type" value="export-import-detail">
+              Xuất nhập tồn chi tiết
+              <mat-icon
+                class="icon-info"
+                matTooltip="Sản phẩm đang kinh doanh">
+                info
+              </mat-icon>
+            </mat-radio-button>
+
+<!--            <mat-radio-button class="radio-button-report-type" value="sale-staff">-->
+<!--              Nhân viên theo hàng bán-->
+<!--              <mat-icon-->
+<!--                class="icon-info"-->
+<!--                matTooltip="Sản phẩm kinh doanh">-->
+<!--                info-->
+<!--              </mat-icon>-->
+<!--            </mat-radio-button>-->
+
+<!--            <mat-radio-button class="radio-button-report-type" value="customer">-->
+<!--              Khách hàng theo hàng bán-->
+<!--              <mat-icon-->
+<!--                class="icon-info"-->
+<!--                matTooltip="Sản phẩm kinh doanh">-->
+<!--                info-->
+<!--              </mat-icon>-->
+<!--            </mat-radio-button>-->
+
+<!--            <mat-radio-button class="radio-button-report-type" value="supplier">-->
+<!--              NCC theo hàng nhập-->
+<!--              <mat-icon-->
+<!--                class="icon-info"-->
+<!--                matTooltip="Sản phẩm kinh doanh">-->
+<!--                info-->
+<!--              </mat-icon>-->
+<!--            </mat-radio-button>-->
+
+          </mat-radio-group>
+        </form>
+
+      </mat-card-content>
+    </mat-card>
+
+
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar class="dv-header">
+      <button mat-icon-button (click)="leftside.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <label class="font-18">Báo cáo tồn kho</label>
+
+      <div class="select-product">
+        <mat-form-field>
+          <mat-label>Tìm kiếm sản phẩm</mat-label>
+          <input matInput [formControl]="searchProductForm" placeholder="" #input>
+          <button mat-icon-button matPrefix>
+            <mat-icon>search</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+
+      <span fxFlex="1 1 0%"></span>
+
+      <button mat-raised-button color="primary" (click)="exportExcel()" style="margin-right: 10px">
+        <mat-icon>cloud_download</mat-icon>
+        Xuất Excel
+      </button>
+
+      <mat-menu #createMenu="matMenu">
+        <button mat-menu-item (click)="openProductMedicineDialog('Add', {});">
+          <mat-icon>add</mat-icon>
+          <span>Tải thuốc</span>
+        </button>
+        <button mat-menu-item (click)="openProductMerchandiseFormDialog('Add',{})">
+          <mat-icon>add</mat-icon>
+          <span>Thêm hàng hóa</span>
+        </button>
+      </mat-menu>
+      <div class="diva-column-select">
+        <button mat-raised-button color="primary" (click)="selectColumn.toggle();">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <mat-select [(ngModel)]="displayedColumns" #selectColumn [multiple]="true"
+                    style="width: 100%; display: inline-flex; margin-left: -20px; color: white" placeholder="Chọn cột">
+          <!--<mat-select-trigger></mat-select-trigger>-->
+          <mat-option *ngFor="let column of columnsToDisplay" [value]="column">{{columnsHeader[column]}}</mat-option>
+        </mat-select>
+      </div>
+      <button style="margin-left: 10px" mat-raised-button color="primary" (click)="loadData()">
+        <mat-icon>refresh</mat-icon>
+        Làm mới
+      </button>
+    </mat-toolbar>
+    <div fxLayout="row wrap">
+      <div fxFlex="100">
+        <div class="table-container">
+          <div class="table-loading-shade" *ngIf="isLoadingResults || isRateLimitReached">
+            <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+            <div class="table-rate-limit-reached" *ngIf="isRateLimitReached">
+              GitHub's API rate limit has been reached. It will be reset in one minute.
+            </div>
+          </div>
+          <div class=" table-responsive">
+            <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="mat-elevation-z8">
+
+              <ng-container matColumnDef="#">
+                <th mat-header-cell *matHeaderCellDef> #</th>
+                <td mat-cell *matCellDef="let element; let i = index;"> {{ (page - 1) * pageSize + element.stt }} </td>
+              </ng-container>
+              <ng-container matColumnDef="second_#">
+                <th mat-header-cell *matHeaderCellDef></th>
+              </ng-container>
+
+              <ng-container matColumnDef="product_no">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_no']}}</th>
+                <td mat-cell *matCellDef="let element"> {{ element.product_no }}</td>
+              </ng-container>
+              <ng-container matColumnDef="second_product_no">
+                <th mat-header-cell *matHeaderCellDef></th>
+              </ng-container>
+
+              <ng-container matColumnDef="product_name">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_name']}}</th>
+                <td mat-cell style="word-wrap: break-word; max-width: 160px;" *matCellDef="let element">
+                  <span>
+                      {{ element.product_name + ' - ' + element.base_unit }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_product_name">
+                <th mat-header-cell *matHeaderCellDef></th>
+              </ng-container>
+
+              <ng-container matColumnDef="total_customer">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['total_customer']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                      {{ element.total_customer | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_total_customer">
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef></th>
+              </ng-container>
+
+              <ng-container matColumnDef="sl_ban">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['sl_ban']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                      {{ element.sl_ban | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_sl_ban">
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_sl_ban | number }}</th>
+              </ng-container>
+
+              <ng-container matColumnDef="doanh_thu">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['doanh_thu']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                      {{ element.doanh_thu | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_doanh_thu">
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_doanh_thu | number }}</th>
+              </ng-container>
+
+              <ng-container matColumnDef="sl_tra">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['sl_tra']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                      {{ element.sl_tra | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_sl_tra">
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_sl_tra | number }}</th>
+              </ng-container>
+
+              <ng-container matColumnDef="gia_tri_tra">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['gia_tri_tra']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                      {{ element.gia_tri_tra | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_gia_tri_tra">
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_gia_tri_tra | number }}</th>
+              </ng-container>
+
+              <ng-container matColumnDef="doanh_thu_thuan">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['doanh_thu_thuan']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                      {{ element.doanh_thu - element.gia_tri_tra | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_doanh_thu_thuan">
+                <th mat-header-cell class="column-number-sumary"
+                    *matHeaderCellDef> {{ sum_doanh_thu - sum_gia_tri_tra | number }}</th>
+              </ng-container>
+
+              <ng-container matColumnDef="tong_gia_von">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['tong_gia_von']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                      {{ element.tong_gia_von | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_tong_gia_von">
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_tong_gia_von | number }}</th>
+              </ng-container>
+
+              <ng-container matColumnDef="loi_nhuan">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['loi_nhuan']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                      {{ element.doanh_thu - element.gia_tri_tra - element.tong_gia_von | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_loi_nhuan">
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>
+                  {{ sum_doanh_thu - sum_gia_tri_tra - sum_tong_gia_von | number }}
+                </th>
+              </ng-container>
+
+              <ng-container matColumnDef="ty_suat">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['ty_suat']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span *ngIf="element.doanh_thu > 0;else zero">
+                      {{ 100 * (element.doanh_thu - element.gia_tri_tra - element.tong_gia_von) / element.doanh_thu | number }}
+                    %
+                  </span>
+                  <ng-template #zero>
+                    <span>0</span>
+                  </ng-template>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_ty_suat">
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>
+                  {{ 100 * (sum_doanh_thu - sum_gia_tri_tra - sum_tong_gia_von) / sum_doanh_thu | number}}
+                </th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="stock_so_luong">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['stock_so_luong']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                      {{ element?.stockCard?.quantity_of_stock }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_stock_so_luong">
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_stock_so_luong | number}}</th>
+              </ng-container>
+
+              <ng-container matColumnDef="stock_gia_ban">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['stock_gia_ban']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ element.sell_price | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_stock_gia_ban">
+                <th mat-header-cell *matHeaderCellDef></th>
+              </ng-container>
+
+              <ng-container matColumnDef="stock_gia_tri_ban">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['stock_gia_tri_ban']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+<!--                  {{ element?.quantity?.number * element.sell_price | number }}-->
+                    {{ element?.stockCard?.quantity_of_stock * element.sell_price | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_stock_gia_tri_ban">
+                <th mat-header-cell class="column-number" *matHeaderCellDef>{{ sum_stock_gia_tri_ban | number }}</th>
+              </ng-container>
+
+              <ng-container matColumnDef="stock_gia_von">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['stock_gia_von']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ element.original_price | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_stock_gia_von">
+                <th mat-header-cell *matHeaderCellDef></th>
+              </ng-container>
+
+              <ng-container matColumnDef="stock_gia_tri_kho">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['stock_gia_tri_kho']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+<!--                    {{ element?.quantity?.number * element.original_price | number }}-->
+                    {{ element?.stockCard?.quantity_of_stock * element.original_price | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_stock_gia_tri_kho">
+                <th mat-header-cell class="column-number-sumary"
+                    *matHeaderCellDef>{{ sum_stock_gia_tri_kho | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="ton_dau_ky">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['ton_dau_ky']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                      {{ 1 * element?.tonDauKy?.quantity_of_stock | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_ton_dau_ky">
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_ton_dau_ky | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="gia_tri_dau_ky">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['gia_tri_dau_ky']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ element?.tonDauKy?.quantity_of_stock * element.original_price | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_gia_tri_dau_ky">
+                <th mat-header-cell class="column-number-sumary"
+                    *matHeaderCellDef>{{ sum_gia_tri_dau_ky | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="sl_nhap">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['sl_nhap']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ 1 * element?.soLuongNhap | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_sl_nhap">
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_sl_nhap | number}}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="gia_tri_nhap">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['gia_tri_nhap']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                      {{ 1 * element?.soLuongNhap * element.original_price | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_gia_tri_nhap">
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_gia_tri_nhap | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="sl_xuat">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['sl_xuat']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                      {{ -1 * element?.soLuongXuat | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_sl_xuat">
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ -1 * sum_sl_xuat | number}}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="gia_tri_xuat">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['gia_tri_xuat']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                      {{ -1 * element?.soLuongXuat * element.original_price | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_gia_tri_xuat">
+                <th mat-header-cell class="column-number-sumary"
+                    *matHeaderCellDef>{{ -1 * sum_gia_tri_xuat | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="ton_cuoi_ky">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['ton_cuoi_ky']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                      {{ 1 * element?.tonCuoiKy?.quantity_of_stock | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_ton_cuoi_ky">
+                <th mat-header-cell class="column-number-sumary " *matHeaderCellDef>{{ sum_ton_cuoi_ky | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="gia_tri_cuoi_ky">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['gia_tri_cuoi_ky']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ element?.tonCuoiKy?.quantity_of_stock * element.original_price | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_gia_tri_cuoi_ky">
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef>{{ sum_gia_tri_cuoi_ky | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="nhap_ncc">
+                <th mat-header-cell class="column-number color-import"
+                    *matHeaderCellDef> {{columnsHeader['nhap_ncc']}}</th>
+                <td mat-cell class="column-number color-import" *matCellDef="let element">
+                  <span>
+                    {{ 1 * element?.soLuongNhap | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_nhap_ncc">
+                <th mat-header-cell class="column-number color-import" *matHeaderCellDef>{{ sum_sl_nhap | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="nhap_kiem">
+                <th mat-header-cell class="column-number color-import"
+                    *matHeaderCellDef> {{columnsHeader['nhap_kiem']}}</th>
+                <td mat-cell class="column-number color-import" *matCellDef="let element">
+                  <span>
+                    {{ 1 * element?.soLuongKiemNhap | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_nhap_kiem">
+                <th mat-header-cell class="column-number color-import"
+                    *matHeaderCellDef>{{ sum_sl_kiem_nhap | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="nhap_tra_hang">
+                <th mat-header-cell class="column-number color-import"
+                    *matHeaderCellDef> {{columnsHeader['nhap_tra_hang']}}</th>
+                <td mat-cell class="column-number color-import" *matCellDef="let element">
+                  <span>
+                    {{ 1 * element?.soLuongTraHang | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_nhap_tra_hang">
+                <th mat-header-cell class="column-number color-import"
+                    *matHeaderCellDef>{{ sum_sl_nhap_tra_hang | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="nhap_chuyen">
+                <th mat-header-cell class="column-number color-import"
+                    *matHeaderCellDef> {{columnsHeader['nhap_chuyen']}}</th>
+                <td mat-cell class="column-number color-import" *matCellDef="let element">
+                  <span>
+                    {{ 1 * element?.soLuongNhapChuyen | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_nhap_chuyen">
+                <th mat-header-cell class="column-number color-import"
+                    *matHeaderCellDef>{{ sum_sl_nhap_chuyen | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="xuat_ban">
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef> {{columnsHeader['xuat_ban']}}</th>
+                <td mat-cell class="column-number color-export" *matCellDef="let element">
+                  <span>
+                    {{ -1 * element?.soLuongXuat | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_xuat_ban">
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef>{{ -1 * sum_sl_xuat | number }}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="xuat_kiem">
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef> {{columnsHeader['xuat_kiem']}}</th>
+                <td mat-cell class="column-number color-export" *matCellDef="let element">
+                  <span>
+                    {{ -1 * element?.soLuongKiemXuat | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_xuat_kiem">
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef>{{ -1 * sum_sl_kiem_xuat | number }}</th>
+              </ng-container>
+
+              <ng-container matColumnDef="xuat_chuyen">
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef> {{columnsHeader['xuat_chuyen']}}</th>
+                <td mat-cell class="column-number color-export" *matCellDef="let element">
+                  <span>
+                    {{ -1 * element?.soLuongXuatChuyen | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_xuat_chuyen">
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef>{{ -1 * sum_sl_xuat_chuyen | number }}</th>
+              </ng-container>
+
+              <!--expiration-date-->
+              <ng-container matColumnDef="expiration_parcel_no">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['expiration_parcel_no']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{element?.productUnit?.latest_parcel_no }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="expiration_date">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['expiration_date']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                   {{element?.productUnit?.latest_parcel_exp_date | date: 'dd/MM/yyyy' }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="expiration_day_exits">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['expiration_day_exits']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{calculateDiff(element?.productUnit?.latest_parcel_exp_date) }}
+                  </span>
+                </td>
+              </ng-container>
+
+
+              <ng-container matColumnDef="expiration_quantity">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['expiration_quantity']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ element?.quantity?.number | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <!-- end expiration-date-->
+
+              <!-- sale-staff -->
+              <ng-container matColumnDef="total_staff_invoice">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['total_staff_invoice']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{element?.total_staff_invoice | number }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="second_total_staff_invoice">
+                <th mat-header-cell *matHeaderCellDef></th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="total_staff_return">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['total_staff_return']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ element?.total_staff_return | number }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="second_total_staff_return">
+                <th mat-header-cell *matHeaderCellDef></th>
+              </ng-container>
+
+              <!-- end sale-staff-->
+
+              <!-- supplier -->
+              <ng-container matColumnDef="supplier_total">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['supplier_total']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{element?.totalSupplier | number }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="second_supplier_total">
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef></th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="supplier_total_import">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['supplier_total_import']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ element?.totalWarehouseImport | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_supplier_total_import">
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef>{{sum_supplier_total_import | number}}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="supplier_total_value_import">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['supplier_total_value_import']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ element?.totalWarehouseImport * element?.original_price | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_supplier_total_value_import">
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef>{{sum_supplier_total_value_import | number}}</th>
+              </ng-container>
+
+              <ng-container matColumnDef="supplier_total_return">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['supplier_total_return']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ -element?.totalWarehouseReturn | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_supplier_total_return">
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef>{{sum_supplier_total_return | number}}</th>
+              </ng-container>
+
+
+              <ng-container matColumnDef="supplier_total_value_return">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['supplier_total_value_return']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                     {{ -(element?.totalWarehouseReturn * element?.original_price) | number}}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_sum_supplier_total_value_return">
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef>{{sum_supplier_total_value_return | number}}</th>
+              </ng-container>
+
+              <ng-container matColumnDef="supplier_value_pure">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['supplier_value_pure']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ getSupplierTotalPure(element?.totalWarehouseImport, element?.totalWarehouseReturn) * element?.original_price | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_supplier_value_pure">
+                <th mat-header-cell class="column-number color-export"
+                    *matHeaderCellDef>{{sum_supplier_value_pure | number }}</th>
+              </ng-container>
+
+              <!-- end supplier-->
+
+
+              <ng-container matColumnDef="expandedDetail">
+                <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
+                  <div class="example-element-detail"
+                       [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                    <mat-tab-group style="width: 100%;">
+
+                    </mat-tab-group>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+              <tr mat-header-row *matHeaderRowDef="second_columnsToDisplay" class="example-second-header-row"></tr>
+              <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" class="example-element-row"
+                  [class.example-expanded-row]="expandedElement === element"
+                  (click)="expandedElement = expandedElement === element ? null : element">
+              </tr>
+              <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+            </table>
+          </div>
+          <mat-paginator #paginator [length]="pageTotalCount" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+                         (page)="onMatPageChange($event)" [pageIndex]="page - 1" showFirstLastButtons></mat-paginator>
+        </div>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
