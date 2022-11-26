@@ -88,32 +88,32 @@
 
               <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['name']}}</th>
-                <td mat-cell *matCellDef="let element"> {{element?.group?.name}}</td>
+                <td mat-cell *matCellDef="let element"> {{element?.name}}</td>
               </ng-container>
 
               <ng-container matColumnDef="sl_ban">
-                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['sl_ban'] }}</th>
-                <td mat-cell *matCellDef="let element"> {{ element?.sl_ban | number }}</td>
+                <th mat-header-cell *matHeaderCellDef class="text-right"> {{ columnsHeader['sl_ban'] }}</th>
+                <td mat-cell *matCellDef="let element" class="text-right"> {{ element?.dataReport?.sl_ban | number }}</td>
               </ng-container>
 
               <ng-container matColumnDef="doanh_thu">
-                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['doanh_thu'] }}</th>
-                <td mat-cell *matCellDef="let element"> {{ element?.doanh_thu | number }}</td>
+                <th mat-header-cell *matHeaderCellDef class="text-right"> {{ columnsHeader['doanh_thu'] }}</th>
+                <td mat-cell *matCellDef="let element" class="text-right"> {{ element?.dataReport?.doanh_thu | number }}</td>
               </ng-container>
 
               <ng-container matColumnDef="sl_tra">
-                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['sl_tra'] }}</th>
-                <td mat-cell *matCellDef="let element"> {{ element?.sl_tra | number }}</td>
+                <th mat-header-cell *matHeaderCellDef class="text-right"> {{ columnsHeader['sl_tra'] }}</th>
+                <td mat-cell *matCellDef="let element" class="text-right"> {{ element?.dataReport?.sl_tra | number }}</td>
               </ng-container>
 
               <ng-container matColumnDef="gia_tri_tra">
-                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['gia_tri_tra'] }}</th>
-                <td mat-cell *matCellDef="let element"> {{ element?.gia_tri_tra | number }}</td>
+                <th mat-header-cell *matHeaderCellDef class="text-right"> {{ columnsHeader['gia_tri_tra'] }}</th>
+                <td mat-cell *matCellDef="let element" class="text-right"> {{ element?.dataReport?.gia_tri_tra | number }}</td>
               </ng-container>
 
               <ng-container matColumnDef="tong_gia_von">
-                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['tong_gia_von'] }}</th>
-                <td mat-cell *matCellDef="let element"> {{ element?.tong_gia_von | number }}</td>
+                <th mat-header-cell *matHeaderCellDef class="text-right"> {{ columnsHeader['tong_gia_von'] }}</th>
+                <td mat-cell *matCellDef="let element" class="text-right"> {{ element?.dataReport?.tong_gia_von | number }}</td>
               </ng-container>
 
 
@@ -130,7 +130,33 @@
                 </td>
               </ng-container>
 
+
+              <!-- Item second-header -->
+              <ng-container matColumnDef="summary_#">
+                <th mat-header-cell *matHeaderCellDef></th>
+              </ng-container>
+              <ng-container matColumnDef="summary_name">
+                <th mat-header-cell *matHeaderCellDef></th>
+              </ng-container>
+              <ng-container matColumnDef="summary_sl_ban">
+                <th mat-header-cell class="summary-row-number text-right" *matHeaderCellDef>{{ sum_sl_ban | number}}</th>
+              </ng-container>
+              <ng-container matColumnDef="summary_doanh_thu">
+                <th mat-header-cell class="summary-row-number text-right" *matHeaderCellDef>{{ sum_doanh_thu | number}}</th>
+              </ng-container>
+              <ng-container matColumnDef="summary_sl_tra">
+                <th mat-header-cell class="summary-row-number text-right" *matHeaderCellDef>{{ sum_sl_tra | number}}</th>
+              </ng-container>
+              <ng-container matColumnDef="summary_gia_tri_tra">
+                <th mat-header-cell class="summary-row-number text-right" *matHeaderCellDef>{{ sum_gia_tri_tra | number}}</th>
+              </ng-container>
+              <ng-container matColumnDef="summary_tong_gia_von">
+                <th mat-header-cell class="summary-row-number text-right" *matHeaderCellDef>{{ sum_tong_gia_von | number}}</th>
+              </ng-container>
+              <!-- Item second-header -->
+
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-header-row *matHeaderRowDef="summaryRowDisplay" class="example-second-header-row">
               <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="example-element-row"
                   [class.example-expanded-row]="expandedElement === element"
                   (click)="expandedElement = expandedElement === element ? null : element">

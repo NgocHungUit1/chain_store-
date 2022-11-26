@@ -82,6 +82,16 @@ export class GroupReportComponent extends ListComponentBase implements OnInit {
     'tong_gia_von',
   ];
 
+  summaryRowDisplay: string[] = [
+    'summary_#',
+    'summary_name',
+    'summary_sl_ban',
+    'summary_doanh_thu',
+    'summary_sl_tra',
+    'summary_gia_tri_tra',
+    'summary_tong_gia_von',
+  ];
+
 
   dataSource = [];
 
@@ -100,6 +110,11 @@ export class GroupReportComponent extends ListComponentBase implements OnInit {
   isLoadingResults = true;
   isRateLimitReached = false;
 
+  sum_sl_ban = 0;
+  sum_doanh_thu = 0;
+  sum_tong_gia_von = 0;
+  sum_sl_tra = 0;
+  sum_gia_tri_tra = 0;
 
   radioTimeChange(event: Event) {
     if (this.timeFilter.controls['typeTime'].value === 'choose') {
@@ -184,10 +199,9 @@ export class GroupReportComponent extends ListComponentBase implements OnInit {
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'branch';
     filter.date_from = objDateFilter?.date_from;
     filter.date_to = objDateFilter?.date_to;
-
+    filter.expand = 'branch,dataReport';
     return filter;
   }
 
@@ -216,6 +230,13 @@ export class GroupReportComponent extends ListComponentBase implements OnInit {
     this.isLoadingResults = true;
     this.service.getReportList(this.apiFilter).subscribe(res => {
       this.dataSource = res.body.data;
+
+      this.sum_sl_ban = res.body?.sum_sl_ban;
+      this.sum_doanh_thu = res.body?.sum_doanh_thu;
+      this.sum_tong_gia_von = res.body?.sum_tong_gia_von;
+      this.sum_sl_tra = res.body?.sum_sl_tra;
+      this.sum_gia_tri_tra = res.body?.sum_gia_tri_tra;
+
       let stt = 0;
       this.dataSource.forEach(elementData => {
         stt++;
