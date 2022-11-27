@@ -233,7 +233,7 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['sl_ban']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                      {{ element.sl_ban | number }}
+                      {{ element?.dataReport?.sl_ban | number }}
                   </span>
                 </td>
               </ng-container>
@@ -242,10 +242,12 @@
               </ng-container>
 
               <ng-container matColumnDef="doanh_thu">
-                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['doanh_thu']}}</th>
+                <th mat-header-cell class="column-number"
+                    matTooltip="Doanh thu = giá vốn * số lượng bán"
+                    *matHeaderCellDef> {{columnsHeader['doanh_thu']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                      {{ element.doanh_thu | number }}
+                      {{ element?.dataReport?.doanh_thu | number }}
                   </span>
                 </td>
               </ng-container>
@@ -257,7 +259,7 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['sl_tra']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                      {{ element.sl_tra | number }}
+                      {{ element?.dataReport?.sl_tra | number }}
                   </span>
                 </td>
               </ng-container>
@@ -269,7 +271,7 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['gia_tri_tra']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                      {{ element.gia_tri_tra | number }}
+                      {{ element?.dataReport?.gia_tri_tra | number }}
                   </span>
                 </td>
               </ng-container>
@@ -281,7 +283,7 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['doanh_thu_thuan']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                      {{ element.doanh_thu - element.gia_tri_tra | number }}
+                      {{ element?.dataReport?.doanh_thu - element?.dataReport?.gia_tri_tra | number }}
                   </span>
                 </td>
               </ng-container>
@@ -294,7 +296,7 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['tong_gia_von']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                      {{ element.tong_gia_von | number }}
+                      {{ element?.dataReport?.tong_gia_von | number }}
                   </span>
                 </td>
               </ng-container>
@@ -303,10 +305,11 @@
               </ng-container>
 
               <ng-container matColumnDef="loi_nhuan">
-                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['loi_nhuan']}}</th>
+                <th mat-header-cell class="column-number" matTooltip="Lợi nhuận = doanh thu - gía trị trả - tổng giá vốn"
+                    *matHeaderCellDef> {{columnsHeader['loi_nhuan']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                      {{ element.doanh_thu - element.gia_tri_tra - element.tong_gia_von | number }}
+                      {{ element?.dataReport?.doanh_thu - element?.dataReport?.gia_tri_tra - element?.dataReport?.tong_gia_von | number }}
                   </span>
                 </td>
               </ng-container>
@@ -317,10 +320,12 @@
               </ng-container>
 
               <ng-container matColumnDef="ty_suat">
-                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['ty_suat']}}</th>
+                <th mat-header-cell class="column-number"
+                    matTooltip="Tỷ suất = 100 * (doanh thu - giá trị trả - tổng giá vôn) / doanh thu"
+                    *matHeaderCellDef> {{columnsHeader['ty_suat']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
-                  <span *ngIf="element.doanh_thu > 0;else zero">
-                      {{ 100 * (element.doanh_thu - element.gia_tri_tra - element.tong_gia_von) / element.doanh_thu | number }}
+                  <span *ngIf="element?.dataReport?.doanh_thu > 0;else zero">
+                      {{ 100 * (element?.dataReport?.doanh_thu - element?.dataReport?.gia_tri_tra - element?.dataReport?.tong_gia_von) / element?.dataReport?.doanh_thu | number }}
                     %
                   </span>
                   <ng-template #zero>
