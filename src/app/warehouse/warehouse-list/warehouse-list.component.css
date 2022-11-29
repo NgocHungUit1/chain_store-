@@ -112,3 +112,6 @@ form .mat-card-content {
   color: black;
 }
 
+.mat-column-- {
+  width: 140px !important;
+}

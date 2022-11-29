@@ -660,11 +660,11 @@ export class ProductMedicineDialogComponent implements OnInit {
     // if (list.length > 0 && newIndex < list.length) {
     //   unitName = list[newIndex].name;
     // }
-
+    const form = this.form.getRawValue();
     const group = new FormGroup({
       unit_name: new FormControl('', Validators.required),
-      unit_value: new FormControl(0, Validators.required),
-      unit_price: new FormControl(0, Validators.required),
+      unit_value: new FormControl(1, Validators.required),
+      unit_price: new FormControl(form['sell_price'], Validators.required),
       unit_no: new FormControl(this.form.controls['product_no'].value + '-' + index)
     });
 
