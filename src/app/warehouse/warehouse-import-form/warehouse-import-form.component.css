@@ -19,10 +19,10 @@
   min-width: 450px;
 }
 
-.mat-column-- {
-  max-width: 30px;
-  padding-left: 10px !important;
-}
+/*.mat-column-- {*/
+/*  max-width: 30px;*/
+/*  padding-left: 10px !important;*/
+/*}*/
 
 .mat-column-quantity, .mat-column-price {
   max-width: 32px;
