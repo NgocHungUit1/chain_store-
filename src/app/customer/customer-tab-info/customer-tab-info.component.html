@@ -69,8 +69,8 @@
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="100" class="product-info-field">
             <span class="product-field-label">Trạng thái:</span>
-            <label *ngIf="customer.status == '10'" class="label label-warning">Ngưng hoạt động</label>
-            <label *ngIf="customer.status == '1'" class="label label-success">Hoạt động</label>
+            <label *ngIf="customer.status == '10'" class="label label-success">Hoạt động</label>
+            <label *ngIf="customer.status == '9'" class="label label-warning">Ngưng hoạt động</label>
           </div>
         </div>
 
@@ -94,11 +94,11 @@
       <mat-icon>edit</mat-icon>
       Cập nhật
     </button>
-    <button class="m-r-10" mat-raised-button color="accent" (click)="lock()" *ngIf="this.customer.status == '9'">
+    <button class="m-r-10" mat-raised-button color="accent" (click)="lock()" *ngIf="this.customer.status == '10'">
       <mat-icon>lock</mat-icon>
       Ngừng hoạt động
     </button>
-    <button class="m-r-10" mat-raised-button color="accent" (click)="activate()" *ngIf="this.customer.status == '10'">
+    <button class="m-r-10" mat-raised-button color="accent" (click)="activate()" *ngIf="this.customer.status == '9'">
       <mat-icon>lock_open</mat-icon>
       Kích hoạt
     </button>
