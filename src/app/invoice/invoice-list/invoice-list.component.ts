@@ -86,14 +86,14 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
 
   columnsHeader = {
     '#': '#',
-    'invoice_no': 'Mã đơn hàng',
+    'invoice_no': 'Mã đơn',
     'created_at': 'Thời gian',
     'returns': 'Mã trả hàng',
     'customer': 'Khách hàng',
     'total_price': 'Tổng tiền hàng',
     'discount': 'Giảm giá',
     'payment': 'Khách đã trả',
-    'national_pharmacy_no': 'Mã phiếu DQG',
+    'national_pharmacy_no': 'Phiếu DQG',
   };
 
   displayedColumns: string[] = ['select',
