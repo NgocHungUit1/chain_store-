@@ -233,7 +233,7 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['sl_ban']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                      {{ element?.dataReport?.sl_ban | number }}
+                      {{ groupData[element.id]?.sl_ban | number }}
                   </span>
                 </td>
               </ng-container>
@@ -247,7 +247,7 @@
                     *matHeaderCellDef> {{columnsHeader['doanh_thu']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                      {{ element?.dataReport?.doanh_thu | number }}
+                      {{ groupData[element.id]?.doanh_thu | number }}
                   </span>
                 </td>
               </ng-container>
@@ -259,7 +259,7 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['sl_tra']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                      {{ element?.dataReport?.sl_tra | number }}
+                      {{ groupData[element.id]?.sl_tra | number }}
                   </span>
                 </td>
               </ng-container>
@@ -271,7 +271,7 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['gia_tri_tra']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                      {{ element?.dataReport?.gia_tri_tra | number }}
+                      {{ groupData[element.id]?.gia_tri_tra | number }}
                   </span>
                 </td>
               </ng-container>
@@ -283,7 +283,7 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['doanh_thu_thuan']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                      {{ element?.dataReport?.doanh_thu - element?.dataReport?.gia_tri_tra | number }}
+                      {{ groupData[element.id]?.doanh_thu - groupData[element.id]?.gia_tri_tra | number }}
                   </span>
                 </td>
               </ng-container>
@@ -296,7 +296,7 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['tong_gia_von']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                      {{ element?.dataReport?.tong_gia_von | number }}
+                      {{ groupData[element.id]?.tong_gia_von | number }}
                   </span>
                 </td>
               </ng-container>
@@ -309,7 +309,7 @@
                     *matHeaderCellDef> {{columnsHeader['loi_nhuan']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                      {{ element?.dataReport?.doanh_thu - element?.dataReport?.gia_tri_tra - element?.dataReport?.tong_gia_von | number }}
+                      {{ groupData[element.id]?.doanh_thu - groupData[element.id]?.gia_tri_tra - groupData[element.id]?.tong_gia_von | number }}
                   </span>
                 </td>
               </ng-container>
@@ -324,8 +324,8 @@
                     matTooltip="Tỷ suất = 100 * (doanh thu - giá trị trả - tổng giá vôn) / doanh thu"
                     *matHeaderCellDef> {{columnsHeader['ty_suat']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
-                  <span *ngIf="element?.dataReport?.doanh_thu > 0;else zero">
-                      {{ 100 * (element?.dataReport?.doanh_thu - element?.dataReport?.gia_tri_tra - element?.dataReport?.tong_gia_von) / element?.dataReport?.doanh_thu | number }}
+                  <span *ngIf="groupData[element.id]?.doanh_thu > 0;else zero">
+                      {{ 100 * (groupData[element.id]?.doanh_thu - groupData[element.id]?.gia_tri_tra - groupData[element.id]?.tong_gia_von) / groupData[element.id]?.doanh_thu | number }}
                     %
                   </span>
                   <ng-template #zero>

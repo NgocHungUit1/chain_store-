@@ -134,6 +134,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
   second_columnsToDisplay: string[] = ['second_#', 'second_product_no', 'second_product_name',
     'second_sl_ban', 'second_doanh_thu', 'second_sl_tra', 'second_gia_tri_tra', 'second_doanh_thu_thuan'];
   dataSource: ProductReport[] = [];
+  groupData: any[] = [];
 
   sum_sl_ban: number;
   sum_doanh_thu: number;
@@ -193,7 +194,9 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'dataReport';
+    // filter.expand = 'dataReport';
+    // filter.expand = 'sl_ban';
+
     if (typeReport === 'stock') {
       filter.expand = 'quantity,stockCard';
     }
@@ -229,6 +232,8 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       this.isLoadingResults = true;
       this.service.getListReportSale(this.apiFilter).subscribe(res => {
         this.dataSource = res.body.data;
+        this.groupData = res.body.groupData;
+        // console.log(this.groupData);
         this.sum_sl_ban = res.body.sum_sl_ban;
         this.sum_doanh_thu = res.body.sum_doanh_thu;
         this.sum_sl_tra = res.body.sum_sl_tra;
