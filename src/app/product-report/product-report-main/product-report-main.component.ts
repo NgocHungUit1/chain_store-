@@ -194,8 +194,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    // filter.expand = 'dataReport';
-    // filter.expand = 'sl_ban';
+    filter.expand = 'dataReport';
 
     if (typeReport === 'stock') {
       filter.expand = 'quantity,stockCard';
@@ -232,7 +231,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       this.isLoadingResults = true;
       this.service.getListReportSale(this.apiFilter).subscribe(res => {
         this.dataSource = res.body.data;
-        this.groupData = res.body.groupData;
+        // this.groupData = res.body.groupData;
         // console.log(this.groupData);
         this.sum_sl_ban = res.body.sum_sl_ban;
         this.sum_doanh_thu = res.body.sum_doanh_thu;
