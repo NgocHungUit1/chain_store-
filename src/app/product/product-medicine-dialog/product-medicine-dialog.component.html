@@ -15,8 +15,7 @@
               <div fxFlex="100">
                 <mat-form-field>
                   <input type="text" (change)="onProductNoChange()" matInput [formControl]="form.controls['product_no']"
-                         required placeholder="Mã hàng tự động">
-                  <mat-hint>Từ 5 đến 20 ký tự !</mat-hint>
+                         required placeholder="Mã hàng tự động (Từ 5 đến 20 ký tự !)">
                 </mat-form-field>
               </div>
             </div>
@@ -112,11 +111,11 @@
               </mat-chip-list>
             </div>
 
-            <mat-form-field>
-              <input type="number" class="text-right"  matInput
-                     [formControl]="form.controls['quantity_of_stock']"
-                     placeholder="Tồn kho (đơn vị cơ bản)" autocomplete="off">
-            </mat-form-field>
+<!--            <mat-form-field>-->
+<!--              <input type="number" class="text-right"  matInput-->
+<!--                     [formControl]="form.controls['quantity_of_stock']"-->
+<!--                     placeholder="Tồn kho (đơn vị cơ bản)" autocomplete="off">-->
+<!--            </mat-form-field>-->
 
           </div>
 
@@ -132,8 +131,8 @@
                         <!--                        <th></th>-->
                         <th>Tên đơn vị</th>
                         <th>Giá trị quy đổi</th>
-                        <th>Giá bán</th>
-                        <th>Mã hàng</th>
+                        <th class="text-center">Giá bán</th>
+                        <th class="text-center">Mã hàng</th>
                         <th></th>
                         </thead>
                         <tbody>

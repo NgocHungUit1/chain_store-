@@ -191,7 +191,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       max_quantity: [0],
       description: [null],
       note: [null],
-      quantity_of_stock: [0],
+      // quantity_of_stock: [0],
     });
   }
 
@@ -339,11 +339,11 @@ export class ProductMedicineDialogComponent implements OnInit {
       }
 
       // console.log(product['quantity']);
-      if (product['quantity']) {
-        this.form.patchValue({
-          quantity_of_stock: numeral(product['quantity'].number).value(),
-        });
-      }
+      // if (product['quantity']) {
+      //   this.form.patchValue({
+      //     quantity_of_stock: numeral(product['quantity'].number).value(),
+      //   });
+      // }
 
       if (copy === null) {
         this.form.patchValue({
@@ -445,7 +445,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       data.made_in = data.medicine.made_in;
       data.original_price = numeral(data.original_price).value();
       data.sell_price = numeral(data.sell_price).value();
-      data.quantity_of_stock = numeral(data.quantity_of_stock).value();
+      // data.quantity_of_stock = numeral(data.quantity_of_stock).value();
 
       data.units.forEach(item => {
         item.unit_price = numeral(item.unit_price).value();

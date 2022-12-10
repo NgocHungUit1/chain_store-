@@ -201,7 +201,7 @@ export class GroupReportComponent extends ListComponentBase implements OnInit {
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.date_from = objDateFilter?.date_from;
     filter.date_to = objDateFilter?.date_to;
-    filter.expand = 'branch';
+    filter.expand = 'branch,dataReport';
     return filter;
   }
 

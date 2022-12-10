@@ -1,14 +1,14 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { ProductService } from '../product.service';
-import { Product } from '../product.model';
-import { ProductMedicineDialogComponent } from '../product-medicine-dialog/product-medicine-dialog.component';
-import { ProductMerchandiseFormDialogComponent } from '../product-merchandise-form-dialog/product-merchandise-form-dialog.component';
-import { ProductPopupDeleteDialogComponent } from '../product-popup-delete-dialog/product-popup-delete-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
-import { NotifierService } from 'angular-notifier';
-import { IdCodeFormDialogComponent } from '../id-code-form-dialog/id-code-form-dialog.component';
-import { MedicineService } from '../../medicine/medicine.service';
-import { Router } from '@angular/router';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {ProductService} from '../product.service';
+import {Product} from '../product.model';
+import {ProductMedicineDialogComponent} from '../product-medicine-dialog/product-medicine-dialog.component';
+import {ProductMerchandiseFormDialogComponent} from '../product-merchandise-form-dialog/product-merchandise-form-dialog.component';
+import {ProductPopupDeleteDialogComponent} from '../product-popup-delete-dialog/product-popup-delete-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
+import {NotifierService} from 'angular-notifier';
+import {IdCodeFormDialogComponent} from '../id-code-form-dialog/id-code-form-dialog.component';
+import {MedicineService} from '../../medicine/medicine.service';
+import {Router} from '@angular/router';
 import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 
 const JsBarcode = require('jsbarcode');
@@ -50,10 +50,14 @@ export class ProductTabInfoComponent implements OnChanges {
       this.productSer.getDetail(this.product_id, 'medicine,productUnits,productPlacements,group,images').subscribe(res => {
         this.product = <Product>res;
         const data = [];
-        this.product.images.forEach(pImage => {
-          data.push(pImage['link']);
-        });
-        this.images = data;
+        if (this.product.images.length === 0) {
+          this.imageIndex = -1;
+        } else {
+          this.product.images.forEach(pImage => {
+            data.push(pImage['link']);
+          });
+          this.images = data;
+        }
       });
 
     }
@@ -202,7 +206,7 @@ export class ProductTabInfoComponent implements OnChanges {
 
     const obj = {
       action: 'Delete',
-      title: 'Xác nhận sản phẩm "' + this.product.product_name  + '"  đã chọn .',
+      title: 'Xác nhận sản phẩm "' + this.product.product_name + '"  đã chọn .',
       content: '',
     };
 

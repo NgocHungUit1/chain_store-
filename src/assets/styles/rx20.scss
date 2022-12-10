@@ -79,7 +79,7 @@ File: scss
 }
 
 .product-image-container .img-container {
-  height: 385px !important;
+  height: 250px !important;
 }
 
 #snav
@@ -143,4 +143,9 @@ File: scss
 
 .mat-form-field-hide-placeholder .mat-form-field-infix {
   // border-top: 0;
+}
+
+.padding-x-10 {
+  padding-right: 10px !important;
+  padding-left: 10px !important;
 }

@@ -82,16 +82,16 @@
       </button>
 
       <div class="header-filter group-button" *ngIf="toggleMore" >
-        <button mat-raised-button color="warn" (click)="lockSelect()" class="m-r-5">
+        <button mat-raised-button color="warn" (click)="lockSelect()" class="m-r-5 padding-x-10">
           <mat-icon>lock</mat-icon>
           Tạm ngừng
         </button>
-        <button mat-raised-button color="accent" (click)="activateSelect()" class="m-r-5">
+        <button mat-raised-button color="accent" (click)="activateSelect()" class="m-r-5 padding-x-10">
           <mat-icon>lock_open</mat-icon>
           Kích hoạt
         </button>
 
-        <button mat-raised-button color="warn" (click)="deleteSelect()" class="m-r-5">
+        <button mat-raised-button color="warn" (click)="deleteSelect()" class="m-r-5 padding-x-10">
           <mat-icon>delete</mat-icon>
           Xóa
         </button>
@@ -110,15 +110,15 @@
       </div>
 
       <span fxFlex="1 1 0%"></span>
-      <button mat-raised-button color="accent" (click)="openUploadDialog();" style="margin-right: 10px">
+      <button mat-raised-button color="accent" (click)="openUploadDialog();" class="m-r-5 padding-x-10">
         <mat-icon>cloud_upload</mat-icon>
-        Tải lên từ Excel
+        Tải lên
       </button>
       <!--<button mat-raised-button color="primary" (click)="exportExcel()" style="margin-right: 10px">
         <mat-icon>cloud_download</mat-icon>
         Xuất Excel
       </button>-->
-      <button mat-raised-button color="primary" [matMenuTriggerFor]="createMenu" style="margin-right: 10px">
+      <button mat-raised-button color="primary" [matMenuTriggerFor]="createMenu" class="m-r-5 padding-x-10">
         <mat-icon>add</mat-icon>
         Thêm mới
       </button>
@@ -143,7 +143,7 @@
         </button>
       </mat-menu>
       <div class="diva-column-select">
-        <button mat-raised-button color="primary" (click)="selectColumn.toggle();">
+        <button mat-raised-button class="m-r-5 padding-x-10" color="primary" (click)="selectColumn.toggle();">
           <mat-icon>menu</mat-icon>
         </button>
         <mat-select [(ngModel)]="displayedColumns" #selectColumn [multiple]="true"
@@ -152,11 +152,12 @@
           <mat-option *ngFor="let column of columnsToDisplay" [value]="column">{{columnsHeader[column]}}</mat-option>
         </mat-select>
       </div>
-      <button style="margin-left: 10px" mat-raised-button color="primary" (click)="loadData()">
+      <button class="m-r-5 padding-x-10" mat-raised-button color="primary" (click)="loadData()">
         <mat-icon>refresh</mat-icon>
         Làm mới
       </button>
     </mat-toolbar>
+
     <div fxLayout="row wrap">
       <div fxFlex="100">
         <div class="table-container">

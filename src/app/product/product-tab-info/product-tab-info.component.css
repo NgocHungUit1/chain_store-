@@ -12,3 +12,10 @@
   min-width: 100px;
   display: inline-block;
 }
+.empty-images {
+  height: 250px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  background-color: #ededed;
+}

@@ -6,7 +6,11 @@
     <div fxLayout="row wrap">
       <div fxFlex="30">
         <div class="product-image-container">
-          <angular-image-viewer [screenHeightOccupied]='0' [src]="images" [(index)]="imageIndex"></angular-image-viewer>
+
+          <div *ngIf="imageIndex === -1" class="empty-images" style="">
+            <img src="assets/images/icons8-product-96.png" style="" alt="user" class="profile-pic">
+          </div>
+          <angular-image-viewer *ngIf="imageIndex !== -1" [screenHeightOccupied]='0' [src]="images" [(index)]="imageIndex"></angular-image-viewer>
         </div>
       </div>
       <div fxFlex="70" class="product-info">
@@ -36,9 +40,13 @@
             <span class="product-field-label">Loại hàng:</span> {{ textType[product.product_type] }}
           </div>
           <div fxFlex="4"></div>
+<!--          <div fxFlex="48" class="product-info-field">-->
+<!--            <span class="product-field-label">Quy cách đóng gói:</span>-->
+<!--            <span *ngIf="product.medicine">{{product.medicine.packing}}</span>-->
+<!--          </div>-->
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Quy cách đóng gói:</span>
-            <span *ngIf="product.medicine">{{product.medicine.packing}}</span>
+            <span class="product-field-label">Vị trí:</span> <span
+            *ngFor="let placement of product.productPlacements">{{placement.name}}, </span>
           </div>
         </div>
         <div fxLayout="row wrap" class="product-info-row">
@@ -56,163 +64,146 @@
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
-
-          </div>
-        </div>
-        <div fxLayout="row wrap" class="product-info-row">
-          <div fxFlex="48" class="product-info-field">
             <span class="product-field-label">Giá vốn:</span> {{ product.original_price | number }}
           </div>
-          <div fxFlex="4"></div>
-          <div fxFlex="48" class="product-info-field">
-
-          </div>
         </div>
-        <div fxLayout="row wrap" class="product-info-row product-info-row-last">
-          <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Vị trí:</span> <span
-            *ngFor="let placement of product.productPlacements">{{placement.name}}, </span>
-          </div>
-          <div fxFlex="4"></div>
-          <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Ghi chú đặt hàng:</span> {{product.note}}
-          </div>
+
+      </div>
+
+      <!-- Group Button -->
+      <div fxLayout="row wrap" class="m-t-10">
+        <!-- kiem tra loai show form -->
+        <div fxFlex="100" *ngIf="product.product_type == 'medicine' ">
+          <!--            disabled="disabled"-->
+          <button class="m-r-5 padding-x-10" mat-raised-button
+                  (click)="openIdCodeFormDialog(this.product.id)">
+            <mat-icon>format_align_justify</mat-icon>
+            In tem
+          </button>
+
+          <button class="m-r-5 padding-x-10" mat-raised-button color="primary"
+                  (click)="openMedicineDialog(this.product.id, null)">
+            <mat-icon>edit</mat-icon>
+            Cập nhật
+          </button>
+
+          <button class="m-r-5 padding-x-10" mat-raised-button color="accent" (click)="openMedicineDialog(null, this.product.id)">
+            <mat-icon>file_copy</mat-icon>
+            Sao chép
+          </button>
+
+          <button class="m-r-5 padding-x-10" mat-raised-button color="accent"
+                  *ngIf="this.product.product_type === 'medicine' && this.product?.medicine?.medicine_no === null"
+                  (click)="connectMedicine(this.product)">
+            <mat-icon>open_in_full</mat-icon>
+            Liên thông
+          </button>
+
+          <!--            <button class="m-r-10" mat-raised-button color="warn"-->
+          <!--                    *ngIf="this.product.product_type === 'medicine' && this.product?.medicine?.medicine_no !== null"-->
+          <!--                    (click)="disConnectMedicine(this.product)">-->
+          <!--              <mat-icon>close_fullscreen</mat-icon>-->
+          <!--              Gỡ liên thông-->
+          <!--            </button>-->
+
+          <button class="m-r-5 padding-x-10" mat-raised-button color="warn" (click)="lock()"
+                  *ngIf="this.product.status == 10; else productStatus10">
+            <mat-icon>lock</mat-icon>
+            Tạm ngừng
+          </button>
+
+          <ng-template #productStatus10>
+            <button class="m-r-5 padding-x-10" mat-raised-button color="accent" (click)="activate()"
+                    *ngIf="this.product.status == 9">
+              <mat-icon>lock_open</mat-icon>
+              Kích hoạt
+            </button>
+          </ng-template>
+
+          <button class="m-r-5 padding-x-10" mat-raised-button color="warn" (click)="delete()">
+            <mat-icon>delete</mat-icon>
+            Xóa
+          </button>
+
+          <button mat-icon-button [matMenuTriggerFor]="menuActions"
+                  [disabled]="checkPermissionDisable('Warehouse.Update') || !isAdminStore">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menuActions="matMenu" yPosition="above">
+            <button mat-menu-item (click)="goToWarehouseCreate()">
+              <mat-icon>local_grocery_store</mat-icon>
+              Nhập hàng
+            </button>
+            <button mat-menu-item (click)="goToStockTakeCreate()">
+              <mat-icon>check_circle_outline</mat-icon>
+              Kiểm kho
+            </button>
+            <button mat-menu-item (click)="goToMoveCreate()">
+              <mat-icon>local_shipping</mat-icon>
+              Chuyển hàng
+            </button>
+          </mat-menu>
+
+          <!-- <button class="m-r-10" mat-raised-button color="warn" (click)="deleteMedicine(this.product.id)"><mat-icon>delete</mat-icon> Xóa</button> -->
         </div>
-        <div fxLayout="row wrap">
-          <!-- kiem tra loai show form -->
-          <div fxFlex="100" *ngIf="product.product_type == 'medicine' ">
-<!--            disabled="disabled"-->
-            <button class="m-r-10" mat-raised-button
-                    (click)="openIdCodeFormDialog(this.product.id)">
-              <mat-icon>format_align_justify</mat-icon>
-              In tem mã
+        <div fxFlex="100" *ngIf="product.product_type == 'merchandise' ">
+          <!--            disabled="disabled"-->
+          <button class="m-r-5 padding-x-10" mat-raised-button
+                  (click)="openIdCodeFormDialog(this.product.id)">
+            <mat-icon>format_align_justify</mat-icon>
+            In tem
+          </button>
+
+          <button class="m-r-5 padding-x-10" mat-raised-button color="primary"
+                  (click)="openMerchandiseFormDialog(this.product.id, null)">
+            <mat-icon>edit</mat-icon>
+            Cập nhật
+          </button>
+
+          <button class="m-r-5 padding-x-10" mat-raised-button color="accent"
+                  (click)="openMerchandiseFormDialog(null, this.product.id)">
+            <mat-icon>file_copy</mat-icon>
+            Sao chép
+          </button>
+          <button class="m-r-5 padding-x-10" mat-raised-button color="warn" (click)="lock()"
+                  *ngIf="this.product.status == 10; else productStatus10">
+            <mat-icon>lock</mat-icon>
+            Tạm ngừng
+          </button>
+          <ng-template #productStatus10>
+            <button class="m-r-5 padding-x-10" mat-raised-button color="accent" (click)="activate()"
+                    *ngIf="this.product.status == 9">
+              <mat-icon>lock_open</mat-icon>
+              Kích hoạt
             </button>
+          </ng-template>
 
-            <button class="m-r-10" mat-raised-button color="primary"
-                    (click)="openMedicineDialog(this.product.id, null)">
-              <mat-icon>edit</mat-icon>
-              Cập nhật
+          <button class="m-r-5 padding-x-10" mat-raised-button color="warn" (click)="delete()">
+            <mat-icon>delete</mat-icon>
+            Xóa
+          </button>
+
+          <button mat-icon-button [matMenuTriggerFor]="menuActions"
+                  [disabled]="checkPermissionDisable('Warehouse.Update') || !isAdminStore">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menuActions="matMenu" yPosition="above">
+            <button mat-menu-item (click)="goToWarehouseCreate()">
+              <mat-icon>local_grocery_store</mat-icon>
+              Nhập hàng
             </button>
-
-            <button class="m-r-10" mat-raised-button color="accent" (click)="openMedicineDialog(null, this.product.id)">
-              <mat-icon>file_copy</mat-icon>
-              Sao chép
+            <button mat-menu-item (click)="goToStockTakeCreate()">
+              <mat-icon>check_circle_outline</mat-icon>
+              Kiểm kho
             </button>
-
-            <button class="m-r-10" mat-raised-button color="accent"
-                    *ngIf="this.product.product_type === 'medicine' && this.product?.medicine?.medicine_no === null"
-                    (click)="connectMedicine(this.product)">
-              <mat-icon>open_in_full</mat-icon>
-              Liên thông
+            <button mat-menu-item (click)="goToMoveCreate()">
+              <mat-icon>local_shipping</mat-icon>
+              Chuyển hàng
             </button>
-
-            <!--            <button class="m-r-10" mat-raised-button color="warn"-->
-            <!--                    *ngIf="this.product.product_type === 'medicine' && this.product?.medicine?.medicine_no !== null"-->
-            <!--                    (click)="disConnectMedicine(this.product)">-->
-            <!--              <mat-icon>close_fullscreen</mat-icon>-->
-            <!--              Gỡ liên thông-->
-            <!--            </button>-->
-
-            <button class="m-r-10" mat-raised-button color="warn" (click)="lock()"
-                    *ngIf="this.product.status == 10; else productStatus10">
-              <mat-icon>lock</mat-icon>
-              Tạm ngừng
-            </button>
-
-            <ng-template #productStatus10>
-              <button class="m-r-10" mat-raised-button color="accent" (click)="activate()"
-                      *ngIf="this.product.status == 9">
-                <mat-icon>lock_open</mat-icon>
-                Kích hoạt
-              </button>
-            </ng-template>
-
-            <button class="m-r-10" mat-raised-button color="warn" (click)="delete()">
-              <mat-icon>delete</mat-icon>
-              Xóa
-            </button>
-
-            <button mat-icon-button [matMenuTriggerFor]="menuActions"
-                    [disabled]="checkPermissionDisable('Warehouse.Update') || !isAdminStore">
-              <mat-icon>more_vert</mat-icon>
-            </button>
-            <mat-menu #menuActions="matMenu" yPosition="above">
-              <button mat-menu-item (click)="goToWarehouseCreate()">
-                <mat-icon>local_grocery_store</mat-icon>
-                Nhập hàng
-              </button>
-              <button mat-menu-item (click)="goToStockTakeCreate()">
-                <mat-icon>check_circle_outline</mat-icon>
-                Kiểm kho
-              </button>
-              <button mat-menu-item (click)="goToMoveCreate()">
-                <mat-icon>local_shipping</mat-icon>
-                Chuyển hàng
-              </button>
-            </mat-menu>
-
-            <!-- <button class="m-r-10" mat-raised-button color="warn" (click)="deleteMedicine(this.product.id)"><mat-icon>delete</mat-icon> Xóa</button> -->
-          </div>
-          <div fxFlex="100" *ngIf="product.product_type == 'merchandise' ">
-<!--            disabled="disabled"-->
-            <button class="m-r-10" mat-raised-button
-                    (click)="openIdCodeFormDialog(this.product.id)">
-              <mat-icon>format_align_justify</mat-icon>
-              In tem mã
-            </button>
-
-            <button class="m-r-10" mat-raised-button color="primary"
-                    (click)="openMerchandiseFormDialog(this.product.id, null)">
-              <mat-icon>edit</mat-icon>
-              Cập nhật
-            </button>
-
-            <button class="m-r-10" mat-raised-button color="accent"
-                    (click)="openMerchandiseFormDialog(null, this.product.id)">
-              <mat-icon>file_copy</mat-icon>
-              Sao chép
-            </button>
-            <button class="m-r-10" mat-raised-button color="warn" (click)="lock()"
-                    *ngIf="this.product.status == 10; else productStatus10">
-              <mat-icon>lock</mat-icon>
-              Tạm ngừng
-            </button>
-            <ng-template #productStatus10>
-              <button class="m-r-10" mat-raised-button color="accent" (click)="activate()"
-                      *ngIf="this.product.status == 9">
-                <mat-icon>lock_open</mat-icon>
-                Kích hoạt
-              </button>
-            </ng-template>
-
-            <button class="m-r-10" mat-raised-button color="warn" (click)="delete()">
-              <mat-icon>delete</mat-icon>
-              Xóa
-            </button>
-
-            <button mat-icon-button [matMenuTriggerFor]="menuActions"
-                    [disabled]="checkPermissionDisable('Warehouse.Update') || !isAdminStore">
-              <mat-icon>more_vert</mat-icon>
-            </button>
-            <mat-menu #menuActions="matMenu" yPosition="above">
-              <button mat-menu-item (click)="goToWarehouseCreate()">
-                <mat-icon>local_grocery_store</mat-icon>
-                Nhập hàng
-              </button>
-              <button mat-menu-item (click)="goToStockTakeCreate()">
-                <mat-icon>check_circle_outline</mat-icon>
-                Kiểm kho
-              </button>
-              <button mat-menu-item (click)="goToMoveCreate()">
-                <mat-icon>local_shipping</mat-icon>
-                Chuyển hàng
-              </button>
-            </mat-menu>
-            <!-- <button class="m-r-10" mat-raised-button color="warn" (click)="deleteMerchandise(this.product.id)"><mat-icon>delete</mat-icon> Xóa</button> -->
-          </div>
-
-
+          </mat-menu>
+          <!-- <button class="m-r-10" mat-raised-button color="warn" (click)="deleteMerchandise(this.product.id)"><mat-icon>delete</mat-icon> Xóa</button> -->
         </div>
+
       </div>
     </div>
   </div>
