@@ -92,6 +92,11 @@
                       <mat-tab label="Thông tin">
                         <app-customer-tab-info [customer]="element" (reload)="loadData()"></app-customer-tab-info>
                       </mat-tab>
+                      <mat-tab label="Lịch sử mua hàng">
+                        <app-history-invoice-tab [customer]="element"
+                                                 [expandedElement]="element == expandedElement ? true : false"
+                                                 (reload)="loadData()"></app-history-invoice-tab>
+                      </mat-tab>
 <!--                      <mat-tab label="Dư nợ">-->
 <!--                        <app-customer-tab-debt></app-customer-tab-debt>-->
 <!--                      </mat-tab>-->
