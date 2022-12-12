@@ -38,11 +38,16 @@ export class ProductUploadDialogComponent implements OnInit {
       if (uploadRes['success']) {
         this.notifierSer.notify('success', 'Tải dữ liệu thành công!');
         this.dialogRef.close(true);
-      } else {
-        this.notifierSer.notify('error', 'Tải dữ liệu không thành công!');
+      }
+      // } else {
+      //   this.notifierSer.notify('error', 'Tải dữ liệu không thành công!');
+      // }
+
+      if (!Array.isArray(uploadRes['errors'])) {
+        this.notifierSer.notify('error', uploadRes['errors']);
       }
 
-      if (uploadRes['errors']) {
+      if (Array.isArray(uploadRes['errors'])) {
         uploadRes['errors'].forEach(error => {
           this.notifierSer.notify('error', error);
         });
