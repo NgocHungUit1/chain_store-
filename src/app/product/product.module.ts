@@ -26,6 +26,7 @@ import { ProductStockChangeDialogComponent } from './product-stock-change-dialog
 import { IdCodeFormDialogComponent } from './id-code-form-dialog/id-code-form-dialog.component';
 import { ViewIdCodeFormDialogComponent } from './view-id-code-form-dialog/view-id-code-form-dialog.component';
 import {InputSelectAllModule} from '../common/input-select-all/input-select-all.module';
+import {NgxMaskModule} from 'ngx-mask';
 
 @NgModule({
   declarations: [
@@ -45,20 +46,21 @@ import {InputSelectAllModule} from '../common/input-select-all/input-select-all.
     IdCodeFormDialogComponent,
     ViewIdCodeFormDialogComponent
   ],
-    imports: [
-        CommonModule,
-        RouterModule.forChild(ProductRoutes),
-        FormsModule,
-        ReactiveFormsModule,
-        FlexLayoutModule,
-        QuillModule.forRoot(),
-        DragulaModule.forRoot(),
-        PerfectScrollbarModule,
-        Ng2SearchPipeModule,
-        DemoMaterialModule,
-        AngularImageViewerModule,
-        InputSelectAllModule
-    ],
+  imports: [
+    CommonModule,
+    RouterModule.forChild(ProductRoutes),
+    FormsModule,
+    ReactiveFormsModule,
+    FlexLayoutModule,
+    QuillModule.forRoot(),
+    DragulaModule.forRoot(),
+    PerfectScrollbarModule,
+    Ng2SearchPipeModule,
+    DemoMaterialModule,
+    AngularImageViewerModule,
+    InputSelectAllModule,
+    NgxMaskModule
+  ],
   entryComponents: [
     ProductMedicineDialogComponent,
     ProductGroupFormDialogComponent,

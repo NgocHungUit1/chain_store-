@@ -90,6 +90,10 @@
     </div>
   </div>
   <div fxFlex="100" align="end">
+    <button class="m-r-10" mat-raised-button color="accent" (click)="history()" >
+      <mat-icon>shopping_basket</mat-icon>
+      Lịch sử mua hàng
+    </button>
     <button class="m-r-10" mat-raised-button color="primary" (click)="openCustomerFormDialog(this.customer.id, null)">
       <mat-icon>edit</mat-icon>
       Cập nhật

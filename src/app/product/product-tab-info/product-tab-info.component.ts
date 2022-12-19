@@ -203,13 +203,11 @@ export class ProductTabInfoComponent implements OnChanges {
   }
 
   delete() {
-
     const obj = {
       action: 'Delete',
-      title: 'Xác nhận sản phẩm "' + this.product.product_name + '"  đã chọn .',
+      title: 'Xác nhận xóa sản phẩm "' + this.product.product_name + '"  đã chọn .',
       content: '',
     };
-
     const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
       data: obj,
       width: '30%',
@@ -224,7 +222,6 @@ export class ProductTabInfoComponent implements OnChanges {
         });
       }
     });
-
   }
 
   activate() {

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { Branch } from '../../branch/branch.model';
 import { CashFlow } from '../cash-flow.model';
 import { BranchFormDialogComponent } from '../../branch/branch-form-dialog/branch-form-dialog.component';
@@ -7,6 +7,7 @@ import { CashFlowReceiptDialogComponent } from '../cash-flow-receipt-dialog/cash
 import { CashFlowPaymentDialogComponent } from '../cash-flow-payment-dialog/cash-flow-payment-dialog.component';
 import { CashFlowService } from '../cash-flow.service';
 import { NotifierService } from 'angular-notifier';
+import {PopupDeleteDialogComponent} from '../../common/popup-delete-dialog/popup-delete-dialog.component';
 
 @Component({
   selector: 'app-cash-flow-tab-info',
@@ -14,6 +15,8 @@ import { NotifierService } from 'angular-notifier';
   styleUrls: ['./cash-flow-tab-info.component.css']
 })
 export class CashFlowTabInfoComponent implements OnInit {
+
+  @Output() reload: EventEmitter<any> = new EventEmitter();
 
   typeHeader = {
     'receipt': 'Phiếu thu',
@@ -90,11 +93,34 @@ export class CashFlowTabInfoComponent implements OnInit {
   clickDelete() {
 
     if (this.cashFlow.parent_id !== null && this.cashFlow.parent_id !== undefined) {
-      this.notifySer.notify('success', 'Phiếu đã được liên kết với hóa đơn !');
+
+      const obj = {
+        action: 'Delete',
+        title: 'Xóa Phiếu đã được liên kết với hóa đơn !',
+        content: 'Bạn có chắc chắn muốn phiếu đã được liên kết với hóa đơn ' + this.cashFlow.code + ' này không?',
+      };
+      const dialogRef = this.dialog.open(PopupDeleteDialogComponent, {
+        data: obj,
+        width: '30%',
+        minHeight: '80%',
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result?.event === 'delete') {
+          this.cashFlowService.delete(this.cashFlow.id).subscribe(res => {
+            if (res === true) {
+              this.notifySer.notify('success', 'Xóa thành công!');
+              this.reload.emit(null);
+            }
+          });
+        }
+      });
+
+      // this.notifySer.notify('success', 'Phiếu đã được liên kết với hóa đơn !');
     } else {
       this.cashFlowService.delete(this.cashFlow.id).subscribe(result => {
         if (result === true) {
           this.notifySer.notify('success', 'Xóa thành công!');
+          this.reload.emit(null);
         }
       });
     }

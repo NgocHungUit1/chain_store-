@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { CustomerFormDialogComponent } from '../customer-form-dialog/customer-form-dialog.component';
 import { CustomerPopupDeleteDialogComponent } from '../customer-popup-delete-dialog/customer-popup-delete-dialog.component';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-customer-tab-info',
@@ -24,7 +25,8 @@ export class CustomerTabInfoComponent implements OnInit {
   constructor(
     private customerSer: CustomerService,
     private dialog: MatDialog,
-    private notifyService: NotifierService
+    private notifyService: NotifierService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -98,6 +100,11 @@ export class CustomerTabInfoComponent implements OnInit {
         this.notifyService.notify('warning', res?.message);
       }
     });
+  }
+
+  history() {
+    localStorage.setItem('customer_id', this.customer.id);
+    this.router.navigate(['/transaction/invoice']);
   }
 
 }

@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
 import {ListComponentBase} from '../../shared/base';
 import {MatDialog} from '@angular/material/dialog';
@@ -37,7 +37,7 @@ import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/pop
     ]),
   ]
 })
-export class InvoiceListComponent extends ListComponentBase implements OnInit {
+export class InvoiceListComponent extends ListComponentBase implements OnInit, AfterViewInit {
 
   constructor(
     private service: InvoiceService,
@@ -521,6 +521,24 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit {
         this.toggleMore = false;
       }
     });
+  }
+
+  ngAfterViewInit(): void { //
+    const customer_id = localStorage.getItem('customer_id');
+    if (customer_id !== null) {
+      this.isLoadingResults = true;
+      this.customerSer.getDetail(customer_id, '').subscribe(customer => {
+        this.customerFilter.patchValue({
+          'customer': customer,
+        });
+        localStorage.removeItem('customer_id');
+
+        setTimeout(() => {
+          this.refreshData();
+        }, this.timeOutSelect);
+
+      });
+    }
   }
 
   refreshData() {

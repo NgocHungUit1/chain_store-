@@ -77,6 +77,7 @@
 
             <div fxLayout="row wrap">
               <mat-form-field>
+<!--                mask="separator" thousandSeparator=","-->
                 <input matInput type="number" class="text-right"
                        [formControl]="form.controls['original_price']"
                         placeholder="Giá vốn" autocomplete="off">
@@ -86,6 +87,7 @@
 
               <div fxFlex="100">
                 <mat-form-field>
+<!--                  mask="separator" thousandSeparator=","-->
                   <input matInput type="number" class="text-right"
                          [formControl]="form.controls['sell_price']"
                           required placeholder="Giá bán cơ bản" autocomplete="off">

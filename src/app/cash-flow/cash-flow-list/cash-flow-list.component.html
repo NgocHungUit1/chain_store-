@@ -91,7 +91,9 @@
                     <mat-tab-group style="width: 100%;">
                       <mat-tab label="Thông tin">
                         <!--                        <app-branch-tab-info [branch]="element"></app-branch-tab-info>-->
-                        <app-cash-flow-tab-info [cashFlow]="element"></app-cash-flow-tab-info>
+                        <app-cash-flow-tab-info [cashFlow]="element"
+                                                (reload)="loadData()"
+                        ></app-cash-flow-tab-info>
                       </mat-tab>
                     </mat-tab-group>
                   </div>
