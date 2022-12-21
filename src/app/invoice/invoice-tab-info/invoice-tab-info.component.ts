@@ -325,7 +325,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
 
       printContent += '<table>' +
         '<tr>' +
-        '<th>Đơn giá</th>' +
+        '<th>Tên thuốc</th>' +
         '<th style="text-align:center;">SL</th>';
 
       if (this.autoPrintInSoLo === true) {
