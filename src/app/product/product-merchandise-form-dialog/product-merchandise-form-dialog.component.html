@@ -96,6 +96,16 @@
 
           <!-- Hình ảnh -->
           <div fxFlex.gt-sm="40%" fxFlex="100">
+
+            <div fxLayout="row wrap">
+              <div fxFlex="100">
+                <mat-form-field>
+                  <input type="text" matInput [formControl]="form.controls['barcode']" placeholder="Mã vạch"
+                         autocomplete="off" autofocus>
+                </mat-form-field>
+              </div>
+            </div>
+
             <div fxLayout="row wrap">
               <input type="file" id="file-input" #imageInput accept="image/*" (change)="processFile(imageInput)"
                      style="display: none">
