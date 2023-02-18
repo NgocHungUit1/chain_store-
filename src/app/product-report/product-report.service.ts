@@ -37,8 +37,28 @@ export class ProductReportService {
     return url;
   }
 
+  getApiUrlReportSaleSummary(filter?: ProductFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/report/product-sale-summary?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
   getListReportSale(filter?: ProductFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrlReportSale(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
+  getListReportSaleSummary(filter?: ProductFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrlReportSaleSummary(filter);
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 

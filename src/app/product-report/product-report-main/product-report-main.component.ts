@@ -194,7 +194,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'dataReport';
+    filter.expand = 'sl_ban,doanh_thu,tong_gia_von,sl_tra,gia_tri_tra,base_revenue';
 
     if (typeReport === 'stock') {
       filter.expand = 'quantity,stockCard';
@@ -230,14 +230,9 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     if (typeReport === 'sale' || typeReport === 'profit' || typeReport === 'sale-staff' || typeReport === 'customer') {
       this.isLoadingResults = true;
       this.service.getListReportSale(this.apiFilter).subscribe(res => {
-        this.dataSource = res.body.data;
+        this.dataSource = res.body;
         // this.groupData = res.body.groupData;
         // console.log(this.groupData);
-        this.sum_sl_ban = res.body.sum_sl_ban;
-        this.sum_doanh_thu = res.body.sum_doanh_thu;
-        this.sum_sl_tra = res.body.sum_sl_tra;
-        this.sum_gia_tri_tra = res.body.sum_gia_tri_tra;
-        this.sum_tong_gia_von = res.body.sum_tong_gia_von;
         let stt = 0;
         this.dataSource.forEach(elementData => {
           stt++;
@@ -246,6 +241,14 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
         this.reloadFilter(res);
         // const url = this.service.getApiUrlReportSale(this.apiFilter);
         this.isLoadingResults = false;
+      });
+
+      this.service.getListReportSaleSummary(this.apiFilter).subscribe(res => {
+        this.sum_sl_ban = res.body.sl_ban;
+        this.sum_doanh_thu = res.body.doanh_thu;
+        this.sum_sl_tra = res.body.sl_tra;
+        this.sum_gia_tri_tra = res.body.gia_tri_tra;
+        this.sum_tong_gia_von = res.body.base_revenue;
       });
     }
 
