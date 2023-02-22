@@ -92,7 +92,7 @@ export class ListComponentBase {
   /**
    * Function to call api for loading data
    */
-  loadData() {
+  loadData(summary = true) {
 
   }
 
@@ -137,7 +137,7 @@ export class ListComponentBase {
   onPageChange(page) {
     this.page = page;
     this.apiFilter.page = page;
-    this.loadData();
+    this.loadData(false);
   }
 
   onMatPageChange(event) {
@@ -145,7 +145,7 @@ export class ListComponentBase {
     this.apiFilter.page = event.pageIndex + 1;
     this.apiFilter.pageSize = event.pageSize;
     console.log(this.apiFilter);
-    this.loadData();
+    this.loadData(false);
   }
 
   onMatSortChange(event) {

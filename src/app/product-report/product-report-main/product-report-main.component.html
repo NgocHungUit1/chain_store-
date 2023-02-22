@@ -344,7 +344,7 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['stock_so_luong']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                      {{ element?.stockCard?.quantity_of_stock }}
+                      {{ element?.quantity_of_stock }}
                   </span>
                 </td>
               </ng-container>
@@ -369,7 +369,7 @@
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
 <!--                  {{ element?.quantity?.number * element.sell_price | number }}-->
-                    {{ element?.stockCard?.quantity_of_stock * element.sell_price | number }}
+                    {{ element?.quantity_of_stock * element.sell_price | number }}
                   </span>
                 </td>
               </ng-container>
@@ -394,7 +394,7 @@
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
 <!--                    {{ element?.quantity?.number * element.original_price | number }}-->
-                    {{ element?.stockCard?.quantity_of_stock * element.original_price | number }}
+                    {{ element?.quantity_of_stock * element.original_price | number }}
                   </span>
                 </td>
               </ng-container>

@@ -197,7 +197,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     filter.expand = 'sl_ban,doanh_thu,tong_gia_von,sl_tra,gia_tri_tra,base_revenue';
 
     if (typeReport === 'stock') {
-      filter.expand = 'quantity,stockCard';
+      // filter.expand = 'quantity,stockCard';
     }
 
     if (typeReport === 'export-import') {
@@ -225,7 +225,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
   }
 
 
-  loadData(): void {
+  loadData(summary = true): void {
     const typeReport = this.reportType.controls['type'].value;
     if (typeReport === 'sale' || typeReport === 'profit' || typeReport === 'sale-staff' || typeReport === 'customer') {
       this.isLoadingResults = true;
@@ -243,22 +243,21 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
         this.isLoadingResults = false;
       });
 
-      this.service.getListReportSaleSummary(this.apiFilter).subscribe(res => {
-        this.sum_sl_ban = res.body.sl_ban;
-        this.sum_doanh_thu = res.body.doanh_thu;
-        this.sum_sl_tra = res.body.sl_tra;
-        this.sum_gia_tri_tra = res.body.gia_tri_tra;
-        this.sum_tong_gia_von = res.body.base_revenue;
-      });
+      if (summary) {
+        this.service.getListReportSaleSummary(this.apiFilter).subscribe(res => {
+          this.sum_sl_ban = res.body.sl_ban;
+          this.sum_doanh_thu = res.body.doanh_thu;
+          this.sum_sl_tra = res.body.sl_tra;
+          this.sum_gia_tri_tra = res.body.gia_tri_tra;
+          this.sum_tong_gia_von = res.body.base_revenue;
+        });
+      }
     }
 
     if (typeReport === 'stock') {
       this.isLoadingResults = true;
       this.service.getListReportStock(this.apiFilter).subscribe(res => {
-        this.dataSource = res.body.data;
-        this.sum_stock_so_luong = res.body.sum_stock_so_luong;
-        this.sum_stock_gia_tri_ban = res.body.sum_stock_gia_tri_ban;
-        this.sum_stock_gia_tri_kho = res.body.sum_stock_gia_tri_kho;
+        this.dataSource = res.body;
         let stt = 0;
         this.dataSource.forEach(elementData => {
           stt++;
@@ -268,6 +267,14 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
         // const url = this.service.getApiUrlReportSale(this.apiFilter);
         this.isLoadingResults = false;
       });
+
+      if (summary) {
+        this.service.getListReportStockSummary(this.apiFilter).subscribe(res => {
+          this.sum_stock_so_luong = res.body.quantity_of_stock;
+          this.sum_stock_gia_tri_ban = res.body.sell_price;
+          this.sum_stock_gia_tri_kho = res.body.original_price;
+        });
+      }
     }
 
     if (typeReport === 'export-import') {
