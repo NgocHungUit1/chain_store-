@@ -7,6 +7,7 @@ import {
   FormControl
 } from '@angular/forms';
 import {AuthService} from '../auth.service';
+import {StoreService} from '../../store/store.service';
 
 @Component({
   selector: 'app-login',
@@ -17,11 +18,13 @@ export class LoginComponent implements OnInit {
   public form: FormGroup;
   wrong = false;
   wrongMessage = '';
+  logo = 'assets/images/logo-chrome-192x192.png';
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private authSer: AuthService,
+    private storeSer: StoreService,
   ) {
   }
 
@@ -35,6 +38,11 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/']).then(() => {
           window.location.reload();
         });
+      }
+    });
+    this.storeSer.getLogo().subscribe(res => {
+      if (res !== null && res.length > 0) {
+        this.logo = res;
       }
     });
   }

@@ -37,7 +37,8 @@ export class AuthService {
     return this.httpClient.get<String[]>(url);
   }
 
-  login(username: string, password: string, remember?: boolean): Observable<any> {
+  private getSubDomain()
+  {
     const domain = window.location.hostname;
     let subDomain = '';
     if (domain.indexOf('.') < 0 ||
@@ -46,6 +47,11 @@ export class AuthService {
     } else {
       subDomain = domain.split('.')[0];
     }
+    return subDomain;
+  }
+
+  login(username: string, password: string, remember?: boolean): Observable<any> {
+    const subDomain = this.getSubDomain();
     const url = environment.apiUrl + '/auth/login';
     return this.httpClient.post(url, {username: username, password: password, remember: remember, subdomain: subDomain});
   }
@@ -56,7 +62,7 @@ export class AuthService {
   }
 
   checkStatus() {
-    const url = environment.apiUrl + '/auth/login-status';
+    let url = environment.apiUrl + '/auth/login-status';
     return this.httpClient.get(url);
   }
 

@@ -17,8 +17,21 @@ export class StoreService {
   }
 
 
+  private getSubDomain()
+  {
+    const domain = window.location.hostname;
+    let subDomain = '';
+    if (domain.indexOf('.') < 0 ||
+      domain.split('.')[0] === 'example' || domain.split('.')[0] === 'lvh' || domain.split('.')[0] === 'www') {
+      subDomain = '';
+    } else {
+      subDomain = domain.split('.')[0];
+    }
+    return subDomain;
+  }
+
   getLogo() {
-    const url = environment.apiUrl + '/store/get-logo'
+    const url = environment.apiUrl + '/store/get-logo?subdomain=' + this.getSubDomain();
     return this.http.get<string>(url);
   }
 
