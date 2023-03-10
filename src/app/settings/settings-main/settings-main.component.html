@@ -25,6 +25,13 @@
             </button>
           </mat-radio-button>
 
+          <mat-radio-button class="radio-button-report-type" value="logo" *ngIf="this.storeFeatures.indexOf('logo') >= 0">
+            Logo
+            <button mat-icon-button aria-label="add">
+              <mat-icon>image</mat-icon>
+            </button>
+          </mat-radio-button>
+
 <!--          <mat-radio-button class="radio-button-report-type" value="partner">-->
 <!--            Đối tác-->
 <!--            <button mat-icon-button aria-label="add">-->
@@ -119,6 +126,38 @@
                     Giấy A4
                   </mat-radio-button>
                 </mat-radio-group>
+              </mat-card-content>
+
+            </mat-card>
+
+            <mat-card *ngIf=" settingsType === 'logo' ">
+              <mat-card-content>
+                <div fxLayout="row wrap">
+                  <mat-hint><b>Lưu ý</b>: Hình PNG, kích thước chuẩn 120x120 pixel để thể hiện chính xác lên hệ thống</mat-hint>
+                  <input type="file" id="file-input" #imageInput accept="image/*" (change)="processFile(imageInput)"
+                         style="display: none">
+                  <ul class="product-upload-image">
+                    <li class="show selected-image" *ngFor="let image of selectedFiles; index as i"
+                        [id]="'selected-image-'+i">
+                      <!--<label>-->
+                      <!--<span class="add-image-text"></span>-->
+                      <img src="{{image.src}}" alt="Image" >
+                      <a class="delete-image" (click)="removeSelectedImage(i)" title="Xóa ảnh">
+                        <mat-icon>remove_circle_outline</mat-icon>
+                      </a>
+                      <!--</label>-->
+                    </li>
+                    <li *ngFor="let imgBtn of imageButtons; index as i;" [class]="imageButtons[i]['isShow'] ? 'show' : ''">
+                      <label for="file-input">
+                        <span class="add-image-text">+</span>
+                        <img src="/assets/images/default-product-img.jpg">
+                      </label>
+                    </li>
+                  </ul>
+                </div>
+                <div fxLayout="row wrap">
+                  <button mat-raised-button color="primary" (click)="saveLogo();" [disabled]="!this.needToSaveLogo"><mat-icon>save</mat-icon> Lưu</button>
+                </div>
               </mat-card-content>
 
             </mat-card>

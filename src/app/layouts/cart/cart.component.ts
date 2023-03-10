@@ -35,6 +35,7 @@ import { NotifierService } from 'angular-notifier';
 import { SamplePrescriptionService } from '../../sample-prescription/sample-prescription.service';
 import { element } from 'protractor';
 import { CustomerService } from '../../customer/customer.service';
+import {StoreService} from '../../store/store.service';
 
 /** @title Responsive sidenav */
 @Component({
@@ -72,6 +73,9 @@ export class CartComponent implements OnInit, OnDestroy {
 
   amountProduct = 1;
 
+  public storeDetail: object = null;
+  logo = 'assets/images/Rx20_16x16_op1-1207.png';
+
   @ViewChild('inputSearch') inputSearch: ElementRef;
 
   constructor(
@@ -84,6 +88,7 @@ export class CartComponent implements OnInit, OnDestroy {
     private samplePrescriptionService: SamplePrescriptionService,
     private priceListSer: PriceListService,
     private notifySer: NotifierService,
+    private storeSer: StoreService,
     protected customerService: CustomerService
   ) {
     this.mobileQuery = media.matchMedia('(min-width: 768px)');
@@ -131,6 +136,13 @@ export class CartComponent implements OnInit, OnDestroy {
         }
       })
     );
+
+    this.storeSer.getDetail().subscribe(res => {
+      this.storeDetail = res;
+      if (this.storeDetail['features'].indexOf('logo') >= 0 && this.storeDetail['logo'] !== null) {
+        this.logo = this.storeDetail['logo'];
+      }
+    });
   }
 
   /**

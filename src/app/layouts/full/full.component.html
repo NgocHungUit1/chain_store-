@@ -18,9 +18,9 @@
         <b>
           <!--You can put here icon as well logo-rx20.png // <i class="wi wi-sunset"></i> //-->
           <!-- Dark Logo icon -->
-          <img src="assets/images/Rx20_16x16_op1-1207.png" height="50" alt="homepage" class="dark-logo">
+          <img src="{{logo}}" height="50" width="50" alt="homepage" class="dark-logo">
           <!-- Light Logo icon -->
-          <img src="assets/images/Rx20_16x16_op1-1207.png" height="50" alt="homepage" class="light-logo">
+          <img src="{{logo}}" height="50" width="50" alt="homepage" class="light-logo">
         </b>
         <!--End Logo icon -->
         <!-- Logo text -->
@@ -111,33 +111,33 @@
       <div class="scroll">
         <mat-nav-list>
 
-          <h3 mat-subheader class="text-uppercase font-weight-bold">Settings</h3>
-          <mat-list-item>
-            <mat-slide-toggle color="warn" (change)="dir = (dir == 'rtl' ? 'ltr' : 'rtl')">RTL
-            </mat-slide-toggle>
-          </mat-list-item>
-          <mat-list-item>
-            <mat-slide-toggle color="warn" [(ngModel)]="boxed">Boxed Layout</mat-slide-toggle>
-          </mat-list-item>
+          <h3 mat-subheader class="text-uppercase font-weight-bold">Cấu hình hệ thống</h3>
+<!--          <mat-list-item>-->
           <mat-divider></mat-divider>
-          <h3 mat-subheader class="text-uppercase font-weight-bold">Colors</h3>
-          <mat-list-item>
-            <mat-checkbox color="warn" [(ngModel)]="danger" (change)="green = blue = false" class="text-danger">Red
-            </mat-checkbox>
-          </mat-list-item>
-          <mat-list-item>
-            <mat-checkbox color="warn" [(ngModel)]="green" (change)="danger = blue = false" class="text-megna">Teal
-              Green
-            </mat-checkbox>
-          </mat-list-item>
-          <mat-list-item>
-            <mat-checkbox color="warn" [(ngModel)]="blue" (change)="green = danger = false" class="text-info">Blue
-            </mat-checkbox>
-          </mat-list-item>
-          <mat-list-item>
-            <mat-checkbox color="warn" [(ngModel)]="dark" (change)="green = blue = danger = false">Dark
-            </mat-checkbox>
-          </mat-list-item>
+            <a mat-button href="/setting"><mat-icon>store_mall_directory</mat-icon> Thiết lập cửa hàng</a>
+<!--          </mat-list-item>-->
+<!--          <mat-list-item>-->
+<!--            <mat-slide-toggle color="warn" [(ngModel)]="boxed">Boxed Layout</mat-slide-toggle>-->
+<!--          </mat-list-item>-->
+          <mat-divider></mat-divider>
+<!--          <h3 mat-subheader class="text-uppercase font-weight-bold">Colors</h3>-->
+<!--          <mat-list-item>-->
+<!--            <mat-checkbox color="warn" [(ngModel)]="danger" (change)="green = blue = false" class="text-danger">Red-->
+<!--            </mat-checkbox>-->
+<!--          </mat-list-item>-->
+<!--          <mat-list-item>-->
+<!--            <mat-checkbox color="warn" [(ngModel)]="green" (change)="danger = blue = false" class="text-megna">Teal-->
+<!--              Green-->
+<!--            </mat-checkbox>-->
+<!--          </mat-list-item>-->
+<!--          <mat-list-item>-->
+<!--            <mat-checkbox color="warn" [(ngModel)]="blue" (change)="green = danger = false" class="text-info">Blue-->
+<!--            </mat-checkbox>-->
+<!--          </mat-list-item>-->
+<!--          <mat-list-item>-->
+<!--            <mat-checkbox color="warn" [(ngModel)]="dark" (change)="green = blue = danger = false">Dark-->
+<!--            </mat-checkbox>-->
+<!--          </mat-list-item>-->
         </mat-nav-list>
       </div>
     </mat-sidenav>

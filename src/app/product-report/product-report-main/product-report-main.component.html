@@ -344,7 +344,7 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['stock_so_luong']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                      {{ element?.quantity_of_stock }}
+                      {{ element?.quantity_of_stock | number}}
                   </span>
                 </td>
               </ng-container>

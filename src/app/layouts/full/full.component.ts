@@ -18,6 +18,7 @@ import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { CustomerService } from '../../customer/customer.service';
 import { UserService } from '../../user/user.service';
 import { NotifierService } from 'angular-notifier';
+import {StoreService} from '../../store/store.service';
 
 /** @title Responsive sidenav */
 @Component({
@@ -46,6 +47,9 @@ export class FullComponent implements OnDestroy {
   public config: PerfectScrollbarConfigInterface = {};
   private _mobileQueryListener: () => void;
 
+  public storeDetail: object = null;
+  logo = 'assets/images/Rx20_16x16_op1-1207.png';
+
   constructor(
     changeDetectorRef: ChangeDetectorRef,
     media: MediaMatcher,
@@ -54,6 +58,7 @@ export class FullComponent implements OnDestroy {
     public customerService: CustomerService,
     public userService: UserService,
     public notifySer: NotifierService,
+    public storeSer: StoreService,
   ) {
     this.mobileQuery = media.matchMedia('(min-width: 768px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -92,6 +97,14 @@ export class FullComponent implements OnDestroy {
         sessionStorage.setItem('isAdminStore', String(isAdminStore));
       });
     });
+
+    this.storeSer.getDetail().subscribe(res => {
+      this.storeDetail = res;
+      if (this.storeDetail['features'].indexOf('logo') >= 0 && this.storeDetail['logo'] !== null) {
+        this.logo = this.storeDetail['logo'];
+      }
+    });
+
   }
 
   public changeBranch(event) {
