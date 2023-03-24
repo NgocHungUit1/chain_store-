@@ -13,6 +13,7 @@ import { Product } from '../../product/product.model';
 import { PrescriptionService } from '../../sale/prescription.service';
 import { Prescription } from '../../sale/prescription.model';
 import { OptionStoreService } from '../../common/option-store.service';
+import {StoreService} from '../../store/store.service';
 
 @Component({
   selector: 'app-invoice-tab-info',
@@ -59,6 +60,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
 
   domPrint = '';
   prescription: Prescription;
+  logo = null;
 
   sexItems = {
     '1': 'Nam',
@@ -69,7 +71,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
     private dialog: MatDialog,
     public notifySer: NotifierService,
     public invoiceService: InvoiceService,
-    // public invoiceService: InvoiceDetailS,
+    public storeSer: StoreService,
     private orderService: OrderService,
     private router: Router,
     private medicineService: MedicineService,
@@ -290,6 +292,11 @@ export class InvoiceTabInfoComponent implements OnChanges {
         _solo = 'text-align:left; min-width: 100px;';
       }
     });
+    this.storeSer.getDetail().subscribe(res => {
+      if (res['logo'] !== null && res['logo'].length > 0) {
+        this.logo = res['logo'];
+      }
+    });
 
     this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
       const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
@@ -313,6 +320,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
         'padding: ' + _padding +
         '}</style>' +
         '<section style="padding: 10px; font-size: ' + _font_size + ' ">' +
+        (this.logo !== null ? '<p style="text-align:center; margin-bottom: 10px"><img src="' + this.logo + '" style="max-width: 160px;"></p>' : '') +
         '<p style="text-align:center;">' + res?.store?.name + '</p>' +
         '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
         '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +

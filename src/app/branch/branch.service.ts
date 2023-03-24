@@ -57,6 +57,16 @@ export class BranchService {
     return this.http.get<Branch>(url);
   }
 
+  getConnect() {
+    const url = environment.apiUrl + '/branch/get-connect';
+    return this.http.get<object>(url);
+  }
+
+  updateConnect(data) {
+    const url = environment.apiUrl + '/branch/update-connect';
+    return this.http.post<object>(url, data);
+  }
+
   update(id: string, pos: any) {
     const url = environment.apiUrl + '/branch/' + id;
     return this.http.put(url, pos);

@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { OptionStoreService } from '../../common/option-store.service';
 import { OptionStore } from '../../common/option-store.model';
 import {StoreService} from '../../store/store.service';
+import {BranchService} from '../../branch/branch.service';
 
 class ImageSnippet {
   constructor(public src: string, public file: File, public id: string) {
@@ -23,6 +24,7 @@ export class SettingsMainComponent implements OnInit {
     private notifySer: NotifierService,
     private fb: FormBuilder,
     public storeSer: StoreService,
+    public branchSer: BranchService,
     public optionStoreService: OptionStoreService
   ) {
   }
@@ -37,10 +39,12 @@ export class SettingsMainComponent implements OnInit {
     'partner': 'Đối tác',
     'print': 'Cài đặt khổ mẫu giấy in',
     'logo': 'Logo cửa hàng',
+    'branch-connect': 'Liên thông theo chi nhánh',
   };
 
   isLoadingResults = true;
   isRateLimitReached = false;
+  public connectForm: FormGroup;
 
   optionStore_transaction_expenses_order: OptionStore;
   optionStore_transaction_expenses_transaction: OptionStore;
@@ -58,9 +62,23 @@ export class SettingsMainComponent implements OnInit {
     this.printType = 'K58';
     this.isLoadingResults = false;
 
+    this.connectForm = this.fb.group({
+      national_pharmacy_registration_no: [{value: null, disabled: true}, Validators.compose([Validators.required])],
+      national_pharmacy_login_username: [{value: null, disabled: true}, Validators.compose([Validators.required])],
+      national_pharmacy_login_password: [{value: null, disabled: true}, Validators.compose([Validators.required])],
+      use_branch_national_connect: [false, Validators.compose([Validators.required])]
+    });
+
+    this.branchSer.getConnect().subscribe(res => {
+      this.connectForm.patchValue(res);
+      this.onConnectChange();
+    });
+
     this.storeSer.getDetail().subscribe(res => {
-      this.selectedFiles.push(new ImageSnippet(res['logo'], null, ''));
-      this.imageButtons[0]['isShow'] = false;
+      if (res['logo'] !== null && res['logo'].length > 0) {
+        this.selectedFiles.push(new ImageSnippet(res['logo'], null, ''));
+        this.imageButtons[0]['isShow'] = false;
+      }
 
       this.storeFeatures = res['features'];
     });
@@ -77,6 +95,18 @@ export class SettingsMainComponent implements OnInit {
       this.optionStore_print_type = res;
       this.printType = this.optionStore_print_type.value;
     });
+  }
+
+  onConnectChange() {
+    if (this.connectForm.controls['use_branch_national_connect'].value) {
+      this.connectForm.controls['national_pharmacy_registration_no'].enable();
+      this.connectForm.controls['national_pharmacy_login_username'].enable();
+      this.connectForm.controls['national_pharmacy_login_password'].enable();
+    } else {
+      this.connectForm.controls['national_pharmacy_registration_no'].disable();
+      this.connectForm.controls['national_pharmacy_login_username'].disable();
+      this.connectForm.controls['national_pharmacy_login_password'].disable();
+    }
   }
 
   changeSlideToggle(name: string) {
@@ -164,6 +194,24 @@ export class SettingsMainComponent implements OnInit {
     } else {
       this.isLoadingResults = false;
     }
+  }
+
+  saveConnect() {
+    this.connectForm.markAllAsTouched();
+    if (!this.connectForm.valid) {
+      return;
+    }
+
+    const data = this.connectForm.getRawValue();
+
+    this.branchSer.updateConnect(data)
+      .subscribe(res => {
+        if (res['success'] === false) {
+          this.notifySer.notify('error', 'Lưu không thành công!');
+        } else {
+          this.notifySer.notify('success', 'Lưu thành công!');
+        }
+      });
   }
 
 }

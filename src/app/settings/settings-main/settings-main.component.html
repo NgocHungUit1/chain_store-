@@ -25,25 +25,34 @@
             </button>
           </mat-radio-button>
 
-          <mat-radio-button class="radio-button-report-type" value="logo" *ngIf="this.storeFeatures.indexOf('logo') >= 0">
+          <mat-radio-button class="radio-button-report-type" value="logo"
+                            *ngIf="this.storeFeatures.indexOf('logo') >= 0">
             Logo
             <button mat-icon-button aria-label="add">
               <mat-icon>image</mat-icon>
             </button>
           </mat-radio-button>
 
-<!--          <mat-radio-button class="radio-button-report-type" value="partner">-->
-<!--            Đối tác-->
-<!--            <button mat-icon-button aria-label="add">-->
-<!--              <mat-icon>contacts</mat-icon>-->
-<!--            </button>-->
-<!--          </mat-radio-button>-->
-<!--          <mat-radio-button class="radio-button-report-type" value="store">-->
-<!--            Hàng hóa-->
-<!--            <button mat-icon-button aria-label="add">-->
-<!--              <mat-icon>web_asset</mat-icon>-->
-<!--            </button>-->
-<!--          </mat-radio-button>-->
+          <mat-radio-button class="radio-button-report-type" value="branch-connect"
+                            *ngIf="this.storeFeatures.indexOf('branch_connect') >= 0">
+            Liên thông chi nhánh
+            <button mat-icon-button aria-label="add">
+              <mat-icon>open_in_full</mat-icon>
+            </button>
+          </mat-radio-button>
+
+          <!--          <mat-radio-button class="radio-button-report-type" value="partner">-->
+          <!--            Đối tác-->
+          <!--            <button mat-icon-button aria-label="add">-->
+          <!--              <mat-icon>contacts</mat-icon>-->
+          <!--            </button>-->
+          <!--          </mat-radio-button>-->
+          <!--          <mat-radio-button class="radio-button-report-type" value="store">-->
+          <!--            Hàng hóa-->
+          <!--            <button mat-icon-button aria-label="add">-->
+          <!--              <mat-icon>web_asset</mat-icon>-->
+          <!--            </button>-->
+          <!--          </mat-radio-button>-->
 
         </mat-radio-group>
 
@@ -113,7 +122,7 @@
               </mat-card-content>
             </mat-card>
 
-<!--            chon kho giay in-->
+            <!--            chon kho giay in-->
             <mat-card *ngIf=" settingsType === 'print' ">
               <mat-card-content>
                 <mat-radio-group [(ngModel)]="printType"
@@ -130,10 +139,76 @@
 
             </mat-card>
 
+            <mat-card *ngIf=" settingsType === 'branch-connect' ">
+              <mat-card-content>
+                <form [formGroup]="connectForm" (ngSubmit)="saveConnect()">
+
+                  <div fxLayout="row wrap" class="line-option">
+                    <div fxFlex="60px" class="custom-toggle">
+                      <mat-slide-toggle
+                        [formControl]="connectForm.controls['use_branch_national_connect']"
+                        (change)="onConnectChange()"
+                      ></mat-slide-toggle>
+                    </div>
+                    <div fxFlex="auto">
+                      <b><a routerLink="/partner/expenses-transaction">Liên thông theo chi nhánh</a></b>
+                      <br>
+                      <span> Cho phép các chi nhánh trong mỗi chuỗi liên thông theo các Tài khoản liên thông khác nhau.
+                    </span>
+                    </div>
+                  </div>
+                  <div fxLayout="row wrap">
+                    <!-- col full-->
+                    <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                      <mat-form-field>
+                        <input matInput placeholder="Mã cơ sở"
+                               [formControl]="connectForm.controls['national_pharmacy_registration_no']">
+                      </mat-form-field>
+                      <small
+                        *ngIf="connectForm.controls['national_pharmacy_registration_no'].hasError('required') && connectForm.controls['national_pharmacy_registration_no'].touched"
+                        class="text-danger support-text">Vui lòng điền mã cơ sở.
+                      </small>
+                    </div>
+                    <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                      <mat-form-field>
+                        <input matInput placeholder="Tài khoản kết nối"
+                               [formControl]="connectForm.controls['national_pharmacy_login_username']">
+                      </mat-form-field>
+                      <small
+                        *ngIf="connectForm.controls['national_pharmacy_login_username'].hasError('required') && connectForm.controls['national_pharmacy_login_username'].touched"
+                        class="text-danger support-text">Vui lòng điền tài khoản kết nối.
+                      </small>
+                    </div>
+                    <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                      <mat-form-field>
+                        <input matInput placeholder="Mật khẩu kết nối"
+                               [formControl]="connectForm.controls['national_pharmacy_login_password']">
+                      </mat-form-field>
+                      <small
+                        *ngIf="connectForm.controls['national_pharmacy_login_password'].hasError('required') && connectForm.controls['national_pharmacy_login_password'].touched"
+                        class="text-danger support-text">Vui lòng điền mật khẩu kết nối.
+                      </small>
+                    </div>
+
+                    <!-- col half-->
+                    <div fxFlex.gt-sm="50" fxFlex.gt-xs="100" fxFlex="10">
+                      <button mat-raised-button color="primary"  type="submit"
+                              [disabled]="!connectForm.valid">
+                        <mat-icon>save</mat-icon>
+                        Lưu
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </mat-card-content>
+
+            </mat-card>
+
             <mat-card *ngIf=" settingsType === 'logo' ">
               <mat-card-content>
                 <div fxLayout="row wrap">
-                  <mat-hint><b>Lưu ý</b>: Hình PNG, kích thước chuẩn 120x120 pixel để thể hiện chính xác lên hệ thống</mat-hint>
+                  <mat-hint><b>Lưu ý</b>: Hình PNG, kích thước chuẩn 120x120 pixel để thể hiện chính xác lên hệ thống
+                  </mat-hint>
                   <input type="file" id="file-input" #imageInput accept="image/*" (change)="processFile(imageInput)"
                          style="display: none">
                   <ul class="product-upload-image">
@@ -141,13 +216,14 @@
                         [id]="'selected-image-'+i">
                       <!--<label>-->
                       <!--<span class="add-image-text"></span>-->
-                      <img src="{{image.src}}" alt="Image" >
+                      <img src="{{image.src}}" alt="Image">
                       <a class="delete-image" (click)="removeSelectedImage(i)" title="Xóa ảnh">
                         <mat-icon>remove_circle_outline</mat-icon>
                       </a>
                       <!--</label>-->
                     </li>
-                    <li *ngFor="let imgBtn of imageButtons; index as i;" [class]="imageButtons[i]['isShow'] ? 'show' : ''">
+                    <li *ngFor="let imgBtn of imageButtons; index as i;"
+                        [class]="imageButtons[i]['isShow'] ? 'show' : ''">
                       <label for="file-input">
                         <span class="add-image-text">+</span>
                         <img src="/assets/images/default-product-img.jpg">
@@ -156,7 +232,10 @@
                   </ul>
                 </div>
                 <div fxLayout="row wrap">
-                  <button mat-raised-button color="primary" (click)="saveLogo();" [disabled]="!this.needToSaveLogo"><mat-icon>save</mat-icon> Lưu</button>
+                  <button mat-raised-button color="primary" (click)="saveLogo();" [disabled]="!this.needToSaveLogo">
+                    <mat-icon>save</mat-icon>
+                    Lưu
+                  </button>
                 </div>
               </mat-card-content>
 
