@@ -624,6 +624,68 @@
                 </td>
               </ng-container>
 
+              <ng-container matColumnDef="warehouse_product_parcel_day_exits">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['expiration_day_exits']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{calculateDiff(element.expiration_date) }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="warehouse_product_parcel_quantity_of_stock">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> Số lượng tồn</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{element.quantity_of_stock }}
+                  </span>
+                </td>
+              </ng-container>
+
+
+              <ng-container matColumnDef="warehouse_product_parcel_expiration">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> Ngày hết hạn</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{element.expiration_date }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="warehouse_product_no">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['product_no']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{element?.product?.product_no }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="warehouse_product_name">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['product_name']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{element?.product?.product_name }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <!--expiration-date-->
+              <ng-container matColumnDef="warehouse_product_parcel_no">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> Số Lô</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{element.parcel_no }}
+                  </span>
+                </td>
+              </ng-container>
+
               <ng-container matColumnDef="expiration_date">
                 <th mat-header-cell class="column-number"
                     *matHeaderCellDef> {{columnsHeader['expiration_date']}}</th>

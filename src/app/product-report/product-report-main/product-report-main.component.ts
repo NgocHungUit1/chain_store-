@@ -21,6 +21,8 @@ import {DateFilter} from '../../invoice/invoice.model';
 import {DatetimeDefaultFilterDialogComponent} from '../../invoice/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
 import {DatetimeChooseFilterDialogComponent} from '../../invoice/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
 import {ProductReportService} from '../product-report.service';
+import {WarehouseProductParcelService} from '../../warehouse-product-parcel/warehouse-product-parcel.service';
+import {WarehouseProductParcelFilter} from '../../warehouse-product-parcel/warehouse-product-parcel.model';
 
 @Component({
   selector: 'app-product-report-main',
@@ -38,6 +40,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
 
   constructor(
     private service: ProductReportService,
+    private parcelSer: WarehouseProductParcelService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private notifySer: NotifierService,
@@ -51,6 +54,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
   @ViewChild('selectColumn') selectColumn;
 
   apiFilter: ProductFilter;
+  parcelFilter: WarehouseProductParcelFilter;
   expandedElement: ProductReport | null;
 
   statusProductFilter: FormGroup;
@@ -224,6 +228,30 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     return filter;
   }
 
+  buildFilterExpiration(): WarehouseProductParcelFilter {
+    function write<K extends keyof WarehouseProductParcelFilter>(arg: WarehouseProductParcelFilter, key: K, value: WarehouseProductParcelFilter[K]): void {
+      arg[key] = value;
+    }
+
+    const typeReport = this.reportType.controls['type'].value;
+    const objDateFilter = this.serviceInvoice.getDateFilter();
+    const filter = new WarehouseProductParcelFilter();
+    const objectKeys = Object.keys(filter) as Array<keyof WarehouseProductParcelFilter>;
+
+    for (const attr of objectKeys) {
+      write(filter, attr, this.route.snapshot.queryParams['WarehouseProductParcelSearch[' + attr + ']']);
+    }
+    filter.page = this.route.snapshot.queryParams['page'];
+    filter.pageSize = this.route.snapshot.queryParams['pageSize'];
+    filter.sort = this.route.snapshot.queryParams['sort'];
+
+    // filter.expand = 'returnsDetailsBranch';
+    // filter.expand = 'medicine,productUnits,productPlacements,group,images,quantity';
+    filter.date_from = objDateFilter.date_from;
+    filter.date_to = objDateFilter.date_to;
+    return filter;
+  }
+
 
   loadData(summary = true): void {
     const typeReport = this.reportType.controls['type'].value;
@@ -332,8 +360,8 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
 
     if (typeReport === 'expiration-date') {
       this.isLoadingResults = true;
-      this.service.getListReportExpirationDate(this.apiFilter).subscribe(res => {
-        this.dataSource = res.body.data;
+      this.parcelSer.getListExpiration(this.parcelFilter).subscribe(res => {
+        this.dataSource = res.body;
         let stt = 0;
         this.dataSource.forEach(elementData => {
           stt++;
@@ -488,6 +516,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     });
 
     this.apiFilter = this.buildFilterFromParams();
+    this.parcelFilter = this.buildFilterExpiration();
     this.loadData();
 
 
@@ -548,10 +577,10 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       }
 
       if (res.type === 'expiration-date') {
-        this.displayedColumns = ['#', 'product_no', 'product_name', 'expiration_parcel_no',
-          'expiration_date', 'expiration_day_exits', 'expiration_quantity'];
-        this.columnsToDisplay = ['#', 'product_no', 'product_name', 'expiration_parcel_no',
-          'expiration_date', 'expiration_day_exits', 'expiration_quantity'];
+        this.displayedColumns = ['#', 'warehouse_product_no', 'warehouse_product_name', 'warehouse_product_parcel_no',
+          'warehouse_product_parcel_expiration', 'expiration_day_exits', 'warehouse_product_parcel_quantity_of_stock'];
+        this.columnsToDisplay = ['#', 'warehouse_product_no', 'warehouse_product_name', 'warehouse_product_parcel_no',
+          'warehouse_product_parcel_expiration', 'warehouse_product_parcel_day_exits', 'warehouse_product_parcel_quantity_of_stock'];
         this.second_columnsToDisplay = [];
       }
 

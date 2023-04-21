@@ -3,3 +3,24 @@
   width: 280px;
   margin: 0 auto;
 }
+.expiration-alert {
+  font-size: 1.2rem;
+  display: flex;
+  align-content: center;
+  justify-content: flex-start;
+  align-items: center;
+}
+.expiration-alert .mat-select {
+  color: purple;
+}
+::ng-deep .expiration-alert .mat-select .mat-select-arrow-wrapper {
+  display: none;
+}
+::ng-deep .expiration-alert .mat-select .mat-select-value {
+  display: contents;
+  color: #00aced;
+}
+.expire-count {
+  color: #00aced;
+  cursor: pointer;
+}

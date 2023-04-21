@@ -12,16 +12,18 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { Dashboard1Component } from './dashboard1/dashboard1.component';
 import { Dashboard2Component } from './dashboard2/dashboard2.component';
 import { DashboardMainComponent } from './dashboard-main/dashboard-main.component';
+import {FormsModule} from '@angular/forms';
 @NgModule({
-    imports: [
-        CommonModule,
-        DemoMaterialModule,
-        FlexLayoutModule,
-        ChartistModule,
-        ChartsModule,
-        NgApexchartsModule,
-        RouterModule.forChild(DashboardsRoutes)
-    ],
+  imports: [
+    CommonModule,
+    DemoMaterialModule,
+    FlexLayoutModule,
+    ChartistModule,
+    ChartsModule,
+    NgApexchartsModule,
+    RouterModule.forChild(DashboardsRoutes),
+    FormsModule
+  ],
     declarations: [Dashboard1Component, Dashboard2Component, DashboardMainComponent]
 })
 export class DashboardsModule { }

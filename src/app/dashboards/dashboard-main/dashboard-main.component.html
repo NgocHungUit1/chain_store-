@@ -85,7 +85,7 @@
 <!-- ============================================================== -->
 <div fxLayout="row wrap">
   <!-- Column-->
-  <div fxFlex="100">
+  <div fxFlex="75">
     <mat-card>
       <mat-card-content>
         <mat-card-title>DOANH THU THUẦN THÁNG NÀY</mat-card-title>
@@ -112,6 +112,21 @@
               <i class="fa fa-circle font-10 m-r-10"></i>Bán hàng</h6>
           </li>
         </ul>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div fxFlex="25">
+    <mat-card>
+      <mat-card-content>
+        <mat-card-title>THÔNG BÁO</mat-card-title>
+        <mat-card-subtitle></mat-card-subtitle>
+        <div class="expiration-alert">
+          <mat-icon color="warn" style="margin-right: 5px">warning</mat-icon> <label style="margin-right: 5px">Có <span class="expire-count" (click)="goToExpireReport()">{{this.alertExpiredCount}} mặt hàng</span> sẽ hết hạn trong </label>
+          <mat-select color="primary" [(ngModel)]="timeSelected" (selectionChange)="onTimeChange();"
+                                                                                                                                                       style="width: 97px">
+          <mat-option *ngFor="let column of timeSelects" [value]="column">{{this.timeLabels[column]}}</mat-option>
+        </mat-select>
+        </div>
       </mat-card-content>
     </mat-card>
   </div>
