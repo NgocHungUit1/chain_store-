@@ -52,11 +52,8 @@
         <mat-icon>list</mat-icon>
       </button>
 
-      <span fxFlex="1 1 0%"></span>
-
-      <button mat-raised-button color="primary" [matMenuTriggerFor]="createMenu" style="margin-right: 10px">
+      <button mat-mini-fab color="primary" [matMenuTriggerFor]="createMenu" style="margin-left: 10px">
         <mat-icon>add</mat-icon>
-        Thêm mới
       </button>
       <mat-menu #createMenu="matMenu">
         <button mat-menu-item (click)="openProductMedicineDialog('Add', {});">
@@ -68,6 +65,8 @@
           <span>Thêm hàng hóa</span>
         </button>
       </mat-menu>
+
+      <span fxFlex="1 1 0%"></span>
     </mat-toolbar>
     <div fxLayout="row wrap" style="height: calc(100% - 50px)">
       <div fxFlex="100">

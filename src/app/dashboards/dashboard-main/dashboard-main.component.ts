@@ -24,6 +24,7 @@ import { DateFilter } from '../../invoice/invoice.model';
 import { SaleReportService } from '../../sale-report/sale-report.service';
 import {WarehouseProductParcelService} from '../../warehouse-product-parcel/warehouse-product-parcel.service';
 import {WarehouseProductParcelFilter} from '../../warehouse-product-parcel/warehouse-product-parcel.model';
+import {Router} from '@angular/router';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -74,6 +75,7 @@ export class DashboardMainComponent implements OnInit {
   constructor(
     private serviceDashBoard: DashboardService,
     private parcelSer: WarehouseProductParcelService,
+    private router: Router,
   ) {
     // super();
     this.chartOptions = {
@@ -143,7 +145,7 @@ export class DashboardMainComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.timeSelected = 'today';
+    this.timeSelected = 'next_3_month';
     this.onTimeChange();
     this.initDashBoard();
     // throw new Error("Method not implemented.");
@@ -295,7 +297,7 @@ export class DashboardMainComponent implements OnInit {
   public barChartLegend = false;
   public barChartType = 'bar';
   public alertExpiredCount = 100;
-  public timeSelected = 'today';
+  public timeSelected = 'next_3_month';
   public timeSelects = [
     'today',
     'this_week',
@@ -328,7 +330,7 @@ export class DashboardMainComponent implements OnInit {
 
   goToExpireReport() {
     if (this.alertExpiredCount > 0) {
-
+      this.router.navigateByUrl('/report/product-report/expiration-date?WarehouseProductParcelSearch[timeSelect]=' + this.timeSelected);
     }
   }
 

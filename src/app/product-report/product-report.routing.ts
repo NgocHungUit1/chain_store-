@@ -5,5 +5,9 @@ export const ProductReportRoutes: Routes = [
   {
     path: '',
     component: ProductReportMainComponent
+  },
+  {
+    path: ':tab',
+    component: ProductReportMainComponent
   }
 ];

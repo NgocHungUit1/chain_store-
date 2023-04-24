@@ -180,7 +180,10 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
   isLoadingResults = true;
   isRateLimitReached = false;
 
+  sum_expiration: number;
+
   searchProductForm = new FormControl();
+  tab: string = '';
 
   buildFilterFromParams(): ProductFilter {
     function write<K extends keyof ProductFilter>(arg: ProductFilter, key: K, value: ProductFilter[K]): void {
@@ -233,7 +236,6 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       arg[key] = value;
     }
 
-    const typeReport = this.reportType.controls['type'].value;
     const objDateFilter = this.serviceInvoice.getDateFilter();
     const filter = new WarehouseProductParcelFilter();
     const objectKeys = Object.keys(filter) as Array<keyof WarehouseProductParcelFilter>;
@@ -371,6 +373,13 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
         // const url = this.service.getApiUrlReportSale(this.apiFilter);
         this.isLoadingResults = false;
       });
+
+      if (summary) {
+        this.parcelSer.getSummaryExpiration(this.parcelFilter).subscribe(res => {
+          this.sum_expiration = res.body;
+        });
+      }
+
     }
 
     if (typeReport === 'supplier') {
@@ -493,7 +502,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       ],
     });
     this.reportType = this.fb.group({
-      type: ['sale']
+      type: [this.tab]
     });
   }
 
@@ -508,6 +517,10 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
 
   ngOnInit() {
     this.initDateFilter();
+    this.tab = this.route.snapshot.paramMap.get('tab');
+    if (this.tab === null) {
+      this.tab = 'sale';
+    }
     this.buildFromTimeFilter();
     this.statusProductFilter = this.fb.group({
       status: [
@@ -515,105 +528,11 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       ],
     });
 
-    this.apiFilter = this.buildFilterFromParams();
     this.parcelFilter = this.buildFilterExpiration();
-    this.loadData();
-
+    this.loadColumns(this.tab);
 
     this.reportType.valueChanges.subscribe(res => {
-      if (res.type === 'sale') {
-        this.displayedColumns = ['#', 'product_no', 'product_name',
-          'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
-        this.columnsToDisplay = ['#', 'product_no', 'product_name',
-          'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
-        this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name',
-          'second_sl_ban', 'second_doanh_thu', 'second_sl_tra', 'second_gia_tri_tra', 'second_doanh_thu_thuan'];
-      }
-      if (res.type === 'profit') {
-        this.displayedColumns = ['#', 'product_no', 'product_name',
-          'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan',
-          'tong_gia_von', 'loi_nhuan', 'ty_suat'];
-        this.columnsToDisplay = ['#', 'product_no', 'product_name',
-          'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan',
-          'tong_gia_von', 'loi_nhuan', 'ty_suat'];
-        this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name',
-          'second_sl_ban', 'second_doanh_thu', 'second_sl_tra', 'second_gia_tri_tra', 'second_doanh_thu_thuan',
-          'second_tong_gia_von', 'second_loi_nhuan', 'second_ty_suat'
-        ];
-      }
-      if (res.type === 'stock') {
-        this.displayedColumns = ['#', 'product_no', 'product_name',
-          'stock_so_luong', 'stock_gia_ban', 'stock_gia_tri_ban', 'stock_gia_von', 'stock_gia_tri_kho'];
-        this.columnsToDisplay = ['#', 'product_no', 'product_name',
-          'stock_so_luong', 'stock_gia_ban', 'stock_gia_tri_ban', 'stock_gia_von', 'stock_gia_tri_kho'];
-        this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name',
-          'second_stock_so_luong', 'second_stock_gia_ban', 'second_stock_gia_tri_ban', 'second_stock_gia_von', 'second_stock_gia_tri_kho'];
-      }
-
-      if (res.type === 'export-import') {
-        this.displayedColumns = ['#', 'product_no', 'product_name', 'ton_dau_ky',
-          'gia_tri_dau_ky', 'sl_nhap', 'gia_tri_nhap', 'sl_xuat', 'gia_tri_xuat', 'ton_cuoi_ky', 'gia_tri_cuoi_ky'];
-        this.columnsToDisplay = ['#', 'product_no', 'product_name', 'ton_dau_ky',
-          'gia_tri_dau_ky', 'sl_nhap', 'gia_tri_nhap', 'sl_xuat', 'gia_tri_xuat', 'ton_cuoi_ky', 'gia_tri_cuoi_ky'];
-        this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name',
-          'second_ton_dau_ky', 'second_gia_tri_dau_ky', 'second_sl_nhap', 'second_gia_tri_nhap', 'second_sl_xuat',
-          'second_gia_tri_xuat', 'second_ton_cuoi_ky', 'second_gia_tri_cuoi_ky'];
-      }
-
-      if (res.type === 'export-import-detail') {
-        this.displayedColumns = ['#', 'product_no', 'product_name', 'ton_dau_ky',
-          'gia_tri_dau_ky', 'nhap_ncc', 'nhap_kiem', 'nhap_tra_hang', 'nhap_chuyen', '' +
-          'xuat_ban', 'xuat_kiem', 'xuat_chuyen',
-          'ton_cuoi_ky', 'gia_tri_cuoi_ky'];
-        this.columnsToDisplay = ['#', 'product_no', 'product_name', 'ton_dau_ky',
-          'gia_tri_dau_ky', 'nhap_ncc', 'nhap_kiem', 'nhap_tra_hang', 'nhap_chuyen',
-          'xuat_ban', 'xuat_kiem', 'xuat_chuyen',
-          'ton_cuoi_ky', 'gia_tri_cuoi_ky'];
-        this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name',
-          'second_ton_dau_ky', 'second_gia_tri_dau_ky',
-          'second_nhap_ncc', 'second_nhap_kiem', 'second_nhap_tra_hang', 'second_nhap_chuyen',
-          'second_xuat_ban', 'second_xuat_kiem', 'second_xuat_chuyen',
-          'second_ton_cuoi_ky', 'second_gia_tri_cuoi_ky'];
-      }
-
-      if (res.type === 'expiration-date') {
-        this.displayedColumns = ['#', 'warehouse_product_no', 'warehouse_product_name', 'warehouse_product_parcel_no',
-          'warehouse_product_parcel_expiration', 'expiration_day_exits', 'warehouse_product_parcel_quantity_of_stock'];
-        this.columnsToDisplay = ['#', 'warehouse_product_no', 'warehouse_product_name', 'warehouse_product_parcel_no',
-          'warehouse_product_parcel_expiration', 'warehouse_product_parcel_day_exits', 'warehouse_product_parcel_quantity_of_stock'];
-        this.second_columnsToDisplay = [];
-      }
-
-      if (res.type === 'sale-staff') {
-        this.displayedColumns = ['#', 'product_no', 'product_name', 'total_staff_invoice', 'total_staff_return',
-          'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
-        this.columnsToDisplay = ['#', 'product_no', 'product_name', 'total_staff_invoice', 'total_staff_return',
-          'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
-        this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name', 'second_total_staff_invoice', 'second_total_staff_return',
-          'second_sl_ban', 'second_doanh_thu', 'second_sl_tra', 'second_gia_tri_tra', 'second_doanh_thu_thuan'];
-      }
-
-      if (res.type === 'supplier') {
-        this.displayedColumns = ['#', 'product_no', 'product_name', 'supplier_total', 'supplier_total_import',
-          'supplier_total_value_import', 'supplier_total_return', 'supplier_total_value_return', 'supplier_value_pure'];
-        this.columnsToDisplay = ['#', 'product_no', 'product_name', 'supplier_total', 'supplier_total_import',
-          'supplier_total_value_import', 'supplier_total_return', 'supplier_total_value_return', 'supplier_value_pure'];
-        this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name', 'second_supplier_total', 'second_supplier_total_import',
-          'second_supplier_total_value_import', 'second_supplier_total_return', 'second_sum_supplier_total_value_return', 'second_supplier_value_pure'];
-      }
-
-      if (res.type === 'customer') {
-        this.displayedColumns = ['#', 'product_no', 'product_name', 'total_customer',
-          'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
-        this.columnsToDisplay = ['#', 'product_no', 'product_name', 'total_customer',
-          'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
-        this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name', 'second_total_customer',
-          'second_sl_ban', 'second_doanh_thu', 'second_sl_tra', 'second_gia_tri_tra', 'second_doanh_thu_thuan'];
-      }
-
-      this.apiFilter = this.buildFilterFromParams();
-      this.loadData();
-
+      this.loadColumns(res.type);
     });
 
     this.searchProductForm.valueChanges.pipe(debounceTime(800)).subscribe(res => {
@@ -626,6 +545,101 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
         this.loadData();
       }
     });
+  }
+
+  loadColumns(type) {
+    if (type === 'sale') {
+      this.displayedColumns = ['#', 'product_no', 'product_name',
+        'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
+      this.columnsToDisplay = ['#', 'product_no', 'product_name',
+        'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
+      this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name',
+        'second_sl_ban', 'second_doanh_thu', 'second_sl_tra', 'second_gia_tri_tra', 'second_doanh_thu_thuan'];
+    }
+    if (type === 'profit') {
+      this.displayedColumns = ['#', 'product_no', 'product_name',
+        'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan',
+        'tong_gia_von', 'loi_nhuan', 'ty_suat'];
+      this.columnsToDisplay = ['#', 'product_no', 'product_name',
+        'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan',
+        'tong_gia_von', 'loi_nhuan', 'ty_suat'];
+      this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name',
+        'second_sl_ban', 'second_doanh_thu', 'second_sl_tra', 'second_gia_tri_tra', 'second_doanh_thu_thuan',
+        'second_tong_gia_von', 'second_loi_nhuan', 'second_ty_suat'
+      ];
+    }
+    if (type === 'stock') {
+      this.displayedColumns = ['#', 'product_no', 'product_name',
+        'stock_so_luong', 'stock_gia_ban', 'stock_gia_tri_ban', 'stock_gia_von', 'stock_gia_tri_kho'];
+      this.columnsToDisplay = ['#', 'product_no', 'product_name',
+        'stock_so_luong', 'stock_gia_ban', 'stock_gia_tri_ban', 'stock_gia_von', 'stock_gia_tri_kho'];
+      this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name',
+        'second_stock_so_luong', 'second_stock_gia_ban', 'second_stock_gia_tri_ban', 'second_stock_gia_von', 'second_stock_gia_tri_kho'];
+    }
+
+    if (type === 'export-import') {
+      this.displayedColumns = ['#', 'product_no', 'product_name', 'ton_dau_ky',
+        'gia_tri_dau_ky', 'sl_nhap', 'gia_tri_nhap', 'sl_xuat', 'gia_tri_xuat', 'ton_cuoi_ky', 'gia_tri_cuoi_ky'];
+      this.columnsToDisplay = ['#', 'product_no', 'product_name', 'ton_dau_ky',
+        'gia_tri_dau_ky', 'sl_nhap', 'gia_tri_nhap', 'sl_xuat', 'gia_tri_xuat', 'ton_cuoi_ky', 'gia_tri_cuoi_ky'];
+      this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name',
+        'second_ton_dau_ky', 'second_gia_tri_dau_ky', 'second_sl_nhap', 'second_gia_tri_nhap', 'second_sl_xuat',
+        'second_gia_tri_xuat', 'second_ton_cuoi_ky', 'second_gia_tri_cuoi_ky'];
+    }
+
+    if (type === 'export-import-detail') {
+      this.displayedColumns = ['#', 'product_no', 'product_name', 'ton_dau_ky',
+        'gia_tri_dau_ky', 'nhap_ncc', 'nhap_kiem', 'nhap_tra_hang', 'nhap_chuyen', '' +
+        'xuat_ban', 'xuat_kiem', 'xuat_chuyen',
+        'ton_cuoi_ky', 'gia_tri_cuoi_ky'];
+      this.columnsToDisplay = ['#', 'product_no', 'product_name', 'ton_dau_ky',
+        'gia_tri_dau_ky', 'nhap_ncc', 'nhap_kiem', 'nhap_tra_hang', 'nhap_chuyen',
+        'xuat_ban', 'xuat_kiem', 'xuat_chuyen',
+        'ton_cuoi_ky', 'gia_tri_cuoi_ky'];
+      this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name',
+        'second_ton_dau_ky', 'second_gia_tri_dau_ky',
+        'second_nhap_ncc', 'second_nhap_kiem', 'second_nhap_tra_hang', 'second_nhap_chuyen',
+        'second_xuat_ban', 'second_xuat_kiem', 'second_xuat_chuyen',
+        'second_ton_cuoi_ky', 'second_gia_tri_cuoi_ky'];
+    }
+
+    if (type === 'expiration-date') {
+      this.displayedColumns = ['#', 'warehouse_product_no', 'warehouse_product_name', 'warehouse_product_parcel_no',
+        'warehouse_product_parcel_expiration', 'expiration_day_exits', 'warehouse_product_parcel_quantity_of_stock'];
+      this.columnsToDisplay = ['#', 'warehouse_product_no', 'warehouse_product_name', 'warehouse_product_parcel_no',
+        'warehouse_product_parcel_expiration', 'warehouse_product_parcel_day_exits', 'warehouse_product_parcel_quantity_of_stock'];
+      this.second_columnsToDisplay = ['second_warehouse_product_parcel_quantity_of_stock'];
+    }
+
+    if (type === 'sale-staff') {
+      this.displayedColumns = ['#', 'product_no', 'product_name', 'total_staff_invoice', 'total_staff_return',
+        'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
+      this.columnsToDisplay = ['#', 'product_no', 'product_name', 'total_staff_invoice', 'total_staff_return',
+        'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
+      this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name', 'second_total_staff_invoice', 'second_total_staff_return',
+        'second_sl_ban', 'second_doanh_thu', 'second_sl_tra', 'second_gia_tri_tra', 'second_doanh_thu_thuan'];
+    }
+
+    if (type === 'supplier') {
+      this.displayedColumns = ['#', 'product_no', 'product_name', 'supplier_total', 'supplier_total_import',
+        'supplier_total_value_import', 'supplier_total_return', 'supplier_total_value_return', 'supplier_value_pure'];
+      this.columnsToDisplay = ['#', 'product_no', 'product_name', 'supplier_total', 'supplier_total_import',
+        'supplier_total_value_import', 'supplier_total_return', 'supplier_total_value_return', 'supplier_value_pure'];
+      this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name', 'second_supplier_total', 'second_supplier_total_import',
+        'second_supplier_total_value_import', 'second_supplier_total_return', 'second_sum_supplier_total_value_return', 'second_supplier_value_pure'];
+    }
+
+    if (type === 'customer') {
+      this.displayedColumns = ['#', 'product_no', 'product_name', 'total_customer',
+        'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
+      this.columnsToDisplay = ['#', 'product_no', 'product_name', 'total_customer',
+        'sl_ban', 'doanh_thu', 'sl_tra', 'gia_tri_tra', 'doanh_thu_thuan'];
+      this.second_columnsToDisplay = ['second_#', 'second_product_no', 'second_product_name', 'second_total_customer',
+        'second_sl_ban', 'second_doanh_thu', 'second_sl_tra', 'second_gia_tri_tra', 'second_doanh_thu_thuan'];
+    }
+
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
   }
 
   openProductMedicineDialog(action, obj) {
