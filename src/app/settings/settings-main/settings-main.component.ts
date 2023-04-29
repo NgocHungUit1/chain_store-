@@ -6,6 +6,8 @@ import { OptionStoreService } from '../../common/option-store.service';
 import { OptionStore } from '../../common/option-store.model';
 import {StoreService} from '../../store/store.service';
 import {BranchService} from '../../branch/branch.service';
+import {ActivatedRoute, Route} from '@angular/router';
+import {Location} from '@angular/common';
 
 class ImageSnippet {
   constructor(public src: string, public file: File, public id: string) {
@@ -25,6 +27,8 @@ export class SettingsMainComponent implements OnInit {
     private fb: FormBuilder,
     public storeSer: StoreService,
     public branchSer: BranchService,
+    public route: ActivatedRoute,
+    private location: Location,
     public optionStoreService: OptionStoreService
   ) {
   }
@@ -45,6 +49,7 @@ export class SettingsMainComponent implements OnInit {
   isLoadingResults = true;
   isRateLimitReached = false;
   public connectForm: FormGroup;
+  public storeForm: FormGroup;
 
   optionStore_transaction_expenses_order: OptionStore;
   optionStore_transaction_expenses_transaction: OptionStore;
@@ -62,11 +67,20 @@ export class SettingsMainComponent implements OnInit {
     this.printType = 'K58';
     this.isLoadingResults = false;
 
+    const tab = this.route.snapshot.paramMap.get('tab');
+    if (tab !== null) {
+      this.settingsType = tab;
+    }
+
     this.connectForm = this.fb.group({
       national_pharmacy_registration_no: [{value: null, disabled: true}, Validators.compose([Validators.required])],
       national_pharmacy_login_username: [{value: null, disabled: true}, Validators.compose([Validators.required])],
       national_pharmacy_login_password: [{value: null, disabled: true}, Validators.compose([Validators.required])],
       use_branch_national_connect: [false, Validators.compose([Validators.required])]
+    });
+
+    this.storeForm = this.fb.group({
+      description: ['', Validators.compose([Validators.required])],
     });
 
     this.branchSer.getConnect().subscribe(res => {
@@ -79,6 +93,8 @@ export class SettingsMainComponent implements OnInit {
         this.selectedFiles.push(new ImageSnippet(res['logo'], null, ''));
         this.imageButtons[0]['isShow'] = false;
       }
+
+      this.storeForm.patchValue({description: res['description']});
 
       this.storeFeatures = res['features'];
     });
@@ -133,6 +149,12 @@ export class SettingsMainComponent implements OnInit {
     this.optionStoreService.update(this.optionStore_print_type.id, this.optionStore_print_type).subscribe(res => {
       // console.log(res);
     });
+  }
+
+  changeSettingType() {
+    const url = '/partner/settings/' + this.settingsType;
+
+    this.location.go(url);
   }
 
   processFile(imageInput) {
@@ -205,6 +227,24 @@ export class SettingsMainComponent implements OnInit {
     const data = this.connectForm.getRawValue();
 
     this.branchSer.updateConnect(data)
+      .subscribe(res => {
+        if (res['success'] === false) {
+          this.notifySer.notify('error', 'Lưu không thành công!');
+        } else {
+          this.notifySer.notify('success', 'Lưu thành công!');
+        }
+      });
+  }
+
+  saveStore() {
+    this.storeForm.markAllAsTouched();
+    if (!this.storeForm.valid) {
+      return;
+    }
+
+    const data = this.storeForm.getRawValue();
+
+    this.storeSer.updateInfo(data)
       .subscribe(res => {
         if (res['success'] === false) {
           this.notifySer.notify('error', 'Lưu không thành công!');

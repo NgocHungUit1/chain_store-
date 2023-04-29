@@ -18,7 +18,11 @@ export const SettingsRoutes: Routes = [
       {
         path: 'profile',
         component: SettingProfileComponent,
-      }
+      },
+      {
+        path: ':tab',
+        component: SettingsMainComponent
+      },
     ]
   }
 ];

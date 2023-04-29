@@ -5,4 +5,5 @@ export class Store {
   id: string;
   no: string;
   logo: string;
+  description: string;
 }

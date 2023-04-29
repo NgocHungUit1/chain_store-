@@ -61,6 +61,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
   domPrint = '';
   prescription: Prescription;
   logo = null;
+  description = null;
 
   sexItems = {
     '1': 'Nam',
@@ -296,6 +297,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
       if (res['logo'] !== null && res['logo'].length > 0) {
         this.logo = res['logo'];
       }
+      this.description = res['description'];
     });
 
     this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
@@ -398,6 +400,9 @@ export class InvoiceTabInfoComponent implements OnChanges {
       }
       printContent += '</table>';
       printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
+      if (this.description.length > 0) {
+        printContent += '<p style="text-align:center; font-weight: bold;font-size: 1.1rem" >' + this.description + '</p>';
+      }
       // printContent += '<p style="text-align:left; font-size: 12px;font-style: italic;" >Hổ trợ : 0972 574 506</p>';
 
       printContent += '</section>';

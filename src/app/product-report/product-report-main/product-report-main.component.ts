@@ -79,6 +79,8 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
 
   reportType: FormGroup;
 
+  timeExpireFilter: FormGroup;
+
   columnsHeader = {
     '#': '#',
     'product_no': 'Mã hàng',
@@ -185,6 +187,30 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
   searchProductForm = new FormControl();
   tab: string = '';
 
+  public timeSelected = 'next_3_month';
+  public timeSelects = [
+    'today',
+    'this_week',
+    'this_month',
+    'next_30_day',
+    'next_2_month',
+    'next_3_month',
+    'next_6_month',
+    'next_year',
+    'expired',
+  ];
+  public timeLabels = {
+    'today': 'Hôm nay',
+    'this_week': 'Tuần này',
+    'this_month': 'Tháng này',
+    'next_30_day': '30 ngày tới',
+    'next_2_month': 'Trong 2 tháng',
+    'next_3_month': 'Trong 3 tháng',
+    'next_6_month': 'Trong 6 tháng',
+    'next_year': 'Trong 1 năm',
+    'expired': 'Đã hết hạn',
+  };
+
   buildFilterFromParams(): ProductFilter {
     function write<K extends keyof ProductFilter>(arg: ProductFilter, key: K, value: ProductFilter[K]): void {
       arg[key] = value;
@@ -246,6 +272,10 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
+
+    if (filter.timeSelect !== undefined && filter.timeSelect.length > 0) {
+      this.timeExpireFilter.patchValue({'typeTime': filter.timeSelect});
+    }
 
     // filter.expand = 'returnsDetailsBranch';
     // filter.expand = 'medicine,productUnits,productPlacements,group,images,quantity';
@@ -501,6 +531,12 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
         'default'
       ],
     });
+    this.timeExpireFilter = this.fb.group({
+      typeTime: [
+        'next_3_month'
+      ],
+    });
+
     this.reportType = this.fb.group({
       type: [this.tab]
     });
@@ -642,6 +678,17 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     this.loadData();
   }
 
+  reloadFilter(res) {
+    this.pageTotalCount = Number(res.headers.get('X-Pagination-Total-Count'));
+    this.pageSize = Number(res.headers.get('X-Pagination-Per-Page'));
+    this.page = Number(res.headers.get('X-Pagination-Current-Page'));
+    this.apiFilter.pageSize = this.pageSize;
+    this.apiFilter.page = this.page;
+    this.parcelFilter.pageSize = this.pageSize;
+    this.parcelFilter.page = this.page;
+
+  }
+
   openProductMedicineDialog(action, obj) {
     obj.action = action;
     obj.title = 'Thêm thuốc';
@@ -768,5 +815,10 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     } else {
       return 0;
     }
+  }
+
+  onTimeChange() {
+    this.parcelFilter.timeSelect = this.timeExpireFilter.controls['typeTime'].value;
+    this.loadData(true);
   }
 }

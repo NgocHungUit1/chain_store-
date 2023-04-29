@@ -8,29 +8,6 @@
     </mat-toolbar>
 
     <mat-card class="time-filter-info">
-      <mat-card-title class="title-time-filter">Thời gian</mat-card-title>
-      <mat-card-content>
-
-        <form [formGroup]="timeFilter">
-          <mat-radio-group (change)="radioTimeChange($event)" formControlName="typeTime">
-            <mat-radio-button style="display: inline; " value="default">{{ titleTimeDefault }}
-              <button mat-icon-button aria-label="add" (click)="openTimeDefault()">
-                <mat-icon>format_line_spacing</mat-icon>
-              </button>
-            </mat-radio-button>
-            <mat-radio-button style="display: inline; " value="choose">{{ titleTimeChoose }}
-              <button mat-icon-button aria-label="add" (click)="openTimeChoose()">
-                <mat-icon>date_range</mat-icon>
-              </button>
-            </mat-radio-button>
-
-          </mat-radio-group>
-        </form>
-
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card class="time-filter-info">
       <mat-card-title class="title-time-filter">Mối quan tâm</mat-card-title>
       <mat-card-content>
         <form [formGroup]="reportType">
@@ -106,6 +83,39 @@
             </mat-radio-button>
 
           </mat-radio-group>
+        </form>
+
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="time-filter-info">
+      <mat-card-title class="title-time-filter">Thời gian</mat-card-title>
+      <mat-card-content>
+
+        <form [formGroup]="timeFilter" *ngIf="this.reportType.controls['type'].value !== 'expiration-date'">
+          <mat-radio-group (change)="radioTimeChange($event)" formControlName="typeTime">
+            <mat-radio-button style="display: inline; " value="default">{{ titleTimeDefault }}
+              <button mat-icon-button aria-label="add" (click)="openTimeDefault()">
+                <mat-icon>format_line_spacing</mat-icon>
+              </button>
+            </mat-radio-button>
+            <mat-radio-button style="display: inline; " value="choose">{{ titleTimeChoose }}
+              <button mat-icon-button aria-label="add" (click)="openTimeChoose()">
+                <mat-icon>date_range</mat-icon>
+              </button>
+            </mat-radio-button>
+
+          </mat-radio-group>
+        </form>
+
+        <form [formGroup]="timeExpireFilter" *ngIf="this.reportType.controls['type'].value === 'expiration-date'">
+          <mat-form-field>
+            <mat-select formControlName="typeTime" (selectionChange)="onTimeChange()">
+              <mat-option *ngFor="let item of timeSelects"
+                          [value]="item">{{ timeLabels[item] }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </form>
 
       </mat-card-content>

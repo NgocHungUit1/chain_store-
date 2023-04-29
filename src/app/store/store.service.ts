@@ -45,4 +45,9 @@ export class StoreService {
     return this.http.post(url, formData);
   }
 
+  updateInfo(formData) {
+    const url = environment.apiUrl + '/store/update-info';
+    return this.http.post(url, formData);
+  }
+
 }

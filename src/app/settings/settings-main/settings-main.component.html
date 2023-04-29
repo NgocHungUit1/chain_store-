@@ -10,7 +10,7 @@
     <mat-card class="time-filter-info">
       <mat-card-content>
         <mat-radio-group [(ngModel)]="settingsType"
-                         class="type-radio-group">
+                         class="type-radio-group" (change)="changeSettingType()">
           <mat-radio-button class="radio-button-report-type" value="transaction">
             Giao dịch
             <button mat-icon-button aria-label="add">
@@ -38,6 +38,14 @@
             Liên thông chi nhánh
             <button mat-icon-button aria-label="add">
               <mat-icon>open_in_full</mat-icon>
+            </button>
+          </mat-radio-button>
+
+          <mat-radio-button class="radio-button-report-type" value="store-info"
+                            *ngIf="this.storeFeatures.indexOf('logo') >= 0">
+            Lời chào trong hóa đơn
+            <button mat-icon-button aria-label="add">
+              <mat-icon>format_color_text</mat-icon>
             </button>
           </mat-radio-button>
 
@@ -187,6 +195,37 @@
                       <small
                         *ngIf="connectForm.controls['national_pharmacy_login_password'].hasError('required') && connectForm.controls['national_pharmacy_login_password'].touched"
                         class="text-danger support-text">Vui lòng điền mật khẩu kết nối.
+                      </small>
+                    </div>
+
+                    <!-- col half-->
+                    <div fxFlex.gt-sm="50" fxFlex.gt-xs="100" fxFlex="10">
+                      <button mat-raised-button color="primary"  type="submit"
+                              [disabled]="!connectForm.valid">
+                        <mat-icon>save</mat-icon>
+                        Lưu
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </mat-card-content>
+
+            </mat-card>
+
+            <mat-card *ngIf="settingsType === 'store-info' ">
+              <mat-card-content>
+                <form [formGroup]="storeForm" (ngSubmit)="saveStore()">
+
+                  <div fxLayout="row wrap">
+                    <!-- col full-->
+                    <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                      <mat-form-field>
+                        <input matInput placeholder="Lời chào chuỗi nhà thuốc trong hóa đơn bán"
+                               [formControl]="storeForm.controls['description']">
+                      </mat-form-field>
+                      <small
+                        *ngIf="storeForm.controls['description'].hasError('required') && storeForm.controls['description'].touched"
+                        class="text-danger support-text">Vui lòng điền thông tin.
                       </small>
                     </div>
 
