@@ -26,6 +26,8 @@ import {ProductService} from '../../product/product.service';
 import * as moment from 'moment';
 import {SelectionModel} from '@angular/cdk/collections';
 import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
+import {Store} from '../../store/store.model';
+import {StoreService} from '../../store/store.service';
 
 
 @Component({
@@ -49,7 +51,8 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     private service: InvoiceService,
     private fb: FormBuilder,
     private supplierSer: SupplierService,
-    private productSer: ProductService
+    private productSer: ProductService,
+    private storeSer: StoreService,
   ) {
     super();
   }
@@ -69,6 +72,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
   titleTimeChoose = 'Lựa chọn khác';
 
   currentDateFilter: DateFilter;
+  store: Store = null;
 
   columnsHeader = {
     '#': '#',
@@ -484,6 +488,9 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
       }
     });
 
+    this.storeSer.getDetail().subscribe(res => {
+      this.store = res;
+    });
   }
 
   refreshData() {

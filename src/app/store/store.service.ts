@@ -36,8 +36,8 @@ export class StoreService {
   }
 
   getDetail() {
-    const url = environment.apiUrl + '/store/get-detail'
-    return this.http.get<object>(url);
+    const url = environment.apiUrl + '/store/get-detail';
+    return this.http.get<Store>(url);
   }
 
   uploadLogo(formData) {

@@ -24,6 +24,8 @@ import {CustomerService} from '../../customer/customer.service';
 import * as moment from 'moment';
 import {SelectionModel} from '@angular/cdk/collections';
 import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
+import {StoreService} from '../../store/store.service';
+import {Store} from '../../store/store.model';
 
 @Component({
   selector: 'app-invoice-list',
@@ -48,6 +50,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     private router: Router,
     private productSer: ProductService,
     private customerSer: CustomerService,
+    private storeSer: StoreService
   ) {
     super();
   }
@@ -74,6 +77,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
 
   searchInvoiceForm = new FormControl();
 
+  store: Store = null;
 
   // second column
   TongTienHang = 0;
@@ -520,6 +524,10 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
       } else {
         this.toggleMore = false;
       }
+    });
+
+    this.storeSer.getDetail().subscribe(res => {
+      this.store = res;
     });
   }
 

@@ -6,4 +6,5 @@ export class Store {
   no: string;
   logo: string;
   description: string;
+  can_change_completed: number;
 }

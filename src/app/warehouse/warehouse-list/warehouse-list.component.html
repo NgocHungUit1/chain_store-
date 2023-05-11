@@ -393,7 +393,7 @@
                        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
                     <mat-tab-group style="width: 100%;">
                       <mat-tab label="Thông tin">
-                        <app-warehouse-info-tab [model]="element"
+                        <app-warehouse-info-tab *ngIf="store !== null" [model]="element" [store]="store"
                                                 [expandedElement]="element == expandedElement ? true : false"
                                                 (reload)="loadData();">
                         </app-warehouse-info-tab>

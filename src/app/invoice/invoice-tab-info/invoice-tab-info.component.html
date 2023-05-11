@@ -298,7 +298,7 @@
   <div fxLayout="row wrap">
     <div fxFlex="100">
       <button class="m-r-10" mat-raised-button color="primary"
-              [disabled]="checkPermissionDisable('Invoice.Update-Order') || !isAdminStore"
+              [disabled]="checkPermissionDisable('Invoice.Update-Order') || !isAdminStore || (this.store.can_change_completed == 0 && invoice.status == 10)"
               (click)="updateInvoice(invoice)">
         <mat-icon>edit</mat-icon>
         Cập nhật
@@ -319,10 +319,10 @@
       <!-- <button class="m-r-10" mat-raised-button color="info">
                 <mat-icon>file_copy</mat-icon> Xuất file
             </button> -->
-      <button class="m-r-10" mat-raised-button color="accent">
-        <mat-icon>file_copy</mat-icon>
-        Sao chép
-      </button>
+<!--      <button class="m-r-10" mat-raised-button color="accent">-->
+<!--        <mat-icon>file_copy</mat-icon>-->
+<!--        Sao chép-->
+<!--      </button>-->
       <button class="m-r-10" mat-raised-button color="accent" (click)="connect(invoice)"
               *ngIf="invoice.order_status === 'done' && invoice.national_pharmacy_no === null">
         <mat-icon>open_in_full</mat-icon>
@@ -340,7 +340,7 @@
       </button>
 
       <button class="m-r-10" mat-raised-button color="warn"
-              [disabled]="checkPermissionDisable('Invoice.Delete-Invoice') || !isAdminStore"
+              [disabled]="checkPermissionDisable('Invoice.Delete-Invoice') || !isAdminStore || (this.store.can_change_completed == 0 && invoice.status == 10)"
               (click)='deleteInvoice(invoice)'>
         <mat-icon>delete</mat-icon>
         Hủy bỏ

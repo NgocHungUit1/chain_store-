@@ -43,9 +43,9 @@
 
           <mat-radio-button class="radio-button-report-type" value="store-info"
                             *ngIf="this.storeFeatures.indexOf('logo') >= 0">
-            Lời chào trong hóa đơn
+            Cấu hình chung
             <button mat-icon-button aria-label="add">
-              <mat-icon>format_color_text</mat-icon>
+              <mat-icon>settings</mat-icon>
             </button>
           </mat-radio-button>
 
@@ -200,7 +200,7 @@
 
                     <!-- col half-->
                     <div fxFlex.gt-sm="50" fxFlex.gt-xs="100" fxFlex="10">
-                      <button mat-raised-button color="primary"  type="submit"
+                      <button mat-raised-button color="primary" type="submit"
                               [disabled]="!connectForm.valid">
                         <mat-icon>save</mat-icon>
                         Lưu
@@ -220,8 +220,8 @@
                     <!-- col full-->
                     <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
                       <mat-form-field>
-                        <input matInput placeholder="Lời chào chuỗi nhà thuốc trong hóa đơn bán"
-                               [formControl]="storeForm.controls['description']">
+                        <textarea matInput [rows]="3" placeholder="Lời chào chuỗi nhà thuốc trong hóa đơn bán"
+                                  [formControl]="storeForm.controls['description']"></textarea>
                       </mat-form-field>
                       <small
                         *ngIf="storeForm.controls['description'].hasError('required') && storeForm.controls['description'].touched"
@@ -229,9 +229,22 @@
                       </small>
                     </div>
 
+                    <div fxLayout="row wrap" class="line-option">
+                      <div fxFlex="60px" class="custom-toggle">
+                        <mat-slide-toggle
+                          [formControl]="storeForm.controls['can_change_completed']"
+                        ></mat-slide-toggle>
+                      </div>
+                      <div fxFlex="auto">
+                        <b>Thay đổi Hóa Đơn Bán/Nhập khi đã Hoàn Thành</b>
+                        <br>
+                        <span> Cho phép cập nhật/thay đổi các đơn Nhập hàng/Bán hàng khi trạng thái đã chuyển sang Hoàn Thành!</span>
+                      </div>
+                    </div>
+
                     <!-- col half-->
-                    <div fxFlex.gt-sm="50" fxFlex.gt-xs="100" fxFlex="10">
-                      <button mat-raised-button color="primary"  type="submit"
+                    <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                      <button mat-raised-button color="primary" type="submit"
                               [disabled]="!connectForm.valid">
                         <mat-icon>save</mat-icon>
                         Lưu

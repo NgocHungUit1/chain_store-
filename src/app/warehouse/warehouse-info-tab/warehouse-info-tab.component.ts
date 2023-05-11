@@ -8,6 +8,7 @@ import { WarehouseProductService } from '../warehouse-product.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OptionStoreService } from '../../common/option-store.service';
 import { PopupDeleteDialogComponent } from '../../common/popup-delete-dialog/popup-delete-dialog.component';
+import {Store} from '../../store/store.model';
 
 @Component({
   selector: 'app-warehouse-info-tab',
@@ -17,6 +18,7 @@ import { PopupDeleteDialogComponent } from '../../common/popup-delete-dialog/pop
 export class WarehouseInfoTabComponent implements OnChanges {
 
   @Input() model: Warehouse;
+  @Input() store: Store;
   @Input() expandedElement: boolean;
   @Output() reload: EventEmitter<any> = new EventEmitter();
 

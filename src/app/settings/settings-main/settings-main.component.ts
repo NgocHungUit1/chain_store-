@@ -81,6 +81,7 @@ export class SettingsMainComponent implements OnInit {
 
     this.storeForm = this.fb.group({
       description: ['', Validators.compose([Validators.required])],
+      can_change_completed: [false],
     });
 
     this.branchSer.getConnect().subscribe(res => {
@@ -94,7 +95,7 @@ export class SettingsMainComponent implements OnInit {
         this.imageButtons[0]['isShow'] = false;
       }
 
-      this.storeForm.patchValue({description: res['description']});
+      this.storeForm.patchValue({description: res['description'], can_change_completed: res['can_change_completed']});
 
       this.storeFeatures = res['features'];
     });
@@ -184,25 +185,29 @@ export class SettingsMainComponent implements OnInit {
   removeSelectedImage(index) {
     const removeImage = this.selectedFiles[index];
     this.selectedFiles.splice(index, 1);
+
     if (removeImage['id'].length > 0) {
       // this.productSer.removeImage(this.product_id, removeImage['id']).subscribe(res => {
       //   this.notifySer.notify('warning', 'Đã xóa hình ảnh!');
         this.reloadImageButtons();
+
       // });
     } else {
       this.reloadImageButtons();
     }
 
+    this.needToSaveLogo = true;
   }
 
   saveLogo() {
-    if (this.selectedFiles.length > 0) {
       /**
        * Upload product images
        */
       const formData = new FormData();
 
-      formData.append('file', this.selectedFiles[0].file);
+      if (this.selectedFiles.length > 0) {
+        formData.append('file', this.selectedFiles[0].file);
+      }
 
       this.storeSer.uploadLogo(formData).subscribe(res => {
         this.isLoadingResults = false;
@@ -213,9 +218,6 @@ export class SettingsMainComponent implements OnInit {
         }
         this.reloadImageButtons();
       });
-    } else {
-      this.isLoadingResults = false;
-    }
   }
 
   saveConnect() {

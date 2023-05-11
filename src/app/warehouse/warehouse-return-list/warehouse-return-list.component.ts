@@ -9,6 +9,8 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
 import {NotifierService} from 'angular-notifier';
 import {WarehouseService} from '../warehouse.service';
 import {Warehouse, WarehouseFilter} from '../warehouse.model';
+import {Store} from '../../store/store.model';
+import {StoreService} from '../../store/store.service';
 
 @Component({
   templateUrl: './warehouse-return-list.component.html',
@@ -27,7 +29,7 @@ export class WarehouseReturnListComponent extends ListComponentBase implements O
     private mainService: WarehouseService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
-    private notifyService: NotifierService
+    private storeSer: StoreService
   ) {
     super();
   }
@@ -62,6 +64,7 @@ export class WarehouseReturnListComponent extends ListComponentBase implements O
   ];
   dataSource = [];
   expandedElement: Warehouse | null;
+  store: Store = null;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -101,5 +104,9 @@ export class WarehouseReturnListComponent extends ListComponentBase implements O
   ngOnInit() {
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
+
+    this.storeSer.getDetail().subscribe(res => {
+      this.store = res;
+    });
   }
 }

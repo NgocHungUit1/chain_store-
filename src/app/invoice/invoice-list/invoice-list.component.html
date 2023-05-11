@@ -289,7 +289,7 @@
                        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
                     <mat-tab-group style="width: 100%;">
                       <mat-tab label="Thông tin">
-                        <app-invoice-tab-info [invoice]="element"
+                        <app-invoice-tab-info *ngIf="this.store !== null" [invoice]="element" [store]="store"
                                               [expandedElement]="element == expandedElement ? true : false"
                                               (reload)="loadData();"
                         ></app-invoice-tab-info>
