@@ -1130,7 +1130,7 @@ export class SaleMainComponent implements OnInit {
           }
           printContent += '</table>';
           if (this.description !== null && this.description.length > 0) {
-            printContent += '<p style="text-align:center; font-weight: bold;font-size: 1.1rem" >' + this.description + '</p>';
+            printContent += '<p style="text-align:center; font-style: italic;" >' + this.description + '</p>';
           } else {
             printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
           }

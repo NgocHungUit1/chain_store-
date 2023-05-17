@@ -80,7 +80,7 @@ export class SettingsMainComponent implements OnInit {
     });
 
     this.storeForm = this.fb.group({
-      description: ['', Validators.compose([Validators.required])],
+      description: [''],
       can_change_completed: [false],
     });
 
