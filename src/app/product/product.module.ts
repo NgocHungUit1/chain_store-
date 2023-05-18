@@ -27,6 +27,7 @@ import { IdCodeFormDialogComponent } from './id-code-form-dialog/id-code-form-di
 import { ViewIdCodeFormDialogComponent } from './view-id-code-form-dialog/view-id-code-form-dialog.component';
 import {InputSelectAllModule} from '../common/input-select-all/input-select-all.module';
 import {NgxMaskModule} from 'ngx-mask';
+import {NgxExtendedPdfViewerModule} from 'ngx-extended-pdf-viewer';
 
 @NgModule({
   declarations: [
@@ -59,7 +60,8 @@ import {NgxMaskModule} from 'ngx-mask';
     DemoMaterialModule,
     AngularImageViewerModule,
     InputSelectAllModule,
-    NgxMaskModule
+    NgxMaskModule,
+    NgxExtendedPdfViewerModule
   ],
   entryComponents: [
     ProductMedicineDialogComponent,

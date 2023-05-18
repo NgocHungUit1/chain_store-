@@ -29,6 +29,7 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
   nameStore: string;
   money: string;
   type: string;
+  base64 = null;
 
   constructor(
     public dialogRef: MatDialogRef<ViewIdCodeFormDialogComponent>,
@@ -38,9 +39,11 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
     private customerService: CustomerService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
     this.local_data = {...data};
-    this.product_id = this.local_data.product_id;
-    this.option = this.local_data.option;
-    this.type = this.local_data.type;
+    // this.product_id = this.local_data.product_id;
+    // this.option = this.local_data.option;
+    // this.type = this.local_data.type;
+    console.log(this.local_data);
+    this.base64 = this.local_data.base64;
   }
 
   onNoClick(): void {
@@ -48,40 +51,40 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // <img id="barcode"/>
-    this.productSerivce.getDetail(this.product_id).subscribe(res => {
-      this.product = <Product>res;
-
-      if (this.product.product_name.length > 25) {
-        this.product.product_name = this.product.product_name.substring(0, 25) + '...';
-      }
-
-      if (this.option.in_ten_cua_hang === 'yes') {
-        this.customerService.getNameStore().subscribe(name => {
-          // this.nameStore = name;
-          this.nameStore = name.substring(0, 24);
-        });
-      }
-      if (this.option.in_gia === 'yes') {
-        this.money = numeral(this.product.sell_price).format('0,0');
-        if (this.option.in_vnd === 'yes') {
-          this.money = this.money + '/VNĐ';
-        }
-      }
-      if (this.option.in_don_vi === 'yes') {
-        this.product.product_name = this.product.product_name + ' (' + this.product.base_unit + ')';
-      }
-      let barcode = this.product.barcode;
-      if (this.option.in_ma === 'ma_hang') {
-        barcode = this.product.product_no;
-      }
-      JsBarcode('#barcode')
-        .options({font: 'OCR-B'}) // Will affect all barcodes
-        .CODE128(barcode, {fontSize: 22, textMargin: 2, width: 3, height: 50, lineColor: '#000000', marginLeft: 0, marginRight: 0})
-        // .blank(20) // Create space between the barcodes
-        // .EAN5('12345', {height: 85, textPosition: 'top', fontSize: 16, marginTop: 15})
-        .render();
-    });
+    // // <img id="barcode"/>
+    // this.productSerivce.getDetail(this.product_id).subscribe(res => {
+    //   this.product = <Product>res;
+    //
+    //   if (this.product.product_name.length > 25) {
+    //     this.product.product_name = this.product.product_name.substring(0, 25) + '...';
+    //   }
+    //
+    //   if (this.option.in_ten_cua_hang === 'yes') {
+    //     this.customerService.getNameStore().subscribe(name => {
+    //       // this.nameStore = name;
+    //       this.nameStore = name.substring(0, 24);
+    //     });
+    //   }
+    //   if (this.option.in_gia === 'yes') {
+    //     this.money = numeral(this.product.sell_price).format('0,0');
+    //     if (this.option.in_vnd === 'yes') {
+    //       this.money = this.money + '/VNĐ';
+    //     }
+    //   }
+    //   if (this.option.in_don_vi === 'yes') {
+    //     this.product.product_name = this.product.product_name + ' (' + this.product.base_unit + ')';
+    //   }
+    //   let barcode = this.product.barcode;
+    //   if (this.option.in_ma === 'ma_hang') {
+    //     barcode = this.product.product_no;
+    //   }
+    //   JsBarcode('#barcode')
+    //     .options({font: 'OCR-B'}) // Will affect all barcodes
+    //     .CODE128(barcode, {fontSize: 22, textMargin: 2, width: 3, height: 50, lineColor: '#000000', marginLeft: 0, marginRight: 0})
+    //     // .blank(20) // Create space between the barcodes
+    //     // .EAN5('12345', {height: 85, textPosition: 'top', fontSize: 16, marginTop: 15})
+    //     .render();
+    // });
 
   }
 

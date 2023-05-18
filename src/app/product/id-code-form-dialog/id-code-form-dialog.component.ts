@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { NotifierService } from 'angular-notifier';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ViewIdCodeFormDialogComponent } from '../view-id-code-form-dialog/view-id-code-form-dialog.component';
+import {ProductService} from '../product.service';
 
 @Component({
   selector: 'app-id-code-form-dialog',
@@ -17,6 +18,7 @@ export class IdCodeFormDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<IdCodeFormDialogComponent>,
     public notifySer: NotifierService,
+    public productSer: ProductService,
     private fb: FormBuilder,
     private dialog: MatDialog,
   @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
@@ -63,23 +65,26 @@ export class IdCodeFormDialogComponent implements OnInit {
 
   openViewIdCodeFormDialog(type: string) {
     const data = this.form.getRawValue();
+    data['type'] = type;
+
+    this.productSer.getPdfBarcode(this.product_id, data).subscribe(res => {
+
+      const obj = {
+        base64: res,
+      };
+
+      const dialogRef = this.dialog.open(ViewIdCodeFormDialogComponent, {
+        data: obj,
+        width: '500px',
+        height: '300px',
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+
+      });
+    });
     // 130/83
 
-    const obj = {
-      product_id: this.product_id,
-      option: data,
-      type: type,
-    };
-
-    const dialogRef = this.dialog.open(ViewIdCodeFormDialogComponent, {
-      data: obj,
-      width: '500px',
-      minHeight: '60%',
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-
-    });
   }
 
 }

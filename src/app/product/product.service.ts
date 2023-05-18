@@ -229,6 +229,11 @@ export class ProductService {
     const url = environment.apiUrl + '/product/get-parcel?id=' + id;
     return this.http.get(url);
   }
+
+  getPdfBarcode(id: string, data = {}) {
+    const url = environment.apiUrl + '/product/print-pdf-barcode?id=' + id;
+    return this.http.post(url, data);
+  }
 }
 
 

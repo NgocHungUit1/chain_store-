@@ -1,46 +1,6 @@
-#contentToConvert {
-  text-align: center;
-
+::ng-deep .cdk-overlay-container .mat-dialog-container {
+  padding: 0px;
 }
-
-.name-store {
-  max-width: 450px;
-  margin: auto;
-  font-size: 20px;
-}
-
-#image-print {
-  max-width: 440px;
-  background-color: white;
-  /*margin: auto;*/
-  /*border: 1px dotted black;*/
-}
-
-.product-name {
-  max-width: 450px;
-  word-break: break-all;
-  margin: auto;
-  color: black;
-  font-size: 25px;
-  margin-bottom: 12px;
-  font-weight: 600;
-}
-
-.product-money {
-  color: black;
-  font-size: 25px;
-}
-
-/*img {*/
-/*  image-rendering: auto;*/
-/*  image-rendering: crisp-edges;*/
-/*  image-rendering: pixelated;*/
-/*}*/
-
-#barcode {
-  margin-bottom: -11px;
-}
-
-button {
-  margin-right:10px
+::ng-deep #outerContainer .hiddenSmallView, ::ng-deep #outerContainer .hiddenSmallView *  {
+  display: block!important;
 }

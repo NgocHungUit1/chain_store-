@@ -1,42 +1,24 @@
 <div id="contentToConvert">
   <div id="image-print" #container>
-    <b class="name-store" *ngIf="nameStore !== undefined" >{{ nameStore }}</b>
-    <b class="name-store" *ngIf="nameStore == undefined"> &nbsp; </b>
-    <br>
-    <p class="product-name">{{ this.product?.product_name }}</p>
-    <img id="barcode" alt=""/><br>
-    <b class="product-money" *ngIf="money !== undefined">{{ money }}</b>
+    <ngx-extended-pdf-viewer [base64Src]="this.base64"
+                             [useBrowserLocale]="true"
+                             [customToolbar]="additionalButtons"
+                             [handTool]="true"
+                             [showPrintButton]="true"
+                             [height]="'90vh'"></ngx-extended-pdf-viewer>
+    <ng-template #additionalButtons>
+      <div id="toolbarViewer">
+        <div id="toolbarViewerLeft">
+          <pdf-toggle-sidebar></pdf-toggle-sidebar>
+          <pdf-paging-area></pdf-paging-area>
+        </div>
+        <div id="toolbarViewerRight">
+          <pdf-print></pdf-print>
+          <pdf-download></pdf-download>
+        </div>
+      </div>
+    </ng-template>
   </div>
 </div>
 <br>
 <!--disabled="disabled"-->
-
-
-<div fxLayout="row wrap">
-  <div fxFlex="100">
-
-    <button mat-raised-button color="primary" [matMenuTriggerFor]="createMenu" style="margin-right: 10px">
-      <mat-icon>cloud_download</mat-icon>
-      Download
-    </button>
-    <mat-menu #createMenu="matMenu">
-      <button mat-menu-item class="button-card" (click)="generateImage()" color="primary">
-        <mat-icon>image</mat-icon>
-        Image
-      </button>
-      <button mat-menu-item class="button-card" (click)="generatePDF()" color="primary">
-        <mat-icon>picture_as_pdf</mat-icon>
-        File Pdf
-      </button>
-    </mat-menu>
-
-
-    <button class="m-r-10" mat-raised-button (click)="onNoClick()" tabindex="-1">
-      <mat-icon>cancel</mat-icon>
-      Bỏ qua
-    </button>
-
-
-  </div>
-</div>
-
