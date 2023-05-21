@@ -39,10 +39,9 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
     private customerService: CustomerService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
     this.local_data = {...data};
-    // this.product_id = this.local_data.product_id;
-    // this.option = this.local_data.option;
-    // this.type = this.local_data.type;
-    console.log(this.local_data);
+    this.product_id = this.local_data.product_id;
+    this.option = this.local_data.option;
+    this.type = this.local_data.type;
     this.base64 = this.local_data.base64;
   }
 
@@ -84,6 +83,8 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
     //     // .blank(20) // Create space between the barcodes
     //     // .EAN5('12345', {height: 85, textPosition: 'top', fontSize: 16, marginTop: 15})
     //     .render();
+    //
+    //   this.generatePDF();
     // });
 
   }
@@ -118,11 +119,12 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
 
   }
 
+
   generatePDF() {
     const product_name = this.product?.product_name;
     const so_luong = this.option.so_luong;
     const type = this.type;
-    setTimeout(() => domtoimage.toPng(this.container.nativeElement)
+    domtoimage.toPng(this.container.nativeElement)
       .then(function (dataUrl) {
         const img = new Image();
         img.src = dataUrl;
@@ -159,7 +161,8 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
               pdf.addImage(img.src, 'PNG', 35, position, 35, height);
             }
           }
-          pdf.save(product_name + '.pdf');
+          // pdf.save(product_name + '.pdf');
+          this.base64 = pdf.output('datauristring').replace('data:application/pdf;filename=generated.pdf;base64,', '');
 
         } // END '104x22'
 
@@ -190,8 +193,8 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
             pdf.addPage(format, 'l');
             pdf.addImage(img.src, 'PNG', 0, position, 35, height);
           }
-          pdf.save(product_name + '.pdf');
-
+          // pdf.save(product_name + '.pdf');
+          this.base64 = pdf.output('blob');
         } // END '72x22'
 
 
@@ -221,8 +224,9 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
             pdf.addPage(format, 'l');
             pdf.addImage(img.src, 'PNG', 0, position, 36, height);
           }
-          pdf.save(product_name + '.pdf');
+          // pdf.save(product_name + '.pdf');
 
+          this.base64 = pdf.output('datauri');
         } // END '74x22'
 
 
@@ -248,8 +252,9 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
             }
           }
 
-          pdf.save(product_name + '.pdf');
+          // pdf.save(product_name + '.pdf');
 
+          this.base64 = pdf.output('datauri');
         } // END '35x22'
 
 
@@ -263,10 +268,7 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
         // pdf.addImage(img.src, 'PNG', 70, position, 35, height);
 
 
-      })
-      .catch(function (error) {
-        console.error('oops, something went wrong!', error);
-      }), 500);
+      });
 
   }
 

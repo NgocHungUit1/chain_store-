@@ -71,12 +71,16 @@ export class IdCodeFormDialogComponent implements OnInit {
 
       const obj = {
         base64: res,
+        // product_id: this.product_id,
+        // option: data,
+        // type: type,
       };
 
       const dialogRef = this.dialog.open(ViewIdCodeFormDialogComponent, {
         data: obj,
         width: '500px',
         height: '300px',
+        panelClass: 'rx20',
       });
 
       dialogRef.afterClosed().subscribe(result => {
