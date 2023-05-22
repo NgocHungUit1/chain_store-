@@ -13,7 +13,7 @@ import {ProductService} from '../product.service';
 export class IdCodeFormDialogComponent implements OnInit {
 
   local_data: any;
-  product_id: string;
+  printProductData: [];
 
   constructor(
     public dialogRef: MatDialogRef<IdCodeFormDialogComponent>,
@@ -23,7 +23,7 @@ export class IdCodeFormDialogComponent implements OnInit {
     private dialog: MatDialog,
   @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
     this.local_data = {...data};
-    this.product_id = this.local_data.product_id;
+    this.printProductData = this.local_data.printProductData;
   }
 
   public form: FormGroup;
@@ -35,7 +35,6 @@ export class IdCodeFormDialogComponent implements OnInit {
 
 
   ngOnInit(): void {
-    // console.log(this.product_id);
     this.form = this.fb.group({
       so_luong: [
         30,
@@ -57,6 +56,15 @@ export class IdCodeFormDialogComponent implements OnInit {
       ],
     });
 
+    let totalPrint = 0;
+    this.printProductData.forEach(item => {
+      totalPrint = totalPrint + item['print_quantity'];
+    });
+    this.form.patchValue({so_luong: totalPrint});
+    if (this.printProductData.length > 1) {
+      this.form.controls['so_luong'].disable();
+    }
+
   }
 
   submit() {
@@ -66,14 +74,12 @@ export class IdCodeFormDialogComponent implements OnInit {
   openViewIdCodeFormDialog(type: string) {
     const data = this.form.getRawValue();
     data['type'] = type;
+    data['productData'] = this.printProductData;
 
-    this.productSer.getPdfBarcode(this.product_id, data).subscribe(res => {
+    this.productSer.getPdfBarcode(data).subscribe(res => {
 
       const obj = {
-        base64: res,
-        // product_id: this.product_id,
-        // option: data,
-        // type: type,
+        base64: res
       };
 
       const dialogRef = this.dialog.open(ViewIdCodeFormDialogComponent, {

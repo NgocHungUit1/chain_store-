@@ -20,7 +20,7 @@ const JsBarcode = require('jsbarcode');
 
 export class ViewIdCodeFormDialogComponent implements OnInit {
 
-  @ViewChild('container') container;
+  // @ViewChild('container') container;
 
   local_data: any;
   product_id: string;
@@ -89,188 +89,188 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
 
   }
 
-  generateImage() {
-    const product_name = this.product?.product_name;
-    const node = this.container.nativeElement;
-    const scale = 750 / node.offsetWidth;
-    // https://github.com/tsayen/dom-to-image/issues/69
-    // {
-    //   height: node.offsetHeight * scale,
-    //     width: node.offsetWidth * scale,
-    //   style: {
-    //   transform: 'scale(' + scale + ')',
-    //     transformOrigin: 'top left',
-    //     width: node.offsetWidth + 'px',
-    //     height: node.offsetHeight + 'px',
-    // }
-    // }
-    setTimeout(() => domtoimage.toPng(node).then(function (dataUrl) {
-      const img = new Image();
-      img.src = dataUrl;
-
-      const link = document.createElement('a');
-      link.download = product_name + '.png';
-      link.href = dataUrl;
-      link.click();
-    })
-      .catch(function (error) {
-        console.error('oops, something went wrong!', error);
-      }), 500);
-
-  }
-
-
-  generatePDF() {
-    const product_name = this.product?.product_name;
-    const so_luong = this.option.so_luong;
-    const type = this.type;
-    domtoimage.toPng(this.container.nativeElement)
-      .then(function (dataUrl) {
-        const img = new Image();
-        img.src = dataUrl;
-
-        if (type === '104x22') {
-          const format = [105, 22];
-          const pdf = new jsPDF('l', 'mm', format);
-          let position = 2;
-          let height = 18;
-          if (product_name.length > 40) {
-            position = 1;
-            height = 20;
-          }
-          const phan_du = so_luong % 3;
-          const so_trang = Math.floor(so_luong / 3);
-
-          if (so_trang > 0) {
-            for (let i = 1; i <= so_trang; i++) {
-              pdf.addImage(img.src, 'PNG', 0, position, 35, height);
-              pdf.addImage(img.src, 'PNG', 35, position, 35, height);
-              pdf.addImage(img.src, 'PNG', 70, position, 35, height);
-              if (so_trang - i > 0) {
-                pdf.addPage(format, 'l');
-              }
-            }
-          }
-
-          if (phan_du > 0) {
-            pdf.addPage(format, 'l');
-            if (phan_du === 1) {
-              pdf.addImage(img.src, 'PNG', 0, position, 35, height);
-            } else {
-              pdf.addImage(img.src, 'PNG', 0, position, 35, height);
-              pdf.addImage(img.src, 'PNG', 35, position, 35, height);
-            }
-          }
-          // pdf.save(product_name + '.pdf');
-          this.base64 = pdf.output('datauristring').replace('data:application/pdf;filename=generated.pdf;base64,', '');
-
-        } // END '104x22'
+  // generateImage() {
+  //   const product_name = this.product?.product_name;
+  //   const node = this.container.nativeElement;
+  //   const scale = 750 / node.offsetWidth;
+  //   // https://github.com/tsayen/dom-to-image/issues/69
+  //   // {
+  //   //   height: node.offsetHeight * scale,
+  //   //     width: node.offsetWidth * scale,
+  //   //   style: {
+  //   //   transform: 'scale(' + scale + ')',
+  //   //     transformOrigin: 'top left',
+  //   //     width: node.offsetWidth + 'px',
+  //   //     height: node.offsetHeight + 'px',
+  //   // }
+  //   // }
+  //   setTimeout(() => domtoimage.toPng(node).then(function (dataUrl) {
+  //     const img = new Image();
+  //     img.src = dataUrl;
+  //
+  //     const link = document.createElement('a');
+  //     link.download = product_name + '.png';
+  //     link.href = dataUrl;
+  //     link.click();
+  //   })
+  //     .catch(function (error) {
+  //       console.error('oops, something went wrong!', error);
+  //     }), 500);
+  //
+  // }
 
 
-        if (type === '72x22') {
-          const format = [70, 22];
-          const pdf = new jsPDF('l', 'mm', format);
-          let position = 2;
-          let height = 18;
-          if (product_name.length > 40) {
-            position = 1;
-            height = 20;
-          }
-          const phan_du = so_luong % 2;
-          const so_trang = Math.floor(so_luong / 2);
-
-          if (so_trang > 0) {
-            for (let i = 1; i <= so_trang; i++) {
-              pdf.addImage(img.src, 'PNG', 0, position, 35, height);
-              pdf.addImage(img.src, 'PNG', 35, position, 35, height);
-              if (so_trang - i > 0) {
-                pdf.addPage(format, 'l');
-              }
-            }
-          }
-
-          if (phan_du > 0) {
-            pdf.addPage(format, 'l');
-            pdf.addImage(img.src, 'PNG', 0, position, 35, height);
-          }
-          // pdf.save(product_name + '.pdf');
-          this.base64 = pdf.output('blob');
-        } // END '72x22'
-
-
-        if (type === '74x22') {
-          const format = [74, 22];
-          const pdf = new jsPDF('l', 'mm', format);
-          let position = 2;
-          let height = 18;
-          if (product_name.length > 40) {
-            position = 1;
-            height = 20;
-          }
-          const phan_du = so_luong % 2;
-          const so_trang = Math.floor(so_luong / 2);
-
-          if (so_trang > 0) {
-            for (let i = 1; i <= so_trang; i++) {
-              pdf.addImage(img.src, 'PNG', 0, position, 36, height);
-              pdf.addImage(img.src, 'PNG', 38, position, 36, height);
-              if (so_trang - i > 0) {
-                pdf.addPage(format, 'l');
-              }
-            }
-          }
-
-          if (phan_du > 0) {
-            pdf.addPage(format, 'l');
-            pdf.addImage(img.src, 'PNG', 0, position, 36, height);
-          }
-          // pdf.save(product_name + '.pdf');
-
-          this.base64 = pdf.output('datauri');
-        } // END '74x22'
-
-
-        if (type === '35x22') {
-          const format = [40, 22];
-          const pdf = new jsPDF('l', 'mm', format);
-          let position = 2;
-          let height = 18;
-          if (product_name.length > 40) {
-            position = 1;
-            height = 20;
-          }
-          const so_trang = Math.floor(so_luong);
-
-          if (so_trang > 0) {
-            for (let i = 1; i <= so_trang; i++) {
-              pdf.addImage(img.src, 'PNG', 2, position, 35, height);
-              // pdf.addImage(img.src, 'PNG', 35, position, 35, height);
-              // pdf.addImage(img.src, 'PNG', 70, position, 35, height);
-              if (so_trang - i > 0) {
-                pdf.addPage(format, 'l');
-              }
-            }
-          }
-
-          // pdf.save(product_name + '.pdf');
-
-          this.base64 = pdf.output('datauri');
-        } // END '35x22'
-
-
-        // pdf.addImage(img.src, 'PNG', 0, position, 35, height);
-        // pdf.addImage(img.src, 'PNG', 35, position, 35, height);
-        // pdf.addImage(img.src, 'PNG', 70, position, 35, height);
-        //
-        // pdf.addPage([105, 22], 'l');
-        // pdf.addImage(img.src, 'PNG', 0, position, 35, height);
-        // pdf.addImage(img.src, 'PNG', 35, position, 35, height);
-        // pdf.addImage(img.src, 'PNG', 70, position, 35, height);
-
-
-      });
-
-  }
+  // generatePDF() {
+  //   const product_name = this.product?.product_name;
+  //   const so_luong = this.option.so_luong;
+  //   const type = this.type;
+  //   domtoimage.toPng(this.container.nativeElement)
+  //     .then(function (dataUrl) {
+  //       const img = new Image();
+  //       img.src = dataUrl;
+  //
+  //       if (type === '104x22') {
+  //         const format = [105, 22];
+  //         const pdf = new jsPDF('l', 'mm', format);
+  //         let position = 2;
+  //         let height = 18;
+  //         if (product_name.length > 40) {
+  //           position = 1;
+  //           height = 20;
+  //         }
+  //         const phan_du = so_luong % 3;
+  //         const so_trang = Math.floor(so_luong / 3);
+  //
+  //         if (so_trang > 0) {
+  //           for (let i = 1; i <= so_trang; i++) {
+  //             pdf.addImage(img.src, 'PNG', 0, position, 35, height);
+  //             pdf.addImage(img.src, 'PNG', 35, position, 35, height);
+  //             pdf.addImage(img.src, 'PNG', 70, position, 35, height);
+  //             if (so_trang - i > 0) {
+  //               pdf.addPage(format, 'l');
+  //             }
+  //           }
+  //         }
+  //
+  //         if (phan_du > 0) {
+  //           pdf.addPage(format, 'l');
+  //           if (phan_du === 1) {
+  //             pdf.addImage(img.src, 'PNG', 0, position, 35, height);
+  //           } else {
+  //             pdf.addImage(img.src, 'PNG', 0, position, 35, height);
+  //             pdf.addImage(img.src, 'PNG', 35, position, 35, height);
+  //           }
+  //         }
+  //         // pdf.save(product_name + '.pdf');
+  //         this.base64 = pdf.output('datauristring').replace('data:application/pdf;filename=generated.pdf;base64,', '');
+  //
+  //       } // END '104x22'
+  //
+  //
+  //       if (type === '72x22') {
+  //         const format = [70, 22];
+  //         const pdf = new jsPDF('l', 'mm', format);
+  //         let position = 2;
+  //         let height = 18;
+  //         if (product_name.length > 40) {
+  //           position = 1;
+  //           height = 20;
+  //         }
+  //         const phan_du = so_luong % 2;
+  //         const so_trang = Math.floor(so_luong / 2);
+  //
+  //         if (so_trang > 0) {
+  //           for (let i = 1; i <= so_trang; i++) {
+  //             pdf.addImage(img.src, 'PNG', 0, position, 35, height);
+  //             pdf.addImage(img.src, 'PNG', 35, position, 35, height);
+  //             if (so_trang - i > 0) {
+  //               pdf.addPage(format, 'l');
+  //             }
+  //           }
+  //         }
+  //
+  //         if (phan_du > 0) {
+  //           pdf.addPage(format, 'l');
+  //           pdf.addImage(img.src, 'PNG', 0, position, 35, height);
+  //         }
+  //         // pdf.save(product_name + '.pdf');
+  //         this.base64 = pdf.output('blob');
+  //       } // END '72x22'
+  //
+  //
+  //       if (type === '74x22') {
+  //         const format = [74, 22];
+  //         const pdf = new jsPDF('l', 'mm', format);
+  //         let position = 2;
+  //         let height = 18;
+  //         if (product_name.length > 40) {
+  //           position = 1;
+  //           height = 20;
+  //         }
+  //         const phan_du = so_luong % 2;
+  //         const so_trang = Math.floor(so_luong / 2);
+  //
+  //         if (so_trang > 0) {
+  //           for (let i = 1; i <= so_trang; i++) {
+  //             pdf.addImage(img.src, 'PNG', 0, position, 36, height);
+  //             pdf.addImage(img.src, 'PNG', 38, position, 36, height);
+  //             if (so_trang - i > 0) {
+  //               pdf.addPage(format, 'l');
+  //             }
+  //           }
+  //         }
+  //
+  //         if (phan_du > 0) {
+  //           pdf.addPage(format, 'l');
+  //           pdf.addImage(img.src, 'PNG', 0, position, 36, height);
+  //         }
+  //         // pdf.save(product_name + '.pdf');
+  //
+  //         this.base64 = pdf.output('datauri');
+  //       } // END '74x22'
+  //
+  //
+  //       if (type === '35x22') {
+  //         const format = [40, 22];
+  //         const pdf = new jsPDF('l', 'mm', format);
+  //         let position = 2;
+  //         let height = 18;
+  //         if (product_name.length > 40) {
+  //           position = 1;
+  //           height = 20;
+  //         }
+  //         const so_trang = Math.floor(so_luong);
+  //
+  //         if (so_trang > 0) {
+  //           for (let i = 1; i <= so_trang; i++) {
+  //             pdf.addImage(img.src, 'PNG', 2, position, 35, height);
+  //             // pdf.addImage(img.src, 'PNG', 35, position, 35, height);
+  //             // pdf.addImage(img.src, 'PNG', 70, position, 35, height);
+  //             if (so_trang - i > 0) {
+  //               pdf.addPage(format, 'l');
+  //             }
+  //           }
+  //         }
+  //
+  //         // pdf.save(product_name + '.pdf');
+  //
+  //         this.base64 = pdf.output('datauri');
+  //       } // END '35x22'
+  //
+  //
+  //       // pdf.addImage(img.src, 'PNG', 0, position, 35, height);
+  //       // pdf.addImage(img.src, 'PNG', 35, position, 35, height);
+  //       // pdf.addImage(img.src, 'PNG', 70, position, 35, height);
+  //       //
+  //       // pdf.addPage([105, 22], 'l');
+  //       // pdf.addImage(img.src, 'PNG', 0, position, 35, height);
+  //       // pdf.addImage(img.src, 'PNG', 35, position, 35, height);
+  //       // pdf.addImage(img.src, 'PNG', 70, position, 35, height);
+  //
+  //
+  //     });
+  //
+  // }
 
 
 }

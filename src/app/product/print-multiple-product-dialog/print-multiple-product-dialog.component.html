@@ -1,0 +1,61 @@
+<h2 mat-dialog-title><strong>Chọn số lượng in</strong></h2>
+
+<div mat-dialog-content>
+  <div class="table-container">
+    <div class="table-loading-shade" *ngIf="isLoadingResults">
+      <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+    </div>
+    <div class=" table-responsive">
+      <table mat-table [dataSource]="this.dataSource">
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let row; let i = index;">
+            <a mat-button
+               (click)="remove(i)">
+              <mat-icon>delete_forever</mat-icon>
+            </a>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="product_no">
+          <th mat-header-cell *matHeaderCellDef> Mã hàng</th>
+          <td mat-cell *matCellDef="let row"> {{row.product_no}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="product_name">
+          <th mat-header-cell *matHeaderCellDef> Tên hàng</th>
+          <td mat-cell *matCellDef="let row"> {{row.product_name}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="quantity">
+          <th mat-header-cell *matHeaderCellDef> Số lượng</th>
+          <td mat-cell *matCellDef="let row; let i = index;">
+            <mat-form-field>
+              <input type="number" class="text-right" autocomplete="off" matInput
+                                                                    [(ngModel)]="this.tempData[i]['print_quantity']"/>
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="['actions', 'product_no', 'product_name', 'quantity']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['actions', 'product_no', 'product_name', 'quantity']"></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button class="m-r-10" mat-raised-button color="primary" (click)="openViewIdCodeFormDialog()">
+    <mat-icon>print</mat-icon>
+    In tem mã
+  </button>
+
+  <button class="m-r-10" mat-raised-button color="grey" mat-dialog-close>
+    <mat-icon>cancel</mat-icon>
+    Bỏ qua
+  </button>
+</div>
+
+
+

@@ -1,0 +1,28 @@
+mat-card-content.mat-card-content {
+  padding: 10px !important;
+}
+
+.text-card {
+  position: absolute;
+  margin-left: 10px;
+}
+
+.button-card {
+  position: relative;
+  bottom: 10px;
+  margin-left: 10px;
+}
+
+.mat-column-actions, .mat-column-product_no, .mat-column-print_quantity {
+  flex: 1 0 0%;
+}
+.mat-column-product_name {
+  flex: 3 0 0%;
+}
+table {
+  width: 100%;
+}
+tr.mat-header-row:nth-child(1) {
+  height: 45px !important;
+  background-color: #dcf4fc;
+}

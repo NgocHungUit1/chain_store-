@@ -81,21 +81,21 @@
         <mat-icon>menu</mat-icon>
       </button>
 
-      <div class="header-filter group-button" *ngIf="toggleMore" >
-        <button mat-raised-button color="warn" (click)="lockSelect()" class="m-r-5 padding-x-10">
-          <mat-icon>lock</mat-icon>
-          Tạm ngừng
-        </button>
-        <button mat-raised-button color="accent" (click)="activateSelect()" class="m-r-5 padding-x-10">
-          <mat-icon>lock_open</mat-icon>
-          Kích hoạt
-        </button>
+<!--      <div class="header-filter group-button" *ngIf="toggleMore" >-->
+<!--        <button mat-raised-button color="warn" (click)="lockSelect()" class="m-r-5 padding-x-10">-->
+<!--          <mat-icon>lock</mat-icon>-->
+<!--          Tạm ngừng-->
+<!--        </button>-->
+<!--        <button mat-raised-button color="accent" (click)="activateSelect()" class="m-r-5 padding-x-10">-->
+<!--          <mat-icon>lock_open</mat-icon>-->
+<!--          Kích hoạt-->
+<!--        </button>-->
 
-        <button mat-raised-button color="warn" (click)="deleteSelect()" class="m-r-5 padding-x-10">
-          <mat-icon>delete</mat-icon>
-          Xóa
-        </button>
-      </div>
+<!--        <button mat-raised-button color="warn" (click)="deleteSelect()" class="m-r-5 padding-x-10">-->
+<!--          <mat-icon>delete</mat-icon>-->
+<!--          Xóa-->
+<!--        </button>-->
+<!--      </div>-->
 
       <label class="font-18">Sản phẩm</label>
 
@@ -110,6 +110,31 @@
       </div>
 
       <span fxFlex="1 1 0%"></span>
+      <button mat-raised-button  class="m-r-5 padding-x-10" *ngIf="toggleMore" [matMenuTriggerFor]="menuActions" [disabled]="this.selection.selected.length === 0">
+        Xử lý <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menuActions="matMenu">
+        <button mat-menu-item
+                (click)="openPrintMultipleProduct()">
+          <mat-icon>print</mat-icon>
+          In tem mã
+        </button>
+
+        <button  mat-menu-item (click)="lockSelect()">
+          <mat-icon>lock</mat-icon>
+          Tạm ngừng
+        </button>
+        <button mat-menu-item (click)="activateSelect()">
+          <mat-icon>lock_open</mat-icon>
+          Kích hoạt
+        </button>
+
+        <button mat-menu-item (click)="deleteSelect()">
+          <mat-icon>delete</mat-icon>
+          Xóa
+        </button>
+      </mat-menu>
+
       <button mat-raised-button color="accent" (click)="openUploadDialog();" class="m-r-5 padding-x-10">
         <mat-icon>cloud_upload</mat-icon>
         Tải lên

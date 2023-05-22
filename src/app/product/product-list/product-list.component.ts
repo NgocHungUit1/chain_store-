@@ -20,6 +20,7 @@ import {Group, GroupFilter} from '../group.model';
 import {SelectionModel} from '@angular/cdk/collections';
 import {Warehouse} from '../../warehouse/warehouse.model';
 import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
+import {PrintMultipleProductDialogComponent} from '../print-multiple-product-dialog/print-multiple-product-dialog.component';
 
 
 @Component({
@@ -161,7 +162,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row?.id + 1}`;
   }
 
-  lockSelect(){
+  lockSelect() {
     const obj = {
       action: 'Delete',
       title: 'Xác nhận tạm ngừng danh sách đã chọn .',
@@ -191,6 +192,18 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
 
         });
       }
+    });
+  }
+
+  openPrintMultipleProduct() {
+    const dialogRef = this.dialog.open(PrintMultipleProductDialogComponent, {
+      data: {
+        selected: this.selection.selected
+      },
+      width: '50%',
+      minHeight: '60%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
     });
   }
 

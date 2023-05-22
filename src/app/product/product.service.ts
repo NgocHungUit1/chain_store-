@@ -230,8 +230,8 @@ export class ProductService {
     return this.http.get(url);
   }
 
-  getPdfBarcode(id: string, data = {}) {
-    const url = environment.apiUrl + '/product/print-pdf-barcode?id=' + id;
+  getPdfBarcode(data = {}) {
+    const url = environment.apiUrl + '/product/print-pdf-barcode';
     return this.http.post(url, data);
   }
 }

@@ -76,7 +76,7 @@
         <div fxFlex="100" *ngIf="product.product_type == 'medicine' ">
           <!--            disabled="disabled"-->
           <button class="m-r-5 padding-x-10" mat-raised-button
-                  (click)="openIdCodeFormDialog(this.product.id)">
+                  (click)="openIdCodeFormDialog(this.product)">
             <mat-icon>format_align_justify</mat-icon>
             In tem
           </button>
@@ -149,7 +149,7 @@
         <div fxFlex="100" *ngIf="product.product_type == 'merchandise' ">
           <!--            disabled="disabled"-->
           <button class="m-r-5 padding-x-10" mat-raised-button
-                  (click)="openIdCodeFormDialog(this.product.id)">
+                  (click)="openIdCodeFormDialog(this.product)">
             <mat-icon>format_align_justify</mat-icon>
             In tem
           </button>

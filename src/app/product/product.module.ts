@@ -28,6 +28,9 @@ import { ViewIdCodeFormDialogComponent } from './view-id-code-form-dialog/view-i
 import {InputSelectAllModule} from '../common/input-select-all/input-select-all.module';
 import {NgxMaskModule} from 'ngx-mask';
 import {NgxExtendedPdfViewerModule} from 'ngx-extended-pdf-viewer';
+import {PrintMultipleProductDialogComponent} from './print-multiple-product-dialog/print-multiple-product-dialog.component';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
 
 @NgModule({
   declarations: [
@@ -45,7 +48,8 @@ import {NgxExtendedPdfViewerModule} from 'ngx-extended-pdf-viewer';
     ProductUploadDialogComponent,
     ProductStockChangeDialogComponent,
     IdCodeFormDialogComponent,
-    ViewIdCodeFormDialogComponent
+    ViewIdCodeFormDialogComponent,
+    PrintMultipleProductDialogComponent
   ],
   imports: [
     CommonModule,
@@ -68,7 +72,8 @@ import {NgxExtendedPdfViewerModule} from 'ngx-extended-pdf-viewer';
     ProductGroupFormDialogComponent,
     ProductUsingFormDialogComponent,
     ProductPlacementFormDialogComponent,
-    ProductUploadDialogComponent
+    ProductUploadDialogComponent,
+    PrintMultipleProductDialogComponent
   ]
 })
 export class ProductModule {
