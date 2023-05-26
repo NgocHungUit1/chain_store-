@@ -454,29 +454,26 @@ export class InvoiceTabInfoComponent implements OnChanges {
 
       if (resultReturn !== undefined && resultReturn !== null) {
         detail.forEach(element => {
-
-          const units = element?.product?.productUnits;
-          const item = units.find(element => element.is_base == 1);
           const mProductInfo = new ProductInfo();
-          if (resultReturn[item['id']] !== undefined) {
+          if (resultReturn[element.product_unit_id] !== undefined) {
             mProductInfo.amount = 0;
             mProductInfo.product_id = element.product?.id;
             mProductInfo.product = element.product;
             mProductInfo.product.end_price = element.price;
             mProductInfo.common_price = element.price;
-            mProductInfo.product_unit_id = item['id'];
-            mProductInfo.product_unit_value = item['value'];
+            mProductInfo.product_unit_id = element.product_unit_id; // item['id'];
+            mProductInfo.product_unit_value = element.product_unit_value;
             mProductInfo.base_unit = element.base_unit;
             mProductInfo.is_return = true;
-            mProductInfo.max_amount_return = element.amount - resultReturn[item['id']];
+            mProductInfo.max_amount_return = element.amount - resultReturn[element.product_unit_id];
           } else {
             mProductInfo.amount = 0;
             mProductInfo.product_id = element.product?.id;
             mProductInfo.product = element.product;
             mProductInfo.product.end_price = element.price;
             mProductInfo.common_price = element.price;
-            mProductInfo.product_unit_id = item['id'];
-            mProductInfo.product_unit_value = item['value'];
+            mProductInfo.product_unit_id = element.product_unit_id;
+            mProductInfo.product_unit_value = element.product_unit_value;
             mProductInfo.base_unit = element.base_unit;
             mProductInfo.is_return = true;
             mProductInfo.max_amount_return = element.amount;
@@ -488,16 +485,14 @@ export class InvoiceTabInfoComponent implements OnChanges {
         });
       } else {
         detail.forEach(element => {
-          const units = element?.product?.productUnits;
-          const item = units.find(element => element.is_base == 1);
           const mProductInfo = new ProductInfo();
           mProductInfo.amount = 0;
           mProductInfo.product_id = element.product?.id;
           mProductInfo.product = element.product;
           mProductInfo.product.end_price = element.price;
           mProductInfo.common_price = element.price;
-          mProductInfo.product_unit_id = item['id'];
-          mProductInfo.product_unit_value = item['value'];
+          mProductInfo.product_unit_id = element.product_unit_id;
+          mProductInfo.product_unit_value = element.product_unit_value;
           mProductInfo.base_unit = element.base_unit;
           mProductInfo.is_return = true;
           mProductInfo.max_amount_return = element.amount;
