@@ -44,7 +44,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
   }
 
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
-  @ViewChild('selectColumn') selectColumn;
+  // @ViewChild('selectColumn') selectColumn;
 
   selectProduct = new FormControl();
 
@@ -287,6 +287,10 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
   }
 
   submit(status: number) {
+    if (this.isLoadingResults === true) {
+      return;
+    }
+    this.isLoadingResults = true;
     if (this.form.valid) {
       const data = this.form.getRawValue();
       data['supplier_id'] = data['supplier']['id'];
@@ -301,13 +305,14 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
       if (this.updateModelId !== null) {
         if (this.model['status'] === 10 && !this.isAdminStore) {
           this.notifySer.notify('error', 'Bạn không có quyền thực hiện chức năng này.');
+          this.isLoadingResults = false;
           return;
         }
 
         delete data['date'];
         delete data['supplier'];
         this.mainService.update(this.updateModelId, data).subscribe(res => {
-
+          this.isLoadingResults = false;
           this.notifySer.notify('success', 'Lưu thành công.');
           if (status === 9) {
             this.model = res;
@@ -318,6 +323,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
         });
       } else {
         this.mainService.create(data).subscribe(res => {
+          this.isLoadingResults = false;
           this.notifySer.notify('success', 'Lưu thành công.');
           if (status === 9) {
             this.model = res;

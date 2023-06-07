@@ -83,6 +83,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   expensesTransactions: ExpensesTransaction[] = [];
   optionStore_transaction_expenses: OptionStore;
 
+  submitted = false;
   statuses = [
     {id: '10', name: 'Hoàn thành'},
     {id: '9', name: 'Lưu tạm'},
@@ -411,6 +412,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
 
   submit(status: number) {
+    if (this.submitted === true) {
+      return;
+    }
+    this.submitted = true;
     this.recalculateWarehouse();
     const data = this.form.getRawValue();
     if (numeral(data['paid_amount']).value() > (numeral(data['total_price']).value() + numeral(data['expenses_price']).value())) {
@@ -484,6 +489,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           //delete data['supplier'];
           this.mainService.update(this.updateModelId, data).subscribe(res => { //
             this.notifySer.notify('success', 'Lưu thành công.');
+            this.submitted = false;
             if (status === 9) {
               this.model = res;
               this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
@@ -494,6 +500,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         } else {
           this.mainService.create(data).subscribe(res => {
             this.notifySer.notify('success', 'Lưu thành công.');
+            this.submitted = false;
             if (status === 9) {
               this.model = res;
               this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
@@ -507,10 +514,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         // Form errors
         const controls = Object.entries(this.form.controls);
         const hasError = this.checkToShowControlError(controls);
+        this.submitted = false;
       }
 
     }).catch(() => {
       console.log('rejected');
+      this.submitted = false;
     });
   }
 

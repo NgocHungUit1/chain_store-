@@ -109,6 +109,8 @@ export class SaleMainComponent implements OnInit {
   logo = null;
   description = null;
 
+  submitted = false;
+
   optionStore_transaction_expenses_order: OptionStore = null;
   expenseOrder = 0; // thu khac
   expenseOrders: ExpensesOrder[] = null;
@@ -1457,6 +1459,11 @@ export class SaleMainComponent implements OnInit {
   // ------------------------------------------------------ PAYMENT ----------------------------------------------------------//
 
   payment() {
+    if (this.submitted) {
+      return;
+    }
+    this.submitted = true;
+
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     let date_created = '';
@@ -1595,6 +1602,7 @@ export class SaleMainComponent implements OnInit {
      */
     if (mItemInvoice.invoice_id < 0) {
       this.orderService.saleOrder(dataInvoice).subscribe(res => {
+        this.submitted = false;
         if (res !== false) {
           if (typeof res === 'number' && this.autoPrint === true) {
             this.printInvoice(res);
@@ -1618,6 +1626,7 @@ export class SaleMainComponent implements OnInit {
         return;
       }
       this.orderService.updateOrder(dataInvoice).subscribe(res => {
+        this.submitted = false;
         if (res !== false) {
           if (typeof res === 'number' && this.autoPrint === true) {
             this.resetDataSiderBar();

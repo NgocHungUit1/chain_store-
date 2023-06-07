@@ -110,11 +110,18 @@ export class WarehouseInfoTabComponent implements OnChanges {
   }
 
   finish() {
+    if (this.isLoadingResults === true) {
+      return;
+    }
+    this.isLoadingResults = true;
     if (this.model.status === 9) {
       this.mainService.update(this.model.id, {status: 10}).subscribe(res => {
         const typeStr = res['type'] === 'import' ? 'nhập' : 'trả';
+        this.isLoadingResults = false;
         this.model.status = res['status'];
         this.notifySer.notify('success', 'Hoàn thành đơn ' + typeStr + ' hàng');
+      }, error => {
+        this.isLoadingResults = false;
       });
     }
   }
@@ -125,6 +132,10 @@ export class WarehouseInfoTabComponent implements OnChanges {
   }
 
   delete() {
+    if (this.isLoadingResults === true) {
+      return;
+    }
+    this.isLoadingResults = true;
     // TODO: call confirm dialog
     if (this.checkPermissionDisable('Warehouse.Delete')) {
       this.notifySer.notify('error', 'Bạn không có quyền thực hiện chức năng này.');
@@ -149,6 +160,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
         if (result?.event === 'delete') {
           this.mainService.delete(this.model.id).subscribe(res => {
             this.notifySer.notify('success', 'Xóa hóa đơn thành công!');
+            this.isLoadingResults = false;
             this.reload.emit(null);
             setTimeout(function () {
               location.reload();
@@ -159,6 +171,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
     } else {
       this.mainService.delete(this.model.id).subscribe(res => {
         this.notifySer.notify('success', 'Xóa hóa đơn thành công!');
+        this.isLoadingResults = false;
         this.reload.emit(null);
         setTimeout(function () {
           location.reload();
