@@ -14,6 +14,7 @@ import {UserRoutes} from './user.routing';
 import {UserTabInfoComponent} from './user-tab-info/user-tab-info.component';
 import {UserPopupDeleteDialogComponent} from './user-popup-delete-dialog/user-popup-delete-dialog.component';
 import {UserTabAuthorizationComponent} from './user-tab-authorization/user-tab-authorization.component';
+import {TreeViewModule} from '@syncfusion/ej2-angular-navigations';
 
 
 @NgModule({
@@ -24,18 +25,19 @@ import {UserTabAuthorizationComponent} from './user-tab-authorization/user-tab-a
     UserPopupDeleteDialogComponent,
     UserTabAuthorizationComponent
   ],
-  imports: [
-    CommonModule,
-    RouterModule.forChild(UserRoutes),
-    FormsModule,
-    ReactiveFormsModule,
-    FlexLayoutModule,
-    QuillModule.forRoot(),
-    DragulaModule.forRoot(),
-    PerfectScrollbarModule,
-    Ng2SearchPipeModule,
-    DemoMaterialModule
-  ]
+    imports: [
+        CommonModule,
+        RouterModule.forChild(UserRoutes),
+        FormsModule,
+        ReactiveFormsModule,
+        FlexLayoutModule,
+        QuillModule.forRoot(),
+        DragulaModule.forRoot(),
+        PerfectScrollbarModule,
+        Ng2SearchPipeModule,
+        DemoMaterialModule,
+        TreeViewModule
+    ]
 })
 export class UserModule {
 }

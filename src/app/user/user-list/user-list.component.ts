@@ -10,6 +10,7 @@ import {ListComponentBase} from '../../shared/base';
 import {UserService} from '../user.service';
 import {User, UserFilter} from '../user.model';
 import {UserFormDialogComponent} from '../user-form-dialog/user-form-dialog.component';
+import {StorePermissionService} from '../store-permission.service';
 
 @Component({
   selector: 'app-user-list',
@@ -29,7 +30,7 @@ export class UserListComponent extends ListComponentBase implements OnInit {
     private service: UserService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
-    private notifyService: NotifierService
+    private storePerSer: StorePermissionService
   ) {
     super();
   }
@@ -63,6 +64,7 @@ export class UserListComponent extends ListComponentBase implements OnInit {
 
   dataSource = [];
   expandedElement: User | null;
+  storePerData: any;
 
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -112,6 +114,10 @@ export class UserListComponent extends ListComponentBase implements OnInit {
         this.loadData();
         this.service.setLoadUser(false);
       }
+    });
+
+    this.storePerSer.getPermissionListWithGroup().subscribe(res => {
+      this.storePerData = res.body;
     });
   }
 

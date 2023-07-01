@@ -16,6 +16,7 @@ export class UserTabAuthorizationComponent implements OnInit {
 
 
   @Input() user: User;
+  @Input() permissionData: any;
 
   storeRoles: any;
   selectedRoleId = null;

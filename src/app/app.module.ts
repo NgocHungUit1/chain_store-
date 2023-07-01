@@ -40,7 +40,12 @@ import { SearchProductDialogComponent } from './common/search-product-dialog/sea
 import { SearchSupplierDialogComponent } from './common/search-supplier-dialog/search-supplier-dialog.component';
 import { PopupConfirmDialogComponent } from './common/popup-confirm-dialog/popup-confirm-dialog.component';
 import { GroupReportComponent } from './group/group-report/group-report.component';
+import {TreeViewModule} from '@syncfusion/ej2-angular-navigations';
 // import { InputSelectAllDirective } from './common/input-select-all/input-select-all.directive';
+import { registerLicense } from '@syncfusion/ej2-base';
+
+// Registering Syncfusion license key
+registerLicense('Ngo9BigBOggjHTQxAR8/V1NGaF5cXmdCeUx+WmFZfV1gdVdMZV9bRXFPMyBoS35RdUVkWX5ecHFWR2deVEB0');
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -91,7 +96,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
       theme: 'material',
     }),
     AngularImageViewerModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TreeViewModule
   ],
   providers: [
     {

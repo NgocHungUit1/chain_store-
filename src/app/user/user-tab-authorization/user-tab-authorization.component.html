@@ -16,7 +16,14 @@
         </mat-card>
       </div>
       <div fxFlex="70" class="user-info">
-        <h1>Tác vụ</h1>
+        <div fxLayout="row wrap" >
+          <div fxFlex="30" *ngFor="let group of this.permissionData.group">
+            <h3>{{group}}</h3>
+            <ejs-treeview [fields]="{ dataSource: this.permissionData.permission_data[group]['children'], id: 'id', text: 'name', child: 'children' }" [showCheckBox]="true"></ejs-treeview>
+          </div>
+
+
+        </div>
       </div>
 
     </div>
