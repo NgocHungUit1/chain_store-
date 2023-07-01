@@ -1,0 +1,22 @@
+.user-info .user-info-row {
+  margin: 20px 0px;
+}
+.user-info .user-info-row .user-info-field {
+  border-bottom: 1px solid #eee;
+  padding: 3px 0 10px;
+}
+.user-info .user-info-row-last .user-info-field {
+  border-bottom: 0px;
+}
+.user-info .user-info-row .user-field-label {
+  min-width: 100px;
+  display: inline-block;
+}
+.h3 {
+  margin: 0px;
+}
+.type-radio-group {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+}

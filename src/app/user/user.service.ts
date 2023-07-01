@@ -67,6 +67,11 @@ export class UserService {
     return this.http.get<User>(url);
   }
 
+  updatePermission(id: string, data: any) {
+    const url = environment.apiUrl + '/user/update-permission?id=' + id;
+    return this.http.post<boolean>(url, data);
+  }
+
   update(id: string, pos: any) {
     const url = environment.apiUrl + '/user/' + id;
     return this.http.put(url, pos).pipe(

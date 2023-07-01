@@ -1,0 +1,31 @@
+<div fxLayout="row wrap" *ngIf="user !== null" class="m-b-20">
+  <div fxFlex="100">
+    <div fxLayout="row wrap">
+      <div fxFlex="30" class="user-info">
+        <mat-card class="time-filter-info">
+          <mat-card-title class="title-time-filter">Vai trò</mat-card-title>
+          <mat-card-content>
+            <mat-radio-group [(ngModel)]="selectedRoleId"
+              class="type-radio-group" (change)="onChangeRole($event);">
+              <mat-radio-button class="radio-button-report-type" [checked]="role.id == this.selectedRoleId" value="{{role.id}}" *ngFor="let role of storeRoles">
+                {{role.name}}
+              </mat-radio-button>
+
+            </mat-radio-group>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div fxFlex="70" class="user-info">
+        <h1>Tác vụ</h1>
+      </div>
+
+    </div>
+  </div>
+
+
+  <div fxFlex="100" align="end">
+    <button class="m-r-10" mat-raised-button color="primary" (click)="save()">
+      <mat-icon>save</mat-icon> Cập nhật
+    </button>
+  </div>
+</div>

@@ -13,6 +13,7 @@ import {DemoMaterialModule} from '../demo-material-module';
 import {UserRoutes} from './user.routing';
 import {UserTabInfoComponent} from './user-tab-info/user-tab-info.component';
 import {UserPopupDeleteDialogComponent} from './user-popup-delete-dialog/user-popup-delete-dialog.component';
+import {UserTabAuthorizationComponent} from './user-tab-authorization/user-tab-authorization.component';
 
 
 @NgModule({
@@ -20,7 +21,9 @@ import {UserPopupDeleteDialogComponent} from './user-popup-delete-dialog/user-po
     UserListComponent,
     UserFormDialogComponent,
     UserTabInfoComponent,
-    UserPopupDeleteDialogComponent],
+    UserPopupDeleteDialogComponent,
+    UserTabAuthorizationComponent
+  ],
   imports: [
     CommonModule,
     RouterModule.forChild(UserRoutes),

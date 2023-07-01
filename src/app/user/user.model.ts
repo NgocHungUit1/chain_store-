@@ -8,6 +8,7 @@ export class User {
   status: string;
   employee: any;
   storeRole: any;
+  store_role_id: number;
 }
 
 

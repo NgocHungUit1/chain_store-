@@ -1479,6 +1479,7 @@ export class SaleMainComponent implements OnInit {
 
     if (this.selectUser.value === '') {
       this.notifySer.notify('warning', 'Chưa chọn tên nhân viên !');
+      this.submitted = false;
       return;
     }
 
@@ -1491,6 +1492,7 @@ export class SaleMainComponent implements OnInit {
       mItemInvoice.listProduct.length === 0
     ) {
       this.notifySer.notify('warning', 'Chưa chọn sản phẩm !');
+      this.submitted = false;
       return;
     }
 
@@ -1511,6 +1513,7 @@ export class SaleMainComponent implements OnInit {
       // console.log(product_unit);
     });
     if (needReturn === 1) {
+      this.submitted = false;
       return;
     }
 
@@ -1550,6 +1553,7 @@ export class SaleMainComponent implements OnInit {
 
     if (this.form.controls['branch_id'].value == null) {
       this.notifySer.notify('warning', 'Chưa chọn chi nhánh!');
+      this.submitted = false;
       return;
     }
 
@@ -1616,6 +1620,8 @@ export class SaleMainComponent implements OnInit {
 
         this.orderService.setLoadProduct(false);
         this.orderService.setLoadDetailPage(true);
+      }, error => {
+        this.submitted = false;
       });
     } else {
       if (!this.isAdminStore) {
@@ -1623,6 +1629,7 @@ export class SaleMainComponent implements OnInit {
           'error',
           'Bạn không có quyền thực hiện chức năng này.'
         );
+        this.submitted = false;
         return;
       }
       this.orderService.updateOrder(dataInvoice).subscribe(res => {
@@ -1640,6 +1647,8 @@ export class SaleMainComponent implements OnInit {
         this.loadData();
         this.orderService.setLoadProduct(false);
         this.orderService.setLoadDetailPage(true);
+      }, error => {
+        this.submitted = false;
       });
     }
     this.handleExpenseOrder();
