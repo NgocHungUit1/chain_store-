@@ -79,10 +79,14 @@
                        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
                     <mat-tab-group style="width: 100%;">
                       <mat-tab label="Thông tin">
-                        <app-user-tab-info [user]="element"></app-user-tab-info>
+                        <ng-template matTabContent>
+                          <app-user-tab-info [user]="element"></app-user-tab-info>
+                        </ng-template>
                       </mat-tab>
                       <mat-tab label="Phân quyền">
-                        <app-user-tab-authorization *ngIf="this.storePerData" [permissionData]="this.storePerData" [user]="element"></app-user-tab-authorization>
+                        <ng-template matTabContent>
+                          <app-user-tab-authorization *ngIf="this.storePerData" [permissionData]="this.storePerData" [user]="element"></app-user-tab-authorization>
+                        </ng-template>
                       </mat-tab>
                     </mat-tab-group>
                   </div>

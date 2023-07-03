@@ -4,8 +4,8 @@ import {NotifierService} from 'angular-notifier';
 import {User} from '../user.model';
 import {UserService} from '../user.service';
 import {UserFormDialogComponent} from '../user-form-dialog/user-form-dialog.component';
-import {UserPopupDeleteDialogComponent} from '../user-popup-delete-dialog/user-popup-delete-dialog.component';
 import {StoreRoleService} from '../store-role.service';
+import {StoreUserPermissionService} from '../store-user-permission.service';
 
 @Component({
   selector: 'app-user-tab-authorization',
@@ -20,7 +20,9 @@ export class UserTabAuthorizationComponent implements OnInit {
 
   storeRoles: any;
   selectedRoleId = null;
-  permissionList = [];
+  selectedPermissions = [];
+  savedUserPermission = [];
+  savedUserRoleId = null;
 
   sexHeader = {
     '1': 'Nam',
@@ -30,18 +32,28 @@ export class UserTabAuthorizationComponent implements OnInit {
   constructor(
     private userService: UserService,
     private storeRoleService: StoreRoleService,
+    private storeUserPermissionService: StoreUserPermissionService,
     private dialog: MatDialog,
     private notifyService: NotifierService
   ) { }
 
   ngOnInit(): void {
     this.getStoreRoleList();
-    this.selectedRoleId = this.user.store_role_id;
+    this.loadUserPermission();
   }
 
   loadUser(id) {
     this.userService.getUser(id).subscribe(res => {
       this.user = res;
+    });
+  }
+
+  loadUserPermission() {
+    this.storeUserPermissionService.getPermissionByUser(this.user.id).subscribe(res => {
+      this.selectedRoleId = res.body['role_id'];
+      this.savedUserRoleId = res.body['role_id'];
+      this.selectedPermissions = res.body['permission_list'];
+      this.savedUserPermission = res.body['permission_list'];
     });
   }
 
@@ -65,32 +77,15 @@ export class UserTabAuthorizationComponent implements OnInit {
     });
   }
 
-  openDeleteUser(id) {
-
-    const obj = {
-      action: 'Delete',
-      title: 'Xóa tài khoản',
-      user_id: id,
-    };
-
-    const dialogRef = this.dialog.open(UserPopupDeleteDialogComponent, {
-      data: obj,
-      width: '20%',
-      minHeight: '80%',
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-
-    });
-  }
-
   save() {
     const data = {
       role_id: this.selectedRoleId,
-      permission_list: []
+      permission_list: this.selectedPermissions
     };
-    this.userService.updatePermission(this.user.id, data).subscribe(x => {
-      this.user.store_role_id = this.selectedRoleId;
+    this.storeUserPermissionService.updatePermission(this.user.id, data).subscribe(x => {
+      this.savedUserRoleId = this.selectedRoleId;
+      this.savedUserPermission = this.selectedPermissions;
+
       this.notifyService.notify('success', 'Cập nhật thành công!');
     });
   }
@@ -102,14 +97,35 @@ export class UserTabAuthorizationComponent implements OnInit {
   }
 
   onChangeRole(event) {
-    console.log(this.selectedRoleId);
     this.loadRolePermission();
   }
 
   loadRolePermission() {
     this.storeRoleService.getPermissionList(this.selectedRoleId).subscribe(res => {
-      this.permissionList = res.body;
-      console.log(res.body);
+      console.log(this.selectedRoleId, this.savedUserRoleId);
+      if (this.selectedRoleId == this.savedUserRoleId) {
+        this.selectedPermissions = [...new Set([...res.body , ...this.savedUserPermission])];
+        console.log(this.selectedPermissions);
+      } else {
+        this.selectedPermissions = res.body;
+      }
     });
+  }
+
+  public nodeChecked(args: any): void {
+   args.data.forEach(item => {
+     const index = this.selectedPermissions.indexOf(item.id);
+     if (item['isChecked'] === 'true') {
+       // Item checked then check not exist
+       if (index === -1) {
+         this.selectedPermissions.push(item.id);
+       }
+     } else {
+       if (index !== -1) {
+         this.selectedPermissions.splice(index, 1);
+       }
+     }
+   });
+
   }
 }
