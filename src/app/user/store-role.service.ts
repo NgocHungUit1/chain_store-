@@ -13,37 +13,36 @@ export class StoreRoleService {
   constructor(private http: HttpClient) {
   }
 
-  getApiUrl(filter?: UserFilter) {
-    if (!filter.page) {
-      filter.page = 1;
-    }
-
-    if (!filter.pageSize) {
-      filter.pageSize = 20;
-    }
-
-    let url = '/user?per-page=' + filter.pageSize;
-
-    url += '&' + filter.toFilterString();
-    return url;
-  }
-
-  getStateUrl(filter?: UserFilter) {
-
-    let url = '/user/list';
-    if (!filter.page) {
-      filter.page = 1;
-    }
-    if (!filter.pageSize) {
-      filter.pageSize = 20;
-    }
-    url += '?' + filter.toFilterString();
-    return url;
+  create(data) {
+    const url = environment.apiUrl + '/store-role';
+    return this.http.post(url, data).pipe(
+      map(results => {
+        return results;
+      }),
+      // catch errors
+      catchError(err => throwError(err))
+    );
   }
 
   getPermissionList(id): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + '/store-role/get-permission-list?id=' + id;
     return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
+  }
+
+  public getDetail(id: string): Observable<Object> {
+    const url = environment.apiUrl + '/store-role/' + id;
+    return this.http.get<Object>(url);
+  }
+
+  update(id: string, data: any) {
+    const url = environment.apiUrl + '/store-role/' + id;
+    return this.http.put(url, data).pipe(
+      map(results => {
+        return results;
+      }),
+      // catch errors
+      catchError(err => throwError(err))
+    );
   }
 
 }

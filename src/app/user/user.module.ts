@@ -15,6 +15,7 @@ import {UserTabInfoComponent} from './user-tab-info/user-tab-info.component';
 import {UserPopupDeleteDialogComponent} from './user-popup-delete-dialog/user-popup-delete-dialog.component';
 import {UserTabAuthorizationComponent} from './user-tab-authorization/user-tab-authorization.component';
 import {TreeViewModule} from '@syncfusion/ej2-angular-navigations';
+import {StoreRoleFormDialogComponent} from './store-role-form-dialog/store-role-form-dialog.component';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import {TreeViewModule} from '@syncfusion/ej2-angular-navigations';
     UserFormDialogComponent,
     UserTabInfoComponent,
     UserPopupDeleteDialogComponent,
-    UserTabAuthorizationComponent
+    UserTabAuthorizationComponent,
+    StoreRoleFormDialogComponent
   ],
     imports: [
         CommonModule,

@@ -20,3 +20,14 @@
   flex-direction: column;
   margin: 15px 0;
 }
+.e-list-parent {
+  padding-left: 0px;
+}
+/*.radio-button-report-type .mat-icon-button {*/
+/*  display: none;*/
+/*  width: 20px;*/
+/*  height: 20px;*/
+/*}*/
+/*.radio-button-report-type:hover .mat-icon-button {*/
+/*  display: inline-block;*/
+/*}*/

@@ -1,0 +1,48 @@
+<h1 mat-dialog-title *ngIf="!(this.store_role_id !== null && this.store_role_id !== undefined)">Thêm vai trò</h1>
+<h1 mat-dialog-title *ngIf="this.store_role_id !== null && this.store_role_id !== undefined">Cập nhật vai trò</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <div fxLayout="row wrap">
+      <div fxFlex="100">
+        <div fxLayout="row wrap">
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Tên vai trò</mat-label>
+              <input matInput tabindex="1" formControlName="name">
+              <mat-error *ngIf="form.controls['name'].hasError('required')">Tên tài khoản không được bỏ trống
+              </mat-error>
+              <mat-error *ngIf="form.controls['name'].hasError('ajaxValidator')
+                    && form.controls['name'].touched">{{ form.controls['name'].getError('ajaxValidator')?.value}}</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <div fxLayout="row wrap" *ngIf="this.storePerData">
+              <div fxFlex="30" *ngFor="let group of this.storePerData.group">
+                <h3>{{group}}</h3>
+                <ejs-treeview [fields]="{ dataSource: this.storePerData.permission_data[group]['children'], id: 'id', text: 'name', child: 'children'}" [checkedNodes]="this.selectedPermissions" [showCheckBox]="true" (nodeChecked)="nodeChecked($event)"></ejs-treeview>
+              </div>
+
+
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+
+    </div>
+
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="7" (click)="submit()">
+    <mat-icon>save</mat-icon>
+    Lưu
+  </button>
+  <button mat-raised-button (click)="onNoClick()" tabindex="-1">
+    <mat-icon>cancel</mat-icon>
+    Bỏ qua
+  </button>
+</div>

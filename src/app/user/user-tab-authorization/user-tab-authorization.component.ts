@@ -6,6 +6,7 @@ import {UserService} from '../user.service';
 import {UserFormDialogComponent} from '../user-form-dialog/user-form-dialog.component';
 import {StoreRoleService} from '../store-role.service';
 import {StoreUserPermissionService} from '../store-user-permission.service';
+import {StoreRoleFormDialogComponent} from '../store-role-form-dialog/store-role-form-dialog.component';
 
 @Component({
   selector: 'app-user-tab-authorization',
@@ -57,26 +58,6 @@ export class UserTabAuthorizationComponent implements OnInit {
     });
   }
 
-  openUserFormDialog(id) {
-    const obj = {
-      action: 'Update',
-      title: 'Cập nhật tài khoản',
-      user_id: id,
-    };
-
-    const dialogRef = this.dialog.open(UserFormDialogComponent, {
-      data: obj,
-      width: '50%',
-      minHeight: '80%',
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loadUser(result.id);
-      }
-    });
-  }
-
   save() {
     const data = {
       role_id: this.selectedRoleId,
@@ -102,10 +83,8 @@ export class UserTabAuthorizationComponent implements OnInit {
 
   loadRolePermission() {
     this.storeRoleService.getPermissionList(this.selectedRoleId).subscribe(res => {
-      console.log(this.selectedRoleId, this.savedUserRoleId);
       if (this.selectedRoleId == this.savedUserRoleId) {
         this.selectedPermissions = [...new Set([...res.body , ...this.savedUserPermission])];
-        console.log(this.selectedPermissions);
       } else {
         this.selectedPermissions = res.body;
       }
@@ -127,5 +106,30 @@ export class UserTabAuthorizationComponent implements OnInit {
      }
    });
 
+  }
+
+  openStoreRoleDialog(role_id = null, copy_role_id = null) {
+    const obj = {
+      action: 'Create',
+      title: 'Thêm mới vai trò',
+    };
+    if (role_id !== null) {
+      obj['role_id'] = role_id;
+    }
+    if (copy_role_id !== null) {
+      obj['copy_role_id'] = copy_role_id;
+    }
+
+    const dialogRef = this.dialog.open(StoreRoleFormDialogComponent, {
+      data: obj,
+      width: '50%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.getStoreRoleList();
+      }
+    });
   }
 }
