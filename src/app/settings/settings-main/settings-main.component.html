@@ -11,14 +11,14 @@
       <mat-card-content>
         <mat-radio-group [(ngModel)]="settingsType"
                          class="type-radio-group" (change)="changeSettingType()">
-          <mat-radio-button class="radio-button-report-type" value="transaction">
+          <mat-radio-button class="radio-button-report-type" value="transaction" *ngIf="canDo('Option-Store.Update') || canDo('Option-Store.Create')">
             Giao dịch
             <button mat-icon-button aria-label="add">
               <mat-icon>sync_alt</mat-icon>
             </button>
           </mat-radio-button>
 
-          <mat-radio-button class="radio-button-report-type" value="print">
+          <mat-radio-button class="radio-button-report-type" value="print" *ngIf="canDo('Option-Store.Update') || canDo('Option-Store.Create')">
             Khổ giấy in
             <button mat-icon-button aria-label="add">
               <mat-icon>print</mat-icon>
@@ -26,7 +26,7 @@
           </mat-radio-button>
 
           <mat-radio-button class="radio-button-report-type" value="logo"
-                            *ngIf="this.storeFeatures.indexOf('logo') >= 0">
+                            *ngIf="this.storeFeatures.indexOf('logo') >= 0 && canDo('Store.Upload-Logo')">
             Logo
             <button mat-icon-button aria-label="add">
               <mat-icon>image</mat-icon>
@@ -34,14 +34,14 @@
           </mat-radio-button>
 
           <mat-radio-button class="radio-button-report-type" value="branch-connect"
-                            *ngIf="this.storeFeatures.indexOf('branch_connect') >= 0">
+                            *ngIf="this.storeFeatures.indexOf('branch_connect') >= 0 && canDo('Branch.Update-Connect')">
             Liên thông chi nhánh
             <button mat-icon-button aria-label="add">
               <mat-icon>open_in_full</mat-icon>
             </button>
           </mat-radio-button>
 
-          <mat-radio-button class="radio-button-report-type" value="store-info">
+          <mat-radio-button class="radio-button-report-type" value="store-info" *ngIf="canDo('Store.Update-Info')">
             Cấu hình chung
             <button mat-icon-button aria-label="add">
               <mat-icon>settings</mat-icon>

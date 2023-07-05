@@ -11,7 +11,7 @@ import {
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { MediaMatcher } from '@angular/cdk/layout';
 import { MenuItems } from '../../../shared/menu-items/menu-items';
-import { AuthService } from "../../../authentication/auth.service";
+import { AuthService } from '../../../authentication/auth.service';
 import { Router } from '@angular/router';
 @Component({
   selector: 'app-sidebar',
@@ -23,7 +23,7 @@ export class AppSidebarComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
 
   private _mobileQueryListener: () => void;
-  public permissions: String[] = [];
+  public permissions: string[] = [];
 
   constructor(
     changeDetectorRef: ChangeDetectorRef,
@@ -37,10 +37,21 @@ export class AppSidebarComponent implements OnInit, OnDestroy {
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
 
+  checkMatchPermission(menuPermissions = []) {
+    let res = false;
+
+    menuPermissions.forEach(per => {
+      if (this.permissions.indexOf(per) !== -1) {
+        res = true;
+        return;
+      }
+    });
+
+    return res;
+  }
+
   ngOnInit() {
-    // this.authService.getPermissions().subscribe(res => {
-    //   this.permissions = res;
-    // });
+    this.permissions = this.authService.getPermissionsFromLocalStorage();
   }
 
   ngOnDestroy(): void {

@@ -19,6 +19,7 @@ import { CustomerService } from '../../customer/customer.service';
 import { UserService } from '../../user/user.service';
 import { NotifierService } from 'angular-notifier';
 import {StoreService} from '../../store/store.service';
+import {AuthService} from '../../authentication/auth.service';
 
 /** @title Responsive sidenav */
 @Component({
@@ -58,6 +59,7 @@ export class FullComponent implements OnDestroy {
     public customerService: CustomerService,
     public userService: UserService,
     public notifySer: NotifierService,
+    public authService: AuthService,
     public storeSer: StoreService,
   ) {
     this.mobileQuery = media.matchMedia('(min-width: 768px)');
@@ -75,7 +77,6 @@ export class FullComponent implements OnDestroy {
       if (day < 4) {
         this.notifySer.notify('warning', 'Cửa hàng của bạn còn ' + day + ' ngày sử dụng, vui lòng liên hệ để gia hạn.');
       }
-      this.menuItems.refreshMenuItem();
 
       this.customerService.getNameStore().subscribe(name => {
         this.name_store = name;
@@ -95,6 +96,10 @@ export class FullComponent implements OnDestroy {
 
       this.userService.isAdminStore().subscribe(isAdminStore => {
         sessionStorage.setItem('isAdminStore', String(isAdminStore));
+      });
+
+      this.authService.getPermissions().subscribe(res => {
+        this.authService.setPermissions(res);
       });
     });
 

@@ -1,5 +1,6 @@
-import { HostBinding, Directive } from "@angular/core";
+import { HostBinding, Directive } from '@angular/core';
 import * as moment from 'moment';
+import {AuthService} from '../authentication/auth.service';
 
 
 export class ApiFilterBase {
@@ -40,6 +41,22 @@ export class ApiFilterBase {
 }
 
 @Directive()
+// tslint:disable-next-line:directive-class-suffix
+export class BaseComponent {
+
+  constructor(
+    public authSer: AuthService,
+  ) { }
+
+  canDo(permissionName: string): boolean {
+    const allPermissions = this.authSer.getPermissionsFromLocalStorage();
+
+    return allPermissions.indexOf(permissionName) !== -1;
+  }
+}
+
+@Directive()
+// tslint:disable-next-line:directive-class-suffix
 export class ListComponentBase {
   @HostBinding('class.dv-list-page') layout = true;
   /**

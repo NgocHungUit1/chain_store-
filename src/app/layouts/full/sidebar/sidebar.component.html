@@ -4,33 +4,33 @@
 <mat-nav-list appAccordion *ngIf="this.router.url !== '/sale'">
     <mat-list-item appAccordionLink *ngFor="let menuitem of menuItems.getMenuitem()" routerLinkActive="selected"
         group="{{menuitem.state}}">
-        <a class="" appAccordionToggle [routerLink]="['/', menuitem.state]" *ngIf="menuitem.type === 'link'">
+        <a class="" appAccordionToggle [routerLink]="['/', menuitem.state]" *ngIf="menuitem.type === 'link' && checkMatchPermission(menuitem.permissions)">
             <mat-icon>{{ menuitem.icon }}</mat-icon>
             <span>{{ menuitem.name }}</span>
             <span fxFlex></span>
             <span class="label label-{{ badge.type }}" *ngFor="let badge of menuitem.badge">{{ badge.value }}</span>
         </a>
 
-        <a class="" appAccordionToggle routerLink="/{{menuitem.state}}" *ngIf="menuitem.type === 'extLink'">
+        <a class="" appAccordionToggle routerLink="/{{menuitem.state}}" *ngIf="menuitem.type === 'extLink' && checkMatchPermission(menuitem.permissions)">
             <mat-icon>{{ menuitem.icon }}</mat-icon>
             <span>{{ menuitem.name }}</span>
             <span fxFlex></span>
             <span class="label label-{{ badge.type }}" *ngFor="let badge of menuitem.badge">{{ badge.value }}</span>
         </a>
-        <a class="" appAccordionToggle href="{{menuitem.state}}" target="_blank" *ngIf="menuitem.type === 'extTabLink'">
+        <a class="" appAccordionToggle href="{{menuitem.state}}" target="_blank" *ngIf="menuitem.type === 'extTabLink' && checkMatchPermission(menuitem.permissions)">
             <mat-icon>{{ menuitem.icon }}</mat-icon>
             <span>{{ menuitem.name}}</span>
             <span fxFlex></span>
             <span class="label label-{{ badge.type }}" *ngFor="let badge of menuitem.badge">{{ badge.value }}</span>
         </a>
-        <a class="" [style]="styleNotBackground(menuitem.state)" appAccordionToggle href="javascript:;" *ngIf="menuitem.type === 'sub'">
+        <a class="" [style]="styleNotBackground(menuitem.state)" appAccordionToggle href="javascript:;" *ngIf="menuitem.type === 'sub' && checkMatchPermission(menuitem.permissions)">
             <mat-icon [style]="styleIconNotBackground(menuitem.state)" >{{ menuitem.icon }}</mat-icon>
             <span>{{ menuitem.name }}</span>
             <span fxFlex></span>
             <span class="label label-{{ badge.type }}" *ngFor="let badge of menuitem.badge">{{ badge.value }}</span>
             <mat-icon class="dd-icon">keyboard_arrow_down</mat-icon>
         </a>
-        <mat-nav-list class="sub-item" *ngIf="menuitem.type === 'sub'">
+        <mat-nav-list class="sub-item" *ngIf="menuitem.type === 'sub' && checkMatchPermission(menuitem.permissions)">
             <mat-list-item *ngFor="let childitem of menuitem.children" routerLinkActive="selected">
                 <a [style]="styleNotBackgroundSubItem(menuitem.state, childitem.state)" [routerLink]="['/', menuitem.state, childitem.state ]" class="relative" routerLinkActive="selected">
                     <mat-icon [style]="styleNotBackgroundSubItem(menuitem.state, childitem.state, true)">{{ childitem.icon }}</mat-icon>
@@ -38,7 +38,7 @@
                 </a>
             </mat-list-item>
         </mat-nav-list>
-        <div class="saperator text-muted" *ngIf="menuitem.type === 'saperator'">
+        <div class="saperator text-muted" *ngIf="menuitem.type === 'saperator' && checkMatchPermission(menuitem.permissions)">
             <span>{{ menuitem.name }}</span>
         </div>
     </mat-list-item>

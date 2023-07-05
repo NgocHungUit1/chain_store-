@@ -45,7 +45,7 @@ import {TreeViewModule} from '@syncfusion/ej2-angular-navigations';
 import { registerLicense } from '@syncfusion/ej2-base';
 
 // Registering Syncfusion license key
-registerLicense('Ngo9BigBOggjHTQxAR8/V1NGaF5cXmdCeUx+WmFZfV1gdVdMZV9bRXFPMyBoS35RdUVkWX5ecHFWR2deVEB0');
+registerLicense('ORg4AjUWIQA/Gnt2V1hhQlJAfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hSn5UdkFjXXxccHNTRmZb');
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,

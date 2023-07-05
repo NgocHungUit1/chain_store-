@@ -31,6 +31,7 @@ export interface Menu {
   saperator?: Saperator[];
   children?: ChildrenItems[];
   roles?: string[];
+  permissions?: string[];
 }
 
 const MENUITEMS = [
@@ -45,7 +46,7 @@ const MENUITEMS = [
     name: 'Tổng quan',
     type: 'link',
     icon: 'av_timer',
-    roles: ['ADMIN', 'WAREHOUSE', 'SALE']
+    permissions: ['Report.Dash-Board', 'Report.Data-Bar-Chart', 'Warehouse-Product-Parcel.Summary-Expiration'],
     // children: [
     //     { state: 'dashboard1', name: 'Dashboard 1', type: 'link' },
     //     { state: 'dashboard2', name: 'Dashboard 2', type: 'link' }
@@ -56,15 +57,15 @@ const MENUITEMS = [
     name: 'Hàng hóa',
     type: 'sub',
     icon: 'web_asset',
-    roles: ['ADMIN', 'WAREHOUSE', 'SALE'],
+    permissions: ['Product.List', 'Group.List', 'Sample-Prescription.List', 'Price-Book.List', 'Stock-Take.List'],
     // badge: [{type: 'red', value: '17'}],
     children: [
       // {state: 'medicine', name: 'Danh mục thuốc', type: 'link', icon: 'list', roles: ['ADMIN', 'WAREHOUSE', 'SALE']},
-      {state: 'product', name: 'Sản phẩm', type: 'link', icon: 'local_pharmacy', roles: ['ADMIN', 'WAREHOUSE']},
-      {state: 'group', name: 'Nhóm hàng', type: 'link', icon: 'local_pharmacy', roles: ['ADMIN', 'WAREHOUSE', 'SALE']},
-      {state: 'sample-prescription', name: 'Đơn thuốc mẫu', type: 'link', icon: 'list_alt', roles: ['ADMIN', 'SALE']},
-      {state: 'price-book', name: 'Thiết lập giá', type: 'link', icon: 'loyalty', roles: ['ADMIN', 'WAREHOUSE']},
-      {state: 'stock-take', name: 'Kiểm kho', type: 'link', icon: 'check_circle_outline', roles: ['ADMIN', 'WAREHOUSE']},
+      {state: 'product', name: 'Sản phẩm', type: 'link', icon: 'local_pharmacy', permissions: ['Product.List']},
+      {state: 'group', name: 'Nhóm hàng', type: 'link', icon: 'local_pharmacy', permissions: ['Group.List']},
+      {state: 'sample-prescription', name: 'Đơn thuốc mẫu', type: 'link', icon: 'list_alt', permissions: ['Sample-Prescription.List']},
+      {state: 'price-book', name: 'Thiết lập giá', type: 'link', icon: 'loyalty', permissions: ['Price-Book.List']},
+      {state: 'stock-take', name: 'Kiểm kho', type: 'link', icon: 'check_circle_outline', permissions: ['Stock-Take.List']},
     ]
   },
   {
@@ -72,14 +73,14 @@ const MENUITEMS = [
     name: 'Giao dịch',
     type: 'sub',
     icon: 'sync_alt',
-    roles: ['ADMIN', 'WAREHOUSE', 'SALE'],
+    permissions: ['Invoice.List', 'Warehouse.List', 'Returns.List', 'Move.List'],
     // badge: [{type: 'red', value: '17'}],
     children: [
-      {state: 'invoice', name: 'Hóa đơn bán', type: 'link', icon: 'receipt', roles: ['ADMIN', 'SALE']},
-      {state: 'warehouse', name: 'Hóa đơn nhập', type: 'link', icon: 'local_grocery_store', roles: ['ADMIN', 'WAREHOUSE']},
-      {state: 'returns', name: 'Trả hàng', type: 'link', icon: 'keyboard_return', roles: ['ADMIN', 'SALE']},
-      {state: 'warehouse-return', name: 'Trả hàng nhập', type: 'link', 'icon': 'assignment_return', roles: ['ADMIN', 'WAREHOUSE']},
-      {state: 'move', name: 'Chuyển hàng', type: 'link', icon: 'local_shipping', roles: ['ADMIN', 'WAREHOUSE']},
+      {state: 'invoice', name: 'Hóa đơn bán', type: 'link', icon: 'receipt', permissions: ['Invoice.List']},
+      {state: 'warehouse', name: 'Hóa đơn nhập', type: 'link', icon: 'local_grocery_store', permissions: ['Warehouse.List']},
+      {state: 'returns', name: 'Trả hàng', type: 'link', icon: 'keyboard_return', permissions: ['Returns.List']},
+      {state: 'warehouse-return', name: 'Trả hàng nhập', type: 'link', 'icon': 'assignment_return', permissions: ['Warehouse.List']},
+      {state: 'move', name: 'Chuyển hàng', type: 'link', icon: 'local_shipping', permissions: ['Move.List']},
     ]
   },
   {
@@ -87,12 +88,12 @@ const MENUITEMS = [
     name: 'Đối tác',
     type: 'sub',
     icon: 'contacts',
-    roles: ['ADMIN', 'WAREHOUSE', 'SALE'],
+    permissions: ['Customer.List', 'Supplier.List', 'Doctor.List'],
     // badge: [{type: 'red', value: '17'}],
     children: [
-      {state: 'customer', name: 'Khách hàng', type: 'link', icon: 'person', roles: ['ADMIN', 'SALE']},
-      {state: 'supplier', name: 'Nhà cung cấp', type: 'link', icon: 'people', roles: ['ADMIN', 'WAREHOUSE']},
-      {state: 'doctor', name: 'Bác sĩ', type: 'link', icon: 'local_hospital', roles: ['ADMIN', 'SALE']},
+      {state: 'customer', name: 'Khách hàng', type: 'link', icon: 'person', permissions: ['Customer.List']},
+      {state: 'supplier', name: 'Nhà cung cấp', type: 'link', icon: 'people', permissions: ['Supplier.List']},
+      {state: 'doctor', name: 'Bác sĩ', type: 'link', icon: 'local_hospital', permissions: ['Doctor.List']},
     ]
   },
   {
@@ -100,29 +101,36 @@ const MENUITEMS = [
     name: 'Nhập hàng',
     type: 'extLink',
     icon: 'local_grocery_store',
-    roles: ['ADMIN', 'WAREHOUSE'],
+    permissions: ['Warehouse.Create'],
   },
   {
     state: 'sale',
     name: 'Bán hàng',
     type: 'link',
     icon: 'shopping_basket',
-    roles: ['ADMIN', 'SALE'],
+    permissions: ['Invoice.Create'],
   },
   {
     state: 'partner',
     name: 'Cửa hàng',
     type: 'sub',
     icon: 'assignment_ind',
-    roles: ['ADMIN'],
+    permissions: ['User.List', 'Employee.List', 'Branch.List', 'Timesheet.List',
+      'Pay-Sheet.List', 'Option-Store.Update',
+      'Store.Upload-Logo', 'Branch.Update-Connect',
+      'Store.Update-Info'
+    ],
     children: [
-      {state: 'user', name: 'Tài khoản', type: 'link', icon: 'person', roles: ['ADMIN']},
-      {state: 'employee', name: 'Nhân viên', type: 'link', icon: 'assignment_ind', roles: ['ADMIN']},
-      {state: 'branch', name: 'Chi nhánh', type: 'link', icon: 'business', roles: ['ADMIN']},
-      {state: 'timesheet', name: 'Chấm công', type: 'link', icon: 'calendar_today', roles: ['ADMIN']},
+      {state: 'user', name: 'Tài khoản', type: 'link', icon: 'person', permissions: ['User.List']},
+      {state: 'employee', name: 'Nhân viên', type: 'link', icon: 'assignment_ind', permissions: ['Employee.List']},
+      {state: 'branch', name: 'Chi nhánh', type: 'link', icon: 'business', permissions: ['Branch.List']},
+      {state: 'timesheet', name: 'Chấm công', type: 'link', icon: 'calendar_today', permissions: ['Timesheet.List']},
       // {state: 'expenses-other', name: 'Quản lý chi phí nhập hàng', type: 'link', icon: 'attach_money', roles: ['ADMIN']},
-      {state: 'pay-sheet', name: 'Bảng tính lương', type: 'link', icon: 'assessment', roles: ['ADMIN']},
-      {state: 'settings', name: 'Thiết lập', type: 'link', icon: 'settings', roles: ['ADMIN']},
+      {state: 'pay-sheet', name: 'Bảng tính lương', type: 'link', icon: 'assessment', permissions: ['Pay-Sheet.List']},
+      {state: 'settings', name: 'Thiết lập', type: 'link', icon: 'settings', permissions: [
+        'Option-Store.Update',
+          'Store.Upload-Logo', 'Branch.Update-Connect',
+          'Store.Update-Info']},
     ]
   },
   {
@@ -130,23 +138,36 @@ const MENUITEMS = [
     name: 'Sổ quỹ',
     type: 'link',
     icon: 'attach_money',
-    roles: ['ADMIN'],
+    permissions: ['Cash-Flow.List'],
   },
   {
     state: 'report',
     name: 'Báo cáo',
     type: 'sub',
     icon: 'bar_chart',
-    roles: ['ADMIN'],
+    permissions: ['Invoice.List', 'Report.Stock', 'Report.Product-Sale',
+      'Warehouse-Product-Parcel.Expiration', 'Option-Store.Update',
+      'Store.Upload-Logo', 'Branch.Update-Connect',
+      'Store.Update-Info'
+      , 'Report.Export-Import-Detail'
+      , 'Group.Report'
+      , 'Report.Customers-Debt'
+    ],
     children: [
-      {state: 'day-report', name: 'Cuối ngày', type: 'link', icon: 'pie_chart', roles: ['ADMIN']},
-      {state: 'product-report', name: 'Hàng hóa', type: 'link', icon: 'store', roles: ['ADMIN']},
+      {state: 'day-report', name: 'Cuối ngày', type: 'link', icon: 'pie_chart', permissions: ['Invoice.List']},
+      {state: 'product-report', name: 'Hàng hóa', type: 'link', icon: 'store', roles: [
+        'Report.Product-Sale',
+        'Report.Stock',
+        'Warehouse-Product-Parcel.Expiration',
+        'Report/Export-Import-Detail'
+          , 'Report.Supplier'
+        ]},
       //{state: 'stock-report', name: 'Tồn kho', type: 'link', icon: 'store', roles: ['ADMIN']},
-      {state: 'group-report', name: 'Doanh thu nhóm hàng', type: 'link', icon: 'store', roles: ['ADMIN']},
+      {state: 'group-report', name: 'Doanh thu nhóm hàng', type: 'link', icon: 'store', permissions: ['Group.Report']},
       //{state: 'sale-report', name: 'Bán hàng', type: 'link', icon: 'table_chart', roles: ['ADMIN']},
       // {state: 'debt-report', name: 'Công nợ', type: 'link', icon: 'money', roles: ['ADMIN']},
-      {state: 'debt-customers', name: 'Công nợ thu', type: 'link', icon: 'money_on', roles: ['ADMIN']},
-      {state: 'debt-suppliers', name: 'Công nợ trả', type: 'link', icon: 'money_off', roles: ['ADMIN']},
+      {state: 'debt-customers', name: 'Công nợ thu', type: 'link', icon: 'money_on', permissions: ['Report.Customers-Debt']},
+      {state: 'debt-suppliers', name: 'Công nợ trả', type: 'link', icon: 'money_off', permissions: ['Report.Supplier-Debt']},
     ]
   },
   // {
@@ -330,64 +351,13 @@ const MENUITEMS = [
 
 @Injectable()
 export class MenuItems {
-  menuItems = [];
-
-  private static _generateUrl() {
-    return environment.apiUrl + '/user/roles';
-  }
-
-  private static _hasRole(userRoles, menuRoles) {
-    if (userRoles && userRoles.indexOf('*') >= 0) {
-      return true;
-    }
-    if (menuRoles && menuRoles.indexOf('*') >= 0) {
-      return true;
-    }
-    if (!menuRoles || !userRoles) {
-      return false;
-    }
-
-    return userRoles.filter(item => menuRoles.indexOf(item) >= 0).length > 0;
-  }
-
-
-  constructor(
-    private httpClient: HttpClient,
-    private router: Router,
-  ) {
-  }
-
-  public refreshMenuItem() {
-    const requestUrl = MenuItems._generateUrl();
-    this.menuItems = [];
-
-    return this.httpClient.get<any>(requestUrl).subscribe(res => {
-      const roles: string[] = res.roles;
-      const self = this;
-      MENUITEMS.forEach(function (menu: Menu, index, array) {
-        const _menu = menu;
-        if (menu.type === 'sub') {
-          const _children = [];
-          const children = menu.children;
-          children.forEach(function (child: ChildrenItems, _index, _array) {
-            if (MenuItems._hasRole(roles, child.roles)) {
-              _children.push(child);
-            }
-          });
-          _menu.children = _children;
-        }
-        if (MenuItems._hasRole(roles, menu.roles)) {
-          self.menuItems.push(_menu);
-        }
-      });
-    });
-  }
-
-  getMenuitem(): Menu[] {
-    return this.menuItems;
-  }
+  // menuItems = MENUITEMS;
 
   // getMenuitem(): Menu[] {
-  //   return MENUITEMS;
+  //   return this.menuItems;
   // }
+
+  getMenuitem(): Menu[] {
+    return MENUITEMS;
+  }
 }

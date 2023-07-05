@@ -8,6 +8,8 @@ import {StoreService} from '../../store/store.service';
 import {BranchService} from '../../branch/branch.service';
 import {ActivatedRoute, Route} from '@angular/router';
 import {Location} from '@angular/common';
+import {BaseComponent} from '../../shared/base';
+import {AuthService} from '../../authentication/auth.service';
 
 class ImageSnippet {
   constructor(public src: string, public file: File, public id: string) {
@@ -19,7 +21,7 @@ class ImageSnippet {
   templateUrl: './settings-main.component.html',
   styleUrls: ['./settings-main.component.css']
 })
-export class SettingsMainComponent implements OnInit {
+export class SettingsMainComponent extends BaseComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
@@ -28,9 +30,11 @@ export class SettingsMainComponent implements OnInit {
     public storeSer: StoreService,
     public branchSer: BranchService,
     public route: ActivatedRoute,
+    public authSer: AuthService,
     private location: Location,
     public optionStoreService: OptionStoreService
   ) {
+    super(authSer);
   }
 
   settingsType: string;
@@ -84,21 +88,25 @@ export class SettingsMainComponent implements OnInit {
       can_change_completed: [false],
     });
 
-    this.branchSer.getConnect().subscribe(res => {
-      this.connectForm.patchValue(res);
-      this.onConnectChange();
-    });
+    if (this.canDo('Branch.Get-Connect')) {
+      this.branchSer.getConnect().subscribe(res => {
+        this.connectForm.patchValue(res);
+        this.onConnectChange();
+      });
+    }
 
-    this.storeSer.getDetail().subscribe(res => {
-      if (res['logo'] !== null && res['logo'].length > 0) {
-        this.selectedFiles.push(new ImageSnippet(res['logo'], null, ''));
-        this.imageButtons[0]['isShow'] = false;
-      }
+    if (this.canDo('Store.Get-Detail')) {
+      this.storeSer.getDetail().subscribe(res => {
+        if (res['logo'] !== null && res['logo'].length > 0) {
+          this.selectedFiles.push(new ImageSnippet(res['logo'], null, ''));
+          this.imageButtons[0]['isShow'] = false;
+        }
 
-      this.storeForm.patchValue({description: res['description'], can_change_completed: res['can_change_completed']});
+        this.storeForm.patchValue({description: res['description'], can_change_completed: res['can_change_completed']});
 
-      this.storeFeatures = res['features'];
-    });
+        this.storeFeatures = res['features'];
+      });
+    }
 
     this.optionStoreService.getValue('transaction_expenses_order').subscribe(res => {
       this.optionStore_transaction_expenses_order = res;

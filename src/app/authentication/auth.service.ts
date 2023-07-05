@@ -9,6 +9,7 @@ import {User} from '../user/user.model';
 })
 export class AuthService {
   auth_token_key = 'rs24_token';
+  auth_permission_key = 'rx20_permission_key';
 
   constructor(
     private httpClient: HttpClient,
@@ -23,6 +24,16 @@ export class AuthService {
     return localStorage.setItem(this.auth_token_key, token);
   }
 
+  public getPermissionsFromLocalStorage(): string[] {
+    const permissionStr = localStorage.getItem(this.auth_permission_key);
+    return JSON.parse(permissionStr);
+  }
+
+  public setPermissions(permissions: string[]) {
+    const permissionsStr = JSON.stringify(permissions);
+    return localStorage.setItem(this.auth_permission_key, permissionsStr);
+  }
+
   public clearToken() {
     return localStorage.removeItem(this.auth_token_key);
   }
@@ -34,11 +45,10 @@ export class AuthService {
 
   public getPermissions() {
     const url = environment.apiUrl + '/auth/all-permission';
-    return this.httpClient.get<String[]>(url);
+    return this.httpClient.get<string[]>(url);
   }
 
-  private getSubDomain()
-  {
+  private getSubDomain() {
     const domain = window.location.hostname;
     let subDomain = '';
     if (domain.indexOf('.') < 0 ||
@@ -62,7 +72,7 @@ export class AuthService {
   }
 
   checkStatus() {
-    let url = environment.apiUrl + '/auth/login-status';
+    const url = environment.apiUrl + '/auth/login-status';
     return this.httpClient.get(url);
   }
 
