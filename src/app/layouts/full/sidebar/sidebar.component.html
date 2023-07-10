@@ -31,12 +31,14 @@
             <mat-icon class="dd-icon">keyboard_arrow_down</mat-icon>
         </a>
         <mat-nav-list class="sub-item" *ngIf="menuitem.type === 'sub' && checkMatchPermission(menuitem.permissions)">
-            <mat-list-item *ngFor="let childitem of menuitem.children" routerLinkActive="selected">
+          <div *ngFor="let childitem of menuitem.children">
+            <mat-list-item  *ngIf="checkMatchPermission(childitem.permissions)" routerLinkActive="selected">
                 <a [style]="styleNotBackgroundSubItem(menuitem.state, childitem.state)" [routerLink]="['/', menuitem.state, childitem.state ]" class="relative" routerLinkActive="selected">
                     <mat-icon [style]="styleNotBackgroundSubItem(menuitem.state, childitem.state, true)">{{ childitem.icon }}</mat-icon>
                     {{childitem.name}}
                 </a>
             </mat-list-item>
+          </div>
         </mat-nav-list>
         <div class="saperator text-muted" *ngIf="menuitem.type === 'saperator' && checkMatchPermission(menuitem.permissions)">
             <span>{{ menuitem.name }}</span>

@@ -20,6 +20,7 @@ export interface ChildrenItems {
   type?: string;
   icon?: string;
   roles?: string[];
+  permissions?: string[];
 }
 
 export interface Menu {
@@ -155,7 +156,7 @@ const MENUITEMS = [
     ],
     children: [
       {state: 'day-report', name: 'Cuối ngày', type: 'link', icon: 'pie_chart', permissions: ['Invoice.List']},
-      {state: 'product-report', name: 'Hàng hóa', type: 'link', icon: 'store', roles: [
+      {state: 'product-report', name: 'Hàng hóa', type: 'link', icon: 'store', permissions: [
         'Report.Product-Sale',
         'Report.Stock',
         'Warehouse-Product-Parcel.Expiration',
