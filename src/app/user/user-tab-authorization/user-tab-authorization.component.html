@@ -8,11 +8,11 @@
             <mat-radio-group [(ngModel)]="selectedRoleId"
               class="type-radio-group" (change)="onChangeRole($event);">
               <mat-radio-button class="radio-button-report-type" [checked]="role.id == this.selectedRoleId" value="{{role.id}}" *ngFor="let role of storeRoles">
-                {{role.name}} <button mat-icon-button (click)="openStoreRoleDialog(role.id);"><mat-icon>edit</mat-icon></button><button mat-icon-button (click)="openStoreRoleDialog(null, role.id);"><mat-icon>content_copy</mat-icon></button>
+                <span class="role-name">{{role.name}}</span> <button mat-icon-button (click)="openStoreRoleDialog(role.id);"><mat-icon>edit</mat-icon></button><button mat-icon-button (click)="openStoreRoleDialog(null, role.id);"><mat-icon>content_copy</mat-icon></button>
               </mat-radio-button>
 
             </mat-radio-group>
-            <button mat-mini-fab (click)="openStoreRoleDialog();"><mat-icon>add</mat-icon></button>
+            <button mat-mini-fab (click)="openStoreRoleDialog();" color="primary"><mat-icon>add</mat-icon></button>
           </mat-card-content>
         </mat-card>
       </div>

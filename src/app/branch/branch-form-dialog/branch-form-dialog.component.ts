@@ -26,6 +26,10 @@ export class BranchFormDialogComponent implements OnInit {
   local_data: any;
   branch_id: string;
 
+  nationalPharmacyLoginUsername: string;
+  nationalPharmacyLoginPassword: string;
+  hidePassword = true;
+
   statusItems: any[] = [
     {
       'id': 9,
@@ -130,6 +134,10 @@ export class BranchFormDialogComponent implements OnInit {
         ward: branch['ward'],
         province: branch['province'],
       });
+
+      this.nationalPharmacyLoginUsername =  branch['national_pharmacy_login_username'];
+      // @ts-ignore
+      this.nationalPharmacyLoginPassword = branch['national_pharmacy_login_password'];
 
       if (branch['province_id'] !== null) {
         this.locationSer.autocomplete('', 'district', branch['province_id']).subscribe(locations => {

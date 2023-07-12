@@ -60,7 +60,7 @@ export class UserFormDialogComponent implements OnInit {
       this.loadUser(this.user_id);
     }
 
-    this.getNationalPharmacyInfo();
+    // this.getNationalPharmacyInfo();
   }
 
   initForm() {
@@ -83,13 +83,13 @@ export class UserFormDialogComponent implements OnInit {
       email: [null, Validators.compose([
         Validators.required, Validators.maxLength(100), Validators.email
       ])],
-      status: [10, Validators.compose([
-        Validators.required, Validators.maxLength(3)
-      ])],
-      store_role_id: [null, Validators.compose([
-        Validators.required,
-        Validators.maxLength(40)
-      ])],
+      // status: [10, Validators.compose([
+      //   Validators.required, Validators.maxLength(3)
+      // ])],
+      // store_role_id: [null, Validators.compose([
+      //   Validators.required,
+      //   Validators.maxLength(40)
+      // ])],
     }, {validators: this.checkPasswordConfirm});
   }
 
@@ -99,8 +99,8 @@ export class UserFormDialogComponent implements OnInit {
         username: user['username'],
         phone_number: user['phone_number'],
         email: user['email'],
-        status: user['status'],
-        store_role_id: user['storeRole'] ? user['storeRole']['id'] : null,
+        // status: user['status'],
+        // store_role_id: user['storeRole'] ? user['storeRole']['id'] : null,
       });
     });
   }

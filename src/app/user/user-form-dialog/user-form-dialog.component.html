@@ -73,36 +73,36 @@
             </mat-form-field>
           </div>
 
-          <div *ngIf="checkRole('ADMIN')" fxFlex="100">
-            <div fxLayout="row wrap">
-              <div fxFlex="48">
-                <mat-form-field>
-                  <mat-select placeholder="Vai trò" [formControl]="form.controls['store_role_id']">
-                    <mat-option *ngFor="let role of storeRoles" [value]="role.id">
-                      {{role.name}}
-                    </mat-option>
-                  </mat-select>
+<!--          <div fxFlex="100">-->
+<!--            <div fxLayout="row wrap">-->
+<!--              <div fxFlex="48">-->
+<!--                <mat-form-field>-->
+<!--                  <mat-select placeholder="Vai trò" [formControl]="form.controls['store_role_id']">-->
+<!--                    <mat-option *ngFor="let role of storeRoles" [value]="role.id">-->
+<!--                      {{role.name}}-->
+<!--                    </mat-option>-->
+<!--                  </mat-select>-->
 
-                  <mat-error *ngIf="form.controls['store_role_id'].hasError('required')">Vui lòng chọn vai trò
-                  </mat-error>
-                </mat-form-field>
-              </div>
-              <div fxFlex="4"></div>
+<!--                  <mat-error *ngIf="form.controls['store_role_id'].hasError('required')">Vui lòng chọn vai trò-->
+<!--                  </mat-error>-->
+<!--                </mat-form-field>-->
+<!--              </div>-->
+<!--              <div fxFlex="4"></div>-->
 
-              <div fxFlex="48">
-                <mat-form-field>
-                  <mat-select placeholder="Trạng thái" [formControl]="form.controls['status']">
-                    <mat-option *ngFor="let item of statusItems" [value]="item.id">
-                      {{item.title}}
-                    </mat-option>
-                  </mat-select>
+<!--              <div fxFlex="48">-->
+<!--                <mat-form-field>-->
+<!--                  <mat-select placeholder="Trạng thái" [formControl]="form.controls['status']">-->
+<!--                    <mat-option *ngFor="let item of statusItems" [value]="item.id">-->
+<!--                      {{item.title}}-->
+<!--                    </mat-option>-->
+<!--                  </mat-select>-->
 
-                  <mat-error *ngIf="form.controls['status'].hasError('required')">Vui lòng chọn trạng thái</mat-error>
-                </mat-form-field>
-              </div>
+<!--                  <mat-error *ngIf="form.controls['status'].hasError('required')">Vui lòng chọn trạng thái</mat-error>-->
+<!--                </mat-form-field>-->
+<!--              </div>-->
 
-            </div>
-          </div>
+<!--            </div>-->
+<!--          </div>-->
 
         </div>
       </div>
@@ -110,26 +110,26 @@
     </div>
 
   </form>
-  <mat-divider></mat-divider>
-  <h3>Thông tin tài khoản kết nối liên thông</h3>
-  <div fxLayout="row wrap">
-    <div fxFlex="48">
-      <mat-form-field class="npl-info" appearance="fill" >
-        <mat-label>Tài khoản</mat-label>
-        <input matInput value="{{ nationalPharmacyLoginUsername }}" readonly>
-      </mat-form-field>
-    </div>
-    <div fxFlex="4"></div>
-    <div fxFlex="48">
-      <mat-form-field class="npl-info" appearance="fill">
-        <mat-label>Mật khẩu</mat-label>
-        <input matInput [type]="hidePassword ? 'password' : 'text'" value="{{ nationalPharmacyLoginPassword }}" readonly>
-        <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
-          <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-        </button>
-      </mat-form-field>
-    </div>
-  </div>
+<!--  <mat-divider></mat-divider>-->
+<!--  <h3>Thông tin tài khoản kết nối liên thông</h3>-->
+<!--  <div fxLayout="row wrap">-->
+<!--    <div fxFlex="48">-->
+<!--      <mat-form-field class="npl-info" appearance="fill" >-->
+<!--        <mat-label>Tài khoản</mat-label>-->
+<!--        <input matInput value="{{ nationalPharmacyLoginUsername }}" readonly>-->
+<!--      </mat-form-field>-->
+<!--    </div>-->
+<!--    <div fxFlex="4"></div>-->
+<!--    <div fxFlex="48">-->
+<!--      <mat-form-field class="npl-info" appearance="fill">-->
+<!--        <mat-label>Mật khẩu</mat-label>-->
+<!--        <input matInput [type]="hidePassword ? 'password' : 'text'" value="{{ nationalPharmacyLoginPassword }}" readonly>-->
+<!--        <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">-->
+<!--          <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>-->
+<!--        </button>-->
+<!--      </mat-form-field>-->
+<!--    </div>-->
+<!--  </div>-->
 </div>
 <div mat-dialog-actions align="end">
   <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="7" (click)="submit()">

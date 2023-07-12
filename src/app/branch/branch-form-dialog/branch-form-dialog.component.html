@@ -131,7 +131,8 @@
               <mat-form-field>
                 <mat-label>Số đăng ký nhà thuốc</mat-label>
                 <input matInput tabindex="8" formControlName="pharmacy_registration_number">
-                <mat-error *ngIf="form.controls['pharmacy_registration_number'].hasError('maxlength')">Số đăng ký nhà thuốc quá dài
+                <mat-error *ngIf="form.controls['pharmacy_registration_number'].hasError('maxlength')">Số đăng ký nhà
+                  thuốc quá dài
                 </mat-error>
               </mat-form-field>
             </div>
@@ -140,7 +141,8 @@
               <mat-form-field>
                 <mat-label>Giấy phép kinh doanh</mat-label>
                 <input matInput tabindex="9" formControlName="business_registration_certificate">
-                <mat-error *ngIf="form.controls['business_registration_certificate'].hasError('maxlength')">Giấy phép kinh doanh quá dài
+                <mat-error *ngIf="form.controls['business_registration_certificate'].hasError('maxlength')">Giấy phép
+                  kinh doanh quá dài
                 </mat-error>
               </mat-form-field>
             </div>
@@ -257,6 +259,35 @@
           </div>
         </div>
 
+      </div>
+    </div>
+    <div fxLayout="row">
+
+      <div fxLayout="row wrap">
+        <div fxFlex="100">
+          <mat-divider></mat-divider>
+          <h3>Thông tin tài khoản kết nối liên thông</h3>
+          <div fxLayout="row wrap">
+            <div fxFlex="48">
+              <mat-form-field class="npl-info" appearance="fill">
+                <mat-label>Tài khoản</mat-label>
+                <input matInput value="{{ nationalPharmacyLoginUsername }}" readonly>
+              </mat-form-field>
+            </div>
+            <div fxFlex="4"></div>
+            <div fxFlex="48">
+              <mat-form-field class="npl-info" appearance="fill">
+                <mat-label>Mật khẩu</mat-label>
+                <input matInput [type]="hidePassword ? 'password' : 'text'" value="{{ nationalPharmacyLoginPassword }}"
+                       readonly>
+                <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword"
+                        [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
+                  <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
