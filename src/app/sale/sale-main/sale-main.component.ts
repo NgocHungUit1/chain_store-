@@ -363,7 +363,6 @@ export class SaleMainComponent implements OnInit {
 
       // handle add common price
       const priceBookID = mItemInvoice.price_book_id; // this.orderService.getPriceBookID();
-      console.log(priceBookID);
       const list = this.listProduct;
 
       if (
@@ -846,8 +845,8 @@ export class SaleMainComponent implements OnInit {
   choosePriceBook(event: any) {
     this.changePriceBook = true;
     this.actionChoosePriceBook();
-    this.changePriceBook = true;
-    this.actionChoosePriceBook();
+    // this.changePriceBook = true;
+    // this.actionChoosePriceBook();
   }
 
   actionChoosePriceBook() {

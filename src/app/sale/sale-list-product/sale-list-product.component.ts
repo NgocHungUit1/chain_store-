@@ -106,17 +106,23 @@ export class SaleListProductComponent extends ListComponentBase implements OnIni
   ngOnInit(): void {
     let mItemInvoice = new ItemInvoice();
     this.apiFilter = this.buildFilterFromParams();
-    this.loadData();
+    // this.loadData();
     this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
       const listItemInvoice = ListInvoice.itemInvoice;
       // tslint:disable-next-line:no-shadowed-variable
+      let loaded = false;
       listItemInvoice.forEach(element => {
         if (element.active === true && this.priceBookID !== element?.price_book_id) {
           this.priceBookID = element?.price_book_id;
-          this.apiFilter = this.buildFilterFromParams();
+          this.apiFilter.price_book_id = element?.price_book_id;
+          // this.apiFilter = this.buildFilterFromParams();
           this.loadData();
+          loaded = true;
         }
       });
+      if (!loaded) {
+        this.loadData();
+      }
       this.localItemInvoice = this.getNewItemInvoice();
 
     });
