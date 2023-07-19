@@ -28,7 +28,7 @@ export class OrderService {
   rx20_history = 'rx20_history';
 
   constructor(private http: HttpClient) {
-    this.getDataInvoiceActive();
+    this.initData();
   }
 
   public initListInvoice() {
@@ -41,8 +41,17 @@ export class OrderService {
     itemInvoice.is_return = false;
     listItemInvoice.push(itemInvoice);
     data.itemInvoice = listItemInvoice;
-    this.ObjectListInvoice.next(data);
+    // this.ObjectListInvoice.next(data);
     this.setListInvoiceLocalStorage(data);
+  }
+
+  public initData() {
+    let listInvoice = JSON.parse(localStorage.getItem(this.order_key_local));
+    if (listInvoice == null) {
+      listInvoice = new ListInvoice();
+    }
+    this.ObjectListInvoice = new BehaviorSubject<ListInvoice>(listInvoice);
+    this.subscribeObjectListInvoice = this.ObjectListInvoice.asObservable();
   }
 
   public getDataInvoiceActive() {
@@ -51,7 +60,7 @@ export class OrderService {
       this.initListInvoice();
     }
     listInvoice = this.getListInvoiceLocalStorage();
-    this.ObjectOrder.next(listInvoice);
+    // this.ObjectOrder.next(listInvoice);
   }
 
   public setListInvoiceLocalStorage(data: ListInvoice) {
@@ -64,7 +73,6 @@ export class OrderService {
     if (listInvoice == null) {
       return new ListInvoice();
     }
-    this.ObjectListInvoice.next(listInvoice);
     return listInvoice;
   }
 
@@ -145,8 +153,8 @@ export class OrderService {
 
 
   // danh sach hoa don
-  public ObjectListInvoice: BehaviorSubject<ListInvoice> = new BehaviorSubject<ListInvoice>(null);
-  subscribeObjectListInvoice: Observable<ListInvoice> = this.ObjectListInvoice.asObservable();
+  public ObjectListInvoice: BehaviorSubject<ListInvoice>;
+  subscribeObjectListInvoice: Observable<ListInvoice>;
 
   // danh sach san pham , so luong, gia tien, ghi chu
   public ObjectOrder: BehaviorSubject<Object> = new BehaviorSubject<Object>(null);

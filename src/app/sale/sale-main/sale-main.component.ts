@@ -363,6 +363,7 @@ export class SaleMainComponent implements OnInit {
 
       // handle add common price
       const priceBookID = mItemInvoice.price_book_id; // this.orderService.getPriceBookID();
+      console.log(priceBookID);
       const list = this.listProduct;
 
       if (
@@ -446,7 +447,7 @@ export class SaleMainComponent implements OnInit {
               }
             });
           this.listProduct.reverse();
-          this.changePriceBook = false;
+          // this.changePriceBook = false;
         } else {
           /**
            * Truong hop: khong thay doi vs sl , pricebook
@@ -577,15 +578,19 @@ export class SaleMainComponent implements OnInit {
           // xu ly them price book id vao mac dinh
           const listInvoice = this.orderService.getListInvoiceLocalStorage();
           const listItemInvoice = listInvoice.itemInvoice;
+          let hasChanged = false;
           listItemInvoice.forEach(ele => {
             if (ele.active === true && ele.price_book_id === undefined) {
               ele.price_book_id = element.id;
               this.form.patchValue({
                 priceBookID: element.id,
               });
+              hasChanged = true;
             }
           });
-          this.orderService.setListInvoiceLocalStorage(listInvoice);
+          if (hasChanged) {
+            this.orderService.setListInvoiceLocalStorage(listInvoice);
+          }
         }
       });
     });
