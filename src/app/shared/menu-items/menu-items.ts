@@ -58,14 +58,14 @@ const MENUITEMS = [
     name: 'Hàng hóa',
     type: 'sub',
     icon: 'web_asset',
-    permissions: ['Product.List', 'Group.List', 'Sample-Prescription.List', 'Price-Book.List', 'Stock-Take.List'],
+    permissions: ['Product.List', 'Group.List', 'Sample-Prescription.List', 'Price-List.List', 'Stock-Take.List'],
     // badge: [{type: 'red', value: '17'}],
     children: [
       // {state: 'medicine', name: 'Danh mục thuốc', type: 'link', icon: 'list', roles: ['ADMIN', 'WAREHOUSE', 'SALE']},
       {state: 'product', name: 'Sản phẩm', type: 'link', icon: 'local_pharmacy', permissions: ['Product.List']},
       {state: 'group', name: 'Nhóm hàng', type: 'link', icon: 'local_pharmacy', permissions: ['Group.List']},
       {state: 'sample-prescription', name: 'Đơn thuốc mẫu', type: 'link', icon: 'list_alt', permissions: ['Sample-Prescription.List']},
-      {state: 'price-book', name: 'Thiết lập giá', type: 'link', icon: 'loyalty', permissions: ['Price-Book.List']},
+      {state: 'price-book', name: 'Thiết lập giá', type: 'link', icon: 'loyalty', permissions: ['Price-List.List']},
       {state: 'stock-take', name: 'Kiểm kho', type: 'link', icon: 'check_circle_outline', permissions: ['Stock-Take.List']},
     ]
   },
