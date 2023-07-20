@@ -398,7 +398,7 @@ export class SaleMainComponent implements OnInit {
                 //
                 // debugger;
                 /**
-                 * group = [ product_id] => [
+                 * group = [ product_unit_id] => [
                  *          id,price,price_list_id,product_id
                  *          ]
                  * code group array by key
@@ -472,7 +472,7 @@ export class SaleMainComponent implements OnInit {
           if (this.listProduct !== null) {
             this.listProduct.forEach(elementData => {
               if (
-                groupProductIdCommonPrice[elementData.product_unit_id] !==
+                groupProductIdCommonPrice[elementData.product_id] !==
                 undefined
               ) {
                 if (elementData.product.end_price !== undefined) {
@@ -481,11 +481,11 @@ export class SaleMainComponent implements OnInit {
                     elementData.product.end_price * elementData.amount;
                 } else {
                   elementData.common_price =
-                    groupProductIdCommonPrice[elementData.product_unit_id][0][
+                    groupProductIdCommonPrice[elementData.product_id][0][
                       'common_price'
                     ];
                   this.sumPrice +=
-                    groupProductIdCommonPrice[elementData.product_unit_id][0][
+                    groupProductIdCommonPrice[elementData.product_id][0][
                       'common_price'
                     ] * elementData.amount;
                 }
