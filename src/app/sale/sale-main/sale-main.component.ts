@@ -365,6 +365,8 @@ export class SaleMainComponent implements OnInit {
       const priceBookID = mItemInvoice.price_book_id; // this.orderService.getPriceBookID();
       const list = this.listProduct;
 
+      console.log(priceBookID);
+
       if (
         priceBookID !== null &&
         Array.isArray(list) &&
@@ -445,7 +447,7 @@ export class SaleMainComponent implements OnInit {
                 }
               }
             });
-          this.listProduct.reverse();
+          // this.listProduct.reverse();
           // this.changePriceBook = false;
         } else {
           /**
@@ -1620,6 +1622,7 @@ export class SaleMainComponent implements OnInit {
         } else {
           this.notifySer.notify('warning', 'Thất bại !');
         }
+        this.actionChoosePriceBook();
         this.loadData();
 
         this.orderService.setLoadProduct(false);
@@ -1648,6 +1651,7 @@ export class SaleMainComponent implements OnInit {
         } else {
           this.notifySer.notify('warning', 'Thất bại !');
         }
+        this.actionChoosePriceBook();
         this.loadData();
         this.orderService.setLoadProduct(false);
         this.orderService.setLoadDetailPage(true);
