@@ -463,7 +463,6 @@ export class SaleMainComponent implements OnInit {
                   return r;
                 }, {})
               : [];
-
           /**
            * Tien hanh sumPrice , cap nhat common_price, neu khong co common_price se cho sell_price
            */
@@ -475,19 +474,13 @@ export class SaleMainComponent implements OnInit {
                 groupProductIdCommonPrice[elementData.product_id] !==
                 undefined
               ) {
-                if (elementData.product.end_price !== undefined) {
-                  elementData.common_price = elementData.product.end_price;
-                  this.sumPrice +=
-                    elementData.product.end_price * elementData.amount;
+                const unitPrice = groupProductIdCommonPrice[elementData.product_id]
+                  .find(i => i.product_unit_id === elementData.product_unit_id);
+                if (unitPrice) {
+                  elementData.common_price = unitPrice['common_price'];
+                  this.sumPrice += unitPrice['common_price'] * elementData.amount;
                 } else {
-                  elementData.common_price =
-                    groupProductIdCommonPrice[elementData.product_id][0][
-                      'common_price'
-                    ];
-                  this.sumPrice +=
-                    groupProductIdCommonPrice[elementData.product_id][0][
-                      'common_price'
-                    ] * elementData.amount;
+                  // lost here
                 }
               } else {
                 if (elementData.product.end_price !== undefined) {
