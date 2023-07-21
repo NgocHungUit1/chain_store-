@@ -48,7 +48,7 @@ export class OrderService {
   public initData() {
     let listInvoice = JSON.parse(localStorage.getItem(this.order_key_local));
     if (listInvoice == null) {
-      listInvoice = new ListInvoice();
+      listInvoice = this.createNewInvoice();
     }
     this.ObjectListInvoice = new BehaviorSubject<ListInvoice>(listInvoice);
     this.subscribeObjectListInvoice = this.ObjectListInvoice.asObservable();
@@ -68,10 +68,32 @@ export class OrderService {
     localStorage.setItem(this.order_key_local, JSON.stringify(data));
   }
 
+  private createNewInvoice() {
+    let min_invoice_id = 0;
+    const data = new ListInvoice();
+    const listItemInvoice = [];
+    // tslint:disable-next-line:no-shadowed-variable
+    listItemInvoice.forEach(element => {
+      element.active = false;
+      if (element.invoice_id < min_invoice_id) {
+        min_invoice_id = element.invoice_id;
+      }
+    });
+    const itemInvoice = new ItemInvoice();
+    itemInvoice.invoice_id = min_invoice_id - 1;
+    itemInvoice.invoice_name = 'Hóa đơn';
+    itemInvoice.active = true;
+    itemInvoice.is_return = false;
+    itemInvoice.new = true;
+    listItemInvoice.push(itemInvoice);
+    data.itemInvoice = listItemInvoice;
+    return data;
+  }
+
   public getListInvoiceLocalStorage() {
     const listInvoice = JSON.parse(localStorage.getItem(this.order_key_local));
     if (listInvoice == null) {
-      return new ListInvoice();
+      return this.createNewInvoice();
     }
     return listInvoice;
   }
@@ -94,7 +116,6 @@ export class OrderService {
     itemInvoice.new = true;
     listItemInvoice.push(itemInvoice);
     data.itemInvoice = listItemInvoice;
-    this.setListInvoiceLocalStorage(data);
     this.setListInvoiceLocalStorage(data);
   }
 

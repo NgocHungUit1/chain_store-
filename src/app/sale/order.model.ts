@@ -68,7 +68,7 @@ export class ItemInvoice {
 }
 
 export class ListInvoice {
-  itemInvoice: ItemInvoice[];
+  itemInvoice: ItemInvoice[] = [];
 }
 
 export class itemDetail {
