@@ -35,6 +35,21 @@ export class UserService {
     return url;
   }
 
+  getApiUrlRef(filter?: UserFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/user/index-for-ref?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
   getStateUrl(filter?: UserFilter) {
 
     let url = '/user/list';
@@ -58,7 +73,7 @@ export class UserService {
     filter.page = 1;
     filter.pageSize = 100;
 
-    const url = environment.apiUrl + this.getApiUrl(filter);
+    const url = environment.apiUrl + this.getApiUrlRef(filter);
     return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
   }
 
