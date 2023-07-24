@@ -102,11 +102,13 @@ export class OrderService {
     const data = this.getListInvoiceLocalStorage();
     const listItemInvoice = data.itemInvoice || [];
     let min_invoice_id = 0;
+    let last_price_book_id = null;
     listItemInvoice.forEach(element => {
       element.active = false;
       if (element.invoice_id < min_invoice_id) {
         min_invoice_id = element.invoice_id;
       }
+      last_price_book_id = element.price_book_id;
     });
     const itemInvoice = new ItemInvoice();
     itemInvoice.invoice_id = min_invoice_id - 1;
@@ -114,6 +116,7 @@ export class OrderService {
     itemInvoice.active = true;
     itemInvoice.is_return = false;
     itemInvoice.new = true;
+    itemInvoice.price_book_id = last_price_book_id;
     listItemInvoice.push(itemInvoice);
     data.itemInvoice = listItemInvoice;
     this.setListInvoiceLocalStorage(data);

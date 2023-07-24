@@ -12,11 +12,11 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { NotifierService } from 'angular-notifier';
-import { Observable } from 'rxjs';
-import { Product } from '../../product/product.model';
-import { OrderService } from '../order.service';
+import {MatDialog} from '@angular/material/dialog';
+import {NotifierService} from 'angular-notifier';
+import {Observable} from 'rxjs';
+import {Product} from '../../product/product.model';
+import {OrderService} from '../order.service';
 import {
   catchError,
   debounceTime,
@@ -24,30 +24,30 @@ import {
   startWith,
   switchMap,
 } from 'rxjs/operators';
-import { of } from 'rxjs/internal/observable/of';
-import { PriceList, PriceListFilter } from '../../price-book/price-list.model';
-import { PriceListService } from '../../price-book/price-list.service';
-import { NoteDetailOrderDialogComponent } from '../note-detail-order-dialog/note-detail-order-dialog.component';
-import { PriceDetailOrderDialogComponent } from '../price-detail-order-dialog/price-detail-order-dialog.component';
-import { PriceListProductService } from '../../price-book/price-list-product.service';
-import { ItemInvoice } from '../order.model';
-import { Customer } from '../../customer/customer.model';
-import { SaleCustomerFormDialogComponent } from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
-import { PaymentSiderbarDialogComponent } from '../payment-siderbar-dialog/payment-siderbar-dialog.component';
-import { DiscountSiderbarDialogComponent } from '../discount-siderbar-dialog/discount-siderbar-dialog.component';
-import { CustomerService } from '../../customer/customer.service';
-import { UserService } from '../../user/user.service';
-import { User } from '../../user/user.model';
+import {of} from 'rxjs/internal/observable/of';
+import {PriceList, PriceListFilter} from '../../price-book/price-list.model';
+import {PriceListService} from '../../price-book/price-list.service';
+import {NoteDetailOrderDialogComponent} from '../note-detail-order-dialog/note-detail-order-dialog.component';
+import {PriceDetailOrderDialogComponent} from '../price-detail-order-dialog/price-detail-order-dialog.component';
+import {PriceListProductService} from '../../price-book/price-list-product.service';
+import {ItemInvoice} from '../order.model';
+import {Customer} from '../../customer/customer.model';
+import {SaleCustomerFormDialogComponent} from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
+import {PaymentSiderbarDialogComponent} from '../payment-siderbar-dialog/payment-siderbar-dialog.component';
+import {DiscountSiderbarDialogComponent} from '../discount-siderbar-dialog/discount-siderbar-dialog.component';
+import {CustomerService} from '../../customer/customer.service';
+import {UserService} from '../../user/user.service';
+import {User} from '../../user/user.model';
 import * as numeral from 'numeral';
-import { OptionStoreService } from '../../common/option-store.service';
-import { OptionStore } from '../../common/option-store.model';
-import { ExpensesOrderService } from '../../expenses-order/expenses-order.service';
+import {OptionStoreService} from '../../common/option-store.service';
+import {OptionStore} from '../../common/option-store.model';
+import {ExpensesOrderService} from '../../expenses-order/expenses-order.service';
 import {
   ExpensesOrder,
   ExpensesOrderFilter,
 } from '../../expenses-order/expenses-order.model';
-import { SaleExpensesDialogComponent } from '../sale-expenses-dialog/sale-expenses-dialog.component';
-import { PrescriptionFormDialogComponent } from '../prescription-form-dialog/prescription-form-dialog.component';
+import {SaleExpensesDialogComponent} from '../sale-expenses-dialog/sale-expenses-dialog.component';
+import {PrescriptionFormDialogComponent} from '../prescription-form-dialog/prescription-form-dialog.component';
 import {
   DateAdapter,
   MAT_DATE_FORMATS,
@@ -57,7 +57,7 @@ import {
   MAT_MOMENT_DATE_ADAPTER_OPTIONS,
   MomentDateAdapter,
 } from '@angular/material-moment-adapter';
-import { DatePipe } from '@angular/common';
+import {DatePipe} from '@angular/common';
 import * as moment from 'moment';
 import {StoreService} from '../../store/store.service';
 
@@ -85,7 +85,7 @@ export const MY_FORMATS = {
       useClass: MomentDateAdapter,
       deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
     },
-    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+    {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS},
   ],
 })
 export class SaleMainComponent implements OnInit {
@@ -102,7 +102,8 @@ export class SaleMainComponent implements OnInit {
     private optionStoreService: OptionStoreService,
     private expensesOrderService: ExpensesOrderService,
     public storeSer: StoreService,
-  ) {}
+  ) {
+  }
 
   optionStore_auto_print: OptionStore = null;
 
@@ -459,9 +460,9 @@ export class SaleMainComponent implements OnInit {
           const groupProductIdCommonPrice =
             listProductOLD !== null
               ? listProductOLD.reduce((r, a) => {
-                  r[a.product_id] = [...(r[a.product_id] || []), a];
-                  return r;
-                }, {})
+                r[a.product_id] = [...(r[a.product_id] || []), a];
+                return r;
+              }, {})
               : [];
           /**
            * Tien hanh sumPrice , cap nhat common_price, neu khong co common_price se cho sell_price
@@ -470,27 +471,33 @@ export class SaleMainComponent implements OnInit {
           this.sumPrice = 0;
           if (this.listProduct !== null) {
             this.listProduct.forEach(elementData => {
-              if (
-                groupProductIdCommonPrice[elementData.product_id] !==
-                undefined
-              ) {
-                const unitPrice = groupProductIdCommonPrice[elementData.product_id]
-                  .find(i => i.product_unit_id === elementData.product_unit_id);
-                if (unitPrice) {
-                  elementData.common_price = unitPrice['common_price'];
-                  this.sumPrice += unitPrice['common_price'] * elementData.amount;
-                } else {
-                  // lost here
-                }
+              if (elementData.product.end_price !== undefined) {
+                elementData.common_price = elementData.product.end_price;
+                this.sumPrice +=
+                  elementData.product.end_price * elementData.amount;
               } else {
-                if (elementData.product.end_price !== undefined) {
-                  elementData.common_price = elementData.product.end_price;
-                  this.sumPrice +=
-                    elementData.product.end_price * elementData.amount;
+                if (
+                  groupProductIdCommonPrice[elementData.product_id] !==
+                  undefined
+                ) {
+                  const unitPrice = groupProductIdCommonPrice[elementData.product_id]
+                    .find(i => i.product_unit_id === elementData.product_unit_id);
+                  if (unitPrice) {
+                    elementData.common_price = unitPrice['common_price'];
+                    this.sumPrice += unitPrice['common_price'] * elementData.amount;
+                  } else {
+                    // lost here
+                  }
                 } else {
-                  elementData.common_price = elementData.product.sell_price;
-                  this.sumPrice +=
-                    elementData.product.sell_price * elementData.amount;
+                  if (elementData.product.end_price !== undefined) {
+                    elementData.common_price = elementData.product.end_price;
+                    this.sumPrice +=
+                      elementData.product.end_price * elementData.amount;
+                  } else {
+                    elementData.common_price = elementData.product.sell_price;
+                    this.sumPrice +=
+                      elementData.product.sell_price * elementData.amount;
+                  }
                 }
               }
             });
@@ -591,7 +598,7 @@ export class SaleMainComponent implements OnInit {
   }
 
   public changeBranch(event) {
-    const data = { branch_store_id: event.value };
+    const data = {branch_store_id: event.value};
     this.userService.updateBranchLogin(data).subscribe(
       res => {
         if (res === true) {
@@ -608,7 +615,8 @@ export class SaleMainComponent implements OnInit {
           );
         }
       },
-      error => {}
+      error => {
+      }
     );
   }
 
@@ -765,7 +773,8 @@ export class SaleMainComponent implements OnInit {
       minHeight: '80%',
     });
 
-    dialogRef.afterClosed().subscribe(result => {});
+    dialogRef.afterClosed().subscribe(result => {
+    });
   }
 
   /**
@@ -1031,121 +1040,121 @@ export class SaleMainComponent implements OnInit {
         _solo = 'text-align:left; min-width: 100px;';
       }
 
-        this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
-          const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
-          const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
-          let printContent = '<title>' + res?.invoice_no + '</title>';
-          printContent += '<style> ' +
-            'p,table,div {' +
-            'font-family: Arial, sans-serif;' +
-            'font-size: ' + _font_size +
-            'margin: ' + _margin +
-            '}' +
-            'table, th, td {' +
-            // 'font-family: arial, sans-serif;' +
-            'border-collapse: collapse;' +
-            'border: 1px solid black;' +
-            'width: 100%;' +
-            '}' +
-            'td, th {' +
-            'border: 1px solid black;' +
-            'text-align: left;' +
-            'padding: ' + _padding +
-            '}</style>' +
-            '<section style="padding: 10px; font-size: ' + _font_size + ' ">' +
-            (this.logo !== null ? '<p style="text-align:center; margin-bottom: 10px"><img src="' + this.logo + '" style="max-width: 160px;"></p>' : '') +
-            '<p style="text-align:center;">' + res?.store?.name + '</p>' +
-            '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
-            '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +
-            '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
-            '<p style="">Khách hàng: ' + customer_name + '</p>';
+      this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
+        const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
+        const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
+        let printContent = '<title>' + res?.invoice_no + '</title>';
+        printContent += '<style> ' +
+          'p,table,div {' +
+          'font-family: Arial, sans-serif;' +
+          'font-size: ' + _font_size +
+          'margin: ' + _margin +
+          '}' +
+          'table, th, td {' +
+          // 'font-family: arial, sans-serif;' +
+          'border-collapse: collapse;' +
+          'border: 1px solid black;' +
+          'width: 100%;' +
+          '}' +
+          'td, th {' +
+          'border: 1px solid black;' +
+          'text-align: left;' +
+          'padding: ' + _padding +
+          '}</style>' +
+          '<section style="padding: 10px; font-size: ' + _font_size + ' ">' +
+          (this.logo !== null ? '<p style="text-align:center; margin-bottom: 10px"><img src="' + this.logo + '" style="max-width: 160px;"></p>' : '') +
+          '<p style="text-align:center;">' + res?.store?.name + '</p>' +
+          '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
+          '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +
+          '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
+          '<p style="">Khách hàng: ' + customer_name + '</p>';
 
-          if (customer_phone !== '') {
-            printContent += '<p style="">SĐT: ' + customer_phone + '</p>';
-          }
+        if (customer_phone !== '') {
+          printContent += '<p style="">SĐT: ' + customer_phone + '</p>';
+        }
 
-          printContent += '<table>' +
-            '<tr>' +
-            '<th>Tên thuốc</th>' +
-            '<th style="text-align:center;">SL</th>';
+        printContent += '<table>' +
+          '<tr>' +
+          '<th>Tên thuốc</th>' +
+          '<th style="text-align:center;">SL</th>';
 
-          if (this.autoPrintInSoLo === true) {
-            printContent += '<th style="' + _solo + '">Số lô</th>';
-          }
+        if (this.autoPrintInSoLo === true) {
+          printContent += '<th style="' + _solo + '">Số lô</th>';
+        }
 
-          printContent += '<th style="text-align:center;">T.Tiền</th>' +
-            '</tr>';
+        printContent += '<th style="text-align:center;">T.Tiền</th>' +
+          '</tr>';
 
-          const detail = res.detail;
+        const detail = res.detail;
 
-          /**
-           * Chi tiet don hang
-           */
-          // tslint:disable-next-line:no-shadowed-variable
-          detail.forEach(element => {
-            if (element?.base_unit == null) {
-              printContent += '<tr>' +
-                '<td>' + element.product?.product_name + '<br>' + element.price + '</td>' +
-                '<td style="text-align:center;">' + element.amount + '</td>';
-              if (this.autoPrintInSoLo === true) {
-                printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
-              }
-              printContent += '<td style="text-align:right;">' + element.total + '</td>' +
-                '</tr>';
-            } else {
-              printContent += '<tr>' +
-                '<td>' + element.product?.product_name + ' - ' + element?.base_unit + '<br>' + element.price + '</td>' +
-                '<td style="text-align:center;">' + element.amount + '</td>';
-              if (this.autoPrintInSoLo === true) {
-                printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
-              }
-              printContent += '<td style="text-align:right;">' + element.total + '</td>' +
-                '</tr>';
-            }
-          });
-
-          /**
-           * Tong tien hang
-           */
-          let colspan = 2;
-          if (this.autoPrintInSoLo === true) {
-            colspan = 3;
-          }
-          printContent += '<tr>' +
-            '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng tiền hàng :</td>' +
-            '<td style="text-align:right; font-weight:600;">' + res.total_price + '</td>' +
-            '</tr>';
-          printContent += '<tr>' +
-            '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Chiết khấu :</td>' +
-            '<td style="text-align:right; font-weight:600;">' + res.discount + '</td>' +
-            '</tr>';
-          printContent += '<tr>' +
-            '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng thanh toán :</td>' +
-            '<td style="text-align:right; font-weight:600;">' + res.sum_payment + '</td>' +
-            '</tr>';
-          if (res.debt !== null) {
+        /**
+         * Chi tiet don hang
+         */
+        // tslint:disable-next-line:no-shadowed-variable
+        detail.forEach(element => {
+          if (element?.base_unit == null) {
             printContent += '<tr>' +
-              '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Còn nợ :</td>' +
-              '<td style="text-align:right; font-weight:600;">' + res.debt + '</td>' +
+              '<td>' + element.product?.product_name + '<br>' + element.price + '</td>' +
+              '<td style="text-align:center;">' + element.amount + '</td>';
+            if (this.autoPrintInSoLo === true) {
+              printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
+            }
+            printContent += '<td style="text-align:right;">' + element.total + '</td>' +
+              '</tr>';
+          } else {
+            printContent += '<tr>' +
+              '<td>' + element.product?.product_name + ' - ' + element?.base_unit + '<br>' + element.price + '</td>' +
+              '<td style="text-align:center;">' + element.amount + '</td>';
+            if (this.autoPrintInSoLo === true) {
+              printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
+            }
+            printContent += '<td style="text-align:right;">' + element.total + '</td>' +
               '</tr>';
           }
-          printContent += '</table>';
-          if (this.description !== null && this.description.length > 0) {
-            printContent += '<p style="text-align:center; font-style: italic;" >' + this.description + '</p>';
-          } else {
-            printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
-          }
-          // printContent += '<p style="text-align:left; font-size: 12px;font-style: italic;" >Hổ trợ : 0972 574 506</p>';
-
-          printContent += '</section>';
-
-          const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
-          WindowPrt.document.write(printContent);
-          WindowPrt.document.close();
-          WindowPrt.focus();
-          WindowPrt.print();
-          // WindowPrt.close(); // lỗi tự đôngs
         });
+
+        /**
+         * Tong tien hang
+         */
+        let colspan = 2;
+        if (this.autoPrintInSoLo === true) {
+          colspan = 3;
+        }
+        printContent += '<tr>' +
+          '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng tiền hàng :</td>' +
+          '<td style="text-align:right; font-weight:600;">' + res.total_price + '</td>' +
+          '</tr>';
+        printContent += '<tr>' +
+          '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Chiết khấu :</td>' +
+          '<td style="text-align:right; font-weight:600;">' + res.discount + '</td>' +
+          '</tr>';
+        printContent += '<tr>' +
+          '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng thanh toán :</td>' +
+          '<td style="text-align:right; font-weight:600;">' + res.sum_payment + '</td>' +
+          '</tr>';
+        if (res.debt !== null) {
+          printContent += '<tr>' +
+            '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Còn nợ :</td>' +
+            '<td style="text-align:right; font-weight:600;">' + res.debt + '</td>' +
+            '</tr>';
+        }
+        printContent += '</table>';
+        if (this.description !== null && this.description.length > 0) {
+          printContent += '<p style="text-align:center; font-style: italic;" >' + this.description + '</p>';
+        } else {
+          printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
+        }
+        // printContent += '<p style="text-align:left; font-size: 12px;font-style: italic;" >Hổ trợ : 0972 574 506</p>';
+
+        printContent += '</section>';
+
+        const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+        WindowPrt.document.write(printContent);
+        WindowPrt.document.close();
+        WindowPrt.focus();
+        WindowPrt.print();
+        // WindowPrt.close(); // lỗi tự đôngs
+      });
     });
   }
 
