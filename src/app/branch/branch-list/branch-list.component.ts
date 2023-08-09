@@ -1,15 +1,16 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute} from '@angular/router';
-import {NotifierService} from 'angular-notifier';
 import {MatTable} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {ListComponentBase} from '../../shared/base';
+import {BaseComponent, ListComponentBase} from '../../shared/base';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {Branch, BranchFilter} from '../branch.model';
 import {BranchService} from '../branch.service';
 import {BranchFormDialogComponent} from '../branch-form-dialog/branch-form-dialog.component';
+import {StoreService} from '../../store/store.service';
+import {AuthService} from '../../authentication/auth.service';
 
 
 @Component({
@@ -30,7 +31,8 @@ export class BranchListComponent extends ListComponentBase implements OnInit {
     private service: BranchService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
-    private notifyService: NotifierService
+    private storeSer: StoreService,
+    public authSer: AuthService
   ) {
     super();
   }
@@ -75,6 +77,8 @@ export class BranchListComponent extends ListComponentBase implements OnInit {
   isLoadingResults = true;
   isRateLimitReached = false;
 
+  storeFeatures = [];
+
   buildFilterFromParams(): BranchFilter {
     function write<K extends keyof BranchFilter>(arg: BranchFilter, key: K, value: BranchFilter[K]): void {
       arg[key] = value;
@@ -105,6 +109,12 @@ export class BranchListComponent extends ListComponentBase implements OnInit {
       this.reloadFilter(res);
       this.isLoadingResults = false;
     });
+
+    if (this.canDo('Store.Get-Detail')) {
+      this.storeSer.getDetail().subscribe(res => {
+        this.storeFeatures = res['features'];
+      });
+    }
   }
 
   ngOnInit(): void {
@@ -131,6 +141,12 @@ export class BranchListComponent extends ListComponentBase implements OnInit {
         this.loadData();
       }
     });
+  }
+
+  canDo(permissionName: string): boolean {
+    const allPermissions = this.authSer.getPermissionsFromLocalStorage();
+
+    return allPermissions.indexOf(permissionName) !== -1;
   }
 
 

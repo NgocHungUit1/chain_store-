@@ -15,7 +15,7 @@
       </button>
       <label class="font-18">Danh sách chi nhánh</label>
       <span fxFlex="1 1 0%"></span>
-      <button mat-raised-button color="primary" (click)="openBranchFormDialog()" style="margin-right: 10px">
+      <button mat-raised-button color="primary" (click)="openBranchFormDialog()" style="margin-right: 10px" *ngIf="this.storeFeatures.indexOf('branch_create') >= 0">
         <mat-icon>add</mat-icon>
         Thêm mới
       </button>
