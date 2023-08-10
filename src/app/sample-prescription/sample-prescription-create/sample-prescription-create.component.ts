@@ -16,6 +16,7 @@ import { of } from 'rxjs/internal/observable/of';
 import { SamplePrescription, SamplePrescriptionItem, SamplePrescriptionItemFilter } from '../sample-prescription.model';
 import { SamplePrescriptionService } from '../sample-prescription.service';
 import { SamplePrescriptionItemService } from '../sample-prescription-item.service';
+import * as numeral from 'numeral';
 
 @Component({
   selector: 'app-sample-prescription-item-create',
@@ -40,7 +41,6 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
 
 
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
-  @ViewChild('selectColumn') selectColumn;
 
   selectProduct = new FormControl();
 
@@ -99,6 +99,7 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
       name: [null, Validators.required],
       status: ['10'],
       note: [null],
+      total_amount: [0],
     });
 
     this.displayedColumns = this.columnsToDisplay;
@@ -136,6 +137,7 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
           name: res['name'],
           status: res['status'] + '',
           note: res['note'],
+          total_amount: numeral(res['total_amount']).format('0,0'),
         });
 
         this.form.controls['date'].disable();
@@ -267,6 +269,7 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
   saveSample() {
     if (this.form.valid) {
       const data = this.form.getRawValue();
+      data['total_amount'] = numeral(data['total_amount']).value();
 
       if (this.form.controls['date'].value !== null && typeof this.form.controls['date'].value === 'object') {
         const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
@@ -294,6 +297,10 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
 
       //
     }
+  }
+
+  inputFormatNumber(event: any) {
+    event.target.value = numeral(event.target.value).format('0,0');
   }
 
   /**
