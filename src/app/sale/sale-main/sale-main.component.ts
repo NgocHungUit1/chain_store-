@@ -446,6 +446,7 @@ export class SaleMainComponent implements OnInit {
                 } else {
                   this.sumPrice = 0;
                 }
+                this.form.patchValue({total_amount: numeral(this.sumPrice).format('0,0')});
               }
             });
           // this.listProduct.reverse();
@@ -504,6 +505,7 @@ export class SaleMainComponent implements OnInit {
           } else {
             this.sumPrice = 0;
           }
+          this.form.patchValue({total_amount: numeral(this.sumPrice).format('0,0')});
         }
       }
       this.handleExpenseOrder();
@@ -556,6 +558,7 @@ export class SaleMainComponent implements OnInit {
       time: [time],
       today: [today],
       invoice_id: [null],
+      total_amount: [0],
       prescription_id: [null], // ban thuoc theo don
     });
 
@@ -1884,6 +1887,9 @@ export class SaleMainComponent implements OnInit {
    */
   inputformatNumber(event: any) {
     event.target.value = numeral(event.target.value).format('0,0');
+  }
+
+  tinhLaiTienThua() {
     this.tienThuaTraKhach =
       numeral(this.form.controls['customerPay'].value).value() -
       this.sumPrice +
@@ -1959,5 +1965,11 @@ export class SaleMainComponent implements OnInit {
       event.preventDefault();
       this.payment();
     }
+  }
+
+  recalculateTotalAmount() {
+    const formTotalAmount = numeral(this.form.controls['total_amount'].value).value();
+    this.sumPrice = formTotalAmount;
+    this.localItemInvoice.total_amount = formTotalAmount;
   }
 }

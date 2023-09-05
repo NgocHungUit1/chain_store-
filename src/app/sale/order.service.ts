@@ -8,8 +8,8 @@ import {
   ItemInvoice,
   ListInvoice,
   ProductInfo,
-  resInvoicePrint,
-  resReturnsPrint
+  ResInvoicePrint,
+  ResReturnsPrint
 } from '../sale/order.model';
 import { Product } from '../product/product.model';
 import { environment } from '../../environments/environment';
@@ -460,7 +460,7 @@ export class OrderService {
    */
   getDataInvoiceToPrint(invoice_id: number) {
     const url = environment.apiUrl + '/invoice/get-data-invoice-print/';
-    return this.http.post<resInvoicePrint>(url, {invoice_id: invoice_id});
+    return this.http.post<ResInvoicePrint>(url, {invoice_id: invoice_id});
   }
 
   /**
@@ -469,7 +469,7 @@ export class OrderService {
    */
   getDataReturnsToPrint(returns_id: number) {
     const url = environment.apiUrl + '/invoice/get-data-returns-print/';
-    return this.http.post<resReturnsPrint>(url, {returns_id: returns_id});
+    return this.http.post<ResReturnsPrint>(url, {returns_id: returns_id});
   }
 
   /**

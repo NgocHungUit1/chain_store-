@@ -465,12 +465,19 @@
                       </span>
                     </ng-template>
                   </div>
-                  <div fxFlex="50" class="price-product-number">
-                    <input
-                      matInput
-                      type="text"
-                      value="{{ sumPrice | number }}"
-                      autocomplete="off" />
+                  <div fxFlex="50" class="customer-pay-number">
+                    <mat-form-field
+                      floatLabel="never"
+                      style="text-align: right">
+                      <input
+                        matInput
+                        type="text"
+                        style="color: black"
+                        (change)="recalculateTotalAmount();"
+                        formControlName="total_amount"
+                        (keyup)="inputformatNumber($event)"
+                        />
+                    </mat-form-field>
                   </div>
                 </div>
               </div>
@@ -606,7 +613,7 @@
                         type="text"
                         style="color: black"
                         formControlName="customerPay"
-                        (keyup)="inputformatNumber($event)"
+                        (keyup)="inputformatNumber($event); tinhLaiTienThua();"
                         autocomplete="off"
                         #customerPayment />
                     </mat-form-field>
