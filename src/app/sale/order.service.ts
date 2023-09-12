@@ -54,18 +54,9 @@ export class OrderService {
     this.subscribeObjectListInvoice = this.ObjectListInvoice.asObservable();
   }
 
-  public getDataInvoiceActive() {
-    let listInvoice = this.getListInvoiceLocalStorage();
-    if (Object.keys(listInvoice).length === 0) {
-      this.initListInvoice();
-    }
-    listInvoice = this.getListInvoiceLocalStorage();
-    // this.ObjectOrder.next(listInvoice);
-  }
-
   public setListInvoiceLocalStorage(data: ListInvoice) {
-    this.ObjectListInvoice.next(data);
     localStorage.setItem(this.order_key_local, JSON.stringify(data));
+    this.ObjectListInvoice.next(data);
   }
 
   private createNewInvoice() {
@@ -223,9 +214,9 @@ export class OrderService {
     this.loadDetailPage.next(action);
   }
 
-  addProduct(object: Product, amountProduct = 1) {
-    const ListInvoice = this.getListInvoiceLocalStorage();
-    const listItemInvoice = ListInvoice.itemInvoice;
+  addProduct(object: Product, amountProduct = 1, samplePrescriptionId = null) {
+    const listInvoice = this.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
 
     mItemInvoice = listItemInvoice.find(element => element.active === true);
@@ -237,6 +228,7 @@ export class OrderService {
       mProductInfo.product_unit_id = object.product_unit_id;
       mProductInfo.product_unit_value = object.product_unit_value;
       mProductInfo.base_unit = object.base_unit;
+      mProductInfo.sample_prescription_id = samplePrescriptionId;
       mProductInfo.amount = (object.amount === undefined || object.amount === null) ? amountProduct : object.amount;
       listProduct.unshift(mProductInfo);
       mItemInvoice.listProduct = listProduct;
@@ -256,33 +248,60 @@ export class OrderService {
         mProductInfo.product = object;
         mProductInfo.product_unit_id = object.product_unit_id;
         mProductInfo.product_unit_value = object.product_unit_value;
+        mProductInfo.sample_prescription_id = samplePrescriptionId;
         mProductInfo.base_unit = object.base_unit;
-        mProductInfo.amount = amountProduct;
+        mProductInfo.amount = (object.amount === undefined || object.amount === null) ? amountProduct : object.amount;
         listProduct.unshift(mProductInfo);
       }
     }
-    this.setListInvoiceLocalStorage(ListInvoice);
+    this.setListInvoiceLocalStorage(listInvoice);
+  }
+
+  setOrderSumPrice(sumPrice) {
+    const listInvoice = this.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        element.total_amount = sumPrice;
+      }
+    });
+    this.setListInvoiceLocalStorage(listInvoice);
   }
 
   deleteProduct(i: any) {
-    let ListInvoice = this.getListInvoiceLocalStorage();
-    const listItemInvoice = ListInvoice.itemInvoice;
-    let mItemInvoice = new ItemInvoice();
+    const listInvoice = this.getListInvoiceLocalStorage();
 
-    mItemInvoice = listItemInvoice.find(element => element.active === true);
-
-    if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
-    } else {
-      let listProduct = mItemInvoice.listProduct;
-      const resultListProduct = [];
-      listProduct.forEach((eProductInfo, index) => {
-        if (i !== index) {
-          resultListProduct.push(eProductInfo);
+    listInvoice.itemInvoice.forEach(mItemInvoice => {
+      if (mItemInvoice.active === true) {
+        if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
+        } else {
+          const listProduct = mItemInvoice.listProduct;
+          const resultListProduct = [];
+          let deleteSampleId = null;
+          listProduct.forEach((eProductInfo, index) => {
+            if (i !== index) {
+              resultListProduct.push(eProductInfo);
+            } else {
+              if (eProductInfo.sample_prescription_id !== undefined && eProductInfo.sample_prescription_id !== null) {
+                deleteSampleId = eProductInfo.sample_prescription_id;
+              }
+            }
+          });
+          if (deleteSampleId !== null) {
+            resultListProduct.forEach(item => {
+              if (item.sample_prescription_id !== undefined && item.sample_prescription_id !== null
+                && item.sample_prescription_id === deleteSampleId) {
+                item.sample_prescription_id = null;
+              }
+            });
+            mItemInvoice.total_amount = 0;
+          }
+          mItemInvoice.listProduct = resultListProduct;
         }
-      });
-      mItemInvoice.listProduct = resultListProduct;
-    }
-    this.setListInvoiceLocalStorage(ListInvoice);
+      }
+    });
+
+    this.setListInvoiceLocalStorage(listInvoice);
   }
 
   /*

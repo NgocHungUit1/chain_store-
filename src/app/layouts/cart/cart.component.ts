@@ -228,10 +228,11 @@ export class CartComponent implements OnInit, OnDestroy {
       this.samplePrescriptionService
         .getDetailForCart(product.id)
         .subscribe(res => {
+          this.orderService.setOrderSumPrice(res['total_amount']);
           // tslint:disable-next-line:no-shadowed-variable
-          res.forEach(element => {
+          res['items'].forEach(element => {
             // console.log(element);
-            this.handlePriceListProduct(element);
+            this.handlePriceListProduct(element, product.id);
           });
         });
     }
@@ -239,7 +240,7 @@ export class CartComponent implements OnInit, OnDestroy {
     this.inputSearch.nativeElement.blur(); // un focus
   }
 
-  handlePriceListProduct(product: Product) {
+  handlePriceListProduct(product: Product, samplePrescriptionId = null) {
     let units = product.productUnits;
     // tslint:disable-next-line:no-shadowed-variable
     units.forEach(element => {
@@ -251,7 +252,7 @@ export class CartComponent implements OnInit, OnDestroy {
     units = units.filter(element => element.quantity_of_stock > 0);
     product.productUnits = units;
 
-    this.orderService.addProduct(product, this.amountProduct);
+    this.orderService.addProduct(product, this.amountProduct, samplePrescriptionId);
   }
 
   addInvoice() {

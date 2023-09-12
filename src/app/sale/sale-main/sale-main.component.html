@@ -175,7 +175,7 @@
                       value="{{ itemProduct | showPrice | number }}"
                       disabled="true"
                       style="color: black" />
-                    <button mat-icon-button matPrefix>
+                    <button mat-icon-button matPrefix *ngIf="!(itemProduct.sample_prescription_id !== undefined && itemProduct.sample_prescription_id !== null)">
                       <mat-icon
                         class="row-icon-edit-price"
                         (click)="
@@ -198,7 +198,7 @@
               </span>
             </div>
             <div fxFlex="6" class="row-count-number">
-              <button mat-icon-button (click)="deleleProduct(i)">
+              <button mat-icon-button (click)="deleteProduct(i)">
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
