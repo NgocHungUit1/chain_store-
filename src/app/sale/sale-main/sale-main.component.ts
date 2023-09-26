@@ -341,6 +341,7 @@ export class SaleMainComponent implements OnInit {
       this.prescription.checked = false;
       this.prescription_id = null;
       this.sumPrice = 0;
+      this.listProductUnitIdChooseOld = [];
       this.form.patchValue({total_amount: 0});
     } else {
       if (
@@ -368,6 +369,8 @@ export class SaleMainComponent implements OnInit {
       const priceBookID = mItemInvoice.price_book_id; // this.orderService.getPriceBookID();
       const list = this.listProduct;
 
+      console.log(priceBookID);
+
       if (
         priceBookID !== null &&
         Array.isArray(list) &&
@@ -385,6 +388,7 @@ export class SaleMainComponent implements OnInit {
           this.compareEqualListProduct(listProductUnitIdChoose) === 0 ||
           this.changePriceBook === true
         ) {
+          console.log('2');
           this.listProductUnitIdChooseOld = listProductUnitIdChoose;
           this.common_idOld = priceBookID;
           const common_id = priceBookID;
@@ -457,11 +461,13 @@ export class SaleMainComponent implements OnInit {
                   this.sumPrice = 0;
                 }
                 this.form.patchValue({total_amount: numeral(this.sumPrice).format('0,0')});
+                this.checkToAdjustItemPriceByTotalDiff();
               }
             });
           // this.listProduct.reverse();
           // this.changePriceBook = false;
         } else {
+          console.log('3');
           /**
            * Truong hop: khong thay doi vs sl , pricebook
            * groupProductIdCommonPrice = [ product_id] => [
@@ -530,6 +536,7 @@ export class SaleMainComponent implements OnInit {
             this.sumPrice = 0;
           }
           this.form.patchValue({total_amount: numeral(this.sumPrice).format('0,0')});
+          this.checkToAdjustItemPriceByTotalDiff();
         }
       }
       this.handleExpenseOrder();
@@ -1996,5 +2003,28 @@ export class SaleMainComponent implements OnInit {
     const formTotalAmount = numeral(this.form.controls['total_amount'].value).value();
     this.sumPrice = formTotalAmount;
     this.localItemInvoice.total_amount = formTotalAmount;
+
+    this.checkToAdjustItemPriceByTotalDiff();
+  }
+
+  checkToAdjustItemPriceByTotalDiff() {
+    let realTotal = 0;
+    this.listProduct.forEach(item => {
+      realTotal += item.common_price * item.amount;
+    });
+
+    const diff = this.sumPrice - realTotal;
+    if (diff) {
+      this.listProduct.forEach(item => {
+        /**
+         * Điều chỉnh tổng giá hóa đơn, nên chia lại phần chênh lệch cho các sản phẩm trong đơn hàng theo tỉ lệ tương ứng.
+         * => Tính lợi nhuận theo sản phẩm
+         */
+        if (diff !== 0) {
+          const commPrice = Number(item.common_price);
+          item.common_price = Number(commPrice + (commPrice * diff / realTotal)).toFixed(0);
+        }
+      });
+    }
   }
 }
