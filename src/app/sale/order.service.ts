@@ -214,6 +214,16 @@ export class OrderService {
     this.loadDetailPage.next(action);
   }
 
+  addNationalPrescriptionInvoice(prescriptionId = null, nationalPrescriptionId = null) {
+    const listInvoice = this.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    let mItemInvoice = new ItemInvoice();
+    mItemInvoice = listItemInvoice.find(element => element.active === true);
+    mItemInvoice.prescription_id = prescriptionId;
+    mItemInvoice.national_pharmacy_no = nationalPrescriptionId;
+    this.setListInvoiceLocalStorage(listInvoice);
+  }
+
   addProduct(object: Product, amountProduct = 1, samplePrescriptionId = null) {
     const listInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
@@ -254,6 +264,7 @@ export class OrderService {
         listProduct.unshift(mProductInfo);
       }
     }
+
     this.setListInvoiceLocalStorage(listInvoice);
   }
 
@@ -355,7 +366,7 @@ export class OrderService {
       let result = [];
       listProduct[i]['amount'] = Number(listProduct[i]['amount']) - 1;
       listProduct.forEach(eProduct => {
-        if (eProduct.amount > 0) {
+        if (eProduct.amount >= 0) {
           result.push(eProduct);
         }
       });

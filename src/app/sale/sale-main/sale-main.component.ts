@@ -1550,7 +1550,7 @@ export class SaleMainComponent implements OnInit {
       if (element.amount > product_unit.quantity_of_stock) {
         this.notifySer.notify(
           'warning',
-          'Không đủ số lượng tồn kho sản phẩm ' + element.product.product_name
+          `Không đủ số lượng tồn kho sản phẩm ${element.product.product_name} (Tồn kho: ${product_unit.quantity_of_stock})`
         );
         needReturn = 1;
       }
@@ -1615,11 +1615,6 @@ export class SaleMainComponent implements OnInit {
         data['time'] + ' ' + this.dp.transform(effDate, 'yyyy-MM-dd');
     }
 
-    let prescription_id = null;
-    if (this.prescription.checked) {
-      prescription_id = this.prescription_id;
-    }
-
     /**
      * Gang du lieu data
      */
@@ -1634,7 +1629,8 @@ export class SaleMainComponent implements OnInit {
         price_book_id: this.form.controls['priceBookID'].value,
         branch_id: this.form.controls['branch_id'].value,
         expenses_order_price: this.expenseOrder,
-        prescription_id: prescription_id,
+        prescription_id: this.prescription.checked ? mItemInvoice.prescription_id : null,
+        national_pharmacy_no: this.prescription.checked ? mItemInvoice.national_pharmacy_no : null
       },
       UserID: mItemInvoice.user.id,
       InvoiceDetail: invoiceDetail,

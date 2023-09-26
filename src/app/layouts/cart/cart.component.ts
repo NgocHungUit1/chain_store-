@@ -19,6 +19,7 @@ import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { Observable } from 'rxjs';
 import { Product } from '../../product/product.model';
 import { PriceListFilter } from '../../price-book/price-list.model';
+import { NationalPrescription } from '../../national-prescription/national-prescription.model';
 import {
   catchError,
   debounceTime,
@@ -33,6 +34,9 @@ import { OrderService } from '../../sale/order.service';
 import { ItemInvoice } from '../../sale/order.model';
 import { NotifierService } from 'angular-notifier';
 import { SamplePrescriptionService } from '../../sample-prescription/sample-prescription.service';
+import { NationalPrescriptionService } from '../../national-prescription/national-prescription.service';
+
+
 import { element } from 'protractor';
 import { CustomerService } from '../../customer/customer.service';
 import {StoreService} from '../../store/store.service';
@@ -62,7 +66,7 @@ export class CartComponent implements OnInit, OnDestroy {
   private _mobileQueryListener: () => void;
 
   selectProduct = new FormControl();
-  public filteredProducts: Observable<Product[]>;
+  public filteredProducts: Observable<any[]>;
   public productsHistory: Observable<Product[]>;
   listmItemInvoice: ItemInvoice[] = [];
 
@@ -86,6 +90,7 @@ export class CartComponent implements OnInit, OnDestroy {
     private orderService: OrderService,
     private productSer: ProductService,
     private samplePrescriptionService: SamplePrescriptionService,
+    private nationalPrescriptionService: NationalPrescriptionService,
     private priceListSer: PriceListService,
     private notifySer: NotifierService,
     private storeSer: StoreService,
@@ -123,12 +128,18 @@ export class CartComponent implements OnInit, OnDestroy {
       debounceTime(300),
       // use switch map so as to cancel previous subscribed events, before creating new once
       switchMap(value => {
+        value = (value || '').trim();
         if (value !== '') {
           // lookup from github
-          if (this.iconChangeType === 'assignment') {
-            return this.lookupSamplePrescription(value);
-          } else {
-            return this.lookupProduct(value);
+          switch(this.iconChangeType) {
+            case 'assignment':
+              return this.lookupSamplePrescription(value);
+            case 'nation':
+              return this.lookupNationalPrescription(value);
+            case 'cached':
+              return this.lookupProduct(value);
+            default:
+              return [];
           }
         } else {
           // if no value is present, return null
@@ -199,6 +210,25 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Search national prescription
+   * @param value
+   * @returns
+   */
+  lookupNationalPrescription(value: string): Observable<NationalPrescription[]> {
+    return this.nationalPrescriptionService.autocomplete(value).pipe(
+      debounceTime(300),
+      // map the item property of the github results as our return object
+      map(results => {
+        return [results];
+      }),
+      // catch errors
+      catchError(_ => {
+        return of(null);
+      })
+    );
+  }
+
+  /**
    * chon tim kiem
    * @param product
    */
@@ -207,25 +237,25 @@ export class CartComponent implements OnInit, OnDestroy {
       this.amountProduct = 1;
     }
 
-    if (this.iconChangeType === 'cached') {
-      // tim san pham
+    switch(this.iconChangeType) {
+      case 'cached':
+        // tim san pham
+        this.orderService.pushHistorySearch(product, product.store_id);
 
-      this.orderService.pushHistorySearch(product, product.store_id);
-
-      if (
-        product['quantity_of_stock'] > 0 &&
-        product['quantity_of_stock'] >= this.amountProduct
-      ) {
-        this.handlePriceListProduct(product);
-      } else {
-        this.notifySer.notify('warning', 'Không đủ tồn kho.');
-      }
-      // console.log(product);
-    } else {
-      /**
-       * product.id  === sample.id
-       */
-      this.samplePrescriptionService
+        if (
+          product['quantity_of_stock'] > 0 &&
+          product['quantity_of_stock'] >= this.amountProduct
+        ) {
+          this.handlePriceListProduct(product);
+        } else {
+          this.notifySer.notify('warning', 'Không đủ tồn kho.');
+        }
+        break;
+      case 'assignment':
+        /**
+         * product.id  === sample.id
+         */
+        this.samplePrescriptionService
         .getDetailForCart(product.id)
         .subscribe(res => {
           this.orderService.setOrderSumPrice(res['total_amount']);
@@ -235,6 +265,18 @@ export class CartComponent implements OnInit, OnDestroy {
             this.handlePriceListProduct(element, product.id);
           });
         });
+        break;
+      case 'nation':
+        this.nationalPrescriptionService
+        .addToCart(product.nationalPrescriptionId)
+        .subscribe(res => {
+          this.orderService.addNationalPrescriptionInvoice(product.prescriptionId, product.nationalPrescriptionId);
+          res.forEach(element => {
+            this.handlePriceListProduct(element);
+          });
+        });
+        break;
+      default:
     }
     this.selectProduct.patchValue(null);
     this.inputSearch.nativeElement.blur(); // un focus
@@ -248,10 +290,7 @@ export class CartComponent implements OnInit, OnDestroy {
         product.quantity_of_stock / element.value
       );
     });
-    // tslint:disable-next-line:no-shadowed-variable
-    units = units.filter(element => element.quantity_of_stock > 0);
     product.productUnits = units;
-
     this.orderService.addProduct(product, this.amountProduct, samplePrescriptionId);
   }
 
@@ -268,17 +307,27 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   // Mini sidebar
-  changeTypeSearch() {
-    if (this.iconChangeType === 'assignment') {
-      this.selectProduct.patchValue(null);
-      this.placeholderSearch = 'Tìm sản phẩm';
-      this.iconChangeType = 'cached';
-      this.notifySer.notify('success', 'Tìm kiếm theo sản phẩm.');
-    } else {
-      this.selectProduct.patchValue(null);
-      this.placeholderSearch = 'Tìm đơn thuốc mẫu';
-      this.iconChangeType = 'assignment';
-      this.notifySer.notify('success', 'Tìm kiếm đơn thuốc mẫu.');
+  changeTypeSearch(currentSearchType) {
+    switch(currentSearchType) {
+      case 'cached':
+        this.selectProduct.patchValue(null);
+        this.placeholderSearch = 'Tìm đơn thuốc mẫu';
+        this.iconChangeType = 'assignment';
+        this.notifySer.notify('success', 'Tìm kiếm đơn thuốc mẫu.');
+        break;
+      case 'assignment':
+        this.selectProduct.patchValue(null);
+        this.placeholderSearch = 'Tìm đơn thuốc quốc gia';
+        this.iconChangeType = 'nation';
+        this.notifySer.notify('success', 'Tìm kiếm đơn thuốc quốc gia.');
+        break;
+      case 'nation':
+        this.selectProduct.patchValue(null);
+        this.placeholderSearch = 'Tìm sản phẩm';
+        this.iconChangeType = 'cached';
+        this.notifySer.notify('success', 'Tìm kiếm theo sản phẩm.');
+        break;
+      default:
     }
   }
 
@@ -287,8 +336,9 @@ export class CartComponent implements OnInit, OnDestroy {
       if (this.iconChangeType === 'cached') {
         // tim thuoc
         const data = this.orderService.getHistorySearch(this.storeId);
-        // console.log(data);
-        this.productsHistory = this.lookupProductByHistory(data);
+        if (data) {
+          this.productsHistory = this.lookupProductByHistory(data);
+        }
       }
     }
   }

@@ -67,6 +67,7 @@ export class ItemInvoice {
   prescription_id: string;
   new: boolean;
   total_amount: number;
+  national_pharmacy_no: string;
 }
 
 export class ListInvoice {
