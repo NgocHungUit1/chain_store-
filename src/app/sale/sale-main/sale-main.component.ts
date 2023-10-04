@@ -462,6 +462,8 @@ export class SaleMainComponent implements OnInit {
                 }
                 this.form.patchValue({total_amount: numeral(this.sumPrice).format('0,0')});
                 this.checkToAdjustItemPriceByTotalDiff();
+              } else {
+                console.log('ket qua ko phari la array');
               }
             });
           // this.listProduct.reverse();
@@ -2010,8 +2012,10 @@ export class SaleMainComponent implements OnInit {
   checkToAdjustItemPriceByTotalDiff() {
     let realTotal = 0;
     this.listProduct.forEach(item => {
-      realTotal += item.common_price * item.amount;
+      realTotal += (item.product.end_price > 0 ? item.product.end_price : item.common_price) * item.amount;
     });
+
+    console.log(this.listProduct, this.sumPrice, realTotal);
 
     const diff = this.sumPrice - realTotal;
     if (diff) {
@@ -2020,7 +2024,7 @@ export class SaleMainComponent implements OnInit {
          * Điều chỉnh tổng giá hóa đơn, nên chia lại phần chênh lệch cho các sản phẩm trong đơn hàng theo tỉ lệ tương ứng.
          * => Tính lợi nhuận theo sản phẩm
          */
-        if (diff !== 0) {
+        if (diff !== 0 && !(item.product.end_price > 0)) {
           const commPrice = Number(item.common_price);
           item.common_price = Number(commPrice + (commPrice * diff / realTotal)).toFixed(0);
         }
