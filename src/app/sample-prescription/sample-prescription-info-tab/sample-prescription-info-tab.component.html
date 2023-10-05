@@ -82,6 +82,29 @@
     </div>
   </div>
 
+  <div fxFlex="75">
+
+    <div fxLayout="row wrap">
+      <label >
+      </label>
+    </div>
+
+  </div>
+  <div fxFlex="25" class="product-info">
+    <div fxLayout="row wrap" class="product-info-row">
+      <div fxFlex="50" class="product-info-field">
+        <b>
+          <label>Giá tiền:</label>
+        </b>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="end" fxFlex="40" class="product-info-field">
+        <b>
+          <span>{{sample.total_amount | currency : 'VND' : ''}}</span>
+        </b>
+      </div>
+    </div>
+  </div>
+
   <div fxFlex="100">
     <div fxLayout="row wrap">
       <!-- kiem tra loai show form -->

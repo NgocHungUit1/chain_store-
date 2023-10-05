@@ -36,6 +36,7 @@ export class PaymentSiderBar {
 
 export class ProductInfo {
   product_id: string;
+  sample_prescription_id: string;
   product: Product;
   amount: number;
   common_price: number;
@@ -65,13 +66,14 @@ export class ItemInvoice {
   time: string;
   prescription_id: string;
   new: boolean;
+  total_amount: number;
 }
 
 export class ListInvoice {
   itemInvoice: ItemInvoice[] = [];
 }
 
-export class itemDetail {
+export class ItemDetail {
   amount: string;
   price: number;
   total: number;
@@ -82,7 +84,7 @@ export class itemDetail {
   so_lo: string;
 }
 
-export class resInvoicePrint {
+export class ResInvoicePrint {
   invoice_name: string;
   invoice_no: string;
   active: boolean;
@@ -90,7 +92,7 @@ export class resInvoicePrint {
   customer: Customer;
   created_at: string;
   store: any;
-  detail: itemDetail[];
+  detail: ItemDetail[];
   total: string;
   total_price: string; // tong tien hang
   discount: string;
@@ -98,7 +100,7 @@ export class resInvoicePrint {
   debt: string; // no
 }
 
-export class resReturnsPrint {
+export class ResReturnsPrint {
   return_name: string;
   return_no: string;
   active: boolean;
@@ -106,7 +108,7 @@ export class resReturnsPrint {
   customer: Customer;
   created_at: string;
   store: any;
-  detail: itemDetail[];
+  detail: ItemDetail[];
   total: string;
   total_price: string; // tong tien hang
   discount: string;

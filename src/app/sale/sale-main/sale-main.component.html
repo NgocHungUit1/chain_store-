@@ -175,7 +175,7 @@
                       value="{{ itemProduct | showPrice | number }}"
                       disabled="true"
                       style="color: black" />
-                    <button mat-icon-button matPrefix>
+                    <button mat-icon-button matPrefix *ngIf="!(itemProduct.sample_prescription_id !== undefined && itemProduct.sample_prescription_id !== null)">
                       <mat-icon
                         class="row-icon-edit-price"
                         (click)="
@@ -198,7 +198,7 @@
               </span>
             </div>
             <div fxFlex="6" class="row-count-number">
-              <button mat-icon-button (click)="deleleProduct(i)">
+              <button mat-icon-button (click)="deleteProduct(i)">
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
@@ -465,12 +465,19 @@
                       </span>
                     </ng-template>
                   </div>
-                  <div fxFlex="50" class="price-product-number">
-                    <input
-                      matInput
-                      type="text"
-                      value="{{ sumPrice | number }}"
-                      autocomplete="off" />
+                  <div fxFlex="50" class="customer-pay-number">
+                    <mat-form-field
+                      floatLabel="never"
+                      style="text-align: right">
+                      <input
+                        matInput
+                        type="text"
+                        style="color: black"
+                        (change)="recalculateTotalAmount();"
+                        formControlName="total_amount"
+                        (keyup)="inputformatNumber($event)"
+                        />
+                    </mat-form-field>
                   </div>
                 </div>
               </div>
@@ -606,7 +613,7 @@
                         type="text"
                         style="color: black"
                         formControlName="customerPay"
-                        (keyup)="inputformatNumber($event)"
+                        (keyup)="inputformatNumber($event); tinhLaiTienThua();"
                         autocomplete="off"
                         #customerPayment />
                     </mat-form-field>

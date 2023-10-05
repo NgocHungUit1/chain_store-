@@ -3,7 +3,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { resWarehousePrint, Warehouse, WarehouseFilter } from './warehouse.model';
-import { resInvoicePrint } from '../sale/order.model';
+import { ResInvoicePrint } from '../sale/order.model';
 import { AuthService } from '../authentication/auth.service';
 
 @Injectable({

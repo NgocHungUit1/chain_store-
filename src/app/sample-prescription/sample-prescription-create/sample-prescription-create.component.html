@@ -156,8 +156,16 @@
 
             <div fxFlex="100">
               <mat-form-field>
+                <mat-label>Giá tiền</mat-label>
+                <input matInput tabindex="4" formControlName="total_amount" (keyup)="inputFormatNumber($event)" required
+                       value="{{ form.get('total_amount').value }}">
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
                 <mat-label>Trạng thái</mat-label>
-                <mat-select [formControl]="form.controls['status']" placeholder="Chọn trạng thái">
+                <mat-select tabindex="5"  [formControl]="form.controls['status']" placeholder="Chọn trạng thái">
                   <mat-option *ngFor="let status of statuses" value="{{ status.id }}">{{ status.name }}</mat-option>
                 </mat-select>
               </mat-form-field>
@@ -166,7 +174,7 @@
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Ghi chú</mat-label>
-                <textarea matInput tabindex="9" formControlName="note" rows="3"></textarea>
+                <textarea matInput tabindex="6" formControlName="note" rows="3"></textarea>
               </mat-form-field>
             </div>
 

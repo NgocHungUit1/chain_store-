@@ -14,6 +14,7 @@ export class SamplePrescription {
   date: string;
   balance_at: number;
   balance_by: number;
+  total_amount: number;
   note: string;
   store: Store;
   balance_status: string;
