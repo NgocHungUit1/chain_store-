@@ -234,7 +234,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     }
 
     if (typeReport === 'export-import') {
-      filter.expand = 'tonDauKy,tonCuoiKy,soLuongNhap,soLuongXuat';
+      // filter.expand = 'tonDauKy,tonCuoiKy,soLuongNhap,soLuongXuat';
     }
 
     if (typeReport === 'export-import-detail') {
@@ -340,15 +340,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     if (typeReport === 'export-import') {
       this.isLoadingResults = true;
       this.service.getListReportExportImport(this.apiFilter).subscribe(res => {
-        this.dataSource = res.body.data;
-        this.sum_ton_dau_ky = res.body.sum_ton_dau_ky;
-        this.sum_gia_tri_dau_ky = res.body.sum_gia_tri_dau_ky;
-        this.sum_sl_nhap = res.body.sum_sl_nhap;
-        this.sum_gia_tri_nhap = res.body.sum_gia_tri_nhap;
-        this.sum_sl_xuat = res.body.sum_sl_xuat;
-        this.sum_gia_tri_xuat = res.body.sum_gia_tri_xuat;
-        this.sum_ton_cuoi_ky = res.body.sum_ton_cuoi_ky;
-        this.sum_gia_tri_cuoi_ky = res.body.sum_gia_tri_cuoi_ky;
+        this.dataSource = res.body;
 
         let stt = 0;
         this.dataSource.forEach(elementData => {
@@ -359,6 +351,19 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
         // const url = this.service.getApiUrlReportSale(this.apiFilter);
         this.isLoadingResults = false;
       });
+
+      if (summary) {
+        this.service.getExportImportSummary(this.apiFilter).subscribe(res => {
+          this.sum_ton_dau_ky = res.body.sum_ton_dau_ky;
+          this.sum_gia_tri_dau_ky = res.body.sum_gia_tri_dau_ky;
+          this.sum_sl_nhap = res.body.sum_sl_nhap;
+          this.sum_gia_tri_nhap = res.body.sum_gia_tri_nhap;
+          this.sum_sl_xuat = res.body.sum_sl_xuat;
+          this.sum_gia_tri_xuat = res.body.sum_gia_tri_xuat;
+          this.sum_ton_cuoi_ky = res.body.sum_ton_cuoi_ky;
+          this.sum_gia_tri_cuoi_ky = res.body.sum_gia_tri_cuoi_ky;
+        });
+      }
     }
 
     if (typeReport === 'export-import-detail') {
@@ -736,6 +741,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
    * Download File Excel
    */
   exportExcel() {
+    this.isLoadingResults = true;
     const typeReport = this.reportType.controls['type'].value;
     if (typeReport === 'sale' || typeReport === 'profit' || typeReport === 'sale-staff' || typeReport === 'customer') {
       const _apiFilter = this.apiFilter;
@@ -744,6 +750,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       this.service.getListReportSale(_apiFilter).subscribe(res => {
         const url = this.service.downloadFileExcel(typeReport);
         window.location.href = url;
+        this.isLoadingResults = false;
       });
     }
     // this.apiFilter = this.buildFilterFromParams();
@@ -754,6 +761,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       this.service.exportExcel(_apiFilter).subscribe(res => {
         const url = this.service.downloadFileExcel(typeReport);
         window.location.href = url;
+        this.isLoadingResults = false;
       });
     }
 
@@ -764,6 +772,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       this.service.exportExcel(_apiFilter).subscribe(res => {
         const url = this.service.downloadFileExcel(typeReport);
         window.location.href = url;
+        this.isLoadingResults = false;
       });
     }
 
@@ -774,6 +783,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       this.service.exportExcel(_apiFilter).subscribe(res => {
         const url = this.service.downloadFileExcel(typeReport);
         window.location.href = url;
+        this.isLoadingResults = false;
       });
     }
 
@@ -789,6 +799,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       this.service.exportExcel(_apiFilter).subscribe(res => {
         const url = this.service.downloadFileExcel(typeReport);
         window.location.href = url;
+        this.isLoadingResults = false;
       });
     }
 

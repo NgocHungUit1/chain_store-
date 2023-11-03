@@ -418,7 +418,7 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['ton_dau_ky']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                      {{ 1 * element?.tonDauKy?.quantity_of_stock | number }}
+                      {{ element?.ton_dau_ky | number }}
                   </span>
                 </td>
               </ng-container>
@@ -431,7 +431,7 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['gia_tri_dau_ky']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                    {{ element?.tonDauKy?.quantity_of_stock * element.original_price | number }}
+                    {{ element?.gia_tri_dau_ky | number }}
                   </span>
                 </td>
               </ng-container>
@@ -445,7 +445,7 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['sl_nhap']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                    {{ 1 * element?.soLuongNhap | number }}
+                    {{  element?.so_luong_nhap | number }}
                   </span>
                 </td>
               </ng-container>
@@ -458,7 +458,7 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['gia_tri_nhap']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                      {{ 1 * element?.soLuongNhap * element.original_price | number }}
+                      {{ element?.gia_tri_nhap | number }}
                   </span>
                 </td>
               </ng-container>
@@ -471,12 +471,12 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['sl_xuat']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                      {{ -1 * element?.soLuongXuat | number }}
+                     {{ element?.so_luong_xuat | number }}
                   </span>
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_sl_xuat">
-                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ -1 * sum_sl_xuat | number}}</th>
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_sl_xuat | number}}</th>
               </ng-container>
 
 
@@ -484,13 +484,13 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['gia_tri_xuat']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                      {{ -1 * element?.soLuongXuat * element.original_price | number }}
+                      {{ element?.gia_tri_xuat | number }}
                   </span>
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_gia_tri_xuat">
                 <th mat-header-cell class="column-number-sumary"
-                    *matHeaderCellDef>{{ -1 * sum_gia_tri_xuat | number }}</th>
+                    *matHeaderCellDef>{{ sum_gia_tri_xuat | number }}</th>
               </ng-container>
 
 
@@ -498,7 +498,7 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['ton_cuoi_ky']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                      {{ 1 * element?.tonCuoiKy?.quantity_of_stock | number }}
+                      {{ element?.ton_cuoi_ky | number }}
                   </span>
                 </td>
               </ng-container>
@@ -511,7 +511,7 @@
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['gia_tri_cuoi_ky']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                    {{ element?.tonCuoiKy?.quantity_of_stock * element.original_price | number }}
+                    {{ element?.gia_tri_cuoi_ky | number }}
                   </span>
                 </td>
               </ng-container>
