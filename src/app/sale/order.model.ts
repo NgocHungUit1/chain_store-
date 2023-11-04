@@ -99,6 +99,7 @@ export class ResInvoicePrint {
   discount: string;
   sum_payment: string; // tong thanh tona
   debt: string; // no
+  nationalPrescription: NationalPrescription;
 }
 
 export class ResReturnsPrint {
@@ -115,3 +116,37 @@ export class ResReturnsPrint {
   discount: string;
 }
 
+export class NationalPrescription {
+  nationalPrescriptionId: string;
+  patientName: string;
+  patientDOB: string;
+  patientPhoneNumber: string;
+  patientAddress: string;
+  patientSex: string;
+  patientWeight: number;
+  patientMedicalId: string;
+  patientMedicalInsuranceId: string;
+  guardianName: string;
+  medicalFacilityName: string;
+  medicalFacilityPhoneNumber: string;
+  doctorName: string;
+  doctorNote: string;
+  doctorAdvice: string;
+  diagnostics: NationalDiagnostic[];
+  products: NationalProduct[];
+  prescriptionDate: string;
+}
+
+export class NationalDiagnostic {
+  id: string;
+  name: string;
+  conclusion: string;
+}
+
+export class NationalProduct {
+  id: string;
+  name: string;
+  unit: string;
+  amount: number;
+  usage: string;
+}

@@ -135,15 +135,15 @@
               fxFlex="100"
               style="margin-left: 5px; font-size: 12px;"
               class="m-l-10">
-              <b style="font-size: 12px">Bệnh nhân: {{ product.name }}</b>
+              <b style="font-size: 12px">Bệnh nhân: {{ product.patientName }}</b>
               <br />
-              - Ngày sinh: {{ product.dob }}
+              - Ngày sinh: {{ product.patientDOB }}
               <br />
-              - SĐT: {{ product.phoneNumber }}
+              - SĐT: {{ product.patientPhoneNumber }}
               <br />
-              - Địa chỉ: {{ product.address }}
+              - Địa chỉ: {{ product.patientAddress }}
               <br />
-              - Khám tại: {{ product.hospital }}
+              - Khám tại: {{ product.medicalFacilityName }}
               <br />
               - Mã đơn thuốc: {{ product.nationalPrescriptionId }}
               <br />

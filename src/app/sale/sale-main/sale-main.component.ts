@@ -1,3 +1,4 @@
+import { NationalPrescription } from './../../national-prescription/national-prescription.model';
 import {
   Component,
   ElementRef,
@@ -12,11 +13,11 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import {MatDialog} from '@angular/material/dialog';
-import {NotifierService} from 'angular-notifier';
-import {Observable} from 'rxjs';
-import {Product} from '../../product/product.model';
-import {OrderService} from '../order.service';
+import { MatDialog } from '@angular/material/dialog';
+import { NotifierService } from 'angular-notifier';
+import { Observable } from 'rxjs';
+import { Product } from '../../product/product.model';
+import { OrderService } from '../order.service';
 import {
   catchError,
   debounceTime,
@@ -24,30 +25,30 @@ import {
   startWith,
   switchMap,
 } from 'rxjs/operators';
-import {of} from 'rxjs/internal/observable/of';
-import {PriceList, PriceListFilter} from '../../price-book/price-list.model';
-import {PriceListService} from '../../price-book/price-list.service';
-import {NoteDetailOrderDialogComponent} from '../note-detail-order-dialog/note-detail-order-dialog.component';
-import {PriceDetailOrderDialogComponent} from '../price-detail-order-dialog/price-detail-order-dialog.component';
-import {PriceListProductService} from '../../price-book/price-list-product.service';
-import {ItemInvoice} from '../order.model';
-import {Customer} from '../../customer/customer.model';
-import {SaleCustomerFormDialogComponent} from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
-import {PaymentSiderbarDialogComponent} from '../payment-siderbar-dialog/payment-siderbar-dialog.component';
-import {DiscountSiderbarDialogComponent} from '../discount-siderbar-dialog/discount-siderbar-dialog.component';
-import {CustomerService} from '../../customer/customer.service';
-import {UserService} from '../../user/user.service';
-import {User} from '../../user/user.model';
+import { of } from 'rxjs/internal/observable/of';
+import { PriceList, PriceListFilter } from '../../price-book/price-list.model';
+import { PriceListService } from '../../price-book/price-list.service';
+import { NoteDetailOrderDialogComponent } from '../note-detail-order-dialog/note-detail-order-dialog.component';
+import { PriceDetailOrderDialogComponent } from '../price-detail-order-dialog/price-detail-order-dialog.component';
+import { PriceListProductService } from '../../price-book/price-list-product.service';
+import { ItemInvoice } from '../order.model';
+import { Customer } from '../../customer/customer.model';
+import { SaleCustomerFormDialogComponent } from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
+import { PaymentSiderbarDialogComponent } from '../payment-siderbar-dialog/payment-siderbar-dialog.component';
+import { DiscountSiderbarDialogComponent } from '../discount-siderbar-dialog/discount-siderbar-dialog.component';
+import { CustomerService } from '../../customer/customer.service';
+import { UserService } from '../../user/user.service';
+import { User } from '../../user/user.model';
 import * as numeral from 'numeral';
-import {OptionStoreService} from '../../common/option-store.service';
-import {OptionStore} from '../../common/option-store.model';
-import {ExpensesOrderService} from '../../expenses-order/expenses-order.service';
+import { OptionStoreService } from '../../common/option-store.service';
+import { OptionStore } from '../../common/option-store.model';
+import { ExpensesOrderService } from '../../expenses-order/expenses-order.service';
 import {
   ExpensesOrder,
   ExpensesOrderFilter,
 } from '../../expenses-order/expenses-order.model';
-import {SaleExpensesDialogComponent} from '../sale-expenses-dialog/sale-expenses-dialog.component';
-import {PrescriptionFormDialogComponent} from '../prescription-form-dialog/prescription-form-dialog.component';
+import { SaleExpensesDialogComponent } from '../sale-expenses-dialog/sale-expenses-dialog.component';
+import { PrescriptionFormDialogComponent } from '../prescription-form-dialog/prescription-form-dialog.component';
 import {
   DateAdapter,
   MAT_DATE_FORMATS,
@@ -57,9 +58,9 @@ import {
   MAT_MOMENT_DATE_ADAPTER_OPTIONS,
   MomentDateAdapter,
 } from '@angular/material-moment-adapter';
-import {DatePipe} from '@angular/common';
+import { DatePipe } from '@angular/common';
 import * as moment from 'moment';
-import {StoreService} from '../../store/store.service';
+import { StoreService } from '../../store/store.service';
 
 export const MY_FORMATS = {
   parse: {
@@ -85,7 +86,7 @@ export const MY_FORMATS = {
       useClass: MomentDateAdapter,
       deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
     },
-    {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS},
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
 export class SaleMainComponent implements OnInit {
@@ -342,7 +343,7 @@ export class SaleMainComponent implements OnInit {
       this.prescription_id = null;
       this.sumPrice = 0;
       this.listProductUnitIdChooseOld = [];
-      this.form.patchValue({total_amount: 0});
+      this.form.patchValue({ total_amount: 0 });
     } else {
       if (
         mItemInvoice.prescription_id !== undefined &&
@@ -460,7 +461,7 @@ export class SaleMainComponent implements OnInit {
                 } else {
                   this.sumPrice = 0;
                 }
-                this.form.patchValue({total_amount: numeral(this.sumPrice).format('0,0')});
+                this.form.patchValue({ total_amount: numeral(this.sumPrice).format('0,0') });
                 this.checkToAdjustItemPriceByTotalDiff();
               } else {
                 console.log('ket qua ko phari la array');
@@ -537,7 +538,7 @@ export class SaleMainComponent implements OnInit {
           } else {
             this.sumPrice = 0;
           }
-          this.form.patchValue({total_amount: numeral(this.sumPrice).format('0,0')});
+          this.form.patchValue({ total_amount: numeral(this.sumPrice).format('0,0') });
           this.checkToAdjustItemPriceByTotalDiff();
         }
       }
@@ -634,7 +635,7 @@ export class SaleMainComponent implements OnInit {
   }
 
   public changeBranch(event) {
-    const data = {branch_store_id: event.value};
+    const data = { branch_store_id: event.value };
     this.userService.updateBranchLogin(data).subscribe(
       res => {
         if (res === true) {
@@ -689,7 +690,7 @@ export class SaleMainComponent implements OnInit {
       }
     });
     this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
-      this.loadData().then(r => {});
+      this.loadData().then(r => { });
     });
     this.isLoadingResults = false;
 
@@ -1103,13 +1104,31 @@ export class SaleMainComponent implements OnInit {
           '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
           '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +
           '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
-          '<p style="">Khách hàng: ' + customer_name + '</p>';
+          '<br>';
 
-        if (customer_phone !== '') {
-          printContent += '<p style="">SĐT: ' + customer_phone + '</p>';
+        // Customer info
+        const { nationalPrescription } = res;
+        if (nationalPrescription) {
+          printContent +=
+            '<p>Mã đơn thuốc: <b>' + nationalPrescription.nationalPrescriptionId + '</b></p>' +
+            '<p>Tên đơn vị: <b>' + nationalPrescription.medicalFacilityName + '</b></p>' +
+            '<p>Họ tên: <b>' + nationalPrescription.patientName + '</b></p>' +
+            '<p>Ngày sinh: <b>' + nationalPrescription.patientDOB + '</b>' +
+            '&nbsp;&nbsp;&nbsp;&nbsp;Cân nặng: <b>' + nationalPrescription.patientWeight + '</b>' +
+            '&nbsp;&nbsp;&nbsp;&nbsp;Giới tính: <b>' + nationalPrescription.patientSex + '</b></p>' +
+            '<p>Địa chỉ liên hệ: <b>' + nationalPrescription.patientAddress + '</b></p>' +
+            '<br>' +
+            '<p><b>Chẩn đoán:</b> ' + nationalPrescription?.diagnostics[0]?.conclusion + '</p>';
+        } else {
+          '<p style="">Khách hàng: ' + customer_name + '</p>';
+          if (customer_phone !== '') {
+            printContent += '<p style="">SĐT: ' + customer_phone + '</p>';
+          }
         }
 
-        printContent += '<table>' +
+        printContent +=
+          '<br>' +
+          '<table>' +
           '<tr>' +
           '<th>Tên thuốc</th>' +
           '<th style="text-align:center;">SL</th>';
@@ -1175,6 +1194,9 @@ export class SaleMainComponent implements OnInit {
             '</tr>';
         }
         printContent += '</table>';
+
+        // Footer
+        printContent += '<br>';
         if (this.description !== null && this.description.length > 0) {
           printContent += '<p style="text-align:center; font-style: italic;" >' + this.description + '</p>';
         } else {
