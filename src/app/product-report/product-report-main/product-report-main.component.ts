@@ -167,7 +167,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
   sum_sl_kiem_xuat: number;
   sum_sl_nhap_chuyen: number;
   sum_sl_xuat_chuyen: number;
-  sum_sl_nhap_tra_hang: number;
+  sum_sl_tra_hang: number;
 
   // supplier
   sum_supplier_total_import = 0;
@@ -369,20 +369,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     if (typeReport === 'export-import-detail') {
       this.isLoadingResults = true;
       this.service.getListReportExportImportDetail(this.apiFilter).subscribe(res => {
-        this.dataSource = res.body.data;
-        this.sum_ton_dau_ky = res.body.sum_ton_dau_ky;
-        this.sum_gia_tri_dau_ky = res.body.sum_gia_tri_dau_ky;
-        this.sum_sl_nhap = res.body.sum_sl_nhap;
-        this.sum_gia_tri_nhap = res.body.sum_gia_tri_nhap;
-        this.sum_sl_xuat = res.body.sum_sl_xuat;
-        this.sum_gia_tri_xuat = res.body.sum_gia_tri_xuat;
-        this.sum_ton_cuoi_ky = res.body.sum_ton_cuoi_ky;
-        this.sum_gia_tri_cuoi_ky = res.body.sum_gia_tri_cuoi_ky;
-        this.sum_sl_kiem_nhap = res.body.sum_sl_kiem_nhap;
-        this.sum_sl_kiem_xuat = res.body.sum_sl_kiem_xuat;
-        this.sum_sl_nhap_chuyen = res.body.sum_sl_nhap_chuyen;
-        this.sum_sl_xuat_chuyen = res.body.sum_sl_xuat_chuyen;
-        this.sum_sl_nhap_tra_hang = res.body.sum_sl_nhap_tra_hang;
+        this.dataSource = res.body;
 
         let stt = 0;
         this.dataSource.forEach(elementData => {
@@ -393,6 +380,24 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
         // const url = this.service.getApiUrlReportSale(this.apiFilter);
         this.isLoadingResults = false;
       });
+
+      if (summary) {
+        this.service.getExportImportDetailSummary(this.apiFilter).subscribe(res => {
+          this.sum_ton_dau_ky = res.body.sum_ton_dau_ky;
+          this.sum_gia_tri_dau_ky = res.body.sum_gia_tri_dau_ky;
+          this.sum_sl_nhap = res.body.sum_sl_nhap;
+          this.sum_gia_tri_nhap = res.body.sum_gia_tri_nhap;
+          this.sum_sl_xuat = res.body.sum_sl_xuat;
+          this.sum_gia_tri_xuat = res.body.sum_gia_tri_xuat;
+          this.sum_ton_cuoi_ky = res.body.sum_ton_cuoi_ky;
+          this.sum_gia_tri_cuoi_ky = res.body.sum_gia_tri_cuoi_ky;
+          this.sum_sl_kiem_nhap = res.body.sum_sl_kiem_nhap;
+          this.sum_sl_kiem_xuat = res.body.sum_sl_kiem_xuat;
+          this.sum_sl_nhap_chuyen = res.body.sum_sl_nhap_chuyen;
+          this.sum_sl_xuat_chuyen = res.body.sum_sl_xuat_chuyen;
+          this.sum_sl_tra_hang = res.body.sum_sl_tra_hang;
+        });
+      }
     }
 
     if (typeReport === 'expiration-date') {

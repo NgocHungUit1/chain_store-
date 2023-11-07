@@ -67,6 +67,21 @@ export class ProductReportService {
     return url;
   }
 
+  getApiUrlExportImportDetailSummary(filter?: ProductFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/report/export-import-detail-summary?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
   getListReportSale(filter?: ProductFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrlReportSale(filter);
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
@@ -79,6 +94,11 @@ export class ProductReportService {
 
   getExportImportSummary(filter?: ProductFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrlExportImportSummary(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
+  getExportImportDetailSummary(filter?: ProductFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrlExportImportDetailSummary(filter);
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
