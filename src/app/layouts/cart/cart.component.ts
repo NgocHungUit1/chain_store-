@@ -219,7 +219,7 @@ export class CartComponent implements OnInit, OnDestroy {
       debounceTime(300),
       // map the item property of the github results as our return object
       map(results => {
-        return [results];
+        return results;
       }),
       // catch errors
       catchError(_ => {
