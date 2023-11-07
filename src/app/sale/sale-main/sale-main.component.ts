@@ -1113,10 +1113,10 @@ export class SaleMainComponent implements OnInit {
             '<p>Mã đơn thuốc: <b>' + nationalPrescription.nationalPrescriptionId + '</b></p>' +
             '<p>Tên đơn vị: <b>' + nationalPrescription.medicalFacilityName + '</b></p>' +
             '<p>Họ tên: <b>' + nationalPrescription.patientName + '</b></p>' +
+            '<p>SĐT: <b>' + nationalPrescription.patientPhoneNumber + '</b></p>' +
             '<p>Ngày sinh: <b>' + nationalPrescription.patientDOB + '</b>' +
             '&nbsp;&nbsp;&nbsp;&nbsp;Cân nặng: <b>' + nationalPrescription.patientWeight + '</b>' +
             '&nbsp;&nbsp;&nbsp;&nbsp;Giới tính: <b>' + nationalPrescription.patientSex + '</b></p>' +
-            '<p>Địa chỉ liên hệ: <b>' + nationalPrescription.patientAddress + '</b></p>' +
             '<br>' +
             '<p><b>Chẩn đoán:</b> ' + nationalPrescription?.diagnostics[0]?.conclusion + '</p>';
         } else {
