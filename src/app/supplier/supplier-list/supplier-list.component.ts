@@ -48,6 +48,9 @@ export class SupplierListComponent extends ListComponentBase implements OnInit {
     'company_name': 'Tên công ty',
     'tax_code': 'Mã số thuế',
     'status': 'Trạng thái',
+    'total_amount': 'Tổng mua',
+    'paid_amount': 'Đã trả',
+    'remain_amount': 'Còn nợ',
   };
 
   displayedColumns: string[] = [
@@ -57,7 +60,10 @@ export class SupplierListComponent extends ListComponentBase implements OnInit {
     'email',
     'tax_code',
     'company_name',
-    'status'
+    'status',
+    'total_amount',
+    'paid_amount',
+    'remain_amount',
   ];
   columnsToDisplay: string[] = [
     '#',
@@ -93,7 +99,7 @@ export class SupplierListComponent extends ListComponentBase implements OnInit {
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'province,district,ward';
+    filter.expand = 'province,district,ward,total_amount,paid_amount,remain_amount';
     return filter;
   }
 

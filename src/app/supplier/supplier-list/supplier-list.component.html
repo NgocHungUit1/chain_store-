@@ -91,6 +91,24 @@
                 <td mat-cell *matCellDef="let element"> {{element.tax_code}}</td>
               </ng-container>
 
+              <ng-container matColumnDef="total_amount">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['total_amount']}}</th>
+                <td mat-cell *matCellDef="let element"> {{element.total_amount * 1 | number}}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="paid_amount">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['paid_amount']}}</th>
+                <td mat-cell *matCellDef="let element"> {{element.paid_amount * 1 | number}}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="remain_amount">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['remain_amount']}}</th>
+                <td mat-cell *matCellDef="let element">
+                  <span *ngIf="element.remain_amount * 1 > 0" style="color:red">{{element.remain_amount * 1 | number}}</span>
+                  <span *ngIf="element.remain_amount * 1 == 0" >{{element.remain_amount * 1 | number}}</span>
+                </td>
+              </ng-container>
+
               <ng-container matColumnDef="status">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['status']}}</th>
                 <td mat-cell *matCellDef="let element">
