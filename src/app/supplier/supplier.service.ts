@@ -4,6 +4,8 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {DateFilter, Supplier, SupplierFilter} from './supplier.model';
 import {ResponseModel} from '../common/response.model';
+import {ProductFilter} from '../product/product.model';
+import {AuthService} from '../authentication/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +15,7 @@ export class SupplierService {
   public dateFilter: BehaviorSubject<DateFilter> = new BehaviorSubject<DateFilter>(null);
   subscribeDateFilter: Observable<DateFilter> = this.dateFilter.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private auth: AuthService) {
   }
 
   setDateFilter(obj: DateFilter) {
@@ -116,6 +118,17 @@ export class SupplierService {
     const url = environment.apiUrl + this.getApiUrlReportDebtForSuppliers(filter);
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
+
+  /**
+   * get Export excel link
+   * @param filter
+   */
+  getDownloadLink(filter?: SupplierFilter) {
+    const _token = this.auth.getToken();
+
+    return environment.apiUrl + '/supplier/export?' + filter.toFilterString() + '&token=' + _token;
+  }
+
 }
 
 

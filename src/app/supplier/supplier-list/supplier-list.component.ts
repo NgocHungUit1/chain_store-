@@ -74,6 +74,8 @@ export class SupplierListComponent extends ListComponentBase implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
+  public downloadLink = '';
+
   isLoadingResults = true;
   isRateLimitReached = false;
 
@@ -97,6 +99,7 @@ export class SupplierListComponent extends ListComponentBase implements OnInit {
 
   loadData(): void {
     this.isLoadingResults = true;
+    this.downloadLink = this.service.getDownloadLink(this.apiFilter);
     this.service.getList(this.apiFilter).subscribe(res => {
       this.dataSource = res.body;
       let stt = 0;

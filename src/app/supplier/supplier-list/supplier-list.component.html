@@ -30,6 +30,10 @@
         <mat-icon>add</mat-icon>
         Thêm mới
       </button>
+      <a mat-raised-button color="warn" [href]="this.downloadLink" style="margin-right: 10px" [disabled]="isLoadingResults">
+        <mat-icon>cloud_download</mat-icon>
+        Xuất Excel
+      </a>
       <div class="diva-column-select">
         <button mat-raised-button color="primary" (click)="selectColumn.toggle();">
           <mat-icon>menu</mat-icon>
