@@ -4,6 +4,8 @@ import {Observable, BehaviorSubject} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {Customer, CustomerFilter, DateFilter} from './customer.model';
 import {ResponseModel} from '../common/response.model';
+import {SupplierFilter} from '../supplier/supplier.model';
+import {AuthService} from '../authentication/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +35,7 @@ export class CustomerService {
     return date.getFullYear() + '-' + month + '-' + date.getDate();
   }
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private auth: AuthService) {
   }
 
   getApiUrl(filter?: CustomerFilter) {
@@ -129,5 +131,15 @@ export class CustomerService {
   getReportDebtForCustomers(filter?: CustomerFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrlReportDebtForCustomers(filter);
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
+  /**
+   * get Export excel link
+   * @param filter
+   */
+  getDownloadLink(filter?: CustomerFilter) {
+    const _token = this.auth.getToken();
+
+    return environment.apiUrl + '/customer/export?' + filter.toFilterString() + '&token=' + _token;
   }
 }

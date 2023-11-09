@@ -46,6 +46,8 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
     'company_name': 'Tên công ty',
     'tax_code': 'Mã số thuế',
     'status': 'Trạng thái',
+    'total_amount': 'Tổng bán',
+    'remain_amount': 'Còn nợ',
   };
 
   displayedColumns: string[] = [
@@ -55,7 +57,9 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
     'email',
     'tax_code',
     'company_name',
-    'status'
+    'status',
+    'total_amount',
+    'remain_amount',
   ];
   columnsToDisplay: string[] = [
     '#',
@@ -69,7 +73,7 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
 
   dataSource = [];
   expandedElement: Customer | null;
-
+  public downloadLink = '';
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -91,12 +95,13 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'province,district,ward';
+    filter.expand = 'province,district,ward,total_amount,paid_amount,remain_amount';
     return filter;
   }
 
   loadData(): void {
     this.isLoadingResults = true;
+    this.downloadLink = this.service.getDownloadLink(this.apiFilter);
     this.service.getList(this.apiFilter).subscribe(res => {
       this.dataSource = res.body;
       let stt = 0;
