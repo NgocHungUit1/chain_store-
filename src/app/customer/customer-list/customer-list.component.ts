@@ -10,6 +10,9 @@ import { ActivatedRoute } from '@angular/router';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { NotifierService } from 'angular-notifier';
 import { CustomerFormDialogComponent } from '../customer-form-dialog/customer-form-dialog.component';
+import {SupplierFormDialogComponent} from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
+import {CustomerUploadDialogComponent} from '../customer-upload-dialog/customer-upload-dialog.component';
+import {AuthService} from '../../authentication/auth.service';
 
 @Component({
   // selector: 'app-customer-list',
@@ -29,7 +32,7 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
     private service: CustomerService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
-    private notifyService: NotifierService
+    private authSer: AuthService
   ) {
     super();
   }
@@ -55,8 +58,8 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
     'name',
     'phone',
     'email',
-    'tax_code',
-    'company_name',
+    // 'tax_code',
+    // 'company_name',
     'status',
     'total_amount',
     'remain_amount',
@@ -142,6 +145,24 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
         this.loadData();
       }
     });
+  }
+
+  openUploadDialog() {
+    const dialogRef = this.dialog.open(CustomerUploadDialogComponent, {
+      width: '45%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadData();
+      } else {
+      }
+    });
+  }
+
+  canDo(permissionName: string): boolean {
+    const allPermissions = this.authSer.getPermissionsFromLocalStorage();
+
+    return allPermissions.indexOf(permissionName) !== -1;
   }
 
 }

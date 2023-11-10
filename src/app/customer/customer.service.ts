@@ -38,6 +38,11 @@ export class CustomerService {
   constructor(private http: HttpClient, private auth: AuthService) {
   }
 
+  upload(data) {
+    const url = environment.apiUrl + '/customer/upload';
+    return this.http.post(url, data);
+  }
+
   getApiUrl(filter?: CustomerFilter) {
     if (!filter.page) {
       filter.page = 1;

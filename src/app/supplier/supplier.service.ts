@@ -129,6 +129,11 @@ export class SupplierService {
     return environment.apiUrl + '/supplier/export?' + filter.toFilterString() + '&token=' + _token;
   }
 
+  upload(data) {
+    const url = environment.apiUrl + '/supplier/upload';
+    return this.http.post(url, data);
+  }
+
 }
 
 

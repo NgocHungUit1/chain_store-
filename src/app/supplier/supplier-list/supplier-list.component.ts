@@ -9,9 +9,10 @@ import { Supplier, SupplierFilter } from '../supplier.model';
 import { MatDialog } from '@angular/material/dialog';
 import { SupplierFormDialogComponent } from '../supplier-form-dialog/supplier-form-dialog.component';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { NotifierService } from 'angular-notifier';
 import {FormControl} from '@angular/forms';
 import {debounceTime} from 'rxjs/operators';
+import {SupplierUploadDialogComponent} from '../supplier-upload-dialog/supplier-upload-dialog.component';
+import {AuthService} from '../../authentication/auth.service';
 
 @Component({
   templateUrl: './supplier-list.component.html',
@@ -30,7 +31,7 @@ export class SupplierListComponent extends ListComponentBase implements OnInit {
     private service: SupplierService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
-    private notifyService: NotifierService
+    private authSer: AuthService
   ) {
     super();
   }
@@ -143,5 +144,22 @@ export class SupplierListComponent extends ListComponentBase implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       this.loadData();
     });
+  }
+
+  openUploadDialog() {
+    const dialogRef = this.dialog.open(SupplierUploadDialogComponent, {
+      width: '45%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result['success']) {
+        this.loadData();
+      }
+    });
+  }
+
+  canDo(permissionName: string): boolean {
+    const allPermissions = this.authSer.getPermissionsFromLocalStorage();
+
+    return allPermissions.indexOf(permissionName) !== -1;
   }
 }

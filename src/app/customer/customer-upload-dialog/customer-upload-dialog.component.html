@@ -1,0 +1,30 @@
+<h1 mat-dialog-title>Tải dữ liệu</h1>
+<form (submit)="submit($event)">
+  <mat-dialog-content>
+    <div fxLayout="row wrap" *ngIf="submitted">
+      <div fxFlex="100" class="m-b-10">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </div>
+    </div>
+    <div fxLayout="row wrap">
+
+      <div fxFlex="100" class="m-b-10">
+        <input class="hide" #fileInput type="file" (change)="inputChange($event)" accept=".xls,.xlsx"/>
+        <button mat-raised-button type="button" [disabled]="selectedFile !== null" (click)="fileInput.click()"><mat-icon>cloud_upload</mat-icon> Chọn file</button> (Dùng chức năng tải dữ liệu ở trang danh sách để làm file mẫu tải lên.)<br>
+        <label *ngIf="selectedFile !== null">{{selectedFile.name}}</label><button *ngIf="selectedFile !== null" (click)="removeSelectedFile(fileInput);" mat-icon-button><mat-icon>delete_forever</mat-icon></button>
+      </div>
+
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-raised-button color="primary" [disabled]="submitted || selectedFile === null" class="justify-content-end"
+            type="submit">
+      <mat-icon>cloud_upload</mat-icon>
+      Tải lên
+    </button>
+    <button mat-button mat-dialog-close>
+      <mat-icon>close</mat-icon>
+      Đóng
+    </button>
+  </mat-dialog-actions>
+</form>
