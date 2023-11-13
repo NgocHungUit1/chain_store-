@@ -1120,7 +1120,7 @@ export class SaleMainComponent implements OnInit {
             '<br>' +
             '<p><b>Chẩn đoán:</b> ' + nationalPrescription?.diagnostics[0]?.conclusion + '</p>';
         } else {
-          '<p style="">Khách hàng: ' + customer_name + '</p>';
+          printContent += '<p style="">Khách hàng: ' + customer_name + '</p style="">';
           if (customer_phone !== '') {
             printContent += '<p style="">SĐT: ' + customer_phone + '</p>';
           }
