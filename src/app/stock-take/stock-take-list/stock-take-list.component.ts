@@ -196,21 +196,17 @@ export class StockTakeListComponent extends ListComponentBase implements OnInit 
         stt++;
         elementData.stt = stt; // tinh STT
 
-        const date = new Date(1000 * elementData.created_at).toJSON().slice(0, 16);
-        elementData.created_at = date.slice(8, 10) + '/'
-          + date.slice(5, 7) + '/'
-          + date.slice(0, 4) + ' '
-          + date.slice(11, 16);
-
-        if (elementData.balance_at !== 0) {
-          const balance_date = new Date(1000 * elementData.balance_at).toJSON().slice(0, 16);
-          elementData.balance_at = balance_date.slice(8, 10) + '/'
-            + balance_date.slice(5, 7) + '/'
-            + balance_date.slice(0, 4) + ' '
-            + balance_date.slice(11, 16);
-        } else {
-          elementData.balance_at = '';
-        }
+        //
+        //
+        // if (elementData.balance_at !== 0) {
+        //   const balance_date = new Date(1000 * elementData.balance_at).toJSON().slice(0, 16);
+        //   elementData.balance_at = balance_date.slice(8, 10) + '/'
+        //     + balance_date.slice(5, 7) + '/'
+        //     + balance_date.slice(0, 4) + ' '
+        //     + balance_date.slice(11, 16);
+        // } else {
+        //   elementData.balance_at = '';
+        // }
 
 
       });

@@ -21,14 +21,6 @@ export class InvoiceTabReturnsComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    this.returns.forEach(elementData => {
-      const date = new Date(1000 * elementData['created_at']).toJSON().slice(0, 16);
-        elementData['created_at'] = date.slice(8, 10) + '/'
-          + date.slice(5, 7) + '/'
-          + date.slice(0, 4) + ' '
-          + date.slice(11, 16);
-    });
-    
   }
 
 }

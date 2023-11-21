@@ -249,6 +249,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     if (typeReport === 'supplier') {
       filter.expand = 'totalSupplier,totalWarehouseImport,totalWarehouseReturn';
     }
+    filter.keyword = this.searchProductForm.value;
 
     // filter.expand = 'returnsDetailsBranch';
     // filter.expand = 'medicine,productUnits,productPlacements,group,images,quantity';

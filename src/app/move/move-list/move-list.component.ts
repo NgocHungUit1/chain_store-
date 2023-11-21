@@ -157,15 +157,15 @@ export class MoveListComponent extends ListComponentBase implements OnInit {
         stt++;
         elementData.stt = stt; // tinh STT
 
-        if (elementData.done_at !== 0) {
-          const balance_date = new Date(1000 * elementData.done_at).toJSON().slice(0, 16);
-          elementData.done_at = balance_date.slice(8, 10) + '/'
-            + balance_date.slice(5, 7) + '/'
-            + balance_date.slice(0, 4) + ' '
-            + balance_date.slice(11, 16);
-        } else {
-          elementData.done_at = '';
-        }
+        // if (elementData.done_at !== 0) {
+        //   const balance_date = new Date(1000 * elementData.done_at).toJSON().slice(0, 16);
+        //   elementData.done_at = balance_date.slice(8, 10) + '/'
+        //     + balance_date.slice(5, 7) + '/'
+        //     + balance_date.slice(0, 4) + ' '
+        //     + balance_date.slice(11, 16);
+        // } else {
+        //   elementData.done_at = '';
+        // }
       });
       this.dataSource = data;
       this.reloadFilter(res);
