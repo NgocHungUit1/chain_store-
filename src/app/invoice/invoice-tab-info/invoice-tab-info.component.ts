@@ -62,6 +62,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
   prescription: Prescription;
   logo = null;
   description = null;
+  loading = false;
 
   sexItems = {
     '1': 'Nam',
@@ -82,20 +83,21 @@ export class InvoiceTabInfoComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // console.log(this.expandedElement);
     if (this.expandedElement) {
-      // console.log(this.invoice.prescription_id);
-      if (this.invoice.prescription_id !== null) {
-        this.prescriptionService.getDetail(this.invoice.prescription_id,
-          'doctor,medicalFacility').subscribe(res => {
-          // console.log(res);
-          this.prescription = res;
+      this.loadData();
+    }
+    this.allPermission = sessionStorage.getItem('allPermission').split(',');
+    this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
+  }
 
-        });
-      }
-
-      const invoiceData = this.invoice;
-      const detail = this.invoice.detail;
+  loadData() {
+    this.loading = true;
+    this.invoiceService.getInfo(this.invoice.id,
+      'detail,priceBook,paymentInfo,expensesOrders,branch,payment,customer,store,user,returns,today,time,createdFormat'
+    ).subscribe(res => {
+      const invoiceData = res;
+      this.invoice = res;
+      const detail = res['detail'];
       this.tongTienHang = invoiceData.total_price;
       this.KhachDaTra = invoiceData.total_payment;
       // tslint:disable-next-line:no-shadowed-variable
@@ -110,32 +112,21 @@ export class InvoiceTabInfoComponent implements OnChanges {
         this.giamGiaHoaDonText = '(' + invoiceData.discount + '%)';
       }
 
+      this.loading = false;
+    });
+
+    if (this.invoice.prescription_id !== null) {
+      this.prescriptionService.getDetail(this.invoice.prescription_id,
+        'doctor,medicalFacility').subscribe(res => {
+        // console.log(res);
+        this.prescription = res;
+
+      });
     }
+
     this.allPermission = sessionStorage.getItem('allPermission').split(',');
     this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
   }
-
-  // ngOnInit(): void {
-  //   // console.log(this.invoice);
-  //   const invoiceData = this.invoice;
-  //   const detail = this.invoice.detail;
-  //   this.tongTienHang = invoiceData.total_price;
-  //   this.KhachDaTra = invoiceData.total_payment;
-  //   // tslint:disable-next-line:no-shadowed-variable
-  //   detail.forEach(element => {
-  //     this.tongSoLuong = this.tongSoLuong + element?.amount;
-  //   });
-  //
-  //   if (invoiceData.discount_type === 'price') {
-  //     this.giamGiaHoaDon = invoiceData.discount;
-  //   } else {
-  //     this.giamGiaHoaDon = this.tongTienHang * invoiceData.discount / 100;
-  //     this.giamGiaHoaDonText = '(' + invoiceData.discount + '%)';
-  //   }
-  //
-  //   this.allPermission = sessionStorage.getItem('allPermission').split(',');
-  //   this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
-  // }
 
   deleteInvoice(invoice) {
     if (invoice['returns'].length > 0) {

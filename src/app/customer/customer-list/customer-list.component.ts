@@ -81,8 +81,10 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  isLoadingResults = true;
+  isLoadingResults = false;
   isRateLimitReached = false;
+
+  amountData = {};
 
   buildFilterFromParams(): CustomerFilter {
     function write<K extends keyof CustomerFilter>(arg: CustomerFilter, key: K, value: CustomerFilter[K]): void {
@@ -98,7 +100,7 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'province,district,ward,total_amount,paid_amount,remain_amount';
+    filter.expand = 'province,district,ward';
     return filter;
   }
 
@@ -112,12 +114,29 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
         const arr = this.dataSource;
         this.expandedElement = arr[0];
       }
+      const ids = [];
       this.dataSource.forEach(elementData => {
         stt++;
         elementData.stt = this.pageSize * (this.page - 1) + stt;
+        ids.push(elementData.id);
       });
+
+      const idsStr = ids.join(',');
+      const apiFil = new CustomerFilter();
+      apiFil.ids = idsStr;
+      apiFil.expand = 'total_amount,paid_amount,remain_amount';
+      apiFil.pageSize = this.apiFilter.pageSize;
+      const amountD = {};
+      this.service.getListAmount(apiFil).subscribe(amountRes => {
+        amountRes.body.forEach(item => {
+          amountD[item.id] = item;
+        });
+
+        this.amountData = amountD;
+        this.isLoadingResults = false;
+      });
+
       this.reloadFilter(res);
-      this.isLoadingResults = false;
     });
   }
 

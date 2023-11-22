@@ -23,6 +23,7 @@ export class Customer {
 
 export class CustomerFilter extends ApiFilterBase {
   id = '';
+  ids = '';
   name = '';
   company_name = '';
   phone = '';

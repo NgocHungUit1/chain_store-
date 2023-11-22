@@ -85,20 +85,22 @@
               </ng-container>
 
               <ng-container matColumnDef="total_amount">
-                <th mat-header-cell *matHeaderCellDef> <div mat-sort-header>{{columnsHeader['total_amount']}}</div></th>
-                <td mat-cell *matCellDef="let element"> {{element.total_amount * 1 | number}}</td>
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['total_amount']}}</th>
+                <td mat-cell *matCellDef="let element"><span *ngIf="this.amountData[element.id]">{{this.amountData[element.id].total_amount | number}}</span></td>
               </ng-container>
 
               <ng-container matColumnDef="paid_amount">
-                <th mat-header-cell *matHeaderCellDef><div mat-sort-header> {{columnsHeader['paid_amount']}}</div></th>
-                <td mat-cell *matCellDef="let element"> {{element.paid_amount * 1 | number}}</td>
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['paid_amount']}}</th>
+                <td mat-cell *matCellDef="let element"><span *ngIf="this.amountData[element.id]">{{this.amountData[element.id].paid_amount | number}}</span></td>
               </ng-container>
 
               <ng-container matColumnDef="remain_amount">
-                <th mat-header-cell *matHeaderCellDef><div mat-sort-header> {{columnsHeader['remain_amount']}}</div></th>
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['remain_amount']}}</th>
                 <td mat-cell *matCellDef="let element">
-                  <span *ngIf="element.remain_amount * 1 > 0" style="color:red">{{element.remain_amount * 1 | number}}</span>
-                  <span *ngIf="element.remain_amount * 1 == 0" >{{element.remain_amount * 1 | number}}</span>
+                  <div *ngIf="this.amountData[element.id]">
+                    <span *ngIf="this.amountData[element.id].remain_amount * 1 > 0" style="color:red">{{this.amountData[element.id].remain_amount | number}}</span>
+                    <span *ngIf="this.amountData[element.id].remain_amount * 1 == 0" >{{this.amountData[element.id].remain_amount | number}}</span>
+                  </div>
                 </td>
               </ng-container>
 

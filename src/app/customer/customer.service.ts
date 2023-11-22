@@ -58,6 +58,21 @@ export class CustomerService {
     return url;
   }
 
+  getApiUrlAmount(filter?: CustomerFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/customer/index-amount?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
   getStateUrl(filter?: CustomerFilter) {
 
     let url = '/customer/list';
@@ -73,6 +88,11 @@ export class CustomerService {
 
   getList(filter?: CustomerFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrl(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
+  getListAmount(filter?: CustomerFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrlAmount(filter);
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
