@@ -13,6 +13,7 @@ import {Prescription} from '../../sale/prescription.model';
 import {OptionStoreService} from '../../common/option-store.service';
 import {StoreService} from '../../store/store.service';
 import {Store} from '../../store/store.model';
+import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 
 @Component({
   selector: 'app-invoice-tab-info',
@@ -93,7 +94,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
   loadData() {
     this.loading = true;
     this.invoiceService.getInfo(this.invoice.id,
-      'detail,priceBook,paymentInfo,expensesOrders,branch,payment,customer,store,user,returns,today,time,createdFormat'
+      'detail,priceBook,paymentInfo,expensesOrders,branch,payment,customer,store,user,returns,today,time,createdFormat,total_payment'
     ).subscribe(res => {
       const invoiceData = res;
       this.invoice = res;
@@ -511,11 +512,29 @@ export class InvoiceTabInfoComponent implements OnChanges {
    * @param invoice
    */
   payTheDebt(invoice) {
-    this.invoiceService.payTheDebt(invoice.id).subscribe(res => {
-      if (res === true) {
-        this.notifySer.notify('success', 'Thanh toán nợ thành công.');
-      } else {
-        this.notifySer.notify('error', 'Thanh toán không thành công.');
+    const obj = {
+      action: 'Connect',
+      title: 'Xác nhận khách hàng đã thanh toán nợ!',
+      content: '',
+    };
+
+    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
+      data: obj,
+      width: '30%',
+      minHeight: '60%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.event === 'confirm') {
+        this.loading = true;
+        this.invoiceService.payTheDebt(invoice.id).subscribe(res => {
+          this.loading = false;
+          if (res === true) {
+            this.notifySer.notify('success', 'Thanh toán nợ thành công.');
+            this.loadData();
+          } else {
+            this.notifySer.notify('error', 'Thanh toán không thành công.');
+          }
+        });
       }
     });
   }
