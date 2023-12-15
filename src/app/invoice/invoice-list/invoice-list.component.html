@@ -289,20 +289,25 @@
                        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
                     <mat-tab-group style="width: 100%;">
                       <mat-tab label="Thông tin">
-                        <app-invoice-tab-info *ngIf="this.store !== null" [invoice]="element" [store]="store"
-                                              [expandedElement]="element == expandedElement ? true : false"
-                                              (reload)="loadData();"
-                        ></app-invoice-tab-info>
+                        <ng-template matTabContent>
+                          <app-invoice-tab-info *ngIf="this.store !== null" [invoice]="element" [store]="store"
+                                                [expandedElement]="element == expandedElement ? true : false"
+                                                (reload)="loadData();"
+                          ></app-invoice-tab-info>
+                        </ng-template>
                       </mat-tab>
-                      <mat-tab label="Lịch sử trả hàng" *ngIf="(element['returns']).length > 0 ">
-                        <app-invoice-tab-returns [returns]="element.returns"></app-invoice-tab-returns>
+                      <mat-tab label="Lịch sử trả hàng" *ngIf="this.store !== null">
+                        <ng-template matTabContent>
+                          <app-invoice-tab-returns [invoice]="element"></app-invoice-tab-returns>
+                        </ng-template>
                       </mat-tab>
                       <mat-tab label="Lịch sử thanh toán">
-                        <app-invoice-tab-payment [invoice_id]="element.id"
-                                                 [payment]="element.paymentInfo"
-                                                 [expandedElement]="element == expandedElement ? true : false">
+                        <ng-template matTabContent>
+                          <app-invoice-tab-payment [invoice]="element"
+                                                   [expandedElement]="element == expandedElement ? true : false">
 
-                        </app-invoice-tab-payment>
+                          </app-invoice-tab-payment>
+                        </ng-template>
                       </mat-tab>
 
                     </mat-tab-group>

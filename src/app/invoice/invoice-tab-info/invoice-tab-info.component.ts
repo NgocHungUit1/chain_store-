@@ -13,6 +13,7 @@ import {Prescription} from '../../sale/prescription.model';
 import {OptionStoreService} from '../../common/option-store.service';
 import {StoreService} from '../../store/store.service';
 import {Store} from '../../store/store.model';
+import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 
 @Component({
   selector: 'app-invoice-tab-info',
@@ -62,6 +63,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
   prescription: Prescription;
   logo = null;
   description = null;
+  loading = false;
 
   sexItems = {
     '1': 'Nam',
@@ -82,20 +84,21 @@ export class InvoiceTabInfoComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // console.log(this.expandedElement);
     if (this.expandedElement) {
-      // console.log(this.invoice.prescription_id);
-      if (this.invoice.prescription_id !== null) {
-        this.prescriptionService.getDetail(this.invoice.prescription_id,
-          'doctor,medicalFacility').subscribe(res => {
-          // console.log(res);
-          this.prescription = res;
+      this.loadData();
+    }
+    this.allPermission = sessionStorage.getItem('allPermission').split(',');
+    this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
+  }
 
-        });
-      }
-
-      const invoiceData = this.invoice;
-      const detail = this.invoice.detail;
+  loadData() {
+    this.loading = true;
+    this.invoiceService.getInfo(this.invoice.id,
+      'detail,priceBook,paymentInfo,expensesOrders,branch,payment,customer,store,user,returns,today,time,createdFormat,total_payment'
+    ).subscribe(res => {
+      const invoiceData = res;
+      this.invoice = res;
+      const detail = res['detail'];
       this.tongTienHang = invoiceData.total_price;
       this.KhachDaTra = invoiceData.total_payment;
       // tslint:disable-next-line:no-shadowed-variable
@@ -110,32 +113,21 @@ export class InvoiceTabInfoComponent implements OnChanges {
         this.giamGiaHoaDonText = '(' + invoiceData.discount + '%)';
       }
 
+      this.loading = false;
+    });
+
+    if (this.invoice.prescription_id !== null) {
+      this.prescriptionService.getDetail(this.invoice.prescription_id,
+        'doctor,medicalFacility').subscribe(res => {
+        // console.log(res);
+        this.prescription = res;
+
+      });
     }
+
     this.allPermission = sessionStorage.getItem('allPermission').split(',');
     this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
   }
-
-  // ngOnInit(): void {
-  //   // console.log(this.invoice);
-  //   const invoiceData = this.invoice;
-  //   const detail = this.invoice.detail;
-  //   this.tongTienHang = invoiceData.total_price;
-  //   this.KhachDaTra = invoiceData.total_payment;
-  //   // tslint:disable-next-line:no-shadowed-variable
-  //   detail.forEach(element => {
-  //     this.tongSoLuong = this.tongSoLuong + element?.amount;
-  //   });
-  //
-  //   if (invoiceData.discount_type === 'price') {
-  //     this.giamGiaHoaDon = invoiceData.discount;
-  //   } else {
-  //     this.giamGiaHoaDon = this.tongTienHang * invoiceData.discount / 100;
-  //     this.giamGiaHoaDonText = '(' + invoiceData.discount + '%)';
-  //   }
-  //
-  //   this.allPermission = sessionStorage.getItem('allPermission').split(',');
-  //   this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
-  // }
 
   deleteInvoice(invoice) {
     if (invoice['returns'].length > 0) {
@@ -520,11 +512,29 @@ export class InvoiceTabInfoComponent implements OnChanges {
    * @param invoice
    */
   payTheDebt(invoice) {
-    this.invoiceService.payTheDebt(invoice.id).subscribe(res => {
-      if (res === true) {
-        this.notifySer.notify('success', 'Thanh toán nợ thành công.');
-      } else {
-        this.notifySer.notify('error', 'Thanh toán không thành công.');
+    const obj = {
+      action: 'Connect',
+      title: 'Xác nhận khách hàng đã thanh toán nợ!',
+      content: '',
+    };
+
+    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
+      data: obj,
+      width: '30%',
+      minHeight: '60%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.event === 'confirm') {
+        this.loading = true;
+        this.invoiceService.payTheDebt(invoice.id).subscribe(res => {
+          this.loading = false;
+          if (res === true) {
+            this.notifySer.notify('success', 'Thanh toán nợ thành công.');
+            this.loadData();
+          } else {
+            this.notifySer.notify('error', 'Thanh toán không thành công.');
+          }
+        });
       }
     });
   }

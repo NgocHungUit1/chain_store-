@@ -1,6 +1,6 @@
-import { Customer } from "../customer/customer.model";
-import { ApiFilterBase } from "../shared/base";
-import { PriceList } from "../price-book/price-list.model";
+import { Customer } from '../customer/customer.model';
+import { ApiFilterBase } from '../shared/base';
+import { PriceList } from '../price-book/price-list.model';
 
 export class User {
   username: string;
@@ -23,6 +23,7 @@ export class ReturnsDetail {
 
 export class Returns {
   id: string;
+  invoice_id: number;
   returns_no: string;
   customer: Customer;
   total_price: number;
@@ -45,6 +46,7 @@ export class ReturnsFilter extends ApiFilterBase {
   id = '';
   returns_no = '';
   customer_id = '';
+  invoice_id = '';
   discount = '';
   discount_type = '';
   note = '';

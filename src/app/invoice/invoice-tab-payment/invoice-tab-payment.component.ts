@@ -4,6 +4,9 @@ import { StockTakeItem, StockTakeItemFilter } from '../../stock-take/stock-take.
 import { NotifierService } from 'angular-notifier';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import {PaymentFilter} from '../../payment/payment.model';
+import {Invoice} from '../invoice.model';
+import {PaymentService} from '../../payment/payment.service';
 
 @Component({
   selector: 'app-invoice-tab-payment',
@@ -11,9 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrls: ['./invoice-tab-payment.component.css']
 })
 export class InvoiceTabPaymentComponent implements OnInit {
-
-  @Input() payment: object[];
-  @Input() invoice_id: number;
+  @Input() invoice: Invoice;
   @Input() expandedElement: boolean;
 
   displayedColumns: string[] = ['#', 'payment_no', 'total_price', 'payment_method', 'created_by', 'created_at'];
@@ -37,48 +38,54 @@ export class InvoiceTabPaymentComponent implements OnInit {
   constructor(
     public notifySer: NotifierService,
     private route: ActivatedRoute,
+    private paymentSer: PaymentService,
   ) {
   }
 
-  apiFilter: StockTakeItemFilter;
-  isLoadingResults = false;
-  data: StockTakeItem[] = [];
-  productDataSource = new MatTableDataSource<StockTakeItem>([]);
+  dataSource = [];
 
-  // ngOnChanges(changes: SimpleChanges) {
-  //   if (this.expandedElement) {
-  //     this.apiFilter = this.buildFilterFromParams();
-  //
-  //     this.loadData();
-  //     console.log(this.invoice_id);
-  //   }
-  // }
+  @Input() sub_page = false;
+  @Input() page_size = 20;
+  apiFilter: PaymentFilter = new PaymentFilter();
 
-  // loadData(): void {
-  //
-  //   this.isLoadingResults = true;
-  //   this.stockTakeItemSer.getList(this.apiFilter).subscribe(res => {
-  //     this.data = res.body;
-  //     this.productDataSource = new MatTableDataSource<StockTakeItem>(this.data);
-  //     this.isLoadingResults = false;
-  //   });
-  // }
-  //
-  // buildFilterFromParams(): StockTakeItemFilter {
-  //   function write<K extends keyof StockTakeItemFilter>(arg: StockTakeItemFilter, key: K, value: StockTakeItemFilter[K]): void {
-  //     arg[key] = value;
-  //   }
-  //
-  //   const filter = new StockTakeItemFilter();
-  //   filter.page = this.route.snapshot.queryParams['page'];
-  //   filter.pageSize = 50;//this.route.snapshot.queryParams['pageSize'];
-  //   filter.sort = this.route.snapshot.queryParams['sort'];
-  //   filter.stock_take_id = this.stockTake.id;
-  //   filter.expand = 'product,productUnit,user';
-  //   return filter;
-  // }
-  ngOnInit() {
+  loading = false;
 
+  buildFilterFromParams(): PaymentFilter {
+    function write<K extends keyof PaymentFilter>(arg: PaymentFilter, key: K, value: PaymentFilter[K]): void {
+      arg[key] = value;
+    }
+    const filter = new PaymentFilter();
+    const objectKeys = Object.keys(filter) as Array<keyof PaymentFilter>;
+
+    for (const attr of objectKeys) {
+      if (this.route.snapshot.queryParams['PaymentSearch[' + attr + ']'] !== undefined) {
+        write(filter, attr, this.route.snapshot.queryParams['PaymentSearch[' + attr + ']']);
+      }
+    }
+    if (this.route.snapshot.queryParams['pageSize'] !== undefined) {
+      filter.pageSize = this.route.snapshot.queryParams['pageSize'];
+    } else {
+      filter.pageSize = this.page_size;
+    }
+    filter.page = this.route.snapshot.queryParams['page'];
+    filter.sort = this.route.snapshot.queryParams['sort'];
+    filter.expand = 'createdUser';
+    filter.invoice_id = this.invoice.id;
+    return filter;
   }
+
+  loadData(): void {
+    this.loading = true;
+    this.paymentSer.getList(this.apiFilter).subscribe(res => {
+      this.dataSource = res.body;
+      this.loading = false;
+    });
+  }
+
+  ngOnInit() {
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
+  }
+
 
 }

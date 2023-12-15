@@ -16,6 +16,40 @@ export class PaymentService {
   public dateFilter: BehaviorSubject<DateFilter> = new BehaviorSubject<DateFilter>(null);
   subscribeDateFilter: Observable<DateFilter> = this.dateFilter.asObservable();
 
+  getApiUrl(filter?: PaymentFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/payment?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
+  getStateUrl(filter?: PaymentFilter) {
+
+    let url = '/payment/list';
+    if (!filter.page) {
+      filter.page = 1;
+    }
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+    url += '?' + filter.toFilterString();
+    return url;
+  }
+
+  getList(filter?: PaymentFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrl(filter);
+    return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
+  }
+
+
   setDateFilter(obj: DateFilter) {
     this.dateFilter.next(obj);
   }

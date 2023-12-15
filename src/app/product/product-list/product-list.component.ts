@@ -503,7 +503,9 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
   exportExcel() {
     // debugger;
     this.apiFilter = this.buildFilterFromParams();
+    this.isLoadingResults = true;
     this.service.exportExcel(this.apiFilter).subscribe(res => {
+      this.isLoadingResults = false;
       window.location.href = this.service.downloadFileExcel();
     });
   }

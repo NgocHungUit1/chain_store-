@@ -80,6 +80,11 @@ export class InvoiceService {
     return this.http.get<Invoice>(url);
   }
 
+  public getInfo(id: string, expand: string = ''): Observable<Invoice> {
+    const url = environment.apiUrl + '/invoice/' + id + '?expand=' + expand;
+    return this.http.get<Invoice>(url);
+  }
+
   update(id: string, pos: any) {
     const url = environment.apiUrl + '/invoice/' + id;
     return this.http.put(url, pos);

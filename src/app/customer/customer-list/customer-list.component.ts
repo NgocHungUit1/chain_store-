@@ -10,6 +10,9 @@ import { ActivatedRoute } from '@angular/router';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { NotifierService } from 'angular-notifier';
 import { CustomerFormDialogComponent } from '../customer-form-dialog/customer-form-dialog.component';
+import {SupplierFormDialogComponent} from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
+import {CustomerUploadDialogComponent} from '../customer-upload-dialog/customer-upload-dialog.component';
+import {AuthService} from '../../authentication/auth.service';
 
 @Component({
   // selector: 'app-customer-list',
@@ -29,7 +32,7 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
     private service: CustomerService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
-    private notifyService: NotifierService
+    private authSer: AuthService
   ) {
     super();
   }
@@ -46,6 +49,8 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
     'company_name': 'Tên công ty',
     'tax_code': 'Mã số thuế',
     'status': 'Trạng thái',
+    'total_amount': 'Tổng bán',
+    'remain_amount': 'Còn nợ',
   };
 
   displayedColumns: string[] = [
@@ -53,9 +58,11 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
     'name',
     'phone',
     'email',
-    'tax_code',
-    'company_name',
-    'status'
+    // 'tax_code',
+    // 'company_name',
+    'status',
+    'total_amount',
+    'remain_amount',
   ];
   columnsToDisplay: string[] = [
     '#',
@@ -69,13 +76,15 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
 
   dataSource = [];
   expandedElement: Customer | null;
-
+  public downloadLink = '';
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  isLoadingResults = true;
+  isLoadingResults = false;
   isRateLimitReached = false;
+
+  amountData = {};
 
   buildFilterFromParams(): CustomerFilter {
     function write<K extends keyof CustomerFilter>(arg: CustomerFilter, key: K, value: CustomerFilter[K]): void {
@@ -97,6 +106,7 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
 
   loadData(): void {
     this.isLoadingResults = true;
+    this.downloadLink = this.service.getDownloadLink(this.apiFilter);
     this.service.getList(this.apiFilter).subscribe(res => {
       this.dataSource = res.body;
       let stt = 0;
@@ -104,12 +114,29 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
         const arr = this.dataSource;
         this.expandedElement = arr[0];
       }
+      const ids = [];
       this.dataSource.forEach(elementData => {
         stt++;
         elementData.stt = this.pageSize * (this.page - 1) + stt;
+        ids.push(elementData.id);
       });
+
+      const idsStr = ids.join(',');
+      const apiFil = new CustomerFilter();
+      apiFil.ids = idsStr;
+      apiFil.expand = 'total_amount,paid_amount,remain_amount';
+      apiFil.pageSize = this.apiFilter.pageSize;
+      const amountD = {};
+      this.service.getListAmount(apiFil).subscribe(amountRes => {
+        amountRes.body.forEach(item => {
+          amountD[item.id] = item;
+        });
+
+        this.amountData = amountD;
+        this.isLoadingResults = false;
+      });
+
       this.reloadFilter(res);
-      this.isLoadingResults = false;
     });
   }
 
@@ -137,6 +164,24 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
         this.loadData();
       }
     });
+  }
+
+  openUploadDialog() {
+    const dialogRef = this.dialog.open(CustomerUploadDialogComponent, {
+      width: '45%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadData();
+      } else {
+      }
+    });
+  }
+
+  canDo(permissionName: string): boolean {
+    const allPermissions = this.authSer.getPermissionsFromLocalStorage();
+
+    return allPermissions.indexOf(permissionName) !== -1;
   }
 
 }

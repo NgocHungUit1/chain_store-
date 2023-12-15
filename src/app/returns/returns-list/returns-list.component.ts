@@ -91,11 +91,11 @@ export class ReturnsListComponent extends ListComponentBase implements OnInit {
       data.forEach(elementData => {
         stt++; elementData.stt = stt; // tinh STT
 
-        const date = new Date(1000 * elementData.created_at).toJSON().slice(0, 16);
-        elementData.created_at = date.slice(8, 10) + '/'
-          + date.slice(5, 7) + '/'
-          + date.slice(0, 4) + ' '
-          + date.slice(11, 16);
+        // const date = new Date(1000 * elementData.created_at).toJSON().slice(0, 16);
+        // elementData.created_at = date.slice(8, 10) + '/'
+        //   + date.slice(5, 7) + '/'
+        //   + date.slice(0, 4) + ' '
+        //   + date.slice(11, 16);
 
         // // tong tien khach hang da tra, tien giam gia
         // let total_payment = 0;
@@ -121,7 +121,7 @@ export class ReturnsListComponent extends ListComponentBase implements OnInit {
       // const url = this.service.getStateUrl(this.apiFilter);
       this.isLoadingResults = false;
     });
-    
+
   }
 
   ngOnInit(): void {

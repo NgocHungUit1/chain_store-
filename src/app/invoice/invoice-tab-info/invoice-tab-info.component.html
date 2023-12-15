@@ -1,7 +1,9 @@
 <div fxLayout="row wrap" class="m-b-20">
-  <!-- <div fxFlex="100">
-        <h3 style="color: #009688">{{ invoice.invoice_no }}</h3>
-    </div> -->
+  <div fxFlex="100">
+    <div class="process-bar-container">
+      <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
+    </div>
+  </div>
   <div fxFlex="100">
     <div fxLayout="row wrap">
       <div fxFlex="70" class="invoice-info">

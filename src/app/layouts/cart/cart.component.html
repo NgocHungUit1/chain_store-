@@ -74,7 +74,7 @@
         <button mat-icon-button matPrefix>
           <mat-icon>search</mat-icon>
         </button>
-        <button mat-icon-button matSuffix (click)="changeTypeSearch()">
+        <button mat-icon-button matSuffix (click)="changeTypeSearch(iconChangeType)">
           <mat-icon>{{ iconChangeType }}</mat-icon>
         </button>
         <mat-autocomplete
@@ -84,8 +84,9 @@
             fxLayout="row"
             *ngFor="let product of filteredProducts | async"
             [value]="product"
-            style="min-height: 70px; line-height: 25px !important"
+            style="min-height: 70px; line-height: 25px !important; height: auto !important;"
             title="{{ product.product_name }}">
+            <!-- San pham -->
             <img
               *ngIf="iconChangeType === 'cached'"
               fxFlex="20"
@@ -118,7 +119,7 @@
               {{ product.sell_price | number }}
             </span>
 
-            <!--            Don thuoc mau-->
+            <!-- Don thuoc mau -->
             <span
               *ngIf="iconChangeType === 'assignment'"
               fxFlex="100"
@@ -127,6 +128,27 @@
               <b style="font-size: 12px">{{ product.product_name }}</b>
               <br />
               {{ product.product_no }}
+            </span>
+
+            <!-- Don thuoc quoc gia -->
+            <span
+              *ngIf="iconChangeType === 'nation'"
+              fxFlex="100"
+              style="margin-left: 5px; font-size: 12px;"
+              class="m-l-10">
+              <b style="font-size: 12px">Bệnh nhân: {{ product.patientName }}</b>
+              <br />
+              - Ngày sinh: {{ product.patientDOB }}
+              <br />
+              - SĐT: {{ product.patientPhoneNumber }}
+              <br />
+              - Địa chỉ: {{ product.patientAddress }}
+              <br />
+              - Khám tại: {{ product.medicalFacilityName }}
+              <br />
+              - Mã đơn thuốc: {{ product.nationalPrescriptionId }}
+              <br />
+              - Ngày kê đơn: {{ product.prescriptionDate }}
             </span>
           </mat-option>
 

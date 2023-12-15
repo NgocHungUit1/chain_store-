@@ -19,6 +19,14 @@
         <mat-icon>add</mat-icon>
         Thêm mới
       </button>
+      <button mat-raised-button color="warn" (click)="openUploadDialog();" class="m-r-5 padding-x-10" *ngIf="canDo('Customer.Upload')">
+        <mat-icon>cloud_upload</mat-icon>
+        Tải lên
+      </button>
+      <a mat-raised-button color="accent" [href]="this.downloadLink" style="margin-right: 10px" [disabled]="isLoadingResults">
+        <mat-icon>cloud_download</mat-icon>
+        Xuất Excel
+      </a>
       <div class="diva-column-select">
         <button mat-raised-button color="primary" (click)="selectColumn.toggle();">
           <mat-icon>menu</mat-icon>
@@ -44,7 +52,7 @@
             </div>
           </div>
           <div class="table-responsive">
-            <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="">
+            <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="" matSort (matSortChange)="onMatSortChange($event)">
 
               <ng-container matColumnDef="#">
                 <th mat-header-cell *matHeaderCellDef> #</th>
@@ -74,6 +82,26 @@
               <ng-container matColumnDef="tax_code">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['tax_code']}}</th>
                 <td mat-cell *matCellDef="let element"> {{element.tax_code}}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="total_amount">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['total_amount']}}</th>
+                <td mat-cell *matCellDef="let element"><span *ngIf="this.amountData[element.id]">{{this.amountData[element.id].total_amount | number}}</span></td>
+              </ng-container>
+
+              <ng-container matColumnDef="paid_amount">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['paid_amount']}}</th>
+                <td mat-cell *matCellDef="let element"><span *ngIf="this.amountData[element.id]">{{this.amountData[element.id].paid_amount | number}}</span></td>
+              </ng-container>
+
+              <ng-container matColumnDef="remain_amount">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['remain_amount']}}</th>
+                <td mat-cell *matCellDef="let element">
+                  <div *ngIf="this.amountData[element.id]">
+                    <span *ngIf="this.amountData[element.id].remain_amount * 1 > 0" style="color:red">{{this.amountData[element.id].remain_amount | number}}</span>
+                    <span *ngIf="this.amountData[element.id].remain_amount * 1 == 0" >{{this.amountData[element.id].remain_amount | number}}</span>
+                  </div>
+                </td>
               </ng-container>
 
               <ng-container matColumnDef="status">

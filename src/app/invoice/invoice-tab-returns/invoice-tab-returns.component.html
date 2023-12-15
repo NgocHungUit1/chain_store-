@@ -1,4 +1,7 @@
-<table mat-table [dataSource]="returns" class="mat-elevation-z8">
+<div class="process-bar-container">
+  <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
+</div>
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
     <ng-container matColumnDef="#">
         <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['#'] }} </th>
@@ -10,9 +13,14 @@
         <td mat-cell *matCellDef="let element"> {{element.return_no}} </td>
     </ng-container>
 
+    <ng-container matColumnDef="created_by">
+      <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['created_by'] }} </th>
+      <td mat-cell *matCellDef="let element"> {{element.createdUser.username}} </td>
+    </ng-container>
+
     <ng-container matColumnDef="created_at">
         <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['created_at'] }} </th>
-        <td mat-cell *matCellDef="let element"> {{element.created_at }} </td>
+        <td mat-cell *matCellDef="let element"> {{element.created_at * 1000 | date:'dd/M/yyyy HH:mm' }} </td>
     </ng-container>
 
     <ng-container matColumnDef="total_price">

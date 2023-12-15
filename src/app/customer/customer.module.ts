@@ -17,6 +17,7 @@ import { CustomerPopupDeleteDialogComponent } from './customer-popup-delete-dial
 import {DatetimeChooseFilterDialogComponent} from './datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
 import {DatetimeDefaultFilterDialogComponent} from './datetime-default-filter-dialog/datetime-default-filter-dialog.component';
 import { HistoryInvoiceTabComponent } from './history-invoice-tab/history-invoice-tab.component';
+import {CustomerUploadDialogComponent} from './customer-upload-dialog/customer-upload-dialog.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { HistoryInvoiceTabComponent } from './history-invoice-tab/history-invoic
     CustomerPopupDeleteDialogComponent,
     DatetimeDefaultFilterDialogComponent,
     DatetimeChooseFilterDialogComponent,
+    CustomerUploadDialogComponent,
     HistoryInvoiceTabComponent
   ],
   imports: [

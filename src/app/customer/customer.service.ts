@@ -4,6 +4,8 @@ import {Observable, BehaviorSubject} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {Customer, CustomerFilter, DateFilter} from './customer.model';
 import {ResponseModel} from '../common/response.model';
+import {SupplierFilter} from '../supplier/supplier.model';
+import {AuthService} from '../authentication/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +35,12 @@ export class CustomerService {
     return date.getFullYear() + '-' + month + '-' + date.getDate();
   }
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private auth: AuthService) {
+  }
+
+  upload(data) {
+    const url = environment.apiUrl + '/customer/upload';
+    return this.http.post(url, data);
   }
 
   getApiUrl(filter?: CustomerFilter) {
@@ -46,6 +53,21 @@ export class CustomerService {
     }
 
     let url = '/customer?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
+  getApiUrlAmount(filter?: CustomerFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/customer/index-amount?per-page=' + filter.pageSize;
 
     url += '&' + filter.toFilterString();
     return url;
@@ -66,6 +88,11 @@ export class CustomerService {
 
   getList(filter?: CustomerFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrl(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
+  getListAmount(filter?: CustomerFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrlAmount(filter);
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
@@ -129,5 +156,15 @@ export class CustomerService {
   getReportDebtForCustomers(filter?: CustomerFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrlReportDebtForCustomers(filter);
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
+  /**
+   * get Export excel link
+   * @param filter
+   */
+  getDownloadLink(filter?: CustomerFilter) {
+    const _token = this.auth.getToken();
+
+    return environment.apiUrl + '/customer/export?' + filter.toFilterString() + '&token=' + _token;
   }
 }

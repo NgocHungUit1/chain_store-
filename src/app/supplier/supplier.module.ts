@@ -13,13 +13,15 @@ import { SupplierRoutes } from './supplier.routing';
 import { SupplierFormDialogComponent } from './supplier-form-dialog/supplier-form-dialog.component';
 import { SupplierTabInfoComponent } from './supplier-tab-info/supplier-tab-info.component';
 import { SupplierTabDebtComponent } from './supplier-tab-debt/supplier-tab-debt.component';
+import {SupplierUploadDialogComponent} from './supplier-upload-dialog/supplier-upload-dialog.component';
 
 @NgModule({
   declarations: [
     SupplierListComponent,
     SupplierFormDialogComponent,
     SupplierTabInfoComponent,
-    SupplierTabDebtComponent
+    SupplierTabDebtComponent,
+    SupplierUploadDialogComponent
   ],
   imports: [
     CommonModule,
@@ -34,7 +36,8 @@ import { SupplierTabDebtComponent } from './supplier-tab-debt/supplier-tab-debt.
     DemoMaterialModule
   ],
   entryComponents: [
-    SupplierFormDialogComponent
+    SupplierFormDialogComponent,
+    SupplierUploadDialogComponent
   ]
 })
 export class SupplierModule {
