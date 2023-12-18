@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment';
 import { DateFilter, Invoice, InvoiceDetailFilter, InvoiceFilter } from './invoice.model';
 import { AuthService } from '../authentication/auth.service';
 import { SamplePrescriptionFilter } from '../sample-prescription/sample-prescription.model';
+import {CustomerFilter} from '../customer/customer.model';
 
 @Injectable({
   providedIn: 'root'
@@ -207,6 +208,16 @@ export class InvoiceService {
   getReportDebtForCustomers(filter?: InvoiceFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrlReportDebtForCustomers(filter);
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
+  /**
+   * get Export excel link
+   * @param filter
+   */
+  getDownloadLink(filter?: InvoiceFilter) {
+    const _token = this.auth.getToken();
+
+    return environment.apiUrl + '/invoice/export-raw?' + filter.toFilterString() + '&token=' + _token;
   }
 }
 
