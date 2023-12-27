@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment';
 import { resWarehousePrint, Warehouse, WarehouseFilter } from './warehouse.model';
 import { ResInvoicePrint } from '../sale/order.model';
 import { AuthService } from '../authentication/auth.service';
+import {InvoiceFilter} from '../invoice/invoice.model';
 
 @Injectable({
   providedIn: 'root'
@@ -123,6 +124,16 @@ export class WarehouseService {
   upload(data) {
     const url = environment.apiUrl + '/warehouse/upload';
     return this.http.post(url, data);
+  }
+
+  /**
+   * get Export excel link
+   * @param filter
+   */
+  getDownloadLink(filter?: WarehouseFilter) {
+    const _token = this.auth.getToken();
+
+    return environment.apiUrl + '/warehouse/export-raw?' + filter.toFilterString() + '&token=' + _token;
   }
 }
 

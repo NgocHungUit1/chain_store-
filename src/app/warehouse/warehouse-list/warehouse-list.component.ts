@@ -74,6 +74,8 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
   currentDateFilter: DateFilter;
   store: Store = null;
 
+  public downloadLink = '';
+
   columnsHeader = {
     '#': '#',
     'national_pharmacy_no': 'Mã DQG',
@@ -390,6 +392,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
       }
     }
     this.isLoadingResults = true;
+    this.downloadLink = this.mainService.getDownloadLink(this.apiFilter);
     this.mainService.getList(this.apiFilter).subscribe(res => {
       this.dataSource = res.body;
       this.reloadFilter(res);

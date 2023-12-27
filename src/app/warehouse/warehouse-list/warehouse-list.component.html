@@ -169,6 +169,10 @@
         </div>
       </div>
       <div class="header-filter-buttons" style="display: flex; align-self: center">
+        <a mat-raised-button [href]="this.downloadLink" style="margin-right: 10px" [disabled]="isLoadingResults || this.pageTotalCount > 2000">
+          <mat-icon>cloud_download</mat-icon>
+          Xuất Excel
+        </a>
         <button mat-raised-button color="accent" (click)="openUploadDialog();" style="margin-right: 10px">
           <mat-icon>cloud_upload</mat-icon>
           Tải lên Excel
