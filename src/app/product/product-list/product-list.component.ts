@@ -21,6 +21,7 @@ import {SelectionModel} from '@angular/cdk/collections';
 import {Warehouse} from '../../warehouse/warehouse.model';
 import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 import {PrintMultipleProductDialogComponent} from '../print-multiple-product-dialog/print-multiple-product-dialog.component';
+import {AuthService} from '../../authentication/auth.service';
 
 
 @Component({
@@ -45,6 +46,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     private notifySer: NotifierService,
     private fb: FormBuilder,
     private groupSer: GroupService,
+    public authSer: AuthService
   ) {
     super();
   }
@@ -430,6 +432,17 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
       }
     });
 
+    if (!this.canDo('Product.View-Original-Price')) {
+      let index = this.displayedColumns.indexOf('original_price');
+      if (index !== -1) {
+        this.displayedColumns.splice(index, 1);
+      }
+      index = this.columnsToDisplay.indexOf('original_price');
+      if (index !== -1) {
+        this.columnsToDisplay.splice(index, 1);
+      }
+    }
+
   }
 
   refreshData() {
@@ -508,5 +521,11 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
       this.isLoadingResults = false;
       window.location.href = this.service.downloadFileExcel();
     });
+  }
+
+  canDo(permissionName: string): boolean {
+    const allPermissions = this.authSer.getPermissionsFromLocalStorage();
+
+    return allPermissions.indexOf(permissionName) !== -1;
   }
 }

@@ -10,6 +10,8 @@ import {IdCodeFormDialogComponent} from '../id-code-form-dialog/id-code-form-dia
 import {MedicineService} from '../../medicine/medicine.service';
 import {Router} from '@angular/router';
 import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
+import {BaseComponent} from '../../shared/base';
+import {AuthService} from '../../authentication/auth.service';
 
 const JsBarcode = require('jsbarcode');
 
@@ -18,7 +20,7 @@ const JsBarcode = require('jsbarcode');
   templateUrl: './product-tab-info.component.html',
   styleUrls: ['./product-tab-info.component.css']
 })
-export class ProductTabInfoComponent implements OnChanges {
+export class ProductTabInfoComponent extends BaseComponent implements OnChanges {
 
   @Input() product_id: string;
   @Input() expandedElement: boolean;
@@ -34,9 +36,11 @@ export class ProductTabInfoComponent implements OnChanges {
     private medicineService: MedicineService,
     private productSer: ProductService,
     public notifySer: NotifierService,
+    public authSer: AuthService,
     private dialog: MatDialog,
     private router: Router
   ) {
+    super(authSer);
   }
 
   textType = {
@@ -250,14 +254,6 @@ export class ProductTabInfoComponent implements OnChanges {
         this.notifySer.notify('error', res['message']);
       }
     });
-  }
-
-  checkPermissionDisable(permission) {
-    const indexPermission = this.allPermission?.indexOf(permission);
-    if (indexPermission !== -1) {
-      return false;
-    }
-    return true;
   }
 
   goToWarehouseCreate() {
