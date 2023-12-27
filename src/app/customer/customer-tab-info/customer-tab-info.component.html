@@ -94,19 +94,19 @@
       <mat-icon>shopping_basket</mat-icon>
       Lịch sử mua hàng
     </button>
-    <button class="m-r-10" mat-raised-button color="primary" (click)="openCustomerFormDialog(this.customer.id, null)">
+    <button class="m-r-10" mat-raised-button color="primary" (click)="openCustomerFormDialog(this.customer.id, null)" [disabled]="!canDo('Customer.Update')">
       <mat-icon>edit</mat-icon>
       Cập nhật
     </button>
-    <button class="m-r-10" mat-raised-button color="accent" (click)="lock()" *ngIf="this.customer.status == '10'">
+    <button class="m-r-10" mat-raised-button color="accent" (click)="lock()" *ngIf="this.customer.status == '10'" [disabled]="!canDo('Customer.Lock')">
       <mat-icon>lock</mat-icon>
       Ngừng hoạt động
     </button>
-    <button class="m-r-10" mat-raised-button color="accent" (click)="activate()" *ngIf="this.customer.status == '9'">
+    <button class="m-r-10" mat-raised-button color="accent" (click)="activate()" *ngIf="this.customer.status == '9'" [disabled]="!canDo('Customer.Activate')">
       <mat-icon>lock_open</mat-icon>
       Kích hoạt
     </button>
-    <button class="m-r-10" mat-raised-button color="warn" (click)="clickDelete()">
+    <button class="m-r-10" mat-raised-button color="warn" (click)="clickDelete()" [disabled]="!canDo('Customer.Delete')">
       <mat-icon>delete</mat-icon>
       Xóa
     </button>

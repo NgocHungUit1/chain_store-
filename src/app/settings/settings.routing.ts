@@ -8,10 +8,6 @@ export const SettingsRoutes: Routes = [
     path: '',
     children: [
       {
-        path: '',
-        component: SettingsMainComponent
-      },
-      {
         path: 'notification',
         component: NotificationListComponent,
       },
@@ -20,9 +16,39 @@ export const SettingsRoutes: Routes = [
         component: SettingProfileComponent,
       },
       {
-        path: ':tab',
-        component: SettingsMainComponent
+        path: 'employee',
+        loadChildren: () => import('../employee/employee.module').then(m => m.EmployeeModule)
       },
+      {
+        path: 'user',
+        loadChildren: () => import('../user/user.module').then(m => m.UserModule)
+      },
+      {
+        path: 'branch',
+        loadChildren: () => import('../branch/branch.module').then(m => m.BranchModule)
+      },
+      {
+        path: 'timesheet',
+        loadChildren: () => import('../timesheet/timesheet.module').then(m => m.TimesheetModule)
+      },
+      {
+        path: 'settings',
+        loadChildren: () => import('../settings/settings.module').then(m => m.SettingsModule)
+      },
+      {
+        path: 'pay-sheet',
+        loadChildren: () => import('../pay-sheet/pay-sheet.module').then(m => m.PaySheetModule)
+      },
+      {
+        path: 'common',
+        component: SettingsMainComponent,
+        children: [
+          {
+            path: ':tab',
+            component: SettingsMainComponent
+          }
+        ]
+      }
     ]
   }
 ];

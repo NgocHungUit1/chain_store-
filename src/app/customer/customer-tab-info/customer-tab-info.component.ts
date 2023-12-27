@@ -6,13 +6,16 @@ import { NotifierService } from 'angular-notifier';
 import { CustomerFormDialogComponent } from '../customer-form-dialog/customer-form-dialog.component';
 import { CustomerPopupDeleteDialogComponent } from '../customer-popup-delete-dialog/customer-popup-delete-dialog.component';
 import {Router} from '@angular/router';
+import {BaseComponent} from '../../shared/base';
+import {AuthService} from '../../authentication/auth.service';
+import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 
 @Component({
   selector: 'app-customer-tab-info',
   templateUrl: './customer-tab-info.component.html',
   styleUrls: ['./customer-tab-info.component.css']
 })
-export class CustomerTabInfoComponent implements OnInit {
+export class CustomerTabInfoComponent extends BaseComponent implements OnInit {
 
   @Input() customer: Customer;
   @Output() reload: EventEmitter<any> = new EventEmitter();
@@ -26,8 +29,11 @@ export class CustomerTabInfoComponent implements OnInit {
     private customerSer: CustomerService,
     private dialog: MatDialog,
     private notifyService: NotifierService,
-    private router: Router
-  ) { }
+    private router: Router,
+    public authSer: AuthService
+  ) {
+    super(authSer);
+  }
 
   ngOnInit(): void {
   }
@@ -92,12 +98,27 @@ export class CustomerTabInfoComponent implements OnInit {
   }
 
   clickDelete() {
-    this.customerSer.delete(this.customer.id).subscribe(res => {
-      if (res?.success === true) {
-        this.notifyService.notify('success', res?.message);
-        this.reload.emit(null);
-      } else {
-        this.notifyService.notify('warning', res?.message);
+    const obj = {
+      action: 'Connect',
+      title: 'Xác nhận xóa khách hàng?',
+      content: '',
+    };
+
+    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
+      data: obj,
+      width: '30%',
+      minHeight: '60%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.event === 'confirm') {
+        this.customerSer.delete(this.customer.id).subscribe(res => {
+          if (res?.success === true) {
+            this.notifyService.notify('success', res?.message);
+            this.reload.emit(null);
+          } else {
+            this.notifyService.notify('warning', res?.message);
+          }
+        });
       }
     });
   }

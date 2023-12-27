@@ -155,30 +155,31 @@
           </button>
 
           <button class="m-r-5 padding-x-10" mat-raised-button color="primary"
-                  (click)="openMerchandiseFormDialog(this.product.id, null)">
+                  (click)="openMerchandiseFormDialog(this.product.id, null)" [disabled]="checkPermissionDisable('Product.Update')">
             <mat-icon>edit</mat-icon>
             Cập nhật
           </button>
 
           <button class="m-r-5 padding-x-10" mat-raised-button color="accent"
-                  (click)="openMerchandiseFormDialog(null, this.product.id)">
+                  (click)="openMerchandiseFormDialog(null, this.product.id)"  [disabled]="checkPermissionDisable('Product.Create')">
             <mat-icon>file_copy</mat-icon>
             Sao chép
           </button>
-          <button class="m-r-5 padding-x-10" mat-raised-button color="warn" (click)="lock()"
+          <button class="m-r-5 padding-x-10" mat-raised-button color="warn" (click)="lock()"  [disabled]="checkPermissionDisable('Product.Lock')"
                   *ngIf="this.product.status == 10; else productStatus10">
             <mat-icon>lock</mat-icon>
             Tạm ngừng
           </button>
           <ng-template #productStatus10>
             <button class="m-r-5 padding-x-10" mat-raised-button color="accent" (click)="activate()"
+                    [disabled]="checkPermissionDisable('Product.Activate')"
                     *ngIf="this.product.status == 9">
               <mat-icon>lock_open</mat-icon>
               Kích hoạt
             </button>
           </ng-template>
 
-          <button class="m-r-5 padding-x-10" mat-raised-button color="warn" (click)="delete()">
+          <button class="m-r-5 padding-x-10" mat-raised-button color="warn" (click)="delete()" [disabled]="checkPermissionDisable('Product.Delete')">
             <mat-icon>delete</mat-icon>
             Xóa
           </button>

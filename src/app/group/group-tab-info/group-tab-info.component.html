@@ -51,7 +51,7 @@
     </div>
   </div>
   <div fxFlex="100" align="end">
-    <button class="m-r-10" mat-raised-button color="primary"
+    <button class="m-r-10" mat-raised-button color="primary" [disabled]="!canDo('Group.Update')"
             (click)="openGroupFormDialog(this.group.id, null)">
       <mat-icon>edit</mat-icon>
       Cập nhật
@@ -65,7 +65,7 @@
     <!--      Kích hoạt-->
     <!--    </button>-->
     <button class="m-r-10" mat-raised-button color="warn"
-            (click)="clickDelete()">
+            (click)="clickDelete()" [disabled]="!canDo('Group.Delete')">
       <mat-icon>delete</mat-icon>
       Xóa
     </button>

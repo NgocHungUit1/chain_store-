@@ -25,7 +25,7 @@ export const AppRoutes: Routes = [
       },
       {
         path: 'partner',
-        loadChildren: () => import('./supplier/supplier.module').then(m => m.SupplierModule)
+        loadChildren: () => import('./partner/partner.module').then(m => m.PartnerModule)
       },
       {
         path: 'transaction',

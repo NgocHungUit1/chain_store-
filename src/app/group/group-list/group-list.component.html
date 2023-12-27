@@ -86,7 +86,7 @@
               <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef> </th>
                 <td mat-cell *matCellDef="let element">
-                  <button class="m-r-10" mat-raised-button color="primary"
+                  <button class="m-r-10" mat-raised-button color="primary" [disabled]="!canDo('Group.Update')"
                           (click)="openGroupFormDialogUpdate(element.id)">
                     <mat-icon>edit</mat-icon>
                     Cập nhật
@@ -100,6 +100,7 @@
                   <!--      Kích hoạt-->
                   <!--    </button>-->
                   <button class="m-r-10" mat-raised-button color="warn"
+                          [disabled]="!canDo('Group.Delete')"
                           (click)="clickDelete(element.id)">
                     <mat-icon>delete</mat-icon>
                     Xóa

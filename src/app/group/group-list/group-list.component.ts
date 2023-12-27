@@ -6,13 +6,14 @@ import { NotifierService } from 'angular-notifier';
 import { MatTable } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { ListComponentBase } from '../../shared/base';
+import {BaseComponent, ListComponentBase} from '../../shared/base';
 import { GroupService } from '../../product/group.service';
 import { Group, GroupFilter } from '../group.model';
 import { GroupFormDialogComponent } from '../group-form-dialog/group-form-dialog.component';
 import { FormControl } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
-import {UserService} from "../../user/user.service";
+import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
+import {AuthService} from '../../authentication/auth.service';
 
 @Component({
   selector: 'app-group-list',
@@ -33,7 +34,7 @@ export class GroupListComponent extends ListComponentBase implements OnInit {
       private dialog: MatDialog,
       private route: ActivatedRoute,
       private notifyService: NotifierService,
-      private userService: UserService,
+      private authSer: AuthService,
   ) {
     super();
   }
@@ -163,14 +164,35 @@ export class GroupListComponent extends ListComponentBase implements OnInit {
   }
 
   clickDelete(id) {
-    this.service.delete(id).subscribe(res => {
-      if (res?.success === true) {
-        this.notifyService.notify('success', res?.message);
-        this.loadData();
-      } else {
-        this.notifyService.notify('warning', res?.message);
+    const obj = {
+      action: 'Connect',
+      title: 'Xác nhận xóa nhóm hàng?',
+      content: '',
+    };
+
+    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
+      data: obj,
+      width: '30%',
+      minHeight: '60%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.event === 'confirm') {
+        this.service.delete(id).subscribe(res => {
+          if (res?.success === true) {
+            this.notifyService.notify('success', res?.message);
+            this.loadData();
+          } else {
+            this.notifyService.notify('warning', res?.message);
+          }
+        });
       }
     });
+  }
+
+  canDo(permissionName: string): boolean {
+    const allPermissions = this.authSer.getPermissionsFromLocalStorage();
+
+    return allPermissions.indexOf(permissionName) !== -1;
   }
 
 }

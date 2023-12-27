@@ -161,7 +161,7 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
   }
 
   changeSettingType() {
-    const url = '/partner/settings/' + this.settingsType;
+    const url = '/setting/common/' + this.settingsType;
 
     this.location.go(url);
   }
