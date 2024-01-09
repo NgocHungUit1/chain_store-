@@ -117,7 +117,25 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     'original_price': 'Giá vốn',
     'sell_price': 'Giá bán',
     'status': 'Trạng thái',
-    'quantity': 'Tồn kho'
+    'quantity': 'Tồn kho',
+    'barcode': 'Mã vạch',
+    'product_type': 'Loại hàng',
+    'shortcut': 'Tên viết tắt',
+    'using_id': 'Đường dùng',
+    'group_id': 'Nhóm hàng',
+    'placements': 'Vị trí',
+    'weight': 'Trọng lượng',
+    // Medicine
+    'registration_no': 'Số đăng ký',
+    'main_active_substance': 'Hoạt chất',
+    'content': 'Hàm lượng',
+    'packing': 'Quy cách đóng gói',
+    'manufacturer': 'Hãng sản xuất',
+    'made_in': 'Nước sản xuất',
+    'unit_name': 'Tên đơn vị',
+    'unit_value': 'Giá trị quy đổi',
+    'unit_price': 'Giá bán',
+    'unit_no': 'Mã đơn vị',
   };
 
   productTypeLable = {

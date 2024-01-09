@@ -77,6 +77,11 @@ export class UserService {
     return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
   }
 
+  getListForRef(filter?: UserFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrlRef(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
   public getUser(id: string): Observable<User> {
     const url = environment.apiUrl + '/user/' + id;
     return this.http.get<User>(url);

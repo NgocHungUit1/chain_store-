@@ -416,6 +416,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       return;
     }
     this.submitted = true;
+    this.isLoadingResults = true;
     this.recalculateWarehouse();
     const data = this.form.getRawValue();
     if (numeral(data['paid_amount']).value() > (numeral(data['total_price']).value() + numeral(data['expenses_price']).value())) {
@@ -490,6 +491,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           this.mainService.update(this.updateModelId, data).subscribe(res => { //
             this.notifySer.notify('success', 'Lưu thành công.');
             this.submitted = false;
+            this.isLoadingResults = false;
             if (status === 9) {
               this.model = res;
               this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
@@ -501,6 +503,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           this.mainService.create(data).subscribe(res => {
             this.notifySer.notify('success', 'Lưu thành công.');
             this.submitted = false;
+            this.isLoadingResults = false;
             if (status === 9) {
               this.model = res;
               this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
@@ -515,11 +518,13 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         const controls = Object.entries(this.form.controls);
         const hasError = this.checkToShowControlError(controls);
         this.submitted = false;
+        this.isLoadingResults = false;
       }
 
     }).catch(() => {
       console.log('rejected');
       this.submitted = false;
+      this.isLoadingResults = false;
     });
   }
 

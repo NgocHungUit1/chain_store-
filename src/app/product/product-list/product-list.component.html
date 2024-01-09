@@ -285,22 +285,33 @@
                        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
                     <mat-tab-group style="width: 100%;">
                       <mat-tab label="Thông tin">
-                        <app-product-tab-info
-                          [product_id]="element.id"
-                          [expandedElement]="element == expandedElement ? true : false"
-                          (reload)="loadData();"></app-product-tab-info>
+                        <ng-template matTabContent>
+                          <app-product-tab-info
+                            [product_id]="element.id"
+                            [expandedElement]="element == expandedElement ? true : false"
+                            (reload)="loadData();"></app-product-tab-info>
+                        </ng-template>
                       </mat-tab>
                       <mat-tab label="Thẻ kho">
-                        <app-product-tab-stock-change
-                          [product_id]="element.id"
-                          [expandedElement]="element == expandedElement ? true : false"
-                          (reload)="loadData();"></app-product-tab-stock-change>
+                        <ng-template matTabContent>
+                          <app-product-tab-stock-change
+                            [product_id]="element.id"
+                            [expandedElement]="element == expandedElement ? true : false"
+                            (reload)="loadData();"></app-product-tab-stock-change>
+                        </ng-template>
                       </mat-tab>
                       <mat-tab label="Tồn kho">
-                        <app-product-tab-stock
-                          [expandedElement]="element == expandedElement ? true : false"
-                          [product_id]="element.id"
-                          (reload)="loadData();"></app-product-tab-stock>
+                        <ng-template matTabContent>
+                          <app-product-tab-stock
+                            [expandedElement]="element == expandedElement ? true : false"
+                            [product_id]="element.id"
+                            (reload)="loadData();"></app-product-tab-stock>
+                        </ng-template>
+                      </mat-tab>
+                      <mat-tab label="Lịch sử cập nhật" *ngIf="canDo('Product.Change-Log')">
+                        <ng-template matTabContent>
+                          <app-model-change-log #changeLogTab [showSearchBar]="false" [model_id]="element.id" [model_name]="'product'" [attrLabels]="this.columnsHeader" [displayColumns]="['#', 'action_name', 'created_at', 'created_by', 'change_detail']"></app-model-change-log>
+                        </ng-template>
                       </mat-tab>
                     </mat-tab-group>
                   </div>

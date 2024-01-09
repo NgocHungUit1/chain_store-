@@ -28,6 +28,7 @@ import {SelectionModel} from '@angular/cdk/collections';
 import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 import {Store} from '../../store/store.model';
 import {StoreService} from '../../store/store.service';
+import {AuthService} from '../../authentication/auth.service';
 
 
 @Component({
@@ -53,6 +54,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     private supplierSer: SupplierService,
     private productSer: ProductService,
     private storeSer: StoreService,
+    public authSer: AuthService
   ) {
     super();
   }
@@ -86,6 +88,20 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     'paid_amount': 'Đã trả',
     'remain_amount': 'Còn lại',
     'status': 'Trạng thái',
+    'no': 'Mã phiếu',
+    'supplier': 'Nhà cung cấp',
+    'type': 'Loại',
+    'quantity': 'Số lượng',
+    'total_price': 'Tổng tiền',
+    'discount_type': 'Loại giảm giá',
+    'branch_id': 'Chi nhánh',
+    'price': 'Giá nhập',
+    'vat': 'VAT',
+    'vat_type': 'Loại VAT',
+    'discount': 'Giảm giá',
+    'amount': 'Thành tiền',
+    'product_unit_id': 'Mã đơn vị',
+    'note': 'Ghi chú',
   };
 
   displayedColumns: string[] = ['select',
@@ -604,5 +620,11 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     } else {
       this.toggleDropdownSearch = false;
     }
+  }
+
+  canDo(permissionName: string): boolean {
+    const allPermissions = this.authSer.getPermissionsFromLocalStorage();
+
+    return allPermissions.indexOf(permissionName) !== -1;
   }
 }

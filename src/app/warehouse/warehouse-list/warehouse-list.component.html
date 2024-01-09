@@ -402,6 +402,11 @@
                                                 (reload)="loadData();">
                         </app-warehouse-info-tab>
                       </mat-tab>
+                      <mat-tab label="Lịch sử cập nhật" *ngIf="canDo('Warehouse.Change-Log')">
+                        <ng-template matTabContent>
+                          <app-model-change-log #changeLogTab [showSearchBar]="true" [model_id]="element.id" [model_name]="'warehouse,warehouse_product'" [attrLabels]="this.columnsHeader" [displayColumns]="['#', 'search_text', 'action_name', 'created_at', 'created_by', 'change_detail']"></app-model-change-log>
+                        </ng-template>
+                      </mat-tab>
                       <!--                      <mat-tab label="Dư nợ">-->
                       <!--                      </mat-tab>-->
                     </mat-tab-group>
