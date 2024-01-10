@@ -136,6 +136,9 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     'unit_value': 'Giá trị quy đổi',
     'unit_price': 'Giá bán',
     'unit_no': 'Mã đơn vị',
+    'medicine_id': 'Thông tin thuốc',
+    'min_quantity': 'Tồn tối thiểu',
+    'max_quantity': 'Tồn tối đa',
   };
 
   productTypeLable = {

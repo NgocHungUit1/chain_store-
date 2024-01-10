@@ -102,6 +102,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     'amount': 'Thành tiền',
     'product_unit_id': 'Mã đơn vị',
     'note': 'Ghi chú',
+    'expenses_price': 'Chi phí nhập trả NCC',
   };
 
   displayedColumns: string[] = ['select',
@@ -148,6 +149,13 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
       'name': 'Chưa liên thông',
     },
   ];
+  actionNameObj = {
+    'Update': 'Cập nhật',
+    'Create': 'Tạo mới',
+    'Update_Product': 'Cập nhật sản phẩm',
+    'Create_Product': 'Thêm sản phẩm',
+    'Delete_Product': 'Xóa sản phẩm',
+  };
 
   dataSource = [];
   expandedElement: Warehouse | null;
