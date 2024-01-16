@@ -79,7 +79,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     HttpClientModule,
     PerfectScrollbarModule,
     SharedModule,
-    RouterModule.forRoot(AppRoutes, { relativeLinkResolution: 'legacy' }),
+    RouterModule.forRoot(AppRoutes, {relativeLinkResolution: 'legacy'}),
     NgMultiSelectDropDownModule.forRoot(),
     NotifierModule.withConfig({
       position: {
@@ -106,7 +106,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     },
     authTokenInterceptorProvider,
     authInterceptorProvider,
-    { provide: MAT_DATE_LOCALE, useValue: 'vi' }
+    {provide: MAT_DATE_LOCALE, useValue: 'vi'}
   ],
   bootstrap: [AppComponent]
 })

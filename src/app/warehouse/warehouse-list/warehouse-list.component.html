@@ -169,6 +169,10 @@
         </div>
       </div>
       <div class="header-filter-buttons" style="display: flex; align-self: center">
+        <a mat-raised-button [href]="this.downloadLink" style="margin-right: 10px" [disabled]="isLoadingResults || this.pageTotalCount > 2000">
+          <mat-icon>cloud_download</mat-icon>
+          Xuất Excel
+        </a>
         <button mat-raised-button color="accent" (click)="openUploadDialog();" style="margin-right: 10px">
           <mat-icon>cloud_upload</mat-icon>
           Tải lên Excel
@@ -397,6 +401,11 @@
                                                 [expandedElement]="element == expandedElement ? true : false"
                                                 (reload)="loadData();">
                         </app-warehouse-info-tab>
+                      </mat-tab>
+                      <mat-tab label="Lịch sử cập nhật" *ngIf="canDo('Warehouse.Change-Log')">
+                        <ng-template matTabContent>
+                          <app-model-change-log #changeLogTab [showSearchBar]="true" [model_id]="element.id" [model_name]="'warehouse,warehouse_product'" [actionNameObj]="this.actionNameObj" [attrLabels]="this.columnsHeader" [displayColumns]="['#', 'search_text', 'action_name', 'created_at', 'created_by', 'change_detail']"></app-model-change-log>
+                        </ng-template>
                       </mat-tab>
                       <!--                      <mat-tab label="Dư nợ">-->
                       <!--                      </mat-tab>-->

@@ -61,6 +61,8 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
+  public downloadLink = '';
+
   isLoadingResults = true;
   isRateLimitReached = false;
   toggleDropdownSearch = false;
@@ -400,7 +402,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
         this.apiFilter.invoice_no = '';
       }
     }
-
+    this.downloadLink = this.service.getDownloadLink(this.apiFilter);
     this.isLoadingResults = true;
     this.service.getList(this.apiFilter).subscribe(res => {
       const data = res.body;

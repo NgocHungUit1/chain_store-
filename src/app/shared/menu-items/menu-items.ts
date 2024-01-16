@@ -112,7 +112,7 @@ const MENUITEMS = [
     permissions: ['Invoice.Create'],
   },
   {
-    state: 'partner',
+    state: 'setting',
     name: 'Cửa hàng',
     type: 'sub',
     icon: 'assignment_ind',
@@ -128,7 +128,7 @@ const MENUITEMS = [
       {state: 'timesheet', name: 'Chấm công', type: 'link', icon: 'calendar_today', permissions: ['Timesheet.List']},
       // {state: 'expenses-other', name: 'Quản lý chi phí nhập hàng', type: 'link', icon: 'attach_money', roles: ['ADMIN']},
       {state: 'pay-sheet', name: 'Bảng tính lương', type: 'link', icon: 'assessment', permissions: ['Pay-Sheet.List']},
-      {state: 'settings', name: 'Thiết lập', type: 'link', icon: 'settings', permissions: [
+      {state: 'common', name: 'Thiết lập chung', type: 'link', icon: 'settings', permissions: [
         'Option-Store.Update',
           'Store.Upload-Logo', 'Branch.Update-Connect',
           'Store.Update-Info']},

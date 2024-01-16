@@ -110,11 +110,12 @@
       <!-- kiem tra loai show form -->
       <div fxFlex="100" align="end">
 
-        <button class="m-r-10" mat-raised-button color="primary" (click)="reOpen()">
+        <button class="m-r-10" mat-raised-button color="primary" (click)="reOpen()" [disabled]="!canDo('Sample-Prescription.Update')">
           <mat-icon>check</mat-icon>
           Cập nhật
         </button>
-        <button class="m-r-10" mat-raised-button color="danger"
+        <button class="m-r-10" mat-raised-button color="warn"
+                [disabled]="!canDo('Sample-Prescription.Delete-Sample')"
                 (click)="delete()">
           <mat-icon>delete</mat-icon>
           Xóa

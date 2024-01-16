@@ -21,6 +21,7 @@ import {SelectionModel} from '@angular/cdk/collections';
 import {Warehouse} from '../../warehouse/warehouse.model';
 import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 import {PrintMultipleProductDialogComponent} from '../print-multiple-product-dialog/print-multiple-product-dialog.component';
+import {AuthService} from '../../authentication/auth.service';
 
 
 @Component({
@@ -45,6 +46,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     private notifySer: NotifierService,
     private fb: FormBuilder,
     private groupSer: GroupService,
+    public authSer: AuthService
   ) {
     super();
   }
@@ -115,7 +117,28 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     'original_price': 'Giá vốn',
     'sell_price': 'Giá bán',
     'status': 'Trạng thái',
-    'quantity': 'Tồn kho'
+    'quantity': 'Tồn kho',
+    'barcode': 'Mã vạch',
+    'product_type': 'Loại hàng',
+    'shortcut': 'Tên viết tắt',
+    'using_id': 'Đường dùng',
+    'group_id': 'Nhóm hàng',
+    'placements': 'Vị trí',
+    'weight': 'Trọng lượng',
+    // Medicine
+    'registration_no': 'Số đăng ký',
+    'main_active_substance': 'Hoạt chất',
+    'content': 'Hàm lượng',
+    'packing': 'Quy cách đóng gói',
+    'manufacturer': 'Hãng sản xuất',
+    'made_in': 'Nước sản xuất',
+    'unit_name': 'Tên đơn vị',
+    'unit_value': 'Giá trị quy đổi',
+    'unit_price': 'Giá bán',
+    'unit_no': 'Mã đơn vị',
+    'medicine_id': 'Thông tin thuốc',
+    'min_quantity': 'Tồn tối thiểu',
+    'max_quantity': 'Tồn tối đa',
   };
 
   productTypeLable = {
@@ -430,6 +453,17 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
       }
     });
 
+    if (!this.canDo('Product.View-Original-Price')) {
+      let index = this.displayedColumns.indexOf('original_price');
+      if (index !== -1) {
+        this.displayedColumns.splice(index, 1);
+      }
+      index = this.columnsToDisplay.indexOf('original_price');
+      if (index !== -1) {
+        this.columnsToDisplay.splice(index, 1);
+      }
+    }
+
   }
 
   refreshData() {
@@ -508,5 +542,11 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
       this.isLoadingResults = false;
       window.location.href = this.service.downloadFileExcel();
     });
+  }
+
+  canDo(permissionName: string): boolean {
+    const allPermissions = this.authSer.getPermissionsFromLocalStorage();
+
+    return allPermissions.indexOf(permissionName) !== -1;
   }
 }

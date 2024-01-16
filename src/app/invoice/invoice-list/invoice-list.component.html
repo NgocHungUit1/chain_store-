@@ -175,6 +175,11 @@
       </div>
 
       <div class="header-filter-buttons" style="display: flex; align-self: center">
+        <a mat-raised-button color="accent" [href]="this.downloadLink" style="margin-right: 10px" [disabled]="isLoadingResults || this.pageTotalCount > 2000">
+          <mat-icon>cloud_download</mat-icon>
+          Xuất Excel
+        </a>
+
         <button mat-raised-button color="primary" (click)="goToCartPage()" style="margin-right: 10px">
           <mat-icon>shopping_basket</mat-icon>
           Bán hàng

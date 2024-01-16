@@ -4,35 +4,8 @@ import { SupplierListComponent } from './supplier-list/supplier-list.component';
 export const SupplierRoutes: Routes = [
   {
     path: '',
+    component: SupplierListComponent,
     children: [
-      {
-        path: 'supplier',
-        component: SupplierListComponent
-      },
-      {
-        path: 'customer',
-        loadChildren: () => import('../customer/customer.module').then(m => m.CustomerModule)
-      },
-      {
-        path: 'employee',
-        loadChildren: () => import('../employee/employee.module').then(m => m.EmployeeModule)
-      },
-      {
-        path: 'user',
-        loadChildren: () => import('../user/user.module').then(m => m.UserModule)
-      },
-      {
-        path: 'branch',
-        loadChildren: () => import('../branch/branch.module').then(m => m.BranchModule)
-      },
-      {
-        path: 'timesheet',
-        loadChildren: () => import('../timesheet/timesheet.module').then(m => m.TimesheetModule)
-      },
-      {
-        path: 'settings',
-        loadChildren: () => import('../settings/settings.module').then(m => m.SettingsModule)
-      },
       {
         path: 'expenses-order',
         loadChildren: () => import('../expenses-order/expenses-order.module').then(m => m.ExpensesOrderModule)
@@ -40,14 +13,6 @@ export const SupplierRoutes: Routes = [
       {
         path: 'expenses-transaction',
         loadChildren: () => import('../expenses-transaction/expenses-transaction.module').then(m => m.ExpensesTransactionModule)
-      },
-      {
-        path: 'pay-sheet',
-        loadChildren: () => import('../pay-sheet/pay-sheet.module').then(m => m.PaySheetModule)
-      },
-      {
-        path: 'doctor',
-        loadChildren: () => import('../doctor/doctor.module').then(m => m.DoctorModule)
       },
       {
         path: 'support',

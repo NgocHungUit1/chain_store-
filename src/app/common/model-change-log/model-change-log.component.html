@@ -1,0 +1,141 @@
+<mat-toolbar class="dv-header" *ngIf="this.showSearchBar">
+  <h3>{{this.title}}</h3>
+  <span fxFlex="1 1 0%"></span>
+  <div class="short-form-filter">
+    <mat-form-field appearance="outline" floatLabel="never" style="width: 150px;">
+      <input matInput [(ngModel)]="apiFilter.search_text" name="search_text" [placeholder]="'Tìm kiếm'" (keypress)="onKeyPress($event)">
+    </mat-form-field>
+  </div>
+  <button mat-button (click)="loadData()">
+    <mat-icon>refresh</mat-icon>
+    Làm mới
+  </button>
+</mat-toolbar>
+<div class="expand-table">
+  <div class="process-bar-container">
+    <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
+  </div>
+  <table mat-table [dataSource]="dataSource" multiTemplateDataRows>
+    <!-- Position Column -->
+    <ng-container matColumnDef="#">
+      <th mat-header-cell *matHeaderCellDef> # </th>
+      <td mat-cell *matCellDef="let element; let i = dataIndex;"> {{ i + 1 }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="action_name">
+      <th mat-header-cell *matHeaderCellDef> Hành động</th>
+      <td mat-cell *matCellDef="let element">
+        {{actionNameObj[element.action_name]}}
+      </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="change_detail">
+      <th mat-header-cell *matHeaderCellDef> Chi tiết</th>
+      <td mat-cell *matCellDef="let element">
+        <div *ngIf="element.change_detail.length === 1 && (!element.change_detail[0]['old'] || element.change_detail[0]['old'].toString().length < 30) && (!element.change_detail[0]['new'] || element.change_detail[0]['new'].toString().length < 30)">
+          <strong><span *ngIf="attrLabels[element.change_detail[0]['key']]">{{attrLabels[element.change_detail[0]['key']]}}</span>
+          <span *ngIf="!attrLabels[element.change_detail[0]['key']]">{{element.change_detail[0]['key']}}</span></strong>
+          : <span *ngIf="valueLabels[element.change_detail[0].old]">{{valueLabels[element.change_detail[0].old]}}</span><span *ngIf="!valueLabels[element.change_detail[0].old]">{{element.change_detail[0].old}}</span> => <strong>
+          <span *ngIf="valueLabels[element.change_detail[0].new]">{{valueLabels[element.change_detail[0].new]}}</span>
+          <span *ngIf="!valueLabels[element.change_detail[0].new]">{{element.change_detail[0].new}}</span>
+        </strong>
+        </div>
+        <i *ngIf="!(element.change_detail.length === 1 && (!element.change_detail[0]['old'] || element.change_detail[0]['old'].toString().length < 30) && (!element.change_detail[0]['new'] || element.change_detail[0]['new'].toString().length < 30))">(click để xem)</i>
+      </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="search_text">
+      <th mat-header-cell *matHeaderCellDef> Tham chiếu</th>
+      <td mat-cell *matCellDef="let element">
+        {{element.search_text}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="created_at">
+      <th mat-header-cell *matHeaderCellDef> Thời điểm</th>
+      <td mat-cell *matCellDef="let element">
+        {{element.created_at * 1000 | date:'dd/MM/yyyy HH:mm'}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="created_by">
+      <th mat-header-cell *matHeaderCellDef> Thực hiện</th>
+      <td mat-cell *matCellDef="let element">
+        <span *ngIf="users[element.created_by]">{{users[element.created_by]['username']}}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="expandedDetail">
+      <td mat-cell *matCellDef="let ba;" [attr.colspan]="5">
+        <div class="example-element-detail"
+             [@detailExpand]="ba == expandedElement ? 'expanded' : 'collapsed'" style="width: 100%">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>
+                Chi tiết thay đổi
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="responsive-table">
+                  <table mat-table [dataSource]="ba['change_detail']">
+
+                    <ng-container matColumnDef="key">
+                      <th mat-header-cell *matHeaderCellDef> Thông tin</th>
+                      <td mat-cell *matCellDef="let element">
+                        <strong>
+                        <span *ngIf="attrLabels[element.key]">{{attrLabels[element.key]}}</span>
+                        <span *ngIf="!attrLabels[element.key]">{{element.key}}</span>
+                        </strong>
+                      </td>
+                    </ng-container>
+
+                    <!-- Position Column -->
+                    <ng-container matColumnDef="old">
+                      <th mat-header-cell *matHeaderCellDef> Giá trị cũ</th>
+                      <td mat-cell *matCellDef="let element">
+                        <span *ngIf="valueLabels[element.old]">{{valueLabels[element.old]}}</span>
+                        <span *ngIf="!valueLabels[element.old]">{{element.old}}</span>
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="new">
+                      <th mat-header-cell *matHeaderCellDef> Giá trị mới</th>
+                      <td mat-cell *matCellDef="let element">
+                        <strong>
+                        <span *ngIf="valueLabels[element.new]">{{valueLabels[element.new]}}</span>
+                        <span *ngIf="!valueLabels[element.new]">{{element.new}}</span>
+                        </strong>
+                      </td>
+                    </ng-container>
+
+                    <tr mat-header-row
+                        *matHeaderRowDef="['key', 'old', 'new']"></tr>
+                    <tr mat-row
+                        *matRowDef="let row; columns: ['key', 'old', 'new']"></tr>
+                  </table>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row
+      *matHeaderRowDef="displayColumns" class="header-element-row"></tr>
+    <tr mat-row *matRowDef="let element; columns: displayColumns;"  class="example-element-row"
+        [class.example-expanded-row]="expandedElement === element"
+        (click)="expandedElement = expandedElement === element ? null : element">
+    </tr>
+    <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+  </table>
+  <mat-paginator #paginator showFirstLastButtons [length]="pageTotalCount"
+                 [pageSize]="pageSize"
+                 [pageSizeOptions]="pageSizeOptions"
+                 (page)="onMatPageChange($event)"
+                 [pageIndex]="page - 1"
+
+  >
+  </mat-paginator>
+</div>

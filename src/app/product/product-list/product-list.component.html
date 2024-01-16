@@ -120,22 +120,22 @@
           In tem mã
         </button>
 
-        <button  mat-menu-item (click)="lockSelect()">
+        <button  mat-menu-item (click)="lockSelect()" [disabled]="!canDo('Product.Lock')">
           <mat-icon>lock</mat-icon>
           Tạm ngừng
         </button>
-        <button mat-menu-item (click)="activateSelect()">
+        <button mat-menu-item (click)="activateSelect()"  [disabled]="!canDo('Product.Activate')">
           <mat-icon>lock_open</mat-icon>
           Kích hoạt
         </button>
 
-        <button mat-menu-item (click)="deleteSelect()">
+        <button mat-menu-item (click)="deleteSelect()"  [disabled]="!canDo('Product.Delete')">
           <mat-icon>delete</mat-icon>
           Xóa
         </button>
       </mat-menu>
 
-      <button mat-raised-button color="accent" (click)="openUploadDialog();" class="m-r-5 padding-x-10">
+      <button mat-raised-button color="accent" (click)="openUploadDialog();" class="m-r-5 padding-x-10"  [disabled]="!canDo('Product.Upload')">
         <mat-icon>cloud_upload</mat-icon>
         Tải lên
       </button>
@@ -143,16 +143,16 @@
         <mat-icon>cloud_download</mat-icon>
         Xuất Excel
       </button>
-      <button mat-raised-button color="primary" [matMenuTriggerFor]="createMenu" class="m-r-5 padding-x-10">
+      <button mat-raised-button color="primary" [matMenuTriggerFor]="createMenu" class="m-r-5 padding-x-10"  [disabled]="!canDo('Product.Create')">
         <mat-icon>add</mat-icon>
         Thêm mới
       </button>
       <mat-menu #createMenu="matMenu">
-        <button mat-menu-item (click)="openProductMedicineDialog('Add', {});">
+        <button mat-menu-item (click)="openProductMedicineDialog('Add', {});"  [disabled]="!canDo('Product.Create')">
           <mat-icon>add</mat-icon>
           <span>Thêm thuốc</span>
         </button>
-        <button mat-menu-item (click)="openProductMerchandiseFormDialog('Add',{})">
+        <button mat-menu-item (click)="openProductMerchandiseFormDialog('Add',{})"  [disabled]="!canDo('Product.Create')">
           <mat-icon>add</mat-icon>
           <span>Thêm hàng hóa</span>
         </button>
@@ -162,7 +162,7 @@
           <mat-icon>add</mat-icon>
           <span>Tải thuốc</span>
         </button>
-        <button mat-menu-item (click)="openProductMerchandiseFormDialog('Add',{})">
+        <button mat-menu-item (click)="openProductMerchandiseFormDialog('Add',{})"  [disabled]="!canDo('Product.Create')">
           <mat-icon>add</mat-icon>
           <span>Thêm hàng hóa</span>
         </button>
@@ -285,22 +285,33 @@
                        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
                     <mat-tab-group style="width: 100%;">
                       <mat-tab label="Thông tin">
-                        <app-product-tab-info
-                          [product_id]="element.id"
-                          [expandedElement]="element == expandedElement ? true : false"
-                          (reload)="loadData();"></app-product-tab-info>
+                        <ng-template matTabContent>
+                          <app-product-tab-info
+                            [product_id]="element.id"
+                            [expandedElement]="element == expandedElement ? true : false"
+                            (reload)="loadData();"></app-product-tab-info>
+                        </ng-template>
                       </mat-tab>
                       <mat-tab label="Thẻ kho">
-                        <app-product-tab-stock-change
-                          [product_id]="element.id"
-                          [expandedElement]="element == expandedElement ? true : false"
-                          (reload)="loadData();"></app-product-tab-stock-change>
+                        <ng-template matTabContent>
+                          <app-product-tab-stock-change
+                            [product_id]="element.id"
+                            [expandedElement]="element == expandedElement ? true : false"
+                            (reload)="loadData();"></app-product-tab-stock-change>
+                        </ng-template>
                       </mat-tab>
                       <mat-tab label="Tồn kho">
-                        <app-product-tab-stock
-                          [expandedElement]="element == expandedElement ? true : false"
-                          [product_id]="element.id"
-                          (reload)="loadData();"></app-product-tab-stock>
+                        <ng-template matTabContent>
+                          <app-product-tab-stock
+                            [expandedElement]="element == expandedElement ? true : false"
+                            [product_id]="element.id"
+                            (reload)="loadData();"></app-product-tab-stock>
+                        </ng-template>
+                      </mat-tab>
+                      <mat-tab label="Lịch sử cập nhật" *ngIf="canDo('Product.Change-Log')">
+                        <ng-template matTabContent>
+                          <app-model-change-log #changeLogTab [showSearchBar]="false" [model_id]="element.id" [model_name]="'product'" [attrLabels]="this.columnsHeader" [displayColumns]="['#', 'action_name', 'created_at', 'created_by', 'change_detail']"></app-model-change-log>
+                        </ng-template>
                       </mat-tab>
                     </mat-tab-group>
                   </div>
