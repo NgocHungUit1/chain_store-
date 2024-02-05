@@ -197,7 +197,7 @@ export class ProductMedicineDialogComponent implements OnInit {
 
   ngOnInit() {
     const groupFilter = new GroupFilter();
-    groupFilter.pageSize = 50;
+    groupFilter.pageSize = 100;
     // groupFilter.store_id = 1;
     this.groupSer.getList(groupFilter).subscribe(res => {
       this.groups = res.body;

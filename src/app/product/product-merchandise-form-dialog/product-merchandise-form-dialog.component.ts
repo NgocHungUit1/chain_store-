@@ -143,7 +143,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
   ngOnInit() {
 
     const groupFilter = new GroupFilter();
-    // groupFilter.store_id = 1;
+    groupFilter.pageSize = 100;
     this.groupSer.getList(groupFilter).subscribe(res => {
       this.groups = res.body;
     });
