@@ -6,6 +6,7 @@ import { AuthService } from '../authentication/auth.service';
 import { NotifierService } from 'angular-notifier';
 import { ProductFilter } from '../product/product.model';
 import { InvoiceFilter } from '../invoice/invoice.model';
+import {CustomerFilter} from '../customer/customer.model';
 
 @Injectable({
   providedIn: 'root'
@@ -252,6 +253,16 @@ export class ProductReportService {
     const _token = this.auth.getToken();
     const url = environment.apiUrl + '/report/download-template?token=' + _token + '&type=' + type;
     return url;
+  }
+
+  /**
+   * get Export excel profit link
+   * @param filter
+   */
+  getDownloadLinkProfit(filter?: ProductFilter) {
+    const _token = this.auth.getToken();
+
+    return environment.apiUrl + '/report/export-profit?' + filter.toFilterString() + '&token=' + _token;
   }
 }
 

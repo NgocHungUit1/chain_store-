@@ -157,10 +157,15 @@
 
       <span fxFlex="1 1 0%"></span>
 
-      <button mat-raised-button color="primary" (click)="exportExcel()" style="margin-right: 10px">
+      <button *ngIf="!this.downloadLink.length" mat-raised-button color="primary" (click)="exportExcel()" style="margin-right: 10px">
         <mat-icon>cloud_download</mat-icon>
         Xuất Excel
       </button>
+
+      <a *ngIf="this.downloadLink.length" mat-raised-button color="accent" [href]="this.downloadLink" style="margin-right: 10px" [disabled]="isLoadingResults">
+        <mat-icon>cloud_download</mat-icon>
+        Xuất Excel
+      </a>
 
       <mat-menu #createMenu="matMenu">
         <button mat-menu-item (click)="openProductMedicineDialog('Add', {});">

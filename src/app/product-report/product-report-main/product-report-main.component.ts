@@ -187,6 +187,8 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
   searchProductForm = new FormControl();
   tab: string = '';
 
+  public downloadLink = '';
+
   public timeSelected = 'next_3_month';
   public timeSelects = [
     'today',
@@ -285,8 +287,16 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     return filter;
   }
 
+  reloadDownloadLink() {
+    this.downloadLink = '';
+    const typeReport = this.reportType.controls['type'].value;
+    if (typeReport === 'profit') {
+      this.downloadLink = this.service.getDownloadLinkProfit(this.apiFilter);
+    }
+  }
 
   loadData(summary = true): void {
+    this.reloadDownloadLink();
     const typeReport = this.reportType.controls['type'].value;
     if (typeReport === 'sale' || typeReport === 'profit' || typeReport === 'sale-staff' || typeReport === 'customer') {
       this.isLoadingResults = true;
