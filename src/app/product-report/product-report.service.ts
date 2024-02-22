@@ -264,6 +264,36 @@ export class ProductReportService {
 
     return environment.apiUrl + '/report/export-profit?' + filter.toFilterString() + '&token=' + _token;
   }
+
+  /**
+   * get Export excel sale link
+   * @param filter
+   */
+  getDownloadLinkSale(filter?: ProductFilter) {
+    const _token = this.auth.getToken();
+
+    return environment.apiUrl + '/report/export-sale?' + filter.toFilterString() + '&token=' + _token;
+  }
+
+  /**
+   * get Export excel sale by customer link
+   * @param filter
+   */
+  getDownloadLinkSaleCustomer(filter?: ProductFilter) {
+    const _token = this.auth.getToken();
+
+    return environment.apiUrl + '/report/export-sale-customer?' + filter.toFilterString() + '&token=' + _token;
+  }
+
+  /**
+   * get Export excel sale by customer link
+   * @param filter
+   */
+  getDownloadLinkSaleEmployee(filter?: ProductFilter) {
+    const _token = this.auth.getToken();
+
+    return environment.apiUrl + '/report/export-sale-employee?' + filter.toFilterString() + '&token=' + _token;
+  }
 }
 
 

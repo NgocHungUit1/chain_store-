@@ -293,6 +293,15 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     if (typeReport === 'profit') {
       this.downloadLink = this.service.getDownloadLinkProfit(this.apiFilter);
     }
+    if (typeReport === 'sale') {
+      this.downloadLink = this.service.getDownloadLinkSale(this.apiFilter);
+    }
+    if (typeReport === 'customer') {
+      this.downloadLink = this.service.getDownloadLinkSaleCustomer(this.apiFilter);
+    }
+    if (typeReport === 'sale-staff') {
+      this.downloadLink = this.service.getDownloadLinkSaleEmployee(this.apiFilter);
+    }
   }
 
   loadData(summary = true): void {
