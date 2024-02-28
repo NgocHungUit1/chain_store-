@@ -13,13 +13,15 @@ import { SettingsRoutes } from './settings.routing';
 import {SettingProfileComponent} from './setting-profile/setting-profile.component';
 import {NotificationListComponent} from './notification-list/notification-list.component';
 import {SettingSidenavComponent} from './setting-sidenav/setting-sidenav.component';
+import {SettingStoreComponent} from './setting-store/setting-store.component';
 
 @NgModule({
   declarations: [
     SettingsMainComponent,
     SettingProfileComponent,
     NotificationListComponent,
-    SettingSidenavComponent
+    SettingSidenavComponent,
+    SettingStoreComponent
   ],
   imports: [
     CommonModule,

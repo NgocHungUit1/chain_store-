@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { SettingsMainComponent } from './settings-main/settings-main.component';
 import {NotificationListComponent} from './notification-list/notification-list.component';
 import {SettingProfileComponent} from './setting-profile/setting-profile.component';
+import {SettingStoreComponent} from './setting-store/setting-store.component';
 
 export const SettingsRoutes: Routes = [
   {
@@ -14,6 +15,10 @@ export const SettingsRoutes: Routes = [
       {
         path: 'profile',
         component: SettingProfileComponent,
+      },
+      {
+        path: 'store',
+        component: SettingStoreComponent,
       },
       {
         path: 'employee',

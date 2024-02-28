@@ -1,0 +1,26 @@
+.dv-content .mat-card-top {
+  margin: 0px;
+  height: 100%;
+}
+
+.dv-content .mat-sidenav-container {
+  height: 100%
+}
+.user-profile {
+  text-align: center;
+  padding: 10px;
+}
+.user-profile h4 {
+  line-height: 0px
+}
+.user-profile .profile-pic {
+  width: 100px;
+  height: 100px;
+  border-radius: 100%;
+}
+.setting-title {
+  display: inline-block;;
+}
+.mat-form-field .mat-input-element:disabled {
+  color: rgba(0, 0, 0, 0.87);
+}

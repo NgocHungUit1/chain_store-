@@ -8,6 +8,11 @@
       <mat-icon>person_outline</mat-icon><span>Thông tin tài khoản</span>
     </a>
   </mat-list-item>
+  <mat-list-item [class.active]="currentRouteLink.indexOf('/setting/store') !== -1">
+    <a routerLink="/setting/store" class="setting-link" >
+      <mat-icon>store</mat-icon><span>Thông tin cửa hàng</span>
+    </a>
+  </mat-list-item>
   <mat-list-item [class.active]="currentRouteLink.indexOf('/setting/notification') !== -1">
     <a routerLink="/setting/notification" class="setting-link" >
       <mat-icon>notifications_none</mat-icon><span>Thông báo</span><span matBadge="{{countUnread}}" matBadgeOverlap="false" matBadgeColor="warn" matBadgePosition="above after"></span>
