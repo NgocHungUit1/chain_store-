@@ -26,10 +26,7 @@ export class SettingStoreComponent implements OnInit {
     '-1': 'Không giới hạn',
     '-10': 'Tùy chọn',
     '1': '1 năm',
-    '2': '2 năm',
-    '3': '3 năm',
-    '4': '4 năm',
-    '5': '5 năm',
+    '2': '3 năm',
   };
 
   form: FormGroup;

@@ -24,6 +24,7 @@ export class Product {
   product_name: string;
   default_image: string;
   original_price: number;
+  avg_original_price: number;
   sell_price: number;
   weight: number;
   quantity_of_stock: number;
