@@ -55,6 +55,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
 
   apiFilter: ProductFilter;
   parcelFilter: WarehouseProductParcelFilter;
+  parcelStockFilter: WarehouseProductParcelFilter;
   expandedElement: ProductReport | null;
 
   statusProductFilter: FormGroup;
@@ -183,6 +184,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
   isRateLimitReached = false;
 
   sum_expiration: number;
+  sum_parcel_stock: number;
 
   searchProductForm = new FormControl();
   tab: string = '';
@@ -287,6 +289,27 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     return filter;
   }
 
+  buildFilterParcelStock(): WarehouseProductParcelFilter {
+    function write<K extends keyof WarehouseProductParcelFilter>(
+      arg: WarehouseProductParcelFilter, key: K, value: WarehouseProductParcelFilter[K]): void {
+      arg[key] = value;
+    }
+
+    const objDateFilter = this.serviceInvoice.getDateFilter();
+    const filter = new WarehouseProductParcelFilter();
+    const objectKeys = Object.keys(filter) as Array<keyof WarehouseProductParcelFilter>;
+
+    for (const attr of objectKeys) {
+      write(filter, attr, this.route.snapshot.queryParams['WarehouseProductParcelSearch[' + attr + ']']);
+    }
+    filter.page = this.route.snapshot.queryParams['page'];
+    filter.pageSize = this.route.snapshot.queryParams['pageSize'];
+    filter.sort = this.route.snapshot.queryParams['sort'];
+    filter.hasStock = 1;
+
+    return filter;
+  }
+
   reloadDownloadLink() {
     this.downloadLink = '';
     const typeReport = this.reportType.controls['type'].value;
@@ -301,6 +324,9 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     }
     if (typeReport === 'sale-staff') {
       this.downloadLink = this.service.getDownloadLinkSaleEmployee(this.apiFilter);
+    }
+    if (typeReport === 'parcel-stock') {
+      this.downloadLink = this.parcelSer.getDownloadLink(this.parcelStockFilter);
     }
   }
 
@@ -436,6 +462,28 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
 
       if (summary) {
         this.parcelSer.getSummaryExpiration(this.parcelFilter).subscribe(res => {
+          this.sum_expiration = res.body;
+        });
+      }
+
+    }
+
+    if (typeReport === 'parcel-stock') {
+      this.isLoadingResults = true;
+      this.parcelSer.getList(this.parcelStockFilter).subscribe(res => {
+        this.dataSource = res.body;
+        let stt = 0;
+        this.dataSource.forEach(elementData => {
+          stt++;
+          elementData.stt = stt;
+        });
+        this.reloadFilter(res);
+        // const url = this.service.getApiUrlReportSale(this.apiFilter);
+        this.isLoadingResults = false;
+      });
+
+      if (summary) {
+        this.parcelSer.getSummary(this.parcelStockFilter).subscribe(res => {
           this.sum_expiration = res.body;
         });
       }
@@ -595,6 +643,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     });
 
     this.parcelFilter = this.buildFilterExpiration();
+    this.parcelStockFilter = this.buildFilterParcelStock();
     this.loadColumns(this.tab);
 
     this.reportType.valueChanges.subscribe(res => {
@@ -605,9 +654,13 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       if (res !== '') {
         this.apiFilter = this.buildFilterFromParams();
         this.apiFilter.keyword = res;
+        this.parcelStockFilter.parcel_no = res;
+        this.parcelFilter.parcel_no = res;
         this.loadData();
       } else {
         this.apiFilter = this.buildFilterFromParams();
+        this.parcelStockFilter = this.buildFilterParcelStock();
+        this.parcelFilter = this.buildFilterExpiration();
         this.loadData();
       }
     });
@@ -675,6 +728,18 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       this.columnsToDisplay = ['#', 'warehouse_product_no', 'warehouse_product_name', 'warehouse_product_parcel_no',
         'warehouse_product_parcel_expiration', 'warehouse_product_parcel_day_exits', 'warehouse_product_parcel_quantity_of_stock'];
       this.second_columnsToDisplay = ['second_warehouse_product_parcel_quantity_of_stock'];
+
+      this.parcelFilter = this.buildFilterExpiration();
+    }
+
+    if (type === 'parcel-stock') {
+      this.displayedColumns = ['#', 'warehouse_product_parcel_no',
+        'warehouse_product_parcel_expiration', 'warehouse_product_parcel_quantity_of_stock'];
+      this.columnsToDisplay = ['#', 'warehouse_product_parcel_no',
+        'warehouse_product_parcel_expiration', 'warehouse_product_parcel_quantity_of_stock'];
+      this.second_columnsToDisplay = ['second_warehouse_product_parcel_quantity_of_stock'];
+
+      this.parcelFilter = this.buildFilterParcelStock();
     }
 
     if (type === 'sale-staff') {

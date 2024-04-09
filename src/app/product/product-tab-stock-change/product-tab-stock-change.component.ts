@@ -34,7 +34,6 @@ export class ProductTabStockChangeComponent extends ListComponentBase implements
 
 
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
-  @ViewChild('selectColumn') selectColumn;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -124,7 +123,7 @@ export class ProductTabStockChangeComponent extends ListComponentBase implements
   }
 
   openProductStockChangeDialog() {
-    let obj = {
+    const obj = {
       // action: copy_product_id !== null ? 'Copy' : 'Update',
       // title: copy_product_id !== null ? 'Sao chép hàng hóa' : 'Cập nhật hàng hóa',
       product_id: this.product_id,

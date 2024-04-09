@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { AuthService } from '../authentication/auth.service';
 import {WarehouseProductParcel, WarehouseProductParcelFilter} from './warehouse-product-parcel.model';
+import {ProductFilter} from '../product/product.model';
 
 @Injectable({
   providedIn: 'root'
@@ -40,6 +41,14 @@ export class WarehouseProductParcelService {
     let url = '/warehouse-product-parcel/expiration?per-page=' + filter.pageSize;
 
     url += '&' + filter.toFilterString();
+    return url;
+  }
+
+  getApiUrlSummary(filter?: WarehouseProductParcelFilter) {
+
+    let url = '/warehouse-product-parcel/summary';
+
+    url += '?' + filter.toFilterString();
     return url;
   }
 
@@ -99,6 +108,11 @@ export class WarehouseProductParcelService {
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
+  getSummary(filter?: WarehouseProductParcelFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrlSummary(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
   update(id: string, pos: any) {
     const url = environment.apiUrl + '/warehouse-product-parcel/' + id;
     return this.http.put<WarehouseProductParcel>(url, pos);
@@ -127,6 +141,12 @@ export class WarehouseProductParcelService {
   reconnect(id) {
     const url = environment.apiUrl + '/warehouse-product-parcel/connect?id=' + id + '&reconnect=1';
     return this.http.post(url, {});
+  }
+
+  getDownloadLink(filter?: WarehouseProductParcelFilter) {
+    const _token = this.auth.getToken();
+
+    return environment.apiUrl + '/warehouse-product-parcel/export?' + filter.toFilterString() + '&token=' + _token;
   }
 
 }
