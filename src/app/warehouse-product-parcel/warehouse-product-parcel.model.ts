@@ -19,7 +19,8 @@ export class WarehouseProductParcel {
 export class WarehouseProductParcelFilter extends ApiFilterBase {
   id = 0;
   parcel_no = '';
-  product_id = 0;
+  product_id = '';
+  hasStock = 0;
   warehouse_product_id = 0;
   quantity = 0;
   quantity_of_stock = 0;

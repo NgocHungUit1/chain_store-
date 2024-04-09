@@ -30,6 +30,7 @@ import {NgxMaskModule} from 'ngx-mask';
 import {NgxExtendedPdfViewerModule} from 'ngx-extended-pdf-viewer';
 import {PrintMultipleProductDialogComponent} from './print-multiple-product-dialog/print-multiple-product-dialog.component';
 import {CommonModule as DComonModule} from '../common/common.module';
+import {ProductTabStockParcelComponent} from './product-tab-stock-parcel/product-tab-stock-parcel.component';
 
 
 @NgModule({
@@ -42,6 +43,7 @@ import {CommonModule as DComonModule} from '../common/common.module';
     ProductTabInfoComponent,
     ProductTabStockChangeComponent,
     ProductTabStockComponent,
+    ProductTabStockParcelComponent,
     ProductMerchandiseFormDialogComponent,
     ProductManufacturerFormDialogComponent,
     ProductPopupDeleteDialogComponent,

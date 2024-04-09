@@ -308,6 +308,14 @@
                             (reload)="loadData();"></app-product-tab-stock>
                         </ng-template>
                       </mat-tab>
+                      <mat-tab label="Tồn kho theo Lô">
+                        <ng-template matTabContent>
+                          <app-product-tab-stock-parcel
+                            [expandedElement]="element == expandedElement ? true : false"
+                            [product_id]="element.id"
+                            (reload)="loadData();"></app-product-tab-stock-parcel>
+                        </ng-template>
+                      </mat-tab>
                       <mat-tab label="Lịch sử cập nhật" *ngIf="canDo('Product.Change-Log')">
                         <ng-template matTabContent>
                           <app-model-change-log #changeLogTab [showSearchBar]="false" [model_id]="element.id" [model_name]="'product'" [attrLabels]="this.columnsHeader" [displayColumns]="['#', 'action_name', 'created_at', 'created_by', 'change_detail']"></app-model-change-log>
