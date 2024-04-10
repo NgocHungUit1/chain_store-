@@ -45,6 +45,14 @@ export const SettingsRoutes: Routes = [
         loadChildren: () => import('../pay-sheet/pay-sheet.module').then(m => m.PaySheetModule)
       },
       {
+        path: 'expenses-order',
+        loadChildren: () => import('../expenses-order/expenses-order.module').then(m => m.ExpensesOrderModule)
+      },
+      {
+        path: 'expenses-transaction',
+        loadChildren: () => import('../expenses-transaction/expenses-transaction.module').then(m => m.ExpensesTransactionModule)
+      },
+      {
         path: 'common',
         component: SettingsMainComponent,
         children: [

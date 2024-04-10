@@ -2,37 +2,37 @@
 <!-- sidebar -->
 <!-- ============================================================== -->
 <mat-nav-list appAccordion *ngIf="this.router.url !== '/sale'">
-    <mat-list-item appAccordionLink *ngFor="let menuitem of menuItems.getMenuitem()" routerLinkActive="selected"
+    <mat-list-item appAccordionLink *ngFor="let menuitem of menus" routerLinkActive="selected"
         group="{{menuitem.state}}">
-        <a class="" appAccordionToggle [routerLink]="['/', menuitem.state]" *ngIf="menuitem.type === 'link' && checkMatchPermission(menuitem.permissions)">
+        <a class="" appAccordionToggle [routerLink]="['/', menuitem.state]" *ngIf="menuitem.type === 'link' && checkMatchPermission(menuitem.permissions) && checkOptionEnabled(menuitem.optionKeys)">
             <mat-icon>{{ menuitem.icon }}</mat-icon>
             <span>{{ menuitem.name }}</span>
             <span fxFlex></span>
             <span class="label label-{{ badge.type }}" *ngFor="let badge of menuitem.badge">{{ badge.value }}</span>
         </a>
 
-        <a class="" appAccordionToggle routerLink="/{{menuitem.state}}" *ngIf="menuitem.type === 'extLink' && checkMatchPermission(menuitem.permissions)">
+        <a class="" appAccordionToggle routerLink="/{{menuitem.state}}" *ngIf="menuitem.type === 'extLink' && checkMatchPermission(menuitem.permissions) && checkOptionEnabled(menuitem.optionKeys)">
             <mat-icon>{{ menuitem.icon }}</mat-icon>
             <span>{{ menuitem.name }}</span>
             <span fxFlex></span>
             <span class="label label-{{ badge.type }}" *ngFor="let badge of menuitem.badge">{{ badge.value }}</span>
         </a>
-        <a class="" appAccordionToggle href="{{menuitem.state}}" target="_blank" *ngIf="menuitem.type === 'extTabLink' && checkMatchPermission(menuitem.permissions)">
+        <a class="" appAccordionToggle href="{{menuitem.state}}" target="_blank" *ngIf="menuitem.type === 'extTabLink' && checkMatchPermission(menuitem.permissions) && checkOptionEnabled(menuitem.optionKeys)">
             <mat-icon>{{ menuitem.icon }}</mat-icon>
             <span>{{ menuitem.name}}</span>
             <span fxFlex></span>
             <span class="label label-{{ badge.type }}" *ngFor="let badge of menuitem.badge">{{ badge.value }}</span>
         </a>
-        <a class="" [style]="styleNotBackground(menuitem.state)" appAccordionToggle href="javascript:;" *ngIf="menuitem.type === 'sub' && checkMatchPermission(menuitem.permissions)">
+        <a class="" [style]="styleNotBackground(menuitem.state)" appAccordionToggle href="javascript:;" *ngIf="menuitem.type === 'sub' && checkMatchPermission(menuitem.permissions) && checkOptionEnabled(menuitem.optionKeys)">
             <mat-icon [style]="styleIconNotBackground(menuitem.state)" >{{ menuitem.icon }}</mat-icon>
             <span>{{ menuitem.name }}</span>
             <span fxFlex></span>
             <span class="label label-{{ badge.type }}" *ngFor="let badge of menuitem.badge">{{ badge.value }}</span>
             <mat-icon class="dd-icon">keyboard_arrow_down</mat-icon>
         </a>
-        <mat-nav-list class="sub-item" *ngIf="menuitem.type === 'sub' && checkMatchPermission(menuitem.permissions)">
+        <mat-nav-list class="sub-item" *ngIf="menuitem.type === 'sub' && checkMatchPermission(menuitem.permissions) && checkOptionEnabled(menuitem.optionKeys)">
           <div *ngFor="let childitem of menuitem.children">
-            <mat-list-item  *ngIf="checkMatchPermission(childitem.permissions)" routerLinkActive="selected">
+            <mat-list-item  *ngIf="checkMatchPermission(childitem.permissions) && checkOptionEnabled(childitem.optionKeys)" routerLinkActive="selected">
                 <a [style]="styleNotBackgroundSubItem(menuitem.state, childitem.state)" [routerLink]="['/', menuitem.state, childitem.state ]" class="relative" routerLinkActive="selected">
                     <mat-icon [style]="styleNotBackgroundSubItem(menuitem.state, childitem.state, true)">{{ childitem.icon }}</mat-icon>
                     {{childitem.name}}
@@ -40,7 +40,7 @@
             </mat-list-item>
           </div>
         </mat-nav-list>
-        <div class="saperator text-muted" *ngIf="menuitem.type === 'saperator' && checkMatchPermission(menuitem.permissions)">
+        <div class="saperator text-muted" *ngIf="menuitem.type === 'saperator' && checkMatchPermission(menuitem.permissions) && checkOptionEnabled(menuitem.optionKeys)">
             <span>{{ menuitem.name }}</span>
         </div>
     </mat-list-item>
