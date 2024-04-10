@@ -21,6 +21,7 @@ export interface ChildrenItems {
   icon?: string;
   roles?: string[];
   permissions?: string[];
+  optionKeys?: string[];
 }
 
 export interface Menu {
@@ -33,6 +34,7 @@ export interface Menu {
   children?: ChildrenItems[];
   roles?: string[];
   permissions?: string[];
+  optionKeys?: string[];
 }
 
 const MENUITEMS = [
@@ -126,12 +128,20 @@ const MENUITEMS = [
       {state: 'employee', name: 'Nhân viên', type: 'link', icon: 'assignment_ind', permissions: ['Employee.List']},
       {state: 'branch', name: 'Chi nhánh', type: 'link', icon: 'business', permissions: ['Branch.List']},
       {state: 'timesheet', name: 'Chấm công', type: 'link', icon: 'calendar_today', permissions: ['Timesheet.List']},
-      // {state: 'expenses-other', name: 'Quản lý chi phí nhập hàng', type: 'link', icon: 'attach_money', roles: ['ADMIN']},
       {state: 'pay-sheet', name: 'Bảng tính lương', type: 'link', icon: 'assessment', permissions: ['Pay-Sheet.List']},
       {state: 'common', name: 'Thiết lập chung', type: 'link', icon: 'settings', permissions: [
         'Option-Store.Update',
           'Store.Upload-Logo', 'Branch.Update-Connect',
           'Store.Update-Info']},
+      {state: 'expenses-order', name: 'Thu khác Bán hàng', type: 'link',
+        icon: 'price_change',
+        permissions: ['Expenses-Order.List'],
+        optionKeys: ['transaction_expenses_order']
+      },
+      {state: 'expenses-transaction', name: 'Chi phí Nhập hàng',
+        type: 'link', icon: 'paid', permissions: ['Expenses-Transaction.List'],
+        optionKeys: ['transaction_expenses_transaction']
+      },
     ]
   },
   {

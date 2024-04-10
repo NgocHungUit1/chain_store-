@@ -103,7 +103,7 @@
                     ></mat-slide-toggle>
                   </div>
                   <div fxFlex="auto">
-                    <b><a routerLink="/partner/expenses-order" disabled="disabled">Thu khác khi bán hàng >> </a></b>
+                    <b><a [routerLink]="optionStore_transaction_expenses_order?.value === 'yes' ? '/setting/expenses-order': '#'">Thu khác khi bán hàng >> </a></b>
                     <br>
                     <span> Cho phép tạo và quản lý các khoản thu khác khi bán hàng như: phí giao hàng, phí dịch vụ, VAT...Phí thu khác được tính bằng số tiền VNĐ hoặc % giá trị đơn hàng.
                     </span>
@@ -119,7 +119,7 @@
                     ></mat-slide-toggle>
                   </div>
                   <div fxFlex="auto">
-                    <b><a routerLink="/partner/expenses-transaction">Hỗ trợ các khoản chi phí nhập hàng >> </a></b>
+                    <b><a [routerLink]="optionStore_transaction_expenses_transaction?.value === 'yes' ? '/setting/expenses-transaction': '#'">Hỗ trợ các khoản chi phí nhập hàng >> </a></b>
                     <br>
                     <span> Cho phép tạo và quản lý các khoản chi phí khi nhập hàng như: phí dịch vụ, thuế hải quan… được tính
                     bằng số tiền VNĐ hoặc % giá trị phiếu nhập.
