@@ -638,7 +638,7 @@
 
               <!--expiration-date-->
               <ng-container matColumnDef="expiration_parcel_no">
-                <th mat-header-cell class="column-number"
+                <th mat-header-cell
                     *matHeaderCellDef> {{columnsHeader['expiration_parcel_no']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
@@ -657,6 +657,32 @@
                 </td>
               </ng-container>
 
+              <ng-container matColumnDef="warehouse_product_parcel_quantity">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['parcel_quantity']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                     {{element.quantity }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_warehouse_product_parcel_quantity">
+                <th colspan="5" mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_quantity | number }}</th>
+              </ng-container>
+
+              <ng-container matColumnDef="warehouse_product_parcel_export">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['parcel_export']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                     {{element.quantity - element.quantity_of_stock }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_warehouse_product_parcel_export">
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sum_quantity - sum_expiration | number }}</th>
+              </ng-container>
+
               <ng-container matColumnDef="warehouse_product_parcel_quantity_of_stock">
                 <th mat-header-cell class="column-number"
                     *matHeaderCellDef> Số lượng tồn</th>
@@ -673,7 +699,7 @@
 
               <ng-container matColumnDef="warehouse_product_parcel_expiration">
                 <th mat-header-cell class="column-number"
-                    *matHeaderCellDef> Ngày hết hạn</th>
+                    *matHeaderCellDef> Hạn sử dụng</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
                     {{element.expiration_date }}
@@ -682,9 +708,9 @@
               </ng-container>
 
               <ng-container matColumnDef="warehouse_product_no">
-                <th mat-header-cell class="column-number"
+                <th mat-header-cell
                     *matHeaderCellDef> {{columnsHeader['product_no']}}</th>
-                <td mat-cell class="column-number" *matCellDef="let element">
+                <td mat-cell *matCellDef="let element">
                   <span>
                     {{element?.product?.product_no }}
                   </span>
@@ -692,9 +718,9 @@
               </ng-container>
 
               <ng-container matColumnDef="warehouse_product_name">
-                <th mat-header-cell class="column-number"
+                <th mat-header-cell
                     *matHeaderCellDef> {{columnsHeader['product_name']}}</th>
-                <td mat-cell class="column-number" *matCellDef="let element">
+                <td mat-cell *matCellDef="let element">
                   <span>
                     {{element?.product?.product_name }}
                   </span>
@@ -703,9 +729,9 @@
 
               <!--expiration-date-->
               <ng-container matColumnDef="warehouse_product_parcel_no">
-                <th mat-header-cell class="column-number"
+                <th mat-header-cell
                     *matHeaderCellDef> Số Lô</th>
-                <td mat-cell class="column-number" *matCellDef="let element">
+                <td mat-cell *matCellDef="let element">
                   <span>
                     {{element.parcel_no }}
                   </span>

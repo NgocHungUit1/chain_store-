@@ -32,7 +32,7 @@ export class ProductTabStockParcelComponent extends ListComponentBase implements
     '#': '#',
     'parcel_no': 'Số lô',
     'quantity_of_stock': 'Tồn kho',
-    'expiration_date': 'Hạn dùng',
+    'expiration_date': 'Hạn sử dụng',
   };
 
   data: WarehouseProductParcel[] = [];
