@@ -120,6 +120,9 @@
                       <mat-tab label="Thông tin">
                         <app-customer-tab-info [customer]="element" (reload)="loadData()"></app-customer-tab-info>
                       </mat-tab>
+                      <mat-tab label="Lịch sử tích điểm">
+                        <app-customer-tab-point [customerId]="element.id"></app-customer-tab-point>
+                      </mat-tab>
 <!--                      <mat-tab label="Lịch sử mua hàng">-->
 <!--                        <app-history-invoice-tab [customer]="element"-->
 <!--                                                 [expandedElement]="element == expandedElement ? true : false"-->

@@ -14,10 +14,11 @@ import { CustomerFormDialogComponent } from './customer-form-dialog/customer-for
 import { CustomerTabInfoComponent } from './customer-tab-info/customer-tab-info.component';
 import { CustomerTabDebtComponent } from './customer-tab-debt/customer-tab-debt.component';
 import { CustomerPopupDeleteDialogComponent } from './customer-popup-delete-dialog/customer-popup-delete-dialog.component';
-import {DatetimeChooseFilterDialogComponent} from './datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
-import {DatetimeDefaultFilterDialogComponent} from './datetime-default-filter-dialog/datetime-default-filter-dialog.component';
+import { DatetimeChooseFilterDialogComponent } from './datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
+import { DatetimeDefaultFilterDialogComponent } from './datetime-default-filter-dialog/datetime-default-filter-dialog.component';
 import { HistoryInvoiceTabComponent } from './history-invoice-tab/history-invoice-tab.component';
-import {CustomerUploadDialogComponent} from './customer-upload-dialog/customer-upload-dialog.component';
+import { CustomerUploadDialogComponent } from './customer-upload-dialog/customer-upload-dialog.component';
+import { CustomerTabPointComponent } from './customer-tab-point/customer-tab-point.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import {CustomerUploadDialogComponent} from './customer-upload-dialog/customer-u
     DatetimeDefaultFilterDialogComponent,
     DatetimeChooseFilterDialogComponent,
     CustomerUploadDialogComponent,
-    HistoryInvoiceTabComponent
+    HistoryInvoiceTabComponent,
+    CustomerTabPointComponent
   ],
   imports: [
     CommonModule,

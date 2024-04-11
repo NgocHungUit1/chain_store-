@@ -40,6 +40,13 @@
               <mat-icon>open_in_full</mat-icon>
             </button>
           </mat-radio-button>
+          
+          <mat-radio-button class="radio-button-report-type" value="point" *ngIf="canDo('Option-Store.Update') || canDo('Option-Store.Create')">
+            Tích điểm
+            <button mat-icon-button aria-label="point">
+              <mat-icon>attach_money</mat-icon>
+            </button>
+          </mat-radio-button>
 
           <mat-radio-button class="radio-button-report-type" value="store-info" *ngIf="canDo('Store.Update-Info')">
             Cấu hình chung
@@ -292,9 +299,43 @@
 
             </mat-card>
 
+            <!-- Point -->
+            <mat-card *ngIf="settingsType === 'point'">
+              <mat-card-content>
+                <form [formGroup]="pointSettingsForm" (ngSubmit)="savePointSettings()">
+                  <div fxLayout="row wrap" class="line-option">
+                    <div fxFlex="60px" class="custom-toggle">
+                      <mat-slide-toggle [formControl]="pointSettingsForm.controls['point_enabled']"></mat-slide-toggle>
+                    </div>
+                    <div fxFlex="auto">
+                      <b>Tích điểm cho đơn hàng</b>
+                      <br>
+                      <span>Cho phép khách hàng tích điểm cho đơn hàng và dùng điểm thưởng để thanh toán đơn hàng.</span>
+                    </div>
+                  </div>
+                  <div fxLayout="row wrap">
+                    <mat-form-field fxFlex="350px">
+                      <input matInput type="number" min="1" [formControl]="pointSettingsForm.controls['point_cash_to_point_rate']" required
+                        placeholder="Hệ số quy đổi từ VNĐ sang điểm thưởng (? VNĐ = 1 điểm)">
+                    </mat-form-field>
+                  </div>
+                  <div fxLayout="row wrap">
+                    <mat-form-field fxFlex="350px">
+                      <input matInput type="number" min="1" [formControl]="pointSettingsForm.controls['point_point_to_cash_rate']" required
+                        placeholder="Hệ số quy đổi từ điểm thưởng sang VNĐ (1 điểm = ? VNĐ)">
+                    </mat-form-field>
+                  </div>
+                  <div fxLayout="row wrap">
+                    <button mat-raised-button color="primary" type="submit" [disabled]="!pointSettingsForm.valid">
+                      <mat-icon>save</mat-icon>
+                      Lưu
+                    </button>
+                  </div>
+                </form>
+              </mat-card-content>
+            </mat-card>
           </div>
         </div>
-
       </div>
     </div>
   </mat-sidenav-content>
