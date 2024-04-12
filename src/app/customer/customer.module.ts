@@ -19,6 +19,7 @@ import { DatetimeDefaultFilterDialogComponent } from './datetime-default-filter-
 import { HistoryInvoiceTabComponent } from './history-invoice-tab/history-invoice-tab.component';
 import { CustomerUploadDialogComponent } from './customer-upload-dialog/customer-upload-dialog.component';
 import { CustomerTabPointComponent } from './customer-tab-point/customer-tab-point.component';
+import { CustomerTabInvoiceComponent } from './customer-tab-invoice/customer-tab-invoice.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { CustomerTabPointComponent } from './customer-tab-point/customer-tab-poi
     DatetimeChooseFilterDialogComponent,
     CustomerUploadDialogComponent,
     HistoryInvoiceTabComponent,
-    CustomerTabPointComponent
+    CustomerTabPointComponent,
+    CustomerTabInvoiceComponent
   ],
   imports: [
     CommonModule,

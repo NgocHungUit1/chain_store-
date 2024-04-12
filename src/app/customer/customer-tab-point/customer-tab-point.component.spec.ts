@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { CustomerTabPointComponent } from './customer-tab-point.component';
 
-describe('ProductTabStockChangeComponent', () => {
+describe('CustomerTabPointComponent', () => {
   let component: CustomerTabPointComponent;
   let fixture: ComponentFixture<CustomerTabPointComponent>;
 
