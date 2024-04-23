@@ -738,11 +738,18 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     }
 
     if (type === 'parcel-stock') {
-      this.displayedColumns = ['#', 'warehouse_product_parcel_no', 'warehouse_product_name',
-        'warehouse_product_parcel_expiration', 'warehouse_product_parcel_quantity', 'warehouse_product_parcel_export', 'warehouse_product_parcel_quantity_of_stock'];
-      this.columnsToDisplay = ['#', 'warehouse_product_parcel_no', 'warehouse_product_name',
-        'warehouse_product_parcel_expiration', 'warehouse_product_parcel_quantity', 'warehouse_product_parcel_export', 'warehouse_product_parcel_quantity_of_stock'];
-      this.second_columnsToDisplay = ['second_warehouse_product_parcel_quantity', 'second_warehouse_product_parcel_export', 'second_warehouse_product_parcel_quantity_of_stock'];
+      this.displayedColumns = ['#', 'warehouse_product_no', 'warehouse_product_name', 'warehouse_product_parcel_no',
+        'warehouse_product_parcel_expiration', 'warehouse_product_parcel_quantity',
+        'warehouse_product_parcel_export', 'warehouse_product_parcel_quantity_of_stock'
+      ];
+      this.columnsToDisplay = ['#', 'warehouse_product_no', 'warehouse_product_name', 'warehouse_product_parcel_no',
+        'warehouse_product_parcel_expiration', 'warehouse_product_parcel_quantity', 'warehouse_product_parcel_export',
+        'warehouse_product_parcel_quantity_of_stock'
+      ];
+      this.second_columnsToDisplay = [
+        'second_warehouse_product_parcel_quantity',
+        'second_warehouse_product_parcel_export', 'second_warehouse_product_parcel_quantity_of_stock'
+      ];
 
       this.parcelFilter = this.buildFilterParcelStock();
     }
