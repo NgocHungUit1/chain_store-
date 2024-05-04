@@ -1,6 +1,13 @@
 <!-- ============================================================== -->
 <!-- Notification - style you can find in header.scss -->
 <!-- ============================================================== -->
+<a mat-button style="padding: 0px; margin: 0px -10px;" href="https://zalo.me/84932106859" target="_blank">
+  <img src="/assets/images/icon/zalo-96.png" width="36px" />
+</a>
+
+<a mat-icon-button style="padding: 0px; margin: 0px -5px;" href="tel:84932106859">
+  <mat-icon>phone</mat-icon>
+</a>
 
 <button [matMenuTriggerFor]="notification" mat-icon-button class="m-r-10 notification-button">
   <mat-icon *ngIf="countUnread == 0">notifications_none</mat-icon>
@@ -94,7 +101,7 @@
 <!-- Profile - style you can find in header.scss -->
 <!-- ============================================================== -->
 <button [matMenuTriggerFor]="profile" mat-icon-button class="m-r-5">
-  <img src="assets/images/users/doctor.jpg" alt="user" class="profile-pic"></button>
+  <img src="assets/images/users/doctor.jpg" alt="user" class="profile-pic" style="width: 30px; height: 30px;"></button>
 <mat-menu #profile="matMenu" class="mymegamenu">
   <!--    <button mat-menu-item>-->
   <!--        <mat-icon>settings</mat-icon> Thiết lập-->

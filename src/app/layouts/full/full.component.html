@@ -66,8 +66,8 @@
 <!--        <button (click)="clickVideoUseBill()" mat-menu-item><mat-icon>video_library</mat-icon>Dùng máy in bill - mã vạch</button>-->
 <!--      </mat-menu>-->
     </div>
-    <div style="width: 200px; margin-right: 10px;">
-      <mat-form-field class="branch-list">
+    <div style="width: 200px;">
+      <mat-form-field class="branch-list" style="margin-bottom: 3px;">
         <mat-select style="font-size: 16px;" tabindex="10" (selectionChange)="changeBranch($event)"
                     [value]="branchLoginId">
           <mat-option *ngFor="let item of branchList" [value]="item.id">
@@ -151,6 +151,12 @@
 
         <router-outlet>
           <app-spinner></app-spinner>
+
+<!--          <div class="customizerBtn">-->
+<!--            <button mat-icon-button>-->
+<!--              <img src="/assets/images/icon/zalo-96.png" width="48px"/>-->
+<!--            </button>-->
+<!--          </div>-->
         </router-outlet>
 
       </div>
