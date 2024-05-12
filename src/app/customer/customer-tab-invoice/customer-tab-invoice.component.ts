@@ -30,10 +30,12 @@ export class CustomerTabInvoiceComponent extends ListComponentBase implements On
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  displayedColumns: string[] = ['invoice_no', 'total_price', 'created_at'];
+  displayedColumns: string[] = ['invoice_no', 'total_price', 'discount_price', 'total_payment', 'created_at'];
   columnsHeader = {
     'invoice_no': 'Mã hóa đơn',
     'total_price': 'Trị giá',
+    'discount_price': 'Giảm giá',
+    'total_payment': 'Đã thanh toán',
     'created_at': 'Thời gian',
   };
 
@@ -44,8 +46,8 @@ export class CustomerTabInvoiceComponent extends ListComponentBase implements On
   data: Invoice[] = [];
 
   ngOnInit(): void {
-      this.apiFilter = this.buildFilterFromParams();
-      this.loadData();
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
   }
 
   buildFilterFromParams(): InvoiceFilter {
@@ -58,7 +60,7 @@ export class CustomerTabInvoiceComponent extends ListComponentBase implements On
     for (const attr of objectKeys) {
       write(filter, attr, this.route.snapshot.queryParams['InvoiceSearch[' + attr + ']']);
     }
-
+    filter.expand = 'payment';
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
@@ -69,9 +71,25 @@ export class CustomerTabInvoiceComponent extends ListComponentBase implements On
   loadData() {
     this.isLoadingResults = true;
     this.invoiceService.getList(this.apiFilter).subscribe(res => {
-      this.data = res.body;
-      this.isLoadingResults = false;
+      const data = res.body;
+      data.forEach(invoice => {
+        let total_payment = 0;
+        let discount_price = 0;
+        invoice.payment.forEach(payment => {
+          total_payment = total_payment + payment.total_price;
+        });
+        invoice.total_payment = total_payment;
+
+        if (invoice.discount_type === 'price') {
+          discount_price = invoice.discount;
+        } else {
+          discount_price = invoice.total_price * invoice.discount / 100;
+        }
+        invoice.discount_price = discount_price;
+      });
+      this.data = data;
       this.reloadFilter(res);
+      this.isLoadingResults = false;
     });
   }
 }

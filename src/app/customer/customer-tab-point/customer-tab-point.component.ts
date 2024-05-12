@@ -30,10 +30,11 @@ export class CustomerTabPointComponent extends ListComponentBase implements OnIn
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  displayedColumns: string[] = ['invoice_no', 'total_price', 'point', 'new_total_point', 'created_at'];
+  displayedColumns: string[] = ['invoice_no', 'total_price', 'type', 'point', 'new_total_point', 'created_at'];
   columnsHeader = {
     'invoice_no': 'Mã hóa đơn',
     'total_price': 'Trị giá',
+    'type': 'Loại',
     'point': 'Điểm GD',
     'new_total_point': 'Điểm sau GD',
     'created_at': 'Thời gian',

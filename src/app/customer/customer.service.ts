@@ -111,8 +111,11 @@ export class CustomerService {
     return this.http.post(url, data);
   }
 
-  autocomplete(term: string) {
-    const url = environment.apiUrl + '/customer/autocomplete?term=' + term;
+  autocomplete(term: string, expand: any) {
+    let url = environment.apiUrl + '/customer/autocomplete?term=' + term;
+    if (expand !== null) {
+      url += '&expand=' + expand;
+    }
     return this.http.get<Customer[]>(url);
   }
 
