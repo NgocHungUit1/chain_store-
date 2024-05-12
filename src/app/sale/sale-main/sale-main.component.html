@@ -355,11 +355,8 @@
                         *ngIf="isSelectedCustomer"
                         mat-icon-button
                         matSuffix
-                        (click)="
-                          this.selectCustomer.patchValue('');
-                          isSelectedCustomer = false;
-                          customer = null;
-                        ">
+                        (click)="removeCustomer()"
+                      >
                         <mat-icon>delete</mat-icon>
                       </button>
                       <button

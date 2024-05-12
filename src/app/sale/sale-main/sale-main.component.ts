@@ -344,6 +344,9 @@ export class SaleMainComponent implements OnInit {
       this.selectCustomer.patchValue(mItemInvoice?.customer?.name);
       this.isSelectedCustomer = true;
       this.customer = mItemInvoice.customer;
+    } else {
+      this.customer = null;
+      this.selectCustomer.patchValue('');
     }
   }
 
@@ -848,6 +851,20 @@ export class SaleMainComponent implements OnInit {
     this.orderService.setListInvoiceLocalStorage(listInvoice);
     this.selectCustomer.patchValue(customer.name);
     this.isSelectedCustomer = true;
+  }
+
+  removeCustomer() {
+    const listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        delete element.customer;
+      }
+    });
+    this.orderService.setListInvoiceLocalStorage(listInvoice);
+    this.selectCustomer.patchValue('');
+    this.isSelectedCustomer = false;
+    this.customer = null;
   }
 
   onSelectedUser(user) {
