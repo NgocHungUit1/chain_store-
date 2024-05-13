@@ -300,7 +300,7 @@ export class SaleSiderbarOrderComponent implements OnInit {
   }
 
   lookupCustomer(value: string): Observable<Customer[]> {
-    return this.customerService.autocomplete(value).pipe(
+    return this.customerService.autocomplete(value, null).pipe(
       // map the item property of the github results as our return object
       map(results => results),
       // catch errors

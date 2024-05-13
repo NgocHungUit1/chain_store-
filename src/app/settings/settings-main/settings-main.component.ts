@@ -48,16 +48,21 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     'print': 'Cài đặt khổ mẫu giấy in',
     'logo': 'Logo cửa hàng',
     'branch-connect': 'Liên thông theo chi nhánh',
+    'score': 'Tích điểm'
   };
 
   isLoadingResults = true;
   isRateLimitReached = false;
   public connectForm: FormGroup;
   public storeForm: FormGroup;
+  public pointSettingsForm: FormGroup;
 
   optionStore_transaction_expenses_order: OptionStore;
   optionStore_transaction_expenses_transaction: OptionStore;
   optionStore_print_type: OptionStore; // print_type
+  point_enabled: OptionStore;
+  point_cash_to_point_rate: OptionStore;
+  point_point_to_cash_rate: OptionStore;
 
   needToSaveLogo = false;
   selectedFiles: ImageSnippet[] = [];
@@ -86,6 +91,12 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     this.storeForm = this.fb.group({
       description: [''],
       can_change_completed: [false],
+    });
+
+    this.pointSettingsForm = this.fb.group({
+      point_enabled: [false],
+      point_cash_to_point_rate: [{value: null}, Validators.compose([Validators.min(1)])],
+      point_point_to_cash_rate: [{value: null}, Validators.compose([Validators.min(1)])]
     });
 
     if (this.canDo('Branch.Get-Connect')) {
@@ -119,6 +130,21 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     this.optionStoreService.getValue('print_type').subscribe(res => {
       this.optionStore_print_type = res;
       this.printType = this.optionStore_print_type.value;
+    });
+    
+    this.optionStoreService.getValue('point_enabled').subscribe(res => {
+      this.point_enabled = res;
+      this.pointSettingsForm.patchValue({ point_enabled: res.value === 'true' });
+    });
+
+    this.optionStoreService.getValue('point_cash_to_point_rate').subscribe(res => {
+      this.point_cash_to_point_rate = res;
+      this.pointSettingsForm.patchValue({ point_cash_to_point_rate: res.value });
+    });
+
+    this.optionStoreService.getValue('point_point_to_cash_rate').subscribe(res => {
+      this.point_point_to_cash_rate = res;
+      this.pointSettingsForm.patchValue({ point_point_to_cash_rate: res.value });
     });
   }
 
@@ -264,4 +290,39 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
       });
   }
 
+  async savePointSettings() {
+    let isError = false;
+    this.pointSettingsForm.markAllAsTouched();
+    if (!this.pointSettingsForm.valid) {
+      return;
+    }
+
+    const data = this.pointSettingsForm.getRawValue();
+    this.point_enabled.value = data.point_enabled.toString();
+    await this.optionStoreService.update(this.point_enabled.id, this.point_enabled).toPromise()
+      .then(res => { },
+        err => {
+          isError = true;
+        });
+
+    this.point_cash_to_point_rate.value = data.point_cash_to_point_rate.toString();
+    await this.optionStoreService.update(this.point_cash_to_point_rate.id, this.point_cash_to_point_rate).toPromise()
+      .then(res => { },
+        err => {
+          isError = true;
+        });
+
+    this.point_point_to_cash_rate.value = data.point_point_to_cash_rate.toString();
+    await this.optionStoreService.update(this.point_point_to_cash_rate.id, this.point_point_to_cash_rate).toPromise()
+      .then(res => { },
+        err => {
+          isError = true;
+        });
+
+    if (isError) {
+      this.notifySer.notify('error', 'Lưu không thành công!');
+    } else {
+      this.notifySer.notify('success', 'Lưu thành công!');
+    }
+  }
 }

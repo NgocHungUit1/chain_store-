@@ -205,6 +205,7 @@ html .page-wrapper .page-content {
   .customer-need,
   .excess-cash,
   .order-discount,
+  .point-discount,
   .note-pay {
     margin-top: 10px;
   }
@@ -402,6 +403,19 @@ html .page-wrapper .page-content {
     .customer-action {
       .mat-form-field-infix {
         border: 0;
+      }
+      .customer-point {
+        color: green;
+        margin: -0.625rem 0 1rem 0;
+      }
+    }
+
+    .point-discount {
+      .point-can-use {
+        color: red;
+      }
+      .mat-slide-toggle {
+        margin-left: 0.5rem;
       }
     }
 

@@ -355,10 +355,8 @@
                         *ngIf="isSelectedCustomer"
                         mat-icon-button
                         matSuffix
-                        (click)="
-                          this.selectCustomer.patchValue('');
-                          isSelectedCustomer = false
-                        ">
+                        (click)="removeCustomer()"
+                      >
                         <mat-icon>delete</mat-icon>
                       </button>
                       <button
@@ -399,9 +397,15 @@
                   <div *ngIf="localItemInvoice?.is_return !== true">
                     <button mat-button matPrefix>
                       <mat-icon (click)="openSaleCustomerFormDialogComponent()">add</mat-icon>
-                    </button>
+                    </button> 
                   </div>
                 </div>-->
+                    <div
+                    *ngIf="isPointEnabled && customer"
+                    class="customer-point"
+                  >
+                    <span>Điểm: </span><span class="green">{{customer.point}}</span>
+                  </div>
                 </div>
               </div>
 
@@ -542,6 +546,39 @@
                       autocomplete="off" />
                   </div>
                 </div>
+              </div>  
+
+              <div
+                class="point-discount"
+                *ngIf="isPointEnabled && customer"
+              >
+                <div
+                  fxLayout="row wrap"
+                  fxLayoutAlign="start center"
+                  class="price-discount">
+                  <div fxFlex="50" class="price-discount-text">
+                    <span>Dùng điểm: </span><span class="point-can-use">-{{pointCanUse}}</span>
+                    <mat-slide-toggle
+                      [checked]="isUsePoint"
+                      (change)="onChangeSlideToggleUsePoint($event)"
+                      >
+                    </mat-slide-toggle>
+                  </div>
+                  <div fxFlex="50" class="price-discount-number">
+                    <mat-form-field
+                      floatLabel="never"
+                      style="text-align: right">
+                      <input
+                        matInput
+                        type="text"
+                        class="price-discount-value"
+                        value="{{ numberPointDiscount | number }}"
+                        [readonly]="true"
+                        autocomplete="off"
+                        style="color: black" />
+                    </mat-form-field>
+                  </div>
+                </div>
               </div>
 
               <div class="customer-need">
@@ -562,7 +599,7 @@
                         matInput
                         type="text"
                         value="{{
-                          sumPrice - numberDiscount + expenseOrder | number
+                          sumPrice - numberDiscount - numberPointDiscount + expenseOrder | number
                         }}"
                         [readonly]="true"
                         autocomplete="off" />

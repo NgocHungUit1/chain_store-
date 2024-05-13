@@ -33,7 +33,7 @@ import { PriceDetailOrderDialogComponent } from '../price-detail-order-dialog/pr
 import { PriceListProductService } from '../../price-book/price-list-product.service';
 import { ItemInvoice } from '../order.model';
 import { Customer } from '../../customer/customer.model';
-import { SaleCustomerFormDialogComponent } from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
+import { SaleCustomerFormDialogComponent }   from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
 import { PaymentSiderbarDialogComponent } from '../payment-siderbar-dialog/payment-siderbar-dialog.component';
 import { DiscountSiderbarDialogComponent } from '../discount-siderbar-dialog/discount-siderbar-dialog.component';
 import { CustomerService } from '../../customer/customer.service';
@@ -104,6 +104,13 @@ export class SaleMainComponent implements OnInit {
     private expensesOrderService: ExpensesOrderService,
     public storeSer: StoreService,
   ) {
+    this.optionStoreService.getValue('point_enabled').subscribe(res => {
+      this.isPointEnabled = res.value === 'true';
+    });
+
+    this.optionStoreService.getValue('point_point_to_cash_rate').subscribe(res => {
+      this.pointToCashRate = parseInt(res.value);
+    });
   }
 
   optionStore_auto_print: OptionStore = null;
@@ -121,6 +128,7 @@ export class SaleMainComponent implements OnInit {
   public filteredProducts: Observable<Product[]>;
   isLoadingResults = true;
   isSelectedCustomer = false;
+  customer: Customer;
 
   showList = false;
 
@@ -161,6 +169,13 @@ export class SaleMainComponent implements OnInit {
   panelOpenState = false;
 
   prescription_id: null; // ban theo don thuoc
+
+  isPointEnabled: boolean = false;  
+  pointToCashRate: number = 0;
+  isUsePoint: boolean = false;
+  pointCanUse: number = 0;
+  numberPointDiscount: number = 0;
+
   @ViewChild('prescription') prescription;
   @ViewChild('customerSearch') customerSearch: ElementRef;
   @ViewChild('customerPayment') customerPayment: ElementRef;
@@ -199,6 +214,8 @@ export class SaleMainComponent implements OnInit {
     await this.handleDetailOrder(mItemInvoice);
 
     await this.handleDiscountSiderBar(mItemInvoice);
+    
+    await this.handlePointDiscountSiderBar(mItemInvoice);
 
     await this.handlePaymentSiderBar(mItemInvoice);
 
@@ -326,6 +343,10 @@ export class SaleMainComponent implements OnInit {
     if (mItemInvoice?.customer?.name !== undefined) {
       this.selectCustomer.patchValue(mItemInvoice?.customer?.name);
       this.isSelectedCustomer = true;
+      this.customer = mItemInvoice.customer;
+    } else {
+      this.customer = null;
+      this.selectCustomer.patchValue('');
     }
   }
 
@@ -832,6 +853,20 @@ export class SaleMainComponent implements OnInit {
     this.isSelectedCustomer = true;
   }
 
+  removeCustomer() {
+    const listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        delete element.customer;
+      }
+    });
+    this.orderService.setListInvoiceLocalStorage(listInvoice);
+    this.selectCustomer.patchValue('');
+    this.isSelectedCustomer = false;
+    this.customer = null;
+  }
+
   onSelectedUser(user) {
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
@@ -857,7 +892,7 @@ export class SaleMainComponent implements OnInit {
 
   lookupCustomer(value: string): Observable<Customer[]> {
     if (value !== null) {
-      return this.customerService.autocomplete(value).pipe(
+      return this.customerService.autocomplete(value, 'point').pipe(
         // map the item property of the github results as our return object
         map(results => results),
         // catch errors
@@ -936,6 +971,18 @@ export class SaleMainComponent implements OnInit {
     } else {
       this.numberDiscount = 0;
     }
+  }
+
+  handlePointDiscountSiderBar(mItemInvoice) {
+    const {pointDiscountSiderBar, customer} = mItemInvoice;
+    this.isUsePoint = pointDiscountSiderBar?.isUsePoint || false;
+    let pointCanUse = Math.floor((this.sumPrice - this.numberDiscount + this.expenseOrder) / this.pointToCashRate);
+    if (customer && pointCanUse > customer.point) {
+      pointCanUse = customer.point;
+    }
+
+    this.pointCanUse = pointCanUse;
+    this.numberPointDiscount = this.isUsePoint ? pointCanUse * this.pointToCashRate : 0;
   }
 
   openPaymentSiderBarDialog() {
@@ -1657,7 +1704,8 @@ export class SaleMainComponent implements OnInit {
       UserID: mItemInvoice.user.id,
       InvoiceDetail: invoiceDetail,
       PaymentMethod: 'cash', // mItemInvoice.paymentSiderBar?.type,
-      PaymentPrice: this.sumPrice - this.numberDiscount + this.expenseOrder, // tien thanh toan
+      PaymentPrice: this.sumPrice - this.numberDiscount - this.numberPointDiscount + this.expenseOrder, // tien thanh toan
+      usedPoint: this.isUsePoint ? this.pointCanUse : 0,
       KhachNo: this.tienKhachNo,
       ExpenseOrders: this.expenseOrders,
       date_created: date_created,
@@ -1848,6 +1896,7 @@ export class SaleMainComponent implements OnInit {
     // await this.form.patchValue({
     //   'userID': [null]
     // });
+    this.customer = null;
     this.sumPrice = 0;
     this.countProduct = 0;
     this.listProduct = [];
@@ -1855,6 +1904,8 @@ export class SaleMainComponent implements OnInit {
     this.prescription_id = null;
     this.discount = 0;
     this.numberDiscount = 0;
+    this.isUsePoint = false;
+    this.numberPointDiscount = 0;
     setTimeout(() => {
       this.listProduct = [];
       this.discount = 0;
@@ -1911,6 +1962,20 @@ export class SaleMainComponent implements OnInit {
     this.autoPrintInSoLo = e.checked;
   }
 
+  onChangeSlideToggleUsePoint(e: any) {
+    this.isUsePoint = e.checked;
+
+    const listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        element.pointDiscountSiderBar = element.pointDiscountSiderBar || {};
+        element.pointDiscountSiderBar.isUsePoint = this.isUsePoint;
+        this.orderService.setListInvoiceLocalStorage(listInvoice);
+      }
+    });
+  }
+
   onChangeProductUnit(e: any, itemProduct, i: number) {
     const units = itemProduct?.product?.productUnits;
     const item = units.find(element => element.id === e.value);
@@ -1943,14 +2008,15 @@ export class SaleMainComponent implements OnInit {
 
   tinhLaiTienThua() {
     this.tienThuaTraKhach =
-      numeral(this.form.controls['customerPay'].value).value() -
-      this.sumPrice +
-      this.numberDiscount;
-    this.tienKhachNo =
-      this.sumPrice -
-      this.numberDiscount -
-      numeral(this.form.controls['customerPay'].value).value() +
-      this.expenseOrder;
+      numeral(this.form.controls['customerPay'].value).value()
+      - this.sumPrice
+      + this.numberDiscount
+      + this.numberPointDiscount;
+    this.tienKhachNo = this.sumPrice
+      - this.numberDiscount
+      - this.numberPointDiscount
+      - numeral(this.form.controls['customerPay'].value).value()
+      + this.expenseOrder;
   }
 
   public checkPermissionSaleDisable() {
