@@ -587,7 +587,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
    */
   handleAddProductToList(product_id) {
 
-    if (this.productDataSource.data.length >= 100) {
+    if (this.productDataSource.data.length >= 200) {
       this.notifySer.notify('warning', 'Đơn nhập tối đa 100 sản phẩm!');
       return;
     }
