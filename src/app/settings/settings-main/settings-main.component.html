@@ -300,7 +300,7 @@
             </mat-card>
 
             <!-- Point -->
-            <mat-card *ngIf="settingsType === 'point'">
+            <mat-card *ngIf="settingsType === 'point'" class="point-setting">
               <mat-card-content>
                 <form [formGroup]="pointSettingsForm" (ngSubmit)="savePointSettings()">
                   <div fxLayout="row wrap" class="line-option">
@@ -314,18 +314,43 @@
                     </div>
                   </div>
                   <div fxLayout="row wrap">
-                    <mat-form-field fxFlex="350px">
-                      <input matInput type="number" min="1" [formControl]="pointSettingsForm.controls['point_cash_to_point_rate']" required
-                        placeholder="Hệ số quy đổi từ VNĐ sang điểm thưởng (? VNĐ = 1 điểm)">
-                    </mat-form-field>
+                    <div fxFlex="300px">Tỉ lệ quy đổi điểm thưởng</div>
+                    <mat-form-field fxFlex="80px">
+                      <input matInput type="number" min="0" [formControl]="pointSettingsForm.controls['point_cash_to_point_rate']" required>
+                    </mat-form-field><span class="unit vnd">VNĐ</span>
+                    <span class="equals">=</span>
+                    <mat-form-field fxFlex="80px">
+                      <input matInput type="number" min="1" value="1" readonly>
+                    </mat-form-field><span class="unit point">Điểm</span>
                   </div>
                   <div fxLayout="row wrap">
-                    <mat-form-field fxFlex="350px">
-                      <input matInput type="number" min="1" [formControl]="pointSettingsForm.controls['point_point_to_cash_rate']" required
-                        placeholder="Hệ số quy đổi từ điểm thưởng sang VNĐ (1 điểm = ? VNĐ)">
-                    </mat-form-field>
+                    <div fxFlex="300px">Cho phép thanh toán bằng điểm thưởng</div>
+                    <mat-form-field fxFlex="80px">
+                      <input matInput type="number" min="1" value="1" readonly>
+                    </mat-form-field><span class="unit point">Điểm</span>
+                    <span class="equals">=</span>
+                    <mat-form-field fxFlex="80px">
+                      <input matInput type="number" min="0" [formControl]="pointSettingsForm.controls['point_point_to_cash_rate']" required>
+                    </mat-form-field><span class="unit vnd">VNĐ</span>
                   </div>
                   <div fxLayout="row wrap">
+                    <div fxFlex="300px">Thanh toán bằng điểm thưởng sau</div>
+                    <mat-form-field fxFlex="80px">
+                      <input matInput type="number" min="0" [formControl]="pointSettingsForm.controls['point_can_pay_by_point_after_invoices']" required>
+                    </mat-form-field>
+                    lần mua.
+                  </div>
+                  <div fxLayout="row wrap">
+                    <mat-checkbox class="example-margin" [formControl]="pointSettingsForm.controls['point_dont_add_point_for_discount_invoice']">
+                      Không tích điểm cho hóa đơn giảm giá.
+                    </mat-checkbox>
+                  </div>
+                  <div fxLayout="row wrap">
+                    <mat-checkbox class="example-margin" [formControl]="pointSettingsForm.controls['point_dont_add_point_for_invoice_paid_by_point']">
+                      Không tích điểm cho hóa đơn thanh toán bằng điểm thưởng.
+                    </mat-checkbox>
+                  </div>
+                  <div fxLayout="row wrap" class="btn-save">
                     <button mat-raised-button color="primary" type="submit" [disabled]="!pointSettingsForm.valid">
                       <mat-icon>save</mat-icon>
                       Lưu

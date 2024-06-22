@@ -18,7 +18,8 @@ export class Customer {
   district: Location;
   ward: Location;
   stt: number; // for view
-  point: number;
+  total_point: number;
+  total_invoice: number;
 }
 
 
