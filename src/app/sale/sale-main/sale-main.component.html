@@ -404,7 +404,7 @@
                     *ngIf="isPointEnabled && customer"
                     class="customer-point"
                   >
-                    <span>Điểm: </span><span class="green">{{customer.point}}</span>
+                    <span>Điểm: </span><span class="green">{{customer.total_point}}</span>
                   </div>
                 </div>
               </div>
@@ -550,7 +550,7 @@
 
               <div
                 class="point-discount"
-                *ngIf="isPointEnabled && customer"
+                *ngIf="isPointEnabled && customer && customer.total_invoice >= canPayByPointAfterInvoices"
               >
                 <div
                   fxLayout="row wrap"

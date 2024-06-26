@@ -111,6 +111,10 @@ export class SaleMainComponent implements OnInit {
     this.optionStoreService.getValue('point_point_to_cash_rate').subscribe(res => {
       this.pointToCashRate = parseInt(res.value);
     });
+
+    this.optionStoreService.getValue('point_can_pay_by_point_after_invoices').subscribe(res => {
+      this.canPayByPointAfterInvoices = parseInt(res.value);
+    });
   }
 
   optionStore_auto_print: OptionStore = null;
@@ -172,6 +176,7 @@ export class SaleMainComponent implements OnInit {
 
   isPointEnabled: boolean = false;  
   pointToCashRate: number = 0;
+  canPayByPointAfterInvoices: number = 0;
   isUsePoint: boolean = false;
   pointCanUse: number = 0;
   numberPointDiscount: number = 0;
@@ -892,7 +897,7 @@ export class SaleMainComponent implements OnInit {
 
   lookupCustomer(value: string): Observable<Customer[]> {
     if (value !== null) {
-      return this.customerService.autocomplete(value, 'point').pipe(
+      return this.customerService.autocomplete(value, 'total_point,total_invoice').pipe(
         // map the item property of the github results as our return object
         map(results => results),
         // catch errors
@@ -976,9 +981,9 @@ export class SaleMainComponent implements OnInit {
   handlePointDiscountSiderBar(mItemInvoice) {
     const {pointDiscountSiderBar, customer} = mItemInvoice;
     this.isUsePoint = pointDiscountSiderBar?.isUsePoint || false;
-    let pointCanUse = Math.floor((this.sumPrice - this.numberDiscount + this.expenseOrder) / this.pointToCashRate);
-    if (customer && pointCanUse > customer.point) {
-      pointCanUse = customer.point;
+    let pointCanUse = Math.floor((this.sumPrice - this.numberDiscount + this.expenseOrder) / this.pointToCashRate) || 0;
+    if (customer && pointCanUse > customer.total_point) {
+      pointCanUse = customer.total_point;
     }
 
     this.pointCanUse = pointCanUse;

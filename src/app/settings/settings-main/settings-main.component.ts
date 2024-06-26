@@ -63,6 +63,9 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
   point_enabled: OptionStore;
   point_cash_to_point_rate: OptionStore;
   point_point_to_cash_rate: OptionStore;
+  point_can_pay_by_point_after_invoices: OptionStore;
+  point_dont_add_point_for_discount_invoice: OptionStore;
+  point_dont_add_point_for_invoice_paid_by_point: OptionStore;
 
   needToSaveLogo = false;
   selectedFiles: ImageSnippet[] = [];
@@ -96,7 +99,10 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     this.pointSettingsForm = this.fb.group({
       point_enabled: [false],
       point_cash_to_point_rate: [{value: null}, Validators.compose([Validators.min(1)])],
-      point_point_to_cash_rate: [{value: null}, Validators.compose([Validators.min(1)])]
+      point_point_to_cash_rate: [{value: null}, Validators.compose([Validators.min(1)])],
+      point_can_pay_by_point_after_invoices: [{value: null}, Validators.compose([Validators.min(0)])],
+      point_dont_add_point_for_discount_invoice: [false],
+      point_dont_add_point_for_invoice_paid_by_point: [false],
     });
 
     if (this.canDo('Branch.Get-Connect')) {
@@ -131,7 +137,7 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
       this.optionStore_print_type = res;
       this.printType = this.optionStore_print_type.value;
     });
-    
+
     this.optionStoreService.getValue('point_enabled').subscribe(res => {
       this.point_enabled = res;
       this.pointSettingsForm.patchValue({ point_enabled: res.value === 'true' });
@@ -145,6 +151,21 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     this.optionStoreService.getValue('point_point_to_cash_rate').subscribe(res => {
       this.point_point_to_cash_rate = res;
       this.pointSettingsForm.patchValue({ point_point_to_cash_rate: res.value });
+    });
+
+    this.optionStoreService.getValue('point_can_pay_by_point_after_invoices').subscribe(res => {
+      this.point_can_pay_by_point_after_invoices = res;
+      this.pointSettingsForm.patchValue({ point_can_pay_by_point_after_invoices: res.value });
+    });
+
+    this.optionStoreService.getValue('point_dont_add_point_for_discount_invoice').subscribe(res => {
+      this.point_dont_add_point_for_discount_invoice = res;
+      this.pointSettingsForm.patchValue({ point_dont_add_point_for_discount_invoice: res.value === 'true' });
+    });
+
+    this.optionStoreService.getValue('point_dont_add_point_for_invoice_paid_by_point').subscribe(res => {
+      this.point_dont_add_point_for_invoice_paid_by_point = res;
+      this.pointSettingsForm.patchValue({ point_dont_add_point_for_invoice_paid_by_point: res.value === 'true' });
     });
   }
 
@@ -314,6 +335,27 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
 
     this.point_point_to_cash_rate.value = data.point_point_to_cash_rate.toString();
     await this.optionStoreService.update(this.point_point_to_cash_rate.id, this.point_point_to_cash_rate).toPromise()
+      .then(res => { },
+        err => {
+          isError = true;
+        });
+
+    this.point_can_pay_by_point_after_invoices.value = data.point_can_pay_by_point_after_invoices.toString();
+    await this.optionStoreService.update(this.point_can_pay_by_point_after_invoices.id, this.point_can_pay_by_point_after_invoices).toPromise()
+      .then(res => { },
+        err => {
+          isError = true;
+        });
+
+    this.point_dont_add_point_for_discount_invoice.value = data.point_dont_add_point_for_discount_invoice.toString();
+    await this.optionStoreService.update(this.point_dont_add_point_for_discount_invoice.id, this.point_dont_add_point_for_discount_invoice).toPromise()
+      .then(res => { },
+        err => {
+          isError = true;
+        });
+
+    this.point_dont_add_point_for_invoice_paid_by_point.value = data.point_dont_add_point_for_invoice_paid_by_point.toString();
+    await this.optionStoreService.update(this.point_dont_add_point_for_invoice_paid_by_point.id, this.point_dont_add_point_for_invoice_paid_by_point).toPromise()
       .then(res => { },
         err => {
           isError = true;
