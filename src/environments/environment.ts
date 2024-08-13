@@ -5,5 +5,5 @@
 
 export const environment = {
   production: false,
-  apiUrl: "http://vm-api.rx20.vn/v1"
+  apiUrl: "https://api.rx20.vn/v1"
 };

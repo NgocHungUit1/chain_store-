@@ -8,7 +8,7 @@
   <!-- ==============================================================
     *ngIf="this.router.url !== '/sale'"
     -->
-  <mat-toolbar color="primary" class="topbar telative">
+  <mat-toolbar color="primary" class="topbar relative">
     <!-- ============================================================== -->
     <!-- Logo - style you can find in header.scss -->
     <!-- ============================================================== -->
@@ -152,11 +152,11 @@
         <router-outlet>
           <app-spinner></app-spinner>
 
-<!--          <div class="customizerBtn">-->
-<!--            <button mat-icon-button>-->
-<!--              <img src="/assets/images/icon/zalo-96.png" width="48px"/>-->
-<!--            </button>-->
-<!--          </div>-->
+          <div style='position: fixed; bottom: 1rem;right: 2rem; z-index: 9999999'>
+            <a mat-raised-button color='primary' style="border-radius: 9999999px" href="https://zalo.me/84932106859" target="_blank">
+              <img src="/assets/images/icon/logo-zalo-smooth.png" width="24px" style='margin-right: 0.5rem' /> <span style='font-size: 1rem; font-weight: bold'>Hỗ trợ 0932 106 859</span>
+            </a>
+          </div>
         </router-outlet>
 
       </div>

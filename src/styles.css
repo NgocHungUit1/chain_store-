@@ -4,3 +4,61 @@
 @import "../node_modules/@syncfusion/ej2-angular-navigations/styles/material.css";
 @import "../node_modules/@syncfusion/ej2-inputs/styles/material.css";
 @import "../node_modules/@syncfusion/ej2-buttons/styles/material.css";
+
+
+/* Custom component */
+.mat-paginator-container {
+  justify-content: flex-start!important;
+  padding: 0 2rem!important;
+}
+
+/* Define container */
+@media (min-width: 1280px) {
+  .container {
+    width: 100%;
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    width: 100%;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .container {
+    width: 1570px !important;
+    max-width: inherit !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    width: 1160px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    width: 1000px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    width: 768px;
+  }
+}
+
+.container {
+  margin-right: auto;
+  margin-left: auto;
+  padding-left: 10px;
+  padding-right: 10px;
+}
