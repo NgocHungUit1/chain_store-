@@ -59,10 +59,9 @@
         Phiếu kiểm kho
       </label>
 
-      <div class="select-product">
-        <mat-form-field>
-          <mat-label>Theo mã phiếu kiểm</mat-label>
-          <input matInput [formControl]="searchInvoiceForm" placeholder="" #input>
+      <div class="customer-filter-container">
+        <mat-form-field appearance="outline" class='search-input'>
+          <input matInput [formControl]="searchInvoiceForm" placeholder="Theo mã phiếu kiếm" #input>
           <button mat-icon-button matPrefix>
             <mat-icon>search</mat-icon>
           </button>

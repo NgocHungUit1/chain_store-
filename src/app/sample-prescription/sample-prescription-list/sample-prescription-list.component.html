@@ -36,10 +36,9 @@
         Đơn thuốc mẫu
       </label>
 
-      <div class="select-product">
-        <mat-form-field>
-          <mat-label>Theo mã, tên đơn thuốc</mat-label>
-          <input matInput [formControl]="searchSampleForm" placeholder="" #input>
+      <div  class="customer-filter-container">
+        <mat-form-field appearance="outline" class='search-input'>
+          <input matInput [formControl]="searchSampleForm" placeholder="Theo mã, tên đơn thuốc" #input>
           <button mat-icon-button matPrefix>
             <mat-icon>search</mat-icon>
           </button>

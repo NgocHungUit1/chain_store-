@@ -15,10 +15,10 @@
       </button>
       <label class="font-18">Danh sách nhà cung cấp</label>
 
-      <div class="select-product">
-        <mat-form-field>
-          <mat-label>Tìm kiếm</mat-label>
-          <input matInput [formControl]="searchForm" placeholder="" #input autocomplete="off">
+
+      <div class="customer-filter-container">
+        <mat-form-field appearance="outline" class='search-input'>
+          <input matInput [formControl]="searchForm" placeholder="Tìm kiếm" #input autocomplete="off">
           <button mat-icon-button matPrefix>
             <mat-icon>search</mat-icon>
           </button>

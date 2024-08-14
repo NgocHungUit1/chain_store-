@@ -57,8 +57,8 @@
       <button mat-icon-button (click)="sidenav.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
-      <div class="select-product">
-        <mat-form-field>
+      <div  class="customer-filter-container">
+        <mat-form-field appearance="outline" class='search-input'>
           <input type="text" [formControl]="selectProduct" matInput [matAutocomplete]="chooseProduct"
             placeholder="Thêm hàng hóa theo mã hoặc tên">
           <button mat-icon-button matPrefix>

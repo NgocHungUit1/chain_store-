@@ -14,10 +14,9 @@
         <mat-icon>menu</mat-icon>
       </button>
       <label class="font-18">Danh sách nhóm hàng</label>
-      <div class="input-filter-common">
-        <mat-form-field>
-          <mat-label>Tìm kiếm</mat-label>
-          <input matInput [formControl]="searchKeyWord" placeholder="" #input autocomplete="off">
+      <div class="customer-filter-container">
+        <mat-form-field appearance="outline" class='search-input'>
+          <input matInput [formControl]="searchKeyWord" placeholder="Theo tên" #input autocomplete="off">
           <button mat-icon-button matPrefix>
             <mat-icon>search</mat-icon>
           </button>

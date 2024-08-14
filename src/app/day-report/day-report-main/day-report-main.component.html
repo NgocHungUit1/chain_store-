@@ -81,10 +81,9 @@
         Báo cáo
       </h3>
 
-      <div class="select-product">
-        <mat-form-field>
-          <mat-label>Theo mã hóa đơn</mat-label>
-          <input matInput [formControl]="searchInvoiceForm" placeholder="" #input>
+      <div class="customer-filter-container">
+        <mat-form-field appearance="outline" class='search-input'>
+          <input matInput [formControl]="searchInvoiceForm" placeholder="Theo mã hóa đơn" #input>
           <button mat-icon-button matPrefix>
             <mat-icon>search</mat-icon>
           </button>

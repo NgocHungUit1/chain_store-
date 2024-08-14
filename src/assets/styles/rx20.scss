@@ -149,3 +149,29 @@ File: scss
   padding-right: 10px !important;
   padding-left: 10px !important;
 }
+
+
+.customer-filter-container {
+  margin-left: 10px;
+  font-size: 1rem;
+  min-width: 215px;
+}
+
+.search-input {
+  width: 315px!important;
+
+  .mat-form-field-infix {
+    border-top: 0;
+    padding: 1.2em 0 1em 0!important;
+  }
+  .mat-form-field-flex {
+    align-items: center;
+  }
+   .mat-form-field-outline {
+    background: white;
+  }
+  .mat-form-field-wrapper {
+    padding-bottom: 5px;
+    padding-top: 5px;
+  }
+}

@@ -153,10 +153,9 @@
       </button>
       <label class="font-18">Báo cáo hàng hóa</label>
 
-      <div class="select-product">
-        <mat-form-field>
-          <mat-label>Tìm kiếm sản phẩm</mat-label>
-          <input matInput [formControl]="searchProductForm" placeholder="" #input>
+      <div class="customer-filter-container">
+        <mat-form-field appearance="outline" class='search-input'>
+          <input matInput [formControl]="searchProductForm" placeholder="Tìm kiếm sản phẩm" #input>
           <button mat-icon-button matPrefix>
             <mat-icon>search</mat-icon>
           </button>
