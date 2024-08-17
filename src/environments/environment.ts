@@ -5,5 +5,5 @@
 
 export const environment = {
   production: false,
-  apiUrl: "http://vm-api.rx20.vn/v1"
+  apiUrl: "http://localhost:31080/v1" // config for docker
 };
