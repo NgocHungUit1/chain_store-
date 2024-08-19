@@ -1,53 +1,60 @@
-<mat-sidenav-container>
+<mat-sidenav-container class='custom-filter-container'>
 
   <mat-sidenav #sidenav class="left-sidebar" mode="side" opened>
     <mat-toolbar class="dv-header">
-      <button mat-icon-button>
-        <mat-icon>filter_list</mat-icon>
-      </button>
-      <label class="font-18">Tìm kiếm</label>
+      <label class='custom-filter-container__title'>Bảng giá</label>
     </mat-toolbar>
-    <mat-card class="price-list-info">
-      <mat-card-title class="title-price-list">Bảng giá</mat-card-title>
-      <mat-card-content>
         <form [formGroup]="priceListForm">
-          <div fxLayout="row wrap">
+          <mat-accordion multi>
+            <mat-expansion-panel [expanded]="true">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Chọn bảng giá
+                </mat-panel-title>
+              </mat-expansion-panel-header>
 
-            <div fxFlex="80">
-              <mat-form-field>
-                <mat-select placeholder="Chọn bảng giá" formControlName="priceLists"
-                  (selectionChange)="choosePriceList($event)">
-                  <!-- <mat-option>--</mat-option> -->
-                  <mat-option *ngFor="let priceList of priceLists" [value]="priceList.id">
-                    {{ priceList.name }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
+              <div fxLayout="row wrap">
+                <div fxFlex="80">
+                  <mat-form-field>
+                    <mat-select placeholder="" formControlName="priceLists"
+                                (selectionChange)="choosePriceList($event)">
+                      <!-- <mat-option>--</mat-option> -->
+                      <mat-option *ngFor="let priceList of priceLists" [value]="priceList.id">
+                        {{ priceList.name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
 
-            <div fxFlex="20">
-              <button mat-button aria-label="add" (click)="createPriceListFormDialog()">
-                <mat-icon>add</mat-icon>
-              </button>
-            </div>
+                <div fxFlex="20">
+                  <button mat-button aria-label="add" (click)="createPriceListFormDialog()">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                </div>
 
-          </div>
+              </div>
+            </mat-expansion-panel>
 
-          <div fxLayout="row wrap">
-            <div fxFlex="100">
-              <mat-form-field>
-                <input type="text" formControlName="textSearchProduct" matInput
-                       placeholder="Tìm hàng hóa theo mã hoặc tên">
-                <button mat-icon-button matPrefix>
-                  <mat-icon>search</mat-icon>
-                </button>
-              </mat-form-field>
-            </div>
-          </div>
-
+            <mat-expansion-panel [expanded]="true">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Tìm hàng hóa theo mã hoặc tên
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <div fxLayout="row wrap">
+                <div fxFlex="100">
+                  <mat-form-field>
+                    <input type="text" formControlName="textSearchProduct" matInput
+                           placeholder="Tìm hàng hóa theo mã hoặc tên">
+                    <button mat-icon-button matPrefix>
+                      <mat-icon>search</mat-icon>
+                    </button>
+                  </mat-form-field>
+                </div>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
         </form>
-      </mat-card-content>
-    </mat-card>
   </mat-sidenav>
 
   <!-- show list, search mat-autocomplete -->

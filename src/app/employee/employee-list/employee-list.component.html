@@ -1,10 +1,7 @@
-<mat-sidenav-container>
+<mat-sidenav-container class='custom-filter-container'>
   <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true">
     <mat-toolbar class="dv-header">
-      <button mat-icon-button>
-        <mat-icon>filter_list</mat-icon>
-      </button>
-      <label class="font-18">Tìm kiếm</label>
+      <label class='custom-filter-container__title'>Danh sách nhân viên</label>
     </mat-toolbar>
 
   </mat-sidenav>
@@ -13,7 +10,6 @@
       <button mat-icon-button (click)="leftside.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
-      <label class="font-18">Danh sách nhân viên</label>
       <span fxFlex="1 1 0%"></span>
       <button mat-raised-button color="primary" (click)="openEmployeesFormDialog()" style="margin-right: 10px">
         <mat-icon>add</mat-icon>

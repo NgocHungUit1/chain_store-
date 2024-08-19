@@ -1,15 +1,19 @@
-<mat-sidenav-container>
+<mat-sidenav-container class='custom-filter-container'>
   <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true">
     <mat-toolbar class="dv-header">
-      <button mat-icon-button>
-        <mat-icon>filter_list</mat-icon>
-      </button>
-      <label class="font-18">Tìm kiếm</label>
+      <label  class='custom-filter-container__title'>
+        Báo cáo</label>
     </mat-toolbar>
 
-    <mat-card class="time-filter-info">
-      <mat-card-title class="title-time-filter">Thời gian</mat-card-title>
-      <mat-card-content>
+
+    <div class='custom-filter-container__div-container'>
+    <mat-accordion multi>
+      <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Thời gian
+          </mat-panel-title>
+        </mat-expansion-panel-header>
 
         <form [formGroup]="timeFilter">
           <mat-radio-group (change)="radioTimeChange($event)" formControlName="typeTime">
@@ -27,13 +31,16 @@
 
           </mat-radio-group>
         </form>
+      </mat-expansion-panel>
 
-      </mat-card-content>
-    </mat-card>
 
-    <mat-card class="time-filter-info">
-      <mat-card-title class="title-time-filter">Trạng thái</mat-card-title>
-      <mat-card-content>
+      <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Trạng thái
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
 
         <form [formGroup]="orderStatusFilter">
           <mat-form-field>
@@ -67,9 +74,10 @@
             </mat-select>
           </mat-form-field>
         </form>
+      </mat-expansion-panel>
+    </mat-accordion>
+    </div>
 
-      </mat-card-content>
-    </mat-card>
 
   </mat-sidenav>
   <mat-sidenav-content>
@@ -77,9 +85,7 @@
       <button mat-icon-button (click)="leftside.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
-      <h3>
-        Báo cáo
-      </h3>
+
 
       <div class="customer-filter-container">
         <mat-form-field appearance="outline" class='search-input'>

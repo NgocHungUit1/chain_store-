@@ -175,3 +175,25 @@ File: scss
     padding-top: 5px;
   }
 }
+
+
+.custom-filter-container {
+  .mat-drawer-inner-container {
+    background: whitesmoke
+  }
+
+  &__title {
+    font-weight: bold;
+  }
+
+  form {
+    padding: 2rem;
+  }
+
+  &__div-container {
+    padding: 2rem;
+    form {
+      padding: 0;
+    }
+  }
+}

@@ -1,13 +1,60 @@
-<mat-sidenav-container>
+<mat-sidenav-container class='custom-filter-container'>
   <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true">
     <mat-toolbar class="dv-header">
-      <button mat-icon-button>
-        <mat-icon>filter_list</mat-icon>
-      </button>
-      <label class="font-18">Tìm kiếm</label>
+      <label class='custom-filter-container__title'>Phiếu kiểm kho</label>
     </mat-toolbar>
 
-    <mat-card class="time-filter-info">
+    <div class='custom-filter-container__div-container'>
+      <mat-accordion multi>
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Thời gian
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <form [formGroup]="timeFilter">
+            <mat-radio-group (change)="radioTimeChange($event)" formControlName="typeTime">
+              <mat-radio-button style="display: inline; " value="default"
+                                (click)="openTimeDefault()">{{ titleTimeDefault }}
+                <button mat-icon-button aria-label="add">
+                  <mat-icon>swap_vert</mat-icon>
+                </button>
+              </mat-radio-button>
+              <mat-radio-button style="display: inline; " value="choose" (click)="openTimeChoose()">{{ titleTimeChoose }}
+                <button mat-icon-button aria-label="add">
+                  <mat-icon>date_range</mat-icon>
+                </button>
+              </mat-radio-button>
+
+            </mat-radio-group>
+          </form>
+        </mat-expansion-panel>
+
+
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Trạng thái
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <form [formGroup]="balanceStatusFilter">
+            <mat-form-field>
+              <mat-label>Cân bằng</mat-label>
+              <mat-select formControlName="status" (selectionChange)="orderStatusFilterChange()" multiple>
+                <mat-option *ngFor="let item of balanceStatusFilterList"
+                            [value]="item.value">{{ item.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </form>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+
+
+    <!--<mat-card class="time-filter-info">
       <mat-card-title class="title-time-filter">Thời gian</mat-card-title>
       <mat-card-content>
 
@@ -29,9 +76,9 @@
         </form>
 
       </mat-card-content>
-    </mat-card>
+    </mat-card>-->
 
-    <mat-card class="time-filter-info">
+    <!--<mat-card class="time-filter-info">
       <mat-card-title class="title-time-filter">Trạng thái</mat-card-title>
       <mat-card-content>
 
@@ -47,7 +94,7 @@
         </form>
 
       </mat-card-content>
-    </mat-card>
+    </mat-card>-->
 
   </mat-sidenav>
   <mat-sidenav-content>
@@ -55,9 +102,6 @@
       <button mat-icon-button (click)="leftside.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
-      <label class="font-18">
-        Phiếu kiểm kho
-      </label>
 
       <div class="customer-filter-container">
         <mat-form-field appearance="outline" class='search-input'>

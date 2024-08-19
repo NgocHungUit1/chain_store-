@@ -1,28 +1,35 @@
-<mat-sidenav-container>
+<mat-sidenav-container class='custom-filter-container'>
   <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true">
     <mat-toolbar class="dv-header">
-      <button mat-icon-button>
-        <mat-icon>filter_list</mat-icon>
-      </button>
-      <label class="font-18">Tìm kiếm</label>
+      <label class='custom-filter-container__title'>Sản phẩm</label>
     </mat-toolbar>
 
     <form [formGroup]="productFilter">
-      <mat-card class="time-filter-info">
-        <mat-card-content>
+      <mat-accordion multi>
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+             Phân loại
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
           <mat-form-field>
-            <mat-label>Phân loại</mat-label>
+            <mat-label><span style='font-size: 1rem; font-weight: bold!important;'>Phân loại</span></mat-label>
             <mat-select formControlName="type" (selectionChange)="typeProductFilterChange()" multiple>
               <mat-option *ngFor="let item of typeProductFilterList"
                           [value]="item.value">{{ item.name }}
               </mat-option>
             </mat-select>
           </mat-form-field>
-        </mat-card-content>
-      </mat-card>
+        </mat-expansion-panel>
 
-      <mat-card class="time-filter-info">
-        <mat-card-content>
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Trạng thái
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
           <mat-form-field>
             <mat-label>Trạng thái</mat-label>
             <mat-select formControlName="status" (selectionChange)="statusProductFilterChange()" multiple>
@@ -31,11 +38,15 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-        </mat-card-content>
-      </mat-card>
+        </mat-expansion-panel>
 
-      <mat-card class="time-filter-info">
-        <mat-card-content>
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Nhóm hàng
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
           <mat-form-field>
             <mat-select placeholder="Nhóm hàng" formControlName="group" (selectionChange)="statusProductFilterChange()">
               <mat-option>-- Tất cả --</mat-option>
@@ -44,12 +55,16 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-        </mat-card-content>
-      </mat-card>
+        </mat-expansion-panel>
 
-      <mat-card class="time-filter-info">
-        <mat-card-content>
-          <mat-form-field>
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Tồn kho
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <mat-form-field >
             <mat-label>Tồn kho</mat-label>
             <mat-select formControlName="stock" (selectionChange)="typeProductFilterChange()" multiple>
               <mat-option *ngFor="let item of stockFilterList"
@@ -57,11 +72,15 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-        </mat-card-content>
-      </mat-card>
+        </mat-expansion-panel>
 
-      <mat-card class="time-filter-info">
-        <mat-card-content>
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Định mức
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
           <mat-form-field>
             <mat-label>Định mức</mat-label>
             <mat-select formControlName="quota_stock" (selectionChange)="typeProductFilterChange()" multiple>
@@ -70,8 +89,10 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-        </mat-card-content>
-      </mat-card>
+        </mat-expansion-panel>
+      </mat-accordion>
+
+      <!--<pre>{{productFilter.value | json}}</pre>-->
     </form>
 
   </mat-sidenav>
@@ -96,8 +117,6 @@
 <!--          Xóa-->
 <!--        </button>-->
 <!--      </div>-->
-
-      <label class="font-18">Sản phẩm</label>
 
       <div class="customer-filter-container">
         <mat-form-field appearance="outline" class='search-input'>

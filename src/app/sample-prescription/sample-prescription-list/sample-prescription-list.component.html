@@ -1,18 +1,19 @@
-<mat-sidenav-container>
-  <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true">
+<mat-sidenav-container class='custom-filter-container'>
+  <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true" style='background: whitesmoke'  >
     <mat-toolbar class="dv-header">
-      <button mat-icon-button>
-        <mat-icon>filter_list</mat-icon>
-      </button>
-      <label class="font-18">Tìm kiếm</label>
+      <label class='custom-filter-container__title'>
+        Đơn thuốc mẫu</label>
     </mat-toolbar>
 
+    <form [formGroup]="orderStatusFilter">
+      <mat-accordion multi >
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Trạng thái
+            </mat-panel-title>
+          </mat-expansion-panel-header>
 
-    <mat-card class="time-filter-info">
-      <mat-card-title class="title-time-filter">Trạng thái</mat-card-title>
-      <mat-card-content>
-
-        <form [formGroup]="orderStatusFilter">
           <mat-form-field>
             <mat-label>Đơn hàng</mat-label>
             <mat-select formControlName="status" (selectionChange)="orderStatusFilterChange()" multiple>
@@ -21,10 +22,9 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-        </form>
-
-      </mat-card-content>
-    </mat-card>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </form>
 
   </mat-sidenav>
   <mat-sidenav-content>
@@ -32,9 +32,6 @@
       <button mat-icon-button (click)="leftside.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
-      <label class="font-18">
-        Đơn thuốc mẫu
-      </label>
 
       <div  class="customer-filter-container">
         <mat-form-field appearance="outline" class='search-input'>
