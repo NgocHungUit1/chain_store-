@@ -61,6 +61,7 @@ import {
 import { DatePipe } from '@angular/common';
 import * as moment from 'moment';
 import { StoreService } from '../../store/store.service';
+import {AuthService} from '../../authentication/auth.service';
 
 export const MY_FORMATS = {
   parse: {
@@ -102,6 +103,7 @@ export class SaleMainComponent implements OnInit {
     private userService: UserService,
     private optionStoreService: OptionStoreService,
     private expensesOrderService: ExpensesOrderService,
+    private authSer: AuthService,
     public storeSer: StoreService,
   ) {
     this.optionStoreService.getValue('point_enabled').subscribe(res => {
@@ -174,7 +176,7 @@ export class SaleMainComponent implements OnInit {
 
   prescription_id: null; // ban theo don thuoc
 
-  isPointEnabled: boolean = false;  
+  isPointEnabled: boolean = false;
   pointToCashRate: number = 0;
   canPayByPointAfterInvoices: number = 0;
   isUsePoint: boolean = false;
@@ -219,7 +221,7 @@ export class SaleMainComponent implements OnInit {
     await this.handleDetailOrder(mItemInvoice);
 
     await this.handleDiscountSiderBar(mItemInvoice);
-    
+
     await this.handlePointDiscountSiderBar(mItemInvoice);
 
     await this.handlePaymentSiderBar(mItemInvoice);
@@ -2119,5 +2121,11 @@ export class SaleMainComponent implements OnInit {
         }
       });
     }
+  }
+
+  canDo(permissionName: string): boolean {
+    const allPermissions = this.authSer.getPermissionsFromLocalStorage();
+
+    return allPermissions.indexOf(permissionName) !== -1;
   }
 }
