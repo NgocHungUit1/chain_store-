@@ -159,7 +159,7 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
     filter.date_to = objDateFilter.date_to;
     filter.order_status = this.orderStatusFilter.controls['status'].value;
     filter.order_national = this.orderNationalFilter.controls['status'].value;
-    filter.users = this.userFilter.controls['user'].value;
+    filter.users = this.userFilter.controls['user'].value?.length ? this.userFilter.controls['user'].value : null ;
     return filter;
   }
 
@@ -182,7 +182,7 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
       ],
     });
     this.userFilter = this.fb.group({
-      user: [ null],
+      user: [[]],
     });
 
     this.userService.getListShort().subscribe( res => {
@@ -374,4 +374,9 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
     });
   }
 
+  checkBoxFilterChange($event: any, value: any, field: string, form: FormGroup) {
+    this.handleFilterCheckbox(form, field, value);
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
+  }
 }

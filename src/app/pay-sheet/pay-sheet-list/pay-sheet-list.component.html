@@ -39,13 +39,14 @@
           </mat-expansion-panel-header>
 
           <form [formGroup]="orderStatusFilter">
-            <mat-form-field>
-              <mat-select formControlName="status" (selectionChange)="orderStatusFilterChange()" multiple>
-                <mat-option *ngFor="let item of statusFilterList"
-                            [value]="item.value">{{ item.name }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+            <div class='custom-filter-container__checkbox-container'>
+              <mat-checkbox *ngFor='let item of statusFilterList'
+                            [checked]="orderStatusFilter.value['status'].includes(item.value)"
+                            (change)='checkBoxFilterChange($event, item.value, "status")'
+              >
+                {{ item.name }}
+              </mat-checkbox>
+            </div>
           </form>
         </mat-expansion-panel>
       </mat-accordion>

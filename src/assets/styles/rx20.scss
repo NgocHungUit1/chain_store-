@@ -196,4 +196,22 @@ File: scss
       padding: 0;
     }
   }
+
+  &__checkbox-container {
+    display: flex;
+    flex-direction: column
+  }
+
+  &__radio-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: visible;
+
+    .mat-radio-label {
+      white-space: normal;
+    }
+  }
 }

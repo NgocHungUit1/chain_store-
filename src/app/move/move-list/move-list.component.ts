@@ -182,4 +182,9 @@ export class MoveListComponent extends ListComponentBase implements OnInit {
     this.loadData();
   }
 
+  checkBoxFilterChange($event: any, value: any, field: string) {
+    this.handleFilterCheckbox(this.orderStatusFilter, field, value);
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
+  }
 }

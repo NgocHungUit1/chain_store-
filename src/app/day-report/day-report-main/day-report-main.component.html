@@ -37,42 +37,69 @@
       <mat-expansion-panel [expanded]="true">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            Trạng thái
+            Trạng thái Đơn hàng
           </mat-panel-title>
         </mat-expansion-panel-header>
 
 
         <form [formGroup]="orderStatusFilter">
           <mat-form-field>
-            <mat-label class="mat-h4">Đơn hàng</mat-label>
+            <mat-label class="mat-h4"></mat-label>
             <mat-select formControlName="status" (selectionChange)="orderStatusFilterChange()" multiple>
               <mat-option *ngFor="let item of orderStatusFilterList"
                           [value]="item.value">{{ item.name }}
               </mat-option>
             </mat-select>
           </mat-form-field>
-        </form>
 
-        <form [formGroup]="orderNationalFilter" style="margin-top: 20px">
-          <mat-form-field>
-            <mat-label class="mat-h4">Liên thông</mat-label>
-            <mat-select formControlName="status" (selectionChange)="orderStatusFilterChange()" multiple>
-              <mat-option *ngFor="let item of orderNationalFilterList"
-                          [value]="item.value">{{ item.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+          <div class='custom-filter-container__checkbox-container'>
+            <mat-checkbox *ngFor='let item of orderStatusFilterList'
+                          [checked]="orderStatusFilter.value['status'].includes(item.value)"
+                          (change)='checkBoxFilterChange($event, item.value, "status", orderStatusFilter)'
+            >
+              {{ item.name }}
+            </mat-checkbox>
+          </div>
         </form>
+      </mat-expansion-panel>
 
-        <form [formGroup]="userFilter" style="margin-top: 20px">
-          <mat-form-field>
-            <mat-label class="mat-h4">Người dùng</mat-label>
-            <mat-select formControlName="user" (selectionChange)="orderStatusFilterChange()" multiple>
-              <mat-option *ngFor="let item of users"
-                          [value]="item.id">{{ item.username }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+      <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Trạng thái Liên thông
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+
+        <form [formGroup]="orderNationalFilter">
+          <div class='custom-filter-container__checkbox-container'>
+            <mat-checkbox *ngFor='let item of orderNationalFilterList'
+                          [checked]="orderNationalFilter.value['status'].includes(item.value)"
+                          (change)='checkBoxFilterChange($event, item.value, "status", orderNationalFilter)'
+            >
+              {{ item.name }}
+            </mat-checkbox>
+          </div>
+        </form>
+      </mat-expansion-panel>
+
+
+      <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Người dùng
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <form [formGroup]="userFilter">
+          <div class='custom-filter-container__checkbox-container'>
+            <mat-checkbox *ngFor='let item of users'
+                          [checked]="userFilter.value['user'].includes(item.id)"
+                          (change)='checkBoxFilterChange($event, item.id, "user", userFilter)'
+            >
+              {{ item.username }}
+            </mat-checkbox>
+          </div>
         </form>
       </mat-expansion-panel>
     </mat-accordion>

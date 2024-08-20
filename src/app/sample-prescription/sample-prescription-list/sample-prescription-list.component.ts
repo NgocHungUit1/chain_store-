@@ -150,6 +150,13 @@ export class SamplePrescriptionListComponent extends ListComponentBase implement
 
   }
 
+
+  checkBoxFilterChange($event: any, value: any, field: string) {
+    this.handleFilterCheckbox(this.orderStatusFilter, field, value);
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
+  }
+
   /**
    * Tim kiem theo trang thai don hang
    */

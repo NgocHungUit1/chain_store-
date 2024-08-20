@@ -221,6 +221,11 @@ export class PaySheetListComponent extends ListComponentBase implements OnInit {
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
   }
+  checkBoxFilterChange($event: any, value: any, field: string) {
+    this.handleFilterCheckbox(this.orderStatusFilter, field, value);
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
+  }
 
   openPaySheetFormDialog() {
     const obj = {};

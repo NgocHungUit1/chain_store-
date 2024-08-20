@@ -377,7 +377,13 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
   /**
    * Tim kiem theo phan loai sản phẩm
    */
-  typeProductFilterChange() {
+  checkBoxFilterChange($event: any, value: any, field: string) {
+    this.handleFilterCheckbox(this.productFilter, field, value);
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
+  }
+  typeProductFilterChange($event: any, value: any) {
+    this.handleFilterCheckbox(this.productFilter, 'type', value);
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
   }
@@ -403,8 +409,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
       stock: [
         ['empty', 'have']
       ],
-      quota_stock: [
-      ],
+      quota_stock: [[]],
     });
 
     const queryString = window.location.search;

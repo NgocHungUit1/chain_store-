@@ -351,7 +351,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     });
   }
 
-  choosePriceList(event: any) {
+  choosePriceList() {
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
   }

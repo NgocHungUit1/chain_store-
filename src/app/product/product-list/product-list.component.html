@@ -1,94 +1,98 @@
 <mat-sidenav-container class='custom-filter-container'>
-  <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true">
-    <mat-toolbar class="dv-header">
+  <mat-sidenav #leftside
+               id='leftside'
+               position='left'
+               class='left-sidebar'
+               mode='side'
+               opened='true'>
+    <mat-toolbar class='dv-header'>
       <label class='custom-filter-container__title'>Sản phẩm</label>
     </mat-toolbar>
 
-    <form [formGroup]="productFilter">
+    <form [formGroup]='productFilter'>
       <mat-accordion multi>
-        <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel [expanded]='true'>
           <mat-expansion-panel-header>
             <mat-panel-title>
-             Phân loại
+              Phân loại
             </mat-panel-title>
           </mat-expansion-panel-header>
 
-          <mat-form-field>
-            <mat-label><span style='font-size: 1rem; font-weight: bold!important;'>Phân loại</span></mat-label>
-            <mat-select formControlName="type" (selectionChange)="typeProductFilterChange()" multiple>
-              <mat-option *ngFor="let item of typeProductFilterList"
-                          [value]="item.value">{{ item.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+          <div class='custom-filter-container__checkbox-container'>
+            <mat-checkbox *ngFor='let item of typeProductFilterList'
+                          [checked]="productFilter.value['type'].includes(item.value)"
+                          (change)='checkBoxFilterChange($event, item.value, "type")'
+            >
+              {{ item.name }}
+            </mat-checkbox>
+          </div>
         </mat-expansion-panel>
 
-        <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel [expanded]='true'>
           <mat-expansion-panel-header>
             <mat-panel-title>
               Trạng thái
             </mat-panel-title>
           </mat-expansion-panel-header>
 
-          <mat-form-field>
-            <mat-label>Trạng thái</mat-label>
-            <mat-select formControlName="status" (selectionChange)="statusProductFilterChange()" multiple>
-              <mat-option *ngFor="let item of statusProductFilterList"
-                          [value]="item.value">{{ item.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+          <div class='custom-filter-container__checkbox-container'>
+            <mat-checkbox *ngFor='let item of statusProductFilterList'
+                          [checked]="productFilter.value['status'].includes(item.value)"
+                          (change)='checkBoxFilterChange($event, item.value, "status")'
+            >
+              {{ item.name }}
+            </mat-checkbox>
+          </div>
         </mat-expansion-panel>
 
-        <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel [expanded]='true'>
           <mat-expansion-panel-header>
             <mat-panel-title>
               Nhóm hàng
             </mat-panel-title>
           </mat-expansion-panel-header>
 
-          <mat-form-field>
-            <mat-select placeholder="Nhóm hàng" formControlName="group" (selectionChange)="statusProductFilterChange()">
-              <mat-option>-- Tất cả --</mat-option>
-              <mat-option *ngFor="let group of groups" [value]="group.id">
-                {{group.name}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+          <mat-radio-group class='custom-filter-container__radio-container' placeholder='Nhóm hàng'
+                           (change)='statusProductFilterChange()'
+                           formControlName='group'>
+            <mat-radio-button *ngFor='let group of groups'
+            [value]='group.id'>
+            {{group.name}}</mat-radio-button>
+          </mat-radio-group>
         </mat-expansion-panel>
 
-        <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel [expanded]='true'>
           <mat-expansion-panel-header>
             <mat-panel-title>
               Tồn kho
             </mat-panel-title>
           </mat-expansion-panel-header>
 
-          <mat-form-field >
-            <mat-label>Tồn kho</mat-label>
-            <mat-select formControlName="stock" (selectionChange)="typeProductFilterChange()" multiple>
-              <mat-option *ngFor="let item of stockFilterList"
-                          [value]="item.value">{{ item.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+          <div class='custom-filter-container__checkbox-container'>
+            <mat-checkbox *ngFor='let item of stockFilterList'
+                          [checked]="productFilter.value['stock'].includes(item.value)"
+                          (change)='checkBoxFilterChange($event, item.value, "stock")'
+            >
+              {{ item.name }}
+            </mat-checkbox>
+          </div>
         </mat-expansion-panel>
 
-        <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel [expanded]='true'>
           <mat-expansion-panel-header>
             <mat-panel-title>
               Định mức
             </mat-panel-title>
           </mat-expansion-panel-header>
 
-          <mat-form-field>
-            <mat-label>Định mức</mat-label>
-            <mat-select formControlName="quota_stock" (selectionChange)="typeProductFilterChange()" multiple>
-              <mat-option *ngFor="let item of quotaStockFilterList"
-                          [value]="item.value">{{ item.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+          <div class='custom-filter-container__checkbox-container'>
+            <mat-checkbox *ngFor='let item of quotaStockFilterList'
+                          [checked]="productFilter.value['quota_stock'] && productFilter.value['quota_stock'].includes(item.value)"
+                          (change)='checkBoxFilterChange($event, item.value, "quota_stock")'
+            >
+              {{ item.name }}
+            </mat-checkbox>
+          </div>
         </mat-expansion-panel>
       </mat-accordion>
 
@@ -97,143 +101,199 @@
 
   </mat-sidenav>
   <mat-sidenav-content>
-    <mat-toolbar class="dv-header">
-      <button mat-icon-button (click)="leftside.toggle()">
+    <mat-toolbar class='dv-header'>
+      <button mat-icon-button
+              (click)='leftside.toggle()'>
         <mat-icon>menu</mat-icon>
       </button>
 
-<!--      <div class="header-filter group-button" *ngIf="toggleMore" >-->
-<!--        <button mat-raised-button color="warn" (click)="lockSelect()" class="m-r-5 padding-x-10">-->
-<!--          <mat-icon>lock</mat-icon>-->
-<!--          Tạm ngừng-->
-<!--        </button>-->
-<!--        <button mat-raised-button color="accent" (click)="activateSelect()" class="m-r-5 padding-x-10">-->
-<!--          <mat-icon>lock_open</mat-icon>-->
-<!--          Kích hoạt-->
-<!--        </button>-->
+      <!--      <div class="header-filter group-button" *ngIf="toggleMore" >-->
+      <!--        <button mat-raised-button color="warn" (click)="lockSelect()" class="m-r-5 padding-x-10">-->
+      <!--          <mat-icon>lock</mat-icon>-->
+      <!--          Tạm ngừng-->
+      <!--        </button>-->
+      <!--        <button mat-raised-button color="accent" (click)="activateSelect()" class="m-r-5 padding-x-10">-->
+      <!--          <mat-icon>lock_open</mat-icon>-->
+      <!--          Kích hoạt-->
+      <!--        </button>-->
 
-<!--        <button mat-raised-button color="warn" (click)="deleteSelect()" class="m-r-5 padding-x-10">-->
-<!--          <mat-icon>delete</mat-icon>-->
-<!--          Xóa-->
-<!--        </button>-->
-<!--      </div>-->
+      <!--        <button mat-raised-button color="warn" (click)="deleteSelect()" class="m-r-5 padding-x-10">-->
+      <!--          <mat-icon>delete</mat-icon>-->
+      <!--          Xóa-->
+      <!--        </button>-->
+      <!--      </div>-->
 
-      <div class="customer-filter-container">
-        <mat-form-field appearance="outline" class='search-input'>
-          <input matInput [formControl]="searchProductForm" placeholder="Theo tên, mã hàng..." #input autocomplete="off">
-          <button mat-icon-button matPrefix>
+      <div class='customer-filter-container'>
+        <mat-form-field appearance='outline'
+                        class='search-input'>
+          <input matInput
+                 [formControl]='searchProductForm'
+                 placeholder='Theo tên, mã hàng...'
+                 #input
+                 autocomplete='off'>
+          <button mat-icon-button
+                  matPrefix>
             <mat-icon>search</mat-icon>
           </button>
         </mat-form-field>
       </div>
 
-      <span fxFlex="1 1 0%"></span>
-      <button mat-raised-button  class="m-r-5 padding-x-10" *ngIf="toggleMore" [matMenuTriggerFor]="menuActions" [disabled]="this.selection.selected.length === 0">
-        Xử lý <mat-icon>more_vert</mat-icon>
+      <span fxFlex='1 1 0%'></span>
+      <button mat-raised-button
+              class='m-r-5 padding-x-10'
+              *ngIf='toggleMore'
+              [matMenuTriggerFor]='menuActions'
+              [disabled]='this.selection.selected.length === 0'>
+        Xử lý
+        <mat-icon>more_vert</mat-icon>
       </button>
-      <mat-menu #menuActions="matMenu">
+      <mat-menu #menuActions='matMenu'>
         <button mat-menu-item
-                (click)="openPrintMultipleProduct()">
+                (click)='openPrintMultipleProduct()'>
           <mat-icon>print</mat-icon>
           In tem mã
         </button>
 
-        <button  mat-menu-item (click)="lockSelect()" [disabled]="!canDo('Product.Lock')">
+        <button mat-menu-item
+                (click)='lockSelect()'
+                [disabled]="!canDo('Product.Lock')">
           <mat-icon>lock</mat-icon>
           Tạm ngừng
         </button>
-        <button mat-menu-item (click)="activateSelect()"  [disabled]="!canDo('Product.Activate')">
+        <button mat-menu-item
+                (click)='activateSelect()'
+                [disabled]="!canDo('Product.Activate')">
           <mat-icon>lock_open</mat-icon>
           Kích hoạt
         </button>
 
-        <button mat-menu-item (click)="deleteSelect()"  [disabled]="!canDo('Product.Delete')">
+        <button mat-menu-item
+                (click)='deleteSelect()'
+                [disabled]="!canDo('Product.Delete')">
           <mat-icon>delete</mat-icon>
           Xóa
         </button>
       </mat-menu>
 
-      <button mat-raised-button color="accent" (click)="openUploadDialog();" class="m-r-5 padding-x-10"  [disabled]="!canDo('Product.Upload')">
+      <button mat-raised-button
+              color='accent'
+              (click)='openUploadDialog();'
+              class='m-r-5 padding-x-10'
+              [disabled]="!canDo('Product.Upload')">
         <mat-icon>cloud_upload</mat-icon>
         Tải lên
       </button>
-      <button mat-raised-button color="warn" (click)="exportExcel()" style="margin-right: 10px">
+      <button mat-raised-button
+              color='warn'
+              (click)='exportExcel()'
+              style='margin-right: 10px'>
         <mat-icon>cloud_download</mat-icon>
         Xuất Excel
       </button>
-      <button mat-raised-button color="primary" [matMenuTriggerFor]="createMenu" class="m-r-5 padding-x-10"  [disabled]="!canDo('Product.Create')">
+      <button mat-raised-button
+              color='primary'
+              [matMenuTriggerFor]='createMenu'
+              class='m-r-5 padding-x-10'
+              [disabled]="!canDo('Product.Create')">
         <mat-icon>add</mat-icon>
         Thêm mới
       </button>
-      <mat-menu #createMenu="matMenu">
-        <button mat-menu-item (click)="openProductMedicineDialog('Add', {});"  [disabled]="!canDo('Product.Create')">
+      <mat-menu #createMenu='matMenu'>
+        <button mat-menu-item
+                (click)="openProductMedicineDialog('Add', {});"
+                [disabled]="!canDo('Product.Create')">
           <mat-icon>add</mat-icon>
           <span>Thêm thuốc</span>
         </button>
-        <button mat-menu-item (click)="openProductMerchandiseFormDialog('Add',{})"  [disabled]="!canDo('Product.Create')">
+        <button mat-menu-item
+                (click)="openProductMerchandiseFormDialog('Add',{})"
+                [disabled]="!canDo('Product.Create')">
           <mat-icon>add</mat-icon>
           <span>Thêm hàng hóa</span>
         </button>
       </mat-menu>
-      <mat-menu #createMenu="matMenu">
-        <button mat-menu-item (click)="openProductMedicineDialog('Add', {});">
+      <mat-menu #createMenu='matMenu'>
+        <button mat-menu-item
+                (click)="openProductMedicineDialog('Add', {});">
           <mat-icon>add</mat-icon>
           <span>Tải thuốc</span>
         </button>
-        <button mat-menu-item (click)="openProductMerchandiseFormDialog('Add',{})"  [disabled]="!canDo('Product.Create')">
+        <button mat-menu-item
+                (click)="openProductMerchandiseFormDialog('Add',{})"
+                [disabled]="!canDo('Product.Create')">
           <mat-icon>add</mat-icon>
           <span>Thêm hàng hóa</span>
         </button>
       </mat-menu>
-      <div class="diva-column-select">
-        <button mat-raised-button class="m-r-5 padding-x-10" color="primary" (click)="selectColumn.toggle();">
+      <div class='diva-column-select'>
+        <button mat-raised-button
+                class='m-r-5 padding-x-10'
+                color='primary'
+                (click)='selectColumn.toggle();'>
           <mat-icon>menu</mat-icon>
         </button>
-        <mat-select [(ngModel)]="displayedColumns" #selectColumn [multiple]="true"
-                    style="width: 100%; display: inline-flex; margin-left: -20px; color: white" placeholder="Chọn cột">
+        <mat-select [(ngModel)]='displayedColumns'
+                    #selectColumn
+                    [multiple]='true'
+                    style='width: 100%; display: inline-flex; margin-left: -20px; color: white'
+                    placeholder='Chọn cột'>
           <!--<mat-select-trigger></mat-select-trigger>-->
-          <mat-option *ngFor="let column of columnsToDisplay" [value]="column">{{columnsHeader[column]}}</mat-option>
+          <mat-option *ngFor='let column of columnsToDisplay'
+                      [value]='column'>{{columnsHeader[column]}}</mat-option>
         </mat-select>
       </div>
-      <button class="m-r-5 padding-x-10" mat-raised-button color="primary" (click)="loadData()">
+      <button class='m-r-5 padding-x-10'
+              mat-raised-button
+              color='primary'
+              (click)='loadData()'>
         <mat-icon>refresh</mat-icon>
         Làm mới
       </button>
     </mat-toolbar>
 
-    <div fxLayout="row wrap">
-      <div fxFlex="100">
-        <div class="table-container">
-          <div class="table-loading-shade" *ngIf="isLoadingResults || isRateLimitReached">
-            <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
-            <div class="table-rate-limit-reached" *ngIf="isRateLimitReached">
+    <div fxLayout='row wrap'>
+      <div fxFlex='100'>
+        <div class='table-container'>
+          <div class='table-loading-shade'
+               *ngIf='isLoadingResults || isRateLimitReached'>
+            <mat-spinner *ngIf='isLoadingResults'></mat-spinner>
+            <div class='table-rate-limit-reached'
+                 *ngIf='isRateLimitReached'>
               GitHub's API rate limit has been reached. It will be reset in one minute.
             </div>
           </div>
-          <div class=" table-responsive">
-            <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="mat-elevation-z8">
+          <div class=' table-responsive'>
+            <table mat-table
+                   multiTemplateDataRows
+                   [dataSource]='dataSource'
+                   class='mat-elevation-z8'>
 
               <!-- Checkbox Column -->
-              <ng-container matColumnDef="select">
-                <th mat-header-cell *matHeaderCellDef>
-                  <mat-checkbox (change)="$event ? toggleAllRows() : null"
-                                [checked]="selection.hasValue() && isAllSelected()"
-                                [indeterminate]="selection.hasValue() && !isAllSelected()"
-                                [aria-label]="checkboxLabel()">
+              <ng-container matColumnDef='select'>
+                <th mat-header-cell
+                    *matHeaderCellDef>
+                  <mat-checkbox (change)='$event ? toggleAllRows() : null'
+                                [checked]='selection.hasValue() && isAllSelected()'
+                                [indeterminate]='selection.hasValue() && !isAllSelected()'
+                                [aria-label]='checkboxLabel()'>
                   </mat-checkbox>
                 </th>
-                <td mat-cell *matCellDef="let row">
-                  <mat-checkbox (click)="$event.stopPropagation()"
-                                (change)="$event ? selection.toggle(row) : null"
-                                [checked]="selection.isSelected(row)"
-                                [aria-label]="checkboxLabel(row)">
+                <td mat-cell
+                    *matCellDef='let row'>
+                  <mat-checkbox (click)='$event.stopPropagation()'
+                                (change)='$event ? selection.toggle(row) : null'
+                                [checked]='selection.isSelected(row)'
+                                [aria-label]='checkboxLabel(row)'>
                   </mat-checkbox>
                 </td>
               </ng-container>
 
-              <ng-container matColumnDef="#">
-                <th mat-header-cell *matHeaderCellDef> #</th>
-                <td mat-cell *matCellDef="let element; let i = index;"> {{ (page - 1) * pageSize + element.stt }} </td>
+              <ng-container matColumnDef='#'>
+                <th mat-header-cell
+                    *matHeaderCellDef> #
+                </th>
+                <td mat-cell
+                    *matCellDef='let element; let i = index;'> {{ (page - 1) * pageSize + element.stt }} </td>
               </ng-container>
 
               <!--              <ng-container matColumnDef="product_type">-->
@@ -241,102 +301,137 @@
               <!--                <td mat-cell *matCellDef="let element"> </td>-->
               <!--              </ng-container>-->
 
-              <ng-container matColumnDef="product_no">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_no']}}</th>
-                <td mat-cell *matCellDef="let element">
+              <ng-container matColumnDef='product_no'>
+                <th mat-header-cell
+                    *matHeaderCellDef> {{columnsHeader['product_no']}}</th>
+                <td mat-cell
+                    *matCellDef='let element'>
                   {{element.product_no}}
                   <!--                  {{ productTypeLable[element.product_type] }}-->
                 </td>
               </ng-container>
 
-              <ng-container matColumnDef="product_name">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_name']}}</th>
-                <td mat-cell style="word-wrap: break-word; max-width: 180px;" *matCellDef="let element">
-                  <span matTooltip="{{ element.product_name }}">
+              <ng-container matColumnDef='product_name'>
+                <th mat-header-cell
+                    *matHeaderCellDef> {{columnsHeader['product_name']}}</th>
+                <td mat-cell
+                    style='word-wrap: break-word; max-width: 180px;'
+                    *matCellDef='let element'>
+                  <span matTooltip='{{ element.product_name }}'>
                     {{ element.product_name }}
                   </span>
                 </td>
               </ng-container>
 
-              <ng-container matColumnDef="base_unit">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['base_unit']}}</th>
-                <td mat-cell *matCellDef="let element"> {{ element.base_unit }}</td>
+              <ng-container matColumnDef='base_unit'>
+                <th mat-header-cell
+                    *matHeaderCellDef> {{columnsHeader['base_unit']}}</th>
+                <td mat-cell
+                    *matCellDef='let element'> {{ element.base_unit }}</td>
               </ng-container>
 
-              <ng-container matColumnDef="original_price">
-                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['original_price']}}</th>
-                <td mat-cell class="column-number" *matCellDef="let element"> {{ element.original_price | number }}</td>
+              <ng-container matColumnDef='original_price'>
+                <th mat-header-cell
+                    class='column-number'
+                    *matHeaderCellDef> {{columnsHeader['original_price']}}</th>
+                <td mat-cell
+                    class='column-number'
+                    *matCellDef='let element'> {{ element.original_price | number }}</td>
               </ng-container>
 
-              <ng-container matColumnDef="sell_price">
-                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['sell_price']}}</th>
-                <td mat-cell class="column-number" *matCellDef="let element"> {{ element.sell_price | number }}</td>
+              <ng-container matColumnDef='sell_price'>
+                <th mat-header-cell
+                    class='column-number'
+                    *matHeaderCellDef> {{columnsHeader['sell_price']}}</th>
+                <td mat-cell
+                    class='column-number'
+                    *matCellDef='let element'> {{ element.sell_price | number }}</td>
               </ng-container>
 
-              <ng-container matColumnDef="quantity">
-                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['quantity']}}</th>
-                <td mat-cell class="column-number" *matCellDef="let element">
-                  <span *ngIf="element.quantity !== null && element.quantity.number > 0;else quantityNull" class="label" [class.label-success]="element.quantity.number >= element.min_quantity" [class.label-warning]="element.quantity.number < element.min_quantity">
+              <ng-container matColumnDef='quantity'>
+                <th mat-header-cell
+                    class='column-number'
+                    *matHeaderCellDef> {{columnsHeader['quantity']}}</th>
+                <td mat-cell
+                    class='column-number'
+                    *matCellDef='let element'>
+                  <span *ngIf='element.quantity !== null && element.quantity.number > 0;else quantityNull'
+                        class='label'
+                        [class.label-success]='element.quantity.number >= element.min_quantity'
+                        [class.label-warning]='element.quantity.number < element.min_quantity'>
                     {{ element.quantity.number | number }}
                   </span>
                   <ng-template #quantityNull>
-                    <span class="label label-danger">0</span>
+                    <span class='label label-danger'>0</span>
                   </ng-template>
                 </td>
               </ng-container>
 
-              <ng-container matColumnDef="status">
-                <th mat-header-cell class="column-number" *matHeaderCellDef> {{columnsHeader['status']}}</th>
-                <td mat-cell class="column-number" *matCellDef="let element">
-                  <label *ngIf="element.status == '9'; else elementStatus10" class="label label-warning">
+              <ng-container matColumnDef='status'>
+                <th mat-header-cell
+                    class='column-number'
+                    *matHeaderCellDef> {{columnsHeader['status']}}</th>
+                <td mat-cell
+                    class='column-number'
+                    *matCellDef='let element'>
+                  <label *ngIf="element.status == '9'; else elementStatus10"
+                         class='label label-warning'>
                     Ngưng kinh doanh
                   </label>
                   <ng-template #elementStatus10>
-                    <label class="label label-success">Kinh doanh</label>
+                    <label class='label label-success'>Kinh doanh</label>
                   </ng-template>
                 </td>
               </ng-container>
 
-              <ng-container matColumnDef="expandedDetail">
-                <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
-                  <div class="example-element-detail"
+              <ng-container matColumnDef='expandedDetail'>
+                <td mat-cell
+                    *matCellDef='let element'
+                    [attr.colspan]='columnsToDisplay.length'>
+                  <div class='example-element-detail'
                        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-                    <mat-tab-group style="width: 100%;">
-                      <mat-tab label="Thông tin">
+                    <mat-tab-group style='width: 100%;'>
+                      <mat-tab label='Thông tin'>
                         <ng-template matTabContent>
                           <app-product-tab-info
-                            [product_id]="element.id"
-                            [expandedElement]="element == expandedElement ? true : false"
-                            (reload)="loadData();"></app-product-tab-info>
+                            [product_id]='element.id'
+                            [expandedElement]='element == expandedElement ? true : false'
+                            (reload)='loadData();'></app-product-tab-info>
                         </ng-template>
                       </mat-tab>
-                      <mat-tab label="Thẻ kho">
+                      <mat-tab label='Thẻ kho'>
                         <ng-template matTabContent>
                           <app-product-tab-stock-change
-                            [product_id]="element.id"
-                            [expandedElement]="element == expandedElement ? true : false"
-                            (reload)="loadData();"></app-product-tab-stock-change>
+                            [product_id]='element.id'
+                            [expandedElement]='element == expandedElement ? true : false'
+                            (reload)='loadData();'></app-product-tab-stock-change>
                         </ng-template>
                       </mat-tab>
-                      <mat-tab label="Tồn kho">
+                      <mat-tab label='Tồn kho'>
                         <ng-template matTabContent>
                           <app-product-tab-stock
-                            [expandedElement]="element == expandedElement ? true : false"
-                            [product_id]="element.id"
-                            (reload)="loadData();"></app-product-tab-stock>
+                            [expandedElement]='element == expandedElement ? true : false'
+                            [product_id]='element.id'
+                            (reload)='loadData();'></app-product-tab-stock>
                         </ng-template>
                       </mat-tab>
-                      <mat-tab label="Tồn kho theo Lô">
+                      <mat-tab label='Tồn kho theo Lô'>
                         <ng-template matTabContent>
                           <app-product-tab-stock-parcel
-                            [expandedElement]="element == expandedElement ? true : false"
-                            [product_id]="element.id"
-                            (reload)="loadData();"></app-product-tab-stock-parcel>
+                            [expandedElement]='element == expandedElement ? true : false'
+                            [product_id]='element.id'
+                            (reload)='loadData();'></app-product-tab-stock-parcel>
                         </ng-template>
                       </mat-tab>
-                      <mat-tab label="Lịch sử cập nhật" *ngIf="canDo('Product.Change-Log')">
+                      <mat-tab label='Lịch sử cập nhật'
+                               *ngIf="canDo('Product.Change-Log')">
                         <ng-template matTabContent>
-                          <app-model-change-log #changeLogTab [showSearchBar]="false" [model_id]="element.id" [model_name]="'product'" [attrLabels]="this.columnsHeader" [displayColumns]="['#', 'action_name', 'created_at', 'created_by', 'change_detail']"></app-model-change-log>
+                          <app-model-change-log #changeLogTab
+                                                [showSearchBar]='false'
+                                                [model_id]='element.id'
+                                                [model_name]="'product'"
+                                                [attrLabels]='this.columnsHeader'
+                                                [displayColumns]="['#', 'action_name', 'created_at', 'created_by', 'change_detail']"></app-model-change-log>
                         </ng-template>
                       </mat-tab>
                     </mat-tab-group>
@@ -344,16 +439,26 @@
                 </td>
               </ng-container>
 
-              <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-              <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" class="example-element-row"
-                  [class.example-expanded-row]="expandedElement === element"
-                  (click)="expandedElement = expandedElement === element ? null : element">
+              <tr mat-header-row
+                  *matHeaderRowDef='columnsToDisplay'></tr>
+              <tr mat-row
+                  *matRowDef='let element; columns: columnsToDisplay;'
+                  class='example-element-row'
+                  [class.example-expanded-row]='expandedElement === element'
+                  (click)='expandedElement = expandedElement === element ? null : element'>
               </tr>
-              <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+              <tr mat-row
+                  *matRowDef="let row; columns: ['expandedDetail']"
+                  class='example-detail-row'></tr>
             </table>
           </div>
-          <mat-paginator #paginator [length]="pageTotalCount" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
-                         (page)="onMatPageChange($event)" [pageIndex]="page - 1" showFirstLastButtons></mat-paginator>
+          <mat-paginator #paginator
+                         [length]='pageTotalCount'
+                         [pageSize]='pageSize'
+                         [pageSizeOptions]='pageSizeOptions'
+                         (page)='onMatPageChange($event)'
+                         [pageIndex]='page - 1'
+                         showFirstLastButtons></mat-paginator>
         </div>
       </div>
     </div>

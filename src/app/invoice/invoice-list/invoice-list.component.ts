@@ -365,6 +365,11 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     this.loadData();
   }
 
+  checkBoxFilterChange($event: any, value: any, field: string, form: FormGroup) {
+    this.handleFilterCheckbox(form, field, value);
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
+  }
   initDateFilter() {
     const today = new Date();
     const year = today.getFullYear();

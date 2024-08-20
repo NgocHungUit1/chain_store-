@@ -635,4 +635,10 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
 
     return allPermissions.indexOf(permissionName) !== -1;
   }
+
+  checkBoxFilterChange($event: any, value: any, field: string, form: FormGroup) {
+    this.handleFilterCheckbox(form, field, value);
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
+  }
 }

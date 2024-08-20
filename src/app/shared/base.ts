@@ -1,6 +1,7 @@
 import { HostBinding, Directive } from '@angular/core';
 import * as moment from 'moment';
 import {AuthService} from '../authentication/auth.service';
+import { FormGroup } from '@angular/forms';
 
 
 export class ApiFilterBase {
@@ -174,5 +175,16 @@ export class ListComponentBase {
       this.apiFilter.sort = '';
     }
     this.loadData();
+  }
+
+  handleFilterCheckbox(form: FormGroup, field: any, value: any) {
+    const data: any = {};
+    if (form.value[field].includes(value)) {
+      data[field] = form.value[field].filter(item => item !== value);
+    } else {
+      data[field] =  [...form.value[field], value];
+    }
+
+    form.patchValue(data);
   }
 }
