@@ -41,6 +41,7 @@
       <form [formGroup]="orderFilter">
         <div class='custom-filter-container__checkbox-container'>
           <mat-checkbox *ngFor='let item of statusFilterList'
+                        color='primary'
                         [checked]="orderFilter.value['status'].includes(item.value)"
                         (change)='checkBoxFilterChange($event, item.value, "status", orderFilter)'
           >
@@ -60,6 +61,7 @@
       <form [formGroup]="orderNationalFilter">
         <div class='custom-filter-container__checkbox-container'>
           <mat-checkbox *ngFor='let item of orderNationalFilterList'
+                        color='primary'
                         [checked]="orderNationalFilter.value['status'].includes(item.value)"
                         (change)='checkBoxFilterChange($event, item.value, "status", orderNationalFilter)'
           >
@@ -326,6 +328,7 @@
               <ng-container matColumnDef="select">
                 <th mat-header-cell *matHeaderCellDef>
                   <mat-checkbox (change)="$event ? toggleAllRows() : null"
+                                color='primary'
                                 [checked]="selection.hasValue() && isAllSelected()"
                                 [indeterminate]="selection.hasValue() && !isAllSelected()"
                                 [aria-label]="checkboxLabel()">
@@ -333,6 +336,7 @@
                 </th>
                 <td mat-cell *matCellDef="let row">
                   <mat-checkbox (click)="$event.stopPropagation()"
+                                color='primary'
                                 (change)="$event ? selection.toggle(row) : null"
                                 [checked]="selection.isSelected(row)"
                                 [aria-label]="checkboxLabel(row)">

@@ -24,6 +24,7 @@
           </mat-form-field>-->
           <div class='custom-filter-container__checkbox-container'>
             <mat-checkbox *ngFor='let item of statusFilterList'
+                          color='primary'
                           [checked]="orderStatusFilter.value['status'].includes(item.value)"
                           (change)='checkBoxFilterChange($event, item.value, "status")'
             >

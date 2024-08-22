@@ -15,7 +15,8 @@
           </mat-expansion-panel-header>
 
           <form [formGroup]="timeFilter">
-            <mat-radio-group (change)="radioTimeChange($event)" formControlName="typeTime">
+            <mat-radio-group (change)="radioTimeChange($event)"
+                             color='primary' formControlName="typeTime">
               <mat-radio-button style="display: inline; " value="default"
                                 (click)="openTimeDefault()">{{ titleTimeDefault }}
                 <button mat-icon-button aria-label="add">

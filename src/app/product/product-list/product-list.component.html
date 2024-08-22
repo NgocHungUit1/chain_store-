@@ -20,6 +20,7 @@
 
           <div class='custom-filter-container__checkbox-container'>
             <mat-checkbox *ngFor='let item of typeProductFilterList'
+                          color='primary'
                           [checked]="productFilter.value['type'].includes(item.value)"
                           (change)='checkBoxFilterChange($event, item.value, "type")'
             >
@@ -37,6 +38,7 @@
 
           <div class='custom-filter-container__checkbox-container'>
             <mat-checkbox *ngFor='let item of statusProductFilterList'
+                          color='primary'
                           [checked]="productFilter.value['status'].includes(item.value)"
                           (change)='checkBoxFilterChange($event, item.value, "status")'
             >
@@ -53,6 +55,7 @@
           </mat-expansion-panel-header>
 
           <mat-radio-group class='custom-filter-container__radio-container' placeholder='Nhóm hàng'
+                           color='primary'
                            (change)='statusProductFilterChange()'
                            formControlName='group'>
             <mat-radio-button *ngFor='let group of groups'
@@ -70,6 +73,7 @@
 
           <div class='custom-filter-container__checkbox-container'>
             <mat-checkbox *ngFor='let item of stockFilterList'
+                          color='primary'
                           [checked]="productFilter.value['stock'].includes(item.value)"
                           (change)='checkBoxFilterChange($event, item.value, "stock")'
             >
@@ -87,6 +91,7 @@
 
           <div class='custom-filter-container__checkbox-container'>
             <mat-checkbox *ngFor='let item of quotaStockFilterList'
+                          color='primary'
                           [checked]="productFilter.value['quota_stock'] && productFilter.value['quota_stock'].includes(item.value)"
                           (change)='checkBoxFilterChange($event, item.value, "quota_stock")'
             >
@@ -281,6 +286,7 @@
                 <td mat-cell
                     *matCellDef='let row'>
                   <mat-checkbox (click)='$event.stopPropagation()'
+                                color='primary'
                                 (change)='$event ? selection.toggle(row) : null'
                                 [checked]='selection.isSelected(row)'
                                 [aria-label]='checkboxLabel(row)'>

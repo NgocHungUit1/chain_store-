@@ -10,6 +10,7 @@
     <mat-card class="time-filter-info">
       <mat-card-content>
         <mat-radio-group [(ngModel)]="settingsType"
+                         color='primary'
                          class="type-radio-group" (change)="changeSettingType()">
           <mat-radio-button class="radio-button-report-type" value="transaction" *ngIf="canDo('Option-Store.Update') || canDo('Option-Store.Create')">
             Giao dịch

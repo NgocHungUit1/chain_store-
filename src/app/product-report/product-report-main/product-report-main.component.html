@@ -16,6 +16,7 @@
 
               <form [formGroup]="reportType">
                 <mat-radio-group
+                  color='primary'
                   class="type-radio-group"
                   (change)="radioTimeChange($event)"
                   formControlName="type">
@@ -106,7 +107,8 @@
           </mat-expansion-panel-header>
 
               <form [formGroup]="timeFilter" *ngIf="this.reportType.controls['type'].value !== 'expiration-date'">
-                <mat-radio-group (change)="radioTimeChange($event)" formControlName="typeTime">
+                <mat-radio-group (change)="radioTimeChange($event)"
+                                 color='primary' formControlName="typeTime">
                   <mat-radio-button style="display: inline; " value="default">{{ titleTimeDefault }}
                     <button mat-icon-button aria-label="add" (click)="openTimeDefault()">
                       <mat-icon>format_line_spacing</mat-icon>
