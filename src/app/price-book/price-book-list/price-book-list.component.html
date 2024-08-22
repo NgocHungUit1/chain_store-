@@ -20,6 +20,7 @@
           </mat-expansion-panel-header>
 
           <mat-radio-group class='custom-filter-container__radio-container'
+                           color='primary'
                            formControlName='priceLists'
                            (change)='choosePriceList()'>
             <mat-radio-button *ngFor='let item of priceLists'
