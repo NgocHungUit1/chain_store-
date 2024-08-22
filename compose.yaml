@@ -1,7 +1,7 @@
-name: ducan
+name: rx20
 services:
   web:
-    container_name: rx20_web
+    container_name: rx20-store
     build:
       context: .
       target: builder
