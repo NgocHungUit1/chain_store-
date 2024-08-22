@@ -193,6 +193,12 @@ export class SearchProductDialogComponent extends ListComponentBase implements O
     this.loadData();
   }
 
+  checkBoxFilterChange($event: any, value: any, field: string) {
+    this.handleFilterCheckbox(this.productFilter, field, value);
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
+  }
+
   /**
    * Tim kiem theo trang thai sản phẩm
    */

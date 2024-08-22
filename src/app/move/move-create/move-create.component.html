@@ -6,7 +6,8 @@
       </button>
       <label class="font-18">Phiếu chuyển hàng </label>
       <div class="select-product">
-        <mat-form-field>
+        <mat-form-field appearance='outline'
+                        class='search-input'>
           <input type="text" [formControl]="selectProduct" matInput [matAutocomplete]="chooseProduct"
                  placeholder="Tìm hàng hóa theo mã hoặc tên">
           <button mat-icon-button matPrefix>

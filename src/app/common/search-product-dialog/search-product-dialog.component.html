@@ -1,64 +1,83 @@
-<mat-sidenav-container>
-  <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true">
+<mat-sidenav-container class='custom-filter-container bg-white' style='background: white!important;'>
+  <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true" style='width: 350px'>
     <mat-toolbar class="dv-header">
-      <button mat-icon-button>
-        <mat-icon>filter_list</mat-icon>
-      </button>
-      <h3></h3>
+
+      <label class='custom-filter-container__title'>Sản phẩm</label>
     </mat-toolbar>
 
     <form [formGroup]="productFilter">
-      <mat-card class="time-filter-info">
-        <mat-card-content>
-          <mat-form-field>
-            <mat-label>Phân loại</mat-label>
-            <mat-select formControlName="type" (selectionChange)="typeProductFilterChange()" multiple>
-              <mat-option *ngFor="let item of typeProductFilterList"
-                          [value]="item.value">{{ item.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </mat-card-content>
-      </mat-card>
+      <mat-accordion multi>
+        <mat-expansion-panel [expanded]='true'>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Phân loại
+            </mat-panel-title>
+          </mat-expansion-panel-header>
 
-      <mat-card class="time-filter-info">
-        <mat-card-content>
-          <mat-form-field>
-            <mat-label>Trạng thái</mat-label>
-            <mat-select formControlName="status" (selectionChange)="statusProductFilterChange()" multiple>
-              <mat-option *ngFor="let item of statusProductFilterList"
-                          [value]="item.value">{{ item.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </mat-card-content>
-      </mat-card>
+          <div class='custom-filter-container__checkbox-container'>
+            <mat-checkbox *ngFor='let item of typeProductFilterList'
+                          color='primary'
+                          [checked]="productFilter.value['type'].includes(item.value)"
+                          (change)='checkBoxFilterChange($event, item.value, "type")'
+            >
+              {{ item.name }}
+            </mat-checkbox>
+          </div>
+        </mat-expansion-panel>
 
-      <mat-card class="time-filter-info">
-        <mat-card-content>
-          <mat-form-field>
-            <mat-select placeholder="Nhóm hàng" formControlName="group" (selectionChange)="statusProductFilterChange()">
-              <mat-option>-- Tất cả --</mat-option>
-              <mat-option *ngFor="let group of groups" [value]="group.id">
-                {{group.name}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </mat-card-content>
-      </mat-card>
+        <mat-expansion-panel [expanded]='true'>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Trạng thái
+            </mat-panel-title>
+          </mat-expansion-panel-header>
 
-      <mat-card class="time-filter-info">
-        <mat-card-content>
-          <mat-form-field>
-            <mat-label>Tồn kho</mat-label>
-            <mat-select formControlName="stock" (selectionChange)="typeProductFilterChange()" multiple>
-              <mat-option *ngFor="let item of stockFilterList"
-                          [value]="item.value">{{ item.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </mat-card-content>
-      </mat-card>
+          <div class='custom-filter-container__checkbox-container'>
+            <mat-checkbox *ngFor='let item of statusProductFilterList'
+                          color='primary'
+                          [checked]="productFilter.value['status'].includes(item.value)"
+                          (change)='checkBoxFilterChange($event, item.value, "status")'
+            >
+              {{ item.name }}
+            </mat-checkbox>
+          </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]='true'>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Nhóm hàng
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <mat-radio-group class='custom-filter-container__radio-container' placeholder='Nhóm hàng'
+                           color='primary'
+                           (change)='statusProductFilterChange()'
+                           formControlName='group'>
+            <mat-radio-button *ngFor='let group of groups'
+                              [value]='group.id'>
+              {{group.name}}</mat-radio-button>
+          </mat-radio-group>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]='true'>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Tồn kho
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class='custom-filter-container__checkbox-container'>
+            <mat-checkbox *ngFor='let item of stockFilterList'
+                          color='primary'
+                          [checked]="productFilter.value['stock'].includes(item.value)"
+                          (change)='checkBoxFilterChange($event, item.value, "stock")'
+            >
+              {{ item.name }}
+            </mat-checkbox>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
     </form>
 
   </mat-sidenav>
@@ -67,12 +86,11 @@
       <button mat-icon-button (click)="leftside.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
-      <label class="font-18">Sản phẩm</label>
 
       <div class="select-product">
-        <mat-form-field>
-          <mat-label>Tìm kiếm sản phẩm</mat-label>
-          <input matInput [formControl]="searchProductForm" placeholder="" #input autocomplete="off">
+        <mat-form-field  appearance='outline'
+                         class='search-input'>
+          <input matInput [formControl]="searchProductForm" placeholder="Tìm kiếm sản phẩm" #input autocomplete="off">
           <button mat-icon-button matPrefix>
             <mat-icon>search</mat-icon>
           </button>

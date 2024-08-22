@@ -176,7 +176,11 @@ File: scss
   }
 }
 
-
+.custom-filter-container.bg-white {
+  .mat-drawer-inner-container {
+    background: white
+  }
+}
 .custom-filter-container {
   .mat-drawer-inner-container {
     background: whitesmoke
