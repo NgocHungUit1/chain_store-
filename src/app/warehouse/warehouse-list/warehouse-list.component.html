@@ -154,7 +154,7 @@
             </button>
           </mat-form-field>
 
-          <form [formGroup]="productFilter" (click)="$event.stopPropagation();">
+          <form [formGroup]="productFilter" (click)="$event.stopPropagation();" style='padding: 0'>
 
             <mat-form-field>
               <input type="text" matInput [formControl]="productFilter?.controls['product']" placeholder="Tên sản phẩm"
