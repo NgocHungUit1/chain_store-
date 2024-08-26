@@ -4,6 +4,129 @@
       <label class='custom-filter-container__title'>Danh sách nhóm hàng</label>
     </mat-toolbar>
 
+
+    <form [formGroup]='filterForm'>
+      <mat-accordion multi>
+        <mat-expansion-panel [expanded]='true'>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Phân loại
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class='custom-filter-container__checkbox-container'>
+            <mat-form-field>
+              <mat-chip-list #chipList>
+                <mat-chip
+                  *ngFor="let seletedItem of filterForm.value['type']"
+                  [selectable]="true"
+                  [removable]="true"
+                  (removed)="remove(seletedItem)">
+                  {{seletedItem.name}}
+                  <mat-icon matChipRemove>cancel</mat-icon>
+                </mat-chip>
+                <input
+                  placeholder=""
+                  #InputType
+                  [matAutocomplete]="auto"
+                  [matChipInputFor]="chipList"
+                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes">
+              </mat-chip-list>
+              <mat-autocomplete  class='custom-select-multiple' #auto="matAutocomplete" (optionSelected)="InputType.value = ''; selected($event)">
+                <mat-option *ngFor="let selectedItem of typeProductFilterList | filter : InputType.value : '' : 'include'" [value]="selectedItem" [disabled]=''>
+                  {{selectedItem.name}} <span style='margin: auto'></span> <mat-icon *ngIf='filterForm.value["type"] | includes : selectedItem : "value"'>check</mat-icon>
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]='true'>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Nợ hiện tại
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class='custom-filter-container__checkbox-container'>
+            <div fxLayout="row" style='align-items: baseline'>
+              <span style='width: 75px'>Từ</span>
+              <mat-form-field appearance="legacy">
+                <input matInput placeholder="Giá trị">
+              </mat-form-field>
+            </div>
+            <div fxLayout="row" style='align-items: baseline'>
+              <span style='width: 75px'>Tới</span>
+              <mat-form-field appearance="legacy">
+                <input matInput placeholder="Giá trị">
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]='true'>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Giá bán
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class='custom-filter-container__checkbox-container'>
+            <div class='customer-2-select' fxLayout="row">
+              <mat-form-field appearance="legacy" fxFlex="30">
+                <mat-select>
+                  <mat-option [value]="'greater'">
+                    >
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field appearance="legacy" fxFlex="70">
+                <mat-select>
+                  <mat-option [value]="1">
+                    Giá vốn
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]='true' [hideToggle]='true'>
+          <mat-expansion-panel-header>
+            <mat-panel-title style='justify-content: space-between; align-items: center; margin-right: 0'>
+              <span>Nhóm hàng</span>
+              <mat-icon title='Thêm'
+                        (click)='$event.stopImmediatePropagation();'>add
+              </mat-icon>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class='custom-filter-container__checkbox-container'>
+            <div fxLayout='row wrap'>
+              <div fxFlex='100'>
+                <mat-form-field>
+                  <input type='text'
+                         #SearchTypeNew
+                         matInput
+                         placeholder='Tìm hàng hóa theo mã hoặc tên'>
+                  <button mat-icon-button
+                          matPrefix>
+                    <mat-icon>search</mat-icon>
+                  </button>
+                </mat-form-field>
+              </div>
+            </div>
+            <mat-selection-list #shoes [multiple]="false">
+              <mat-list-option *ngFor="let type of typeProductFilterList | filter : SearchTypeNew.value : '' : 'include'" [value]="type">
+                {{type.name}}
+              </mat-list-option>
+            </mat-selection-list>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </form>
+
+
   </mat-sidenav>
   <mat-sidenav-content>
     <mat-toolbar class="dv-header">
