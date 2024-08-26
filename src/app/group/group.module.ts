@@ -11,6 +11,7 @@ import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { DemoMaterialModule } from '../demo-material-module';
 import { GroupFormDialogComponent } from './group-form-dialog/group-form-dialog.component';
 import { GroupTabInfoComponent } from './group-tab-info/group-tab-info.component';
+import { SharedModule } from '../shared/shared.module';
 
 
 @NgModule({
@@ -26,6 +27,7 @@ import { GroupTabInfoComponent } from './group-tab-info/group-tab-info.component
     PerfectScrollbarModule,
     Ng2SearchPipeModule,
     DemoMaterialModule,
-  ]
+    SharedModule,
+  ],
 })
 export class GroupModule { }

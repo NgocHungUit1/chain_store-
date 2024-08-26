@@ -10,10 +10,12 @@ import {BaseComponent, ListComponentBase} from '../../shared/base';
 import { GroupService } from '../../product/group.service';
 import { Group, GroupFilter } from '../group.model';
 import { GroupFormDialogComponent } from '../group-form-dialog/group-form-dialog.component';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 import {AuthService} from '../../authentication/auth.service';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-group-list',
@@ -28,6 +30,19 @@ import {AuthService} from '../../authentication/auth.service';
   ]
 })
 export class GroupListComponent extends ListComponentBase implements OnInit {
+  separatorKeysCodes: number[] = [ENTER, COMMA];
+  typeProductFilterList = [
+    {
+      'value': 'medicine',
+      'name': 'Thuốc',
+    },
+    {
+      'value': 'merchandise',
+      'name': 'Hàng hóa',
+    },
+  ];
+
+  filterForm: FormGroup;
 
   constructor(
       private service: GroupService,
@@ -79,7 +94,6 @@ export class GroupListComponent extends ListComponentBase implements OnInit {
   isLoadingResults = true;
   isRateLimitReached = false;
 
-
   buildFilterFromParams(): GroupFilter {
     function write<K extends keyof GroupFilter>(arg: GroupFilter, key: K, value: GroupFilter[K]): void {
       arg[key] = value;
@@ -122,6 +136,32 @@ export class GroupListComponent extends ListComponentBase implements OnInit {
       } else {
         this.refreshData();
       }
+    });
+    this.filterForm = new FormGroup({
+      type: new FormControl([]),
+    });
+  }
+
+  remove(fruit: string): void {
+    this.filterForm.patchValue({
+      type: this.filterForm.value['type'].filter(item => item !== fruit)
+    });
+  }
+
+  selected($event: MatAutocompleteSelectedEvent) {
+    const currentValue = this.filterForm.value['type'];
+    const found = !!currentValue.find(item => $event.option.value['value'] === item.value);
+
+    let newValue;
+
+    if (found) {
+      newValue = currentValue.filter(item => item.value !== $event.option.value['value'])
+    } else {
+      newValue = currentValue.concat([$event.option.value]);
+    }
+
+    this.filterForm.patchValue({
+      type: newValue
     });
   }
 
@@ -194,5 +234,4 @@ export class GroupListComponent extends ListComponentBase implements OnInit {
 
     return allPermissions.indexOf(permissionName) !== -1;
   }
-
 }

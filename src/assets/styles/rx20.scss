@@ -175,24 +175,53 @@ File: scss
     padding-top: 5px;
   }
 }
-
+.custom-select-multiple {
+  .mat-option-text {
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .mat-option {
+    height: 36px;
+    line-height: 36px;
+    font-size: 1rem;
+  }
+  .mat-icon {
+    margin-right: 0!important;
+    font-size: 18px;
+  }
+}
 .custom-filter-container.bg-white {
   .mat-drawer-inner-container {
     background: white
   }
 }
 .custom-filter-container {
+  .customer-2-select {
+    align-items: baseline;
+    gap: 10px;
+    .mat-form-field-infix {
+      width: unset;
+    }
+  }
+  input.mat-chip-input {
+    flex: 1 0 20px !important;
+  }
   .left-sidebar {
     min-width: 350px;
   }
   .mat-expansion-panel-body {
-    padding: 0 16px 16px;
+    //padding: 0 16px 16px;
   }
   .mat-radio-group {
     margin-top: 0!important;
   }
-  span {
+  span, .mat-list-text, .mat-list-base .mat-list-option {
     font-size: 1rem;
+  }
+
+  .mat-list-base .mat-list-option {
+    height: 36px;
   }
 
   .mat-drawer-inner-container {

@@ -6,17 +6,22 @@ import {
   AccordionLinkDirective,
   AccordionDirective
 } from './accordion';
+import { IncludesPipe } from './includes.pipe';
+import { FilterPipe } from './filter.pipe';
 
 @NgModule({
   declarations: [
     AccordionAnchorDirective,
     AccordionLinkDirective,
-    AccordionDirective
+    AccordionDirective,
+    IncludesPipe,
+    FilterPipe
   ],
   exports: [
     AccordionAnchorDirective,
     AccordionLinkDirective,
-    AccordionDirective
+    AccordionDirective,
+    IncludesPipe,
   ],
   providers: [MenuItems]
 })
