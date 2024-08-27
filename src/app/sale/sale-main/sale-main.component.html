@@ -175,7 +175,7 @@
                       value="{{ itemProduct | showPrice | number }}"
                       disabled="true"
                       style="color: black" />
-                    <button mat-icon-button matPrefix *ngIf="!(itemProduct.sample_prescription_id !== undefined && itemProduct.sample_prescription_id !== null)">
+                    <button mat-icon-button matPrefix *ngIf="canDo('Sale-Main.Change-Price') && !(itemProduct.sample_prescription_id !== undefined && itemProduct.sample_prescription_id !== null)">
                       <mat-icon
                         class="row-icon-edit-price"
                         (click)="
@@ -397,7 +397,7 @@
                   <div *ngIf="localItemInvoice?.is_return !== true">
                     <button mat-button matPrefix>
                       <mat-icon (click)="openSaleCustomerFormDialogComponent()">add</mat-icon>
-                    </button> 
+                    </button>
                   </div>
                 </div>-->
                     <div
@@ -476,6 +476,7 @@
                       <input
                         matInput
                         type="text"
+                        [readonly]="!canDo('Sale-Main.Change-Price')"
                         style="color: black"
                         (change)="recalculateTotalAmount();"
                         formControlName="total_amount"
@@ -546,7 +547,7 @@
                       autocomplete="off" />
                   </div>
                 </div>
-              </div>  
+              </div>
 
               <div
                 class="point-discount"
