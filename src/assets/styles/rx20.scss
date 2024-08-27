@@ -155,10 +155,12 @@ File: scss
   margin-left: 10px;
   font-size: 1rem;
   min-width: 215px;
+
+
 }
 
 .search-input {
-  width: 315px!important;
+  width: 450px!important;
 
   .mat-form-field-infix {
     border-top: 0;
@@ -173,6 +175,17 @@ File: scss
   .mat-form-field-wrapper {
     padding-bottom: 5px;
     padding-top: 5px;
+  }
+
+
+  &.mat-form-field-appearance-outline .mat-form-field-outline-start, &.mat-form-field-appearance-outline .mat-form-field-outline-end {
+    border: 2px solid #7a7a7a!important;
+  }
+  &.mat-form-field-appearance-outline .mat-form-field-outline-end {
+    border-left-style: none!important;
+  }
+  &.mat-form-field-appearance-outline .mat-form-field-outline-start {
+    border-right-style: none!important;
   }
 }
 .custom-select-multiple {

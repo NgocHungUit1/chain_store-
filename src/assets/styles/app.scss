@@ -1164,6 +1164,12 @@ Dropdown Search
   position: relative;
   max-width: 90%;
   margin-left: 12px;
+
+  &>button {
+    width: 450px;
+    border: 2px solid #7a7a7a!important;
+    text-align: start;
+  }
 }
 
 .dropdown-search-content {
