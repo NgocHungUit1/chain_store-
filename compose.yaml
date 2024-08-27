@@ -1,0 +1,12 @@
+name: rx20
+services:
+  web:
+    container_name: rx20-store
+    build:
+      context: .
+      target: builder
+    ports:
+      - 4201:4201
+    volumes:
+      - ../pharma_store:/project
+      - /project/node_modules
