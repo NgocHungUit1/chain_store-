@@ -7,6 +7,8 @@ WORKDIR /project
 RUN apk add --update python3 make g++\
    && rm -rf /var/cache/apk/*
 
+RUN apk add --update --no-cache zip
+
 RUN npm install -g @angular/cli@13.2.5
 RUN npm install --save-dev @angular-devkit/build-angular
 RUN npm install --save @popperjs/core
