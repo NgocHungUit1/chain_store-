@@ -133,6 +133,13 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     'supplier_total_return': 'SL Trả',
     'supplier_total_value_return': 'Giá trị trả',
     'supplier_value_pure': 'Giá trị thuần',
+    'warehouse_product_no': 'Mã hàng',
+    'warehouse_product_name': 'Tên hàng',
+    'warehouse_product_parcel_no': 'Số lô',
+    'warehouse_product_parcel_expiration': 'HSD',
+    'warehouse_product_parcel_quantity': 'SL nhập',
+    'warehouse_product_parcel_export': 'SL xuất',
+    'warehouse_product_parcel_quantity_of_stock': 'Tồn kho'
   };
 
   // for sale
