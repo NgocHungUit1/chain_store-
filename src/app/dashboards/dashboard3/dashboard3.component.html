@@ -1,0 +1,59 @@
+<div style='display: flex'>
+  <div class='dash-col-left' style='flex: 1'>
+    <mat-card style='padding: 16px !important;'>
+      <p class='dash-banner-title'>KẾT QUẢ BÁN HÀNG HÔM NAY</p>
+
+      <div style='display: flex;'>
+        <div class='dash-sub-report'
+             style='width: 30%;'>
+          <div>
+            <span class='dash-icon bg-info'>$</span>
+          </div>
+          <div>
+            <p class='text-inverse'>{{(saleResult?.invoices | number) || 0}} Hóa đơn</p>
+            <p class='text-info number'>{{(saleResult?.revenue | number) || 0}}</p>
+            <p class='text-inverse'>Doanh Thu</p>
+          </div>
+        </div>
+        <div class='dash-sub-report'
+             style='width: 30%'>
+          <div>
+            <span class='dash-icon bg-warning'><i class='fa fa-reply-all'></i></span>
+          </div>
+          <div>
+            <p class='text-inverse'>{{(saleResult?.returnOrders | number) || 0}} Phiếu</p>
+            <p class='text-warning number'>{{(saleResult?.returnMoney | number) || 0}}</p>
+            <p class='text-inverse'>Trả hàng</p>
+          </div>
+        </div>
+        <div class='dash-sub-report'
+             style='flex-grow: 1'>
+          <div>
+            <span class='dash-icon'
+                  [class.bg-success]='saleResult?.changePercent >= 0'
+                  [class.bg-danger]='saleResult?.changePercent < 0'>
+              <i class='fa fa-arrow-down '></i>
+            </span>
+          </div>
+          <div>
+            <p>&nbsp;</p>
+            <p class='number'
+               [class.text-success]='saleResult?.changePercent >= 0'
+               [class.text-danger]='saleResult?.changePercent < 0'>{{(saleResult?.changePercent | number) || 0}}%</p>
+            <p class='text-inverse'>So với cùng kì tháng trước</p>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+  <div class='dash-col-right' style='width: 400px'>
+    <mat-card class='dash-ad'
+              [ngStyle]="{ 'background-image': 'url(' + adInfo?.bgUrl + ')'}">
+      <a mat-raised-button
+         href='{{adInfo?.url}}'
+         target='_blank'
+              color='primary'>Quan tâm ngay <i class='fa fa-angle-right'
+                                               style='margin-left: 6px'></i></a>
+    </mat-card>
+  </div>
+</div>
