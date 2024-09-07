@@ -1,5 +1,6 @@
 <div style='display: flex'>
-  <div class='dash-col-left' style='flex: 1'>
+  <div class='dash-col-left'
+       style='flex: 1'>
     <mat-card style='padding: 16px !important;'>
       <p class='dash-banner-title'>KẾT QUẢ BÁN HÀNG HÔM NAY</p>
 
@@ -45,15 +46,65 @@
         </div>
       </div>
     </mat-card>
+
+    <mat-card style='padding: 16px !important;'
+              [formGroup]='revenueFilter'>
+      <div class='d-flex'
+           style='justify-content: space-between'>
+        <span class='dash-banner-title'>DOANH THU THUẦN 7 NGÀY QUA&nbsp;<i class='fa fa-arrow-circle-right text-inverse'></i> &nbsp;<span style='font-size: 1.1rem'
+                                                                                                                                          class='text-info'>{{10000 | number}}</span></span>
+
+        <mat-form-field appearance='outline'
+                        style='width: 200px'>
+          <mat-select formControlName='period'>
+            <mat-option *ngFor='let timePeriodOption of timePeriodOptions'
+                        [value]='timePeriodOption.value'>
+              {{timePeriodOption.label}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class='d-flex'
+           style='gap: 1rem'>
+        <span class='dash-group-btn'
+              [class.active]='revenueFilter.value["groupBy"] == "day"'
+              (click)='revenueFilter.patchValue({groupBy: "day"})'>Theo ngày</span>
+        <span class='dash-group-btn'
+              [class.active]='revenueFilter.value["groupBy"] == "hour"'
+              (click)='revenueFilter.patchValue({groupBy: "hour"})'>Theo giờ</span>
+        <span class='dash-group-btn'
+              [class.active]='revenueFilter.value["groupBy"] == "dayOfWeek"'
+              (click)='revenueFilter.patchValue({groupBy: "dayOfWeek"})'>Theo thứ</span>
+      </div>
+
+      <div>
+        <apx-chart [series]='revenueChartOption.series'
+                   [chart]='revenueChartOption.chart'
+                   [dataLabels]='revenueChartOption.dataLabels'
+                   [plotOptions]='revenueChartOption.plotOptions'
+                   [yaxis]='revenueChartOption.yaxis'
+                   [legend]='revenueChartOption.legend'
+                   [fill]='revenueChartOption.fill'
+                   [stroke]='revenueChartOption.stroke'
+                   [tooltip]='revenueChartOption.tooltip'
+                   [xaxis]='revenueChartOption.xaxis'
+                   [grid]='revenueChartOption.grid'></apx-chart>
+      </div>
+    </mat-card>
+
   </div>
-  <div class='dash-col-right' style='width: 400px'>
+  <div class='dash-col-right'
+       style='width: 400px'>
     <mat-card class='dash-ad'
               [ngStyle]="{ 'background-image': 'url(' + adInfo?.bgUrl + ')'}">
       <a mat-raised-button
          href='{{adInfo?.url}}'
          target='_blank'
-              color='primary'>Quan tâm ngay <i class='fa fa-angle-right'
-                                               style='margin-left: 6px'></i></a>
+         color='primary'>Quan tâm ngay <i class='fa fa-angle-right'
+                                          style='margin-left: 6px'></i></a>
     </mat-card>
+
+
   </div>
 </div>

@@ -45,3 +45,11 @@
     align-items: end;
     padding: 16px!important;
 }
+.dash-group-btn {
+    cursor: pointer;
+    border-bottom: 3px solid white;
+    padding: 4px 1rem
+}
+.dash-group-btn.active {
+    border-color: #009688;
+}
