@@ -42,6 +42,10 @@ export class Dashboard3Component implements OnInit {
   revenueFilter: FormGroup;
 
   revenueChartOption: any = null;
+  topSalingProductReportData = [];
+  topSalingProductFilter: FormGroup;
+
+  topSalingProductOption: any = null;
 
   constructor(private dashboardService: DashboardService, private fb: FormBuilder) {
   }
@@ -116,10 +120,77 @@ export class Dashboard3Component implements OnInit {
         }
       };
     });
+    this.dashboardService.getTopSalingProductData().subscribe(res => {
+      this.topSalingProductReportData = res;
+      console.log(res);
+
+      this.topSalingProductOption = {
+        series: [
+          {
+            name: 'Pixel',
+            data: [44, 55, 57, 56, 61, 58]
+          },
+          {
+            name: 'Ample',
+            data: [76, 85, 101, 98, 87, 105]
+          }
+        ],
+        chart: {
+          type: 'bar',
+          height: 400
+        },
+        grid: {
+          borderColor: 'rgba(0,0,0,.2)',
+          stoke: 3,
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: 1,
+            borderRadiusApplication: 'end',
+          },
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          show: true,
+          width: 2,
+          colors: ['transparent']
+        },
+        xaxis: {
+          categories: [
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul'
+          ]
+        },
+        legend: {
+          show: true,
+        },
+        fill: {
+          colors: ['#009688', '#1e88e5'],
+          opacity: 1
+        },
+        tooltip: {
+          fillSeriesColor: false,
+          marker: {
+            show: false,
+          },
+        }
+      };
+    });
 
     this.revenueFilter = this.fb.group({
       period: this.fb.control('today'),
       groupBy:  this.fb.control('day'),
+    });
+
+    this.topSalingProductFilter = this.fb.group({
+      period: this.fb.control('today'),
+      groupBy:  this.fb.control('quantity'),
     });
   }
 

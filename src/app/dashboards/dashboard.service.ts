@@ -261,4 +261,21 @@ export class DashboardService {
       },
     ]);
   }
+
+  getTopSalingProductData() {
+    return of([
+      {
+        'Subject': 'Ecosip7.5x10cm - Tatra - H20túix 5Miếng',
+        'Value': 95420000,
+        'Total': 0,
+        'Extra1': 'SP000008',
+      },
+      {
+        'Subject': 'Cao Dan Salonsip14x10cm - Hisamitsu - H10 Gói 2 Miếng',
+        'Value': 43030000,
+        'Total': 0,
+        'Extra1': 'SP000007',
+      },
+    ]);
+  }
 }

@@ -47,7 +47,7 @@
       </div>
     </mat-card>
 
-    <mat-card style='padding: 16px !important;'
+    <mat-card class='dash-panel' style='padding: 16px !important;'
               [formGroup]='revenueFilter'>
       <div class='d-flex'
            style='justify-content: space-between'>
@@ -55,8 +55,9 @@
                                                                                                                                           class='text-info'>{{10000 | number}}</span></span>
 
         <mat-form-field appearance='outline'
+                        class='dash-panel-form-field'
                         style='width: 200px'>
-          <mat-select formControlName='period'>
+          <mat-select formControlName='period' class='dash-panel-select'>
             <mat-option *ngFor='let timePeriodOption of timePeriodOptions'
                         [value]='timePeriodOption.value'>
               {{timePeriodOption.label}}
@@ -93,6 +94,51 @@
       </div>
     </mat-card>
 
+
+    <mat-card class='dash-panel' style='padding: 16px !important;'
+              [formGroup]='revenueFilter'>
+      <div class='d-flex'
+           style='justify-content: space-between'>
+        <span class='dash-banner-title'>Top 10 hàng hóa bán chạy Tháng này</span>
+
+        <mat-form-field appearance='outline'
+                        class='dash-panel-form-field'
+                        style='width: 200px'>
+          <mat-select formControlName='period' class='dash-panel-select'>
+            <mat-option *ngFor='let timePeriodOption of timePeriodOptions'
+                        [value]='timePeriodOption.value'>
+              {{timePeriodOption.label}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+
+      <div class='d-flex'
+           style='gap: 1rem'>
+        <span class='dash-group-btn'
+              [class.active]='topSalingProductFilter.value["groupBy"] == "week"'
+              (click)='topSalingProductFilter.patchValue({groupBy: "week"})'>Theo tuần</span>
+        <span class='dash-group-btn'
+              [class.active]='topSalingProductFilter.value["groupBy"] == "quantity"'
+              (click)='topSalingProductFilter.patchValue({groupBy: "quantity"})'>Theo số lượng</span>
+      </div>
+
+      <div>
+        <apx-chart [series]='topSalingProductOption.series'
+                   [chart]='topSalingProductOption.chart'
+                   [dataLabels]='topSalingProductOption.dataLabels'
+                   [plotOptions]='topSalingProductOption.plotOptions'
+                   [yaxis]='topSalingProductOption.yaxis'
+                   [legend]='topSalingProductOption.legend'
+                   [fill]='topSalingProductOption.fill'
+                   [stroke]='topSalingProductOption.stroke'
+                   [tooltip]='topSalingProductOption.tooltip'
+                   [xaxis]='topSalingProductOption.xaxis'
+                   [grid]='topSalingProductOption.grid'></apx-chart>
+      </div>
+    </mat-card>
+
   </div>
   <div class='dash-col-right'
        style='width: 400px'>
@@ -105,6 +151,71 @@
                                           style='margin-left: 6px'></i></a>
     </mat-card>
 
+
+    <mat-card>
+      <div>
+        <p class='dash-banner-title dash-border-bottom'
+           style='padding: 16px !important; margin-bottom: 0'>THÔNG BÁO</p>
+
+        <div style=' padding: 0 10px'>
+          <ol class='timeline timeline-notify'>
+            <li class='timeline-item'>
+              <span class='timeline-item-icon bg-danger text-white'>
+                <i class="fa fa-share-square-o"></i>
+              </span>
+              <div class='timeline-item-description'>
+                <p class='dash-border-bottom'>
+                    Có 1 <strong>hoạt động đăng nhập khác thường </strong> cần kiểm tra.
+                  </p>
+                <p>
+                  <strong>0393376006</strong> đã đăng nhập trên Máy tính Windows vào 03/09/2024 19:15
+                  <a href='#' (click)='$event.preventDefault()'>Kiểm tra</a>
+                </p>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      <div>
+        <p class='dash-banner-title dash-border-bottom'
+           style=' padding: 16px !important; margin-bottom: 0'>
+          CÁC HOẠT ĐỘNG GẦN ĐÂY</p>
+
+        <div style='max-height: 800px; overflow: auto; padding: 0 10px'>
+          <ol class='timeline'>
+            <li class='timeline-item'>
+              <span class='timeline-item-icon bg-danger text-white'>
+                <i class="fa fa-share-square-o"></i>
+              </span>
+              <div class='timeline-item-description'>
+                <span style='line-height: 21px'>
+                  <a href='#' (click)='$event.preventDefault()'>Hương - Kế Toán</a>
+                  vừa
+                  <a href='#'>nhập hàng</a> &nbsp;  với giá trị <strong>0</strong> <br>
+                  <i style='font-size: 1rem'>6 ngày trước</i>
+                  </span>
+              </div>
+            </li>
+
+            <li class='timeline-item'>
+              <span class='timeline-item-icon bg-info text-white'>
+                <i class="fa fa-clipboard"></i>
+              </span>
+              <div class='timeline-item-description'>
+                <span style='line-height: 21px'>
+                  <a href='#' (click)='$event.preventDefault()'>Hương - Kế Toán</a>
+                  vừa
+                  <a href='#'>nhập hàng</a> &nbsp;  với giá trị <strong>0</strong> <br>
+                  <i style='font-size: 1rem'>6 ngày trước</i>
+                  </span>
+              </div>
+            </li>
+
+          </ol>
+        </div>
+      </div>
+    </mat-card>
 
   </div>
 </div>

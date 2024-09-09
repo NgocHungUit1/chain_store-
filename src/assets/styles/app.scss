@@ -1220,3 +1220,37 @@ Dropdown Search
   width: 35px;
   padding-left: 10px !important;
 }
+
+/* Scroll bar css */
+::-webkit-scrollbar {
+  width: .8rem;
+  height: .8rem;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: #ccc;
+}
+::-webkit-scrollbar-track {
+  padding: .6rem;
+}
+
+/* Custom Dashboard CSS */
+.dash-panel-form-field .mat-form-field-appearance-outline .mat-form-field-infix {
+  padding: 0!important;
+}
+.dash-panel-form-field .mat-form-field-wrapper {
+  padding: 0!important;
+}
+.dash-panel-form-field .mat-form-field-appearance-outline .mat-form-field-wrapper {
+  margin: 0!important;
+}
+.dash-panel-form-field .mat-form-field-infix {
+  padding: 0.5em 0!important;
+  border-top: 0.5em solid transparent;
+}
+.dash-panel-form-field .mat-form-field-label-wrapper {
+  padding: 0!important;
+}
+.dash-panel-select .mat-select-arrow-wrapper {
+  transform: translateY(0%) !important;
+}
