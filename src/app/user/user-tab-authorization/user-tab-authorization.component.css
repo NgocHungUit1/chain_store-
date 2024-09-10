@@ -24,11 +24,8 @@
   padding-left: 0px;
 }
 .role-name {
-  margin-top: 8px;
+  margin: 8px 0;
   display: inline-block;
-}
-:host ::ng-deep label.mat-radio-label > span.mat-radio-label-content {
-  width: 240px;
 }
 :host ::ng-deep label.mat-radio-label > span.mat-radio-label-content > .mat-icon-button {
   float: right;
@@ -65,4 +62,9 @@
   font-weight: bold;
   color: #009688;
   margin-bottom: 4px;
+}
+::ng-deep.radio-button-report-type {
+  .mat-radio-label-content {
+    width: 100% !important;
+  }
 }

@@ -1257,18 +1257,37 @@ Dropdown Search
 .custom-tree {
   .e-list-text {
     font-size: 1rem!important;
+    color: black;
   }
   .e-checkbox-wrapper .e-frame, .e-css.e-checkbox-wrapper .e-frame {
     width: 15px!important;
     height: 15px!important;
   }
 
-  .e-checkbox-wrapper .e-check, .e-css.e-checkbox-wrapper .e-check {
+  .e-checkbox-wrapper .e-check, .e-css.e-checkbox-wrapper .e-check, .e-checkbox-wrapper .e-stop, .e-css.e-checkbox-wrapper .e-stop {
     font-size: 8px;
+  }
+  .e-checkbox-wrapper .e-frame.e-check, .e-css.e-checkbox-wrapper .e-frame.e-check {
+    background: #009688!important;
   }
 
   /* Hide scroll bar */
   ::-webkit-scrollbar {
     display: none;
+  }
+}
+
+.small-icon-button {
+  width: 24px !important;
+  height: 24px !important;
+  line-height: 24px !important;
+
+  .mat-icon {
+    width: 16px !important;
+    height: 16px !important;
+    line-height: 16px !important;
+  }
+  .material-icons {
+    font-size: 16px !important;
   }
 }
