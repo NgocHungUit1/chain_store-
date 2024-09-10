@@ -57,6 +57,9 @@
 .dash-border-bottom {
     border-bottom: 1px solid #e3e3e3;
 }
+.dash-border-top {
+    border-top: 1px solid #e3e3e3;
+}
 
 
 /* Timeline CSS*/
@@ -73,6 +76,10 @@
 }
 .timeline.timeline-notify {
     border-left: none
+}
+.timeline.timeline-notify .sub-notification {
+    margin-bottom: 1rem!important;
+    padding-top: 1rem;
 }
 .timeline.timeline-notify .timeline-item-description{
     color: black;
