@@ -54,17 +54,13 @@
             <div fxLayout="row wrap">
               <div fxFlex="50">
                 <mat-form-field>
-                  <input type="text" matInput [formControl]="form.controls['base_unit']" required
-                         placeholder="Đơn vị cơ bản" autocomplete="off">
+                  <input type="text" placeholder="Đơn vị cơ bản" matInput [formControl]="form.controls['base_unit']" [matAutocomplete]="auto">
+                  <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let unit of filterUnit" [value]="unit.name">
+                      {{unit.name}}
+                    </mat-option>
+                  </mat-autocomplete>
                 </mat-form-field>
-                <mat-chip-list #chipList>
-                  <mat-chip *ngFor="let unit of filterUnit; index as i;"
-                            color="{{unit.selelected==true ? 'primary' : 'null'}}"
-                            selected="{{ unit.selected }}"
-                            (click)="selectBaseUnit(unit.name, i)">
-                    {{ unit.name }}
-                  </mat-chip>
-                </mat-chip-list>
               </div>
 
               <div fxFlex="2">

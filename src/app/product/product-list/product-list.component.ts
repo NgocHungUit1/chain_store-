@@ -490,7 +490,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result.event === 'Save' && result.connect === true) {
+      if (result?.event === 'Save' && result?.connect === true) {
         this.service.getDetail(result.data.id).subscribe(product => {
           // @ts-ignore
           this.medicineService.connect(product.medicine_id).subscribe(res => {
@@ -504,7 +504,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
         });
 
       } else {
-        if (result.event !== 'Cancel') {
+        if (result?.event !== 'Cancel') {
           this.loadData();
         }
       }
