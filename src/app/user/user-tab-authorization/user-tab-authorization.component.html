@@ -19,8 +19,8 @@
       <div fxFlex="70" class="user-info">
         <div fxLayout="row wrap" >
           <div fxFlex="30" *ngFor="let group of this.permissionData.group">
-            <h3>{{group}}</h3>
-            <ejs-treeview [fields]="{ dataSource: this.permissionData.permission_data[group]['children'], id: 'id', text: 'name', child: 'children'}" [checkedNodes]="this.selectedPermissions" [selectedNodes]="this.selectedPermissions" [showCheckBox]="true" (nodeChecked)="nodeChecked($event)"></ejs-treeview>
+            <h3 class='group-title'>{{group}}</h3>
+            <ejs-treeview class='custom-tree' [fields]="{ dataSource: this.permissionData.permission_data[group]['children'], id: 'id', text: 'name', child: 'children'}" [checkedNodes]="this.selectedPermissions" [selectedNodes]="this.selectedPermissions" [showCheckBox]="true" (nodeChecked)="nodeChecked($event)"></ejs-treeview>
           </div>
 
 

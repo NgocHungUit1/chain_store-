@@ -1254,3 +1254,21 @@ Dropdown Search
 .dash-panel-select .mat-select-arrow-wrapper {
   transform: translateY(0%) !important;
 }
+.custom-tree {
+  .e-list-text {
+    font-size: 1rem!important;
+  }
+  .e-checkbox-wrapper .e-frame, .e-css.e-checkbox-wrapper .e-frame {
+    width: 15px!important;
+    height: 15px!important;
+  }
+
+  .e-checkbox-wrapper .e-check, .e-css.e-checkbox-wrapper .e-check {
+    font-size: 8px;
+  }
+
+  /* Hide scroll bar */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}

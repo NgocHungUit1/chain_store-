@@ -60,3 +60,9 @@
 /*.radio-button-report-type:hover .mat-icon-button {*/
 /*  display: inline-block;*/
 /*}*/
+.group-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #009688;
+  margin-bottom: 4px;
+}
