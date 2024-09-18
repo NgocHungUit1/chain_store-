@@ -119,14 +119,14 @@
       <div class='d-flex'
            style='gap: 1rem'>
         <span class='dash-group-btn'
-              [class.active]='topSalingProductFilter.value["groupBy"] == "sales"'
-              (click)='topSalingProductFilter.patchValue({groupBy: "sales"})'>Theo doanh thu</span>
+              [class.active]='topSalingProductFilter.value["groupBy"] == "amount"'
+              (click)='topSalingProductFilter.patchValue({groupBy: "amount"})'>Theo doanh thu</span>
         <span class='dash-group-btn'
               [class.active]='topSalingProductFilter.value["groupBy"] == "quantity"'
               (click)='topSalingProductFilter.patchValue({groupBy: "quantity"})'>Theo số lượng</span>
       </div>
 
-      <div>
+      <div style='height: 400px;'>
         <apx-chart [series]='topSalingProductOption.series'
                    [chart]='topSalingProductOption.chart'
                    [dataLabels]='topSalingProductOption.dataLabels'

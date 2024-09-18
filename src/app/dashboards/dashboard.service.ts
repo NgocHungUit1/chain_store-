@@ -281,6 +281,6 @@ export class DashboardService {
 
 
     const url = environment.apiUrl + '/product/top-report';
-    return this.http.post<any>(url, payload);
+    return this.http.get<any>(url, { params: payload });
   }
 }

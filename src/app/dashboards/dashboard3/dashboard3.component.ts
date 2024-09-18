@@ -137,21 +137,38 @@ export class Dashboard3Component implements OnInit {
 
     this.topSalingProductFilter = this.fb.group({
       period: this.fb.control('today'),
-      groupBy:  this.fb.control('quantity'),
+      groupBy:  this.fb.control('amount'),
     });
 
+    this.getTopProductData({
+      ...this.convertTimeOptionToDates('today'),
+      groupBy: 'quantity'
+    });
+    this.topSalingProductFilter.valueChanges.subscribe(res => {
+      const payload: any = {
+        ...this.convertTimeOptionToDates(res.period),
+        groupBy: res['groupBy']
+      };
+      this.getTopProductData(payload);
+    });
+  }
 
-    this.dashboardService.getTopSalingProductData({  }, 1).subscribe(res => {
-      this.topSalingProductReportData = res;
-      console.log(res);
+  getTopProductData(payload) {
+    const mapGroupByToField = {
+      amount: ['top_amount', 'total_amount'],
+      quantity: ['top_quantity', 'total_quantity']
+    };
+    this.dashboardService.getTopSalingProductData(payload).subscribe(res => {
+      const field1 = mapGroupByToField[payload.groupBy][0];
+      const field2 = mapGroupByToField[payload.groupBy][1];
 
       this.topSalingProductOption = {
         series: [{
-          data: [400, 430, 448, 470, 540, 580, 690, 1100, 1200, 1380]
+          data: res?.[field1]?.map(item => item[field2]),
         }],
         chart: {
           type: 'bar',
-          height: 350
+          height: 400
         },
         plotOptions: {
           bar: {
@@ -164,27 +181,13 @@ export class Dashboard3Component implements OnInit {
           enabled: false
         },
         xaxis: {
-          categories: ['Thuốc A', 'Thuốc B', 'Thuốc C', 'Thuốc D', 'Thuốc E', 'Thuốc F', 'Thuốc G',
-            'Thuốc H', 'Thuốc J', 'Thuốc k'
-          ],
+          categories: res?.[field1]?.map(item => item.product_id)
         },
         fill: {
           colors: ['#1e88e5'],
           opacity: 1
         },
       };
-    });
-
-    this.topSalingProductFilter.valueChanges.subscribe(res => {
-      console.log(res);
-      const payload: any = {
-        ...this.convertTimeOptionToDates(res.period),
-        groupBy: res['groupBy']
-      };
-      console.log(payload);
-      this.dashboardService.getTopSalingProductData(payload).subscribe(res => {
-        console.log(res);
-      });
     });
   }
 
