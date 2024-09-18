@@ -18,31 +18,33 @@ export class Dashboard3Component implements OnInit {
   timePeriodOptions = [
     {
       value: 'yesterday',
-      label: 'Hôm qua'
+      label: 'HÔM QUA'
     },
     {
       value: 'today',
-      label: 'Hôm nay'
+      label: 'HÔM NAY'
     },
     {
       value: 'last7days',
-      label: '7 ngày qua'
+      label: '7 NGÀY QUA'
     },
     {
       value: 'this_month',
-      label: 'Tháng này'
+      label: 'THÁNG NÀY'
     },
     {
       value: 'last_month',
-      label: 'Tháng trước'
+      label: 'THÁNG TRƯỚC'
     },
   ];
+  timePeriodOptionsMap = this.timePeriodOptions.reduce((acc, cur) => ({...acc, [cur.value]: cur.label}), {});
 
   revenueReportData = [];
 
   revenueFilter: FormGroup;
 
   revenueChartOption: any = null;
+  totalRevenue = 0;
   topSalingProductReportData = [];
   topSalingProductFilter: FormGroup;
 
@@ -106,9 +108,8 @@ export class Dashboard3Component implements OnInit {
 
   getRevenueData(payload) {
     this.dashboardService.getRevenueData(payload).subscribe(res => {
-      console.log(res);
       this.revenueReportData = res;
-      console.log(res);
+      this.totalRevenue = res?.sale?.reduce((acc, cur) => acc + (+cur), 0);
 
       this.revenueChartOption = {
         series: [

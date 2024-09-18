@@ -53,8 +53,8 @@
               [formGroup]='revenueFilter'>
       <div class='d-flex'
            style='justify-content: space-between'>
-        <span class='dash-banner-title'>DOANH THU THUẦN 7 NGÀY QUA&nbsp;<i class='fa fa-arrow-circle-right text-inverse'></i> &nbsp;<span style='font-size: 1.1rem'
-                                                                                                                                          class='text-info'>{{10000 | number}}</span></span>
+        <span class='dash-banner-title'>DOANH THU THUẦN {{timePeriodOptionsMap[revenueFilter.value['period']]}}&nbsp;<i class='fa fa-arrow-circle-right text-inverse'></i> &nbsp;<span style='font-size: 1.1rem'
+                                                                                                                                          class='text-info'>{{totalRevenue | number}}</span></span>
 
         <mat-form-field appearance='outline'
                         class='dash-panel-form-field'
@@ -101,7 +101,7 @@
               [formGroup]='topSalingProductFilter'>
       <div class='d-flex'
            style='justify-content: space-between'>
-        <span class='dash-banner-title'>Top 10 hàng hóa bán chạy Tháng này</span>
+        <span class='dash-banner-title'>Top 10 hàng hóa bán chạy {{timePeriodOptionsMap[topSalingProductFilter.value['period']]}}</span>
 
         <mat-form-field appearance='outline'
                         class='dash-panel-form-field'
