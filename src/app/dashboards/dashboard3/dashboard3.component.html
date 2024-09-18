@@ -33,7 +33,9 @@
             <span class='dash-icon'
                   [class.bg-success]='saleResult?.changePercent >= 0'
                   [class.bg-danger]='saleResult?.changePercent < 0'>
-              <i class='fa fa-arrow-down '></i>
+              <i class='fa fa-arrow-down' *ngIf='saleResult?.changePercent < 0'></i>
+              <i class='fa fa-arrow-up' *ngIf='saleResult?.changePercent > 0'></i>
+              <i class='fa fa-minus' *ngIf='saleResult?.changePercent == 0'></i>
             </span>
           </div>
           <div>
@@ -96,7 +98,7 @@
 
 
     <mat-card class='dash-panel' style='padding: 16px !important;'
-              [formGroup]='revenueFilter'>
+              [formGroup]='topSalingProductFilter'>
       <div class='d-flex'
            style='justify-content: space-between'>
         <span class='dash-banner-title'>Top 10 hàng hóa bán chạy Tháng này</span>
@@ -117,8 +119,8 @@
       <div class='d-flex'
            style='gap: 1rem'>
         <span class='dash-group-btn'
-              [class.active]='topSalingProductFilter.value["groupBy"] == "week"'
-              (click)='topSalingProductFilter.patchValue({groupBy: "week"})'>Theo tuần</span>
+              [class.active]='topSalingProductFilter.value["groupBy"] == "sales"'
+              (click)='topSalingProductFilter.patchValue({groupBy: "sales"})'>Theo doanh thu</span>
         <span class='dash-group-btn'
               [class.active]='topSalingProductFilter.value["groupBy"] == "quantity"'
               (click)='topSalingProductFilter.patchValue({groupBy: "quantity"})'>Theo số lượng</span>

@@ -262,8 +262,8 @@ export class DashboardService {
     ]);
   }
 
-  getTopSalingProductData() {
-    return of([
+  getTopSalingProductData(payload: any, mode?) {
+    if (mode === 1) {  return of([
       {
         'Subject': 'Ecosip7.5x10cm - Tatra - H20túix 5Miếng',
         'Value': 95420000,
@@ -277,5 +277,10 @@ export class DashboardService {
         'Extra1': 'SP000007',
       },
     ]);
+    }
+
+
+    const url = environment.apiUrl + '/product/top-report';
+    return this.http.post<any>(url, payload);
   }
 }

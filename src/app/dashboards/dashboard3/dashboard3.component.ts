@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DashboardService } from '../dashboard.service';
 import { AddInfo, SaleResultToday } from '../dashboard.type';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { format } from 'date-fns';
 
 @Component({
   selector: 'app-dashboard3',
@@ -47,14 +48,22 @@ export class Dashboard3Component implements OnInit {
 
   topSalingProductOption: any = null;
 
+  DATE_FORMAT = 'DD-MM-YYYY';
   constructor(private dashboardService: DashboardService, private fb: FormBuilder) {
   }
 
   ngOnInit(): void {
-    this.dashboardService.getSaleResultToday().subscribe(res => {
-      console.log(res);
-      this.saleResult = res;
+    const today = format(new Date(), this.DATE_FORMAT);
+    this.dashboardService.getDataDashBoard(today, today).subscribe(res => {
+      this.saleResult = {
+        invoices: res?.invoice?.count ?? 0,
+        revenue: res?.invoice?.sum ?? 0,
+        returnOrders: res?.return?.count ?? 0,
+        returnMoney: res?.return?.sum ?? 0,
+        changePercent: res?.month?.now && res?.month?.after ? (res?.month?.now - res?.month?.after) * 100 / res?.month?.after : 0,
+      };
     });
+
     this.dashboardService.getAddInfo().subscribe(res => {
       this.adInfo = res;
     });
@@ -120,7 +129,19 @@ export class Dashboard3Component implements OnInit {
         }
       };
     });
-    this.dashboardService.getTopSalingProductData().subscribe(res => {
+
+    this.revenueFilter = this.fb.group({
+      period: this.fb.control('today'),
+      groupBy:  this.fb.control('day'),
+    });
+
+    this.topSalingProductFilter = this.fb.group({
+      period: this.fb.control('today'),
+      groupBy:  this.fb.control('quantity'),
+    });
+
+
+    this.dashboardService.getTopSalingProductData({  }, 1).subscribe(res => {
       this.topSalingProductReportData = res;
       console.log(res);
 
@@ -154,15 +175,56 @@ export class Dashboard3Component implements OnInit {
       };
     });
 
-    this.revenueFilter = this.fb.group({
-      period: this.fb.control('today'),
-      groupBy:  this.fb.control('day'),
-    });
-
-    this.topSalingProductFilter = this.fb.group({
-      period: this.fb.control('today'),
-      groupBy:  this.fb.control('quantity'),
+    this.topSalingProductFilter.valueChanges.subscribe(res => {
+      console.log(res);
+      const payload: any = {
+        ...this.convertTimeOptionToDates(res.period),
+        groupBy: res['groupBy']
+      };
+      console.log(payload);
+      this.dashboardService.getTopSalingProductData(payload).subscribe(res => {
+        console.log(res);
+      });
     });
   }
 
+  convertTimeOptionToDates(value) {
+    let from: any = new Date();
+    let to: any = new Date();
+    switch (value) {
+      case 'yesterday':
+        from.setDate(from.getDate() - 1);
+        to.setDate(to.getDate() - 1);
+        from = format(from, this.DATE_FORMAT);
+        to = format(to, this.DATE_FORMAT);
+        break;
+      case 'today':
+        from = format(from, this.DATE_FORMAT);
+        to = format(to, this.DATE_FORMAT);
+        break;
+      case 'last7days':
+        from.setDate(from.getDate() - 7);
+        from = format(from, this.DATE_FORMAT);
+        to = format(to, this.DATE_FORMAT);
+        break;
+      case 'this_month':
+        from.setDate(1);
+        from = format(from, this.DATE_FORMAT);
+        to = format(to, this.DATE_FORMAT);
+        break;
+      case 'last_month':
+        from.setMonth(from.getMonth() - 1);
+        from.setDate(1);
+        to.setDate(1);
+        to.setDate(to.getDate() - 1);
+        from = format(from, this.DATE_FORMAT);
+        to = format(to, this.DATE_FORMAT);
+        break;
+    }
+
+    return {
+      from,
+      to
+    };
+  }
 }
