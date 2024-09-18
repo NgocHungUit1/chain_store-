@@ -48,7 +48,7 @@ export class Dashboard3Component implements OnInit {
 
   topSalingProductOption: any = null;
 
-  DATE_FORMAT = 'DD-MM-YYYY';
+  DATE_FORMAT = 'YYYY-MM-DD';
   constructor(private dashboardService: DashboardService, private fb: FormBuilder) {
   }
 
@@ -67,7 +67,46 @@ export class Dashboard3Component implements OnInit {
     this.dashboardService.getAddInfo().subscribe(res => {
       this.adInfo = res;
     });
-    this.dashboardService.getRevenueData().subscribe(res => {
+
+    this.revenueFilter = this.fb.group({
+      period: this.fb.control('today'),
+      groupBy:  this.fb.control('day'),
+    });
+
+
+
+    this.getRevenueData({
+      ...this.convertTimeOptionToDates('today'),
+      group: 'day'
+    });
+    this.revenueFilter.valueChanges.subscribe(res => {
+      this.getRevenueData({
+        ...this.convertTimeOptionToDates(res.period),
+        group: res['groupBy']
+      });
+    });
+
+
+    this.topSalingProductFilter = this.fb.group({
+      period: this.fb.control('today'),
+      groupBy:  this.fb.control('amount'),
+    });
+
+    this.getTopProductData({
+      ...this.convertTimeOptionToDates('today'),
+      groupBy: 'quantity'
+    });
+    this.topSalingProductFilter.valueChanges.subscribe(res => {
+      this.getTopProductData({
+        ...this.convertTimeOptionToDates(res.period),
+        groupBy: res['groupBy']
+      });
+    });
+  }
+
+  getRevenueData(payload) {
+    this.dashboardService.getRevenueData(payload).subscribe(res => {
+      console.log(res);
       this.revenueReportData = res;
       console.log(res);
 
@@ -75,11 +114,11 @@ export class Dashboard3Component implements OnInit {
         series: [
           {
             name: 'Nhập hàng',
-            data: [44, 55, 57, 56, 61, 58]
+            data: res?.import || []
           },
           {
             name: 'Bán hàng',
-            data: [76, 85, 101, 98, 87, 105]
+            data: res?.sale || []
           }
         ],
         chart: {
@@ -105,14 +144,7 @@ export class Dashboard3Component implements OnInit {
           colors: ['transparent']
         },
         xaxis: {
-          categories: [
-            'Feb',
-            'Mar',
-            'Apr',
-            'May',
-            'Jun',
-            'Jul'
-          ]
+          categories: res?.key || []
         },
         legend: {
           show: true,
@@ -129,28 +161,6 @@ export class Dashboard3Component implements OnInit {
         }
       };
     });
-
-    this.revenueFilter = this.fb.group({
-      period: this.fb.control('today'),
-      groupBy:  this.fb.control('day'),
-    });
-
-    this.topSalingProductFilter = this.fb.group({
-      period: this.fb.control('today'),
-      groupBy:  this.fb.control('amount'),
-    });
-
-    this.getTopProductData({
-      ...this.convertTimeOptionToDates('today'),
-      groupBy: 'quantity'
-    });
-    this.topSalingProductFilter.valueChanges.subscribe(res => {
-      const payload: any = {
-        ...this.convertTimeOptionToDates(res.period),
-        groupBy: res['groupBy']
-      };
-      this.getTopProductData(payload);
-    });
   }
 
   getTopProductData(payload) {
@@ -164,7 +174,7 @@ export class Dashboard3Component implements OnInit {
 
       this.topSalingProductOption = {
         series: [{
-          data: res?.[field1]?.map(item => item[field2]),
+          data: res?.[field1]?.map(item => item[field2]) ?? [],
         }],
         chart: {
           type: 'bar',
@@ -181,7 +191,7 @@ export class Dashboard3Component implements OnInit {
           enabled: false
         },
         xaxis: {
-          categories: res?.[field1]?.map(item => item.product_id)
+          categories: res?.[field1]?.map(item => item.product_id) ?? []
         },
         fill: {
           colors: ['#1e88e5'],

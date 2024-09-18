@@ -77,8 +77,8 @@
               [class.active]='revenueFilter.value["groupBy"] == "hour"'
               (click)='revenueFilter.patchValue({groupBy: "hour"})'>Theo giờ</span>
         <span class='dash-group-btn'
-              [class.active]='revenueFilter.value["groupBy"] == "dayOfWeek"'
-              (click)='revenueFilter.patchValue({groupBy: "dayOfWeek"})'>Theo thứ</span>
+              [class.active]='revenueFilter.value["groupBy"] == "weekDay"'
+              (click)='revenueFilter.patchValue({groupBy: "weekDay"})'>Theo thứ</span>
       </div>
 
       <div>

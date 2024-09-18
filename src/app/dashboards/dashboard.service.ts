@@ -40,8 +40,8 @@ export class DashboardService {
     });
   }
 
-  getRevenueData() {
-    return of([
+  getRevenueData(payload, mode?) {
+    if (mode === 1) return of([
       {
         'Subject': '01',
         'Value': 5850000,
@@ -260,26 +260,12 @@ export class DashboardService {
         'ExtraOrderBy': '2024-08-31T00:00:00.0000000+07:00',
       },
     ]);
+
+    const url = environment.apiUrl + '/report/data-bar-chart-new';
+    return this.http.get<any>(url, { params: payload });
   }
 
-  getTopSalingProductData(payload: any, mode?) {
-    if (mode === 1) {  return of([
-      {
-        'Subject': 'Ecosip7.5x10cm - Tatra - H20túix 5Miếng',
-        'Value': 95420000,
-        'Total': 0,
-        'Extra1': 'SP000008',
-      },
-      {
-        'Subject': 'Cao Dan Salonsip14x10cm - Hisamitsu - H10 Gói 2 Miếng',
-        'Value': 43030000,
-        'Total': 0,
-        'Extra1': 'SP000007',
-      },
-    ]);
-    }
-
-
+  getTopSalingProductData(payload: any) {
     const url = environment.apiUrl + '/product/top-report';
     return this.http.get<any>(url, { params: payload });
   }
