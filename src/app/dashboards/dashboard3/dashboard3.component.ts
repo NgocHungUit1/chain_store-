@@ -3,6 +3,9 @@ import { DashboardService } from '../dashboard.service';
 import { AddInfo, SaleResultToday } from '../dashboard.type';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { format } from 'date-fns';
+import { WarehouseProductParcelFilter } from '../../warehouse-product-parcel/warehouse-product-parcel.model';
+import { WarehouseProductParcelService } from '../../warehouse-product-parcel/warehouse-product-parcel.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard3',
@@ -51,7 +54,50 @@ export class Dashboard3Component implements OnInit {
   topSalingProductOption: any = null;
 
   DATE_FORMAT = 'YYYY-MM-DD';
-  constructor(private dashboardService: DashboardService, private fb: FormBuilder) {
+
+
+  alertExpiredCount = 100;
+  timeSelected = 'next_3_month';
+  timeSelects = [
+    {
+      value: 'today',
+      label: 'hôm nay',
+    },
+    {
+      value: 'this_week',
+      label: 'tuần này',
+    },
+    {
+      value: 'this_month',
+      label: 'tháng này',
+    },
+    {
+      value: 'next_30_day',
+      label: '30 ngày tới',
+    },
+    {
+      value: 'next_2_month',
+      label: '2 tháng tới',
+    },
+    {
+      value: 'next_3_month',
+      label: '3 tháng tới',
+    },
+    {
+      value: 'next_6_month',
+      label: '6 tháng tới',
+    },
+    {
+      value: 'next_year',
+      label: '1 năm',
+    },
+  ];
+
+  constructor(private dashboardService: DashboardService,
+              private fb: FormBuilder,
+              private parcelSer: WarehouseProductParcelService,
+              private router: Router,
+              ) {
   }
 
   ngOnInit(): void {
@@ -245,5 +291,22 @@ export class Dashboard3Component implements OnInit {
       from,
       to
     };
+  }
+
+
+  goToExpireReport() {
+    if (this.alertExpiredCount > 0) {
+      this.router.navigateByUrl('/report/product-report/expiration-date?WarehouseProductParcelSearch[timeSelect]=' + this.timeSelected);
+    }
+  }
+
+
+  onTimeChange() {
+    const apiFilter = new WarehouseProductParcelFilter();
+    apiFilter.timeSelect = this.timeSelected;
+
+    this.parcelSer.getSummaryExpiration(apiFilter).subscribe(res => {
+      this.alertExpiredCount = res.body;
+    });
   }
 }

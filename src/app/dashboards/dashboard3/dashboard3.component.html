@@ -161,7 +161,25 @@
 
         <div style=' padding: 0 10px'>
           <ol class='timeline timeline-notify' style='padding-bottom: 0'>
+
             <li class='timeline-item'>
+              <span class='timeline-item-icon bg-danger text-white'>
+                <i class="fa fa-warning"></i>
+              </span>
+              <div class='timeline-item-description expiration-alert'>
+                <p><label style="margin-right: 5px">Có <span class="expire-count" (click)="goToExpireReport()">{{this.alertExpiredCount}} mặt hàng</span> sẽ hết HSD trong</label>
+                  <mat-select color="primary"
+                              [(ngModel)]="timeSelected"
+                              (selectionChange)="onTimeChange();"
+                              style="width: 97px">
+                    <mat-option *ngFor="let column of timeSelects" [value]="column.value">{{column.label}}</mat-option>
+                  </mat-select>
+                </p>
+              </div>
+            </li>
+
+            <!-- API Chua ho tro -->
+            <!--<li class='timeline-item'>
               <span class='timeline-item-icon bg-danger text-white'>
                 <i class="fa fa-share-square-o"></i>
               </span>
@@ -188,7 +206,7 @@
                   </p>
                 </div>
               </div>
-            </li>
+            </li>-->
           </ol>
         </div>
       </div>
