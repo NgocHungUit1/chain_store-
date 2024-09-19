@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import { WarehouseProductParcelFilter } from '../../warehouse-product-parcel/warehouse-product-parcel.model';
 import { WarehouseProductParcelService } from '../../warehouse-product-parcel/warehouse-product-parcel.service';
 import { Router } from '@angular/router';
-
+import moment from 'moment';
 @Component({
   selector: 'app-dashboard3',
   templateUrl: './dashboard3.component.html',
@@ -93,6 +93,12 @@ export class Dashboard3Component implements OnInit {
     },
   ];
 
+  fieldUserMapActionToLabel = {
+    Create: 'tạo'
+  }
+
+  recentlyHistories: any[] = [];
+
   constructor(private dashboardService: DashboardService,
               private fb: FormBuilder,
               private parcelSer: WarehouseProductParcelService,
@@ -149,6 +155,17 @@ export class Dashboard3Component implements OnInit {
         ...this.convertTimeOptionToDates(res.period),
         groupBy: res['groupBy']
       });
+    });
+
+    moment.locale('vi');
+    this.dashboardService.getRecentlyHistory({}).subscribe(res => {
+      this.recentlyHistories = res?.map(item => {
+        return {...item,
+          change_detail: JSON.parse(item.change_detail),
+          createToNow: moment(item.created_at * 1000).fromNow()
+        };
+      });
+      console.log(this.recentlyHistories);
     });
   }
 
