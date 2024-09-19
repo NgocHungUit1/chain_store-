@@ -96,7 +96,7 @@ export class Dashboard3Component implements OnInit {
 
     this.getTopProductData({
       ...this.convertTimeOptionToDates('today'),
-      groupBy: 'quantity'
+      groupBy: 'amount'
     });
     this.topSalingProductFilter.valueChanges.subscribe(res => {
       this.getTopProductData({
@@ -169,12 +169,17 @@ export class Dashboard3Component implements OnInit {
       amount: ['top_amount', 'total_amount'],
       quantity: ['top_quantity', 'total_quantity']
     };
+    const mapGroupByToLabel = {
+      amount: 'Doanh số',
+      quantity: 'Số lượng'
+    };
     this.dashboardService.getTopSalingProductData(payload).subscribe(res => {
       const field1 = mapGroupByToField[payload.groupBy][0];
       const field2 = mapGroupByToField[payload.groupBy][1];
 
       this.topSalingProductOption = {
         series: [{
+          name: mapGroupByToLabel[payload.groupBy],
           data: res?.[field1]?.map(item => item[field2]) ?? [],
         }],
         chart: {
