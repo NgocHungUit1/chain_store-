@@ -94,8 +94,16 @@ export class Dashboard3Component implements OnInit {
   ];
 
   fieldUserMapActionToLabel = {
-    Create: 'tạo'
-  }
+    Create: 'tạo',
+    Update: 'cập nhật',
+    Delete: 'xóa',
+  };
+  mapModelToLabel = {
+    'warehouse': 'Nhập Hàng',
+    'invoice': 'Hoá đơn',
+    'product': 'Sản phẩm',
+    'returns': 'Trả hàng bán',
+  };
 
   recentlyHistories: any[] = [];
 
