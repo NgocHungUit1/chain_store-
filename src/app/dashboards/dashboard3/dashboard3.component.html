@@ -161,7 +161,25 @@
 
         <div style=' padding: 0 10px'>
           <ol class='timeline timeline-notify' style='padding-bottom: 0'>
+
             <li class='timeline-item'>
+              <span class='timeline-item-icon bg-danger text-white'>
+                <i class="fa fa-warning"></i>
+              </span>
+              <div class='timeline-item-description expiration-alert'>
+                <p><label style="margin-right: 5px">Có <span class="expire-count" (click)="goToExpireReport()">{{this.alertExpiredCount}} mặt hàng</span> sẽ hết HSD trong</label>
+                  <mat-select color="primary"
+                              [(ngModel)]="timeSelected"
+                              (selectionChange)="onTimeChange();"
+                              style="width: 97px">
+                    <mat-option *ngFor="let column of timeSelects" [value]="column.value">{{column.label}}</mat-option>
+                  </mat-select>
+                </p>
+              </div>
+            </li>
+
+            <!-- API Chua ho tro -->
+            <!--<li class='timeline-item'>
               <span class='timeline-item-icon bg-danger text-white'>
                 <i class="fa fa-share-square-o"></i>
               </span>
@@ -188,7 +206,7 @@
                   </p>
                 </div>
               </div>
-            </li>
+            </li>-->
           </ol>
         </div>
       </div>
@@ -200,30 +218,16 @@
 
         <div style='max-height: 800px; overflow: auto; padding: 0 10px'>
           <ol class='timeline'>
-            <li class='timeline-item'>
+            <li class='timeline-item' *ngFor='let history of recentlyHistories'>
               <span class='timeline-item-icon bg-danger text-white'>
                 <i class="fa fa-share-square-o"></i>
               </span>
               <div class='timeline-item-description'>
                 <span style='line-height: 21px'>
-                  <a href='#' (click)='$event.preventDefault()'>Hương - Kế Toán</a>
+                  <a href='#' (click)='$event.preventDefault()'>{{history?.createdUser?.email || 'anonymous'}} - {{history?.createdUser.storeRole?.name || 'N/A'}}</a>
                   vừa
-                  <a href='#'>nhập hàng</a> &nbsp;  với giá trị <strong>0</strong> <br>
-                  <i style='font-size: 1rem'>6 ngày trước</i>
-                  </span>
-              </div>
-            </li>
-
-            <li class='timeline-item'>
-              <span class='timeline-item-icon bg-info text-white'>
-                <i class="fa fa-clipboard"></i>
-              </span>
-              <div class='timeline-item-description'>
-                <span style='line-height: 21px'>
-                  <a href='#' (click)='$event.preventDefault()'>Hương - Kế Toán</a>
-                  vừa
-                  <a href='#'>nhập hàng</a> &nbsp;  với giá trị <strong>0</strong> <br>
-                  <i style='font-size: 1rem'>6 ngày trước</i>
+                  <a href='#'>{{fieldUserMapActionToLabel[history?.action_name||''] || 'N/A'}}</a> &nbsp;  với giá trị <strong>{{(history?.change_detail?.original_price?.new || 0 ) | number  }}đ</strong> <br>
+                  <i style='font-size: 1rem'>{{history.createToNow}}</i>
                   </span>
               </div>
             </li>
