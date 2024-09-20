@@ -233,8 +233,8 @@
               <div class='timeline-item-description'>
                 <span style='line-height: 21px'>
                   <a href='#' (click)='$event.preventDefault()'>{{history?.createdUser?.username || 'anonymous'}} - {{history?.createdUser.storeRole?.name || 'n/a'}}</a>
-                  vừa
-                  <a href='#'>{{fieldUserMapActionToLabel[history?.action_name||''] || 'n/a'}}</a> &nbsp; {{mapModelToLabel[history.model_name]||'n/a'}} với giá trị <strong>{{(history?.change_detail?.original_price?.new || 0 ) | number  }}đ</strong> <br>
+                  vừa {{fieldUserMapActionToLabel[history?.action_name||''] || 'n/a'}}
+                  <a href='#' (click)='$event.preventDefault()'>{{mapModelToLabel[history.model_name]||'n/a'}}</a> &nbsp; với giá trị <strong>{{(history?.change_detail?.original_price?.new || 0 ) | number  }}đ</strong> <br>
                   <i style='font-size: 1rem'>{{history.createToNow}}</i>
                   </span>
               </div>
