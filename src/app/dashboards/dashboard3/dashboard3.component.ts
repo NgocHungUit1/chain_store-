@@ -3,7 +3,10 @@ import { DashboardService } from '../dashboard.service';
 import { AddInfo, SaleResultToday } from '../dashboard.type';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { format } from 'date-fns';
-
+import { WarehouseProductParcelFilter } from '../../warehouse-product-parcel/warehouse-product-parcel.model';
+import { WarehouseProductParcelService } from '../../warehouse-product-parcel/warehouse-product-parcel.service';
+import { Router } from '@angular/router';
+import moment from 'moment';
 @Component({
   selector: 'app-dashboard3',
   templateUrl: './dashboard3.component.html',
@@ -51,7 +54,64 @@ export class Dashboard3Component implements OnInit {
   topSalingProductOption: any = null;
 
   DATE_FORMAT = 'YYYY-MM-DD';
-  constructor(private dashboardService: DashboardService, private fb: FormBuilder) {
+
+
+  alertExpiredCount = 100;
+  timeSelected = 'next_3_month';
+  timeSelects = [
+    {
+      value: 'today',
+      label: 'hôm nay',
+    },
+    {
+      value: 'this_week',
+      label: 'tuần này',
+    },
+    {
+      value: 'this_month',
+      label: 'tháng này',
+    },
+    {
+      value: 'next_30_day',
+      label: '30 ngày tới',
+    },
+    {
+      value: 'next_2_month',
+      label: '2 tháng tới',
+    },
+    {
+      value: 'next_3_month',
+      label: '3 tháng tới',
+    },
+    {
+      value: 'next_6_month',
+      label: '6 tháng tới',
+    },
+    {
+      value: 'next_year',
+      label: '1 năm',
+    },
+  ];
+
+  fieldUserMapActionToLabel = {
+    Create: 'tạo',
+    Update: 'cập nhật',
+    Delete: 'xóa',
+  };
+  mapModelToLabel = {
+    'warehouse': 'Nhập Hàng',
+    'invoice': 'Hoá đơn',
+    'product': 'Sản phẩm',
+    'returns': 'Trả hàng bán',
+  };
+
+  recentlyHistories: any[] = [];
+
+  constructor(private dashboardService: DashboardService,
+              private fb: FormBuilder,
+              private parcelSer: WarehouseProductParcelService,
+              private router: Router,
+              ) {
   }
 
   ngOnInit(): void {
@@ -96,13 +156,24 @@ export class Dashboard3Component implements OnInit {
 
     this.getTopProductData({
       ...this.convertTimeOptionToDates('today'),
-      groupBy: 'quantity'
+      groupBy: 'amount'
     });
     this.topSalingProductFilter.valueChanges.subscribe(res => {
       this.getTopProductData({
         ...this.convertTimeOptionToDates(res.period),
         groupBy: res['groupBy']
       });
+    });
+
+    moment.locale('vi');
+    this.dashboardService.getRecentlyHistory({}).subscribe(res => {
+      this.recentlyHistories = res?.map(item => {
+        return {...item,
+          change_detail: JSON.parse(item.change_detail),
+          createToNow: moment(item.created_at * 1000).fromNow()
+        };
+      });
+      console.log(this.recentlyHistories);
     });
   }
 
@@ -169,12 +240,17 @@ export class Dashboard3Component implements OnInit {
       amount: ['top_amount', 'total_amount'],
       quantity: ['top_quantity', 'total_quantity']
     };
+    const mapGroupByToLabel = {
+      amount: 'Doanh số',
+      quantity: 'Số lượng'
+    };
     this.dashboardService.getTopSalingProductData(payload).subscribe(res => {
       const field1 = mapGroupByToField[payload.groupBy][0];
       const field2 = mapGroupByToField[payload.groupBy][1];
 
       this.topSalingProductOption = {
         series: [{
+          name: mapGroupByToLabel[payload.groupBy],
           data: res?.[field1]?.map(item => item[field2]) ?? [],
         }],
         chart: {
@@ -240,5 +316,22 @@ export class Dashboard3Component implements OnInit {
       from,
       to
     };
+  }
+
+
+  goToExpireReport() {
+    if (this.alertExpiredCount > 0) {
+      this.router.navigateByUrl('/report/product-report/expiration-date?WarehouseProductParcelSearch[timeSelect]=' + this.timeSelected);
+    }
+  }
+
+
+  onTimeChange() {
+    const apiFilter = new WarehouseProductParcelFilter();
+    apiFilter.timeSelect = this.timeSelected;
+
+    this.parcelSer.getSummaryExpiration(apiFilter).subscribe(res => {
+      this.alertExpiredCount = res.body;
+    });
   }
 }
