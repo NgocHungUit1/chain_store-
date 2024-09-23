@@ -81,7 +81,7 @@
               (click)='revenueFilter.patchValue({groupBy: "weekDay"})'>Theo thứ</span>
       </div>
 
-      <div>
+      <div *ngIf="revenueChartOption !== null">
         <apx-chart [series]='revenueChartOption.series'
                    [chart]='revenueChartOption.chart'
                    [dataLabels]='revenueChartOption.dataLabels'
