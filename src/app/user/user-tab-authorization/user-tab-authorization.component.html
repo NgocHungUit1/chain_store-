@@ -2,9 +2,8 @@
      *ngIf='user !== null'
      class='m-b-20'>
   <div fxFlex='100'>
-    <div fxLayout='row wrap'>
-      <div fxFlex='30'
-           class='user-info' style='padding: 2rem 4rem 2rem 1rem'>
+    <div  style='display: flex'>
+      <div class='user-info' style='padding: 2rem 4rem 2rem 1rem; width: 350px; flex-shrink: 0;'>
 
         <mat-accordion multi>
           <mat-expansion-panel [expanded]='true'
@@ -45,8 +44,7 @@
           </mat-expansion-panel>
         </mat-accordion>
       </div>
-      <div fxFlex='70'
-           class='user-info'>
+      <div class='user-info' style='flex-grow: 1'>
         <div fxLayout='row wrap'>
           <div fxFlex='30'
                *ngFor='let group of this.permissionData.group'>
