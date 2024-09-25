@@ -103,6 +103,7 @@ export class Dashboard3Component implements OnInit {
     'invoice': 'Hoá đơn',
     'product': 'Sản phẩm',
     'returns': 'Trả hàng bán',
+    'warehouse-return': 'Trả hàng nhập',
   };
 
   recentlyHistories: any[] = [];
@@ -333,5 +334,22 @@ export class Dashboard3Component implements OnInit {
     this.parcelSer.getSummaryExpiration(apiFilter).subscribe(res => {
       this.alertExpiredCount = res.body;
     });
+  }
+
+  /*- Ví dụ: Nhập hàng/Trả hàng nhập: em lấy: giá trị: total_amount
+  - Bán hàng/Trả hàng: total_price*/
+  getPrice(history: any): number {
+    if (!history) { return 0; }
+    if (history.model_name === 'warehouse' || history.model_name === 'warehouse-return') {
+      return history?.change_detail?.total_amount?.new || 0;
+    }
+    if (history.model_name === 'product') {
+      return history?.change_detail?.original_price?.new || 0;
+    }
+    if (history.model_name === 'invoice' || history.model_name === 'return') {
+      return history?.change_detail?.total_price?.new || 0;
+    }
+
+    return 0;
   }
 }
