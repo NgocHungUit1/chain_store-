@@ -24,6 +24,7 @@ import {WarehouseProductMedicineDialogComponent} from './warehouse-product-medic
 import {WarehouseFormPriceDialogComponent} from './warehouse-form-price-dialog/warehouse-form-price-dialog.component';
 import {InputSelectAllModule} from '../common/input-select-all/input-select-all.module';
 import {CommonModule as DComonModule} from '../common/common.module';
+import { WarehouseUnitCreateDialogComponent } from './warehouse-unit-create-dialog/warehouse-unit-create-dialog.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import {CommonModule as DComonModule} from '../common/common.module';
     ShowValueExpensesPipe,
     WarehouseParcelListDialogComponent,
     WarehouseProductMedicineDialogComponent,
-    WarehouseFormPriceDialogComponent
+    WarehouseFormPriceDialogComponent,
+    WarehouseUnitCreateDialogComponent
   ],
   imports: [
     CommonModule,
