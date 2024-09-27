@@ -26,6 +26,7 @@ import {SelectionModel} from '@angular/cdk/collections';
 import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 import {StoreService} from '../../store/store.service';
 import {Store} from '../../store/store.model';
+import {Location} from '@angular/common';
 
 @Component({
   selector: 'app-invoice-list',
@@ -48,6 +49,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     private notifySer: NotifierService,
     private fb: FormBuilder,
     private router: Router,
+    private location: Location,
     private productSer: ProductService,
     private customerSer: CustomerService,
     private storeSer: StoreService
@@ -448,7 +450,11 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
       this.dataSource = data;
 
       this.reloadFilter(res);
-      // const url = this.service.getStateUrl(this.apiFilter);
+
+      let url = '/transaction/invoice';
+      url += '?' + this.apiFilter.toFilterString();
+      this.location.go(url);
+
       this.isLoadingResults = false;
     });
 

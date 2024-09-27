@@ -45,6 +45,9 @@
     align-items: end;
     padding: 16px!important;
 }
+.dash-ad a {
+  margin-left: 28px;
+}
 .dash-group-btn {
     cursor: pointer;
     border-bottom: 3px solid white;

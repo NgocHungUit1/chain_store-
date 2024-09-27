@@ -2,6 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatTable} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
+import {Location} from '@angular/common';
 import {Product, ProductFilter} from '../product.model';
 import {ActivatedRoute} from '@angular/router';
 import {ProductService} from '../product.service';
@@ -45,6 +46,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     private dialog: MatDialog,
     private notifySer: NotifierService,
     private fb: FormBuilder,
+    private location: Location,
     private groupSer: GroupService,
     public authSer: AuthService
   ) {
@@ -360,7 +362,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
       this.dataSource = res.body;
       let stt = 0;
       if (this.dataSource.length === 1) {
-        const arr = this.dataSource;
+        const arr = this.dataSource;``
         this.expandedElement = arr[0];
       }
       this.dataSource.forEach(elementData => {
@@ -368,7 +370,11 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
         elementData.stt = stt;
       });
       this.reloadFilter(res);
-      const url = this.service.getStateUrl(this.apiFilter);
+
+      let url = '/store/product';
+      url += '?' + this.apiFilter.toFilterString();
+      this.location.go(url);
+
       this.isLoadingResults = false;
     });
   }

@@ -58,6 +58,7 @@ export class ReturnsFilter extends ApiFilterBase {
   date_from = '';
   date_to = '';
   national_pharmacy_no = '';
+  keyword = '';
 
   getModelSearch() {
     return 'ReturnsSearch';
