@@ -25,7 +25,7 @@ export class DashboardService {
 
   getAddInfo(): Observable<AddInfo> {
     return of({
-      bgUrl: 'https://cdn-app.kiotviet.vn/retailler/Content/img/zalo-baner-vie.png',
+      bgUrl: '/assets/images/dashboard/zalo_banner.png',
       url: 'https://zalo.me/84932106859',
     });
   }

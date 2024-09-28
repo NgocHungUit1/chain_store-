@@ -15,7 +15,7 @@
 
       <div class="customer-filter-container">
         <mat-form-field appearance="outline" class='search-input'>
-          <input matInput [formControl]="searchInvoiceForm" placeholder="Theo mã trả hàng" #input>
+          <input matInput [formControl]="searchForm" placeholder="Theo mã trả hàng" #input>
           <button mat-icon-button matPrefix>
             <mat-icon>search</mat-icon>
           </button>
@@ -94,7 +94,9 @@
                     [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
                     <mat-tab-group style="width: 100%;">
                       <mat-tab label="Thông tin">
-                        <app-returns-tab-info [detail]="element.detailInfo"></app-returns-tab-info>
+                        <ng-template matTabContent>
+                          <app-returns-tab-info [detail]="element.detailInfo"></app-returns-tab-info>
+                        </ng-template>
                       </mat-tab>
                       <!-- <mat-tab label="Lịch sử thanh toán">
                         </mat-tab> -->

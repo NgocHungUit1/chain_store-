@@ -10,6 +10,16 @@
       <button mat-icon-button (click)="leftside.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
+
+      <div class="customer-filter-container">
+        <mat-form-field appearance="outline" class='search-input'>
+          <input matInput [formControl]="searchForm" placeholder="Theo mã trả hàng" #input>
+          <button mat-icon-button matPrefix>
+            <mat-icon>search</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+
       <span fxFlex="1 1 0%"></span>
       <button mat-raised-button color="primary" routerLink="/transaction/warehouse-return/create" style="margin-right: 10px">
         <mat-icon>add</mat-icon>

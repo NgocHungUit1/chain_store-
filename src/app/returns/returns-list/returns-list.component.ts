@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { Location } from '@angular/common';
 import { ListComponentBase } from '../../shared/base';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,6 +11,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Returns, ReturnsFilter } from '../returns.model';
 import { ReturnsService } from '../returns.service';
+import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-returns-list',
@@ -31,6 +33,7 @@ export class ReturnsListComponent extends ListComponentBase implements OnInit {
     private dialog: MatDialog,
     private notifySer: NotifierService,
     private fb: FormBuilder,
+    private location: Location,
     private router: Router
   ) {
     super();
@@ -49,7 +52,7 @@ export class ReturnsListComponent extends ListComponentBase implements OnInit {
   expandedElement: Returns | null;
   timeFilter: FormGroup;
 
-  searchInvoiceForm = new FormControl();
+  searchForm = new FormControl();
 
   columnsHeader = {
     '#': '#',
@@ -118,7 +121,11 @@ export class ReturnsListComponent extends ListComponentBase implements OnInit {
       this.dataSource = data;
 
       this.reloadFilter(res);
-      // const url = this.service.getStateUrl(this.apiFilter);
+
+      let url = '/transaction/returns';
+      url += '?' + this.apiFilter.toFilterString();
+      this.location.go(url);
+
       this.isLoadingResults = false;
     });
 
@@ -127,6 +134,19 @@ export class ReturnsListComponent extends ListComponentBase implements OnInit {
   ngOnInit(): void {
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
+
+    this.searchForm.valueChanges.pipe(debounceTime(800)).subscribe(res => {
+      if (res !== '') {
+        this.apiFilter = this.buildFilterFromParams();
+        this.apiFilter.keyword = res;
+        this.loadData();
+        // this.service.setLoadProduct(false);
+      } else {
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+        // this.service.setLoadProduct(false);
+      }
+    });
   }
 
 }
