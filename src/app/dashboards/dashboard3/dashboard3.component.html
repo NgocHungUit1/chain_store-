@@ -234,7 +234,7 @@
                 <span style='line-height: 21px'>
                   <a href='#' (click)='$event.preventDefault()'>{{history?.createdUser?.username || 'anonymous'}} - {{history?.createdUser.storeRole?.name || 'n/a'}}</a>
                   vừa {{fieldUserMapActionToLabel[history?.action_name||''] || 'n/a'}}
-                  <a href='#' (click)='$event.preventDefault()'>{{mapModelToLabel[history.model_name]||'n/a'}}</a> &nbsp; với giá trị <strong>{{(getPrice(history)) | number  }}đ</strong> <br>
+                  <a [routerLink]='mapModelToLink[history.model_name].url' [queryParams]='getQueryParam(history)' (click)='$event.preventDefault()'>{{mapModelToLabel[history.model_name]||'n/a'}}</a> &nbsp; với giá trị <strong>{{(getPrice(history)) | number  }}đ</strong> <br>
                   <i style='font-size: 1rem'>{{history.createToNow}}</i>
                   </span>
               </div>

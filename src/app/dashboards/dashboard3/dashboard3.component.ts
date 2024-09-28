@@ -106,6 +106,14 @@ export class Dashboard3Component implements OnInit {
     'warehouse-return': 'Trả hàng nhập',
   };
 
+  mapModelToLink = {
+    'warehouse': { url: '/transaction/warehouse', queryKey: 'WarehouseSearch[keyword]'},
+    'invoice': { url: '/transaction/invoice', queryKey: 'InvoiceSearch[invoice_no]'},
+    'product': { url: '/store/product', queryKey: 'ProductSearch[keyword]'},
+    'returns': { url: '/transaction/returns', queryKey: 'ReturnsSearch[keyword]'},
+    'warehouse-return': { url: '/transaction/warehouse-return', queryKey: 'WarehouseSearch[keyword]'},
+  };
+
   recentlyHistories: any[] = [];
 
   constructor(private dashboardService: DashboardService,
@@ -113,6 +121,10 @@ export class Dashboard3Component implements OnInit {
               private parcelSer: WarehouseProductParcelService,
               private router: Router,
               ) {
+  }
+
+  getQueryParam (history) {
+    return {[this.mapModelToLink[history.model_name].queryKey] : history.model_id};
   }
 
   ngOnInit(): void {
