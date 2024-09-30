@@ -420,6 +420,10 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     this.downloadLink = this.mainService.getDownloadLink(this.apiFilter);
     this.mainService.getList(this.apiFilter).subscribe(res => {
       this.dataSource = res.body;
+      if (this.dataSource.length === 1) {
+        const arr = this.dataSource;``
+        this.expandedElement = arr[0];
+      }
       this.reloadFilter(res);
       this.isLoadingResults = false;
 

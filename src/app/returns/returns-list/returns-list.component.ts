@@ -120,6 +120,11 @@ export class ReturnsListComponent extends ListComponentBase implements OnInit {
       });
       this.dataSource = data;
 
+      if (this.dataSource.length === 1) {
+        const arr = this.dataSource;``
+        this.expandedElement = arr[0];
+      }
+
       this.reloadFilter(res);
 
       let url = '/transaction/returns';

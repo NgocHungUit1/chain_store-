@@ -358,7 +358,7 @@ export class Dashboard3Component implements OnInit {
     if (history.model_name === 'product') {
       return history?.change_detail?.original_price?.new || 0;
     }
-    if (history.model_name === 'invoice' || history.model_name === 'return') {
+    if (history.model_name === 'invoice' || history.model_name === 'returns') {
       return history?.change_detail?.total_price?.new || 0;
     }
 
