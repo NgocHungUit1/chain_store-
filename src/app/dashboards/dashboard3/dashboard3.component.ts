@@ -281,7 +281,7 @@ export class Dashboard3Component implements OnInit {
           enabled: false
         },
         xaxis: {
-          categories: res?.[field1]?.map(item => item.product_id) ?? []
+          categories: res?.[field1]?.map(item => item.product_name) ?? []
         },
         fill: {
           colors: ['#1e88e5'],
