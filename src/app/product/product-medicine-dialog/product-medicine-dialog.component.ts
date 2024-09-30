@@ -24,6 +24,7 @@ import * as numeral from 'numeral';
 import { log } from 'util';
 import { loadConfigurationFromPath } from 'tslint/lib/configuration';
 import { MatRadioChange } from '@angular/material/radio';
+import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 
 
 class ImageSnippet {
@@ -403,7 +404,7 @@ export class ProductMedicineDialogComponent implements OnInit {
         if (pUnit['is_base'] !== 1) {
           const group = new FormGroup({
             unit_name: new FormControl(pUnit['name'], Validators.required),
-            unit_value: new FormControl(pUnit['value'], Validators.required),
+            unit_value: new FormControl(pUnit['value'], [Validators.required, Validators.min(2)]),
             unit_price: new FormControl(numeral(pUnit['sell_price']).value(), Validators.required),
             unit_no: new FormControl(pUnit['no']),
             id: new FormControl(pUnit['id'])
@@ -629,45 +630,57 @@ export class ProductMedicineDialogComponent implements OnInit {
   }
 
   removeUnit(i) {
-    // this.units.removeAt(i);
-    // if (this.units.length) {
-    //
-    // }
-    const data = this.units.getRawValue();
-    if (data[i].id) {
-      // console.log(data[i].id);
-      this.productSer.deleteUnit(data[i].id).subscribe(res => {
-        if (res?.success === true) {
-          this.notifySer.notify('success', res?.message);
-          // this.reload.emit(null);
-          this.units.removeAt(i);
-        } else {
-          this.notifySer.notify('warning', res?.message);
-        }
-      });
-    } else {
-      this.units.removeAt(i);
-      this.notifySer.notify('success', 'Xóa đơn vị thành công');
+    const obj = {
+      title: 'Xác nhận xóa đơn vị?',
+      content: '',
+    };
 
-    }
+    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
+      data: obj,
+      width: '30%',
+      minHeight: '60%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.event === 'confirm') {
+        const data = this.units.getRawValue();
+        if (data[i].id) {
+          // console.log(data[i].id);
+          this.productSer.deleteUnit(data[i].id).subscribe(res => {
+            if (res?.success === true) {
+              this.notifySer.notify('success', res?.message);
+              // this.reload.emit(null);
+              this.units.removeAt(i);
+            } else {
+              this.notifySer.notify('warning', res?.message);
+            }
+          });
+        } else {
+          this.units.removeAt(i);
+          this.notifySer.notify('success', 'Xóa đơn vị thành công');
+        }
+      }
+    });
   }
 
   addUnit() {
+    const baseUnitName = this.form.controls['base_unit'].value;
     const index = this.units.length + 1;
-    // let unitName: string;
-    // const list = this.filterUnit.filter(item => item.selelected === false);
-    // const newIndex = index - 1;
-    // if (list.length > 0 && newIndex < list.length) {
-    //   unitName = list[newIndex].name;
-    // }
     const form = this.form.getRawValue();
     const group = new FormGroup({
-      unit_name: new FormControl('', Validators.required),
-      unit_value: new FormControl(1, Validators.required),
+      unit_name: new FormControl('', [Validators.required, (c) => {
+        // Here the c is your form control and we check if the  value is -1 or 0
+        if (c.value === baseUnitName) {
+          // if the condition is met we return the error
+          return { wrong: true };
+        }
+        // if the condition isn't met (e.g. the form is valid) we return null, which
+        // will not apply errors on the form control
+        return null;
+      }]),
+      unit_value: new FormControl(null, [Validators.required, Validators.min(2)]),
       unit_price: new FormControl(form['sell_price'], Validators.required),
       unit_no: new FormControl(this.form.controls['product_no'].value + '-' + index)
     });
-
     this.units.push(group);
   }
 

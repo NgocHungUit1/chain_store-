@@ -124,3 +124,6 @@
 input {
   font-size: 16px;
 }
+.product-unit-action .btn-remove {
+  margin-top: -15px;
+}

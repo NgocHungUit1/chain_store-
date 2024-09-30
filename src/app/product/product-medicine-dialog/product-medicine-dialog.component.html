@@ -173,10 +173,10 @@
                                 <input type="text" formControlName="unit_no" matInput >
                               </mat-form-field>
                             </td>
-                            <td >
-                              <a (click)="removeUnit(i)">
+                            <td class="product-unit-action">
+                              <button mat-icon-button (click)="removeUnit(i)" class="btn-remove" color="error">
                                 <mat-icon>delete</mat-icon>
-                              </a>
+                              </button>
                             </td>
                           </ng-container>
                         </tr>

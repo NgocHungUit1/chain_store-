@@ -184,7 +184,7 @@
                                   <mat-form-field style="width: 110px">
 <!--                                    placeholder="Giá trị quy đổi"-->
                                     <input type="number" formControlName="unit_value" matInput
-                                           class="text-right" min="0"
+                                           class="text-right" min="2"
                                            (change)="changeUnitValue($event,i)"
                                            (keyup)="changeUnitValue($event,i)"
                                            >
@@ -208,8 +208,8 @@
                                            matInput >
                                   </mat-form-field>
                                 </td>
-                                <td>
-                                  <a (click)="removeUnit(i)">
+                                <td class="product-unit-action">
+                                  <a mat-icon-button (click)="removeUnit(i)" class="btn-remove" color="error">
                                     <mat-icon>delete</mat-icon>
                                   </a>
                                 </td>
