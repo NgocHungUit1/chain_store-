@@ -148,7 +148,7 @@ export class Dashboard3Component implements OnInit {
       groupBy:  this.fb.control('day'),
     });
 
-
+    this.onTimeChange();
 
     this.getRevenueData({
       ...this.convertTimeOptionToDates('today'),

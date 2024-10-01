@@ -283,12 +283,16 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
               this.uploadImage(product, action);
               this.dialogRef.close({event: action, data: product});
             });
+          }, error => {
+            this.loading = false;
           });
         } else {
           this.productSer.create(data).subscribe(product => {
             this.notifySer.notify('success', 'Thêm hàng hóa thành công!');
             this.uploadImage(product, action);
             this.dialogRef.close({event: action, data: product});
+          }, error => {
+            this.loading = false;
           });
         }
 
@@ -298,6 +302,8 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
           this.notifySer.notify('success', 'Cập nhật hàng hóa thành công!');
           this.uploadImage(product, action);
           this.dialogRef.close({event: action, data: product});
+        }, error => {
+          this.loading = false;
         });
       }
     } else {
