@@ -13,13 +13,13 @@
           <button mat-icon-button matPrefix>
             <mat-icon>search</mat-icon>
           </button>
-          <button mat-icon-button matSuffix [matTooltip]='"Chọn nhóm hàng"' (click)="openSearchProductDialog();">
+          <button mat-icon-button matSuffix [matTooltip]='"Chọn nhóm hàng"' (click)="$event.stopImmediatePropagation();openSearchProductDialog();">
             <mat-icon>list</mat-icon>
           </button>
-          <button mat-icon-button matSuffix  [matTooltip]='"Thêm hàng hóa mới"' (click)="openProductMerchandiseFormDialog('Add',{})">
+          <button mat-icon-button matSuffix  [matTooltip]='"Thêm hàng hóa mới"' (click)="$event.stopImmediatePropagation();openProductMerchandiseFormDialog('Add',{})">
             <mat-icon>add</mat-icon>
           </button>
-          <button mat-icon-button matSuffix [matTooltip]='"Thêm thuốc mới"' (click)="openProductMedicineDialog('Add', {});">
+          <button mat-icon-button matSuffix [matTooltip]='"Thêm thuốc mới"' (click)="$event.stopImmediatePropagation();openProductMedicineDialog('Add', {});">
             <mat-icon>add_to_queue</mat-icon>
           </button>
           <mat-autocomplete #chooseProduct="matAutocomplete" (optionSelected)="onSelectedProduct($event.option.value)">
