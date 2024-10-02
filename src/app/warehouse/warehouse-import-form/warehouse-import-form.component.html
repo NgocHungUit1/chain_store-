@@ -5,12 +5,22 @@
         <mat-icon>arrow_back</mat-icon>
       </button>
       <label class="font-18"> Nhập hàng</label>
-      <div class="select-product">
-        <mat-form-field>
+      <div class='customer-filter-container'>
+        <mat-form-field appearance='outline'
+                        class='search-input'>
           <input type="text" [formControl]="selectProduct" matInput [matAutocomplete]="chooseProduct"
                  placeholder="Tìm hàng hóa theo mã hoặc tên">
           <button mat-icon-button matPrefix>
             <mat-icon>search</mat-icon>
+          </button>
+          <button mat-icon-button matSuffix [matTooltip]='"Chọn nhóm hàng"' (click)="openSearchProductDialog();">
+            <mat-icon>list</mat-icon>
+          </button>
+          <button mat-icon-button matSuffix  [matTooltip]='"Thêm hàng hóa mới"' (click)="openProductMerchandiseFormDialog('Add',{})">
+            <mat-icon>add</mat-icon>
+          </button>
+          <button mat-icon-button matSuffix [matTooltip]='"Thêm thuốc mới"' (click)="openProductMedicineDialog('Add', {});">
+            <mat-icon>add_to_queue</mat-icon>
           </button>
           <mat-autocomplete #chooseProduct="matAutocomplete" (optionSelected)="onSelectedProduct($event.option.value)">
             <mat-option fxLayout="row" *ngFor="let product of filteredProducts | async" [value]="product"
@@ -46,25 +56,6 @@
           </mat-autocomplete>
         </mat-form-field>
       </div>
-
-      <button style="margin-left: 10px;"
-              mat-mini-fab color="primary" (click)="openSearchProductDialog();">
-        <mat-icon>list</mat-icon>
-      </button>
-
-      <button mat-mini-fab color="primary" [matMenuTriggerFor]="createMenu" style="margin-left: 10px">
-        <mat-icon>add</mat-icon>
-      </button>
-      <mat-menu #createMenu="matMenu">
-        <button mat-menu-item (click)="openProductMedicineDialog('Add', {});">
-          <mat-icon>add</mat-icon>
-          <span>Thêm thuốc</span>
-        </button>
-        <button mat-menu-item (click)="openProductMerchandiseFormDialog('Add',{})">
-          <mat-icon>add</mat-icon>
-          <span>Thêm hàng hóa</span>
-        </button>
-      </mat-menu>
 
       <span fxFlex="1 1 0%"></span>
     </mat-toolbar>
