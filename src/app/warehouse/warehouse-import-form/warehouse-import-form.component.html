@@ -55,9 +55,14 @@
 
           </mat-autocomplete>
         </mat-form-field>
+
       </div>
 
-      <span fxFlex="1 1 0%"></span>
+      <span style='text-align: right; padding-right: 1rem' fxFlex="1 1 0%">
+              <input matTooltip="Màu đỏ là chế độ quét mã vạch đang bật"
+                     type="text" id="barecode-forcus"
+                     (keyup.enter)="onkeydownBarCode($event)" autocomplete="off" autofocus>
+      </span>
     </mat-toolbar>
     <div fxLayout="row wrap" style="height: calc(100% - 50px)">
       <div fxFlex="100">
@@ -190,19 +195,14 @@
       <mat-card-content>
         <form [formGroup]="form">
           <div fxLayout="row wrap">
-            <div fxFlex="20">
-              <input matTooltip="Màu đỏ là chế độ quét mã vạch đang bật"
-                     type="text" id="barecode-forcus"
-                     (keyup.enter)="onkeydownBarCode($event)" autocomplete="off" autofocus>
-            </div>
-            <div fxFlex="80" style='display: flex; justify-content: space-between'>
+            <div fxFlex="100" style='display: flex; justify-content: space-between;margin-bottom: 4px'>
               <mat-form-field style='width: 150px'>
                 <mat-select formControlName="branch_id" [disabled]="form?.controls['status'].value === '10'">
                   <mat-option *ngFor="let branch of branchList" value="{{branch.id}}">{{branch.name}}</mat-option>
                 </mat-select>
               </mat-form-field>
 
-              <mat-form-field style='width: 90px'>
+              <mat-form-field style='width: 90px;'>
                 <input class="text-right" matInput [matDatepicker]="date_picker"
                        formControlName="date">
                 <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>
@@ -210,7 +210,7 @@
               </mat-form-field>
             </div>
 
-            <div fxFlex="100">
+            <div fxFlex="100" style='margin-bottom: 4px'>
               <mat-form-field>
                 <input type="text" matInput formControlName="supplier" placeholder="Nhà cung cấp"
                        [value]="(form.controls['supplier'].value)?.name"
@@ -235,10 +235,10 @@
                 <!--                </mat-autocomplete>-->
               </mat-form-field>
             </div>
-            <div fxFlex="60">
+            <div fxFlex="60" style='margin-bottom: 4px'>
               <span matPrefix>Mã phiếu nhập &nbsp;</span>
             </div>
-            <div fxFlex="40">
+            <div fxFlex="40" style='margin-bottom: 4px'>
               <mat-form-field>
                 <input class="text-right" matInput tabindex="2"
                        formControlName="no"
@@ -253,20 +253,20 @@
 <!--              </button>-->
 <!--            </div>-->
 
-            <div fxFlex="60">
+            <div fxFlex="60" style='margin-bottom: 4px'>
               <span matPrefix>Tổng tiền hàng &nbsp;</span>
             </div>
-            <div fxFlex="40">
+            <div fxFlex="40" style='margin-bottom: 4px'>
               <mat-form-field>
                 <input class="text-right" matInput tabindex="5" formControlName="total_price"
                        value="{{ form.get('total_price').value }}" readonly>
               </mat-form-field>
             </div>
 
-            <div fxFlex="60">
+            <div fxFlex="60" style='margin-bottom: 4px'>
               <span matPrefix>Chiết khấu &nbsp;</span>
             </div>
-            <div fxFlex="40">
+            <div fxFlex="40" style='margin-bottom: 4px'>
               <!-- 2 truong hop  -->
               <mat-form-field *ngIf="form.get('discount_type').value == 'price'">
                 <input class="text-right" matInput tabindex="6"
@@ -282,13 +282,13 @@
               </mat-form-field>
             </div>
 
-            <div fxFlex="60" *ngIf="expensesTransaction > 0 || optionStore_transaction_expenses?.value === 'yes' ">
+            <div fxFlex="60" style='margin-bottom: 4px' *ngIf="expensesTransaction > 0 || optionStore_transaction_expenses?.value === 'yes' ">
                 <span (click)="openWarehouseExpenses()" matPrefix style="display: flex;align-items: center;">
                   <mat-icon color="primary">list</mat-icon>
                   Chi phí nhập trả NCC
                 </span>
             </div>
-            <div fxFlex="40" *ngIf="expensesTransaction > 0 || optionStore_transaction_expenses?.value === 'yes' ">
+            <div fxFlex="40" style='margin-bottom: 4px' *ngIf="expensesTransaction > 0 || optionStore_transaction_expenses?.value === 'yes' ">
               <mat-form-field floatLabel="never">
 
                 <input class="text-right" matInput tabindex="5" formControlName="expenses_price"
@@ -298,7 +298,7 @@
               </mat-form-field>
             </div>
 
-            <div fxFlex="60">
+            <div fxFlex="60" style='margin-bottom: 4px'>
               <span>Tiền trả nhà cung cấp</span>
             </div>
             <div fxFlex="40">
@@ -312,7 +312,7 @@
             </div>
 
 
-            <div fxFlex="60">
+            <div fxFlex="60" style='margin-bottom: 4px'>
               <span>Tính vào công nợ &nbsp;</span>
             </div>
             <div fxFlex="40">
