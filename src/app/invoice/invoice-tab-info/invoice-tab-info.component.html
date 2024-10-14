@@ -180,7 +180,12 @@
       <ng-container matColumnDef="common_price">
         <th mat-header-cell class="column-number-end" *matHeaderCellDef> {{ columnsHeader['common_price'] }}
         </th>
-        <td mat-cell class="column-number-end" *matCellDef="let element"> {{ element?.common_price | number }}
+        <td mat-cell class="column-number-end" *matCellDef="let element">
+          <span *ngIf="element.discount == 0">{{element.price}}</span>
+          <div *ngIf="element.discount > 0">
+            <span *ngIf="element.discount_type == 'price'">{{element.price + element.discount}}</span>
+            <span *ngIf="element.discount_type == 'percent'">{{element.price * 100 / (100 - element.discount)}}</span>
+          </div>
         </td>
       </ng-container>
 
@@ -191,14 +196,16 @@
 
       <ng-container matColumnDef="discount">
         <th mat-header-cell class="column-number-end" *matHeaderCellDef> {{ columnsHeader['discount'] }} </th>
-        <td mat-cell class="column-number-end" *matCellDef="let element"> {{ element.discount }} </td>
+        <td mat-cell class="column-number-end" *matCellDef="let element">
+          <span>{{element.discount}}</span><span *ngIf="element.discount > 0 && element.discount_type == 'percent'">(%)</span>
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="price">
         <th mat-header-cell class="column-number-end" *matHeaderCellDef> {{ columnsHeader['price'] }} </th>
         <td mat-cell class="column-number-end" *matCellDef="let element">
-          <span *ngIf="element.common_price && element.price === element.common_price">{{ element.price | number }}</span>
-          <span *ngIf="!(element.common_price && element.price === element.common_price)" style="color: red">{{ element.price | number }}</span>
+          <span *ngIf="element.discount == 0">{{ element.price | number }}</span>
+          <span *ngIf="element.discount > 0" style="color: red">{{ element.price | number }}</span>
         </td>
       </ng-container>
 
