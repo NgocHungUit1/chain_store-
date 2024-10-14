@@ -1114,6 +1114,7 @@ export class SaleMainComponent implements OnInit {
    */
   printInvoice(invoice_id: number) {
     let _font_size = '11px';
+    let _font_size_store = '13px';
     let _margin = '4px;';
     let _padding = '3px;';
     let _solo = 'text-align:left;';
@@ -1126,6 +1127,7 @@ export class SaleMainComponent implements OnInit {
         _solo = 'text-align:left;';
       } else { // A4
         _font_size = '14px;';
+        _font_size_store = '16px';
         _margin = '6px;';
         _padding = '6px;';
         _solo = 'text-align:left; min-width: 100px;';
@@ -1154,7 +1156,8 @@ export class SaleMainComponent implements OnInit {
           '}</style>' +
           '<section style="padding: 10px; font-size: ' + _font_size + ' ">' +
           (this.logo !== null ? '<p style="text-align:center; margin-bottom: 10px"><img src="' + this.logo + '" style="max-width: 160px;"></p>' : '') +
-          '<p style="text-align:center;">' + res?.store?.name + '</p>' +
+          '<p style="text-align:center;font-size: ' + _font_size_store + '">' + res?.store?.name + '</p>' +
+          '<p style="text-align:center;">' + res?.store?.address + '</p>' +
           '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
           '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +
           '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
