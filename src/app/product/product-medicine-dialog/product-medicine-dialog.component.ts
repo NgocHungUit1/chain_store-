@@ -464,6 +464,8 @@ export class ProductMedicineDialogComponent implements OnInit {
               this.notifySer.notify('success', 'Thêm thuốc thành công!');
               this.uploadImage(product, action);
               this.dialogRef.close({event: action, data: product, connect: connect});
+            }, error => {
+              this.loading = false;
             });
           });
         } else {
@@ -471,6 +473,8 @@ export class ProductMedicineDialogComponent implements OnInit {
             this.notifySer.notify('success', 'Thêm thuốc thành công!');
             this.uploadImage(product, action);
             this.dialogRef.close({event: action, data: product, connect: connect});
+          }, error => {
+            this.loading = false;
           });
         }
 
@@ -480,6 +484,8 @@ export class ProductMedicineDialogComponent implements OnInit {
           this.notifySer.notify('success', 'Cập nhật thuốc thành công!');
           this.uploadImage(product, action);
           this.dialogRef.close({event: action, data: product, connect: connect});
+        }, error => {
+          this.loading = false;
         });
       }
     } else {
