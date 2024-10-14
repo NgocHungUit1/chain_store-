@@ -450,10 +450,10 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       product['productUnits'].forEach(pUnit => {
         if (pUnit['is_base'] !== 1) {
           const group = new FormGroup({
-            unit_name: new FormControl(pUnit['name'], Validators.required),
-            unit_value: new FormControl(pUnit['value'], [Validators.required, Validators.min(2)]),
+            unit_name: new FormControl({value: pUnit['name'], disabled: true}, Validators.required),
+            unit_value: new FormControl({value: pUnit['value'], disabled: true}, [Validators.required, Validators.min(2)]),
             unit_price: new FormControl(numeral(pUnit['sell_price']).value(), Validators.required),
-            unit_no: new FormControl(pUnit['no']),
+            unit_no: new FormControl({value: pUnit['no'], disabled: true}),
             id: new FormControl(pUnit['id'])
           });
           this.units.push(group);
