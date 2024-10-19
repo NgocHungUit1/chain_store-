@@ -5,12 +5,22 @@
         <mat-icon>arrow_back</mat-icon>
       </button>
       <label class="font-18">Kiểm kho </label>
-      <div class="select-product">
-        <mat-form-field>
+      <div class="select-product customer-filter-container">
+        <mat-form-field appearance='outline'
+                        class='search-input'>
           <input type="text" [formControl]="selectProduct" matInput [matAutocomplete]="chooseProduct"
                  placeholder="Tìm hàng hóa theo mã hoặc tên">
           <button mat-icon-button matPrefix>
             <mat-icon>search</mat-icon>
+          </button>
+          <button mat-icon-button matSuffix [matTooltip]='"Chọn nhóm hàng"' (click)="$event.stopImmediatePropagation();openSearchProductDialog();">
+            <mat-icon>list</mat-icon>
+          </button>
+          <button mat-icon-button matSuffix  [matTooltip]='"Thêm hàng hóa mới"' (click)="$event.stopImmediatePropagation();openProductMerchandiseFormDialog('Add',{})">
+            <mat-icon>add</mat-icon>
+          </button>
+          <button mat-icon-button matSuffix [matTooltip]='"Thêm thuốc mới"' (click)="$event.stopImmediatePropagation();openProductMedicineDialog('Add', {});">
+            <mat-icon>add_to_queue</mat-icon>
           </button>
           <mat-autocomplete #chooseProduct="matAutocomplete" (optionSelected)="onSelectedProduct($event.option.value)">
             <mat-option fxLayout="row" *ngFor="let product of filteredProducts | async" [value]="product"
@@ -27,7 +37,27 @@
           </mat-autocomplete>
         </mat-form-field>
       </div>
-      <span fxFlex="1 1 0%"></span>
+
+      <div  fxFlex="1 1 0%"></div>
+      <div class='diva-column-select m-r-5'>
+        <button mat-raised-button
+                class='m-r-5 padding-x-10'
+                color='primary'
+                (click)='selectColumn.toggle();'>
+          <mat-icon>menu</mat-icon>
+        </button>
+        <mat-select [(ngModel)]='displayedColumns'
+                    #selectColumn
+                    [multiple]='true'
+                    style='width: 100%; display: inline-flex; margin-left: -20px; color: white'
+                    placeholder='Chọn cột'>
+          <!--<mat-select-trigger></mat-select-trigger>-->
+          <mat-option *ngFor='let column of columnsToDisplay'
+
+                      [disabled]='column == "product_name" || column == "actions"'
+                      [value]='column'>{{columnsHeader[column]}}</mat-option>
+        </mat-select>
+      </div>
 
     </mat-toolbar>
     <div fxLayout="row wrap">
@@ -142,7 +172,7 @@
         <form [formGroup]="form">
           <div fxLayout="row wrap">
             <div fxFlex="60">
-              <mat-form-field>
+              <mat-form-field style='width: 100px'>
                 <input matInput [matDatepicker]="date_picker" [formControl]="form.controls['date']"
                        placeholder="Ngày nhập">
                 <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>
@@ -151,9 +181,11 @@
             </div>
             <div fxFlex="40">
             </div>
-            <div fxFlex="100">
+            <div fxFlex="60" style='margin-bottom: 4px'>
+              <span matPrefix>Mã kiểm kho &nbsp;</span>
+            </div>
+            <div fxFlex="40" style='margin-bottom: 4px'>
               <mat-form-field>
-                <mat-label>Mã kiểm kho</mat-label>
                 <input matInput tabindex="2" formControlName="no"
                        readonly
                        matTooltip="Mã phiếu được hệ thống tự động, không được thay đổi"
@@ -161,9 +193,11 @@
               </mat-form-field>
             </div>
 
-            <div fxFlex="100">
+            <div fxFlex="60" style='margin-bottom: 4px'>
+              <span matPrefix>Trạng thái</span>
+            </div>
+            <div fxFlex="40" style='margin-bottom: 4px'>
               <mat-form-field>
-                <mat-label>Trạng thái</mat-label>
                 <mat-select [formControl]="form.controls['balance_status']" placeholder="Chọn trạng thái">
                   <mat-option *ngFor="let status of statuses" value="{{status.id}}"
                               disabled="!status.id">{{status.name}}</mat-option>
@@ -171,9 +205,11 @@
               </mat-form-field>
             </div>
 
-            <div fxFlex="100">
+            <div fxFlex="60" style='margin-bottom: 4px'>
+              <span matPrefix>Tổng tiền hàng</span>
+            </div>
+            <div fxFlex="40" style='margin-bottom: 4px'>
               <mat-form-field>
-                <mat-label>Tổng tiền hàng</mat-label>
                 <input matInput tabindex="5" formControlName="total_price"
                        value="{{ form.controls['total_price'].value | number }}" readonly>
               </mat-form-field>
@@ -184,16 +220,16 @@
                 <textarea matInput tabindex="9" formControlName="note" rows="3"></textarea>
               </mat-form-field>
             </div>
-            <div fxFlex="100">
+            <div fxFlex="100" style='gap: 1rem; margin-top: calc(100vh - 600px)'>
 
-              <button *ngIf="updateModelId === null || (model !== null && model['balance_status'] === 'draft')"
+              <button  style='padding: 50px;' *ngIf="updateModelId === null || (model !== null && model['balance_status'] === 'draft')"
                       mat-raised-button
                       color="accent" fxFlex="45" tabindex="10" [disabled]="this.form.invalid"
                       (click)="openDialogBalanceSave('draft')">
                 <mat-icon>save</mat-icon>
                 Lưu tạm
               </button>
-              <button *ngIf="updateModelId === null || (model !== null && model['balance_status'] === 'draft')"
+              <button  style='padding: 50px;' *ngIf="updateModelId === null || (model !== null && model['balance_status'] === 'draft')"
                       mat-raised-button
                       color="primary" fxFlex="55" (click)="openDialogBalanceSave('done')" [disabled]="this.form.invalid"
                       tabindex="11">

@@ -1078,7 +1078,14 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
     dialogRef.afterClosed().subscribe(result => {
       if (result['event'] === 'Choose') {
-        this.handleAddProductToList(result['product_id']);
+        if (result['product_id']) {
+          this.handleAddProductToList(result['product_id']);
+        }
+        if (result['product_ids']) {
+          result['product_ids'].forEach(id => {
+            this.handleAddProductToList(id);
+          });
+        }
       }
     });
   }

@@ -19,6 +19,8 @@ import {
   ProductMerchandiseFormDialogComponent
 } from '../../product/product-merchandise-form-dialog/product-merchandise-form-dialog.component';
 import { ProductUploadDialogComponent } from '../../product/product-upload-dialog/product-upload-dialog.component';
+import { SelectionModel } from '@angular/cdk/collections';
+import { Invoice } from '../../invoice/invoice.model';
 
 @Component({
   selector: 'app-search-product-dialog',
@@ -67,6 +69,7 @@ export class SearchProductDialogComponent extends ListComponentBase implements O
     },
   ];
 
+  selection = new SelectionModel<Product>(true, []);
 
   statusProductFilter: FormGroup;
   groupProductFilter: FormGroup;
@@ -95,6 +98,7 @@ export class SearchProductDialogComponent extends ListComponentBase implements O
   ];
 
   columnsHeader = {
+    'select': 'Chọn',
     '#': '#',
     // 'product_type': 'Phân loại',
     'product_no': 'Mã hàng',
@@ -111,8 +115,8 @@ export class SearchProductDialogComponent extends ListComponentBase implements O
     'merchandise': 'Hàng hóa',
   };
 
-  displayedColumns: string[] = ['#', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'quantity', 'status'];
-  columnsToDisplay: string[] = ['#', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'quantity', 'status'];
+  displayedColumns: string[] = ['select', '#', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'quantity', 'status'];
+  columnsToDisplay: string[] = ['select', '#', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'quantity', 'status'];
   dataSource: Product[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -123,6 +127,8 @@ export class SearchProductDialogComponent extends ListComponentBase implements O
 
   searchProductForm = new FormControl();
   codeSearch = null;
+
+  toggleMore = false;
 
   buildFilterFromParams(): ProductFilter {
     function write<K extends keyof ProductFilter>(arg: ProductFilter, key: K, value: ProductFilter[K]): void {
@@ -252,6 +258,16 @@ export class SearchProductDialogComponent extends ListComponentBase implements O
         this.service.setLoadProduct(false);
       }
     });
+
+
+
+    this.selection.changed.subscribe(res => {
+      if (this.selection.selected.length > 0) {
+        this.toggleMore = true;
+      } else {
+        this.toggleMore = false;
+      }
+    });
   }
 
   openProductMedicineDialog(action, obj) {
@@ -321,6 +337,35 @@ export class SearchProductDialogComponent extends ListComponentBase implements O
     this.apiFilter = this.buildFilterFromParams();
     this.service.exportExcel(this.apiFilter).subscribe(res => {
       window.location.href = this.service.downloadFileExcel();
+    });
+  }
+
+  toggleAllRows() {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+      return;
+    }
+    this.selection.select(...this.dataSource);
+  }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource?.length;
+    return numSelected === numRows;
+  }
+
+  checkboxLabel(row?: Product): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row?.id + 1}`;
+  }
+
+  chooseSelectedProduct() {
+    this.dialogRef.close({
+      event: 'Choose',
+      product_ids: this.selection.selected.map((item) => item.id)
     });
   }
 }

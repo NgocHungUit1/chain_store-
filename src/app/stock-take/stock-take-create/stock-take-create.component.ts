@@ -18,6 +18,11 @@ import { StockTake, StockTakeItem, StockTakeItemFilter } from '../stock-take.mod
 import { StockTakeItemService } from '../stock-take-item.service';
 import { StockTakeBalanceDialogComponent } from '../stock-take-balance-dialog/stock-take-balance-dialog.component';
 import { element } from 'protractor';
+import { SearchProductDialogComponent } from '../../common/search-product-dialog/search-product-dialog.component';
+import {
+  ProductMerchandiseFormDialogComponent
+} from '../../product/product-merchandise-form-dialog/product-merchandise-form-dialog.component';
+import { ProductMedicineDialogComponent } from '../../product/product-medicine-dialog/product-medicine-dialog.component';
 
 @Component({
   selector: 'app-stock-take-create',
@@ -73,6 +78,7 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
     'actual_number': 'Thực tế',
     'deviation_number': 'Số lệch',
     'deviation_price': 'Giá trị lệch',
+    'action': 'Hành động',
   };
 
   displayedColumns: string[] = [];
@@ -420,5 +426,67 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
   buttonPrintWarehouse(model) {
     console.log('print');
   }
+  openSearchProductDialog() {
+    const dialogRef = this.dialog.open(SearchProductDialogComponent, {
+      width: '80%',
+      minWidth: '750px',
+      minHeight: '85%',
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      if (result['event'] === 'Choose') {
+        if (result['product_id']) {
+          this.handleAddProductToList(result['product_id']);
+        }
+        if (result['product_ids']) {
+          result['product_ids'].forEach(id => {
+            this.handleAddProductToList(id);
+          });
+        }
+      }
+    });
+  }
+
+  openProductMerchandiseFormDialog(action, obj) {
+    obj.action = action;
+    obj.title = 'Thêm hàng hóa';
+    obj.product_id = null;
+    obj.copy_product_id = null;
+    obj.product_name = this.selectProduct.value;
+    const dialogRef = this.dialog.open(ProductMerchandiseFormDialogComponent, {
+      data: obj,
+      width: '60%',
+      minWidth: '750px',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // this.loadData();
+      // console.log(result);
+      if (result['event'] === 'Save') {
+        this.handleAddProductToList(result['data']['id']);
+      }
+    });
+  }
+
+  openProductMedicineDialog(action, obj) {
+    obj.action = action;
+    obj.title = 'Thêm thuốc';
+    obj.product_id = null;
+    obj.copy_product_id = null;
+    obj.product_name = this.selectProduct.value;
+    const dialogRef = this.dialog.open(ProductMedicineDialogComponent, {
+      data: obj,
+      width: '60%',
+      minWidth: '750px',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // console.log(result);
+      if (result['event'] === 'Save') {
+        this.handleAddProductToList(result['data']['id']);
+      }
+    });
+  }
 }
