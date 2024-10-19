@@ -102,9 +102,20 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'price': 'Giá nhập',
     // 'discount': 'Chiết khấu',//'Giảm giá',
     'amount': 'Thành tiền',
+    'actions': 'Hành động',
   };
 
-  displayedColumns: string[] = [];
+  displayedColumns: string[] = [
+    '#',
+    'product_name',
+    // 'product_parcel',
+    'product_unit_id',
+    'quantity',
+    'price',
+    // 'discount',
+    'amount',
+    'actions'
+  ]
   columnsToDisplay: string[] = [
     '#',
     'product_name',
