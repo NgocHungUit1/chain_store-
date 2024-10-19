@@ -74,6 +74,8 @@
                     placeholder='Chọn cột'>
           <!--<mat-select-trigger></mat-select-trigger>-->
           <mat-option *ngFor='let column of columnsToDisplay'
+
+                      [disabled]='column == "product_name" || column == "actions"'
                       [value]='column'>{{columnsHeader[column]}}</mat-option>
         </mat-select>
       </div>
