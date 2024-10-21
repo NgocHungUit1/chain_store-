@@ -20,13 +20,13 @@
                   class="type-radio-group"
                   (change)="radioTimeChange($event)"
                   formControlName="type">
-                  <mat-radio-button class="radio-button-report-type" value="sale">
+                  <mat-radio-button class="radio-button-report-type" value="sale" *ngIf="canDo('Report.Product-Sale')">
                     Bán hàng
                   </mat-radio-button>
-                  <mat-radio-button class="radio-button-report-type" value="profit">
+                  <mat-radio-button class="radio-button-report-type" value="profit" *ngIf="canDo('Report.Profit')">
                     Lợi nhuận
                   </mat-radio-button>
-                  <mat-radio-button class="radio-button-report-type" value="stock">
+                  <mat-radio-button class="radio-button-report-type" value="stock" *ngIf="canDo('Report.Stock')">
                     Giá trị kho
                     <mat-icon
                       class="icon-info"
@@ -35,7 +35,7 @@
                     </mat-icon>
                   </mat-radio-button>
 
-                  <mat-radio-button class="radio-button-report-type" value="expiration-date">
+                  <mat-radio-button class="radio-button-report-type" value="expiration-date" *ngIf="canDo('Warehouse-Product-Parcel.Expiration')">
                     Hạn sử dụng
                     <mat-icon
                       class="icon-info"
@@ -43,7 +43,7 @@
                       info
                     </mat-icon>
                   </mat-radio-button>
-                  <mat-radio-button class="radio-button-report-type" value="parcel-stock">
+                  <mat-radio-button class="radio-button-report-type" value="parcel-stock" *ngIf="canDo('Warehouse-Product-Parcel.List')">
                     Tồn kho theo lô
                     <mat-icon
                       class="icon-info"
@@ -51,7 +51,7 @@
                       info
                     </mat-icon>
                   </mat-radio-button>
-                  <mat-radio-button class="radio-button-report-type" value="export-import">
+                  <mat-radio-button class="radio-button-report-type" value="export-import" *ngIf="canDo('Report.Export-Import')">
                     Xuất nhập tồn
                     <mat-icon
                       class="icon-info"
@@ -59,7 +59,7 @@
                       info
                     </mat-icon>
                   </mat-radio-button>
-                  <mat-radio-button class="radio-button-report-type" value="export-import-detail">
+                  <mat-radio-button class="radio-button-report-type" value="export-import-detail" *ngIf="canDo('Report.Export-Import-Detail')">
                     Xuất nhập tồn chi tiết
                     <mat-icon
                       class="icon-info"
@@ -68,7 +68,7 @@
                     </mat-icon>
                   </mat-radio-button>
 
-                  <mat-radio-button class="radio-button-report-type" value="sale-staff">
+                  <mat-radio-button class="radio-button-report-type" value="sale-staff" *ngIf="canDo('Report.Staff')">
                     Nhân viên theo hàng bán
                     <mat-icon
                       class="icon-info"
@@ -77,7 +77,7 @@
                     </mat-icon>
                   </mat-radio-button>
 
-                  <mat-radio-button class="radio-button-report-type" value="customer">
+                  <mat-radio-button class="radio-button-report-type" value="customer" *ngIf="canDo('Report.Customer')">
                     Khách hàng theo hàng bán
                     <mat-icon
                       class="icon-info"
@@ -86,7 +86,7 @@
                     </mat-icon>
                   </mat-radio-button>
 
-                  <mat-radio-button class="radio-button-report-type" value="supplier">
+                  <mat-radio-button class="radio-button-report-type" value="supplier" *ngIf="canDo('Report.Supplier')">
                     NCC theo hàng nhập
                     <mat-icon
                       class="icon-info"

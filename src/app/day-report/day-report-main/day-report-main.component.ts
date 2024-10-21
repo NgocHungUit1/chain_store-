@@ -219,7 +219,7 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
 
   loadData(): void {
     this.isLoadingResults = true;
-    this.service.getList(this.apiFilter).subscribe(res => {
+    this.service.getEndDayReport(this.apiFilter).subscribe(res => {
       let data = res.body;
       let stt = 0;
       data.forEach(elementData => {
