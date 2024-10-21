@@ -9,7 +9,7 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
 import {NotifierService} from 'angular-notifier';
 import {WarehouseService} from '../warehouse.service';
 import {Warehouse, WarehouseFilter} from '../warehouse.model';
-import {ProductUploadDialogComponent} from '../../product/product-upload-dialog/product-upload-dialog.component';
+import {Location} from '@angular/common';
 import {WarehouseUploadDialogComponent} from '../warehouse-upload-dialog/warehouse-upload-dialog.component';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
@@ -51,6 +51,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     private notifyService: NotifierService,
     private service: InvoiceService,
     private fb: FormBuilder,
+    private location: Location,
     private supplierSer: SupplierService,
     private productSer: ProductService,
     private storeSer: StoreService,
@@ -416,8 +417,16 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     this.downloadLink = this.mainService.getDownloadLink(this.apiFilter);
     this.mainService.getList(this.apiFilter).subscribe(res => {
       this.dataSource = res.body;
+      if (this.dataSource.length === 1) {
+        const arr = this.dataSource;``
+        this.expandedElement = arr[0];
+      }
       this.reloadFilter(res);
       this.isLoadingResults = false;
+
+      let url = '/transaction/warehouse';
+      url += '?' + this.apiFilter.toFilterString();
+      this.location.go(url);
     });
   }
 

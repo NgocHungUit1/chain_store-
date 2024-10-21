@@ -6,11 +6,12 @@ import {ListComponentBase} from '../../shared/base';
 import {ActivatedRoute} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-import {NotifierService} from 'angular-notifier';
+import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import {WarehouseService} from '../warehouse.service';
 import {Warehouse, WarehouseFilter} from '../warehouse.model';
 import {Store} from '../../store/store.model';
 import {StoreService} from '../../store/store.service';
+import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
 
 @Component({
   templateUrl: './warehouse-return-list.component.html',
@@ -72,6 +73,8 @@ export class WarehouseReturnListComponent extends ListComponentBase implements O
   isLoadingResults = true;
   isRateLimitReached = false;
 
+  searchForm = new FormControl();
+
   buildFilterFromParams(): WarehouseFilter {
     function write<K extends keyof WarehouseFilter>(arg: WarehouseFilter, key: K, value: WarehouseFilter[K]): void {
       arg[key] = value;
@@ -107,6 +110,19 @@ export class WarehouseReturnListComponent extends ListComponentBase implements O
 
     this.storeSer.getDetail().subscribe(res => {
       this.store = res;
+    });
+
+    this.searchForm.valueChanges.pipe(debounceTime(800)).subscribe(res => {
+      if (res !== '') {
+        this.apiFilter = this.buildFilterFromParams();
+        this.apiFilter.keyword = res;
+        this.loadData();
+        // this.service.setLoadProduct(false);
+      } else {
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+        // this.service.setLoadProduct(false);
+      }
     });
   }
 }

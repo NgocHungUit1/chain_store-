@@ -1,0 +1,98 @@
+<h1 mat-dialog-title>Thêm đơn vị cho SP: {{data.product.product_name}} ({{data.product.product_no}})</h1>
+<div mat-dialog-content>
+<mat-card style="margin: 10px 0px; border: 1px solid #ccc" *ngIf='form' [formGroup]='form'>
+  <mat-card-content>
+    <div fxLayout="row wrap" *ngIf="units.length > 0">
+      <div fxFlex="100">
+        <ng-container formArrayName="units">
+          <table>
+            <thead style="text-align: left">
+            <!--                        <th></th>-->
+            <th>Tên đơn vị</th>
+            <th>Giá trị quy đổi</th>
+            <th class="text-center">Giá bán</th>
+            <th class="text-center">Mã hàng</th>
+            <th></th>
+            </thead>
+            <tbody>
+            <tr *ngFor="let _ of units.controls; index as i;">
+              <ng-container [formGroupName]="i">
+                <!--                            <td>-->
+                <!--                              <mat-radio-group (change)="_convertIndex = i" name="convert_base_unit">-->
+                <!--                                <mat-radio-button value="{{i}}"></mat-radio-button>-->
+                <!--                              </mat-radio-group>-->
+                <!--                            </td>-->
+                <td style="padding-right: 10px;">
+                  <mat-form-field style="width: 100px">
+                    <!--                                placeholder="Tên đơn vị"-->
+                    <input type="text" formControlName="unit_name"
+                           matInput
+                           [matAutocomplete]="autoUnit">
+                    <mat-autocomplete #autoUnit="matAutocomplete">
+                      <mat-option *ngFor="let option of filteredOptionsUnit | async" [value]="option">
+                        {{ option }}
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+                </td>
+                <td class="p-r-10">
+                  <mat-form-field style="width: 110px">
+                    <!--                                placeholder="Giá trị quy đổi"-->
+                    <input matInput  type="number" formControlName="unit_value"
+                           [min]='2'
+                           class="text-right"
+                           (change)="changeUnitValue($event,i)"
+                           (keyup)="changeUnitValue($event,i)">
+                  </mat-form-field>
+                </td>
+                <td class="p-r-10">
+                  <mat-form-field style="width: 110px">
+                    <!--                                placeholder="Giá bán"-->
+                    <input matInput  type="number" class="text-right" formControlName="unit_price"
+                           (change)="changeBaseUnitValue($event, i)"
+                           (keyup)="changeBaseUnitValue($event, i)">
+                  </mat-form-field>
+                </td>
+                <td class="p-r-10">
+                  <mat-form-field style="width: 120px">
+                    <!--                                placeholder="Mã hàng"-->
+                    <input type="text" formControlName="unit_no" matInput >
+                  </mat-form-field>
+                </td>
+                <td >
+                  <a (click)="removeUnit(i)">
+                    <mat-icon>delete</mat-icon>
+                  </a>
+                </td>
+              </ng-container>
+            </tr>
+            </tbody>
+          </table>
+        </ng-container>
+      </div>
+    </div>
+
+    <div fxLayout="row wrap">
+      <div fxFlex="100">
+        <button mat-raised-button (click)="addUnit();">
+          <mat-icon>add</mat-icon>
+          Thêm đơn vị
+        </button>
+      </div>
+    </div>
+
+
+  </mat-card-content>
+</mat-card>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" [disabled]="this.form.invalid || units.length == 0" tabindex="4" (click)="save()">
+    <mat-icon>save</mat-icon>
+    Ok
+  </button>
+  <button mat-raised-button (click)="dialogRef.close(null)" tabindex="-1">
+    <mat-icon>cancel</mat-icon>
+    Bỏ qua
+  </button>
+</div>

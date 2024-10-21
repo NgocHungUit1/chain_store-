@@ -97,21 +97,13 @@
             </div>
 
             <mat-form-field>
-              <input type="text" matInput [formControl]="form.controls['base_unit']" [matChipInputFor]="chipList"
-                     required
-                     placeholder="Đơn vị cơ bản " autocomplete="off">
+              <input type="text" placeholder="Đơn vị cơ bản" matInput formControlName="base_unit" [matAutocomplete]="autocomplete">
+              <mat-autocomplete #autocomplete="matAutocomplete">
+                <mat-option *ngFor="let unit of filterUnit" [value]="unit.name">
+                  {{unit.name}}
+                </mat-option>
+              </mat-autocomplete>
             </mat-form-field>
-
-            <div class="p-b-10">
-              <mat-chip-list #chipList>
-                <mat-chip *ngFor="let unit of filterUnit; index as i;"
-                          color="{{unit.selelected==true ? 'primary' : 'null'}}"
-                          selected="{{ unit.selected }}"
-                          (click)="selectBaseUnit(unit.name, i)">
-                  {{ unit.name }}
-                </mat-chip>
-              </mat-chip-list>
-            </div>
 
 <!--            <mat-form-field>-->
 <!--              <input type="number" class="text-right"  matInput-->
@@ -181,10 +173,10 @@
                                 <input type="text" formControlName="unit_no" matInput >
                               </mat-form-field>
                             </td>
-                            <td >
-                              <a (click)="removeUnit(i)">
+                            <td class="product-unit-action">
+                              <button mat-icon-button (click)="removeUnit(i)" class="btn-remove" color="error">
                                 <mat-icon>delete</mat-icon>
-                              </a>
+                              </button>
                             </td>
                           </ng-container>
                         </tr>

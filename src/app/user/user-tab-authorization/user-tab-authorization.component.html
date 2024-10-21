@@ -1,26 +1,60 @@
-<div fxLayout="row wrap" *ngIf="user !== null" class="m-b-20">
-  <div fxFlex="100">
-    <div fxLayout="row wrap">
-      <div fxFlex="30" class="user-info">
-        <mat-card class="time-filter-info">
-          <mat-card-title class="title-time-filter">Vai trò</mat-card-title>
-          <mat-card-content>
-            <mat-radio-group [(ngModel)]="selectedRoleId"
-              class="type-radio-group" (change)="onChangeRole($event);">
-              <mat-radio-button class="radio-button-report-type" [checked]="role.id == this.selectedRoleId" value="{{role.id}}" *ngFor="let role of storeRoles">
-                <span class="role-name">{{role.name}}</span> <button mat-icon-button (click)="openStoreRoleDialog(role.id);"><mat-icon>edit</mat-icon></button><button mat-icon-button (click)="openStoreRoleDialog(null, role.id);"><mat-icon>content_copy</mat-icon></button>
-              </mat-radio-button>
+<div fxLayout='row wrap'
+     *ngIf='user !== null'
+     class='m-b-20'>
+  <div fxFlex='100'>
+    <div  style='display: flex'>
+      <div class='user-info' style='padding: 2rem 4rem 2rem 1rem; width: 350px; flex-shrink: 0;'>
 
-            </mat-radio-group>
-            <button mat-mini-fab (click)="openStoreRoleDialog();" color="primary"><mat-icon>add</mat-icon></button>
-          </mat-card-content>
-        </mat-card>
+        <mat-accordion multi>
+          <mat-expansion-panel [expanded]='true'
+                               [hideToggle]='true'>
+            <mat-expansion-panel-header>
+              <mat-panel-title style='justify-content: space-between; align-items: center; margin-right: 0'>
+                <span>Vai trò</span>
+                <mat-icon title='Thêm'
+                          (click)='$event.stopImmediatePropagation();openStoreRoleDialog();'>add
+                </mat-icon>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div class='custom-filter-container__checkbox-container'>
+              <mat-radio-group [(ngModel)]='selectedRoleId'
+                               class='type-radio-group'
+                               (change)='onChangeRole($event);'>
+                <mat-radio-button class='radio-button-report-type'
+                                  style='width: 100%;'
+                                  [checked]='role.id == this.selectedRoleId'
+                                  value='{{role.id}}'
+                                  *ngFor='let role of storeRoles'>
+                    <span class='role-name'>{{role.name}}</span>
+                    <button mat-icon-button
+                            class='small-icon-button'
+                            (click)='$event.stopImmediatePropagation();openStoreRoleDialog(role.id);'>
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button
+                            class='small-icon-button'
+                            (click)='$event.stopImmediatePropagation();openStoreRoleDialog(null, role.id);'>
+                      <mat-icon>content_copy</mat-icon>
+                    </button>
+                </mat-radio-button>
+
+              </mat-radio-group>
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
       </div>
-      <div fxFlex="70" class="user-info">
-        <div fxLayout="row wrap" >
-          <div fxFlex="30" *ngFor="let group of this.permissionData.group">
-            <h3>{{group}}</h3>
-            <ejs-treeview [fields]="{ dataSource: this.permissionData.permission_data[group]['children'], id: 'id', text: 'name', child: 'children'}" [checkedNodes]="this.selectedPermissions" [selectedNodes]="this.selectedPermissions" [showCheckBox]="true" (nodeChecked)="nodeChecked($event)"></ejs-treeview>
+      <div class='user-info' style='flex-grow: 1'>
+        <div fxLayout='row wrap'>
+          <div fxFlex='30'
+               *ngFor='let group of this.permissionData.group'>
+            <h3 class='group-title'>{{group}}</h3>
+            <ejs-treeview class='custom-tree'
+                          [fields]="{ dataSource: this.permissionData.permission_data[group]['children'], id: 'id', text: 'name', child: 'children'}"
+                          [checkedNodes]='this.selectedPermissions'
+                          [selectedNodes]='this.selectedPermissions'
+                          [showCheckBox]='true'
+                          (nodeChecked)='nodeChecked($event)'></ejs-treeview>
           </div>
 
 
@@ -31,9 +65,14 @@
   </div>
 
 
-  <div fxFlex="100" align="end">
-    <button class="m-r-10" mat-raised-button color="primary" (click)="save()">
-      <mat-icon>save</mat-icon> Cập nhật
+  <div fxFlex='100'
+       align='end'>
+    <button class='m-r-10'
+            mat-raised-button
+            color='primary'
+            (click)='save()'>
+      <mat-icon>save</mat-icon>
+      Cập nhật
     </button>
   </div>
 </div>

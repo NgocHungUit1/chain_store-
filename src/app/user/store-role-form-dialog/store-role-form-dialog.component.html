@@ -20,8 +20,8 @@
           <div fxFlex="100">
             <div fxLayout="row wrap" *ngIf="this.storePerData">
               <div fxFlex="30" *ngFor="let group of this.storePerData.group">
-                <h3>{{group}}</h3>
-                <ejs-treeview [fields]="{ dataSource: this.storePerData.permission_data[group]['children'], id: 'id', text: 'name', child: 'children'}" [checkedNodes]="this.selectedPermissions" [showCheckBox]="true" (nodeChecked)="nodeChecked($event)"></ejs-treeview>
+                <h3 class='group-title'>{{group}}</h3>
+                <ejs-treeview class='custom-tree' [fields]="{ dataSource: this.storePerData.permission_data[group]['children'], id: 'id', text: 'name', child: 'children'}" [checkedNodes]="this.selectedPermissions" [showCheckBox]="true" (nodeChecked)="nodeChecked($event)"></ejs-treeview>
               </div>
 
 

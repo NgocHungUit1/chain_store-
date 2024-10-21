@@ -41,6 +41,10 @@
   display: none;
 }
 
+.product-unit-action .btn-remove {
+  margin-top: -15px;
+}
+
 .product-upload-image li label .add-image-text {
   background-color: transparent;
   border: none;

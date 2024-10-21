@@ -24,11 +24,8 @@
   padding-left: 0px;
 }
 .role-name {
-  margin-top: 8px;
+  margin: 8px 0;
   display: inline-block;
-}
-:host ::ng-deep label.mat-radio-label > span.mat-radio-label-content {
-  width: 240px;
 }
 :host ::ng-deep label.mat-radio-label > span.mat-radio-label-content > .mat-icon-button {
   float: right;
@@ -60,3 +57,14 @@
 /*.radio-button-report-type:hover .mat-icon-button {*/
 /*  display: inline-block;*/
 /*}*/
+.group-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #009688;
+  margin-bottom: 4px;
+}
+::ng-deep.radio-button-report-type {
+  .mat-radio-label-content {
+    width: 100% !important;
+  }
+}

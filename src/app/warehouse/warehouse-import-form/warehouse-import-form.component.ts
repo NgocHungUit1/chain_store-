@@ -39,6 +39,7 @@ import {WarehouseFormPriceDialogComponent} from '../warehouse-form-price-dialog/
 import {SearchProductDialogComponent} from '../../common/search-product-dialog/search-product-dialog.component';
 import * as moment from 'moment';
 import {SearchSupplierDialogComponent} from '../../common/search-supplier-dialog/search-supplier-dialog.component';
+import { WarehouseUnitCreateDialogComponent } from '../warehouse-unit-create-dialog/warehouse-unit-create-dialog.component';
 
 
 @Component({
@@ -1275,4 +1276,18 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     }
   }
 
+  openUnitCreateDialog(element: any) {
+    const ref = this.dialog.open(WarehouseUnitCreateDialogComponent, {
+      width: '35%',
+      minHeight: '200px',
+      data: element
+    });
+
+    ref.afterClosed().subscribe(res => {
+      if (res) {
+        /* Handle call api here */
+        console.log(res);
+      }
+    });
+  }
 }

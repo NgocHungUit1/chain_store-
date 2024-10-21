@@ -12,7 +12,8 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { Dashboard1Component } from './dashboard1/dashboard1.component';
 import { Dashboard2Component } from './dashboard2/dashboard2.component';
 import { DashboardMainComponent } from './dashboard-main/dashboard-main.component';
-import {FormsModule} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Dashboard3Component } from './dashboard3/dashboard3.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -22,8 +23,9 @@ import {FormsModule} from '@angular/forms';
     ChartsModule,
     NgApexchartsModule,
     RouterModule.forChild(DashboardsRoutes),
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule,
   ],
-    declarations: [Dashboard1Component, Dashboard2Component, DashboardMainComponent]
+    declarations: [Dashboard1Component, Dashboard2Component, DashboardMainComponent, Dashboard3Component]
 })
 export class DashboardsModule { }
