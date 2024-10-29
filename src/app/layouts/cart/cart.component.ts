@@ -40,6 +40,7 @@ import { NationalPrescriptionService } from '../../national-prescription/nationa
 import { element } from 'protractor';
 import { CustomerService } from '../../customer/customer.service';
 import {StoreService} from '../../store/store.service';
+import {OptionStoreService} from '../../common/option-store.service';
 
 /** @title Responsive sidenav */
 @Component({
@@ -82,6 +83,8 @@ export class CartComponent implements OnInit, OnDestroy {
 
   @ViewChild('inputSearch') inputSearch: ElementRef;
 
+  canNegativeStock: boolean = false;
+
   constructor(
     changeDetectorRef: ChangeDetectorRef,
     media: MediaMatcher,
@@ -93,12 +96,17 @@ export class CartComponent implements OnInit, OnDestroy {
     private nationalPrescriptionService: NationalPrescriptionService,
     private priceListSer: PriceListService,
     private notifySer: NotifierService,
+    private optionStoreService: OptionStoreService,
     private storeSer: StoreService,
     protected customerService: CustomerService
   ) {
     this.mobileQuery = media.matchMedia('(min-width: 768px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
+
+    this.optionStoreService.getValue('sale_negative_stock').subscribe(res => {
+      this.canNegativeStock = res.value === 'yes';
+    });
   }
 
   ngOnDestroy(): void {
@@ -242,10 +250,11 @@ export class CartComponent implements OnInit, OnDestroy {
         // tim san pham
         this.orderService.pushHistorySearch(product, product.store_id);
 
+        console.log(this.canNegativeStock);
         if (
-          product['quantity_of_stock'] > 0 &&
+          this.canNegativeStock || (product['quantity_of_stock'] > 0 &&
           product['quantity_of_stock'] >= this.amountProduct
-        ) {
+        )) {
           this.handlePriceListProduct(product);
         } else {
           this.notifySer.notify('warning', 'Không đủ tồn kho.');

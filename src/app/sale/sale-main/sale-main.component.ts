@@ -117,6 +117,10 @@ export class SaleMainComponent implements OnInit {
     this.optionStoreService.getValue('point_can_pay_by_point_after_invoices').subscribe(res => {
       this.canPayByPointAfterInvoices = parseInt(res.value);
     });
+
+    this.optionStoreService.getValue('sale_negative_stock').subscribe(res => {
+      this.canNegativeStock = res.value === 'yes';
+    });
   }
 
   optionStore_auto_print: OptionStore = null;
@@ -176,6 +180,7 @@ export class SaleMainComponent implements OnInit {
 
   prescription_id: null; // ban theo don thuoc
 
+  canNegativeStock: boolean = false;
   isPointEnabled: boolean = false;
   pointToCashRate: number = 0;
   canPayByPointAfterInvoices: number = 0;
@@ -1625,15 +1630,15 @@ export class SaleMainComponent implements OnInit {
       const product_unit_id = element.product_unit_id;
       const units = element.product.productUnits;
       const product_unit = units.find(ele => ele.id === product_unit_id);
-      // console.log(product_unit);
-      if (element.amount > product_unit.quantity_of_stock) {
-        this.notifySer.notify(
-          'warning',
-          `Không đủ số lượng tồn kho sản phẩm ${element.product.product_name} (Tồn kho: ${product_unit.quantity_of_stock})`
-        );
-        needReturn = 1;
+      if (!this.canNegativeStock) {
+        if (element.amount > product_unit.quantity_of_stock) {
+          this.notifySer.notify(
+            'warning',
+            `Không đủ số lượng tồn kho sản phẩm ${element.product.product_name} (Tồn kho: ${product_unit.quantity_of_stock})`
+          );
+          needReturn = 1;
+        }
       }
-      // console.log(product_unit);
     });
     if (needReturn === 1) {
       this.submitted = false;
