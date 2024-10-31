@@ -106,7 +106,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   };
 
   displayedColumns: string[] = [
+    'actions',
     '#',
+    'product_no',
     'product_name',
     // 'product_parcel',
     'product_unit_id',
@@ -114,10 +116,11 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'price',
     // 'discount',
     'amount',
-    'actions'
   ]
   columnsToDisplay: string[] = [
+    'actions',
     '#',
+    'product_no',
     'product_name',
     // 'product_parcel',
     'product_unit_id',
@@ -125,7 +128,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'price',
     // 'discount',
     'amount',
-    'actions'
   ];
   data: WarehouseProduct[] = [];
   productDataSource = new MatTableDataSource<WarehouseProduct>([]);
@@ -1311,10 +1313,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   toggleColumn(column) {
     setTimeout(() => {
-      if (this.displayedColumns.some(item => item === column)) {
-        this.displayedColumns = [...this.displayedColumns.filter(item => item !== column)];
+      if (this.displayedColumns.includes(column)) {
+        this.displayedColumns = this.displayedColumns.filter(col => col !== column);
       } else {
-        this.displayedColumns = [...this.displayedColumns, column];
+        this.displayedColumns = this.columnsToDisplay.filter(col =>
+          col === column || this.displayedColumns.includes(col)
+        );
       }
     });
   }

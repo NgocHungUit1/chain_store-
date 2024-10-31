@@ -210,6 +210,9 @@ File: scss
   }
 }
 .custom-filter-container {
+  .mat-form-field-appearance-outline .mat-select-arrow-wrapper {
+    transform: translateY(0);
+  }
   .customer-2-select {
     align-items: baseline;
     gap: 10px;
