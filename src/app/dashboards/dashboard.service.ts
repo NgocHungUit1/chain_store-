@@ -26,7 +26,7 @@ export class DashboardService {
   getAddInfo(): Observable<AddInfo> {
     return of({
       bgUrl: '/assets/images/dashboard/zalo_banner.png',
-      url: 'https://zalo.me/84932106859',
+      url: 'https://zalo.me/0903010099',
     });
   }
 
