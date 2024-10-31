@@ -239,7 +239,8 @@
                          (click)="openSearchSupplierDialog()">
                   <!--                [matAutocomplete]="auto"-->
                   <button mat-icon-button matPrefix>
-                    <mat-icon>search</mat-icon>
+                    <mat-icon *ngIf="!form.controls['supplier'].value">search</mat-icon>
+                    <mat-icon *ngIf="form.controls['supplier'].value">person</mat-icon>
                   </button>
                   <button mat-icon-button matSuffix (click)="this.form.patchValue({supplier: null});"
                           *ngIf="this.form?.controls['supplier'].value && this.updateModelId === null">
