@@ -213,175 +213,180 @@
   </div>
   <div fxFlex="25">
     <mat-card class="warehouse-info" style='height: calc(100vh - 150px)'>
-      <mat-card-content>
-        <form [formGroup]="form">
-          <div fxLayout="row wrap">
-            <div fxFlex="100" style='display: flex; justify-content: space-between;margin-bottom: 4px'>
-              <mat-form-field style='width: 150px'>
-                <mat-select formControlName="branch_id" [disabled]="form?.controls['status'].value === '10'">
-                  <mat-option *ngFor="let branch of branchList" value="{{branch.id}}">{{branch.name}}</mat-option>
-                </mat-select>
-              </mat-form-field>
+      <mat-card-content style='height: 100%'>
+        <form [formGroup]="form" style='height: 100%;'>
+          <div style='display: flex; flex-direction: column;height: 100%;'>
+            <div fxLayout="row wrap">
+              <div fxFlex="100" style='display: flex; justify-content: space-between;margin-bottom: 4px'>
+                <mat-form-field style='width: 150px'>
+                  <mat-select formControlName="branch_id" [disabled]="form?.controls['status'].value === '10'">
+                    <mat-option *ngFor="let branch of branchList" value="{{branch.id}}">{{branch.name}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
 
-              <mat-form-field style='width: 90px;'>
-                <input class="text-right" matInput [matDatepicker]="date_picker"
-                       formControlName="date">
-                <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>
-                <mat-datepicker #date_picker></mat-datepicker>
-              </mat-form-field>
-            </div>
+                <mat-form-field style='width: 90px;'>
+                  <input class="text-right" matInput [matDatepicker]="date_picker"
+                         formControlName="date">
+                  <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>
+                  <mat-datepicker #date_picker></mat-datepicker>
+                </mat-form-field>
+              </div>
 
-            <div fxFlex="100" style='margin-bottom: 4px'>
-              <mat-form-field>
-                <input type="text" matInput formControlName="supplier" placeholder="Nhà cung cấp"
-                       [value]="(form.controls['supplier'].value)?.name"
-                       (click)="openSearchSupplierDialog()">
-                <!--                [matAutocomplete]="auto"-->
-                <button mat-icon-button matPrefix>
-                  <mat-icon>search</mat-icon>
-                </button>
-                <button mat-icon-button matSuffix (click)="this.form.patchValue({supplier: null});"
-                        *ngIf="this.form?.controls['supplier'].value && this.updateModelId === null">
-                  <mat-icon>delete</mat-icon>
-                </button>
-                <!--                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySupplier">-->
-                <!--                  <mat-option style="word-break: break-word;-->
-                <!--                                      display: block;-->
-                <!--                                      white-space: pre-wrap;"-->
-                <!--                              *ngFor="let supplier of filteredSuppliers | async" [value]="supplier">-->
-                <!--                    <span class="supplier-option">-->
-                <!--                      - {{supplier.name}}-->
-                <!--                    </span>-->
-                <!--                  </mat-option>-->
-                <!--                </mat-autocomplete>-->
-              </mat-form-field>
-            </div>
-            <div fxFlex="60" style='margin-bottom: 4px'>
-              <span matPrefix>Mã phiếu nhập &nbsp;</span>
-            </div>
-            <div fxFlex="40" style='margin-bottom: 4px'>
-              <mat-form-field>
-                <input class="text-right" matInput tabindex="2"
-                       formControlName="no"
-                       [readonly]="updateModelId !== null"
-                       matTooltipPosition="left" required>
-              </mat-form-field>
-            </div>
-<!--            <div fxFlex="10">-->
-<!--              <button mat-button aria-label="add" (click)="openSupplierFormDialog()"-->
-<!--                      style="min-width: unset; padding: 0">-->
-<!--                <mat-icon>add</mat-icon>-->
-<!--              </button>-->
-<!--            </div>-->
+              <div fxFlex="100" style='margin-bottom: 4px'>
+                <mat-form-field>
+                  <input type="text" matInput formControlName="supplier" placeholder="Nhà cung cấp"
+                         [value]="(form.controls['supplier'].value)?.name"
+                         (click)="openSearchSupplierDialog()">
+                  <!--                [matAutocomplete]="auto"-->
+                  <button mat-icon-button matPrefix>
+                    <mat-icon>search</mat-icon>
+                  </button>
+                  <button mat-icon-button matSuffix (click)="this.form.patchValue({supplier: null});"
+                          *ngIf="this.form?.controls['supplier'].value && this.updateModelId === null">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                  <!--                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySupplier">-->
+                  <!--                  <mat-option style="word-break: break-word;-->
+                  <!--                                      display: block;-->
+                  <!--                                      white-space: pre-wrap;"-->
+                  <!--                              *ngFor="let supplier of filteredSuppliers | async" [value]="supplier">-->
+                  <!--                    <span class="supplier-option">-->
+                  <!--                      - {{supplier.name}}-->
+                  <!--                    </span>-->
+                  <!--                  </mat-option>-->
+                  <!--                </mat-autocomplete>-->
+                </mat-form-field>
+              </div>
+              <div fxFlex="60" style='margin-bottom: 4px'>
+                <span matPrefix>Mã phiếu nhập &nbsp;</span>
+              </div>
+              <div fxFlex="40" style='margin-bottom: 4px'>
+                <mat-form-field>
+                  <input class="text-right" matInput tabindex="2"
+                         formControlName="no"
+                         [readonly]="updateModelId !== null"
+                         matTooltipPosition="left" required>
+                </mat-form-field>
+              </div>
+              <!--            <div fxFlex="10">-->
+              <!--              <button mat-button aria-label="add" (click)="openSupplierFormDialog()"-->
+              <!--                      style="min-width: unset; padding: 0">-->
+              <!--                <mat-icon>add</mat-icon>-->
+              <!--              </button>-->
+              <!--            </div>-->
 
-            <div fxFlex="60" style='margin-bottom: 4px'>
-              <span matPrefix>Tổng tiền hàng &nbsp;</span>
-            </div>
-            <div fxFlex="40" style='margin-bottom: 4px'>
-              <mat-form-field>
-                <input class="text-right" matInput tabindex="5" formControlName="total_price"
-                       value="{{ form.get('total_price').value }}" readonly>
-              </mat-form-field>
-            </div>
+              <div fxFlex="60" style='margin-bottom: 4px'>
+                <span matPrefix>Tổng tiền hàng &nbsp;</span>
+              </div>
+              <div fxFlex="40" style='margin-bottom: 4px'>
+                <mat-form-field>
+                  <input class="text-right" matInput tabindex="5" formControlName="total_price"
+                         value="{{ form.get('total_price').value }}" readonly>
+                </mat-form-field>
+              </div>
 
-            <div fxFlex="60" style='margin-bottom: 4px'>
-              <span matPrefix>Chiết khấu &nbsp;</span>
-            </div>
-            <div fxFlex="40" style='margin-bottom: 4px'>
-              <!-- 2 truong hop  -->
-              <mat-form-field *ngIf="form.get('discount_type').value == 'price'">
-                <input class="text-right" matInput tabindex="6"
-                       value="{{ form.get('discount_amount').value | number }}"
-                       (click)="openDiscountDialogWarehouse();">
-              </mat-form-field>
-
-              <mat-form-field *ngIf="form.get('discount_type').value == 'percent'">
+              <div fxFlex="60" style='margin-bottom: 4px'>
                 <span matPrefix>Chiết khấu &nbsp;</span>
-                <input class="text-right" matInput tabindex="6"
-                       value="{{ (form.get('total_price').value * form.get('discount_amount').value / 100) | number:'1.0-0' }} {{ '(' + form.get('discount_amount').value + '%)' }}"
-                       (click)="openDiscountDialogWarehouse();">
-              </mat-form-field>
-            </div>
+              </div>
+              <div fxFlex="40" style='margin-bottom: 4px'>
+                <!-- 2 truong hop  -->
+                <mat-form-field *ngIf="form.get('discount_type').value == 'price'">
+                  <input class="text-right" matInput tabindex="6"
+                         value="{{ form.get('discount_amount').value | number }}"
+                         (click)="openDiscountDialogWarehouse();">
+                </mat-form-field>
 
-            <div fxFlex="60" style='margin-bottom: 4px' *ngIf="expensesTransaction > 0 || optionStore_transaction_expenses?.value === 'yes' ">
+                <mat-form-field *ngIf="form.get('discount_type').value == 'percent'">
+                  <span matPrefix>Chiết khấu &nbsp;</span>
+                  <input class="text-right" matInput tabindex="6"
+                         value="{{ (form.get('total_price').value * form.get('discount_amount').value / 100) | number:'1.0-0' }} {{ '(' + form.get('discount_amount').value + '%)' }}"
+                         (click)="openDiscountDialogWarehouse();">
+                </mat-form-field>
+              </div>
+
+              <div fxFlex="60" style='margin-bottom: 4px' *ngIf="expensesTransaction > 0 || optionStore_transaction_expenses?.value === 'yes' ">
                 <span (click)="openWarehouseExpenses()" matPrefix style="display: flex;align-items: center;">
                   <mat-icon color="primary">list</mat-icon>
                   Chi phí nhập trả NCC
                 </span>
-            </div>
-            <div fxFlex="40" style='margin-bottom: 4px' *ngIf="expensesTransaction > 0 || optionStore_transaction_expenses?.value === 'yes' ">
-              <mat-form-field floatLabel="never">
+              </div>
+              <div fxFlex="40" style='margin-bottom: 4px' *ngIf="expensesTransaction > 0 || optionStore_transaction_expenses?.value === 'yes' ">
+                <mat-form-field floatLabel="never">
 
-                <input class="text-right" matInput tabindex="5" formControlName="expenses_price"
-                       (click)="openWarehouseExpenses()"
-                       style="color: #0000ff"
-                       value="{{ form.get('expenses_price').value }}" readonly>
-              </mat-form-field>
+                  <input class="text-right" matInput tabindex="5" formControlName="expenses_price"
+                         (click)="openWarehouseExpenses()"
+                         style="color: #0000ff"
+                         value="{{ form.get('expenses_price').value }}" readonly>
+                </mat-form-field>
+              </div>
+
+              <div fxFlex="60" style='margin-bottom: 4px'>
+                <span>Tiền trả nhà cung cấp</span>
+              </div>
+              <div fxFlex="40">
+                <mat-form-field>
+                  <input matInput tabindex="7" formControlName="paid_amount" (keyup)="inputformatNumber($event)" required
+                         value="{{ form.get('paid_amount').value }}" (change)="recalculateWarehouse();">
+                  <button mat-raised-button color="primary" matSuffix (click)="paidAmount()">
+                    Trả đủ
+                  </button>
+                </mat-form-field>
+              </div>
+
+
+              <div fxFlex="60" style='margin-bottom: 4px'>
+                <span>Tính vào công nợ &nbsp;</span>
+              </div>
+              <div fxFlex="40">
+                <mat-form-field>
+                  <input class="text-right" matInput tabindex="8" formControlName="remain_amount"
+                         value="{{ form.get('remain_amount').value }}" readonly>
+                </mat-form-field>
+              </div>
+              <div fxFlex="100">
+                <mat-form-field>
+                  <mat-label>Ghi chú</mat-label>
+                  <textarea matInput tabindex="9"
+                            formControlName="note" rows="3"></textarea>
+                </mat-form-field>
+              </div>
+              <p *ngIf="updateModelId !== null && model !== null && model['status'] === 10">
+                Bạn đang cập nhật lại đơn đã hoàn thành, phần mềm sẽ xóa thông tin thẻ kho cũ và cập nhật mới theo đơn này
+              </p>
             </div>
 
-            <div fxFlex="60" style='margin-bottom: 4px'>
-              <span>Tiền trả nhà cung cấp</span>
-            </div>
-            <div fxFlex="40">
-              <mat-form-field>
-                <input matInput tabindex="7" formControlName="paid_amount" (keyup)="inputformatNumber($event)" required
-                       value="{{ form.get('paid_amount').value }}" (change)="recalculateWarehouse();">
-                <button mat-raised-button color="primary" matSuffix (click)="paidAmount()">
-                  Trả đủ
+            <div fxLayout="row wrap" style='margin-top: auto'>
+              <div fxFlex="100" style='gap: 1rem;'>
+                <button style='padding: 30px;' *ngIf="updateModelId === null || (model !== null && model['status'] === 9)" mat-raised-button
+                        color="accent" fxFlex="45" tabindex="10" [disabled]="this.form.invalid" (click)="submit(9)">
+                  <mat-icon>save</mat-icon>
+                  Lưu tạm
                 </button>
-              </mat-form-field>
-            </div>
+                <button style='padding: 30px;' *ngIf="updateModelId === null || (model !== null && model['status'] === 9)" mat-raised-button
+                        color="primary" fxFlex="55" (click)="submit(10)" [disabled]="this.form.invalid" tabindex="11">
+                  <mat-icon>check</mat-icon>
+                  Hoàn thành
+                </button>
+                <button style='padding: 50px;' *ngIf="updateModelId !== null && model !== null && model['status'] === 10" mat-raised-button
+                        color="primary" fxFlex="100" (click)="submit(10)"
+                        [disabled]="this.form.invalid || checkPermissionDisable('Warehouse.Update') || !isAdminStore"
+                        tabindex="11">
+                  <mat-icon>check</mat-icon>
+                  Lưu sửa đổi
+                </button>
+              </div>
 
+              <div fxFlex="100" style="padding-top: 10px">
+                <button *ngIf="updateModelId !== null && model !== null "
+                        mat-raised-button color="info" fxFlex="100" [disabled]="this.form.invalid"
+                        (click)="buttonPrintWarehouse(model)">
+                  <mat-icon>print</mat-icon>
+                  In đơn nhập
+                </button>
+              </div>
+              <p>Sau khi hoàn thành sẽ cộng số lượng vào tồn kho.</p>
 
-            <div fxFlex="60" style='margin-bottom: 4px'>
-              <span>Tính vào công nợ &nbsp;</span>
             </div>
-            <div fxFlex="40">
-              <mat-form-field>
-                <input class="text-right" matInput tabindex="8" formControlName="remain_amount"
-                       value="{{ form.get('remain_amount').value }}" readonly>
-              </mat-form-field>
-            </div>
-            <div fxFlex="100">
-              <mat-form-field>
-                <mat-label>Ghi chú</mat-label>
-                <textarea matInput tabindex="9"
-                          formControlName="note" rows="3"></textarea>
-              </mat-form-field>
-            </div>
-            <p *ngIf="updateModelId !== null && model !== null && model['status'] === 10">
-              Bạn đang cập nhật lại đơn đã hoàn thành, phần mềm sẽ xóa thông tin thẻ kho cũ và cập nhật mới theo đơn này
-            </p>
-            <div fxFlex="100" style='gap: 1rem; margin-top: calc(100vh - 800px)'>
-              <button style='padding: 50px;' *ngIf="updateModelId === null || (model !== null && model['status'] === 9)" mat-raised-button
-                      color="accent" fxFlex="45" tabindex="10" [disabled]="this.form.invalid" (click)="submit(9)">
-                <mat-icon>save</mat-icon>
-                Lưu tạm
-              </button>
-              <button style='padding: 50px;' *ngIf="updateModelId === null || (model !== null && model['status'] === 9)" mat-raised-button
-                      color="primary" fxFlex="55" (click)="submit(10)" [disabled]="this.form.invalid" tabindex="11">
-                <mat-icon>check</mat-icon>
-                Hoàn thành
-              </button>
-              <button style='padding: 50px;' *ngIf="updateModelId !== null && model !== null && model['status'] === 10" mat-raised-button
-                      color="primary" fxFlex="100" (click)="submit(10)"
-                      [disabled]="this.form.invalid || checkPermissionDisable('Warehouse.Update') || !isAdminStore"
-                      tabindex="11">
-                <mat-icon>check</mat-icon>
-                Lưu sửa đổi
-              </button>
-            </div>
-
-            <div fxFlex="100" style="padding-top: 10px">
-              <button *ngIf="updateModelId !== null && model !== null "
-                      mat-raised-button color="info" fxFlex="100" [disabled]="this.form.invalid"
-                      (click)="buttonPrintWarehouse(model)">
-                <mat-icon>print</mat-icon>
-                In đơn nhập
-              </button>
-            </div>
-            <p>Sau khi hoàn thành sẽ cộng số lượng vào tồn kho.</p>
-
           </div>
         </form>
       </mat-card-content>
