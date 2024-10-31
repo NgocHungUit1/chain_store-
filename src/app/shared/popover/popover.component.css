@@ -1,0 +1,8 @@
+:host {
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    z-index: 10000;
+    transform: translateX(-50%);
+    width: 300px;
+}

@@ -25,6 +25,7 @@ import {WarehouseFormPriceDialogComponent} from './warehouse-form-price-dialog/w
 import {InputSelectAllModule} from '../common/input-select-all/input-select-all.module';
 import {CommonModule as DComonModule} from '../common/common.module';
 import { WarehouseUnitCreateDialogComponent } from './warehouse-unit-create-dialog/warehouse-unit-create-dialog.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import { WarehouseUnitCreateDialogComponent } from './warehouse-unit-create-dial
     Ng2SearchPipeModule,
     DemoMaterialModule,
     InputSelectAllModule,
-    DComonModule
+    DComonModule,
+    SharedModule,
   ],
   entryComponents: [
     WarehouseParcelFormDialogComponent

@@ -8,6 +8,9 @@ import {
 } from './accordion';
 import { IncludesPipe } from './includes.pipe';
 import { FilterPipe } from './filter.pipe';
+import { PopoverComponent } from './popover/popover.component';
+import { MatCardModule } from '@angular/material/card';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -15,14 +18,21 @@ import { FilterPipe } from './filter.pipe';
     AccordionLinkDirective,
     AccordionDirective,
     IncludesPipe,
-    FilterPipe
+    FilterPipe,
+    PopoverComponent,
   ],
   exports: [
     AccordionAnchorDirective,
     AccordionLinkDirective,
     AccordionDirective,
     IncludesPipe,
+    PopoverComponent,
+    PopoverComponent,
   ],
-  providers: [MenuItems]
+  imports: [
+    MatCardModule,
+    CommonModule,
+  ],
+  providers: [MenuItems],
 })
 export class SharedModule {}

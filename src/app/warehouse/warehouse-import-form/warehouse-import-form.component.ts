@@ -1308,4 +1308,18 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       }
     });
   }
+
+  toggleColumn(column) {
+    setTimeout(() => {
+      if (this.displayedColumns.some(item => item === column)) {
+        this.displayedColumns = [...this.displayedColumns.filter(item => item !== column)];
+      } else {
+        this.displayedColumns = [...this.displayedColumns, column];
+      }
+    });
+  }
+
+  isIncludes(column) {
+    return this.displayedColumns.some(item => item === column);
+  }
 }

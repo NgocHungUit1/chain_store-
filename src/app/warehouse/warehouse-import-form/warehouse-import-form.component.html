@@ -60,7 +60,36 @@
 
 
       <div  fxFlex="1 1 0%"></div>
-      <div class='diva-column-select'>
+      <div style='position: relative'>
+        <button mat-raised-button
+                class='m-r-5 padding-x-10'
+                (click)='appPopover.toggle();'>
+          <mat-icon>menu</mat-icon>
+        </button>
+        <app-popover #appPopover>
+          <p style='font-weight: bold'>Tùy chọn hiển thị</p>
+          <mat-divider></mat-divider>
+          <div style='display:flex; flex-direction: column; gap: 12px; margin-top: 12px; padding-top: 12px'>
+            <div class='d-flex' style='justify-content: space-between'>
+              <div>Đơn vị:</div>
+              <div><mat-slide-toggle (click)='toggleColumn("product_unit_id")' color='primary' [checked]='isIncludes("product_unit_id")'></mat-slide-toggle></div>
+            </div>
+            <div class='d-flex' style='justify-content: space-between'>
+              <div>Tổng SL</div>
+              <div><mat-slide-toggle (click)='toggleColumn("quantity")' color='primary' [checked]='isIncludes("quantity")'></mat-slide-toggle></div>
+            </div>
+            <div class='d-flex' style='justify-content: space-between'>
+              <div>Giá nhập</div>
+              <div><mat-slide-toggle (click)='toggleColumn("price")' color='primary' [checked]='isIncludes("price")'></mat-slide-toggle></div>
+            </div>
+            <div class='d-flex' style='justify-content: space-between'>
+              <div>Thành tiền</div>
+              <div><mat-slide-toggle (click)='toggleColumn("amount")' color='primary' [checked]='isIncludes("amount")'></mat-slide-toggle></div>
+            </div>
+          </div>
+        </app-popover>
+      </div>
+      <!--<div class='diva-column-select'>
         <button mat-raised-button
                 class='m-r-5 padding-x-10'
                 color='primary'
@@ -72,13 +101,13 @@
                     [multiple]='true'
                     style='width: 100%; display: inline-flex; margin-left: -20px; color: white'
                     placeholder='Chọn cột'>
-          <!--<mat-select-trigger></mat-select-trigger>-->
+          &lt;!&ndash;<mat-select-trigger></mat-select-trigger>&ndash;&gt;
           <mat-option *ngFor='let column of columnsToDisplay'
 
                       [disabled]='column == "product_name" || column == "actions"'
                       [value]='column'>{{columnsHeader[column]}}</mat-option>
         </mat-select>
-      </div>
+      </div>-->
       <span style='text-align: right; padding-right: 1rem'>
               <input matTooltip="Màu đỏ là chế độ quét mã vạch đang bật"
                      type="text" id="barecode-forcus"
