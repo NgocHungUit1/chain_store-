@@ -81,8 +81,8 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
     'action': 'Hành động',
   };
 
-  displayedColumns: string[] = [];
-  columnsToDisplay: string[] = [
+  displayedColumns: string[] = [
+    'actions',
     '#',
     'product_name',
     'product_unit_id',
@@ -90,7 +90,16 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
     'actual_number',
     'deviation_number',
     'deviation_price',
-    'actions'
+  ];
+  columnsToDisplay: string[] = [
+    'actions',
+    '#',
+    'product_name',
+    'product_unit_id',
+    'quantity_of_stock',
+    'actual_number',
+    'deviation_number',
+    'deviation_price',
   ];
   data: StockTakeItem[] = [];
   productDataSource = new MatTableDataSource<StockTakeItem>([]);
@@ -488,5 +497,22 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
         this.handleAddProductToList(result['data']['id']);
       }
     });
+  }
+
+
+  toggleColumn(column) {
+    setTimeout(() => {
+      if (this.displayedColumns.includes(column)) {
+        this.displayedColumns = this.displayedColumns.filter(col => col !== column);
+      } else {
+        this.displayedColumns = this.columnsToDisplay.filter(col =>
+          col === column || this.displayedColumns.includes(col)
+        );
+      }
+    });
+  }
+
+  isIncludes(column) {
+    return this.displayedColumns.some(item => item === column);
   }
 }

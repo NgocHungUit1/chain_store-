@@ -40,7 +40,40 @@
 
       <div  fxFlex="1 1 0%"></div>
       <div class='diva-column-select m-r-5'>
-        <button mat-raised-button
+        <div style='position: relative'>
+          <button mat-raised-button
+                  class='m-r-5 padding-x-10'
+                  (click)='appPopover.toggle();'>
+            <mat-icon>menu</mat-icon>
+          </button>
+          <app-popover #appPopover>
+            <p style='font-weight: bold'>Tùy chọn hiển thị</p>
+            <mat-divider></mat-divider>
+            <div style='display:flex; flex-direction: column; gap: 12px; margin-top: 12px; padding-top: 12px'>
+              <div class='d-flex' style='justify-content: space-between'>
+                <div>Đơn vị:</div>
+                <div><mat-slide-toggle (click)='toggleColumn("product_unit_id")' color='primary' [checked]='isIncludes("product_unit_id")'></mat-slide-toggle></div>
+              </div>
+              <div class='d-flex' style='justify-content: space-between'>
+                <div>Tồn kho: </div>
+                <div><mat-slide-toggle (click)='toggleColumn("quantity_of_stock")' color='primary' [checked]='isIncludes("quantity_of_stock")'></mat-slide-toggle></div>
+              </div>
+              <div class='d-flex' style='justify-content: space-between'>
+                <div>Thực tế</div>
+                <div><mat-slide-toggle (click)='toggleColumn("actual_number")' color='primary' [checked]='isIncludes("actual_number")'></mat-slide-toggle></div>
+              </div>
+              <div class='d-flex' style='justify-content: space-between'>
+                <div>Số lệch</div>
+                <div><mat-slide-toggle (click)='toggleColumn("deviation_number")' color='primary' [checked]='isIncludes("deviation_number")'></mat-slide-toggle></div>
+              </div>
+              <div class='d-flex' style='justify-content: space-between'>
+                <div>Giá trị lệch</div>
+                <div><mat-slide-toggle (click)='toggleColumn("deviation_price")' color='primary' [checked]='isIncludes("deviation_price")'></mat-slide-toggle></div>
+              </div>
+            </div>
+          </app-popover>
+        </div>
+        <!--<button mat-raised-button
                 class='m-r-5 padding-x-10'
                 color='primary'
                 (click)='selectColumn.toggle();'>
@@ -51,12 +84,12 @@
                     [multiple]='true'
                     style='width: 100%; display: inline-flex; margin-left: -20px; color: white'
                     placeholder='Chọn cột'>
-          <!--<mat-select-trigger></mat-select-trigger>-->
+          &lt;!&ndash;<mat-select-trigger></mat-select-trigger>&ndash;&gt;
           <mat-option *ngFor='let column of columnsToDisplay'
 
                       [disabled]='column == "product_name" || column == "actions"'
                       [value]='column'>{{columnsHeader[column]}}</mat-option>
-        </mat-select>
+        </mat-select>-->
       </div>
 
     </mat-toolbar>
@@ -79,7 +112,7 @@
 
               <ng-container matColumnDef="product_name">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_name']}}</th>
-                <td mat-cell *matCellDef="let element; let i = index"
+                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index"
                     title="{{ element.product.product_name }}">
 
                   <span class="span-product-no">Mã hàng : {{ element.product.product_no }}</span>
@@ -97,7 +130,7 @@
 
               <ng-container matColumnDef="product_unit_id">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_unit_id']}}</th>
-                <td mat-cell *matCellDef="let element; let i = index">
+                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
                   <mat-form-field *ngIf="element.productUnits.length">
                     <mat-select [(ngModel)]="data[i]['product_unit_id']"
                                 (selectionChange)="onUnitChange(i, $event)">
@@ -109,14 +142,14 @@
 
               <ng-container matColumnDef="quantity_of_stock">
                 <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['quantity_of_stock'] }}</th>
-                <td mat-cell *matCellDef="let element; let i = index">
+                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
                   <span style="text-align:center">{{ element.view_quantity_of_stock }}</span>
                 </td>
               </ng-container>
 
               <ng-container matColumnDef="actual_number">
                 <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['actual_number'] }}</th>
-                <td mat-cell *matCellDef="let element; let i = index">
+                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
                   <mat-form-field>
 
                     <input matInput  type="text" class="actual-number"
@@ -137,21 +170,21 @@
 
               <ng-container matColumnDef="deviation_number">
                 <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['deviation_number'] }}</th>
-                <td mat-cell *matCellDef="let element; let i = index">
+                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
                   <span style="text-align:center">{{ element.deviation_number }}</span>
                 </td>
               </ng-container>
 
               <ng-container matColumnDef="deviation_price">
                 <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['deviation_price'] }}</th>
-                <td mat-cell *matCellDef="let element">
+                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element">
                   <span style="text-align:center">{{ element.deviation_price | number }}</span>
                 </td>
               </ng-container>
 
               <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef></th>
-                <td mat-cell *matCellDef="let element; let i = index">
+                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
                   <button mat-icon-button (click)="removeProduct(i)">
                     <mat-icon>delete</mat-icon>
                   </button>
@@ -167,11 +200,12 @@
     </div>
   </div>
   <div fxFlex="25">
-    <mat-card class="warehouse-info">
-      <mat-card-content>
-        <form [formGroup]="form">
+    <mat-card class="warehouse-info" style='height: calc(100vh - 150px)'>
+      <mat-card-content style='height: 100%'>
+        <form [formGroup]="form" style='height: 100%'>
+          <div style='display: flex; flex-direction: column;height: 100%;'>
           <div fxLayout="row wrap">
-            <div fxFlex="60">
+            <div fxFlex="40">
               <mat-form-field style='width: 100px'>
                 <input matInput [matDatepicker]="date_picker" [formControl]="form.controls['date']"
                        placeholder="Ngày nhập">
@@ -179,12 +213,12 @@
                 <mat-datepicker #date_picker></mat-datepicker>
               </mat-form-field>
             </div>
-            <div fxFlex="40">
-            </div>
-            <div fxFlex="60" style='margin-bottom: 4px'>
-              <span matPrefix>Mã kiểm kho &nbsp;</span>
+            <div fxFlex="60">
             </div>
             <div fxFlex="40" style='margin-bottom: 4px'>
+              <span matPrefix>Mã kiểm kho &nbsp;</span>
+            </div>
+            <div fxFlex="60" style='margin-bottom: 4px'>
               <mat-form-field>
                 <input matInput tabindex="2" formControlName="no"
                        readonly
@@ -193,10 +227,10 @@
               </mat-form-field>
             </div>
 
-            <div fxFlex="60" style='margin-bottom: 4px'>
+            <div fxFlex="40" style='margin-bottom: 4px'>
               <span matPrefix>Trạng thái</span>
             </div>
-            <div fxFlex="40" style='margin-bottom: 4px'>
+            <div fxFlex="60" style='margin-bottom: 4px'>
               <mat-form-field>
                 <mat-select [formControl]="form.controls['balance_status']" placeholder="Chọn trạng thái">
                   <mat-option *ngFor="let status of statuses" value="{{status.id}}"
@@ -205,10 +239,10 @@
               </mat-form-field>
             </div>
 
-            <div fxFlex="60" style='margin-bottom: 4px'>
+            <div fxFlex="40" style='margin-bottom: 4px'>
               <span matPrefix>Tổng tiền hàng</span>
             </div>
-            <div fxFlex="40" style='margin-bottom: 4px'>
+            <div fxFlex="60" style='margin-bottom: 4px'>
               <mat-form-field>
                 <input matInput tabindex="5" formControlName="total_price"
                        value="{{ form.controls['total_price'].value | number }}" readonly>
@@ -220,23 +254,6 @@
                 <textarea matInput tabindex="9" formControlName="note" rows="3"></textarea>
               </mat-form-field>
             </div>
-            <div fxFlex="100" style='gap: 1rem; margin-top: calc(100vh - 600px)'>
-
-              <button  style='padding: 50px;' *ngIf="updateModelId === null || (model !== null && model['balance_status'] === 'draft')"
-                      mat-raised-button
-                      color="accent" fxFlex="45" tabindex="10" [disabled]="this.form.invalid"
-                      (click)="openDialogBalanceSave('draft')">
-                <mat-icon>save</mat-icon>
-                Lưu tạm
-              </button>
-              <button  style='padding: 50px;' *ngIf="updateModelId === null || (model !== null && model['balance_status'] === 'draft')"
-                      mat-raised-button
-                      color="primary" fxFlex="55" (click)="openDialogBalanceSave('done')" [disabled]="this.form.invalid"
-                      tabindex="11">
-                <mat-icon>check</mat-icon>
-                Hoàn thành
-              </button>
-            </div>
 
             <div fxFlex="100" style="padding-top: 10px">
               <!--              <button *ngIf="updateModelId !== null && model !== null "-->
@@ -246,8 +263,27 @@
               <!--                In đơn nhập-->
               <!--              </button>-->
             </div>
+          </div>
 
+          <div fxLayout="row wrap" style='margin-top: auto'>
+            <div fxFlex="100" style='gap: 1rem;'>
 
+              <button  style='padding: 30px;' *ngIf="updateModelId === null || (model !== null && model['balance_status'] === 'draft')"
+                       mat-raised-button
+                       color="accent" fxFlex="45" tabindex="10" [disabled]="this.form.invalid"
+                       (click)="openDialogBalanceSave('draft')">
+                <mat-icon>save</mat-icon>
+                Lưu tạm
+              </button>
+              <button  style='padding: 30px;' *ngIf="updateModelId === null || (model !== null && model['balance_status'] === 'draft')"
+                       mat-raised-button
+                       color="primary" fxFlex="55" (click)="openDialogBalanceSave('done')" [disabled]="this.form.invalid"
+                       tabindex="11">
+                <mat-icon>check</mat-icon>
+                Hoàn thành
+              </button>
+            </div>
+          </div>
           </div>
         </form>
       </mat-card-content>

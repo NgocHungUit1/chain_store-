@@ -16,8 +16,8 @@
 
   <ng-container matColumnDef="parcel_no">
     <th mat-header-cell *matHeaderCellDef>Số lô</th>
-    <td mat-cell *matCellDef="let element">
-      <mat-form-field style="width: 130px">
+    <td mat-cell *matCellDef="let element" style='width: 30%'>
+      <mat-form-field>
         <input matInput tabindex="1" [(ngModel)]="element.parcel_no" autocomplete="off">
       </mat-form-field>
     </td>
@@ -26,7 +26,7 @@
   <!-- Name Column -->
   <ng-container matColumnDef="expiration_date">
     <th mat-header-cell *matHeaderCellDef>Hạn sử dụng</th>
-    <td mat-cell *matCellDef="let element">
+    <td mat-cell *matCellDef="let element" style='width: 30%'>
       <!--      {{element.expiration_date}}-->
 
       <mat-form-field>
@@ -40,9 +40,9 @@
 
   <!-- Weight Column -->
   <ng-container matColumnDef="quantity">
-    <th mat-header-cell *matHeaderCellDef>Số lượng</th>
-    <td mat-cell *matCellDef="let element">
-      <mat-form-field style="width: 100px" class="text-right">
+    <th mat-header-cell *matHeaderCellDef style='text-align: left!important;'>Số lượng</th>
+    <td mat-cell *matCellDef="let element" style='width: 30%'>
+      <mat-form-field class="text-right">
         <input matInput [(ngModel)]="element.quantity" min="1" (keyup)="inputformatNumber($event)">
       </mat-form-field>
     </td>

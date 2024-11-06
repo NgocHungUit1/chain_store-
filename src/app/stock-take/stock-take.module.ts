@@ -16,22 +16,24 @@ import { StockTakeInfoTabComponent } from './stock-take-info-tab/stock-take-info
 import { DatetimeChooseFilterDialogComponent } from './datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
 import { DatetimeDefaultFilterDialogComponent } from './datetime-default-filter-dialog/datetime-default-filter-dialog.component';
 import {InputSelectAllModule} from '../common/input-select-all/input-select-all.module';
+import { SharedModule } from '../shared/shared.module';
 
 
 @NgModule({
   declarations: [StockTakeListComponent, StockTakeCreateComponent, StockTakeBalanceDialogComponent, StockTakeInfoTabComponent, DatetimeChooseFilterDialogComponent, DatetimeDefaultFilterDialogComponent],
-    imports: [
-        CommonModule,
-        RouterModule.forChild(StockTakeRoutes),
-        FormsModule,
-        ReactiveFormsModule,
-        FlexLayoutModule,
-        QuillModule.forRoot(),
-        DragulaModule.forRoot(),
-        PerfectScrollbarModule,
-        Ng2SearchPipeModule,
-        DemoMaterialModule,
-        InputSelectAllModule,
-    ]
+  imports: [
+    CommonModule,
+    RouterModule.forChild(StockTakeRoutes),
+    FormsModule,
+    ReactiveFormsModule,
+    FlexLayoutModule,
+    QuillModule.forRoot(),
+    DragulaModule.forRoot(),
+    PerfectScrollbarModule,
+    Ng2SearchPipeModule,
+    DemoMaterialModule,
+    InputSelectAllModule,
+    SharedModule,
+  ],
 })
 export class StockTakeModule { }
