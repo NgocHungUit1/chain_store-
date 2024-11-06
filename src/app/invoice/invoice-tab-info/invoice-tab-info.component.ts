@@ -94,7 +94,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
   loadData() {
     this.loading = true;
     this.invoiceService.getInfo(this.invoice.id,
-      'detail,priceBook,paymentInfo,expensesOrders,branch,payment,customer,store,user,returns,today,time,createdFormat,total_payment'
+      'amount,detail,priceBook,paymentInfo,expensesOrders,branch,payment,customer,store,user,returns,today,time,createdFormat,total_payment'
     ).subscribe(res => {
       const invoiceData = res;
       this.invoice = res;
