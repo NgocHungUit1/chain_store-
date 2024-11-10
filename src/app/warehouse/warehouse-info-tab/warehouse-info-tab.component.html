@@ -62,7 +62,7 @@
             <td mat-cell *matCellDef="let element">
               <b>{{ element.product.product_name }}</b>
               <br><span>Đơn vị : {{ element.productUnit.name }}</span>
-              <p *ngIf="element['productParcelsForView'][0] !== undefined"
+              <p style='font-size: 0.8rem' *ngIf="element['productParcelsForView'][0] !== undefined"
                  [innerHTML]="element['productParcelsForViewHtml']">
               </p>
             </td>

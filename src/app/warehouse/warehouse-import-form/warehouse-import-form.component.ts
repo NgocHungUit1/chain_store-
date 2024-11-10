@@ -95,6 +95,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   columnsHeader = {
     '#': '#',
     'product_no': 'Mã hàng',
+    'image': '',
     'product_name': 'Tên hàng',
     // 'product_parcel': 'Lô',
     'product_unit_id': 'Đơn vị',
@@ -107,6 +108,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   displayedColumns: string[] = [
     'actions',
+    'image',
     '#',
     'product_no',
     'product_name',
@@ -116,9 +118,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'price',
     // 'discount',
     'amount',
-  ]
+  ];
   columnsToDisplay: string[] = [
     'actions',
+    'image',
     '#',
     'product_no',
     'product_name',

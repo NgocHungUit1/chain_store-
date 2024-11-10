@@ -204,6 +204,39 @@ File: scss
     font-size: 18px;
   }
 }
+
+.custom-filter-container.warehouse-input {
+  .mat-select-arrow-wrapper {
+    visibility: hidden;
+  }
+  .mat-form-field-outline {
+    border-color: black;
+  }
+  .mat-form-field-outline-thick {
+    border-color: black; /* Active border color */
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline {
+    color: red; /* Text color */
+    border-color: red; /* Border color */
+  }
+  .mat-form-field-appearance-outline .mat-form-field-outline-thick {
+    border-color: red; /* Outline border color when active */
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline-start {
+    border-radius: 0;
+    border-right: 0!important;
+    border-top: 0!important;
+    border-bottom: 0!important;
+    border-left: 1px solid #c0c0c0!important;
+  }
+  .mat-form-field-appearance-outline .mat-form-field-outline-end {
+    border: none!important;
+  }
+}
+
+
 .custom-filter-container.bg-white {
   .mat-drawer-inner-container {
     background: white

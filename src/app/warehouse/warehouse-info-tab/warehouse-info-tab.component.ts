@@ -81,7 +81,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
       this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
       // console.log(this.productDataSource);
       this.productDataSource.data.forEach(item => {
-        item.productParcelsForViewHtml = 'Lô : ';
+        item.productParcelsForViewHtml = '';
         item.productParcelsForView.forEach(parcel => {
           item.productParcelsForViewHtml += parcel['parcel_no'] + ' - ' + parcel['expiration_date'] + ' -SL: ' + parcel['quantity'] + '<br>';
         });

@@ -71,6 +71,10 @@
           <mat-divider></mat-divider>
           <div style='display:flex; flex-direction: column; gap: 12px; margin-top: 12px; padding-top: 12px'>
             <div class='d-flex' style='justify-content: space-between'>
+              <div>Hình Ảnh:</div>
+              <div><mat-slide-toggle (click)='toggleColumn("image")' color='primary' [checked]='isIncludes("image")'></mat-slide-toggle></div>
+            </div>
+            <div class='d-flex' style='justify-content: space-between'>
               <div>Đơn vị:</div>
               <div><mat-slide-toggle (click)='toggleColumn("product_unit_id")' color='primary' [checked]='isIncludes("product_unit_id")'></mat-slide-toggle></div>
             </div>
@@ -151,14 +155,14 @@
                 <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
                   <div class="span-product-no" style='margin-bottom: 0.5rem;'>{{ element.product.product_no }}</div>
 
-                  <div class='custom-filter-container'>
+                  <div class='custom-filter-container warehouse-input'>
                     <mat-form-field  appearance='outline'
                                      class='search-input' style='width: 250px!important; padding-left: 0'>
 
                       <mat-select multiple [(ngModel)]="data[i]['product_parcels']"
                                   (selectionChange)="onParcelSelectedChange(i, $event.value)"
                                   placeholder="Danh sách lô">
-                        <mat-option *ngFor="let parcel of parcels" [value]="parcel">
+                        <mat-option *ngFor="let parcel of (parcels | slice:0:3)" [value]="parcel">
                           {{parcel['parcel_no']}} - {{parcel['expiration_date']}} - SL: {{parcel['quantity']}}
                         </mat-option>
                       </mat-select>
@@ -170,6 +174,20 @@
                         <mat-icon>add</mat-icon>
                       </button>
                     </mat-form-field>
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="image">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['image']}}</th>
+                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; width: 100px' *matCellDef="let element; let i = index">
+                  <div style='width: 50px; height: 50px; object-fit: contain; border: 1px solid #c0c0c0'>
+                      <ng-container *ngIf='!element.product?.default_image'>
+                        <img src='/assets/images/default-product.png' style='width: 100%;height: 100%;'>
+                      </ng-container>
+                      <ng-container *ngIf='element.product?.default_image'>
+                        <img src='{{element.product?.default_image}}' style='width: 100%;height: 100%;'>
+                      </ng-container>
                   </div>
                 </td>
               </ng-container>

@@ -11,6 +11,7 @@ import { FilterPipe } from './filter.pipe';
 import { PopoverComponent } from './popover/popover.component';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
+import { SlicePipe } from './slice.pipe';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { CommonModule } from '@angular/common';
     IncludesPipe,
     FilterPipe,
     PopoverComponent,
+    SlicePipe,
   ],
   exports: [
     AccordionAnchorDirective,
