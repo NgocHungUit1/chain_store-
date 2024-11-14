@@ -162,7 +162,7 @@
                       <mat-select multiple [(ngModel)]="data[i]['product_parcels']"
                                   (selectionChange)="onParcelSelectedChange(i, $event.value)"
                                   placeholder="Danh sách lô">
-                        <mat-option *ngFor="let parcel of (parcels | slice:0:3)" [value]="parcel">
+                        <mat-option *ngFor="let parcel of (parcels)" [value]="parcel">
                           {{parcel['parcel_no']}} - {{parcel['expiration_date']}} - SL: {{parcel['quantity']}}
                         </mat-option>
                       </mat-select>
