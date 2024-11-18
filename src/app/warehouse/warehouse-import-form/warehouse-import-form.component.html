@@ -131,7 +131,7 @@
             <table mat-table [dataSource]="productDataSource" class="table warehouse-product-table no-wrap ">
 
               <ng-container matColumnDef="#">
-                <th mat-header-cell *matHeaderCellDef style="width: 35px; padding-left: 10px !important;"> #</th>
+                <th mat-header-cell *matHeaderCellDef style="width: 35px;"> #</th>
                 <td mat-cell
                     style="padding-top: 10px; vertical-align: top" *matCellDef="let element; let i = index;"> {{i + 1}}</td>
               </ng-container>
@@ -139,7 +139,7 @@
               <ng-container matColumnDef="product_name">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_name']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index" title="{{ element.product.product_name }}"
-                    style="padding-top: 10px; vertical-align: top">
+                    style="padding-top: 1.5rem; vertical-align: top">
 
                   <strong>
                     <span *ngIf="element.product.product_name.length > 45">{{ element.product.product_name | slice:0:45 }}
@@ -151,13 +151,13 @@
               </ng-container>
 
               <ng-container matColumnDef="product_no">
-                <th mat-header-cell *matHeaderCellDef style='width: 300px;'> {{columnsHeader['product_no']}}</th>
+                <th mat-header-cell *matHeaderCellDef style='width: 250px;'> {{columnsHeader['product_no']}}</th>
                 <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
                   <div class="span-product-no" style='margin-bottom: 0.5rem;'>{{ element.product.product_no }}</div>
 
                   <div class='custom-filter-container warehouse-input'>
                     <mat-form-field  appearance='outline'
-                                     class='search-input' style='width: 250px!important; padding-left: 0'>
+                                     class='search-input' style='width: 100%!important; padding-left: 0'>
 
                       <mat-select multiple [(ngModel)]="data[i]['product_parcels']"
                                   (selectionChange)="onParcelSelectedChange(i, $event.value)"
@@ -243,7 +243,7 @@
                     matTooltip="(Đơn giá * Số lượng) - Tiền CK">
                   {{columnsHeader['amount']}}
                 </th>
-                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element">
+                <td mat-cell style='vertical-align: top; padding: 1.5rem 0.5rem 0 0' *matCellDef="let element">
                   <b>{{ element.amount | currency : 'VND' : ''}} </b>
                 </td>
               </ng-container>

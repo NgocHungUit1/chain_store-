@@ -94,6 +94,9 @@
 
 }
 
+.warehouse-product-table tr td {
+  vertical-align: middle;
+}
 tr.mat-header-row {
   height: 45px !important;
   background-color: #dcf4fc;

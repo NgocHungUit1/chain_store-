@@ -108,7 +108,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   displayedColumns: string[] = [
     'actions',
-    'image',
+    // 'image',
     '#',
     'product_no',
     'product_name',
@@ -200,7 +200,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         this.branchList = res.body;
       });
 
-      this.displayedColumns = this.columnsToDisplay;
+      // this.displayedColumns = this.columnsToDisplay;
 
       // this.filteredSuppliers = this.form.controls['supplier'].valueChanges.pipe(
       //   startWith(''),
