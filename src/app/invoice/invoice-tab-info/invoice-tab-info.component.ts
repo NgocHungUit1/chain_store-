@@ -235,6 +235,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
 
         const mProductInfo = new ProductInfo();
         mProductInfo.amount = element.amount;
+        mProductInfo.invoice_detail_amount = element.amount;
         mProductInfo.product_id = element.product?.id;
         mProductInfo.product = element.product;
         mProductInfo.product.end_price = element.price;

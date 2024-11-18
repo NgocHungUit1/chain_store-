@@ -1631,10 +1631,15 @@ export class SaleMainComponent implements OnInit {
       const units = element.product.productUnits;
       const product_unit = units.find(ele => ele.id === product_unit_id);
       if (!this.canNegativeStock) {
-        if (element.amount > product_unit.quantity_of_stock) {
+        // Kiểm tra nếu là cập nhật thì cộng dồn số lượng tồn trước
+        let currentStock = product_unit.quantity_of_stock;
+        if (mItemInvoice.invoice_id) {
+          currentStock += element.invoice_detail_amount; // cần tìm số lượng trước khi cập nhật
+        }
+        if (element.amount > currentStock) {
           this.notifySer.notify(
             'warning',
-            `Không đủ số lượng tồn kho sản phẩm ${element.product.product_name} (Tồn kho: ${product_unit.quantity_of_stock})`
+            `Không đủ số lượng tồn kho sản phẩm ${element.product.product_name} (Tồn kho: ${currentStock})`
           );
           needReturn = 1;
         }
