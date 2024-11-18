@@ -38,13 +38,14 @@ export class ProductTabStockChangeComponent extends ListComponentBase implements
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  displayedColumns: string[] = ['#', 'no', 'method', 'date', 'parcel_no', 'quantity', 'quantity_of_stock'];
+  displayedColumns: string[] = ['#', 'no', 'date', 'method', 'parcel_no', 'created_date', 'quantity', 'quantity_of_stock'];
 
   columnsHeader = {
     '#': '#',
     'no': 'Chứng từ',
     'method': 'Phương thức',
-    'date': 'Thời gian',
+    'date': 'Ngày chứng từ',
+    'created_date': 'Ngày hệ thống',
     'parcel_no': 'Số lô',
     'quantity': 'Thay đổi',
     'quantity_of_stock': 'Tồn cuối'

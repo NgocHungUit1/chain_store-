@@ -156,21 +156,22 @@ const MENUITEMS = [
     name: 'Báo cáo',
     type: 'sub',
     icon: 'bar_chart',
-    permissions: ['Invoice.List', 'Report.Stock', 'Report.Product-Sale',
+    permissions: ['Report.Stock', 'Report.Product-Sale',
       'Warehouse-Product-Parcel.Expiration', 'Option-Store.Update',
       'Store.Upload-Logo', 'Branch.Update-Connect',
       'Store.Update-Info'
       , 'Report.Export-Import-Detail'
       , 'Group.Report'
       , 'Report.Customers-Debt'
+      , 'Invoice.End-Day-Report'
     ],
     children: [
-      {state: 'day-report', name: 'Cuối ngày', type: 'link', icon: 'pie_chart', permissions: ['Invoice.List']},
+      {state: 'day-report', name: 'Cuối ngày', type: 'link', icon: 'pie_chart', permissions: ['Invoice.End-Day-Report']},
       {state: 'product-report', name: 'Hàng hóa', type: 'link', icon: 'store', permissions: [
         'Report.Product-Sale',
         'Report.Stock',
         'Warehouse-Product-Parcel.Expiration',
-        'Report/Export-Import-Detail'
+        'Report.Export-Import-Detail'
           , 'Report.Supplier'
         ]},
       //{state: 'stock-report', name: 'Tồn kho', type: 'link', icon: 'store', roles: ['ADMIN']},

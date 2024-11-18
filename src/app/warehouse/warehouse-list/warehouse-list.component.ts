@@ -217,20 +217,17 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     dialogRef.afterClosed().subscribe(result => {
       if (result?.event === 'confirm') {
         let itemsProcessed = 0;
+        const total = this.selection.selected.length;
         this.selection.selected.forEach((item, index, array) => {
           if (item.status === 9) {
             this.mainService.update(item.id, {status: 10}).subscribe(res => {
-              // if (res?.success) {
-              // } else {
-              //   this.notifyService.notify('warning', res?.message);
-              // }
+              this.refreshData();
             });
           }
 
           itemsProcessed++;
-          if (itemsProcessed === array.length) {
+          if (itemsProcessed === total) {
             this.notifyService.notify('success', 'Hoàn thành danh sách thành công.');
-            this.refreshData();
           }
         });
       }

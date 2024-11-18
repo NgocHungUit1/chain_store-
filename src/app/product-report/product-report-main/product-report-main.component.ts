@@ -23,6 +23,7 @@ import {DatetimeChooseFilterDialogComponent} from '../../invoice/datetime-choose
 import {ProductReportService} from '../product-report.service';
 import {WarehouseProductParcelService} from '../../warehouse-product-parcel/warehouse-product-parcel.service';
 import {WarehouseProductParcelFilter} from '../../warehouse-product-parcel/warehouse-product-parcel.model';
+import {AuthService} from '../../authentication/auth.service';
 
 @Component({
   selector: 'app-product-report-main',
@@ -46,6 +47,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     private notifySer: NotifierService,
     private serviceInvoice: InvoiceService,
     private fb: FormBuilder,
+    private authSer: AuthService,
   ) {
     super();
   }
@@ -344,7 +346,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
   loadData(summary = true): void {
     this.reloadDownloadLink();
     const typeReport = this.reportType.controls['type'].value;
-    if (typeReport === 'sale' || typeReport === 'profit' || typeReport === 'sale-staff' || typeReport === 'customer') {
+    if (typeReport === 'sale') {
       this.isLoadingResults = true;
       this.service.getListReportSale(this.apiFilter).subscribe(res => {
         this.dataSource = res.body;
@@ -359,7 +361,56 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
         // const url = this.service.getApiUrlReportSale(this.apiFilter);
         this.isLoadingResults = false;
       });
-
+    }
+    if (typeReport === 'profit') {
+      this.isLoadingResults = true;
+      this.service.getListReportProfit(this.apiFilter).subscribe(res => {
+        this.dataSource = res.body;
+        // this.groupData = res.body.groupData;
+        // console.log(this.groupData);
+        let stt = 0;
+        this.dataSource.forEach(elementData => {
+          stt++;
+          elementData.stt = stt;
+        });
+        this.reloadFilter(res);
+        // const url = this.service.getApiUrlReportSale(this.apiFilter);
+        this.isLoadingResults = false;
+      });
+    }
+    if (typeReport === 'sale-staff') {
+      this.isLoadingResults = true;
+      this.service.getListReportStaff(this.apiFilter).subscribe(res => {
+        this.dataSource = res.body;
+        // this.groupData = res.body.groupData;
+        // console.log(this.groupData);
+        let stt = 0;
+        this.dataSource.forEach(elementData => {
+          stt++;
+          elementData.stt = stt;
+        });
+        this.reloadFilter(res);
+        // const url = this.service.getApiUrlReportSale(this.apiFilter);
+        this.isLoadingResults = false;
+      });
+    }
+    if (typeReport === 'customer') {
+      this.isLoadingResults = true;
+      this.service.getListReportCustomer(this.apiFilter).subscribe(res => {
+        this.dataSource = res.body;
+        // this.groupData = res.body.groupData;
+        // console.log(this.groupData);
+        let stt = 0;
+        this.dataSource.forEach(elementData => {
+          stt++;
+          elementData.stt = stt;
+        });
+        this.reloadFilter(res);
+        // const url = this.service.getApiUrlReportSale(this.apiFilter);
+        this.isLoadingResults = false;
+      });
+    }
+    if (typeReport === 'sale' || typeReport === 'profit' || typeReport === 'sale-staff' || typeReport === 'customer') {
       if (summary) {
         this.service.getListReportSaleSummary(this.apiFilter).subscribe(res => {
           this.sum_sl_ban = res.body.sl_ban;
@@ -645,7 +696,27 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     this.initDateFilter();
     this.tab = this.route.snapshot.paramMap.get('tab');
     if (this.tab === null) {
-      this.tab = 'sale';
+      if (this.canDo('Report.Product-Sale')) {
+        this.tab = 'sale';
+      } else if (this.canDo('Report.Profit')) {
+        this.tab = 'profit';
+      } else if (this.canDo('Report.Stock')) {
+        this.tab = 'stock';
+      } else if (this.canDo('Warehouse-Product-Parcel.Expiration')) {
+        this.tab = 'expiration-date';
+      } else if (this.canDo('Warehouse-Product-Parcel.List')) {
+        this.tab = 'parcel-stock';
+      } else if (this.canDo('Report.Export-Import')) {
+        this.tab = 'export-import';
+      } else if (this.canDo('Report.Export-Import-Detail')) {
+        this.tab = 'export-import-detail';
+      } else if (this.canDo('Report.Staff')) {
+        this.tab = 'sale-staff';
+      } else if (this.canDo('Report.Customer')) {
+        this.tab = 'customer';
+      } else if (this.canDo('Report.Supplier')) {
+        this.tab = 'supplier';
+      }
     }
     this.buildFromTimeFilter();
     this.statusProductFilter = this.fb.group({
@@ -940,5 +1011,11 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
   onTimeChange() {
     this.parcelFilter.timeSelect = this.timeExpireFilter.controls['typeTime'].value;
     this.loadData(true);
+  }
+
+  canDo(permissionName: string): boolean {
+    const allPermissions = this.authSer.getPermissionsFromLocalStorage();
+
+    return allPermissions.indexOf(permissionName) !== -1;
   }
 }

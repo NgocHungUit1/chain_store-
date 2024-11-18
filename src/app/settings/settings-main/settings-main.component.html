@@ -41,7 +41,7 @@
               <mat-icon>open_in_full</mat-icon>
             </button>
           </mat-radio-button>
-          
+
           <mat-radio-button class="radio-button-report-type" value="point" *ngIf="canDo('Option-Store.Update') || canDo('Option-Store.Create')">
             Tích điểm
             <button mat-icon-button aria-label="point">
@@ -131,6 +131,21 @@
                     <br>
                     <span> Cho phép tạo và quản lý các khoản chi phí khi nhập hàng như: phí dịch vụ, thuế hải quan… được tính
                     bằng số tiền VNĐ hoặc % giá trị phiếu nhập.
+                    </span>
+                  </div>
+                </div>
+
+                <div fxLayout="row wrap" class="line-option">
+                  <div fxFlex="60px" class="custom-toggle">
+                    <mat-slide-toggle
+                      [checked]="optionStore_sale_negative_stock?.value === 'yes' "
+                      (change)="changeSlideToggle('sale_negative_stock')"
+                    ></mat-slide-toggle>
+                  </div>
+                  <div fxFlex="auto">
+                    <b><a [routerLink]="optionStore_sale_negative_stock?.value === 'yes' ? '/setting/negative-stock': '#'">Cho phép xuất âm</a></b>
+                    <br>
+                    <span> Tìm kiếm, thêm vào và bán hàng với các sản phẩm tồn kho <= 0.
                     </span>
                   </div>
                 </div>

@@ -39,6 +39,7 @@ export class ProductInfo {
   sample_prescription_id: string;
   product: Product;
   amount: number;
+  invoice_detail_amount: number;
   common_price: number;
   product_unit_id: number;
   product_unit_value: number;

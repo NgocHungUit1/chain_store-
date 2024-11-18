@@ -117,6 +117,10 @@ export class SaleMainComponent implements OnInit {
     this.optionStoreService.getValue('point_can_pay_by_point_after_invoices').subscribe(res => {
       this.canPayByPointAfterInvoices = parseInt(res.value);
     });
+
+    this.optionStoreService.getValue('sale_negative_stock').subscribe(res => {
+      this.canNegativeStock = res.value === 'yes';
+    });
   }
 
   optionStore_auto_print: OptionStore = null;
@@ -176,6 +180,7 @@ export class SaleMainComponent implements OnInit {
 
   prescription_id: null; // ban theo don thuoc
 
+  canNegativeStock: boolean = false;
   isPointEnabled: boolean = false;
   pointToCashRate: number = 0;
   canPayByPointAfterInvoices: number = 0;
@@ -1114,6 +1119,7 @@ export class SaleMainComponent implements OnInit {
    */
   printInvoice(invoice_id: number) {
     let _font_size = '11px';
+    let _font_size_store = '13px';
     let _margin = '4px;';
     let _padding = '3px;';
     let _solo = 'text-align:left;';
@@ -1126,6 +1132,7 @@ export class SaleMainComponent implements OnInit {
         _solo = 'text-align:left;';
       } else { // A4
         _font_size = '14px;';
+        _font_size_store = '16px';
         _margin = '6px;';
         _padding = '6px;';
         _solo = 'text-align:left; min-width: 100px;';
@@ -1154,7 +1161,8 @@ export class SaleMainComponent implements OnInit {
           '}</style>' +
           '<section style="padding: 10px; font-size: ' + _font_size + ' ">' +
           (this.logo !== null ? '<p style="text-align:center; margin-bottom: 10px"><img src="' + this.logo + '" style="max-width: 160px;"></p>' : '') +
-          '<p style="text-align:center;">' + res?.store?.name + '</p>' +
+          '<p style="text-align:center;font-size: ' + _font_size_store + '">' + res?.store?.name + '</p>' +
+          '<p style="text-align:center;">' + res?.store?.address + '</p>' +
           '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
           '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +
           '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
@@ -1622,15 +1630,20 @@ export class SaleMainComponent implements OnInit {
       const product_unit_id = element.product_unit_id;
       const units = element.product.productUnits;
       const product_unit = units.find(ele => ele.id === product_unit_id);
-      // console.log(product_unit);
-      if (element.amount > product_unit.quantity_of_stock) {
-        this.notifySer.notify(
-          'warning',
-          `Không đủ số lượng tồn kho sản phẩm ${element.product.product_name} (Tồn kho: ${product_unit.quantity_of_stock})`
-        );
-        needReturn = 1;
+      if (!this.canNegativeStock) {
+        // Kiểm tra nếu là cập nhật thì cộng dồn số lượng tồn trước
+        let currentStock = product_unit.quantity_of_stock;
+        if (mItemInvoice.invoice_id) {
+          currentStock += element.invoice_detail_amount; // cần tìm số lượng trước khi cập nhật
+        }
+        if (element.amount > currentStock) {
+          this.notifySer.notify(
+            'warning',
+            `Không đủ số lượng tồn kho sản phẩm ${element.product.product_name} (Tồn kho: ${currentStock})`
+          );
+          needReturn = 1;
+        }
       }
-      // console.log(product_unit);
     });
     if (needReturn === 1) {
       this.submitted = false;

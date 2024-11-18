@@ -361,7 +361,7 @@
                 <td mat-cell
                     class='column-number'
                     *matCellDef='let element'>
-                  <span *ngIf='element.quantity !== null && element.quantity.number > 0;else quantityNull'
+                  <span *ngIf='element.quantity !== null;else quantityNull'
                         class='label'
                         [class.label-success]='element.quantity.number >= element.min_quantity'
                         [class.label-warning]='element.quantity.number < element.min_quantity'>

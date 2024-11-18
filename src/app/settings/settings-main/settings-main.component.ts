@@ -59,6 +59,7 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
 
   optionStore_transaction_expenses_order: OptionStore;
   optionStore_transaction_expenses_transaction: OptionStore;
+  optionStore_sale_negative_stock: OptionStore;
   optionStore_print_type: OptionStore; // print_type
   point_enabled: OptionStore;
   point_cash_to_point_rate: OptionStore;
@@ -124,6 +125,10 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
         this.storeFeatures = res['features'];
       });
     }
+
+    this.optionStoreService.getValue('sale_negative_stock').subscribe(res => {
+      this.optionStore_sale_negative_stock = res;
+    });
 
     this.optionStoreService.getValue('transaction_expenses_order').subscribe(res => {
       this.optionStore_transaction_expenses_order = res;
@@ -194,6 +199,13 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
       this.optionStore_transaction_expenses_transaction.value = (this.optionStore_transaction_expenses_transaction.value === 'no') ? 'yes' : 'no';
       this.optionStoreService.update(this.optionStore_transaction_expenses_transaction.id,
         this.optionStore_transaction_expenses_transaction).subscribe(res => {
+        // console.log(res);
+      });
+    }
+    if (name === 'sale_negative_stock') {
+      this.optionStore_sale_negative_stock.value = (this.optionStore_sale_negative_stock.value === 'no') ? 'yes' : 'no';
+      this.optionStoreService.update(this.optionStore_sale_negative_stock.id,
+        this.optionStore_sale_negative_stock).subscribe(res => {
         // console.log(res);
       });
     }

@@ -57,6 +57,21 @@ export class InvoiceService {
     return url;
   }
 
+  getEndDayReportApiUrl(filter?: InvoiceFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/invoice/end-day-report?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
   getStateUrl(filter?: InvoiceFilter) {
 
     let url = '/invoice/list';
@@ -72,6 +87,11 @@ export class InvoiceService {
 
   getList(filter?: InvoiceFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrl(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
+  getEndDayReport(filter?: InvoiceFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getEndDayReportApiUrl(filter);
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 

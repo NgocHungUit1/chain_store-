@@ -204,8 +204,8 @@
       <ng-container matColumnDef="price">
         <th mat-header-cell class="column-number-end" *matHeaderCellDef> {{ columnsHeader['price'] }} </th>
         <td mat-cell class="column-number-end" *matCellDef="let element">
-          <span *ngIf="element.common_price && element.price === element.common_price">{{ element.price | number }}</span>
-          <span *ngIf="!(element.common_price && element.price === element.common_price)" style="color: red">{{ element.price | number }}</span>
+          <span *ngIf="element.discount == 0">{{ element.price | number }}</span>
+          <span *ngIf="element.discount > 0" style="color: red">{{ element.price | number }}</span>
         </td>
       </ng-container>
 
