@@ -41,7 +41,7 @@
 
 .mat-column-product_unit_id {
   max-width: 40px;
-  text-align: center;
+  text-align: center!important;
 }
 .mat-column-product_unit_id .mat-form-field {
   max-width: 70px;
