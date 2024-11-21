@@ -221,6 +221,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
     const aProductInfo: ProductInfo[] = [];
     const invoiceDetailFilter = new InvoiceDetailFilter();
     invoiceDetailFilter.invoice_id = invoice.id;
+    invoiceDetailFilter.pageSize = 200;
     invoiceDetailFilter.expand = 'product,quantity,productUnits';
     this.invoiceService.getInvoiceDetailList(invoiceDetailFilter).subscribe(res => {
       const detail = res.body; // invoice.detail || [];
