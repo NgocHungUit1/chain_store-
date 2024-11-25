@@ -148,7 +148,7 @@ const MENUITEMS = [
     state: 'cash-flow',
     name: 'Sổ quỹ',
     type: 'link',
-    icon: 'attach_money',
+    icon: 'currency_exchange',
     permissions: ['Cash-Flow.List'],
   },
   {
@@ -167,7 +167,7 @@ const MENUITEMS = [
     ],
     children: [
       {state: 'day-report', name: 'Cuối ngày', type: 'link', icon: 'pie_chart', permissions: ['Invoice.End-Day-Report']},
-      {state: 'product-report', name: 'Hàng hóa', type: 'link', icon: 'store', permissions: [
+      {state: 'product-report', name: 'Hàng hóa', type: 'link', icon: 'inventory', permissions: [
         'Report.Product-Sale',
         'Report.Stock',
         'Warehouse-Product-Parcel.Expiration',
@@ -175,10 +175,11 @@ const MENUITEMS = [
           , 'Report.Supplier'
         ]},
       //{state: 'stock-report', name: 'Tồn kho', type: 'link', icon: 'store', roles: ['ADMIN']},
-      {state: 'group-report', name: 'Doanh thu nhóm hàng', type: 'link', icon: 'store', permissions: ['Group.Report']},
+      {state: 'group-report', name: 'Nhóm hàng', type: 'link', icon: 'category', permissions: ['Group.Report']},
+      {state: 'employee/revenue', name: 'Nhân viên', type: 'extLink', icon: 'account_box', permissions: ['Group.Report']},
       //{state: 'sale-report', name: 'Bán hàng', type: 'link', icon: 'table_chart', roles: ['ADMIN']},
       // {state: 'debt-report', name: 'Công nợ', type: 'link', icon: 'money', roles: ['ADMIN']},
-      {state: 'debt-customers', name: 'Công nợ thu', type: 'link', icon: 'money_on', permissions: ['Report.Customers-Debt']},
+      {state: 'debt-customers', name: 'Công nợ thu', type: 'link', icon: 'price_check', permissions: ['Report.Customers-Debt']},
       {state: 'debt-suppliers', name: 'Công nợ trả', type: 'link', icon: 'money_off', permissions: ['Report.Supplier-Debt']},
     ]
   },
