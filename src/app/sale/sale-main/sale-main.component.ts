@@ -1737,7 +1737,9 @@ export class SaleMainComponent implements OnInit {
      * Kiem tra invoice_id la don moi hay don cap nhat
      */
     if (mItemInvoice.invoice_id < 0) {
+      this.isLoadingResults = true;
       this.orderService.saleOrder(dataInvoice).subscribe(res => {
+        this.isLoadingResults = false;
         this.submitted = false;
         if (res !== false) {
           if (typeof res === 'number' && this.autoPrint === true) {
@@ -1765,7 +1767,9 @@ export class SaleMainComponent implements OnInit {
         this.submitted = false;
         return;
       }
+      this.isLoadingResults = true;
       this.orderService.updateOrder(dataInvoice).subscribe(res => {
+        this.isLoadingResults = false;
         this.submitted = false;
         if (res !== false) {
           if (typeof res === 'number' && this.autoPrint === true) {
@@ -1892,7 +1896,9 @@ export class SaleMainComponent implements OnInit {
       PaymentPrice: this.sumPrice - this.numberDiscount, // tien thanh toan
     };
 
+    this.isLoadingResults = true;
     this.orderService.returnsOrder(dataReturn).subscribe(res => {
+      this.isLoadingResults = false;
       if (res !== false) {
         if (typeof res === 'number' && this.autoPrint === true) {
           this.printReturns(res);
