@@ -108,6 +108,9 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
   ngOnInit() {
     this.initDateFilter();
     this.tab = this.route.snapshot.paramMap.get('tab');
+    if (this.tab === null || this.tab === undefined) {
+      this.tab = 'revenue';
+    }
     this.tabSelectedIndex = this.tabs.indexOf(this.tab);
 
     this.buildFromTimeFilter();
