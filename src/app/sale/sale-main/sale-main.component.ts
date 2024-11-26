@@ -403,7 +403,7 @@ export class SaleMainComponent implements OnInit {
       const priceBookID = mItemInvoice.price_book_id; // this.orderService.getPriceBookID();
       const list = this.listProduct;
 
-      console.log(priceBookID);
+      // console.log(priceBookID);
 
       if (
         priceBookID !== null &&
@@ -496,6 +496,7 @@ export class SaleMainComponent implements OnInit {
                 }
                 this.form.patchValue({ total_amount: numeral(this.sumPrice).format('0,0') });
                 this.checkToAdjustItemPriceByTotalDiff();
+                this.handleDiscountSiderBar(mItemInvoice);
               } else {
                 console.log('ket qua ko phari la array');
               }
@@ -573,6 +574,7 @@ export class SaleMainComponent implements OnInit {
           }
           this.form.patchValue({ total_amount: numeral(this.sumPrice).format('0,0') });
           this.checkToAdjustItemPriceByTotalDiff();
+          this.handleDiscountSiderBar(mItemInvoice);
         }
       }
       this.handleExpenseOrder();
@@ -977,7 +979,7 @@ export class SaleMainComponent implements OnInit {
         this.numberDiscount = Math.round(
           (this.sumPrice * discountSiderBar?.number) / 100
         );
-        this.discount_type = 'precent';
+        this.discount_type = 'percent';
       }
       this.discount = discountSiderBar?.number;
     } else {
@@ -2000,19 +2002,22 @@ export class SaleMainComponent implements OnInit {
     const units = itemProduct?.product?.productUnits;
     const item = units.find(element => element.id === e.value);
 
-    const listProduct = this.listProduct;
-    listProduct[i]['product_unit_id'] = item['id'];
-    listProduct[i]['product_unit_value'] = item['value'];
-    listProduct[i]['product']['sell_price'] = item['sell_price'];
-    listProduct[i]['product']['product_no'] = item['no'];
-    listProduct[i]['common_price'] = item['price'];
+    const curListProduct = this.listProduct;
+    curListProduct[i]['product_unit_id'] = item['id'];
+    curListProduct[i]['product_unit_value'] = item['value'];
+    curListProduct[i]['product']['sell_price'] = item['sell_price'];
+    curListProduct[i]['product']['end_price'] = item['sell_price'];
+    curListProduct[i]['product']['product_no'] = item['no'];
+    curListProduct[i]['common_price'] = item['price'];
 
-    this.listProduct = listProduct;
+    console.log(curListProduct);
+
+    this.listProduct = curListProduct;
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     listItemInvoice.forEach(element => {
       if (element.active === true) {
-        element.listProduct = listProduct;
+        element.listProduct = curListProduct;
       }
     });
     this.orderService.setListInvoiceLocalStorage(listInvoice);
@@ -2119,7 +2124,7 @@ export class SaleMainComponent implements OnInit {
       realTotal += (item.product.end_price > 0 ? item.product.end_price : item.common_price) * item.amount;
     });
 
-    console.log(this.listProduct, this.sumPrice, realTotal);
+    // console.log(this.listProduct, this.sumPrice, realTotal);
 
     const diff = this.sumPrice - realTotal;
     if (diff) {
