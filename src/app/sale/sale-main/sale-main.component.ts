@@ -1635,7 +1635,7 @@ export class SaleMainComponent implements OnInit {
       if (!this.canNegativeStock) {
         // Kiểm tra nếu là cập nhật thì cộng dồn số lượng tồn trước
         let currentStock = product_unit.quantity_of_stock;
-        if (mItemInvoice.invoice_id) {
+        if (mItemInvoice.invoice_id && mItemInvoice.invoice_id > 0) {
           currentStock += element.invoice_detail_amount; // cần tìm số lượng trước khi cập nhật
         }
         if (element.amount > currentStock) {
