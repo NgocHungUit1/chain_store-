@@ -31,7 +31,7 @@ export class EmployeeReportService {
       filter.pageSize = 20;
     }
 
-    let url = '/employee/report-revenue?per-page=' + filter.pageSize;
+    let url = '/employee-report/revenue?per-page=' + filter.pageSize;
 
     url += '&' + filter.toFilterString();
     return url;
@@ -46,7 +46,7 @@ export class EmployeeReportService {
       filter.pageSize = 20;
     }
 
-    let url = '/employee/report-profit?per-page=' + filter.pageSize;
+    let url = '/employee-report/profit?per-page=' + filter.pageSize;
 
     url += '&' + filter.toFilterString();
     return url;

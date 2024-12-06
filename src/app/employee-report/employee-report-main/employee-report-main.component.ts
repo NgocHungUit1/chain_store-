@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ListComponentBase} from '../../shared/base';
-import {animate, state, style, transition, trigger} from '@angular/animations';
+import {ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {NotifierService} from 'angular-notifier';
@@ -20,13 +20,7 @@ import {EmployeeFilter} from '../../employee/employee.model';
   selector: 'app-employee-report-main',
   templateUrl: './employee-report-main.component.html',
   styleUrls: ['./employee-report-main.component.css'],
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({height: '0px', minHeight: '0'})),
-      state('expanded', style({height: '*'})),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ]
+  changeDetection: ChangeDetectionStrategy.Default
 })
 export class EmployeeReportMainComponent extends ListComponentBase implements OnInit {
 
@@ -38,6 +32,7 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
     private serviceInvoice: InvoiceService,
     private fb: FormBuilder,
     private authSer: AuthService,
+    private ref: ChangeDetectorRef
   ) {
     super();
   }
@@ -48,7 +43,6 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
   @ViewChild('tabGroup', {static: true}) tabGroup;
 
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
-  @ViewChild('selectColumn') selectColumn;
 
   apiFilter: EmployeeFilter;
 
@@ -136,7 +130,6 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
       arg[key] = value;
     }
 
-    const typeReport = this.reportType.controls['type'].value;
     const objDateFilter = this.serviceInvoice.getDateFilter();
     const filter = new EmployeeFilter();
     const objectKeys = Object.keys(filter) as Array<keyof EmployeeFilter>;
@@ -147,12 +140,9 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    // filter.expand = 'sl_ban,doanh_thu,tong_gia_von,sl_tra,gia_tri_tra,base_revenue';
 
     filter.search_string = this.searchForm.value;
 
-    // filter.expand = 'returnsDetailsBranch';
-    // filter.expand = 'medicine,productUnits,productPlacements,group,images,quantity';
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
     return filter;
@@ -212,6 +202,7 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
       });
 
       this.apiFilter = this.buildFilterFromParams();
+      this.ref.detectChanges();
       this.loadData();
     });
   }
@@ -273,19 +264,6 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
     this.reportType = this.fb.group({
       type: [this.tab]
     });
-  }
-
-
-  /**
-   * Tim kiem theo trang thai sản phẩm
-   */
-  statusEmployeeFilterChange() {
-    this.apiFilter = this.buildFilterFromParams();
-    this.loadData();
-  }
-
-  onTimeChange() {
-    this.loadData(true);
   }
 
   canDo(permissionName: string): boolean {

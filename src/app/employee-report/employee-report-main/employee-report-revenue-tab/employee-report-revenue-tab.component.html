@@ -17,12 +17,32 @@
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="revenue_amount">
+      <ng-container matColumnDef="total_sale">
         <th mat-header-cell class="column-number"
-            *matHeaderCellDef> {{columnsHeader['revenue_amount']}}</th>
+            *matHeaderCellDef> {{columnsHeader['total_sale']}}</th>
         <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                    {{ element?.revenue_amount | number }}
+                    {{ element?.total_sale | number }}
+                  </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="total_return">
+        <th mat-header-cell class="column-number"
+            *matHeaderCellDef> {{columnsHeader['total_return']}}</th>
+        <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ element?.total_return | number }}
+                  </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="total_revenue">
+        <th mat-header-cell class="column-number"
+            *matHeaderCellDef> {{columnsHeader['total_revenue']}}</th>
+        <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ element?.total_revenue | number }}
                   </span>
         </td>
       </ng-container>

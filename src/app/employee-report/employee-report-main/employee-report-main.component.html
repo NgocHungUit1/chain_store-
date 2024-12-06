@@ -57,16 +57,6 @@
 
                 </mat-radio-group>
               </form>
-
-              <form [formGroup]="timeExpireFilter" *ngIf="this.reportType.controls['type'].value === 'expiration-date'">
-                <mat-form-field>
-                  <mat-select formControlName="typeTime" (selectionChange)="onTimeChange()">
-                    <mat-option *ngFor="let item of timeSelects"
-                                [value]="item">{{ timeLabels[item] }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </form>
         </mat-expansion-panel>
       </mat-accordion>
     </div>
