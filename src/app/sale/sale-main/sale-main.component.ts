@@ -1635,7 +1635,7 @@ export class SaleMainComponent implements OnInit {
       if (!this.canNegativeStock) {
         // Kiểm tra nếu là cập nhật thì cộng dồn số lượng tồn trước
         let currentStock = product_unit.quantity_of_stock;
-        if (mItemInvoice.invoice_id) {
+        if (mItemInvoice.invoice_id && mItemInvoice.invoice_id > 0) {
           currentStock += element.invoice_detail_amount; // cần tìm số lượng trước khi cập nhật
         }
         if (element.amount > currentStock) {
@@ -1737,7 +1737,9 @@ export class SaleMainComponent implements OnInit {
      * Kiem tra invoice_id la don moi hay don cap nhat
      */
     if (mItemInvoice.invoice_id < 0) {
+      this.isLoadingResults = true;
       this.orderService.saleOrder(dataInvoice).subscribe(res => {
+        this.isLoadingResults = false;
         this.submitted = false;
         if (res !== false) {
           if (typeof res === 'number' && this.autoPrint === true) {
@@ -1765,7 +1767,9 @@ export class SaleMainComponent implements OnInit {
         this.submitted = false;
         return;
       }
+      this.isLoadingResults = true;
       this.orderService.updateOrder(dataInvoice).subscribe(res => {
+        this.isLoadingResults = false;
         this.submitted = false;
         if (res !== false) {
           if (typeof res === 'number' && this.autoPrint === true) {
@@ -1892,7 +1896,9 @@ export class SaleMainComponent implements OnInit {
       PaymentPrice: this.sumPrice - this.numberDiscount, // tien thanh toan
     };
 
+    this.isLoadingResults = true;
     this.orderService.returnsOrder(dataReturn).subscribe(res => {
+      this.isLoadingResults = false;
       if (res !== false) {
         if (typeof res === 'number' && this.autoPrint === true) {
           this.printReturns(res);
