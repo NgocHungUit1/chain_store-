@@ -37,6 +37,11 @@ export class EmployeeReportRevenueTabComponent extends ListComponentBase impleme
     'total_return',
     'total_revenue',
   ];
+  sumColumnsToDisplay = [
+    'sum_total_sale',
+    'sum_total_return',
+    'sum_total_revenue',
+  ];
   columnsHeader = {
     'code': 'Mã',
     'name': 'Tên nhân viên',
@@ -49,6 +54,8 @@ export class EmployeeReportRevenueTabComponent extends ListComponentBase impleme
     'status': 'Trạng trái',
     'actions': 'Hành động',
   };
+
+  sumData = {};
 
   ngOnInit() {
     this.loadData();
@@ -66,8 +73,11 @@ export class EmployeeReportRevenueTabComponent extends ListComponentBase impleme
         elementData.stt = stt;
       });
       this.reloadFilter(res);
-      // const url = this.service.getApiUrlReportSale(this.apiFilter);
-      this.isLoadingResults = false;
+
+      this.service.getSummaryReportRevenue(this.apiFilter).subscribe(res => {
+        this.isLoadingResults = false;
+        this.sumData = res.body;
+      });
 
       let url = '/report/employee/revenue';
       if (!this.apiFilter.page) {

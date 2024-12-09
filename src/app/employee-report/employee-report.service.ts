@@ -37,6 +37,21 @@ export class EmployeeReportService {
     return url;
   }
 
+  getApiUrlSummaryReportRevenue(filter?: EmployeeFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/employee-report/summary-revenue?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
   getApiUrlReportProfit(filter?: EmployeeFilter) {
     if (!filter.page) {
       filter.page = 1;
@@ -54,6 +69,11 @@ export class EmployeeReportService {
 
   getListReportRevenue(filter?: EmployeeFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrlReportRevenue(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
+  getSummaryReportRevenue(filter?: EmployeeFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrlSummaryReportRevenue(filter);
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
