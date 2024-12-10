@@ -12,5 +12,6 @@ export class EmployeeReport {
   total_return: number;
   total_sale: number;
   total_profit: number;
+  total_original_price: number;
   total_commission: number;
 }

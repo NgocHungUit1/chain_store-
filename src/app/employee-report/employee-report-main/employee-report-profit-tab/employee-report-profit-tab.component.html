@@ -17,18 +17,79 @@
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="profit_amount">
+      <ng-container matColumnDef="total_sale">
         <th mat-header-cell class="column-number"
-            *matHeaderCellDef> {{columnsHeader['profit_amount']}}</th>
+            *matHeaderCellDef> {{columnsHeader['total_sale']}}</th>
         <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                    {{ element?.profit_amount | number }}
+                    {{ element?.total_sale | number }}
                   </span>
         </td>
+      </ng-container>
+      <ng-container matColumnDef="sum_total_sale">
+        <th mat-header-cell colspan="2" class="column-number color-export"
+            *matHeaderCellDef>{{sumData?.total_sale | number }}</th>
+      </ng-container>
+
+      <ng-container matColumnDef="total_return">
+        <th mat-header-cell class="column-number"
+            *matHeaderCellDef> {{columnsHeader['total_return']}}</th>
+        <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ element?.total_return | number }}
+                  </span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="sum_total_return">
+        <th mat-header-cell class="column-number color-export"
+            *matHeaderCellDef>{{sumData?.total_return | number }}</th>
+      </ng-container>
+
+      <ng-container matColumnDef="total_revenue">
+        <th mat-header-cell class="column-number"
+            *matHeaderCellDef> {{columnsHeader['total_revenue']}}</th>
+        <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ element?.total_revenue | number }}
+                  </span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="sum_total_revenue">
+        <th mat-header-cell class="column-number color-export"
+            *matHeaderCellDef>{{sumData?.total_revenue | number }}</th>
+      </ng-container>
+
+      <ng-container matColumnDef="total_original_price">
+        <th mat-header-cell class="column-number"
+            *matHeaderCellDef> {{columnsHeader['total_original_price']}}</th>
+        <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ element?.total_original_price | number }}
+                  </span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="sum_total_original_price">
+        <th mat-header-cell class="column-number color-export"
+            *matHeaderCellDef>{{sumData?.total_original_price | number }}</th>
+      </ng-container>
+
+      <ng-container matColumnDef="total_profit">
+        <th mat-header-cell class="column-number"
+            *matHeaderCellDef> {{columnsHeader['total_profit']}}</th>
+        <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ element?.total_profit | number }}
+                  </span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="sum_total_profit">
+        <th mat-header-cell class="column-number color-export"
+            *matHeaderCellDef>{{sumData?.total_profit | number }}</th>
       </ng-container>
 
 
       <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+      <tr mat-header-row *matHeaderRowDef="sumColumnsToDisplay" class="example-second-header-row"></tr>
       <tr mat-row *matRowDef="let ba; columns: columnsToDisplay"></tr>
     </table>
   </div>
