@@ -6,6 +6,7 @@ import {AuthService} from '../../../authentication/auth.service';
 import * as moment from 'moment';
 import {EmployeeFilter} from '../../../employee/employee.model';
 import {EmployeeService} from '../../../employee/employee.service';
+import {EmployeeReportService} from '../../employee-report.service';
 
 
 @Component({
@@ -16,9 +17,8 @@ import {EmployeeService} from '../../../employee/employee.service';
 export class EmployeeReportCommissionTabComponent extends ListComponentBase implements OnInit {
   @HostBinding('class.dv-tab-page') layout = false;
   @Input() apiFilter: EmployeeFilter;
-
   constructor(
-    private service: EmployeeService,
+    private service: EmployeeReportService,
     private route: ActivatedRoute,
     private location: Location,
     public authSer: AuthService) {
@@ -34,19 +34,32 @@ export class EmployeeReportCommissionTabComponent extends ListComponentBase impl
     // 'district_name',
     // 'province_name',
     // 'address',
-    // 'phone_number',
-    'commission_amount',
+    'total_sale',
+    'total_return',
+    'total_revenue',
+    'total_comm_amount_product',
+    'total_comm_amount',
+  ];
+  sumColumnsToDisplay = [
+    'sum_total_sale',
+    'sum_total_return',
+    'sum_total_revenue',
+    'sum_total_comm_amount_product',
+    'sum_total_comm_amount',
   ];
   columnsHeader = {
     'code': 'Mã',
     'name': 'Tên nhân viên',
-    // 'agent_name': 'Đại lý',
-    'profit_amount': 'Lợi nhuận',
-    'address': 'Địa chỉ',
-    'commission_amount': 'Hoa hồng',
+    'total_comm_amount_product': 'Hoa hồng sản phẩm',
+    'total_comm_amount': 'Hoa hồng hoá đơn',
+    'total_revenue': 'Doanh thu thuần',
+    'total_sale': 'Doanh số',
+    'total_return': 'Trả hàng',
     'status': 'Trạng trái',
     'actions': 'Hành động',
   };
+
+  sumData = {};
 
   ngOnInit() {
     this.loadData();
@@ -54,7 +67,7 @@ export class EmployeeReportCommissionTabComponent extends ListComponentBase impl
 
   loadData(): void {
     this.isLoadingResults = true;
-    this.service.getList(this.apiFilter).subscribe(res => {
+    this.service.getListReportCommission(this.apiFilter).subscribe(res => {
       this.dataSource = res.body;
       // this.groupData = res.body.groupData;
       // console.log(this.groupData);
@@ -64,8 +77,11 @@ export class EmployeeReportCommissionTabComponent extends ListComponentBase impl
         elementData.stt = stt;
       });
       this.reloadFilter(res);
-      // const url = this.service.getApiUrlReportSale(this.apiFilter);
-      this.isLoadingResults = false;
+
+      this.service.getSummaryReportCommission(this.apiFilter).subscribe(res => {
+        this.isLoadingResults = false;
+        this.sumData = res.body;
+      });
 
       let url = '/report/employee/commission';
       if (!this.apiFilter.page) {

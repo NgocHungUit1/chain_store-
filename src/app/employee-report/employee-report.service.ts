@@ -67,6 +67,21 @@ export class EmployeeReportService {
     return url;
   }
 
+  getApiUrlReportCommission(filter?: EmployeeFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/employee-report/commission?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
   getApiUrlSummaryReportProfit(filter?: EmployeeFilter) {
     if (!filter.page) {
       filter.page = 1;
@@ -77,6 +92,21 @@ export class EmployeeReportService {
     }
 
     let url = '/employee-report/summary-profit?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
+  getApiUrlSummaryReportCommission(filter?: EmployeeFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/employee-report/summary-commission?per-page=' + filter.pageSize;
 
     url += '&' + filter.toFilterString();
     return url;
@@ -101,6 +131,17 @@ export class EmployeeReportService {
     const url = environment.apiUrl + this.getApiUrlSummaryReportProfit(filter);
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
+
+  getListReportCommission(filter?: EmployeeFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrlReportCommission(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
+  getSummaryReportCommission(filter?: EmployeeFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrlSummaryReportCommission(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
 }
 
 
