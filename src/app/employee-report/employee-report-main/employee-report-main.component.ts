@@ -103,7 +103,13 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
     this.initDateFilter();
     this.tab = this.route.snapshot.paramMap.get('tab');
     if (this.tab === null || this.tab === undefined) {
-      this.tab = 'revenue';
+     if (this.canDo('Employee-Report.Revenue')) {
+       this.tab = 'revenue';
+     } else if (this.canDo('Employee-Report.Profit')) {
+       this.tab = 'profit';
+     } else if (this.canDo('Employee-Report.Commission')) {
+       this.tab = 'commission';
+     }
     }
     this.tabSelectedIndex = this.tabs.indexOf(this.tab);
 

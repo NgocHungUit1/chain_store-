@@ -20,13 +20,13 @@
                   class="type-radio-group"
                   (change)="radioTimeChange($event)"
                   formControlName="type">
-                  <mat-radio-button class="radio-button-report-type" value="revenue" *ngIf="canDo('Report.Product-Sale')">
+                  <mat-radio-button class="radio-button-report-type" value="revenue" *ngIf="canDo('Employee-Report.Revenue')">
                     Doanh thu
                   </mat-radio-button>
-                  <mat-radio-button class="radio-button-report-type" value="profit" *ngIf="canDo('Report.Product-Sale')">
+                  <mat-radio-button class="radio-button-report-type" value="profit" *ngIf="canDo('Employee-Report.Profit')">
                     Lợi nhuận
                   </mat-radio-button>
-                  <mat-radio-button class="radio-button-report-type" value="commission" *ngIf="canDo('Report.Product-Sale')">
+                  <mat-radio-button class="radio-button-report-type" value="commission" *ngIf="canDo('Employee-Report.Commission')">
                     Hoa hồng
                   </mat-radio-button>
 

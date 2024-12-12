@@ -33,7 +33,7 @@ export class EmployeeReportInvoiceListDialogComponent extends ListComponentBase 
   created_by: any;
   filterData: any;
   valueColumns: any;
-  isShowCreateBtn = true;
+  isShowCommission = false;
   title = 'Hóa Đơn bán cần thanh toán';
 
   constructor(
@@ -52,8 +52,8 @@ export class EmployeeReportInvoiceListDialogComponent extends ListComponentBase 
     if (this.local_data.title !== undefined) {
       this.title = this.local_data.title;
     }
-    if (this.local_data.isShowCreateBtn !== undefined) {
-      this.isShowCreateBtn = this.local_data.isShowCreateBtn;
+    if (this.local_data.isShowCommission !== undefined) {
+      this.isShowCommission = this.local_data.isShowCommission;
     }
   }
 

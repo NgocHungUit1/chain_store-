@@ -111,6 +111,7 @@ export class EmployeeReportCommissionTabComponent extends ListComponentBase impl
         created_by: userId,
         filterData: filterData,
         title: 'Danh sách hóa đơn',
+        isShowCommission: true,
         valueColumns: [
           'total_sale',
           'total_return',

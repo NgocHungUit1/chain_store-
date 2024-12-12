@@ -19,6 +19,9 @@ import {
 import {
   EmployeeReportInvoiceListDialogComponent
 } from './employee-report-invoice-list-dialog/employee-report-invoice-list-dialog.component';
+import {
+  EmployeeReportInvoiceProductListComponent
+} from './employee-report-invoice-list-dialog/employee-report-invoice-product-list/employee-report-invoice-product-list.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +30,7 @@ import {
     , EmployeeReportProfitTabComponent
     , EmployeeReportCommissionTabComponent
     , EmployeeReportInvoiceListDialogComponent
+    , EmployeeReportInvoiceProductListComponent
   ],
   imports: [
     CommonModule,
