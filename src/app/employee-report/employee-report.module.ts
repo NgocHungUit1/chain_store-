@@ -16,9 +16,18 @@ import {EmployeeReportProfitTabComponent} from './employee-report-main/employee-
 import {
   EmployeeReportCommissionTabComponent
 } from './employee-report-main/employee-report-commission-tab/employee-report-commission-tab.component';
+import {
+  EmployeeReportInvoiceListDialogComponent
+} from './employee-report-invoice-list-dialog/employee-report-invoice-list-dialog.component';
 
 @NgModule({
-  declarations: [EmployeeReportMainComponent, EmployeeReportRevenueTabComponent, EmployeeReportProfitTabComponent, EmployeeReportCommissionTabComponent],
+  declarations: [
+    EmployeeReportMainComponent
+    , EmployeeReportRevenueTabComponent
+    , EmployeeReportProfitTabComponent
+    , EmployeeReportCommissionTabComponent
+    , EmployeeReportInvoiceListDialogComponent
+  ],
   imports: [
     CommonModule,
     RouterModule.forChild(EmployeeReportRoutes),
@@ -31,6 +40,9 @@ import {
     Ng2SearchPipeModule,
     DemoMaterialModule,
     ChartsModule
+  ],
+  entryComponents: [
+    EmployeeReportInvoiceListDialogComponent
   ]
 })
 export class EmployeeReportModule {

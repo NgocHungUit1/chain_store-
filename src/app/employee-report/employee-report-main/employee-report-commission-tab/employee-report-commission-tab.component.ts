@@ -5,9 +5,11 @@ import {ListComponentBase} from '../../../shared/base';
 import {AuthService} from '../../../authentication/auth.service';
 import * as moment from 'moment';
 import {EmployeeFilter} from '../../../employee/employee.model';
-import {EmployeeService} from '../../../employee/employee.service';
 import {EmployeeReportService} from '../../employee-report.service';
-
+import {
+  EmployeeReportInvoiceListDialogComponent
+} from '../../employee-report-invoice-list-dialog/employee-report-invoice-list-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-employee-report-commission-tab',
@@ -21,6 +23,7 @@ export class EmployeeReportCommissionTabComponent extends ListComponentBase impl
     private service: EmployeeReportService,
     private route: ActivatedRoute,
     private location: Location,
+    private dialog: MatDialog,
     public authSer: AuthService) {
     super();
 
@@ -92,6 +95,33 @@ export class EmployeeReportCommissionTabComponent extends ListComponentBase impl
       }
       url += '?' + this.apiFilter.toFilterString();
       this.location.go(url);
+    });
+  }
+
+  openInvoiceDialog(userId) {
+    const filterData = {
+      date_from: this.apiFilter.date_from,
+      date_to: this.apiFilter.date_to,
+    };
+
+    const dialogRef = this.dialog.open(EmployeeReportInvoiceListDialogComponent, {
+      width: '80%',
+      minHeight: '80%',
+      data: {
+        created_by: userId,
+        filterData: filterData,
+        title: 'Danh sách hóa đơn',
+        valueColumns: [
+          'total_sale',
+          'total_return',
+          'total_revenue',
+          'comm_percent',
+          'comm_amount_product',
+          'comm_amount',
+        ]
+      },
+    });
+    dialogRef.afterClosed().subscribe(result => {
     });
   }
 

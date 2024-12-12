@@ -5,7 +5,10 @@ import {ListComponentBase} from '../../../shared/base';
 import {AuthService} from '../../../authentication/auth.service';
 import {EmployeeFilter} from '../../../employee/employee.model';
 import {EmployeeReportService} from '../../employee-report.service';
-
+import {
+  EmployeeReportInvoiceListDialogComponent
+} from '../../employee-report-invoice-list-dialog/employee-report-invoice-list-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-employee-report-profit-tab',
@@ -20,6 +23,7 @@ export class EmployeeReportProfitTabComponent extends ListComponentBase implemen
     private service: EmployeeReportService,
     private route: ActivatedRoute,
     private location: Location,
+    private dialog: MatDialog,
     public authSer: AuthService) {
     super();
 
@@ -93,6 +97,32 @@ export class EmployeeReportProfitTabComponent extends ListComponentBase implemen
       }
       url += '?' + this.apiFilter.toFilterString();
       this.location.go(url);
+    });
+  }
+
+  openInvoiceDialog(userId) {
+    const filterData = {
+      date_from: this.apiFilter.date_from,
+      date_to: this.apiFilter.date_to,
+    };
+
+    const dialogRef = this.dialog.open(EmployeeReportInvoiceListDialogComponent, {
+      width: '80%',
+      minHeight: '80%',
+      data: {
+        created_by: userId,
+        filterData: filterData,
+        title: 'Danh sách hóa đơn',
+        valueColumns: [
+          'total_sale',
+          'total_return',
+          'total_revenue',
+          'total_original_price',
+          'total_profit'
+        ]
+      },
+    });
+    dialogRef.afterClosed().subscribe(result => {
     });
   }
 
