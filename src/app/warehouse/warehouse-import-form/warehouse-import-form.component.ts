@@ -40,6 +40,7 @@ import {SearchProductDialogComponent} from '../../common/search-product-dialog/s
 import * as moment from 'moment';
 import {SearchSupplierDialogComponent} from '../../common/search-supplier-dialog/search-supplier-dialog.component';
 import { WarehouseUnitCreateDialogComponent } from '../warehouse-unit-create-dialog/warehouse-unit-create-dialog.component';
+import { WarehouseFormAmountComponent } from '../warehouse-form-amount/warehouse-form-amount.component';
 
 
 @Component({
@@ -100,12 +101,16 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     // 'product_parcel': 'Lô',
     'product_unit_id': 'Đơn vị',
     'quantity': 'Tổng SL',
-    'price': 'Giá nhập',
+    'price': 'Giá vốn',
     // 'discount': 'Chiết khấu',//'Giảm giá',
     'amount': 'Thành tiền',
     'actions': 'Hành động',
   };
+  showFilters = false;
+  tempDataForQuickFilter = [];
 
+  filterColumns: string[] = [];
+  filterValues: { [key: string]: string } = {};
   displayedColumns: string[] = [
     'actions',
     // 'image',
@@ -163,7 +168,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   };
 
   ngOnInit() {
-
+    this.filterColumns = this.displayedColumns.map(col => `filter-${col}`);
+    this.productDataSource = new MatTableDataSource();
     const date = new FormControl(new Date());
     this.form = this.fb.group({
       date: date,
@@ -330,6 +336,59 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   }
 
+
+  // Enhanced filter function
+  applyFilter(event: Event, column: string) {
+    debugger;
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.filterValues[column] = filterValue;
+
+    // Apply all active filters
+    this.data = this.tempDataForQuickFilter.filter(item => {
+      return Object.keys(this.filterValues).every(key => {
+        const value = this.filterValues[key];
+        if (!value) return true; // Skip empty filters
+
+        if(key == "product_unit_id"){
+          return (item.productUnits.some(productUnit=>{
+                return (productUnit.name + "")
+                  ?.toLowerCase()
+                  ?.includes(value.toLowerCase());
+              }
+            )
+          )
+        }else
+          return (item.product[key] + "")
+            ?.toLowerCase()
+            ?.includes(value.toLowerCase());
+      });
+    });
+
+    // Update datasource
+    this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+
+    // Reset to first page
+    if (this.paginator) {
+      this.paginator.firstPage();
+    }
+  }
+
+  // Clear all filters
+  clearFilters() {
+    this.filterValues = {};
+    this.data = [...this.tempDataForQuickFilter];
+    this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+  }
+
+  toggleFilters() {
+    if(this.showFilters){
+      this.clearFilters();
+    }
+    setTimeout(()=>{
+      this.showFilters = !this.showFilters;
+    })
+  }
+
   displaySupplier(supplier?: Supplier): string | undefined {
     return (supplier === undefined || supplier === null) ? undefined : supplier.name;
   }
@@ -400,6 +459,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         newData.push(warehouseProduct);
       });
       this.data = newData;
+      this.tempDataForQuickFilter = [...newData]; // Create initial copy
       this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
       this.recalculateWarehouse();
       this.isLoadingResults = false;
@@ -643,6 +703,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           warehouseProduct.price = res['productUnits'][0]['original_price'];
         }
         this.data.unshift(warehouseProduct);
+        this.tempDataForQuickFilter = [...this.data]; // Update copy with new item
 
         // const newData = this.data.concat([warehouseProduct]);
         // this.data = newData;
@@ -764,7 +825,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   removeProduct(i) {
     const newData = this.data;
-    newData.splice(i, 1);
+    const removedProduct = newData.splice(i, 1)[0];
+
+    this.tempDataForQuickFilter = this.tempDataForQuickFilter.filter(item=> item.product_id !== removedProduct.product_id);  // Update copy after removal
 
     this.data = newData;
 
@@ -1314,6 +1377,26 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     });
   }
 
+  openAmountDialog(index: any) {
+    const ref = this.dialog.open(WarehouseFormAmountComponent, {
+      width: '35%',
+      minHeight: '200px',
+      data: this.data[index],
+    });
+
+    ref.afterClosed().subscribe(result => {
+      if (result) {
+        this.data[index]['discount'] = result.discount;
+        this.data[index]['discount_type'] = result.discount_type;
+        this.data[index]['amount'] = result.amount;
+        this.data[index]['vat'] = result.vat;
+        this.data[index]['vat_type'] = result.vat_type;
+        this.recalculateItem(index);
+        this.recalculateWarehouse();
+      }
+    });
+  }
+
   toggleColumn(column) {
     setTimeout(() => {
       if (this.displayedColumns.includes(column)) {
@@ -1323,6 +1406,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           col === column || this.displayedColumns.includes(col)
         );
       }
+      this.filterColumns = this.displayedColumns.map(col => `filter-${col}`);
     });
   }
 

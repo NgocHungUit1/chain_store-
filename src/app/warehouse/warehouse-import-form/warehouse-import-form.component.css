@@ -93,7 +93,9 @@
 .span-product-no {
 
 }
-
+.quick-filter-input{
+  margin-top: 15px;
+}
 .warehouse-product-table tr td {
   vertical-align: middle;
 }
