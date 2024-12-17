@@ -254,7 +254,7 @@
 
               <!-- Product Unit Filter -->
               <ng-container matColumnDef="filter-product_unit_id">
-                <th mat-header-cell *matHeaderCellDef>
+                <th style='min-width: 150px;' mat-header-cell *matHeaderCellDef>
                   <mat-form-field appearance="outline" class="w-full quick-filter-input">
                     <input matInput (keyup)="applyFilter($event, 'product_unit_id')" placeholder="Tìm đơn vị">
                   </mat-form-field>
