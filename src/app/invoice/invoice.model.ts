@@ -73,6 +73,7 @@ export class InvoiceFilter extends ApiFilterBase {
   product_id = '';
   users = '';
   created_by = '';
+  keyword = '';
 
   getModelSearch() {
     return 'InvoiceSearch';
