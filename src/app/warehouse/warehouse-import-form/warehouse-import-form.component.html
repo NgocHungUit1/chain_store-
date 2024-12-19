@@ -238,7 +238,7 @@
               <ng-container matColumnDef="product_unit_id">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_unit_id']}}</th>
                 <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
-                  <div style='display: flex;flex-direction: row;flex-wrap: nowrap;justify-content: flex-end;'>
+                  <div style='display: flex;flex-direction: row;flex-wrap: nowrap;justify-content: center;padding-left:0.5rem;'>
                     <mat-form-field *ngIf="element.productUnits.length">
                       <mat-select matInput [(ngModel)]="data[i]['product_unit_id']"
                                   (selectionChange)="onUnitChange(i, $event)">
@@ -246,16 +246,16 @@
                       </mat-select>
                     </mat-form-field>
                     <button mat-icon-button matSuffix aria-label="add" (click)="openUnitCreateDialog(element);">
-                      <mat-icon>add</mat-icon>
+                      <mat-icon style="margin-bottom: 12px; font-size: 1.5rem;">add</mat-icon>
                     </button>
                   </div>
                 </td>
               </ng-container>
 
               <!-- Product Unit Filter -->
-              <ng-container matColumnDef="filter-product_unit_id">
-                <th style="min-width:80px" mat-header-cell *matHeaderCellDef>
-                  <mat-form-field appearance="outline" class="w-full quick-filter-input">
+              <ng-container matColumnDef="filter-product_unit_id" style="width:100px">
+                <th  mat-header-cell *matHeaderCellDef>
+                  <mat-form-field style="width:100px" appearance="outline" class="w-full quick-filter-input">
                     <input matInput (keyup)="applyFilter($event, 'product_unit_id')" placeholder="Tìm đơn vị">
                   </mat-form-field>
                 </th>
@@ -266,7 +266,7 @@
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['quantity']}}</th>
                 <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
                   <mat-form-field>
-                    <input matInput  class="quantity-input" [value]="element['quantity']"
+                    <input matInput style="text-align: right" class="quantity-input" [value]="element['quantity']"
                            [(ngModel)]="data[i]['quantity']"
                            [disabled]="data[i]['product_parcels'].length > 1"
                            autocomplete="off" (keyup)="quantityChange($event,i)">
@@ -309,7 +309,7 @@
                 </th>
                 <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
                   <mat-form-field>
-                    <input matInput class="quantity-input" [value]="element['amount'] | currency : 'VND' : ''"
+                    <input style="text-align: right" matInput class="quantity-input" [value]="element['amount'] | currency : 'VND' : ''"
                            (click)="openAmountDialog(i)">
                   </mat-form-field>
                 </td>
