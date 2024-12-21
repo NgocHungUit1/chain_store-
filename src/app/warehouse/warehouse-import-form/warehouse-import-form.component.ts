@@ -66,6 +66,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     private notifySer: NotifierService,
     private expensesTransactionService: ExpensesTransactionService,
     private optionStoreService: OptionStoreService,
+    private notifyService: NotifierService,
   ) {
     super();
   }
@@ -635,10 +636,16 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   onSelectedProduct(product) {
 
     if(this.searchMode){
+
+      if(!product["productUnits"]){
+        this.notifyService.notify('warning', "Sản phẩm này không tồn đại đơn vị để thêm nhanh, vui lòng thêm bình thường.");
+        return;
+      }
+
       this.tempProductId = product.id;
 
-      this.selectUnits = product["productUnits"]
-
+      this.selectUnits = product["productUnits"];
+      
       this.quantityInputRef.nativeElement.focus();
       return;
     }
