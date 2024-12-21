@@ -141,18 +141,18 @@
             <table mat-table [dataSource]="productDataSource" class="table warehouse-product-table no-wrap ">
 
               <ng-container matColumnDef="#">
-                <th mat-header-cell *matHeaderCellDef style="width: 35px;"> #</th>
+                <th mat-header-cell *matHeaderCellDef style="min-width: 35px;"> #</th>
                 <td mat-cell
                     style="padding-top: 10px; vertical-align: top" *matCellDef="let element; let i = index;"> {{i + 1}}</td>
               </ng-container>
               
               <!-- Index Filter -->
               <ng-container matColumnDef="filter-#">
-                <th mat-header-cell *matHeaderCellDef></th>
+                <th mat-header-cell *matHeaderCellDef style="min-width:35px"></th>
               </ng-container>
 
               <ng-container matColumnDef="product_name">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_name']}}</th>
+                <th mat-header-cell *matHeaderCellDef style="min-width:200px"> {{columnsHeader['product_name']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index" title="{{ element.product.product_name }}"
                     style="padding-top: 1.5rem; vertical-align: top">
 
@@ -167,7 +167,7 @@
 
               <!-- Product Name Filter -->
               <ng-container matColumnDef="filter-product_name">
-                <th mat-header-cell *matHeaderCellDef>
+                <th mat-header-cell *matHeaderCellDef style="min-width:200px">
                   <mat-form-field appearance="outline" class="w-full quick-filter-input">
                     <input matInput (keyup)="applyFilter($event, 'product_name')" placeholder="Tìm tên sản phẩm">
                   </mat-form-field>
@@ -177,7 +177,7 @@
               <!-- Product Number Column -->
 
               <ng-container matColumnDef="product_no">
-                <th mat-header-cell *matHeaderCellDef style='width: 250px;'> {{columnsHeader['product_no']}}</th>
+                <th mat-header-cell *matHeaderCellDef style='min-width: 80px;'> {{columnsHeader['product_no']}}</th>
                 <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
                   <div class="span-product-no" style='margin-bottom: 0.5rem;'>{{ element.product.product_no }}</div>
 
@@ -206,10 +206,10 @@
 
               <!-- Product No Filter -->
               <ng-container matColumnDef="filter-product_no">
-                <th mat-header-cell *matHeaderCellDef>
+                <th mat-header-cell *matHeaderCellDef style="min-width:80px">
                   <mat-form-field appearance="outline" class="w-full quick-filter-input">
                     <input matInput (keyup)="applyFilter($event, 'product_no')" placeholder="Tìm mã sản phẩm">
-                  </mat-form-field>
+                  </mat-form-field> 
                 </th>
               </ng-container>
 
@@ -236,9 +236,9 @@
               <!-- Product Unit Column -->
 
               <ng-container matColumnDef="product_unit_id">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_unit_id']}}</th>
-                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
-                  <div style='display: flex;flex-direction: row;flex-wrap: nowrap;justify-content: flex-end;'>
+                <th mat-header-cell *matHeaderCellDef style="min-width:100px"> {{columnsHeader['product_unit_id']}}</th>
+                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; min-width:100px;' *matCellDef="let element; let i = index">
+                  <div style='display: flex;flex-direction: row;flex-wrap: nowrap;justify-content: center;padding-left:0.5rem;'>
                     <mat-form-field *ngIf="element.productUnits.length">
                       <mat-select matInput [(ngModel)]="data[i]['product_unit_id']"
                                   (selectionChange)="onUnitChange(i, $event)">
@@ -246,7 +246,7 @@
                       </mat-select>
                     </mat-form-field>
                     <button mat-icon-button matSuffix aria-label="add" (click)="openUnitCreateDialog(element);">
-                      <mat-icon>add</mat-icon>
+                      <mat-icon style="margin-bottom: 12px; font-size: 1.5rem;">add</mat-icon>
                     </button>
                   </div>
                 </td>
@@ -254,19 +254,19 @@
 
               <!-- Product Unit Filter -->
               <ng-container matColumnDef="filter-product_unit_id">
-                <th mat-header-cell *matHeaderCellDef>
-                  <mat-form-field appearance="outline" class="w-full quick-filter-input">
-                    <input matInput (keyup)="applyFilter($event, 'product_unit_id')" placeholder="Tìm đơn vị">
+                <th  mat-header-cell *matHeaderCellDef>
+                  <mat-form-field style="min-width:100px" appearance="outline" class="w-full quick-filter-input">
+                    <input matInput (keyup)="applyFilter($event, 'product_unit_id')" placeholder="Tìm đơn vị" style="min-width:100px">
                   </mat-form-field>
                 </th>
               </ng-container>
 
               <!-- Quantity Column -->
               <ng-container matColumnDef="quantity">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['quantity']}}</th>
-                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
+                <th mat-header-cell *matHeaderCellDef style="min-width:60px"> {{columnsHeader['quantity']}}</th>
+                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; min-width:60px;' *matCellDef="let element; let i = index">
                   <mat-form-field>
-                    <input matInput  class="quantity-input" [value]="element['quantity']"
+                    <input matInput style="text-align: right" class="quantity-input" [value]="element['quantity']"
                            [(ngModel)]="data[i]['quantity']"
                            [disabled]="data[i]['product_parcels'].length > 1"
                            autocomplete="off" (keyup)="quantityChange($event,i)">
@@ -277,13 +277,13 @@
 
               <!-- Quantity Filter -->
               <ng-container matColumnDef="filter-quantity">
-                <th mat-header-cell *matHeaderCellDef></th>
+                <th mat-header-cell *matHeaderCellDef style="min-width:60px"></th>
               </ng-container>
 
               <!-- Price Column -->
               <ng-container matColumnDef="price">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['price']}}</th>
-                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
+                <th mat-header-cell *matHeaderCellDef style="min-width:90px"> {{columnsHeader['price']}}</th>
+                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; min-width:90px' *matCellDef="let element; let i = index">
                   <mat-form-field class="text-right">
 
                     <input matInput
@@ -298,25 +298,26 @@
               </ng-container>
               <!-- Price Filter -->
               <ng-container matColumnDef="filter-price">
-                <th mat-header-cell *matHeaderCellDef></th>
+                <th mat-header-cell *matHeaderCellDef style="min-width:90px"></th>
               </ng-container>
 
               <!-- Amount Column -->
               <ng-container matColumnDef="amount">
                 <th mat-header-cell *matHeaderCellDef
+                    style="min-width:90px"
                     matTooltip="(Đơn giá * Số lượng) - Tiền CK">
                   {{columnsHeader['amount']}}
                 </th>
-                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
+                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; min-width:90px;' *matCellDef="let element; let i = index">
                   <mat-form-field>
-                    <input matInput class="quantity-input" [value]="element['amount'] | currency : 'VND' : ''"
+                    <input style="text-align: right" matInput class="quantity-input" [value]="element['amount'] | currency : 'VND' : ''"
                            (click)="openAmountDialog(i)">
                   </mat-form-field>
                 </td>
               </ng-container>
               <!-- Amount Filter -->
               <ng-container matColumnDef="filter-amount">
-                <th mat-header-cell *matHeaderCellDef></th>
+                <th mat-header-cell *matHeaderCellDef style="min-width:90px"></th>
               </ng-container>
 
               <!-- Actions Column -->
