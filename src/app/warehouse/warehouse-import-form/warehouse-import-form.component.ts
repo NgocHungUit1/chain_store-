@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {MatTable, MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
@@ -41,6 +41,7 @@ import * as moment from 'moment';
 import {SearchSupplierDialogComponent} from '../../common/search-supplier-dialog/search-supplier-dialog.component';
 import { WarehouseUnitCreateDialogComponent } from '../warehouse-unit-create-dialog/warehouse-unit-create-dialog.component';
 import { WarehouseFormAmountComponent } from '../warehouse-form-amount/warehouse-form-amount.component';
+import { MatSelect } from '@angular/material/select';
 
 
 @Component({
@@ -74,6 +75,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   @ViewChild('selectColumn') selectColumn;
 
   selectProduct = new FormControl();
+  selectQuantity = new FormControl();
+  selectUnit = new FormControl();
 
   apiFilter: WarehouseProductFilter;
   updateModelId = null;
@@ -84,7 +87,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   expensesTransaction: number;
   expensesTransactions: ExpensesTransaction[] = [];
   optionStore_transaction_expenses: OptionStore;
+  tempProductId = null;
 
+  searchMode = false;
   submitted = false;
   statuses = [
     {id: '10', name: 'Hoàn thành'},
@@ -151,7 +156,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   filteredSuppliers: Observable<Supplier[]>;
   filteredProducts: Observable<Product[]>;
   filteredMedicines: Observable<Medicine[]>;
-
+  selectUnits = [];
   fieldLabels = {
     no: 'Mã phiếu',
     supplier: 'nhà cung cấp',
@@ -167,6 +172,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     branch_id: 'chi nhánh',
   };
 
+  @ViewChild('inputField') inputField: ElementRef;
+  @ViewChild('quantityInput') quantityInputRef: ElementRef;
+  @ViewChild('unitInput') unitInputRef: MatSelect;
   ngOnInit() {
     this.filterColumns = this.displayedColumns.map(col => `filter-${col}`);
     this.productDataSource = new MatTableDataSource();
@@ -339,7 +347,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   // Enhanced filter function
   applyFilter(event: Event, column: string) {
-    debugger;
     const filterValue = (event.target as HTMLInputElement).value;
     this.filterValues[column] = filterValue;
 
@@ -626,6 +633,16 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
    * @param product
    */
   onSelectedProduct(product) {
+
+    if(this.searchMode){
+      this.tempProductId = product.id;
+
+      this.selectUnits = product["productUnits"]
+
+      this.quantityInputRef.nativeElement.focus();
+      return;
+    }
+
     if (product == -1) {
       return;
     }
@@ -663,7 +680,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
    * @param product_id
    */
   handleAddProductToList(product_id) {
-
     if (this.productDataSource.data.length >= 200) {
       this.notifySer.notify('warning', 'Đơn nhập tối đa 100 sản phẩm!');
       return;
@@ -702,6 +718,65 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           warehouseProduct.product_unit_id = res['productUnits'][0]['id'];
           warehouseProduct.price = res['productUnits'][0]['original_price'];
         }
+        this.data.unshift(warehouseProduct);
+        this.tempDataForQuickFilter = [...this.data]; // Update copy with new item
+
+        // const newData = this.data.concat([warehouseProduct]);
+        // this.data = newData;
+        this.data.forEach(element => {
+          element.price = numeral(element.price).format('0,0');
+        });
+        this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+        this.recalculateWarehouse();
+        this.selectProduct.patchValue(null);
+      });
+    } else {
+      this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+      this.recalculateWarehouse();
+      this.selectProduct.patchValue(null);
+    }
+  }
+  handleAddProductToListWithQuickAdd(product_id) {
+
+    debugger;
+
+
+    if (this.productDataSource.data.length >= 200) {
+      this.notifySer.notify('warning', 'Đơn nhập tối đa 100 sản phẩm!');
+      return;
+    }
+
+    let productExits = 0;
+    // tslint:disable-next-line:no-shadowed-variable
+    this.data.forEach((element, index) => {
+      if (element.product_id === product_id) {
+        productExits = 1;
+        if (element['product_parcels'].length > 0) {
+          element['product_parcels'][0]['quantity'] = element['product_parcels'][0]['quantity'] + 1;
+        }
+        element.quantity = element.quantity + +this.selectQuantity.value;
+        this.recalculateItem(index);
+      }
+    });
+    if (productExits === 0) {
+      this.productSer.getDetail(product_id, 'productUnits').subscribe(res => {
+        const warehouseProduct = new WarehouseProduct();
+        warehouseProduct.product_id = res['id'];
+        warehouseProduct.product = res;
+        warehouseProduct.quantity = +this.selectQuantity.value;
+        warehouseProduct.price = (res['original_price'] !== null) ? numeral(res['original_price']).format('0,0') : 0;
+        warehouseProduct.discount = 0;
+        warehouseProduct.discount_type = 'price';
+        warehouseProduct.amount = (res['original_price'] !== null) ? res['original_price'] : 0;
+        // warehouseProduct.amount = 0; // (res['original_price'] !== null) ? res['original_price'] : 0;
+        warehouseProduct.productUnits = res['productUnits'];
+        warehouseProduct.product_parcels = [];
+        warehouseProduct.vat = 0;
+        warehouseProduct.vat_type = 'price';
+
+        warehouseProduct.product_unit_id = this.selectUnit.value['id'];
+        warehouseProduct.price = this.selectUnit.value['original_price'];
+        
         this.data.unshift(warehouseProduct);
         this.tempDataForQuickFilter = [...this.data]; // Update copy with new item
 
@@ -1412,5 +1487,26 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   isIncludes(column) {
     return this.displayedColumns.some(item => item === column);
+  }
+
+  focusInput() {
+    // This will programmatically focus the input field
+    this.inputField.nativeElement.focus();
+
+    this.searchMode = !this.searchMode;
+  }
+
+  onQuantityEnter(){
+    this.unitInputRef.focus();
+    this.unitInputRef.open();
+  }
+
+  onUnitEnter(){
+    this.handleAddProductToListWithQuickAdd(this.tempProductId);
+  }
+
+  displayProductFn(item: any): string {
+    return item && item.product_name ? item.product_name : 
+          item && item.medicine_name ? item.medicine_name : '';
   }
 }
