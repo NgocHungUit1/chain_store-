@@ -348,6 +348,20 @@
         </div>
       </mat-tab>
 
+      <mat-tab label="Hoa hồng">
+
+        <div fxLayout="row wrap" class="m-t-20">
+          <div fxFlex="100">
+            <mat-form-field>
+              <input type="text" matInput [formControl]="form.controls['comm_percent']" required
+                     placeholder="Mức hoa hồng(%)" autocomplete="off">
+              <label mat-hint>(Hoa hồng mặc định: {{this.defaultCommPercent}}%)</label>
+            </mat-form-field>
+          </div>
+        </div>
+
+      </mat-tab>
+
       <!-- Tab Món thêm  -->
 <!--      <mat-tab label="Món thêm">-->
 <!--      </mat-tab>-->

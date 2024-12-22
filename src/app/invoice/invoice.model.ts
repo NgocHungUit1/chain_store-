@@ -72,6 +72,8 @@ export class InvoiceFilter extends ApiFilterBase {
   order_national = '';
   product_id = '';
   users = '';
+  created_by = '';
+  keyword = '';
 
   getModelSearch() {
     return 'InvoiceSearch';

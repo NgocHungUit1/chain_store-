@@ -1018,4 +1018,25 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
 
     return allPermissions.indexOf(permissionName) !== -1;
   }
+
+  onPageChange(page) {
+    this.page = page;
+    this.apiFilter.page = page;
+    this.parcelFilter.page = page;
+    this.parcelStockFilter.page = page;
+    this.loadData(false);
+  }
+
+  onMatPageChange(event) {
+    this.page = event.pageIndex + 1;
+    this.apiFilter.page = event.pageIndex + 1;
+    this.parcelFilter.page = event.pageIndex + 1;
+    this.parcelStockFilter.page = event.pageIndex + 1;
+
+    this.apiFilter.pageSize = event.pageSize;
+    this.parcelFilter.pageSize = event.pageSize;
+    this.parcelStockFilter.pageSize = event.pageSize;
+    console.log(this.apiFilter);
+    this.loadData(false);
+  }
 }

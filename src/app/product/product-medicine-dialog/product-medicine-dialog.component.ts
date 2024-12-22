@@ -25,6 +25,7 @@ import { log } from 'util';
 import { loadConfigurationFromPath } from 'tslint/lib/configuration';
 import { MatRadioChange } from '@angular/material/radio';
 import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
+import {OptionStoreService} from '../../common/option-store.service';
 
 
 class ImageSnippet {
@@ -48,6 +49,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     private manufacturerSer: ManufacturerService,
     private medicineSer: MedicineService,
     public dialogRef: MatDialogRef<ProductMedicineDialogComponent>,
+    public optionStoreService: OptionStoreService,
     public notifySer: NotifierService,
     private dialog: MatDialog,
     // @Optional() is used to prevent error if no data is passed
@@ -77,6 +79,8 @@ export class ProductMedicineDialogComponent implements OnInit {
   usings = [];
   placements = [];
   manufacturers = [];
+
+  defaultCommPercent: string = '0';
 
   filteredMedicines: Observable<Medicine[]>;
 
@@ -192,7 +196,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       max_quantity: [0],
       description: [null],
       note: [null],
-      // quantity_of_stock: [0],
+      comm_percent: [0],
     });
   }
 
@@ -284,6 +288,10 @@ export class ProductMedicineDialogComponent implements OnInit {
         });
       });
     });
+
+    this.optionStoreService.getValue('comm_percent_product').subscribe(res => {
+      this.defaultCommPercent = res.value;
+    });
   }
 
   public _filterMadeIn(value: any): string[] {
@@ -363,6 +371,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           medicine: medicine, // product['medicine'],
           placements: placements,
           min_quantity: product['min_quantity'],
+          comm_percent: product['comm_percent'],
           max_quantity: product['max_quantity'],
           description: product['description'],
           note: product['note'],
@@ -388,6 +397,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           max_quantity: product['max_quantity'],
           description: product['description'],
           note: product['note'],
+          comm_percent: product['comm_percent'],
         });
 
         this.productSer.getRenderProductNo().subscribe(product_no => {

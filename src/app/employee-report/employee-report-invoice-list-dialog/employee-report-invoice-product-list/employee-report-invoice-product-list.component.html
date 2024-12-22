@@ -1,0 +1,77 @@
+
+<div class="process-bar-container">
+  <mat-progress-bar mode="query" *ngIf="loading"></mat-progress-bar>
+</div>
+<table mat-table [dataSource]="dataSource" class="m-b-20">
+
+  <ng-container matColumnDef="product_no">
+    <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['product_no'] }} </th>
+    <td mat-cell *matCellDef="let element; let i = index;">
+      <a target="_blank" routerLink="/store/product/{{ element.product?.product_no }}">{{ element.product?.product_no }}</a>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="product_name">
+    <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['product_name'] }} </th>
+    <td mat-cell *matCellDef="let element">
+      <p *ngIf="element?.base_unit == null">{{ element.product?.product_name }}</p>
+      <p *ngIf="element?.base_unit !== null">{{ element.product?.product_name + ' - ' + element?.base_unit}}</p>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="common_price">
+    <th mat-header-cell class="column-number-end" *matHeaderCellDef> {{ columnsHeader['common_price'] }}
+    </th>
+    <td mat-cell class="column-number-end" *matCellDef="let element">
+      <span *ngIf="element.discount == 0">{{element.price}}</span>
+      <div *ngIf="element.discount > 0">
+        <span *ngIf="element.discount_type == 'price'">{{element.price + element.discount}}</span>
+        <span *ngIf="element.discount_type == 'percent'">{{element.price * 100 / (100 - element.discount)}}</span>
+      </div>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="amount">
+    <th mat-header-cell class="column-number-end" *matHeaderCellDef> {{ columnsHeader['amount'] }} </th>
+    <td mat-cell class="column-number-end" *matCellDef="let element"> {{ element.amount }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="discount">
+    <th mat-header-cell class="column-number-end" *matHeaderCellDef> {{ columnsHeader['discount'] }} </th>
+    <td mat-cell class="column-number-end" *matCellDef="let element">
+      <span>{{element.discount}}</span><span *ngIf="element.discount > 0 && element.discount_type == 'percent'">(%)</span>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="price">
+    <th mat-header-cell class="column-number-end" *matHeaderCellDef> {{ columnsHeader['price'] }} </th>
+    <td mat-cell class="column-number-end" *matCellDef="let element">
+      <span *ngIf="element.discount == 0">{{ element.price | number }}</span>
+      <span *ngIf="element.discount > 0" style="color: red">{{ element.price | number }}</span>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="total_price">
+    <th mat-header-cell class="column-number-end" *matHeaderCellDef> {{ columnsHeader['total_price'] }}
+    </th>
+    <td mat-cell class="column-number-end" *matCellDef="let element">
+      {{ element.price * element.amount | number }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="comm_percent">
+    <th mat-header-cell class="column-number-end" *matHeaderCellDef> {{ columnsHeader['comm_percent'] }}
+    </th>
+    <td mat-cell class="column-number-end" *matCellDef="let element">
+      {{ element.comm_percent | number }} %</td>
+  </ng-container>
+
+  <ng-container matColumnDef="comm_amount">
+    <th mat-header-cell class="column-number-end" *matHeaderCellDef> {{ columnsHeader['comm_amount'] }}
+    </th>
+    <td mat-cell class="column-number-end" *matCellDef="let element">
+      {{ element.comm_amount | number }} </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns" class="header-element-row"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

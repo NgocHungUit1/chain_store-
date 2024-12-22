@@ -206,7 +206,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
     mItemInvoice.customer = invoice.customer;
     mItemInvoice.branch_id = invoice.branch_id;
     mItemInvoice.today = invoice.today;
-    console.log(mItemInvoice.today);
+    // console.log(mItemInvoice.today);
     mItemInvoice.time = invoice.time;
     mItemInvoice.prescription_id = invoice.prescription_id;
     mItemInvoice.user = {
@@ -221,6 +221,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
     const aProductInfo: ProductInfo[] = [];
     const invoiceDetailFilter = new InvoiceDetailFilter();
     invoiceDetailFilter.invoice_id = invoice.id;
+    invoiceDetailFilter.pageSize = 200;
     invoiceDetailFilter.expand = 'product,quantity,productUnits';
     this.invoiceService.getInvoiceDetailList(invoiceDetailFilter).subscribe(res => {
       const detail = res.body; // invoice.detail || [];
@@ -240,8 +241,8 @@ export class InvoiceTabInfoComponent implements OnChanges {
         mProductInfo.product = element.product;
         mProductInfo.product.end_price = element.price;
         mProductInfo.common_price = element.price;
-        mProductInfo.product_unit_id = item['id'];
-        mProductInfo.product_unit_value = item['value'];
+        mProductInfo.product_unit_id = element['product_unit_id'];
+        mProductInfo.product_unit_value = element['product_unit_value'];
         mProductInfo.base_unit = element.base_unit;
         aProductInfo.push(mProductInfo);
       });
