@@ -745,9 +745,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
   handleAddProductToListWithQuickAdd(product_id) {
 
-    debugger;
-
-
     if (this.productDataSource.data.length >= 200) {
       this.notifySer.notify('warning', 'Đơn nhập tối đa 100 sản phẩm!');
       return;
@@ -795,11 +792,19 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
         this.recalculateWarehouse();
         this.selectProduct.patchValue(null);
+        this.selectUnit.patchValue(null);
+        this.selectUnits = [];
+        this.selectQuantity.patchValue(0);
+        this.inputField.nativeElement.focus();
       });
     } else {
       this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
       this.recalculateWarehouse();
       this.selectProduct.patchValue(null);
+      this.selectUnit.patchValue(null);
+      this.selectUnits = [];
+      this.selectQuantity.patchValue(0);
+      this.inputField.nativeElement.focus();
     }
   }
 
