@@ -61,9 +61,11 @@ export class WarehouseProduct {
   product: object;
   quantity: number;
   price: number;
+  sell_price: number;
   discount: number;
   discount_type: string;
   amount: number;
+  inventory_quantity: number;
   note: string;
   productUnits: object[];
   productParcels: object[];
