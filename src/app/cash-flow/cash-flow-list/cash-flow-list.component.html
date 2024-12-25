@@ -4,6 +4,56 @@
       <label class='custom-filter-container__title'>Sổ quỹ</label>
     </mat-toolbar>
 
+    <div class='custom-filter-container__div-container'>
+      <mat-accordion multi>
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Thời gian
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <form [formGroup]="timeFilter">
+            <mat-radio-group (change)="radioTimeChange($event)" formControlName="typeTime">
+              <mat-radio-button style="display: inline; " value="default"
+                                color='primary'
+                                (click)="openTimeDefault()">{{ titleTimeDefault }}
+                <button mat-icon-button aria-label="add">
+                  <mat-icon>swap_vert</mat-icon>
+                </button>
+              </mat-radio-button>
+              <mat-radio-button style="display: inline; " value="choose" (click)="openTimeChoose()">{{ titleTimeChoose }}
+                <button mat-icon-button aria-label="add">
+                  <mat-icon>date_range</mat-icon>
+                </button>
+              </mat-radio-button>
+
+            </mat-radio-group>
+          </form>
+        </mat-expansion-panel>
+
+
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Loại chứng từ
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <form [formGroup]="typeFilterForm">
+            <div class='custom-filter-container__checkbox-container'>
+              <mat-checkbox *ngFor='let item of typeFilterList'
+                            color='primary'
+                            [checked]="typeFilterForm.value['type'].includes(item.value)"
+                            (change)='checkBoxFilterChange($event, item.value, "type", typeFilterForm)'
+              >
+                {{ item.name }}
+              </mat-checkbox>
+            </div>
+          </form>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
   </mat-sidenav>
   <mat-sidenav-content>
     <mat-toolbar class="dv-header">
@@ -51,6 +101,14 @@
               GitHub's API rate limit has been reached. It will be reset in one minute.
             </div>
           </div>
+          <mat-toolbar class="dv-header" style="border-top: none;">
+
+            <span fxFlex="1 1 0%"></span>
+
+            <div class="summary">
+
+            </div>
+          </mat-toolbar>
           <div class="table-responsive">
             <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="">
 
