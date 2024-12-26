@@ -1,23 +1,25 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
-import { NotifierService } from 'angular-notifier';
-import { CashFlow, CashFlowFilter } from '../cash-flow.model';
-import { CashFlowService } from '../cash-flow.service';
-import { ListComponentBase } from '../../shared/base';
-import { MatTable } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import {MatDialog} from '@angular/material/dialog';
+import {ActivatedRoute} from '@angular/router';
+import {Location} from '@angular/common';
+import {CashFlow, CashFlowFilter} from '../cash-flow.model';
+import {CashFlowService} from '../cash-flow.service';
+import {ListComponentBase} from '../../shared/base';
+import {MatTable} from '@angular/material/table';
+import {MatPaginator} from '@angular/material/paginator';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import { MatSort } from '@angular/material/sort';
+import {MatSort} from '@angular/material/sort';
 import * as moment from 'moment';
-import { CashFlowPaymentDialogComponent } from '../cash-flow-payment-dialog/cash-flow-payment-dialog.component';
-import { CashFlowReceiptDialogComponent } from '../cash-flow-receipt-dialog/cash-flow-receipt-dialog.component';
+import {CashFlowPaymentDialogComponent} from '../cash-flow-payment-dialog/cash-flow-payment-dialog.component';
+import {CashFlowReceiptDialogComponent} from '../cash-flow-receipt-dialog/cash-flow-receipt-dialog.component';
 import {DateFilter} from '../../invoice/invoice.model';
 import {DatetimeDefaultFilterDialogComponent} from '../../invoice/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
 import {DatetimeChooseFilterDialogComponent} from '../../invoice/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
 import {InvoiceService} from '../../invoice/invoice.service';
+import {UserFilter} from '../../user/user.model';
+import {UserService} from '../../user/user.service';
 
 @Component({
   selector: 'app-cash-flow-list',
@@ -53,7 +55,8 @@ export class CashFlowListComponent extends ListComponentBase implements OnInit {
     private ref: ChangeDetectorRef,
     private fb: FormBuilder,
     private serviceInvoice: InvoiceService,
-    private notifyService: NotifierService
+    private location: Location,
+    private userSer: UserService
   ) {
     super();
   }
@@ -66,6 +69,7 @@ export class CashFlowListComponent extends ListComponentBase implements OnInit {
     '#': '#',
     'no': 'Mã Phiếu',
     'created_at': 'Thời gian',
+    'created_by': 'Người lập phiếu',
     'type': 'Loại phiếu',
     'value': 'Giá trị',
   };
@@ -75,6 +79,7 @@ export class CashFlowListComponent extends ListComponentBase implements OnInit {
     'no',
     'created_at',
     'type',
+    'created_by',
     'value',
   ];
   columnsToDisplay: string[] = [
@@ -82,12 +87,15 @@ export class CashFlowListComponent extends ListComponentBase implements OnInit {
     'no',
     'created_at',
     'type',
+    'created_by',
     'value',
   ];
 
   dataSource = [];
   expandedElement: CashFlow | null;
 
+  users = {};
+  loadingUser = false;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -124,14 +132,17 @@ export class CashFlowListComponent extends ListComponentBase implements OnInit {
     const objectKeys = Object.keys(filter) as Array<keyof CashFlowFilter>;
 
     for (const attr of objectKeys) {
-      write(filter, attr, this.route.snapshot.queryParams['CashFlowFilterSearch[' + attr + ']']);
+      if (this.route.snapshot.queryParams['CashFlowSearch[' + attr + ']'] !== undefined) {
+        write(filter, attr, this.route.snapshot.queryParams['CashFlowSearch[' + attr + ']']);
+      }
     }
+
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
+    filter.type = this.typeFilterForm.controls['type'].value;
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.type = this.typeFilterForm.controls['type'].value;
     filter.expand = 'createdFormat,code';
     return filter;
   }
@@ -155,6 +166,28 @@ export class CashFlowListComponent extends ListComponentBase implements OnInit {
         this.isLoadingResults = false;
         this.sumData = res.body;
       });
+
+      this.loadingUser = true;
+      const userIds = Array.from(new Set(this.dataSource.map(item => item.created_by)));
+      if (userIds.length > 0) {
+        const userFilter = new UserFilter();
+        userFilter.id = userIds.join(',');
+        userFilter.pageSize = this.apiFilter.pageSize;
+        this.userSer.getListForRef(userFilter).subscribe(userRes => {
+          const userData = [];
+          userRes.body.forEach(function (item) {
+            userData[item.id] = item;
+          });
+          this.users = userData;
+          this.loadingUser = false;
+        });
+      } else {
+        this.loadingUser = false;
+      }
+
+      let url = '/cash-flow';
+      url += '?' + this.apiFilter.toFilterString();
+      this.location.go(url);
     });
 
 
@@ -210,8 +243,8 @@ export class CashFlowListComponent extends ListComponentBase implements OnInit {
     const obj = new DateFilter();
     // tháng này
 
-    obj.date_to = moment().endOf('month').format("YYYY-MM-DD");
-    obj.date_from = moment().startOf('month').format("YYYY-MM-DD");
+    obj.date_to = moment().endOf('month').format('YYYY-MM-DD');
+    obj.date_from = moment().startOf('month').format('YYYY-MM-DD');
     // obj.date_from = this.service.convertDateYYYYMMDD(first);
     // obj.date_to = this.service.convertDateYYYYMMDD(today);
 

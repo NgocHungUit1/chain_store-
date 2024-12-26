@@ -95,7 +95,7 @@
     <div fxLayout="row wrap">
       <div fxFlex="100">
         <div class="table-container">
-          <div class="table-loading-shade" *ngIf="isLoadingResults || isRateLimitReached">
+          <div class="table-loading-shade" *ngIf="isLoadingResults || isRateLimitReached || loadingUser">
             <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
             <div class="table-rate-limit-reached" *ngIf="isRateLimitReached">
               GitHub's API rate limit has been reached. It will be reset in one minute.
@@ -162,9 +162,14 @@
                 <td mat-cell *matCellDef="let element"> {{ typeHeader[element.type] }}</td>
               </ng-container>
 
+              <ng-container matColumnDef="created_by">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['created_by']}}</th>
+                <td mat-cell *matCellDef="let element"> {{ users[element?.created_by]?.username }}</td>
+              </ng-container>
+
               <ng-container matColumnDef="value">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['value']}}</th>
-                <td mat-cell *matCellDef="let element"> {{ element?.value | number }}</td>
+                <th mat-header-cell *matHeaderCellDef class="text-right"> {{columnsHeader['value']}}</th>
+                <td mat-cell *matCellDef="let element" class="text-right"> {{ element?.value | number }}</td>
               </ng-container>
 
 
