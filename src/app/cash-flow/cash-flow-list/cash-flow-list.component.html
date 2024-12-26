@@ -101,12 +101,42 @@
               GitHub's API rate limit has been reached. It will be reset in one minute.
             </div>
           </div>
-          <mat-toolbar class="dv-header" style="border-top: none;">
-
-            <span fxFlex="1 1 0%"></span>
-
-            <div class="summary">
-
+          <mat-toolbar class="dv-header">
+            <div class="summary" style="width: 100%" fxLayout="row wrap">
+              <div fxFlex="100">
+                <div fxLayout="row wrap">
+                  <div class="item-header" fxFlex="20">
+                  </div>
+                  <div class="item-header" fxFlex="20">
+                    Tồn đầu kỳ
+                  </div>
+                  <div class="item-header" fxFlex="20">
+                    Tổng thu
+                  </div>
+                  <div class="item-header" fxFlex="20">
+                    Tổng chi
+                  </div>
+                  <div class="item-header" fxFlex="20">
+                    Tồn cuối kỳ
+                  </div>
+                </div>
+              </div>
+              <div fxFlex="100" *ngIf="sumData">
+                <div class="item-value" fxFlex="20">
+                </div>
+                <div class="item-value" fxFlex="20">
+                  {{sumData.start_amount | number}}
+                </div>
+                <div class="item-value" fxFlex="20">
+                  {{sumData.receipt_amount | number}}
+                </div>
+                <div class="item-value" fxFlex="20">
+                  {{sumData.payment_amount | number}}
+                </div>
+                <div class="item-value" fxFlex="20">
+                  {{sumData.end_amount | number}}
+                </div>
+              </div>
             </div>
           </mat-toolbar>
           <div class="table-responsive">

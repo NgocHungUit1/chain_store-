@@ -39,7 +39,12 @@ export class CashFlowListComponent extends ListComponentBase implements OnInit {
     'payment': 'Phiếu chi',
   };
 
-  sumData = {};
+  sumData = {
+    start_amount: 0,
+    payment_amount: 0,
+    receipt_amount: 0,
+    end_amount: 0,
+  };
 
   constructor(
     private service: CashFlowService,
