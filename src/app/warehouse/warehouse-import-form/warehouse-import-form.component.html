@@ -273,13 +273,8 @@
               <ng-container matColumnDef="inventory_quantity">
 
                  <th mat-header-cell *matHeaderCellDef style="min-width:60px; max-width:60px"> {{columnsHeader['inventory_quantity']}}</th>
-                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; min-width:60px; max-width:60px;' *matCellDef="let element; let i = index">
-                  <mat-form-field>
-                    <input matInput style="text-align: right" class="inventory_quantity-input" [value]="element['inventory_quantity']"
-                           [(ngModel)]="data[i]['inventory_quantity']"
-                           readonly>
-
-                  </mat-form-field>
+                <td mat-cell style='text-align:right; vertical-align: top; padding: 1.5rem 0.5rem 0 0; min-width:60px; max-width:60px;' *matCellDef="let element; let i = index">
+                 <span class="inventory_quantity-input" style="text-align: right">{{element['inventory_quantity']}}</span>
                 </td>
               </ng-container>
 
@@ -331,14 +326,8 @@
               <!-- Sell Price Column -->
               <ng-container matColumnDef="sell_price">
                 <th mat-header-cell *matHeaderCellDef style="min-width:90px; max-width:90px; text-align: right;"> {{columnsHeader['sell_price']}}</th>
-                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; min-width:90px; max-width:90px;' *matCellDef="let element; let i = index">
-                  <mat-form-field class="text-right">
-
-                    <input matInput
-                           readonly
-                           [(ngModel)]="data[i]['sell_price']">
-                  </mat-form-field>
-
+                <td mat-cell style='text-align: right; vertical-align: top; padding: 1.5rem 0.5rem 0 0; min-width:90px; max-width:90px;' *matCellDef="let element; let i = index">
+                    <span class="inventory_quantity-input">{{element['sell_price']}}</span>
                 </td>
               </ng-container>
               <!-- Sell Price Filter -->
