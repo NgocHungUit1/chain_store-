@@ -12,6 +12,7 @@ import {ProductGroupFormDialogComponent} from '../product-group-form-dialog/prod
 import {ProductPlacementFormDialogComponent} from '../product-placement-form-dialog/product-placement-form-dialog.component';
 import * as numeral from 'numeral';
 import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
+import {OptionStoreService} from '../../common/option-store.service';
 
 class ImageSnippet {
   constructor(public src: string, public file: File, public id: string) {
@@ -38,7 +39,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
   placements = [];
   manufacturers = [];
 
-  // filteredMedicines: Observable<Medicine[]>;
+  defaultCommPercent: string = '0';
 
   fieldLabels = {
     product_no: 'Mã hàng',
@@ -92,6 +93,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
     private groupSer: GroupService,
     public notifySer: NotifierService,
     private placementSer: PlacementService,
+    public optionStoreService: OptionStoreService,
     private dialog: MatDialog,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
     this.local_data = {...data};
@@ -131,7 +133,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       //   manufacturer: [null, Validators.required],
       //   made_in: [null]
       // }),
-
+      comm_percent: [0],
       units: new FormArray([]),
       min_quantity: [0],
       max_quantity: [0],
@@ -182,6 +184,10 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
           emitEvent: false
         });
       });
+    });
+
+    this.optionStoreService.getValue('comm_percent_product').subscribe(res => {
+      this.defaultCommPercent = res.value;
     });
   }
 
@@ -417,6 +423,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
           max_quantity: product['max_quantity'],
           description: product['description'],
           note: product['note'],
+          comm_percent: product['comm_percent'],
         });
       } else {
         this.form.patchValue({
@@ -438,6 +445,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
           max_quantity: product['max_quantity'],
           description: product['description'],
           note: product['note'],
+          comm_percent: product['comm_percent'],
         });
         this.productSer.getRenderProductNo().subscribe(product_no => {
           this.form.patchValue({

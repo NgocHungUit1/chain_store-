@@ -1,0 +1,115 @@
+<mat-sidenav-container class='custom-filter-container'>
+  <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true">
+    <mat-toolbar class="dv-header">
+      <label  class='custom-filter-container__title'>Báo cáo Nhân viên</label>
+    </mat-toolbar>
+
+
+    <div class='custom-filter-container__div-container'>
+      <mat-accordion multi>
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Mối quan tâm
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+              <form [formGroup]="reportType">
+                <mat-radio-group
+                  color='primary'
+                  class="type-radio-group"
+                  (change)="radioTimeChange($event)"
+                  formControlName="type">
+                  <mat-radio-button class="radio-button-report-type" value="revenue" *ngIf="canDo('Employee-Report.Revenue')">
+                    Doanh thu
+                  </mat-radio-button>
+                  <mat-radio-button class="radio-button-report-type" value="profit" *ngIf="canDo('Employee-Report.Profit')">
+                    Lợi nhuận
+                  </mat-radio-button>
+                  <mat-radio-button class="radio-button-report-type" value="commission" *ngIf="canDo('Employee-Report.Commission')">
+                    Hoa hồng
+                  </mat-radio-button>
+
+                </mat-radio-group>
+              </form>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Thời gian
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+              <form [formGroup]="timeFilter" *ngIf="this.reportType.controls['type'].value !== 'expiration-date'">
+                <mat-radio-group (change)="radioTimeChange($event)"
+                                 color='primary' formControlName="typeTime">
+                  <mat-radio-button style="display: inline; " value="default">{{ titleTimeDefault }}
+                    <button mat-icon-button aria-label="add" (click)="openTimeDefault()">
+                      <mat-icon>format_line_spacing</mat-icon>
+                    </button>
+                  </mat-radio-button>
+                  <mat-radio-button style="display: inline; " value="choose">{{ titleTimeChoose }}
+                    <button mat-icon-button aria-label="add" (click)="openTimeChoose()">
+                      <mat-icon>date_range</mat-icon>
+                    </button>
+                  </mat-radio-button>
+
+                </mat-radio-group>
+              </form>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+
+
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar class="dv-header">
+      <button mat-icon-button (click)="leftside.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <div class="customer-filter-container">
+        <mat-form-field appearance="outline" class='search-input'>
+          <input matInput [formControl]="searchForm" placeholder="Tìm kiếm" #input>
+          <button mat-icon-button matPrefix>
+            <mat-icon>search</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+
+      <span fxFlex="1 1 0%"></span>
+
+      <a *ngIf="this.downloadLink.length" mat-raised-button color="accent" [href]="this.downloadLink" style="margin-right: 10px" [disabled]="isLoadingResults">
+        <mat-icon>cloud_download</mat-icon>
+        Xuất Excel
+      </a>
+
+      <button style="margin-left: 10px" mat-raised-button color="primary" (click)="loadData()">
+        <mat-icon>refresh</mat-icon>
+        Làm mới
+      </button>
+    </mat-toolbar>
+    <div fxLayout="row wrap">
+      <div fxFlex="100" >
+        <mat-tab-group mat-align-tabs="end" #tabGroup class="tab-group-employee" [(selectedIndex)]="tabSelectedIndex">
+          <mat-tab >
+            <ng-template matTabContent>
+              <app-employee-report-revenue-tab #revenueTab  [apiFilter]="apiFilter" ></app-employee-report-revenue-tab>
+            </ng-template>
+          </mat-tab>
+          <mat-tab >
+            <ng-template matTabContent>
+              <app-employee-report-profit-tab #profitTab  [apiFilter]="apiFilter" ></app-employee-report-profit-tab>
+            </ng-template>
+          </mat-tab>
+          <mat-tab >
+            <ng-template matTabContent>
+              <app-employee-report-commission-tab #commissionTab  [apiFilter]="apiFilter" ></app-employee-report-commission-tab>
+            </ng-template>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

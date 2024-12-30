@@ -3,6 +3,7 @@ import {DebtCustomersModule} from '../debt-customers/debt-customers.module';
 import {DebtSuppliersModule} from '../debt-suppliers/debt-suppliers.module';
 import {GroupReportComponent} from '../group/group-report/group-report.component';
 import {StockReportComponent} from '../product-report/stock-report/stock-report.component';
+import {EmployeeReportModule} from '../employee-report/employee-report.module';
 
 export const ReportRoutes: Routes = [
   {
@@ -19,6 +20,10 @@ export const ReportRoutes: Routes = [
       {
         path: 'product-report',
         loadChildren: () => import('../product-report/product-report.module').then(m => m.ProductReportModule)
+      },
+      {
+        path: 'employee',
+        loadChildren: () => import('../employee-report/employee-report.module').then(m => m.EmployeeReportModule)
       },
       {
         path: 'stock-report',

@@ -237,7 +237,7 @@ export class SaleSiderbarOrderComponent implements OnInit {
                 this.discount_type = 'price';
               } else {
                 this.numberDiscount = this.sumPrice * discountSiderBar?.number / 100;
-                this.discount_type = 'precent';
+                this.discount_type = 'percent';
               }
               this.discount = discountSiderBar?.number;
             } else {

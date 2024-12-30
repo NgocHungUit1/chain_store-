@@ -1,0 +1,115 @@
+.mat-column-medicine_no,
+.mat-column-medicine_name,
+.mat-column-registration_no,
+.mat-column-manufacturer,
+.mat-column-made_in,
+.mat-column-unit {
+    flex: 1 1 0%;
+}
+.mat-column-main_active_substance, .mat-column-content {
+    flex: 2 1 0%;
+}
+table {
+    width: 100%;
+}
+
+tr.example-detail-row {
+    height: 0;
+}
+
+tr.example-element-row:not(.example-expanded-row):hover {
+    background: whitesmoke;
+}
+
+tr.example-element-row:not(.example-expanded-row):active {
+    background: #efefef;
+}
+
+.example-element-row td {
+    border-bottom-width: 0;
+}
+
+.example-element-detail {
+    overflow: hidden;
+    display: flex;
+}
+
+.example-element-diagram {
+    min-width: 80px;
+    border: 2px solid black;
+    padding: 8px;
+    font-weight: lighter;
+    margin: 8px 0;
+    height: auto;
+}
+
+.example-element-symbol {
+    font-weight: bold;
+    font-size: 40px;
+    line-height: normal;
+}
+
+.example-element-description {
+    padding: 16px;
+}
+
+.example-element-description-attribution {
+    opacity: 0.5;
+}
+.example-expanded-row {
+    font-weight: 700;
+    background-color: #ebf5ea;
+}
+
+tr.mat-header-row:nth-child(1) {
+    height: 45px !important;
+    background-color: #dcf4fc;
+}
+
+.input-filter-common {
+    margin-left: 10px;
+    font-size: 1rem;
+    min-width: 215px;
+    margin-bottom: -15px;
+}
+
+.mat-footer-cell {
+    padding: 8px;
+    font-weight: 600;
+    text-align: right;
+}
+th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type {
+    padding-left: 0px;
+}
+.column-number {
+  text-align: end;
+}
+
+.column-number-sumary {
+  text-align: end;
+  color: black;
+}
+.color-import {
+  color: #e07f2a;
+}
+
+.color-export {
+  color: #0e68b4;
+}
+
+tr.mat-header-row:nth-child(1) {
+  height: 45px !important;
+  background-color: #dcf4fc;
+}
+
+tr.mat-header-row:nth-child(2) {
+  height: 45px !important;
+}
+
+.icon-info {
+  font-size: 15px;
+  color: #a0a0a0;
+}
+
+
+

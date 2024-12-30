@@ -130,7 +130,7 @@ export class OrderService {
       let lastItem: ItemInvoice = aItemInvoice.pop();
       if (lastItem === undefined) {
         lastItem = new ItemInvoice();
-        lastItem.invoice_name = 'Hóa Đơn';
+        lastItem.invoice_name = 'Hóa đơn';
         lastItem.invoice_id = -1;
       }
       lastItem.active = true;

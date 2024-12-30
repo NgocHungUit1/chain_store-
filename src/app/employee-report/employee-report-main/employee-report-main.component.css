@@ -1,0 +1,56 @@
+
+.select-product {
+  margin-left: 10px;
+  font-size: 1rem;
+  min-width: 215px;
+}
+
+.title-time-filter {
+  padding: 16px 0 0 20px;
+}
+
+.mat-card {
+  margin: 0px !important;
+}
+
+.radio-button-report-type {
+  /*display: inline;*/
+  margin: 5px;
+}
+
+.type-radio-group {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+}
+
+.color-import {
+  color: #e07f2a;
+}
+
+.color-export {
+  color: #0e68b4;
+}
+
+tr.mat-header-row:nth-child(1) {
+  height: 45px !important;
+  background-color: #dcf4fc;
+}
+
+tr.mat-header-row:nth-child(2) {
+  height: 45px !important;
+}
+
+.icon-info {
+  font-size: 15px;
+  color: #a0a0a0;
+}
+
+:host ::ng-deep .tab-group-employee .mat-tab-labels {
+  display: none;
+}
+:host ::ng-deep .tab-group-employee .mat-tab-header{
+  display: none;
+}
+
+
