@@ -7,8 +7,11 @@
       <label class="font-18"> Nhập hàng</label>
       <div class='customer-filter-container'>
         <mat-form-field appearance='outline'
-                        class='search-input'>
-          <input type="text" [formControl]="selectProduct" matInput [matAutocomplete]="chooseProduct"
+                        class='search-input'
+                        [ngClass]="{'search-focus': searchMode}">
+          <input
+          #inputField
+          type="text" [formControl]="selectProduct" matInput [matAutocomplete]="chooseProduct"
                  placeholder="Tìm hàng hóa theo mã hoặc tên">
           <button mat-icon-button matPrefix>
             <mat-icon>search</mat-icon>
@@ -22,7 +25,7 @@
           <button mat-icon-button matSuffix [matTooltip]='"Thêm thuốc mới"' (click)="$event.stopImmediatePropagation();openProductMedicineDialog('Add', {});">
             <mat-icon>add_to_queue</mat-icon>
           </button>
-          <mat-autocomplete #chooseProduct="matAutocomplete" (optionSelected)="onSelectedProduct($event.option.value)">
+          <mat-autocomplete #chooseProduct="matAutocomplete" [displayWith]="displayProductFn" (optionSelected)="onSelectedProduct($event.option.value)">
             <mat-option fxLayout="row" *ngFor="let product of filteredProducts | async" [value]="product"
                         style="min-height: 70px; line-height:25px !important;"
                         title="{{ product.product_name }}">
@@ -59,7 +62,37 @@
       </div>
 
 
+
+      <div  [hidden] = "!searchMode" style = "margin-left: 10px; font-size: 1rem;">
+        <mat-form-field appearance='outline'
+                        style="width:100px !important"
+                        class='search-input'>
+          <input #quantityInput type="number" [formControl]="selectQuantity" matInput
+                 placeholder="Số lượng" (keydown.enter)="onQuantityEnter()">
+        </mat-form-field>
+      </div>
+
+      <div  [hidden] = "!searchMode" style = "margin-left: 10px; font-size: 1rem;">
+        <mat-form-field appearance='outline' style="width:100px !important" class='search-input'>
+          <!-- Replace input with mat-select -->
+          <mat-select #unitInput [formControl]="selectUnit" placeholder="Đơn vị" (keydown.enter) = "onUnitEnter()">
+            <!-- Add options based on your needs -->
+            <mat-option *ngFor="let unit of selectUnits" [value]="unit">
+              {{unit.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      
+
       <div  fxFlex="1 1 0%"></div>
+      <button mat-raised-button
+        (click)="$event.stopImmediatePropagation();focusInput();"
+        [ngClass]="{'selected-button': searchMode}"
+        class='m-r-5 padding-x-10'>
+      <mat-icon>search</mat-icon>
+      </button>
+
       <div style='position: relative'>
         <button mat-raised-button
                 class='m-r-5 padding-x-10'

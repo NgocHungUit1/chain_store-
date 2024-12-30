@@ -144,6 +144,16 @@ tr.mat-header-row {
   }
 }
 
+.selected-button {
+  background-color: #2196F3 !important;
+  color: white !important;
+}
+
+.search-focus {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 8px 12px;
+}
 
 #barecode-forcus:focus {
   /*width: 28px;*/
