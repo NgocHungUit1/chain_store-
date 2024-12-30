@@ -106,8 +106,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'product_name': 'Tên hàng',
     // 'product_parcel': 'Lô',
     'product_unit_id': 'Đơn vị',
+    'inventory_quantity': 'SL tồn kho',
     'quantity': 'Tổng SL',
     'price': 'Giá vốn',
+    'sell_price': 'Giá bán',
     // 'discount': 'Chiết khấu',//'Giảm giá',
     'amount': 'Thành tiền',
     'actions': 'Hành động',
@@ -125,8 +127,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'product_name',
     // 'product_parcel',
     'product_unit_id',
+    'inventory_quantity',
     'quantity',
     'price',
+    'sell_price',
     // 'discount',
     'amount',
   ];
@@ -138,8 +142,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'product_name',
     // 'product_parcel',
     'product_unit_id',
+    'inventory_quantity',
     'quantity',
     'price',
+    'sell_price',
     // 'discount',
     'amount',
   ];
@@ -488,7 +494,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = 50; // this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'product,productParcels,productUnits';
+    filter.expand = 'productUnits,quantity,product,productParcels';
     if (this.updateModelId !== null) {
       filter.warehouse_id = this.updateModelId;
     }
@@ -556,6 +562,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           element.amount = numeral(element.amount).value();
           element.discount = numeral(element.discount).value();
           element.vat = numeral(element.vat).value();
+          element.sell_price = numeral(element.sell_price).value();
         });
         data['items'] = this.data;
         // console.log(this.data);
@@ -705,12 +712,14 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       }
     });
     if (productExits === 0) {
-      this.productSer.getDetail(product_id, 'productUnits').subscribe(res => {
+      this.productSer.getDetail(product_id, 'productUnits,quantity').subscribe(res => {
         const warehouseProduct = new WarehouseProduct();
         warehouseProduct.product_id = res['id'];
         warehouseProduct.product = res;
         warehouseProduct.quantity = 1; // de nhap so lo
         warehouseProduct.price = (res['original_price'] !== null) ? numeral(res['original_price']).format('0,0') : 0;
+        warehouseProduct.sell_price = (res['sell_price'] !== null) ? numeral(res['sell_price']).format('0,0') : 0;
+        warehouseProduct.inventory_quantity = res['quantity']['number'];
         warehouseProduct.discount = 0;
         warehouseProduct.discount_type = 'price';
         warehouseProduct.amount = (res['original_price'] !== null) ? res['original_price'] : 0;
@@ -724,6 +733,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           res['productUnits'].sort((a, b) => (a.value > b.value) ? 1 : -1);
           warehouseProduct.product_unit_id = res['productUnits'][0]['id'];
           warehouseProduct.price = res['productUnits'][0]['original_price'];
+          warehouseProduct.sell_price = (res['productUnits'][0]['sell_price'] !== null) ? numeral(res['productUnits'][0]['sell_price']).format('0,0') : 0;
         }
         this.data.unshift(warehouseProduct);
         this.tempDataForQuickFilter = [...this.data]; // Update copy with new item
@@ -1478,6 +1488,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         this.data[index]['amount'] = result.amount;
         this.data[index]['vat'] = result.vat;
         this.data[index]['vat_type'] = result.vat_type;
+        this.data[index]['sell_price'] = result.sell_price;
         this.recalculateItem(index);
         this.recalculateWarehouse();
       }

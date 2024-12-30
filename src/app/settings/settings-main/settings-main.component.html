@@ -45,7 +45,14 @@
           <mat-radio-button class="radio-button-report-type" value="point" *ngIf="canDo('Option-Store.Update') || canDo('Option-Store.Create')">
             Tích điểm
             <button mat-icon-button aria-label="point">
-              <mat-icon>attach_money</mat-icon>
+              <mat-icon>card_membership</mat-icon>
+            </button>
+          </mat-radio-button>
+
+          <mat-radio-button class="radio-button-report-type" value="commission" *ngIf="canDo('Option-Store.Update') || canDo('Option-Store.Create')">
+            Hoa hồng
+            <button mat-icon-button aria-label="commission">
+              <mat-icon>price_check</mat-icon>
             </button>
           </mat-radio-button>
 
@@ -311,6 +318,53 @@
                     Lưu
                   </button>
                 </div>
+              </mat-card-content>
+
+            </mat-card>
+
+            <mat-card *ngIf="settingsType === 'commission' ">
+              <mat-card-content>
+                <form [formGroup]="commForm" (ngSubmit)="saveComm()">
+
+                  <div fxLayout="row wrap" class="line-option">
+                    <div fxFlex="300px">Hoa hồng mặc định cho tất cả sản phẩm (%)</div>
+                    <!-- col full-->
+                    <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                      <mat-form-field>
+                        <input matInput
+                                  [formControl]="commForm.controls['comm_percent_product']"/>
+                        <mat-hint>Hoa hồng bán hàng mặc định cho tất cả sản phẩm (sẽ bị ghi đè khi cấu hình riêng cho từng sản phẩm). = 0 sẽ bỏ qua tính Hoa hồng</mat-hint>
+                      </mat-form-field>
+                      <small
+                        *ngIf="commForm.controls['comm_percent_product'].hasError('required') && commForm.controls['comm_percent_product'].touched"
+                        class="text-danger support-text">Vui lòng điền thông tin.
+                      </small>
+                    </div>
+                  </div>
+
+                  <div fxLayout="row wrap" class="line-option">
+                    <div fxFlex="300px">Hoa hồng theo tổng hoá đơn (%)</div>
+                    <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                      <mat-form-field>
+                        <input matInput
+                               [formControl]="commForm.controls['comm_percent_invoice']"/>
+                        <mat-hint>Hoa hồng bán hàng mặc định cho tất cả hoá đơn, tính theo tổng tiền cuối cùng của hoá đơn sau khi giảm giá. = 0 sẽ bỏ qua tính Hoa hồng</mat-hint>
+                      </mat-form-field>
+                      <small
+                        *ngIf="commForm.controls['comm_percent_product'].hasError('required') && commForm.controls['comm_percent_product'].touched"
+                        class="text-danger support-text">Vui lòng điền thông tin.
+                      </small>
+                    </div>
+
+                    <!-- col half-->
+                    <div fxLayout="row wrap" class="btn-save m-t-10">
+                      <button mat-raised-button color="primary" type="submit" [disabled]="!commForm.valid">
+                        <mat-icon>save</mat-icon>
+                        Lưu
+                      </button>
+                    </div>
+                  </div>
+                </form>
               </mat-card-content>
 
             </mat-card>

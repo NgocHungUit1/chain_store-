@@ -40,8 +40,14 @@
 }
 
 .mat-column-product_unit_id {
-  max-width: 36px;
-  text-align: center;
+  max-width: 40px;
+  text-align: center!important;
+}
+.mat-column-product_unit_id .mat-form-field {
+  max-width: 70px;
+}
+.mat-column-product_unit_id .mat-icon-button .mat-icon {
+  line-height: 10px;
 }
 
 .mat-column-product_parcel {
@@ -94,8 +100,15 @@
 
 }
 .quick-filter-input{
-  margin-top: 15px;
+  margin-top: 2px !important;
+  padding-right: 10px;
+  padding-left: 0px !important;
 }
+
+.mat-form-field-wrapper {
+  padding-bottom: 2px;
+}
+
 .warehouse-product-table tr td {
   vertical-align: middle;
 }

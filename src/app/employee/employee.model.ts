@@ -35,6 +35,8 @@ export class EmployeeFilter extends ApiFilterBase {
   facebook = '';
   note = '';
   address = '';
+  date_from = '';
+  date_to = '';
   page = 1;
   pageSize = 15;
   sort = '';

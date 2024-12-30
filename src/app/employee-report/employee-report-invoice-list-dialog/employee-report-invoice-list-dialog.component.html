@@ -1,0 +1,174 @@
+<div mat-dialog-content class="product-search-dialog">
+  <mat-sidenav-container>
+    <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="false">
+      <mat-toolbar class="dv-header">
+        <button mat-icon-button>
+          <mat-icon>filter_list</mat-icon>
+        </button>
+      </mat-toolbar>
+
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <mat-toolbar class="dv-header">
+        <button mat-icon-button (click)="leftside.toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <label class="font-18">{{this.title}}</label>
+        <div class="input-filter-common">
+          <mat-form-field>
+            <mat-label>Tìm kiếm</mat-label>
+            <input matInput [formControl]="searchKeyWord" placeholder="" #input autocomplete="off">
+            <button mat-icon-button matPrefix>
+              <mat-icon>search</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
+
+        <span fxFlex="1 1 0%"></span>
+        <button style="margin-left: 10px" mat-raised-button color="primary" (click)="loadData()">
+          <mat-icon>refresh</mat-icon>
+          Làm mới
+        </button>
+      </mat-toolbar>
+      <div fxLayout="row wrap">
+        <div fxFlex="100">
+          <div class="table-container">
+            <div class="table-loading-shade" *ngIf="isLoadingResults || isRateLimitReached">
+              <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+              <div class="table-rate-limit-reached" *ngIf="isRateLimitReached">
+                GitHub's API rate limit has been reached. It will be reset in one minute.
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="table-report">
+
+                <ng-container matColumnDef="#">
+                  <th mat-header-cell *matHeaderCellDef class="text-center"> #</th>
+                  <td mat-cell *matCellDef="let element" class="text-center"> {{element?.stt }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="no">
+                  <th mat-header-cell *matHeaderCellDef> {{columnsHeader['no']}}</th>
+                  <td mat-cell *matCellDef="let element"> {{element.invoice_no}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="date">
+                  <th mat-header-cell *matHeaderCellDef> {{columnsHeader['date']}}</th>
+                  <td mat-cell *matCellDef="let element"> {{element?.created_at * 1000 | date: 'dd/MM/yyyy'}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="total_sale">
+                  <th mat-header-cell class="text-right" *matHeaderCellDef> {{columnsHeader['total_sale']}}</th>
+                  <td mat-cell *matCellDef="let element" class="text-right"> {{element.total_sale | number }}</td>
+                </ng-container>
+                <ng-container matColumnDef="sum_total_sale">
+                  <th mat-header-cell colspan="4" class="column-number color-export"
+                      *matHeaderCellDef>{{sumData?.total_sale | number }}</th>
+                </ng-container>
+
+                <ng-container matColumnDef="total_return">
+                  <th mat-header-cell class="text-right" *matHeaderCellDef> {{columnsHeader['total_return']}}</th>
+                  <td mat-cell *matCellDef="let element" class="text-right"> {{element.total_return | number }}</td>
+                </ng-container>
+                <ng-container matColumnDef="sum_total_return">
+                  <th mat-header-cell class="column-number color-export"
+                      *matHeaderCellDef>{{sumData?.total_return | number }}</th>
+                </ng-container>
+
+                <ng-container matColumnDef="total_revenue">
+                  <th mat-header-cell class="text-right" *matHeaderCellDef> {{columnsHeader['total_revenue']}}</th>
+                  <td mat-cell *matCellDef="let element" class="text-right"> {{element.total_revenue || 0 | number }}</td>
+                </ng-container>
+                <ng-container matColumnDef="sum_total_revenue">
+                  <th mat-header-cell class="column-number color-export"
+                      *matHeaderCellDef>{{sumData?.total_revenue | number }}</th>
+                </ng-container>
+
+                <ng-container matColumnDef="total_original_price">
+                  <th mat-header-cell class="text-right" *matHeaderCellDef> {{columnsHeader['total_original_price']}}</th>
+                  <td mat-cell *matCellDef="let element" class="text-right"> {{element.total_original_price || 0 | number }}</td>
+                </ng-container>
+                <ng-container matColumnDef="sum_total_original_price">
+                  <th mat-header-cell class="column-number color-export"
+                      *matHeaderCellDef>{{sumData?.total_original_price | number }}</th>
+                </ng-container>
+
+                <ng-container matColumnDef="total_profit">
+                  <th mat-header-cell class="text-right" *matHeaderCellDef> {{columnsHeader['total_profit']}}</th>
+                  <td mat-cell *matCellDef="let element" class="text-right"> {{element.total_profit || 0 | number }}</td>
+                </ng-container>
+                <ng-container matColumnDef="sum_total_profit">
+                  <th mat-header-cell class="column-number color-export"
+                      *matHeaderCellDef>{{sumData?.total_profit | number }}</th>
+                </ng-container>
+
+                <ng-container matColumnDef="comm_amount">
+                  <th mat-header-cell class="text-right" *matHeaderCellDef> {{columnsHeader['comm_amount']}}</th>
+                  <td mat-cell *matCellDef="let element" class="text-right"> {{element.comm_amount || 0 | number }}</td>
+                </ng-container>
+                <ng-container matColumnDef="sum_comm_amount">
+                  <th mat-header-cell class="column-number color-export"
+                      *matHeaderCellDef>{{sumData?.total_comm_amount | number }}</th>
+                </ng-container>
+
+                <ng-container matColumnDef="comm_amount_product">
+                  <th mat-header-cell class="text-right" *matHeaderCellDef> {{columnsHeader['comm_amount_product']}}</th>
+                  <td mat-cell *matCellDef="let element" class="text-right"> {{element.comm_amount_product || 0 | number }}</td>
+                </ng-container>
+                <ng-container matColumnDef="sum_comm_amount_product">
+                  <th mat-header-cell class="column-number color-export"
+                      *matHeaderCellDef>{{sumData?.total_comm_amount_product | number }}</th>
+                </ng-container>
+
+                <ng-container matColumnDef="comm_percent">
+                  <th mat-header-cell class="text-right" *matHeaderCellDef> {{columnsHeader['comm_percent']}}</th>
+                  <td mat-cell *matCellDef="let element" class="text-right"> {{element.comm_percent || 0 | number }} %</td>
+                </ng-container>
+                <ng-container matColumnDef="sum_comm_percent">
+                  <th mat-header-cell class="column-number color-export"
+                      *matHeaderCellDef></th>
+                </ng-container>
+
+                <ng-container matColumnDef="expandedDetail">
+                  <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+                    <div class="example-element-detail"
+                         [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                      <mat-tab-group style="width: 100%;">
+                        <mat-tab label="Danh sách sản phẩm">
+                          <ng-template matTabContent>
+                            <app-employee-report-invoice-product-list [invoice_id]="element.id" [isShowCommission]="this.isShowCommission"
+                                                  [expandedElement]="element == expandedElement ? true : false"
+                            ></app-employee-report-invoice-product-list>
+                          </ng-template>
+                        </mat-tab>
+                      </mat-tab-group>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-header-row *matHeaderRowDef="sumColumnsToDisplay" class="example-second-header-row"></tr>
+                <tr mat-row *matRowDef="let element; columns: displayedColumns;"
+                    class="example-element-row"
+                    [class.example-expanded-row]="expandedElement === element"
+                    (click)="expandedElement = expandedElement === element ? null : element">
+                </tr>
+                <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+              </table>
+            </div>
+            <mat-paginator #paginator [length]="pageTotalCount" [pageSize]="pageSize"
+                           [pageSizeOptions]="pageSizeOptions"
+                           (page)="onMatPageChange($event)" [pageIndex]="page - 1"
+                           showFirstLastButtons></mat-paginator>
+          </div>
+        </div>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
+<div mat-dialog-actions class="m-0 p-0" align="end">
+  <button mat-raised-button mat-dialog-close>
+    <mat-icon>cancel</mat-icon>
+    Bỏ qua
+  </button>
+</div>
