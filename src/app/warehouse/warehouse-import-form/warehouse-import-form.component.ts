@@ -449,6 +449,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         warehouseProduct.product = item.product;
         warehouseProduct.quantity = item.quantity;
         warehouseProduct.price = (item.price !== null) ? numeral(item.price).format('0,0') : 0;
+        warehouseProduct.sell_price = item.sell_price;
         warehouseProduct.discount = (item.discount !== null) ? item.discount : 0;
         warehouseProduct.discount_type = (item.discount_type !== null) ? item.discount_type : 'price';
         warehouseProduct.amount = (item.amount !== null) ? item.amount : 0;
@@ -457,6 +458,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         warehouseProduct.product_parcels = item.productParcels !== undefined ? item.productParcels : [];
         warehouseProduct.vat = (item.vat !== null) ? item.vat : 0;
         warehouseProduct.vat_type = (item.vat_type !== null) ? item.vat_type : 'price';
+
+        warehouseProduct.productUnits.forEach(productUnit=>{
+          productUnit['quantity_of_stock'] = Math.floor(warehouseProduct.quantity / productUnit["value"]);
+        })
+
+        warehouseProduct.inventory_quantity = warehouseProduct.productUnits.find(item=>item['is_base'] === 1)['quantity_of_stock'];
 
         if (item.productParcels !== undefined && item.productParcels.length > 0) {
           this.parcels = this.parcels.concat(item.productParcels);
@@ -855,6 +862,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       const unit = this.data[index]['productUnits'].find(element => element['id'] === select.value);
       const unitBase = this.data[index]['productUnits'].find(element => element['is_base'] === 1);
       this.data[index]['price'] = unitBase['original_price'] * unit['value'];
+      this.data[index]['sell_price'] = unit['sell_price'];
+      this.data[index]['inventory_quantity'] = unit['quantity_of_stock'];
       // this.data[index]['price'] = (unit['original_price'] !== 0) ? unit['original_price'] : unit['sell_price']; //unit['original_price'];
       this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
       this.recalculateWarehouse();
