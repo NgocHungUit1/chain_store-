@@ -73,6 +73,8 @@ export class ProductTabStockChangeComponent extends ListComponentBase implements
     'move-to': '/transaction/move/code/',
   };
 
+  downloadLink = null;
+
 
   apiFilter: StockCardFilter;
   isLoadingResults = false;
@@ -113,6 +115,7 @@ export class ProductTabStockChangeComponent extends ListComponentBase implements
 
   loadData() {
     this.isLoadingResults = true;
+    this.downloadLink = this.stockCardService.getDownloadLink(this.apiFilter);
 
     this.stockCardService.getList(this.apiFilter).subscribe(res => {
       this.data = res.body;

@@ -10,7 +10,6 @@ export class CashFlow {
   ten_nguoi_nop: string;
   doi_tuong_nop: string;
   type_money: any;
-  type: any;
   note: string;
   parent_table: string;
   parent_id: string;

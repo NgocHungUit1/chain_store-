@@ -1,16 +1,19 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { element } from 'protractor';
-import { Product, ProductUnit, Quantity } from '../product.model';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { ProductService } from '../product.service';
 import {WarehouseProductParcelService} from '../../warehouse-product-parcel/warehouse-product-parcel.service';
 import {MatTableDataSource} from '@angular/material/table';
-import {StockCard, StockCardFilter} from '../stock-card.model';
+import { MatDialog } from '@angular/material/dialog';
 import {
   WarehouseProductParcel,
   WarehouseProductParcelFilter
 } from '../../warehouse-product-parcel/warehouse-product-parcel.model';
 import {ListComponentBase} from '../../shared/base';
 import {ActivatedRoute} from '@angular/router';
+import {AuthService} from '../../authentication/auth.service';
+import {GroupFormDialogComponent} from '../../group/group-form-dialog/group-form-dialog.component';
+import {
+  WarehouseProductParcelChangeStockFormDialogComponent
+} from '../../warehouse-product-parcel/warehouse-product-parcel-change-stock-form-dialog/warehouse-product-parcel-change-stock-form-dialog.component';
 
 @Component({
   selector: 'app-product-tab-stock-parcel',
@@ -26,7 +29,7 @@ export class ProductTabStockParcelComponent extends ListComponentBase implements
   apiFilter: WarehouseProductParcelFilter;
   isLoadingResults = false;
   isRateLimitReached = false;
-  displayedColumns: string[] = ['#', 'parcel_no', 'expiration_date', 'quantity_of_stock'];
+  displayedColumns: string[] = ['#', 'parcel_no', 'expiration_date', 'quantity_of_stock', 'actions'];
 
   columnsHeader = {
     '#': '#',
@@ -41,7 +44,9 @@ export class ProductTabStockParcelComponent extends ListComponentBase implements
   constructor(
     private productService: ProductService,
     private warehouseParcelService: WarehouseProductParcelService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authSer: AuthService,
+    private dialog: MatDialog,
   ) {
     super();
   }
@@ -87,5 +92,24 @@ export class ProductTabStockParcelComponent extends ListComponentBase implements
     return filter;
   }
 
+  canDo(permissionName: string): boolean {
+    const allPermissions = this.authSer.getPermissionsFromLocalStorage();
+
+    return allPermissions.indexOf(permissionName) !== -1;
+  }
+
+  openChangeWarehouseProductStockFormDialog(id) {
+    const dialogRef = this.dialog.open(WarehouseProductParcelChangeStockFormDialogComponent, {
+      data: {productParcelId: id},
+      width: '600px',
+      minHeight: '60%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadData();
+      }
+    });
+  }
 
 }
