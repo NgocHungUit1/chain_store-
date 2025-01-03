@@ -15,7 +15,7 @@ import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operator
 import {of} from 'rxjs/internal/observable/of';
 import {SupplierService} from '../../supplier/supplier.service';
 import {WarehouseService} from '../warehouse.service';
-import {Product} from '../../product/product.model';
+import {Product, ProductFilter} from '../../product/product.model';
 import {ProductService} from '../../product/product.service';
 import {WarehouseParcelFormDialogComponent} from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
 import {WarehouseDiscountDialogComponent} from '../warehouse-discount-dialog/warehouse-discount-dialog.component';
@@ -440,42 +440,53 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     this.apiFilter = this.buildFilterFromParams();
     this.warehouseProductService.getList(this.apiFilter).subscribe(res => {
       const newData = [];
-      res.body.forEach(item => {
-        const warehouseProduct = new WarehouseProduct();
-        if (this.updateModelId !== null) {
-          warehouseProduct.id = item.id;
-        }
-        warehouseProduct.product_id = item.product_id;
-        warehouseProduct.product = item.product;
-        warehouseProduct.quantity = item.quantity;
-        warehouseProduct.price = (item.price !== null) ? numeral(item.price).format('0,0') : 0;
-        warehouseProduct.sell_price = item.sell_price;
-        warehouseProduct.discount = (item.discount !== null) ? item.discount : 0;
-        warehouseProduct.discount_type = (item.discount_type !== null) ? item.discount_type : 'price';
-        warehouseProduct.amount = (item.amount !== null) ? item.amount : 0;
-        warehouseProduct.product_unit_id = item.product_unit_id;
-        warehouseProduct.productUnits = item.productUnits !== undefined ? item.productUnits : [];
-        warehouseProduct.product_parcels = item.productParcels !== undefined ? item.productParcels : [];
-        warehouseProduct.vat = (item.vat !== null) ? item.vat : 0;
-        warehouseProduct.vat_type = (item.vat_type !== null) ? item.vat_type : 'price';
 
-        warehouseProduct.productUnits.forEach(productUnit=>{
-          productUnit['quantity_of_stock'] = Math.floor(warehouseProduct.quantity / productUnit["value"]);
-        })
+      let productIdsStr = res.body.map(item=>item.product.id).join(",");
 
-        warehouseProduct.inventory_quantity = warehouseProduct.productUnits.find(item=>item['is_base'] === 1)['quantity_of_stock'];
+      
+      const productFilter = new ProductFilter();
+      productFilter.id = productIdsStr;
+      productFilter.expand = 'quantity';
+      this.productSer.getList(productFilter).subscribe(res1=>{
+        let productData = res1.body;
+        
+        res.body.forEach(item => {
+          const warehouseProduct = new WarehouseProduct();
+          if (this.updateModelId !== null) {
+            warehouseProduct.id = item.id;
+          }
+          warehouseProduct.product_id = item.product_id;
+          warehouseProduct.product = item.product;
+          warehouseProduct.quantity = item.quantity;
+          warehouseProduct.price = (item.price !== null) ? numeral(item.price).format('0,0') : 0;
+          warehouseProduct.sell_price = item.sell_price;
+          warehouseProduct.discount = (item.discount !== null) ? item.discount : 0;
+          warehouseProduct.discount_type = (item.discount_type !== null) ? item.discount_type : 'price';
+          warehouseProduct.amount = (item.amount !== null) ? item.amount : 0;
+          warehouseProduct.product_unit_id = item.product_unit_id;
+          warehouseProduct.productUnits = item.productUnits !== undefined ? item.productUnits : [];
+          warehouseProduct.product_parcels = item.productParcels !== undefined ? item.productParcels : [];
+          warehouseProduct.vat = (item.vat !== null) ? item.vat : 0;
+          warehouseProduct.vat_type = (item.vat_type !== null) ? item.vat_type : 'price';
 
-        if (item.productParcels !== undefined && item.productParcels.length > 0) {
-          this.parcels = this.parcels.concat(item.productParcels);
-        }
-
-        newData.push(warehouseProduct);
+          warehouseProduct.productUnits.forEach(productUnit=>{
+            productUnit['quantity_of_stock'] = Math.floor(productData.find(prod=>prod.id == item.product_id)?.quantity?.number / productUnit["value"]);
+          })
+  
+          warehouseProduct.inventory_quantity = warehouseProduct.productUnits.find(item=>item['is_base'] === 1)['quantity_of_stock'];
+  
+          if (item.productParcels !== undefined && item.productParcels.length > 0) {
+            this.parcels = this.parcels.concat(item.productParcels);
+          }
+  
+          newData.push(warehouseProduct);
+        });
+        this.data = newData;
+        this.tempDataForQuickFilter = [...newData]; // Create initial copy
+        this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+        this.recalculateWarehouse();
+        this.isLoadingResults = false;
       });
-      this.data = newData;
-      this.tempDataForQuickFilter = [...newData]; // Create initial copy
-      this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
-      this.recalculateWarehouse();
-      this.isLoadingResults = false;
     });
   }
 
