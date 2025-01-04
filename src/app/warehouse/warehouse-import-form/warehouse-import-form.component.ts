@@ -112,7 +112,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   filterColumns: string[] = [];
   filterValues: { [key: string]: string } = {};
   displayedColumns: string[] = [
-    'actions',
     // 'image',
     '#',
     'product_no',
@@ -123,9 +122,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'price',
     // 'discount',
     'amount',
+    'actions',
   ];
   columnsToDisplay: string[] = [
-    'actions',
     'image',
     '#',
     'product_no',
@@ -136,6 +135,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'price',
     // 'discount',
     'amount',
+    'actions',
   ];
   data: WarehouseProduct[] = [];
   productDataSource = new MatTableDataSource<WarehouseProduct>([]);

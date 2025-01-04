@@ -236,7 +236,7 @@
               <!-- Product Unit Column -->
 
               <ng-container matColumnDef="product_unit_id">
-                <th mat-header-cell *matHeaderCellDef style="min-width:100px"> {{columnsHeader['product_unit_id']}}</th>
+                <th mat-header-cell *matHeaderCellDef style="min-width:100px; text-align: right;"> {{columnsHeader['product_unit_id']}}</th>
                 <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; min-width:100px;' *matCellDef="let element; let i = index">
                   <div style='display: flex;flex-direction: row;flex-wrap: nowrap;justify-content: center;padding-left:0.5rem;'>
                     <mat-form-field *ngIf="element.productUnits.length">
@@ -244,10 +244,10 @@
                                   (selectionChange)="onUnitChange(i, $event)">
                         <mat-option *ngFor="let unit of element.productUnits" [value]="unit.id">{{unit.name}}</mat-option>
                       </mat-select>
+                      <button mat-icon-button matSuffix aria-label="add" (click)="$event.stopImmediatePropagation();openUnitCreateDialog(element);">
+                        <mat-icon style="margin-bottom: 5px; font-size: 1.5rem;">add</mat-icon>
+                      </button>
                     </mat-form-field>
-                    <button mat-icon-button matSuffix aria-label="add" (click)="openUnitCreateDialog(element);">
-                      <mat-icon style="margin-bottom: 12px; font-size: 1.5rem;">add</mat-icon>
-                    </button>
                   </div>
                 </td>
               </ng-container>
@@ -310,7 +310,7 @@
                 </th>
                 <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; min-width:90px;' *matCellDef="let element; let i = index">
                   <mat-form-field>
-                    <input style="text-align: right" matInput class="quantity-input" [value]="element['amount'] | currency : 'VND' : ''"
+                    <input style="text-align: left" matInput class="quantity-input" [value]="element['amount'] | currency : 'VND' : ''"
                            (click)="openAmountDialog(i)">
                   </mat-form-field>
                 </td>
