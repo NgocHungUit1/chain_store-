@@ -16,6 +16,9 @@
           <button mat-icon-button matPrefix>
             <mat-icon>search</mat-icon>
           </button>
+          <button mat-icon-button matSuffix [matTooltip]='"Thêm nhiều sản phẩm"' (click)="$event.stopImmediatePropagation();onAddProducts();" *ngIf='selectedProducts.length>0' style='color:#00fff7'>
+            <mat-icon>add_box</mat-icon>
+          </button>
           <button mat-icon-button matSuffix [matTooltip]='"Chọn nhóm hàng"' (click)="$event.stopImmediatePropagation();openSearchProductDialog();">
             <mat-icon>list</mat-icon>
           </button>
@@ -26,18 +29,46 @@
             <mat-icon>add_to_queue</mat-icon>
           </button>
           <mat-autocomplete #chooseProduct="matAutocomplete" [displayWith]="displayProductFn" (optionSelected)="onSelectedProduct($event.option.value)">
-            <mat-option fxLayout="row" *ngFor="let product of filteredProducts | async" [value]="product"
-                        style="min-height: 70px; line-height:25px !important;"
-                        title="{{ product.product_name }}">
-              <img fxFlex="25" class="example-option-img" aria-hidden [src]="product.default_image" width="23">
-              <span fxFlex="75" style="margin-left: 5px; font-size: 13px;">
-                <b style="font-size: 12px;">{{ product.product_name }}</b><br>
-                {{ product.product_no }} &nbsp;  Giá : {{ product.original_price | number }}
-                &nbsp; - {{ product.base_unit }}
-              </span>
-              <mat-divider></mat-divider>
-            </mat-option>
-
+            <ng-container *ngIf="searchMode">
+              <mat-option fxLayout="row" *ngFor="let product of filteredProducts | async" [value]="product"
+                            style="min-height: 100px !important; line-height:25px !important;"
+                            title="{{ product.product_name }}"
+                            class="product-item">
+                  <img fxFlex="25" class="example-option-img" aria-hidden [src]="product.default_image" width="23">
+                  <span fxFlex="75" style="margin-left: 5px; font-size: 13px;">
+                    Nhà sản xuất: {{ product.manufacturerOne.name }} <br>
+                    Tồn kho: {{product.quantity.number}} <br>
+                    <b style="font-size: 12px;">{{ product.product_name }}</b><br>
+                    {{ product.product_no }} &nbsp;  Giá : {{ product.original_price | number }}
+                    &nbsp; - {{ product.base_unit }}
+                  </span>
+                <mat-divider></mat-divider>
+              </mat-option>
+            </ng-container>
+            <ng-container *ngIf="!searchMode">
+              <mat-selection-list #productList [multiple]="true"
+                (selectionChange)="onProductSelectionChange($event)">
+                <mat-list-option *ngFor="let product of filteredProducts | async" 
+                                [value]="product"
+                                checkboxPosition="before"
+                                style="height:100px !important; line-height:25px !important;"
+                                title="{{ product.product_name }}"
+                                class="product-item">
+                  <div fxLayout="row">
+                    <img fxFlex="25" class="example-option-img" aria-hidden [src]="product.default_image" width="23">
+                    <span fxFlex="75" style="margin-left: 5px; font-size: 13px;">
+                      Nhà sản xuất: {{ product.manufacturerOne.name }} <br>
+                      Tồn kho: {{product.quantity.number}} <br>
+                      <b style="font-size: 12px;">{{ product.product_name }}</b><br>
+                      {{ product.product_no }} &nbsp; Giá : {{ product.original_price | number }}
+                      &nbsp; - {{ product.base_unit }}
+                    </span>
+                  </div>
+                  <mat-divider></mat-divider>
+                </mat-list-option>
+              </mat-selection-list>
+            </ng-container>
+            
             <mat-option fxLayout="row" *ngFor="let medicine of filteredMedicines | async" [value]="medicine"
                         style="min-height: 70px; line-height:25px !important;"
                         title="{{ medicine.medicine_name }}">

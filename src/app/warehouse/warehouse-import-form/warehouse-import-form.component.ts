@@ -42,6 +42,7 @@ import {SearchSupplierDialogComponent} from '../../common/search-supplier-dialog
 import { WarehouseUnitCreateDialogComponent } from '../warehouse-unit-create-dialog/warehouse-unit-create-dialog.component';
 import { WarehouseFormAmountComponent } from '../warehouse-form-amount/warehouse-form-amount.component';
 import { MatSelect } from '@angular/material/select';
+import { MatSelectionList, MatSelectionListChange } from '@angular/material/list';
 
 
 @Component({
@@ -71,10 +72,11 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     super();
   }
 
-
+  @ViewChild('productList') productList: MatSelectionList;
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
   @ViewChild('selectColumn') selectColumn;
 
+  selectedProducts: Product[] = [];
   selectProduct = new FormControl();
   selectQuantity = new FormControl();
   selectUnit = new FormControl();
@@ -432,7 +434,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
 
   lookupProduct(value: string): Observable<Product[]> {
-    return this.productSer.autocomplete(value).pipe(
+    return this.productSer.autocompleteWithExpand(value,"manufacturerOne").pipe(
       // map the item property of the github results as our return object
       map(results => results),
       // catch errors
@@ -773,12 +775,14 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       }
     });
     if (productExits === 0) {
-      this.productSer.getDetail(product_id, 'productUnits').subscribe(res => {
+      this.productSer.getDetail(product_id, 'productUnits,quantity').subscribe(res => {
         const warehouseProduct = new WarehouseProduct();
         warehouseProduct.product_id = res['id'];
         warehouseProduct.product = res;
         warehouseProduct.quantity = +this.selectQuantity.value;
         warehouseProduct.price = (res['original_price'] !== null) ? numeral(res['original_price']).format('0,0') : 0;
+        warehouseProduct.sell_price = (res['sell_price'] !== null) ? numeral(res['sell_price']).format('0,0') : 0;
+        warehouseProduct.inventory_quantity = res['quantity']['number'];
         warehouseProduct.discount = 0;
         warehouseProduct.discount_type = 'price';
         warehouseProduct.amount = (res['original_price'] !== null) ? res['original_price'] : 0;
@@ -1517,6 +1521,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     this.inputField.nativeElement.focus();
 
     this.searchMode = !this.searchMode;
+    this.selectedProducts = [];
   }
 
   onQuantityEnter(){
@@ -1531,5 +1536,18 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   displayProductFn(item: any): string {
     return item && item.product_name ? item.product_name : 
           item && item.medicine_name ? item.medicine_name : '';
+  }
+
+  onProductSelectionChange(event: MatSelectionListChange) {
+    // Get selected products
+    const selectedProducts = event.source.selectedOptions.selected.map(option => option.value);
+    this.selectedProducts = selectedProducts;
+  }
+
+  onAddProducts(){
+    for (const product of this.selectedProducts) {
+      this.handleAddProductToList(product.id);
+    }
+    this.selectedProducts = [];
   }
 }
