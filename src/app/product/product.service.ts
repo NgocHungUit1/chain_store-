@@ -103,6 +103,11 @@ export class ProductService {
     return this.http.get<Product[]>(url);
   }
 
+  autocompleteWithExpand(term: string, expand) {
+    const url = environment.apiUrl + '/product/autocomplete?expand=' + expand + '&term=' + term;
+    return this.http.get<Product[]>(url);
+  }
+
   /**
    * Search Autocomplete With Units
    * @param term
