@@ -36,11 +36,11 @@
                             class="product-item">
                   <img fxFlex="25" class="example-option-img" aria-hidden [src]="product.default_image" width="23">
                   <span fxFlex="75" style="margin-left: 5px; font-size: 13px;">
-                    Nhà sản xuất: {{ product.manufacturerOne.name }} <br>
-                    Tồn kho: {{product.quantity.number}} <br>
                     <b style="font-size: 12px;">{{ product.product_name }}</b><br>
                     {{ product.product_no }} &nbsp;  Giá : {{ product.original_price | number }}
-                    &nbsp; - {{ product.base_unit }}
+                    &nbsp; - {{ product.base_unit }} <br>
+                    Nhà sản xuất: {{ product.manufacturerOne.name }} <br>
+                    Tồn kho: {{product.quantity.number}}
                   </span>
                 <mat-divider></mat-divider>
               </mat-option>
@@ -57,11 +57,11 @@
                   <div fxLayout="row">
                     <img fxFlex="25" class="example-option-img" aria-hidden [src]="product.default_image" width="23">
                     <span fxFlex="75" style="margin-left: 5px; font-size: 13px;">
-                      Nhà sản xuất: {{ product.manufacturerOne.name }} <br>
-                      Tồn kho: {{product.quantity.number}} <br>
                       <b style="font-size: 12px;">{{ product.product_name }}</b><br>
                       {{ product.product_no }} &nbsp; Giá : {{ product.original_price | number }}
-                      &nbsp; - {{ product.base_unit }}
+                      &nbsp; - {{ product.base_unit }} <br>
+                      Nhà sản xuất: {{ product.manufacturerOne.name }} <br>
+                      Tồn kho: {{product.quantity.number}}
                     </span>
                   </div>
                   <mat-divider></mat-divider>
@@ -255,7 +255,7 @@
 
                   <div class='custom-filter-container warehouse-input'>
                     <mat-form-field  appearance='outline'
-                                     class='search-input' style='width: 100%!important; padding-left: 0'>
+                                     class='search-input' style='width: 250px!important; padding-left: 0'>
 
                       <mat-select multiple [(ngModel)]="data[i]['product_parcels']"
                                   (selectionChange)="onParcelSelectedChange(i, $event.value)"
@@ -307,17 +307,17 @@
 
               <!-- Product Unit Column -->
 
-              <ng-container matColumnDef="product_unit_id">
+             <ng-container matColumnDef="product_unit_id">
                 <th mat-header-cell *matHeaderCellDef style="min-width:100px; text-align: right;"> {{columnsHeader['product_unit_id']}}</th>
                 <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; min-width:100px;' *matCellDef="let element; let i = index">
-                  <div style='display: flex;flex-direction: row;flex-wrap: nowrap;justify-content: center;padding-left:0.5rem;'>
+                  <div style='display: flex;flex-direction: row;flex-wrap: nowrap;justify-content: center;padding-left:0.5rem; max-width: 150px !important;'>
                     <mat-form-field *ngIf="element.productUnits.length">
                       <mat-select matInput [(ngModel)]="data[i]['product_unit_id']"
                                   (selectionChange)="onUnitChange(i, $event)">
                         <mat-option *ngFor="let unit of element.productUnits" [value]="unit.id">{{unit.name}}</mat-option>
                       </mat-select>
                       <button mat-icon-button matSuffix aria-label="add" (click)="$event.stopImmediatePropagation();openUnitCreateDialog(element);">
-                        <mat-icon style="margin-bottom: 5px; font-size: 1.5rem;">add</mat-icon>
+                        <mat-icon style="margin-bottom: -10px; font-size: 1.5rem;">add</mat-icon>
                       </button>
                     </mat-form-field>
                   </div>

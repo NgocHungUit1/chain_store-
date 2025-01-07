@@ -480,10 +480,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           warehouseProduct.vat_type = (item.vat_type !== null) ? item.vat_type : 'price';
 
           warehouseProduct.productUnits.forEach(productUnit=>{
-            productUnit['quantity_of_stock'] = Math.floor(productData.find(prod=>prod.id == item.product_id)?.quantity?.number / productUnit["value"]);
+            productUnit['quantity_of_stock'] = (productData.find(prod=>prod.id == item.product_id)?.quantity?.number / productUnit["value"]);
           })
-  
-          warehouseProduct.inventory_quantity = warehouseProduct.productUnits.find(item=>item['is_base'] === 1)['quantity_of_stock'];
+          warehouseProduct.inventory_quantity = warehouseProduct.productUnits.find(productUnit => productUnit['id'] === item.product_unit_id)['quantity_of_stock'];
   
           if (item.productParcels !== undefined && item.productParcels.length > 0) {
             this.parcels = this.parcels.concat(item.productParcels);
