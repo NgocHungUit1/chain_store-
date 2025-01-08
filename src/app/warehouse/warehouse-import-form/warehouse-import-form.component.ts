@@ -130,11 +130,11 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'product_unit_id',
     'inventory_quantity',
     'quantity',
-    'price',
+    // 'price',
     'sell_price',
     // 'discount',
     'amount',
-    'actions',
+    // 'actions',
   ];
   columnsToDisplay: string[] = [
     'image',
