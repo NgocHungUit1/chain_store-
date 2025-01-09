@@ -57,6 +57,7 @@ export class InvoiceFilter extends ApiFilterBase {
   id = '';
   invoice_no = '';
   customer_id = '';
+  needToPay = 0;
   discount = '';
   discount_type = '';
   note = '';

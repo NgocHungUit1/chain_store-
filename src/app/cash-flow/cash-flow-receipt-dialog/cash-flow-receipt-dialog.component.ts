@@ -9,6 +9,10 @@ import { of } from 'rxjs/internal/observable/of';
 import { SupplierService } from '../../supplier/supplier.service';
 import { CashFlowService } from '../cash-flow.service';
 import * as numeral from 'numeral';
+import {Customer} from '../../customer/customer.model';
+import {CustomerService} from '../../customer/customer.service';
+import {InvoiceService} from '../../invoice/invoice.service';
+import {InvoiceFilter} from '../../invoice/invoice.model';
 
 @Component({
   selector: 'app-cash-flow-receipt-dialog',
@@ -19,8 +23,12 @@ export class CashFlowReceiptDialogComponent implements OnInit {
 
   form: FormGroup;
   loading = false;
+  isSelectedCustomer = false;
   local_data: any;
   cash_flow_id: string = null;
+  customer: Customer;
+
+  public filteredCustomers: Observable<Customer[]>;
 
   doi_tuong_nop_value: string[] = [
     'customer',
@@ -28,12 +36,20 @@ export class CashFlowReceiptDialogComponent implements OnInit {
     'supplier',
     'orther'
   ];
+  methodValues: string[] = [
+    'customer',
+    'other'
+  ];
 
   doi_tuong_nop_label = {
     'customer': 'Khách hàng',
     'employee': 'Nhân viên',
     'supplier': 'Nhà cung cấp',
     'orther': 'Khác',
+  };
+  methodLabels = {
+    'customer': 'Thu nợ khách hàng',
+    'other': 'Thu khác',
   };
 
   fieldLabels = {
@@ -53,7 +69,9 @@ export class CashFlowReceiptDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<CashFlowReceiptDialogComponent>,
     public notifySer: NotifierService,
     public supplierService: SupplierService,
+    public customerService: CustomerService,
     public cashFlowService: CashFlowService,
+    public invoiceService: InvoiceService,
     private fb: FormBuilder,
     private dialog: MatDialog,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object
@@ -75,6 +93,7 @@ export class CashFlowReceiptDialogComponent implements OnInit {
     this.form = this.fb.group({
       no: [null, [Validators.required, Validators.maxLength(50)]],
       type: ['receipt'],
+      method: ['receipt'],
       phone: [null],
       type_money: ['money'],
       doi_tuong_nop: [null, [Validators.required]],
@@ -103,6 +122,39 @@ export class CashFlowReceiptDialogComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
 
+    /**
+     * Tim kiem khach hang
+     */
+    this.filteredCustomers = this.form.controls['ten_nguoi_nop'].valueChanges.pipe(
+      startWith(''),
+      // delay emits
+      debounceTime(300),
+      // use switch map so as to cancel previous subscribed events, before creating new once
+      switchMap(value => {
+        if (value !== '') {
+          // lookup from github
+          return this.lookupCustomer(value);
+        } else {
+          // if no value is present, return null
+          return of(null);
+        }
+      })
+    );
+
+
+  }
+
+  lookupCustomer(value: string): Observable<Customer[]> {
+    if (value !== null) {
+      return this.customerService.autocomplete(value, 'total_point,total_invoice').pipe(
+        // map the item property of the github results as our return object
+        map(results => results),
+        // catch errors
+        catchError(_ => {
+          return of(null);
+        })
+      );
+    }
   }
 
   loadCashFlow(id) {
@@ -201,5 +253,24 @@ export class CashFlowReceiptDialogComponent implements OnInit {
     event.target.value = numeral(event.target.value).format('0,0');
   }
 
+  onSelectedCustomer(customer) {
+    // loadInvoice need to pay
+    const invoiceFilter = new InvoiceFilter();
+    invoiceFilter.customer_id = customer.id;
+    invoiceFilter.needToPay = 1;
+    this.invoiceService.getList(invoiceFilter).subscribe(res => {
+
+    });
+    this.isSelectedCustomer = true;
+    this.form.controls['nguoi_nop_id'].patchValue(customer.id);
+    this.form.controls['ten_nguoi_nop'].patchValue(customer.name);
+  }
+
+  removeCustomer() {
+    this.form.controls['ten_nguoi_nop'].patchValue('');
+    this.form.controls['nguoi_nop_id'].patchValue(null);
+    this.isSelectedCustomer = false;
+    this.customer = null;
+  }
 
 }
