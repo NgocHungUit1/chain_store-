@@ -17,3 +17,9 @@ table {
 .bold-text {
   font-weight: 600;
 }
+.mat-column-parcel_no, .mat-column-expiration_date {
+  flex: 2 1 0;
+}
+.mat-column-actions {
+  flex: 1 1 0;
+}

@@ -7,6 +7,10 @@
         <mat-icon>list</mat-icon>
         Danh sách
       </button>
+      <a mat-raised-button color="accent" [href]="this.downloadLink" style="margin-left: 10px" [disabled]="isLoadingResults">
+        <mat-icon>cloud_download</mat-icon>
+        Xuất Excel
+      </a>
     </div>
   </div>
 

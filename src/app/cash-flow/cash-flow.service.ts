@@ -5,12 +5,16 @@ import { environment } from '../../environments/environment';
 import {catchError, map} from 'rxjs/operators';
 import { CashFlow, CashFlowFilter } from './cash-flow.model';
 import { Branch } from '../branch/branch.model';
+import {EmployeeFilter} from '../employee/employee.model';
+import {DateFilter} from '../invoice/invoice.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CashFlowService {
 
+  public dateFilter: BehaviorSubject<DateFilter> = new BehaviorSubject<DateFilter>(null);
+  subscribeDateFilter: Observable<DateFilter> = this.dateFilter.asObservable();
 
   constructor(private http: HttpClient) {
   }
@@ -46,6 +50,26 @@ export class CashFlowService {
   getList(filter?: CashFlowFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrl(filter);
     return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
+  }
+
+  getApiUrlSummary(filter?: CashFlowFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/cash-flow/summary?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
+  getSummary(filter?: CashFlowFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrlSummary(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
   public getUser(id: string): Observable<CashFlow> {
@@ -93,6 +117,14 @@ export class CashFlowService {
   getDetail(id: string) {
     const url = environment.apiUrl + '/cash-flow/' + id;
     return this.http.get<CashFlow>(url);
+  }
+
+  setDateFilter(obj: DateFilter) {
+    this.dateFilter.next(obj);
+  }
+
+  getDateFilter() {
+    return this.dateFilter.value;
   }
 }
 

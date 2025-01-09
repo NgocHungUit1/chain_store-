@@ -4,6 +4,56 @@
       <label class='custom-filter-container__title'>Sổ quỹ</label>
     </mat-toolbar>
 
+    <div class='custom-filter-container__div-container'>
+      <mat-accordion multi>
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Thời gian
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <form [formGroup]="timeFilter">
+            <mat-radio-group (change)="radioTimeChange($event)" formControlName="typeTime">
+              <mat-radio-button style="display: inline; " value="default"
+                                color='primary'
+                                (click)="openTimeDefault()">{{ titleTimeDefault }}
+                <button mat-icon-button aria-label="add">
+                  <mat-icon>swap_vert</mat-icon>
+                </button>
+              </mat-radio-button>
+              <mat-radio-button style="display: inline; " value="choose" (click)="openTimeChoose()">{{ titleTimeChoose }}
+                <button mat-icon-button aria-label="add">
+                  <mat-icon>date_range</mat-icon>
+                </button>
+              </mat-radio-button>
+
+            </mat-radio-group>
+          </form>
+        </mat-expansion-panel>
+
+
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Loại chứng từ
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <form [formGroup]="typeFilterForm">
+            <div class='custom-filter-container__checkbox-container'>
+              <mat-checkbox *ngFor='let item of typeFilterList'
+                            color='primary'
+                            [checked]="typeFilterForm.value['type'].includes(item.value)"
+                            (change)='checkBoxFilterChange($event, item.value, "type", typeFilterForm)'
+              >
+                {{ item.name }}
+              </mat-checkbox>
+            </div>
+          </form>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
   </mat-sidenav>
   <mat-sidenav-content>
     <mat-toolbar class="dv-header">
@@ -45,12 +95,50 @@
     <div fxLayout="row wrap">
       <div fxFlex="100">
         <div class="table-container">
-          <div class="table-loading-shade" *ngIf="isLoadingResults || isRateLimitReached">
+          <div class="table-loading-shade" *ngIf="isLoadingResults || isRateLimitReached || loadingUser">
             <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
             <div class="table-rate-limit-reached" *ngIf="isRateLimitReached">
               GitHub's API rate limit has been reached. It will be reset in one minute.
             </div>
           </div>
+          <mat-toolbar class="dv-header">
+            <div class="summary" style="width: 100%" fxLayout="row wrap">
+              <div fxFlex="100">
+                <div fxLayout="row wrap">
+                  <div class="item-header" fxFlex="20">
+                  </div>
+                  <div class="item-header" fxFlex="20">
+                    Tồn đầu kỳ
+                  </div>
+                  <div class="item-header" fxFlex="20">
+                    Tổng thu
+                  </div>
+                  <div class="item-header" fxFlex="20">
+                    Tổng chi
+                  </div>
+                  <div class="item-header" fxFlex="20">
+                    Tồn cuối kỳ
+                  </div>
+                </div>
+              </div>
+              <div fxFlex="100" *ngIf="sumData">
+                <div class="item-value" fxFlex="20">
+                </div>
+                <div class="item-value" fxFlex="20">
+                  {{sumData.start_amount | number}}
+                </div>
+                <div class="item-value" fxFlex="20">
+                  {{sumData.receipt_amount | number}}
+                </div>
+                <div class="item-value" fxFlex="20">
+                  {{sumData.payment_amount | number}}
+                </div>
+                <div class="item-value" fxFlex="20">
+                  {{sumData.end_amount | number}}
+                </div>
+              </div>
+            </div>
+          </mat-toolbar>
           <div class="table-responsive">
             <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="">
 
@@ -74,9 +162,14 @@
                 <td mat-cell *matCellDef="let element"> {{ typeHeader[element.type] }}</td>
               </ng-container>
 
+              <ng-container matColumnDef="created_by">
+                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['created_by']}}</th>
+                <td mat-cell *matCellDef="let element"> {{ users[element?.created_by]?.username }}</td>
+              </ng-container>
+
               <ng-container matColumnDef="value">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['value']}}</th>
-                <td mat-cell *matCellDef="let element"> {{ element?.value | number }}</td>
+                <th mat-header-cell *matHeaderCellDef class="text-right"> {{columnsHeader['value']}}</th>
+                <td mat-cell *matCellDef="let element" class="text-right"> {{ element?.value | number }}</td>
               </ng-container>
 
 

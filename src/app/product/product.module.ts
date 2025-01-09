@@ -31,6 +31,9 @@ import {NgxExtendedPdfViewerModule} from 'ngx-extended-pdf-viewer';
 import {PrintMultipleProductDialogComponent} from './print-multiple-product-dialog/print-multiple-product-dialog.component';
 import {CommonModule as DComonModule} from '../common/common.module';
 import {ProductTabStockParcelComponent} from './product-tab-stock-parcel/product-tab-stock-parcel.component';
+import {
+  WarehouseProductParcelChangeStockFormDialogComponent
+} from '../warehouse-product-parcel/warehouse-product-parcel-change-stock-form-dialog/warehouse-product-parcel-change-stock-form-dialog.component';
 
 
 @NgModule({
@@ -51,7 +54,8 @@ import {ProductTabStockParcelComponent} from './product-tab-stock-parcel/product
     ProductStockChangeDialogComponent,
     IdCodeFormDialogComponent,
     ViewIdCodeFormDialogComponent,
-    PrintMultipleProductDialogComponent
+    PrintMultipleProductDialogComponent,
+    WarehouseProductParcelChangeStockFormDialogComponent
   ],
   imports: [
     CommonModule,
@@ -76,7 +80,8 @@ import {ProductTabStockParcelComponent} from './product-tab-stock-parcel/product
     ProductUsingFormDialogComponent,
     ProductPlacementFormDialogComponent,
     ProductUploadDialogComponent,
-    PrintMultipleProductDialogComponent
+    PrintMultipleProductDialogComponent,
+    WarehouseProductParcelChangeStockFormDialogComponent
   ]
 })
 export class ProductModule {
