@@ -161,7 +161,7 @@ export class CashFlowReceiptDialogComponent implements OnInit {
   }
 
   loadCashFlow(id) {
-    this.cashFlowService.getDetail(id).subscribe(cashFlow => {
+    this.cashFlowService.getDetail(id, 'items').subscribe(cashFlow => {
       // @ts-ignore
       const today = new Date(1000 * cashFlow['created_at']);
       const time = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
@@ -173,11 +173,39 @@ export class CashFlowReceiptDialogComponent implements OnInit {
         doi_tuong_nop: cashFlow['doi_tuong_nop'],
         nguoi_nop_id: cashFlow['nguoi_nop_id'],
         ten_nguoi_nop: cashFlow['ten_nguoi_nop'],
+        method: cashFlow['method'],
         value: numeral(cashFlow['value']).format('0,0'),
         note: cashFlow['note'],
         today: today,
         time: time,
         parent_table: cashFlow['parent_table']
+      });
+
+      let ids = [];
+      let itemsData = {};
+      cashFlow.items.forEach((item, index) => {
+        ids.push(item.invoice_id);
+        itemsData[item.invoice_id] = item;
+      });
+
+      const invoiceFilter = new InvoiceFilter();
+      invoiceFilter.id = ids.join(',');
+      this.isLoadingResults = true;
+
+      let data = [];
+
+      this.invoiceService.getList(invoiceFilter).subscribe(res => {
+        this.isLoadingResults = false;
+
+        res.body.forEach( (item, index) => {
+          let newItem = item;
+          newItem.need_to_pay_amount = itemsData[item.id]['need_to_process_amount'];
+          data.push(newItem);
+
+          this.form.addControl('needToPayInvoices[' + index + ']', new FormControl(numeral(itemsData[item.id]['processed_amount']).format('0,0'), Validators.required));
+        });
+
+        this.needToPayInvoices = data;
       });
 
     });
@@ -187,7 +215,7 @@ export class CashFlowReceiptDialogComponent implements OnInit {
     let date_created = '';
     if (this.form.valid) {
       const data = this.form.getRawValue();
-      const needToPayData = [];
+      let needToPayData = [];
 
       this.needToPayInvoices.forEach((item, index) => {
         let needToPayInvoice = {
