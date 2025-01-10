@@ -1439,7 +1439,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   priceChange(event: any, index) {
     event.target.value = numeral(event.target.value).format('0,0');
-    this.data[index]['price'] = numeral(event.target.value).value();
     this.recalculateItem(index);
   }
 
