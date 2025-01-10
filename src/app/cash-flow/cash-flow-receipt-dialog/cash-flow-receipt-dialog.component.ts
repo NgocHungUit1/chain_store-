@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, Optional } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { Observable } from 'rxjs';
@@ -12,7 +12,7 @@ import * as numeral from 'numeral';
 import {Customer} from '../../customer/customer.model';
 import {CustomerService} from '../../customer/customer.service';
 import {InvoiceService} from '../../invoice/invoice.service';
-import {InvoiceFilter} from '../../invoice/invoice.model';
+import {Invoice, InvoiceFilter} from '../../invoice/invoice.model';
 
 @Component({
   selector: 'app-cash-flow-receipt-dialog',
@@ -27,6 +27,7 @@ export class CashFlowReceiptDialogComponent implements OnInit {
   local_data: any;
   cash_flow_id: string = null;
   customer: Customer;
+  isLoadingResults = false;
 
   public filteredCustomers: Observable<Customer[]>;
 
@@ -40,6 +41,8 @@ export class CashFlowReceiptDialogComponent implements OnInit {
     'customer',
     'other'
   ];
+
+  needToPayInvoices: Invoice[] = [];
 
   doi_tuong_nop_label = {
     'customer': 'Khách hàng',
@@ -184,6 +187,17 @@ export class CashFlowReceiptDialogComponent implements OnInit {
     let date_created = '';
     if (this.form.valid) {
       const data = this.form.getRawValue();
+      const needToPayData = [];
+
+      this.needToPayInvoices.forEach((item, index) => {
+        let needToPayInvoice = {
+          invoice_id: item.id,
+          pay_value: numeral(this.form.controls['needToPayInvoices[' + index + ']'].value).value()
+        };
+        needToPayData.push(needToPayInvoice);
+      });
+
+      data['items'] = needToPayData;
 
       if (data['today'] !== null && typeof data['today'] === 'object') {
         let effDate;
@@ -258,8 +272,25 @@ export class CashFlowReceiptDialogComponent implements OnInit {
     const invoiceFilter = new InvoiceFilter();
     invoiceFilter.customer_id = customer.id;
     invoiceFilter.needToPay = 1;
-    this.invoiceService.getList(invoiceFilter).subscribe(res => {
+    invoiceFilter.expand = 'need_to_pay_amount';
+    this.isLoadingResults = true;
 
+    let totalPaid = numeral(this.form.controls['value'].value ? this.form.controls['value'].value : 0).value();
+
+    this.invoiceService.getList(invoiceFilter).subscribe(res => {
+      this.isLoadingResults = false;
+      this.needToPayInvoices = res.body;
+
+      this.needToPayInvoices.forEach( (item, index) => {
+        let payItemAmount = item.need_to_pay_amount;
+        if (totalPaid >= payItemAmount) {
+          totalPaid -= payItemAmount;
+        } else {
+          payItemAmount = totalPaid;
+          totalPaid = 0;
+        }
+        this.form.addControl('needToPayInvoices[' + index + ']', new FormControl(numeral(payItemAmount).format('0,0'), Validators.required));
+      });
     });
     this.isSelectedCustomer = true;
     this.form.controls['nguoi_nop_id'].patchValue(customer.id);
@@ -270,7 +301,30 @@ export class CashFlowReceiptDialogComponent implements OnInit {
     this.form.controls['ten_nguoi_nop'].patchValue('');
     this.form.controls['nguoi_nop_id'].patchValue(null);
     this.isSelectedCustomer = false;
+    this.needToPayInvoices.forEach((item, index) => {
+      this.form.removeControl('needToPayInvoices[' + index + ']');
+    });
+    this.needToPayInvoices = [];
     this.customer = null;
+  }
+
+  formatMoney(event: any, index) {
+    event.target.value = numeral(event.target.value).format('0,0');
+  }
+
+  shareItemAmount() {
+    let totalPaid = numeral(this.form.controls['value'].value ? this.form.controls['value'].value : 0).value();
+
+    this.needToPayInvoices.forEach( (item, index) => {
+      let payItemAmount = item.need_to_pay_amount;
+      if (totalPaid >= payItemAmount) {
+        totalPaid -= payItemAmount;
+      } else {
+        payItemAmount = totalPaid;
+        totalPaid = 0;
+      }
+      this.form.controls['needToPayInvoices[' + index + ']'].patchValue(numeral(payItemAmount).format('0,0'));
+    });
   }
 
 }
