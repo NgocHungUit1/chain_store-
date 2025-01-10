@@ -192,12 +192,13 @@ export class CashFlowReceiptDialogComponent implements OnInit {
       this.needToPayInvoices.forEach((item, index) => {
         let needToPayInvoice = {
           invoice_id: item.id,
-          pay_value: numeral(this.form.controls['needToPayInvoices[' + index + ']'].value).value()
+          processed_amount: numeral(this.form.controls['needToPayInvoices[' + index + ']'].value).value(),
+          need_to_process_amount: item.need_to_pay_amount
         };
         needToPayData.push(needToPayInvoice);
       });
 
-      data['items'] = needToPayData;
+      data['invoice_items'] = needToPayData;
 
       if (data['today'] !== null && typeof data['today'] === 'object') {
         let effDate;
