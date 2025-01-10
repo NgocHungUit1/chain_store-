@@ -121,7 +121,7 @@
         (click)="$event.stopImmediatePropagation();focusInput();"
         [ngClass]="{'selected-button': searchMode}"
         class='m-r-5 padding-x-10'>
-      <mat-icon>search</mat-icon>
+        <mat-icon>barcode_reader</mat-icon>
       </button>
 
       <div style='position: relative'>
@@ -373,7 +373,7 @@
                   <mat-form-field class="text-right">
 
                     <input matInput
-                           [ngModel]="data[i]['price'] | showValueExpenses: '0,0'" (keyup)="priceChange($event,i)">
+                    [(ngModel)]="data[i]['price']" (keyup)="priceChange($event,i)">
                     <button mat-icon-button matPrefix
                             (click)="openPriceDialog(i)">
                       <mat-icon>add</mat-icon>
