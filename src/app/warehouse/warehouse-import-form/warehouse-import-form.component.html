@@ -373,7 +373,7 @@
                   <mat-form-field class="text-right">
 
                     <input matInput
-                    [(ngModel)]="data[i]['price']" (keyup)="priceChange($event,i)">
+                    [ngModel]="data[i]['price'] | showValueExpenses: '0,0'" (keyup)="priceChange($event,i)">
                     <button mat-icon-button matPrefix
                             (click)="openPriceDialog(i)">
                       <mat-icon>add</mat-icon>
