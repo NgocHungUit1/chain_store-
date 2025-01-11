@@ -190,6 +190,7 @@ export class CashFlowReceiptDialogComponent implements OnInit {
 
       const invoiceFilter = new InvoiceFilter();
       invoiceFilter.id = ids.join(',');
+      invoiceFilter.pageSize = 200;
       this.isLoadingResults = true;
 
       let data = [];
@@ -354,6 +355,16 @@ export class CashFlowReceiptDialogComponent implements OnInit {
       }
       this.form.controls['needToPayInvoices[' + index + ']'].patchValue(numeral(payItemAmount).format('0,0'));
     });
+  }
+
+  sumTotalAmount() {
+    let totalAmount = 0;
+
+    this.needToPayInvoices.forEach( (item, index) => {
+      totalAmount += numeral(this.form.controls['needToPayInvoices[' + index + ']'].value).value();
+    });
+
+    this.form.controls['value'].patchValue(numeral(totalAmount).format('0,0'));
   }
 
 }

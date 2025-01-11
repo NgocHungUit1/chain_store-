@@ -172,7 +172,9 @@
                 <td mat-cell *matCellDef="let element; let i = index;" class="text-right">
                   <mat-form-field>
                     <input type="text" matInput style="text-align: right" [formControl]="form.controls['needToPayInvoices[' + i + ']']"
-                           required autocomplete="off" (keyup)="formatMoney($event,i)">
+                           required autocomplete="off"
+                           (change)="sumTotalAmount();"
+                           (keyup)="formatMoney($event,i)">
                   </mat-form-field>
                 </td>
               </ng-container>
