@@ -83,7 +83,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
       this.productDataSource.data.forEach(item => {
         item.productParcelsForViewHtml = '';
         item.productParcelsForView.forEach(parcel => {
-          item.productParcelsForViewHtml += parcel['parcel_no'] + ' - ' + parcel['expiration_date'] + ' -SL: ' + parcel['quantity'] + '<br>';
+          item.productParcelsForViewHtml += parcel['parcel_no'] + ' -HD: ' + parcel['expiration_date'] + ' -SL: ' + parcel['quantity'] + '<br>';
         });
         // console.log(item);
       });

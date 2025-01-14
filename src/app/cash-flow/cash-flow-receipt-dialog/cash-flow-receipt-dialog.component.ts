@@ -303,6 +303,7 @@ export class CashFlowReceiptDialogComponent implements OnInit {
     invoiceFilter.customer_id = customer.id;
     invoiceFilter.needToPay = 1;
     invoiceFilter.expand = 'need_to_pay_amount';
+    invoiceFilter.sort = 'created_at';
     this.isLoadingResults = true;
 
     let totalPaid = numeral(this.form.controls['value'].value ? this.form.controls['value'].value : 0).value();
