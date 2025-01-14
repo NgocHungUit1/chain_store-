@@ -36,7 +36,7 @@
                             title="{{ product.product_name }}"
                             class="product-item">
                   <img fxFlex="25" class="example-option-img" aria-hidden [src]="product.default_image" width="23">
-                  <span fxFlex="75" style="margin-left: 5px; font-size: 13px;">
+                  <span fxFlex="75" style="margin-left: 5px; font-size: 13px;" class = 'no-wrap'>
                     <b style="font-size: 12px;">{{ product.product_name }}</b><br>
                     {{ product.product_no }} &nbsp;  Giá : {{ product.original_price | number }}
                     &nbsp; - {{ product.base_unit }} <br>
@@ -57,7 +57,7 @@
                                 class="product-item">
                   <div fxLayout="row">
                     <img fxFlex="25" class="example-option-img" aria-hidden [src]="product.default_image" width="23">
-                    <span fxFlex="75" style="margin-left: 5px; font-size: 13px;">
+                    <span fxFlex="75" style="margin-left: 5px; font-size: 13px;" class = 'no-wrap'>
                       <b style="font-size: 12px;">{{ product.product_name }}</b><br>
                       {{ product.product_no }} &nbsp; Giá : {{ product.original_price | number }}
                       &nbsp; - {{ product.base_unit }} <br>
@@ -73,7 +73,7 @@
             <mat-option fxLayout="row" *ngFor="let medicine of filteredMedicines | async" [value]="medicine"
                         style="min-height: 70px; line-height:25px !important;"
                         title="{{ medicine.medicine_name }}">
-              <span fxFlex="100" style="margin-left: 5px; font-size: 13px;">
+              <span fxFlex="100" style="margin-left: 5px; font-size: 13px;" class = 'no-wrap'>
                 <b> {{ medicine.medicine_name }} </b> <br>
                 Nhà sản xuất: {{ medicine.manufacturer }}  <br>
                 Mã thuốc: {{ medicine.medicine_no }} - Số đăng ký: {{ medicine.registration_no }}
