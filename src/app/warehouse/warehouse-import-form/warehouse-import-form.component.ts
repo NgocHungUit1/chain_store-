@@ -134,7 +134,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'sell_price',
     // 'discount',
     'amount',
-    // 'actions',
+    'actions',
   ];
   columnsToDisplay: string[] = [
     'image',
@@ -244,8 +244,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       this.selectProduct.valueChanges.subscribe(value => {
         setTimeout(res => {
           if (value !== '') {
-            this.filteredProducts = this.lookupProduct(value);
             this.filteredMedicines = this.lookupMedicine(value);
+            this.filteredProducts = this.lookupProduct(value);
           } else {
             // if no value is present, return null
             this.filteredProducts = of(null);
@@ -409,16 +409,16 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     return (supplier === undefined || supplier === null) ? undefined : supplier.name;
   }
 
-  lookup(value: string): Observable<Supplier[]> {
-    return this.supplierSer.autocomplete(value).pipe(
-      // map the item property of the github results as our return object
-      map(results => results),
-      // catch errors
-      catchError(_ => {
-        return of(null);
-      })
-    );
-  }
+  // lookup(value: string): Observable<Supplier[]> {
+  //   return this.supplierSer.autocomplete(value).pipe(
+  //     // map the item property of the github results as our return object
+  //     map(results => results),
+  //     // catch errors
+  //     catchError(_ => {
+  //       return of(null);
+  //     })
+  //   );
+  // }
 
 
   lookupMedicine(value: string): Observable<Medicine[]> {
@@ -434,7 +434,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
 
   lookupProduct(value: string): Observable<Product[]> {
-    return this.productSer.autocompleteWithExpand(value,"manufacturerOne").pipe(
+    // return this.productSer.autocompleteWithExpand(value,"manufacturerOne")
+    return this.productSer.autocomplete(value)
+    .pipe(
       // map the item property of the github results as our return object
       map(results => results),
       // catch errors
