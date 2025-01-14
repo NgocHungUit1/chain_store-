@@ -29,6 +29,7 @@
             <mat-icon>add_to_queue</mat-icon>
           </button>
           <mat-autocomplete #chooseProduct="matAutocomplete" [displayWith]="displayProductFn" (optionSelected)="onSelectedProduct($event.option.value)">
+            <mat-option [style.display]="'none'"></mat-option>
             <ng-container *ngIf="searchMode">
               <mat-option fxLayout="row" *ngFor="let product of filteredProducts | async" [value]="product"
                             style="min-height: 100px !important; line-height:25px !important;"
