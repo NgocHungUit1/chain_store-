@@ -44,7 +44,7 @@
   text-align: center!important;
 }
 .mat-column-product_unit_id .mat-form-field {
-  max-width: 70px;
+  max-width: 150px;
 }
 .mat-column-product_unit_id .mat-icon-button .mat-icon {
   line-height: 10px;
@@ -117,6 +117,16 @@ tr.mat-header-row {
   background-color: #dcf4fc;
 }
 
+.product-item {
+  background-color: #bcfffd !important;
+}
+
+.product-item:hover,
+.product-item.mat-active,
+.product-item.mat-selected{
+  background-color: #7cfffb !important;
+}
+
 /*quet ma vach*/
 
 @keyframes example {
@@ -144,6 +154,16 @@ tr.mat-header-row {
   }
 }
 
+.selected-button {
+  background-color: #2196F3 !important;
+  color: white !important;
+}
+
+.search-focus {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 8px 12px;
+}
 
 #barecode-forcus:focus {
   /*width: 28px;*/

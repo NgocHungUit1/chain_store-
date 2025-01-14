@@ -46,7 +46,7 @@ export class WarehouseFormPriceDialogComponent implements OnInit {
     // console.log(numeral(this.price)._value);
     this.form = this.fb.group({
       price: [
-        numeral(this.price)._value
+        numeral(this.price).format('0,0')
       ],
       discount: [
         numeral(this.discount).format('0,0')

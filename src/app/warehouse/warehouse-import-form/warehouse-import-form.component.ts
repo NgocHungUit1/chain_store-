@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {MatTable, MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
@@ -15,7 +15,7 @@ import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operator
 import {of} from 'rxjs/internal/observable/of';
 import {SupplierService} from '../../supplier/supplier.service';
 import {WarehouseService} from '../warehouse.service';
-import {Product} from '../../product/product.model';
+import {Product, ProductFilter} from '../../product/product.model';
 import {ProductService} from '../../product/product.service';
 import {WarehouseParcelFormDialogComponent} from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
 import {WarehouseDiscountDialogComponent} from '../warehouse-discount-dialog/warehouse-discount-dialog.component';
@@ -41,6 +41,8 @@ import * as moment from 'moment';
 import {SearchSupplierDialogComponent} from '../../common/search-supplier-dialog/search-supplier-dialog.component';
 import { WarehouseUnitCreateDialogComponent } from '../warehouse-unit-create-dialog/warehouse-unit-create-dialog.component';
 import { WarehouseFormAmountComponent } from '../warehouse-form-amount/warehouse-form-amount.component';
+import { MatSelect } from '@angular/material/select';
+import { MatSelectionList, MatSelectionListChange } from '@angular/material/list';
 
 
 @Component({
@@ -65,15 +67,19 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     private notifySer: NotifierService,
     private expensesTransactionService: ExpensesTransactionService,
     private optionStoreService: OptionStoreService,
+    private notifyService: NotifierService,
   ) {
     super();
   }
 
-
+  @ViewChild('productList') productList: MatSelectionList;
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
   @ViewChild('selectColumn') selectColumn;
 
+  selectedProducts: Product[] = [];
   selectProduct = new FormControl();
+  selectQuantity = new FormControl();
+  selectUnit = new FormControl();
 
   apiFilter: WarehouseProductFilter;
   updateModelId = null;
@@ -84,7 +90,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   expensesTransaction: number;
   expensesTransactions: ExpensesTransaction[] = [];
   optionStore_transaction_expenses: OptionStore;
+  tempProductId = null;
 
+  searchMode = false;
   submitted = false;
   statuses = [
     {id: '10', name: 'Hoàn thành'},
@@ -100,8 +108,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'product_name': 'Tên hàng',
     // 'product_parcel': 'Lô',
     'product_unit_id': 'Đơn vị',
+    'inventory_quantity': 'SL tồn kho',
     'quantity': 'Tổng SL',
     'price': 'Giá vốn',
+    'sell_price': 'Giá bán',
     // 'discount': 'Chiết khấu',//'Giảm giá',
     'amount': 'Thành tiền',
     'actions': 'Hành động',
@@ -112,30 +122,34 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   filterColumns: string[] = [];
   filterValues: { [key: string]: string } = {};
   displayedColumns: string[] = [
-    'actions',
     // 'image',
     '#',
     'product_no',
     'product_name',
     // 'product_parcel',
     'product_unit_id',
+    'inventory_quantity',
     'quantity',
-    'price',
+    // 'price',
+    'sell_price',
     // 'discount',
     'amount',
+    // 'actions',
   ];
   columnsToDisplay: string[] = [
-    'actions',
     'image',
     '#',
     'product_no',
     'product_name',
     // 'product_parcel',
     'product_unit_id',
+    'inventory_quantity',
     'quantity',
     'price',
+    'sell_price',
     // 'discount',
     'amount',
+    'actions',
   ];
   data: WarehouseProduct[] = [];
   productDataSource = new MatTableDataSource<WarehouseProduct>([]);
@@ -151,7 +165,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   filteredSuppliers: Observable<Supplier[]>;
   filteredProducts: Observable<Product[]>;
   filteredMedicines: Observable<Medicine[]>;
-
+  selectUnits = [];
   fieldLabels = {
     no: 'Mã phiếu',
     supplier: 'nhà cung cấp',
@@ -167,6 +181,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     branch_id: 'chi nhánh',
   };
 
+  @ViewChild('inputField') inputField: ElementRef;
+  @ViewChild('quantityInput') quantityInputRef: ElementRef;
+  @ViewChild('unitInput') unitInputRef: MatSelect;
   ngOnInit() {
     this.filterColumns = this.displayedColumns.map(col => `filter-${col}`);
     this.productDataSource = new MatTableDataSource();
@@ -339,7 +356,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   // Enhanced filter function
   applyFilter(event: Event, column: string) {
-    debugger;
     const filterValue = (event.target as HTMLInputElement).value;
     this.filterValues[column] = filterValue;
 
@@ -418,7 +434,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
 
   lookupProduct(value: string): Observable<Product[]> {
-    return this.productSer.autocomplete(value).pipe(
+    return this.productSer.autocompleteWithExpand(value,"manufacturerOne").pipe(
       // map the item property of the github results as our return object
       map(results => results),
       // catch errors
@@ -434,35 +450,52 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     this.apiFilter = this.buildFilterFromParams();
     this.warehouseProductService.getList(this.apiFilter).subscribe(res => {
       const newData = [];
-      res.body.forEach(item => {
-        const warehouseProduct = new WarehouseProduct();
-        if (this.updateModelId !== null) {
-          warehouseProduct.id = item.id;
-        }
-        warehouseProduct.product_id = item.product_id;
-        warehouseProduct.product = item.product;
-        warehouseProduct.quantity = item.quantity;
-        warehouseProduct.price = (item.price !== null) ? numeral(item.price).format('0,0') : 0;
-        warehouseProduct.discount = (item.discount !== null) ? item.discount : 0;
-        warehouseProduct.discount_type = (item.discount_type !== null) ? item.discount_type : 'price';
-        warehouseProduct.amount = (item.amount !== null) ? item.amount : 0;
-        warehouseProduct.product_unit_id = item.product_unit_id;
-        warehouseProduct.productUnits = item.productUnits !== undefined ? item.productUnits : [];
-        warehouseProduct.product_parcels = item.productParcels !== undefined ? item.productParcels : [];
-        warehouseProduct.vat = (item.vat !== null) ? item.vat : 0;
-        warehouseProduct.vat_type = (item.vat_type !== null) ? item.vat_type : 'price';
 
-        if (item.productParcels !== undefined && item.productParcels.length > 0) {
-          this.parcels = this.parcels.concat(item.productParcels);
-        }
+      let productIdsStr = res.body.map(item=>item.product.id).join(",");
 
-        newData.push(warehouseProduct);
+      
+      const productFilter = new ProductFilter();
+      productFilter.id = productIdsStr;
+      productFilter.expand = 'quantity';
+      this.productSer.getList(productFilter).subscribe(res1=>{
+        let productData = res1.body;
+        
+        res.body.forEach(item => {
+          const warehouseProduct = new WarehouseProduct();
+          if (this.updateModelId !== null) {
+            warehouseProduct.id = item.id;
+          }
+          warehouseProduct.product_id = item.product_id;
+          warehouseProduct.product = item.product;
+          warehouseProduct.quantity = item.quantity;
+          warehouseProduct.price = (item.price !== null) ? numeral(item.price).format('0,0') : 0;
+          warehouseProduct.sell_price = item.sell_price;
+          warehouseProduct.discount = (item.discount !== null) ? item.discount : 0;
+          warehouseProduct.discount_type = (item.discount_type !== null) ? item.discount_type : 'price';
+          warehouseProduct.amount = (item.amount !== null) ? item.amount : 0;
+          warehouseProduct.product_unit_id = item.product_unit_id;
+          warehouseProduct.productUnits = item.productUnits !== undefined ? item.productUnits : [];
+          warehouseProduct.product_parcels = item.productParcels !== undefined ? item.productParcels : [];
+          warehouseProduct.vat = (item.vat !== null) ? item.vat : 0;
+          warehouseProduct.vat_type = (item.vat_type !== null) ? item.vat_type : 'price';
+
+          warehouseProduct.productUnits.forEach(productUnit=>{
+            productUnit['quantity_of_stock'] = (productData.find(prod=>prod.id == item.product_id)?.quantity?.number / productUnit["value"]);
+          })
+          warehouseProduct.inventory_quantity = warehouseProduct.productUnits.find(productUnit => productUnit['id'] === item.product_unit_id)['quantity_of_stock'];
+  
+          if (item.productParcels !== undefined && item.productParcels.length > 0) {
+            this.parcels = this.parcels.concat(item.productParcels);
+          }
+  
+          newData.push(warehouseProduct);
+        });
+        this.data = newData;
+        this.tempDataForQuickFilter = [...newData]; // Create initial copy
+        this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+        this.recalculateWarehouse();
+        this.isLoadingResults = false;
       });
-      this.data = newData;
-      this.tempDataForQuickFilter = [...newData]; // Create initial copy
-      this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
-      this.recalculateWarehouse();
-      this.isLoadingResults = false;
     });
   }
 
@@ -480,7 +513,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = 50; // this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'product,productParcels,productUnits';
+    filter.expand = 'productUnits,quantity,product,productParcels';
     if (this.updateModelId !== null) {
       filter.warehouse_id = this.updateModelId;
     }
@@ -548,6 +581,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           element.amount = numeral(element.amount).value();
           element.discount = numeral(element.discount).value();
           element.vat = numeral(element.vat).value();
+          element.sell_price = numeral(element.sell_price).value();
         });
         data['items'] = this.data;
         // console.log(this.data);
@@ -626,6 +660,22 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
    * @param product
    */
   onSelectedProduct(product) {
+
+    if(this.searchMode){
+
+      if(!product["productUnits"]){
+        this.notifyService.notify('warning', "Sản phẩm này không tồn đại đơn vị để thêm nhanh, vui lòng thêm bình thường.");
+        return;
+      }
+
+      this.tempProductId = product.id;
+
+      this.selectUnits = product["productUnits"];
+      
+      this.quantityInputRef.nativeElement.focus();
+      return;
+    }
+
     if (product == -1) {
       return;
     }
@@ -663,7 +713,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
    * @param product_id
    */
   handleAddProductToList(product_id) {
-
     if (this.productDataSource.data.length >= 200) {
       this.notifySer.notify('warning', 'Đơn nhập tối đa 100 sản phẩm!');
       return;
@@ -682,12 +731,14 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       }
     });
     if (productExits === 0) {
-      this.productSer.getDetail(product_id, 'productUnits').subscribe(res => {
+      this.productSer.getDetail(product_id, 'productUnits,quantity').subscribe(res => {
         const warehouseProduct = new WarehouseProduct();
         warehouseProduct.product_id = res['id'];
         warehouseProduct.product = res;
         warehouseProduct.quantity = 1; // de nhap so lo
         warehouseProduct.price = (res['original_price'] !== null) ? numeral(res['original_price']).format('0,0') : 0;
+        warehouseProduct.sell_price = (res['sell_price'] !== null) ? numeral(res['sell_price']).format('0,0') : 0;
+        warehouseProduct.inventory_quantity = res['quantity']['number'];
         warehouseProduct.discount = 0;
         warehouseProduct.discount_type = 'price';
         warehouseProduct.amount = (res['original_price'] !== null) ? res['original_price'] : 0;
@@ -701,6 +752,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           res['productUnits'].sort((a, b) => (a.value > b.value) ? 1 : -1);
           warehouseProduct.product_unit_id = res['productUnits'][0]['id'];
           warehouseProduct.price = res['productUnits'][0]['original_price'];
+          warehouseProduct.sell_price = (res['productUnits'][0]['sell_price'] !== null) ? numeral(res['productUnits'][0]['sell_price']).format('0,0') : 0;
         }
         this.data.unshift(warehouseProduct);
         this.tempDataForQuickFilter = [...this.data]; // Update copy with new item
@@ -718,6 +770,72 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
       this.recalculateWarehouse();
       this.selectProduct.patchValue(null);
+    }
+  }
+  handleAddProductToListWithQuickAdd(product_id) {
+
+    if (this.productDataSource.data.length >= 200) {
+      this.notifySer.notify('warning', 'Đơn nhập tối đa 100 sản phẩm!');
+      return;
+    }
+
+    let productExits = 0;
+    // tslint:disable-next-line:no-shadowed-variable
+    this.data.forEach((element, index) => {
+      if (element.product_id === product_id) {
+        productExits = 1;
+        if (element['product_parcels'].length > 0) {
+          element['product_parcels'][0]['quantity'] = element['product_parcels'][0]['quantity'] + 1;
+        }
+        element.quantity = element.quantity + +this.selectQuantity.value;
+        this.recalculateItem(index);
+      }
+    });
+    if (productExits === 0) {
+      this.productSer.getDetail(product_id, 'productUnits,quantity').subscribe(res => {
+        const warehouseProduct = new WarehouseProduct();
+        warehouseProduct.product_id = res['id'];
+        warehouseProduct.product = res;
+        warehouseProduct.quantity = +this.selectQuantity.value;
+        warehouseProduct.price = (res['original_price'] !== null) ? numeral(res['original_price']).format('0,0') : 0;
+        warehouseProduct.sell_price = (res['sell_price'] !== null) ? numeral(res['sell_price']).format('0,0') : 0;
+        warehouseProduct.inventory_quantity = res['quantity']['number'];
+        warehouseProduct.discount = 0;
+        warehouseProduct.discount_type = 'price';
+        warehouseProduct.amount = (res['original_price'] !== null) ? res['original_price'] : 0;
+        // warehouseProduct.amount = 0; // (res['original_price'] !== null) ? res['original_price'] : 0;
+        warehouseProduct.productUnits = res['productUnits'];
+        warehouseProduct.product_parcels = [];
+        warehouseProduct.vat = 0;
+        warehouseProduct.vat_type = 'price';
+
+        warehouseProduct.product_unit_id = this.selectUnit.value['id'];
+        warehouseProduct.price = this.selectUnit.value['original_price'];
+        
+        this.data.unshift(warehouseProduct);
+        this.tempDataForQuickFilter = [...this.data]; // Update copy with new item
+
+        // const newData = this.data.concat([warehouseProduct]);
+        // this.data = newData;
+        this.data.forEach(element => {
+          element.price = numeral(element.price).format('0,0');
+        });
+        this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+        this.recalculateWarehouse();
+        this.selectProduct.patchValue(null);
+        this.selectUnit.patchValue(null);
+        this.selectUnits = [];
+        this.selectQuantity.patchValue(0);
+        this.inputField.nativeElement.focus();
+      });
+    } else {
+      this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+      this.recalculateWarehouse();
+      this.selectProduct.patchValue(null);
+      this.selectUnit.patchValue(null);
+      this.selectUnits = [];
+      this.selectQuantity.patchValue(0);
+      this.inputField.nativeElement.focus();
     }
   }
 
@@ -845,6 +963,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       const unit = this.data[index]['productUnits'].find(element => element['id'] === select.value);
       const unitBase = this.data[index]['productUnits'].find(element => element['is_base'] === 1);
       this.data[index]['price'] = unitBase['original_price'] * unit['value'];
+      this.data[index]['sell_price'] = unit['sell_price'];
+      this.data[index]['inventory_quantity'] = unit['quantity_of_stock'];
       // this.data[index]['price'] = (unit['original_price'] !== 0) ? unit['original_price'] : unit['sell_price']; //unit['original_price'];
       this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
       this.recalculateWarehouse();
@@ -1319,6 +1439,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   priceChange(event: any, index) {
     event.target.value = numeral(event.target.value).format('0,0');
+    this.data[index]['price'] = numeral(event.target.value).value();
     this.recalculateItem(index);
   }
 
@@ -1391,6 +1512,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         this.data[index]['amount'] = result.amount;
         this.data[index]['vat'] = result.vat;
         this.data[index]['vat_type'] = result.vat_type;
+        this.data[index]['sell_price'] = result.sell_price;
         this.recalculateItem(index);
         this.recalculateWarehouse();
       }
@@ -1412,5 +1534,40 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   isIncludes(column) {
     return this.displayedColumns.some(item => item === column);
+  }
+
+  focusInput() {
+    // This will programmatically focus the input field
+    this.inputField.nativeElement.focus();
+
+    this.searchMode = !this.searchMode;
+    this.selectedProducts = [];
+  }
+
+  onQuantityEnter(){
+    this.unitInputRef.focus();
+    this.unitInputRef.open();
+  }
+
+  onUnitEnter(){
+    this.handleAddProductToListWithQuickAdd(this.tempProductId);
+  }
+
+  displayProductFn(item: any): string {
+    return item && item.product_name ? item.product_name : 
+          item && item.medicine_name ? item.medicine_name : '';
+  }
+
+  onProductSelectionChange(event: MatSelectionListChange) {
+    // Get selected products
+    const selectedProducts = event.source.selectedOptions.selected.map(option => option.value);
+    this.selectedProducts = selectedProducts;
+  }
+
+  onAddProducts(){
+    for (const product of this.selectedProducts) {
+      this.handleAddProductToList(product.id);
+    }
+    this.selectedProducts = [];
   }
 }
