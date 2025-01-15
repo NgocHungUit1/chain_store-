@@ -114,8 +114,8 @@ export class CashFlowService {
     return this.http.get<string>(url);
   }
 
-  getDetail(id: string) {
-    const url = environment.apiUrl + '/cash-flow/' + id;
+  getDetail(id: string, expand = '') {
+    const url = environment.apiUrl + '/cash-flow/' + id + '?expand=' + expand;
     return this.http.get<CashFlow>(url);
   }
 

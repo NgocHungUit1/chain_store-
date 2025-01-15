@@ -40,7 +40,7 @@
                     <b style="font-size: 12px;">{{ product.product_name }}</b><br>
                     {{ product.product_no }} &nbsp;  Giá : {{ product.original_price | number }}
                     &nbsp; - {{ product.base_unit }} <br>
-                    Nhà sản xuất: {{ product.manufacturerOne.name }} <br>
+                    NSX: {{ product.manufacturerOne.name }} <br>
                     Tồn kho: {{product.quantity.number}}
                   </span>
                 <mat-divider></mat-divider>
@@ -49,7 +49,7 @@
             <ng-container *ngIf="!searchMode">
               <mat-selection-list #productList [multiple]="true"
                 (selectionChange)="onProductSelectionChange($event)">
-                <mat-list-option *ngFor="let product of filteredProducts | async" 
+                <mat-list-option *ngFor="let product of filteredProducts | async"
                                 [value]="product"
                                 checkboxPosition="before"
                                 style="height:100px !important; line-height:25px !important;"
@@ -61,7 +61,7 @@
                       <b style="font-size: 12px;">{{ product.product_name }}</b><br>
                       {{ product.product_no }} &nbsp; Giá : {{ product.original_price | number }}
                       &nbsp; - {{ product.base_unit }} <br>
-                      Nhà sản xuất: {{ product.manufacturerOne.name }} <br>
+                      NSX: {{ product.manufacturerOne.name }} <br>
                       Tồn kho: {{product.quantity.number}}
                     </span>
                   </div>
@@ -69,13 +69,13 @@
                 </mat-list-option>
               </mat-selection-list>
             </ng-container>
-            
+
             <mat-option fxLayout="row" *ngFor="let medicine of filteredMedicines | async" [value]="medicine"
                         style="min-height: 70px; line-height:25px !important;"
                         title="{{ medicine.medicine_name }}">
               <span fxFlex="100" style="margin-left: 5px; font-size: 13px;" class = 'no-wrap'>
                 <b> {{ medicine.medicine_name }} </b> <br>
-                Nhà sản xuất: {{ medicine.manufacturer }}  <br>
+                NSX: {{ medicine.manufacturer }}  <br>
                 Mã thuốc: {{ medicine.medicine_no }} - Số đăng ký: {{ medicine.registration_no }}
                 - Đơn vị: {{ medicine.unit }}
               </span>
@@ -115,7 +115,7 @@
           </mat-select>
         </mat-form-field>
       </div>
-      
+
 
       <div  fxFlex="1 1 0%"></div>
       <button mat-raised-button
@@ -145,7 +145,7 @@
               <div><mat-slide-toggle (click)='toggleColumn("product_unit_id")' color='primary' [checked]='isIncludes("product_unit_id")'></mat-slide-toggle></div>
             </div>
             <div class='d-flex' style='justify-content: space-between'>
-              <div>SL tồn kho</div>
+              <div>Tồn kho</div>
               <div><mat-slide-toggle (click)='toggleColumn("inventory_quantity")' color='primary' [checked]='isIncludes("inventory_quantity")'></mat-slide-toggle></div>
             </div>
             <div class='d-flex' style='justify-content: space-between'>
@@ -219,7 +219,7 @@
                 <td mat-cell
                     style="padding-top: 10px; vertical-align: top" *matCellDef="let element; let i = index;"> {{i + 1}}</td>
               </ng-container>
-              
+
               <!-- Index Filter -->
               <ng-container matColumnDef="filter-#">
                 <th mat-header-cell *matHeaderCellDef style="min-width:35px"></th>
@@ -283,7 +283,7 @@
                 <th mat-header-cell *matHeaderCellDef style="min-width:80px">
                   <mat-form-field appearance="outline" class="w-full quick-filter-input">
                     <input matInput (keyup)="applyFilter($event, 'product_no')" placeholder="Tìm mã sản phẩm">
-                  </mat-form-field> 
+                  </mat-form-field>
                 </th>
               </ng-container>
 

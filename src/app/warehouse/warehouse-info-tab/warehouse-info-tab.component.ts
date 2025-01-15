@@ -83,7 +83,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
       this.productDataSource.data.forEach(item => {
         item.productParcelsForViewHtml = '';
         item.productParcelsForView.forEach(parcel => {
-          item.productParcelsForViewHtml += parcel['parcel_no'] + ' - ' + parcel['expiration_date'] + ' -SL: ' + parcel['quantity'] + '<br>';
+          item.productParcelsForViewHtml += parcel['parcel_no'] + ' -HD: ' + parcel['expiration_date'] + ' -SL: ' + parcel['quantity'] + '<br>';
         });
         // console.log(item);
       });
@@ -322,7 +322,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
 
         if (parcels !== null && parcels !== undefined) {
           parcels.forEach(parcel => {
-            printContent += 'Lô: ' + parcel['parcel_no'] + '-';
+            printContent += 'Lô: ' + parcel['parcel_no'] + '-HD:';
             printContent += parcel['expiration_date'] + '-SL:';
             printContent += parcel['quantity'] + '<br>';
           });
@@ -420,7 +420,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
           'Số lượng : ' + element.quantity + '<br>';
         const parcels = element.parcels;
         if (parcels[0] !== undefined) {
-          printContent += 'Lô: ' + parcels[0]['parcel_no'] + '-';
+          printContent += 'Lô: ' + parcels[0]['parcel_no'] + '-HD:';
           printContent += parcels[0]['expiration_date'] + '-SL:';
           printContent += parcels[0]['quantity'];
         }

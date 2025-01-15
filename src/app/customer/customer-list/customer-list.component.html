@@ -114,13 +114,19 @@
                     [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
                     <mat-tab-group style="width: 100%;">
                       <mat-tab label="Thông tin">
-                        <app-customer-tab-info [customer]="element" (reload)="loadData()"></app-customer-tab-info>
+                        <ng-template matTabContent>
+                          <app-customer-tab-info [customer]="element" (reload)="loadData()"></app-customer-tab-info>
+                        </ng-template>
                       </mat-tab>
                       <mat-tab label="Lịch sử mua hàng">
-                        <app-customer-tab-invoice [customerId]="element.id"></app-customer-tab-invoice>
+                        <ng-template matTabContent>
+                          <app-customer-tab-invoice [customerId]="element.id"></app-customer-tab-invoice>
+                        </ng-template>
                       </mat-tab>
                       <mat-tab label="Lịch sử tích điểm">
-                        <app-customer-tab-point [customerId]="element.id"></app-customer-tab-point>
+                        <ng-template matTabContent>
+                          <app-customer-tab-point [customerId]="element.id"></app-customer-tab-point>
+                        </ng-template>
                       </mat-tab>
 <!--                      <mat-tab label="Lịch sử mua hàng">-->
 <!--                        <app-history-invoice-tab [customer]="element"-->

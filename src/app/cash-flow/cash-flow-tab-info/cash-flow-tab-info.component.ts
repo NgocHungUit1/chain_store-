@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import { Branch } from '../../branch/branch.model';
 import { CashFlow } from '../cash-flow.model';
 import { BranchFormDialogComponent } from '../../branch/branch-form-dialog/branch-form-dialog.component';
@@ -8,15 +8,18 @@ import { CashFlowPaymentDialogComponent } from '../cash-flow-payment-dialog/cash
 import { CashFlowService } from '../cash-flow.service';
 import { NotifierService } from 'angular-notifier';
 import {PopupDeleteDialogComponent} from '../../common/popup-delete-dialog/popup-delete-dialog.component';
+import {InvoiceFilter} from '../../invoice/invoice.model';
+import {InvoiceService} from '../../invoice/invoice.service';
 
 @Component({
   selector: 'app-cash-flow-tab-info',
   templateUrl: './cash-flow-tab-info.component.html',
   styleUrls: ['./cash-flow-tab-info.component.css']
 })
-export class CashFlowTabInfoComponent implements OnInit {
+export class CashFlowTabInfoComponent implements OnChanges {
 
   @Output() reload: EventEmitter<any> = new EventEmitter();
+  @Input() expandedElement: boolean;
 
   typeHeader = {
     'receipt': 'Phiếu thu',
@@ -42,14 +45,45 @@ export class CashFlowTabInfoComponent implements OnInit {
 
   @Input() cashFlow: CashFlow;
 
+  isLoadingResults = false;
+  invoiceData = {};
+
   constructor(
     private dialog: MatDialog,
     public notifySer: NotifierService,
+    public invoiceService: InvoiceService,
     public cashFlowService: CashFlowService,
   ) {
   }
 
-  ngOnInit(): void {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.expandedElement) {
+      this.loadData();
+    }
+  }
+
+  loadData() {
+    let ids = [];
+    this.cashFlow.items.forEach((item, index) => {
+      ids.push(item.invoice_id);
+    });
+
+    const invoiceFilter = new InvoiceFilter();
+    invoiceFilter.id = ids.join(',');
+    invoiceFilter.pageSize = 200;
+    this.isLoadingResults = true;
+
+    this.invoiceService.getList(invoiceFilter).subscribe(res => {
+      this.isLoadingResults = false;
+
+      let data = [];
+
+      res.body.forEach( (item, index) => {
+        data[item.id] = item;
+      });
+
+      this.invoiceData = data;
+    });
   }
 
   openCashFlowReceiptDialog() {

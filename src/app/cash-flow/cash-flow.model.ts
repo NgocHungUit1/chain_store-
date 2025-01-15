@@ -13,6 +13,7 @@ export class CashFlow {
   note: string;
   parent_table: string;
   parent_id: string;
+  items: any;
 }
 
 

@@ -906,7 +906,7 @@ export class SaleMainComponent implements OnInit {
 
   lookupCustomer(value: string): Observable<Customer[]> {
     if (value !== null) {
-      return this.customerService.autocomplete(value, 'total_point,total_invoice').pipe(
+      return this.customerService.autocomplete(value, 'total_point,total_invoice,total_debt').pipe(
         // map the item property of the github results as our return object
         map(results => results),
         // catch errors
