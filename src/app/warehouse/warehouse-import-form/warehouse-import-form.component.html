@@ -48,7 +48,8 @@
             </ng-container>
             <ng-container *ngIf="!searchMode">
               <mat-selection-list #productList [multiple]="true"
-                (selectionChange)="onProductSelectionChange($event)">
+                (selectionChange)="onProductSelectionChange($event)"
+                class = "custom-selection-list">
                 <mat-list-option *ngFor="let product of filteredProducts | async"
                                 [value]="product"
                                 checkboxPosition="before"

@@ -127,6 +127,10 @@ tr.mat-header-row {
   background-color: #7cfffb !important;
 }
 
+.custom-selection-list{
+  padding-top: 0px;
+}
+
 /*quet ma vach*/
 
 @keyframes example {
