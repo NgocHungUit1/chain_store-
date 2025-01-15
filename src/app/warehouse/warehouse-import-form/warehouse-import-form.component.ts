@@ -92,8 +92,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   optionStore_transaction_expenses: OptionStore;
   tempProductId = null;
 
-  searchMode = false;
+  searchMode = localStorage.getItem("importForm-searchMode") ? JSON.parse(localStorage.getItem("importForm-searchMode")) : false;
   submitted = false;
+  allow_amount_adjust = localStorage.getItem("importForm-allowAmountAdjust") ? JSON.parse(localStorage.getItem("importForm-allowAmountAdjust")) : false;
   statuses = [
     {id: '10', name: 'Hoàn thành'},
     {id: '9', name: 'Lưu tạm'},
@@ -116,21 +117,21 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'amount': 'Thành tiền',
     'actions': 'Hành động',
   };
-  showFilters = false;
+  showFilters = localStorage.getItem("importForm-showFilters") ? JSON.parse(localStorage.getItem("importForm-showFilters")) : false;
   tempDataForQuickFilter = [];
 
   filterColumns: string[] = [];
   filterValues: { [key: string]: string } = {};
-  displayedColumns: string[] = [
+  displayedColumns: string[] = localStorage.getItem("importForm-displayedColumns") ? JSON.parse(localStorage.getItem("importForm-displayedColumns")) : [
     // 'image',
     '#',
     'product_no',
     'product_name',
     // 'product_parcel',
     'product_unit_id',
-    'inventory_quantity',
     'quantity',
-    // 'price',
+    // 'inventory_quantity',
+    'price',
     // 'sell_price',
     // 'discount',
     'amount',
@@ -402,7 +403,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     }
     setTimeout(()=>{
       this.showFilters = !this.showFilters;
+      localStorage.setItem("importForm-showFilters", JSON.stringify(this.showFilters));
     })
+
   }
 
   displaySupplier(supplier?: Supplier): string | undefined {
@@ -1100,6 +1103,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         minHeight: '65%',
         data: {
           price: this.data[i]['price'],
+          sell_price: this.data[i]['sell_price'],
           discount: this.data[i]['discount'],
           discount_type: this.data[i]['discount_type'],
           vat: this.data[i]['vat'],
@@ -1109,6 +1113,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
       dialogRef.afterClosed().subscribe(result => {
         if (result !== null) {
+          this.data[i]['sell_price'] = numeral(result.sell_price).value();
           this.data[i]['price'] = numeral(result.price).value();
           this.data[i]['discount'] = numeral(result.discount).value();
           this.data[i]['discount_type'] = result.discount_type;
@@ -1501,6 +1506,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   openAmountDialog(index: any) {
+    if(!this.allow_amount_adjust) return;
+
     const ref = this.dialog.open(WarehouseFormAmountComponent, {
       width: '35%',
       minHeight: '200px',
@@ -1514,7 +1521,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         this.data[index]['amount'] = result.amount;
         this.data[index]['vat'] = result.vat;
         this.data[index]['vat_type'] = result.vat_type;
-        this.data[index]['sell_price'] = result.sell_price;
         this.recalculateItem(index);
         this.recalculateWarehouse();
       }
@@ -1531,9 +1537,16 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         );
       }
       this.filterColumns = this.displayedColumns.map(col => `filter-${col}`);
+
+      localStorage.setItem("importForm-displayedColumns", JSON.stringify(this.displayedColumns));
     });
   }
-
+  toggleAmountAdjustColumn(){
+    setTimeout(()=>{
+      this.allow_amount_adjust = !this.allow_amount_adjust;
+      localStorage.setItem("importForm-allowAmountAdjust", JSON.stringify(this.allow_amount_adjust));
+    })
+  }
   isIncludes(column) {
     return this.displayedColumns.some(item => item === column);
   }

@@ -1,6 +1,15 @@
 <div mat-dialog-content>
   <form [formGroup]="form">
 
+    <mat-label style="font-size: 16px">Giá bán</mat-label>
+    <div fxLayout="row wrap" class="row-wrap">
+      <div fxFlex="auto">
+        <mat-form-field style="text-align: right; font-size: 16px">
+          <input matInput tabindex="1" formControlName="sell_price" type="text" min="0" autocomplete="off">
+        </mat-form-field>
+      </div>
+    </div>
+    
     <mat-label style="font-size: 16px">Đơn giá </mat-label>
     <div fxLayout="row wrap" class="row-wrap">
       <div fxFlex="auto">
