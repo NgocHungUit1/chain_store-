@@ -108,7 +108,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'product_name': 'Tên hàng',
     // 'product_parcel': 'Lô',
     'product_unit_id': 'Đơn vị',
-    'inventory_quantity': 'SL tồn kho',
+    'inventory_quantity': 'Tồn kho',
     'quantity': 'Tổng SL',
     'price': 'Giá vốn',
     'sell_price': 'Giá bán',
@@ -131,7 +131,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'inventory_quantity',
     'quantity',
     // 'price',
-    'sell_price',
+    // 'sell_price',
     // 'discount',
     'amount',
     'actions',
@@ -455,13 +455,13 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
       let productIdsStr = res.body.map(item=>item.product.id).join(",");
 
-      
+
       const productFilter = new ProductFilter();
       productFilter.id = productIdsStr;
       productFilter.expand = 'quantity';
       this.productSer.getList(productFilter).subscribe(res1=>{
         let productData = res1.body;
-        
+
         res.body.forEach(item => {
           const warehouseProduct = new WarehouseProduct();
           if (this.updateModelId !== null) {
@@ -485,11 +485,11 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
             productUnit['quantity_of_stock'] = (productData.find(prod=>prod.id == item.product_id)?.quantity?.number / productUnit["value"]);
           })
           warehouseProduct.inventory_quantity = warehouseProduct.productUnits.find(productUnit => productUnit['id'] === item.product_unit_id)['quantity_of_stock'];
-  
+
           if (item.productParcels !== undefined && item.productParcels.length > 0) {
             this.parcels = this.parcels.concat(item.productParcels);
           }
-  
+
           newData.push(warehouseProduct);
         });
         this.data = newData;
@@ -673,7 +673,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       this.tempProductId = product.id;
 
       this.selectUnits = product["productUnits"];
-      
+
       this.quantityInputRef.nativeElement.focus();
       return;
     }
@@ -813,7 +813,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
         warehouseProduct.product_unit_id = this.selectUnit.value['id'];
         warehouseProduct.price = this.selectUnit.value['original_price'];
-        
+
         this.data.unshift(warehouseProduct);
         this.tempDataForQuickFilter = [...this.data]; // Update copy with new item
 
@@ -1556,7 +1556,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   displayProductFn(item: any): string {
-    return item && item.product_name ? item.product_name : 
+    return item && item.product_name ? item.product_name :
           item && item.medicine_name ? item.medicine_name : '';
   }
 
