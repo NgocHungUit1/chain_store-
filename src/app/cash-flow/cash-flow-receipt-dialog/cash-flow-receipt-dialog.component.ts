@@ -96,7 +96,7 @@ export class CashFlowReceiptDialogComponent implements OnInit {
     this.form = this.fb.group({
       no: [null, [Validators.required, Validators.maxLength(50)]],
       type: ['receipt'],
-      method: ['receipt'],
+      method: ['customer'],
       phone: [null],
       type_money: ['money'],
       doi_tuong_nop: [null, [Validators.required]],

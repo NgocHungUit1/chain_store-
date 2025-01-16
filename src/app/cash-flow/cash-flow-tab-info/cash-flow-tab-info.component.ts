@@ -1,15 +1,17 @@
 import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import { Branch } from '../../branch/branch.model';
-import { CashFlow } from '../cash-flow.model';
-import { BranchFormDialogComponent } from '../../branch/branch-form-dialog/branch-form-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
-import { CashFlowReceiptDialogComponent } from '../cash-flow-receipt-dialog/cash-flow-receipt-dialog.component';
-import { CashFlowPaymentDialogComponent } from '../cash-flow-payment-dialog/cash-flow-payment-dialog.component';
-import { CashFlowService } from '../cash-flow.service';
-import { NotifierService } from 'angular-notifier';
+import {Branch} from '../../branch/branch.model';
+import {CashFlow} from '../cash-flow.model';
+import {BranchFormDialogComponent} from '../../branch/branch-form-dialog/branch-form-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
+import {CashFlowReceiptDialogComponent} from '../cash-flow-receipt-dialog/cash-flow-receipt-dialog.component';
+import {CashFlowPaymentDialogComponent} from '../cash-flow-payment-dialog/cash-flow-payment-dialog.component';
+import {CashFlowService} from '../cash-flow.service';
+import {NotifierService} from 'angular-notifier';
 import {PopupDeleteDialogComponent} from '../../common/popup-delete-dialog/popup-delete-dialog.component';
 import {InvoiceFilter} from '../../invoice/invoice.model';
 import {InvoiceService} from '../../invoice/invoice.service';
+import {WarehouseFilter} from '../../warehouse/warehouse.model';
+import {WarehouseService} from '../../warehouse/warehouse.service';
 
 @Component({
   selector: 'app-cash-flow-tab-info',
@@ -47,11 +49,13 @@ export class CashFlowTabInfoComponent implements OnChanges {
 
   isLoadingResults = false;
   invoiceData = {};
+  warehouseData = {};
 
   constructor(
     private dialog: MatDialog,
     public notifySer: NotifierService,
     public invoiceService: InvoiceService,
+    public warehouseService: WarehouseService,
     public cashFlowService: CashFlowService,
   ) {
   }
@@ -63,27 +67,51 @@ export class CashFlowTabInfoComponent implements OnChanges {
   }
 
   loadData() {
-    let ids = [];
+    let iIds = [];
+    let wIds = [];
     this.cashFlow.items.forEach((item, index) => {
-      ids.push(item.invoice_id);
+      iIds.push(item.invoice_id);
+      wIds.push(item.warehouse_id);
     });
 
-    const invoiceFilter = new InvoiceFilter();
-    invoiceFilter.id = ids.join(',');
-    invoiceFilter.pageSize = 200;
-    this.isLoadingResults = true;
+    if (this.cashFlow.type == 'receipt' && iIds.length > 0) {
+      const invoiceFilter = new InvoiceFilter();
+      invoiceFilter.id = iIds.join(',');
+      invoiceFilter.pageSize = 200;
+      this.isLoadingResults = true;
 
-    this.invoiceService.getList(invoiceFilter).subscribe(res => {
-      this.isLoadingResults = false;
+      this.invoiceService.getList(invoiceFilter).subscribe(res => {
+        this.isLoadingResults = false;
 
-      let data = [];
+        let data = [];
 
-      res.body.forEach( (item, index) => {
-        data[item.id] = item;
+        res.body.forEach((item, index) => {
+          data[item.id] = item;
+        });
+
+        this.invoiceData = data;
       });
+    }
 
-      this.invoiceData = data;
-    });
+    if (this.cashFlow.type == 'payment' && wIds.length > 0) {
+      const warehouseFilter = new WarehouseFilter();
+      warehouseFilter.id = wIds.join(',');
+      warehouseFilter.pageSize = 200;
+      this.isLoadingResults = true;
+
+      this.warehouseService.getList(warehouseFilter).subscribe(res => {
+        this.isLoadingResults = false;
+
+        let data = [];
+
+        res.body.forEach((item, index) => {
+          data[item.id] = item;
+        });
+
+        this.warehouseData = data;
+      });
+    }
+
   }
 
   openCashFlowReceiptDialog() {

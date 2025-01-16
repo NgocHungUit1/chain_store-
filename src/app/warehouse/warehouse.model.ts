@@ -36,6 +36,7 @@ export class WarehouseFilter extends ApiFilterBase {
   total_price = 0;
   total_amount = 0;
   paid_amount = 0;
+  needToPay = 0;
   note = '';
   remain_amount = '';
   type = '';
