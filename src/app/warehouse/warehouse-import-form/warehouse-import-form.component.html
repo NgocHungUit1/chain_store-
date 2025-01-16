@@ -1,5 +1,5 @@
 <div fxLayout="row" style="height: 100%">
-  <div fxFlex="75" style="height: 100%">
+  <div fxFlex="75" style="height: 100%; padding-right: 10px;">
     <mat-toolbar class="dv-header">
       <button mat-icon-button routerLink="/transaction/warehouse">
         <mat-icon>arrow_back</mat-icon>
@@ -7,8 +7,7 @@
       <label class="font-18"> Nhập hàng</label>
       <div class='customer-filter-container'>
         <mat-form-field appearance='outline'
-                        class='search-input'
-                        [ngClass]="{'search-focus': searchMode}">
+                        class='search-input'>
           <input
           #inputField
           type="text" [formControl]="selectProduct" matInput [matAutocomplete]="chooseProduct"
@@ -40,15 +39,16 @@
                     <b style="font-size: 12px;">{{ product.product_name }}</b><br>
                     {{ product.product_no }} &nbsp;  Giá : {{ product.original_price | number }}
                     &nbsp; - {{ product.base_unit }} <br>
-                    NSX: {{ product.manufacturerOne.name }} <br>
-                    Tồn kho: {{product.quantity.number}}
+                    Tồn kho: {{product.quantity.number}} <br>
+                    NSX: {{ product.manufacturerOne.name }}
                   </span>
                 <mat-divider></mat-divider>
               </mat-option>
             </ng-container>
             <ng-container *ngIf="!searchMode">
               <mat-selection-list #productList [multiple]="true"
-                (selectionChange)="onProductSelectionChange($event)">
+                (selectionChange)="onProductSelectionChange($event)"
+                class = "custom-selection-list">
                 <mat-list-option *ngFor="let product of filteredProducts | async"
                                 [value]="product"
                                 checkboxPosition="before"
@@ -61,8 +61,8 @@
                       <b style="font-size: 12px;">{{ product.product_name }}</b><br>
                       {{ product.product_no }} &nbsp; Giá : {{ product.original_price | number }}
                       &nbsp; - {{ product.base_unit }} <br>
-                      NSX: {{ product.manufacturerOne.name }} <br>
-                      Tồn kho: {{product.quantity.number}}
+                      Tồn kho: {{product.quantity.number}} <br>
+                      NSX: {{ product.manufacturerOne.name }}
                     </span>
                   </div>
                   <mat-divider></mat-divider>
@@ -161,8 +161,8 @@
               <div><mat-slide-toggle (click)='toggleColumn("sell_price")' color='primary' [checked]='isIncludes("sell_price")'></mat-slide-toggle></div>
             </div>
             <div class='d-flex' style='justify-content: space-between'>
-              <div>Thành tiền</div>
-              <div><mat-slide-toggle (click)='toggleColumn("amount")' color='primary' [checked]='isIncludes("amount")'></mat-slide-toggle></div>
+              <div>Chỉnh sửa Thành tiền</div>
+              <div><mat-slide-toggle color='primary' (click)='toggleAmountAdjustColumn()' [checked]='allow_amount_adjust'></mat-slide-toggle></div>
             </div>
             <div class='d-flex' style='justify-content: space-between'>
               <div>Bộ lọc</div>
@@ -408,12 +408,22 @@
                     matTooltip="(Đơn giá * Số lượng) - Tiền CK">
                   {{columnsHeader['amount']}}
                 </th>
-                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; min-width:90px;' *matCellDef="let element; let i = index">
-                  <mat-form-field>
-                    <input style="text-align: left" matInput class="quantity-input" [value]="element['amount'] | currency : 'VND' : ''"
-                           (click)="openAmountDialog(i)">
-                  </mat-form-field>
-                </td>
+                <ng-container *matCellDef="let element; let i = index">
+                  <td *ngIf="allow_amount_adjust" mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; min-width:90px;'>
+                    <mat-form-field>
+                      <input style="text-align: right" 
+                             matInput 
+                             class="quantity-input" 
+                             [value]="element['amount'] | currency : 'VND' : ''"
+                             (click)="openAmountDialog(i)">
+                    </mat-form-field>
+                  </td>
+                  <td *ngIf="!allow_amount_adjust" 
+                      mat-cell 
+                      style='text-align:right; vertical-align: top; padding: 1.5rem 0.5rem 0 0; min-width:90px;'>
+                    <span>{{element['amount'] | currency : 'VND' : ''}}</span>
+                  </td>
+                </ng-container>
               </ng-container>
               <!-- Amount Filter -->
               <ng-container matColumnDef="filter-amount">

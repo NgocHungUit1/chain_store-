@@ -10,7 +10,6 @@ import * as numeral from 'numeral';
 })
 export class WarehouseFormAmountComponent implements OnInit {
   price: any;
-  sell_price: any;
   amount: any;
   discount: any;
   discount_type: any;
@@ -27,7 +26,6 @@ export class WarehouseFormAmountComponent implements OnInit {
     this.local_data = { ...data };
     this.amount = this.local_data.amount;
     this.price = this.local_data.price;
-    this.sell_price = this.local_data.sell_price;
     this.quantity = this.local_data.quantity;
     this.discount = this.local_data.discount;
     this.discount_type = this.local_data.discount_type;
@@ -45,7 +43,6 @@ export class WarehouseFormAmountComponent implements OnInit {
     this.form = this.fb.group({
       amount: [numeral(numeral(this.quantity).value() * numeral(this.price).value()).format('0,0')],
       price: [numeral(this.price)._value],
-      sell_price: [numeral(this.sell_price).format('0,0')],
       discount: [numeral(this.discount).format('0,0')],
       discount_type: [this.discount_type],
       vat: [numeral(this.vat).format('0,0')],
