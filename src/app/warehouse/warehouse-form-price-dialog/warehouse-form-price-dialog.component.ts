@@ -11,6 +11,7 @@ import * as numeral from 'numeral';
 export class WarehouseFormPriceDialogComponent implements OnInit {
 
   price: any;
+  sell_price: any;
   discount: any;
   discount_type: any;
   vat: any;
@@ -28,8 +29,10 @@ export class WarehouseFormPriceDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<WarehouseFormPriceDialogComponent>,
     private fb: FormBuilder,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
+
     this.local_data = {...data};
     this.price = this.local_data.price;
+    this.sell_price = this.local_data.sell_price;
     this.discount = this.local_data.discount;
     this.discount_type = this.local_data.discount_type;
     this.vat = (this.local_data.vat) ? (this.local_data.vat) : 0;
@@ -45,6 +48,9 @@ export class WarehouseFormPriceDialogComponent implements OnInit {
   ngOnInit(): void {
     // console.log(numeral(this.price)._value);
     this.form = this.fb.group({
+      sell_price: [
+        numeral(this.sell_price).format('0,0')
+      ],
       price: [
         numeral(this.price).format('0,0')
       ],
