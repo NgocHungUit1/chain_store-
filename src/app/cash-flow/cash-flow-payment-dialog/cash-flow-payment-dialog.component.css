@@ -1,0 +1,6 @@
+table {
+  width: 100%;
+}
+.mat-column-paid_amount .mat-form-field {
+  max-width: 80px;
+}
