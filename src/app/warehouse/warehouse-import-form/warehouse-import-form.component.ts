@@ -1509,18 +1509,37 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     if(!this.allow_amount_adjust) return;
 
     const ref = this.dialog.open(WarehouseFormAmountComponent, {
-      width: '35%',
+      width: '20%',
       minHeight: '200px',
       data: this.data[index],
     });
 
     ref.afterClosed().subscribe(result => {
       if (result) {
-        this.data[index]['discount'] = result.discount;
-        this.data[index]['discount_type'] = result.discount_type;
-        this.data[index]['amount'] = result.amount;
-        this.data[index]['vat'] = result.vat;
-        this.data[index]['vat_type'] = result.vat_type;
+        debugger;
+
+        const el = this.data[index];
+        const am = numeral(result.final_amount).value();
+        const q = el.quantity;
+        const a = el.vat;
+        const b = el.discount;
+
+        const  type = el.vat_type + "|" + el.discount_type;
+        switch (type){
+          case "percent|percent":
+            this.data[index]['price']= (100*am) / (q * (100 + a - a * (b / 100) - b));
+            break; 
+          case "price|price":
+            this.data[index]['price']= (am / q) - a + b;
+            break; 
+          case "percent|price":
+            this.data[index]['price']= (100*am + a*b + 100*b) / (q*(100 + a));
+            break; 
+          case "price|percent":
+            this.data[index]['price']= (am - a) / (q * (1 - b / 100));
+            break; 
+        }
+        
         this.recalculateItem(index);
         this.recalculateWarehouse();
       }
