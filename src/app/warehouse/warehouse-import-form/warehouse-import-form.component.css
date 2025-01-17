@@ -117,18 +117,32 @@ tr.mat-header-row {
   background-color: #dcf4fc;
 }
 
+.mat-pseudo-checkbox-checked {
+  background-color: rgb(0, 150, 136) !important;
+}
+
 .product-item {
-  background-color: #bcfffd !important;
+  background-color: rgba(0, 150, 136, 0.1) !important;
 }
 
 .product-item:hover,
 .product-item.mat-active,
 .product-item.mat-selected{
-  background-color: #7cfffb !important;
+  background-color: rgba(0, 150, 136, 0.3) !important;
 }
 
 .custom-selection-list{
   padding-top: 0px;
+}
+
+.selected-products-text {
+  position: absolute;
+  right: -6px;
+  top: 58%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: #009688;
+  white-space: nowrap;
 }
 
 /*quet ma vach*/
