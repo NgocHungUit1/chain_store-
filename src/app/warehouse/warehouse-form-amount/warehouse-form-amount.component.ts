@@ -40,6 +40,32 @@ export class WarehouseFormAmountComponent implements OnInit {
     });
   }
 
+  onNumberInput(event: any, controlName: string): void {
+    // Early return for percentage-based VAT and discount
+    if (controlName === "vat" && this.vat_type === "percent") return;
+    if (controlName === "discount" && this.discount_type === "percent") return;
+    
+    // Get the current form control and its current value
+    const control = this.form.get(controlName);
+
+    // Remove existing commas from the input
+    let inputValue = event.target.value.replace(/,/g, '');
+    
+    // Convert to number for validation
+    const numValue = Number(inputValue);
+    
+    if (!isNaN(numValue)) {
+        const formattedValue = numeral(numValue).format('0,0');
+        event.target.value = formattedValue;
+        control.setValue(formattedValue, { emitEvent: false });
+        this[controlName] = formattedValue;
+    } else {
+        event.target.value = this[controlName];
+        control.setValue(this[controlName], { emitEvent: false });
+    }
+  }
+  
+
   submit() {
     const data = this.form.getRawValue();
     this.dialogRef.close(data);
