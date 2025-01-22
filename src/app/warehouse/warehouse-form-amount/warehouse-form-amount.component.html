@@ -10,41 +10,11 @@
       </div>
     </div>
 
-    <mat-label style="font-size: 16px">Giảm</mat-label>
-    <div fxLayout="row wrap" class="row-wrap">
-      <div fxFlex="102px">
-        <mat-button-toggle-group formControlName="discount_type">
-          <mat-button-toggle value="price" >VNĐ</mat-button-toggle>
-          <mat-button-toggle value="percent" >%</mat-button-toggle>
-        </mat-button-toggle-group>
-      </div>
-      <div fxFlex="auto">
-        <mat-form-field style="text-align: right; font-size: 16px;">
-          <input matInput type="text" tabindex="2" formControlName="discount" (keyup)="discountInputChange($event)" autocomplete="off">
-        </mat-form-field>
-      </div>
-    </div>
-
-    <mat-label style="font-size: 16px">Thuế suất</mat-label>
-    <div fxLayout="row wrap" class="row-wrap">
-      <div fxFlex="102px">
-        <mat-button-toggle-group formControlName="vat_type">
-          <mat-button-toggle value="price" >VNĐ</mat-button-toggle>
-          <mat-button-toggle value="percent" >%</mat-button-toggle>
-        </mat-button-toggle-group>
-      </div>
-      <div fxFlex="auto">
-        <mat-form-field style="text-align: right; font-size: 16px;">
-          <input matInput type="text" tabindex="2" formControlName="vat" (keyup)="discountInputChange($event)" autocomplete="off">
-        </mat-form-field>
-      </div>
-    </div>
-
     <mat-label style="font-size: 16px">Thành tiền mới</mat-label>
     <div fxLayout="row wrap" class="row-wrap">
       <div fxFlex="auto">
         <mat-form-field style="text-align: right; font-size: 16px">
-          <input readonly matInput  tabindex="1" formControlName="final_amount" type="text" min="0" autocomplete="off">
+          <input matInput  tabindex="1" formControlName="final_amount" (input)="onNumberInput($event, 'final_amount')" type="text" min="0" autocomplete="off">
         </mat-form-field>
       </div>
     </div>

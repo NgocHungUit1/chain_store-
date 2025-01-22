@@ -15,7 +15,10 @@
           <button mat-icon-button matPrefix>
             <mat-icon>search</mat-icon>
           </button>
-          <button mat-icon-button matSuffix [matTooltip]='"Thêm nhiều sản phẩm"' (click)="$event.stopImmediatePropagation();onAddProducts();" *ngIf='selectedProducts.length>0' style='color:#00fff7'>
+          <span class="selected-products-text" *ngIf='selectedProducts.length>0'>
+            {{selectedProducts.length}} SP
+          </span>
+          <button color="primary" mat-icon-button matSuffix [matTooltip]='"Thêm vào đơn"' (click)="$event.stopImmediatePropagation();onAddProducts();" *ngIf='selectedProducts.length>0'>
             <mat-icon>add_box</mat-icon>
           </button>
           <button mat-icon-button matSuffix [matTooltip]='"Chọn nhóm hàng"' (click)="$event.stopImmediatePropagation();openSearchProductDialog();">
@@ -31,17 +34,27 @@
             <mat-option [style.display]="'none'"></mat-option>
             <ng-container *ngIf="searchMode">
               <mat-option fxLayout="row" *ngFor="let product of filteredProducts | async" [value]="product"
-                            style="min-height: 100px !important; line-height:25px !important;"
+                            style="min-height: 100px !important; line-height:20px !important;"
                             title="{{ product.product_name }}"
                             class="product-item">
-                  <img fxFlex="25" class="example-option-img" aria-hidden [src]="product.default_image" width="23">
-                  <span fxFlex="75" style="margin-left: 5px; font-size: 13px;" class = 'no-wrap'>
-                    <b style="font-size: 12px;">{{ product.product_name }}</b><br>
+                  <div fxFlex="25" style="display: flex; justify-content: center; align-items: center;">
+                    <ng-container *ngIf='product?.default_image'>
+                      <img class="example-option-img" aria-hidden [src]="product.default_image" style="object-fit: contain; width:70px; height:70px;">
+                    </ng-container>
+                    <ng-container *ngIf='!product?.default_image'>
+                      <img src='/assets/images/default-product.png' style="object-fit: contain; width:70px; height:70px;">
+                    </ng-container>
+
+                  </div>
+                  <div fxFlex="75" style="margin-left: 5px; font-size: 13px;" class = 'no-wrap'>
+                    <p style="font-size: 12px; margin: 0 0 3px 0;"><b>{{ product.product_name }}</b></p>
+                    <span style="font-size: 11px; line-height: 17px">
                     {{ product.product_no }} &nbsp;  Giá : {{ product.original_price | number }}
                     &nbsp; - {{ product.base_unit }} <br>
-                    Tồn kho: {{product.quantity.number}} <br>
-                    NSX: {{ product.manufacturerOne.name }}
-                  </span>
+                      Tồn kho: {{product.quantity.number}} <br>
+                      NSX: {{ product.manufacturerOne.name }}
+                    </span>
+                  </div>
                 <mat-divider></mat-divider>
               </mat-option>
             </ng-container>
@@ -52,18 +65,29 @@
                 <mat-list-option *ngFor="let product of filteredProducts | async"
                                 [value]="product"
                                 checkboxPosition="before"
-                                style="height:100px !important; line-height:25px !important;"
+                                style="height:100px !important; line-height:20px !important;"
                                 title="{{ product.product_name }}"
-                                class="product-item">
+                                class="product-item"
+                                backgroundColor="primary">
                   <div fxLayout="row">
-                    <img fxFlex="25" class="example-option-img" aria-hidden [src]="product.default_image" width="23">
-                    <span fxFlex="75" style="margin-left: 5px; font-size: 13px;" class = 'no-wrap'>
-                      <b style="font-size: 12px;">{{ product.product_name }}</b><br>
+                    <div fxFlex="25" style="display: flex; justify-content: center; align-items: center;">
+                      <ng-container *ngIf='product?.default_image'>
+                        <img class="example-option-img" aria-hidden [src]="product.default_image" style="object-fit: contain; width:70px; height:70px;">
+                      </ng-container>
+                      <ng-container *ngIf='!product?.default_image'>
+                        <img src='/assets/images/default-product.png' style="object-fit: contain; width:70px; height:70px;">
+                      </ng-container>
+
+                    </div>
+                    <div fxFlex="75" style="margin-left: 3px; font-size: 13px;" class = 'no-wrap'>
+                      <p style="font-size: 12px; margin: 0 0 3px 0;"><b>{{ product.product_name }}</b></p>
+                      <span style="font-size: 11px; line-height: 17px">
                       {{ product.product_no }} &nbsp; Giá : {{ product.original_price | number }}
                       &nbsp; - {{ product.base_unit }} <br>
-                      Tồn kho: {{product.quantity.number}} <br>
-                      NSX: {{ product.manufacturerOne.name }}
-                    </span>
+                        Tồn kho: {{product.quantity.number}} <br>
+                        NSX: {{ product.manufacturerOne.name }}
+                      </span>
+                    </div>
                   </div>
                   <mat-divider></mat-divider>
                 </mat-list-option>
@@ -71,7 +95,7 @@
             </ng-container>
 
             <mat-option fxLayout="row" *ngFor="let medicine of filteredMedicines | async" [value]="medicine"
-                        style="min-height: 70px; line-height:25px !important;"
+                        style="min-height: 70px; line-height:20px !important;"
                         title="{{ medicine.medicine_name }}">
               <span fxFlex="100" style="margin-left: 5px; font-size: 13px;" class = 'no-wrap'>
                 <b> {{ medicine.medicine_name }} </b> <br>
@@ -81,7 +105,7 @@
               </span>
               <mat-divider></mat-divider>
             </mat-option>
-            <mat-option style="min-height: 70px; line-height:25px !important;" value="-1" [disabled]="true"
+            <mat-option style="min-height: 70px; line-height:20px !important;" value="-1" [disabled]="true"
                         *ngIf="selectProduct.value && (filteredProducts | async)?.length === 0 && (filteredMedicines | async)?.length === 0">
                 <span fxFlex="100" style="margin-left: 5px; font-size: 13px; color: black;">
                   Không tìm thấy kết quả.<br> Vui lòng kiểm tra lại tên hoặc thêm mới thuốc/ sản phẩm
@@ -118,11 +142,16 @@
 
 
       <div  fxFlex="1 1 0%"></div>
-      <button mat-raised-button
+      <button *ngIf="searchMode" mat-raised-button
         (click)="$event.stopImmediatePropagation();focusInput();"
-        [ngClass]="{'selected-button': searchMode}"
         class='m-r-5 padding-x-10'
         color ="primary">
+        <mat-icon>barcode_reader</mat-icon>
+      </button>
+      <button *ngIf="!searchMode" mat-raised-button
+        (click)="$event.stopImmediatePropagation();focusInput();"
+        class='m-r-5 padding-x-10'
+        >
         <mat-icon>barcode_reader</mat-icon>
       </button>
 
