@@ -305,7 +305,7 @@
                               placeholder="Nhập lô, hạn sử dụng"
                               #parcelInput
                               [formControl]="getItemControl(i)"
-                              [matAutocomplete]="auto"
+                              [matAutocomplete]="parcelAutocomplete"
                               [matChipInputFor]="chiplist"
                               [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                             >
@@ -322,7 +322,7 @@
                             </button>
                           </div>
                         </mat-chip-list>
-                          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event, i)" class="parcel-option-list" [panelWidth]="240">
+                          <mat-autocomplete #parcelAutocomplete="matAutocomplete" (optionSelected)="selected($event, i)" class="parcel-option-list" [panelWidth]="240">
                             <mat-option (click)="$event.stopPropagation(); openAddNewParcelDialog(i)" class="add-new-parcel" [value]="null">
                               <span style="color: #1a73e8; font-size: 1rem !important;">Thêm mới lô, hạn sử dụng</span>
                             </mat-option>

@@ -50,7 +50,7 @@ import {WarehouseFormAmountComponent} from '../warehouse-form-amount/warehouse-f
 import {MatSelect} from '@angular/material/select';
 import {MatSelectionList, MatSelectionListChange} from '@angular/material/list';
 import {COMMA, ENTER} from "@angular/cdk/keycodes";
-import {MatAutocomplete, MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
+import {MatAutocomplete, MatAutocompleteSelectedEvent, MatAutocompleteTrigger} from "@angular/material/autocomplete";
 import {
   ParcelData,
   WarehouseParcelFormDialogNewComponent
@@ -244,7 +244,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   parcelFilteredItems: Map<number, Observable<object[]>> = new Map();
   available_product_parcels: Map<string, object[]> = new Map();
   @ViewChild('parcelInput') parcelInput!: ElementRef<HTMLInputElement>;
-  @ViewChild('auto') matAutocomplete!: MatAutocomplete;
+  @ViewChild('parcelAutocomplete') matAutocompleteParcel!: MatAutocomplete;
 
   // create input for each row
   getItemControl(product_index: number) {
@@ -404,6 +404,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
       parcelDialogRef.afterClosed().subscribe(result => {
         console.log('Result: ', result);
+        debugger;
         if(!result){return;}
 
         const product = this.data.find(u => u.product_id.toString() == product_id);
@@ -439,10 +440,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         //review later -> reviewed (17/1/2025)
         const allQuantities = product.product_parcels.map(item => Number(item['quantity']));
         product.quantity = allQuantities.reduce((acc, curr) => acc + curr, 0);
+        this.recalculateItem(product_index);
+        this.productDataSource.data = [...this.data];
       });
-    // calculate the sum of quantity = sum of quantity of parcel
-    this.recalculateItem(product_index);
-    this.productDataSource.data = [...this.data];
+
   }
 
   // handle open when click to option -> available (old) parcel
@@ -1260,6 +1261,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   recalculateItem(i) {
+    debugger;
     if (this.data[i] !== undefined) {
       const price = numeral(this.data[i]['price']).value();
       if (this.data[i]['discount_type'] === 'price') {
