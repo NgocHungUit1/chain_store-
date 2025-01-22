@@ -77,7 +77,7 @@ export class WarehouseParcelFormDialogComponent implements OnInit {
 
     if (this.product_id) {
       this.productService.getParcel(this.product_id).subscribe(res => {
-        console.log(res);
+        console.log("parcel: ", res);
         if (res) {
           this.parcelRecommend = res;
         }

@@ -1,0 +1,62 @@
+.quantity_parcel{
+  width: 50%;
+}
+/* Dialog container */
+
+/* Content container */
+mat-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Form field container */
+.form-field {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+
+
+/* Label color */
+mat-label {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* Error message */
+mat-error {
+  top: 4px;
+  margin-top: 9px;
+}
+
+/* Action buttons container */
+mat-dialog-actions {
+  margin: 24px 0 0 0;
+  gap: 8px;
+}
+
+/* Save button */
+button[type="submit"] {
+  background-color: #4CAF50;
+  color: white;
+}
+
+button[type="submit"][disabled] {
+  background-color: rgba(0, 0, 0, 0.12);
+  color: rgba(0, 0, 0, 0.38);
+}
+
+/* Cancel button */
+button[type="button"] {
+  background-color: white;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+/* Button icons */
+mat-icon {
+  margin-right: 8px;
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+}
+

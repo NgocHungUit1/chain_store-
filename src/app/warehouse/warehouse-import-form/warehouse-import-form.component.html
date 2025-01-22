@@ -246,7 +246,7 @@
               <ng-container matColumnDef="#">
                 <th mat-header-cell *matHeaderCellDef style="min-width: 35px;"> #</th>
                 <td mat-cell
-                    style="padding-top: 10px; vertical-align: top" *matCellDef="let element; let i = index;"> {{i + 1}}</td>
+                    style="padding-top: 1.5rem; vertical-align: top" *matCellDef="let element; let i = index;"> {{i + 1}}</td>
               </ng-container>
 
               <!-- Index Filter -->
@@ -281,28 +281,56 @@
 
               <ng-container matColumnDef="product_no">
                 <th mat-header-cell *matHeaderCellDef style='min-width: 80px;'> {{columnsHeader['product_no']}}</th>
-                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
-                  <div class="span-product-no" style='margin-bottom: 0.5rem;'>{{ element.product.product_no }}</div>
-
-                  <div class='custom-filter-container warehouse-input'>
-                    <mat-form-field  appearance='outline'
-                                     class='search-input' style='width: 250px!important; padding-left: 0'>
-
-                      <mat-select multiple [(ngModel)]="data[i]['product_parcels']"
-                                  (selectionChange)="onParcelSelectedChange(i, $event.value)"
-                                  placeholder="Danh sách lô">
-                        <mat-option *ngFor="let parcel of (parcels)" [value]="parcel">
-                          {{parcel['parcel_no']}} - {{parcel['expiration_date']}} - SL: {{parcel['quantity']}}
-                        </mat-option>
-                      </mat-select>
-
-                      <button mat-icon-button matSuffix aria-label="add" (click)="$event.stopImmediatePropagation();openParcelListDialog(i);">
-                        <mat-icon>list</mat-icon>
-                      </button>
-                      <button mat-icon-button matSuffix aria-label="add" (click)="$event.stopImmediatePropagation();openParcelFormDialog(i);">
-                        <mat-icon>add</mat-icon>
-                      </button>
-                    </mat-form-field>
+                <td mat-cell style='vertical-align: top;' *matCellDef="let element; let i = index">
+                  <div class="span-product-no" style='margin-bottom: 0.5rem;'>
+                    {{ element.product.product_no }}</div>
+<!--                    coding parcel -->
+                  <div class="custom-parcel-filter-container">
+                      <div class="chip-list">
+                        <mat-chip-list #chiplist aria-label="Parcel selection">
+                          <mat-chip
+                            class="chip-item"
+                            *ngFor = "let parcel of data[i]['product_parcels']"
+                            [selectable]="true"
+                            [removable]="true"
+                            (click)="handleSelectChip(i, parcel)"
+                            (removed) = "remove(i, parcel)">
+                            {{parcel['parcel_no']}} - {{parcel['expiration_date'] | date:'dd/MM/yyyy'}} - SL: {{parcel['quantity']}}
+                            <mat-icon matChipRemove>cancel</mat-icon>
+                          </mat-chip>
+                          <div class="parcel-seletor">
+                            <div class="parcel-input-border">
+                              <input
+                              class="parcel-input"
+                              placeholder="Nhập lô, hạn sử dụng"
+                              #parcelInput
+                              [formControl]="getItemControl(i)"
+                              [matAutocomplete]="parcelAutocomplete"
+                              [matChipInputFor]="chiplist"
+                              [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                            >
+                            </div>
+                            <button
+                              mat-icon-button
+                              type="button"
+                              (click)="openParcelSelectionDialog(i)"
+                              class="select-parcel-button"
+                              matTooltip="Chọn lô"
+                              matTooltipPosition="above"
+                            >
+                              <mat-icon>menu</mat-icon>
+                            </button>
+                          </div>
+                        </mat-chip-list>
+                          <mat-autocomplete #parcelAutocomplete="matAutocomplete" (optionSelected)="selected($event, i)" class="parcel-option-list" [panelWidth]="240">
+                            <mat-option (click)="$event.stopPropagation(); openAddNewParcelDialog(i)" class="add-new-parcel" [value]="null">
+                              <span style="color: #1a73e8; font-size: 1rem !important;">Thêm mới lô, hạn sử dụng</span>
+                            </mat-option>
+                            <mat-option *ngFor="let parcel of getFilterItems(i) | async" [value]="parcel" class="parcel-option">
+                              {{parcel['parcel_no']}} - {{parcel['expiration_date'] | date:'dd/MM/yyyy'}} - tồn: {{parcel['quantity_of_stock']}}
+                            </mat-option>
+                          </mat-autocomplete>
+                      </div>
                   </div>
                 </td>
               </ng-container>
@@ -440,15 +468,15 @@
                 <ng-container *matCellDef="let element; let i = index">
                   <td *ngIf="allow_amount_adjust" mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; min-width:90px;'>
                     <mat-form-field>
-                      <input style="text-align: right" 
-                             matInput 
-                             class="quantity-input" 
+                      <input style="text-align: right"
+                             matInput
+                             class="quantity-input"
                              [value]="element['amount'] | currency : 'VND' : ''"
                              (click)="openAmountDialog(i)">
                     </mat-form-field>
                   </td>
-                  <td *ngIf="!allow_amount_adjust" 
-                      mat-cell 
+                  <td *ngIf="!allow_amount_adjust"
+                      mat-cell
                       style='text-align:right; vertical-align: top; padding: 1.5rem 0.5rem 0 0; min-width:90px;'>
                     <span>{{element['amount'] | currency : 'VND' : ''}}</span>
                   </td>
@@ -670,3 +698,25 @@
     </mat-card>
   </div>
 </div>
+
+
+
+<!--                  <div class='custom-filter-container warehouse-input parcel-container'>-->
+<!--                    <mat-form-field  appearance='outline'-->
+<!--                                     class='search-input' style='width: 250px!important; padding-left: 0'>-->
+
+<!--                      <mat-select multiple [(ngModel)]="data[i]['product_parcels']"-->
+<!--                                  (selectionChange)="onParcelSelectedChange(i, $event.value)"-->
+<!--                                  placeholder="Danh sách lô">-->
+<!--                        <mat-option *ngFor="let parcel of (parcels)" [value]="parcel">-->
+<!--                          {{parcel['parcel_no']}} - {{parcel['expiration_date']}} - SL: {{parcel['quantity']}}-->
+<!--                        </mat-option>-->
+<!--                      </mat-select>-->
+
+<!--                      <button mat-icon-button matSuffix aria-label="add" (click)="$event.stopImmediatePropagation();openParcelListDialog(i);">-->
+<!--                        <mat-icon>list</mat-icon>-->
+<!--                      </button>-->
+<!--                      <button mat-icon-button matSuffix aria-label="add" (click)="$event.stopImmediatePropagation();openParcelFormDialog(i);">-->
+<!--                        <mat-icon>add</mat-icon>-->
+<!--                      </button>-->
+<!--                    </mat-form-field>-->

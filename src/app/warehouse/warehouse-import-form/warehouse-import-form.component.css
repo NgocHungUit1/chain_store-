@@ -224,3 +224,104 @@ tr.mat-header-row {
     max-height: 750px;
   }
 }
+
+
+
+/* Container chính */
+.custom-parcel-filter-container {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 8px !important;
+  width: 100% !important;
+  margin-top: 8px !important;
+  min-height: 40px !important;
+  padding-right: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+.mat-chip-list{
+  padding:2px !important;
+}
+
+.chip-list {
+  flex: 1 !important;
+  min-width: 0 !important;
+  display: flex !important;
+}
+
+/* Container cho chips */
+.mat-chip-list-wrapper {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+/* Style cho từng chip */
+.chip-item {
+  background-color: #009688 !important;
+  color: white !important;
+  height: 32px !important;
+  border-radius: 4px !important;
+  padding: 0 12px !important;
+  font-size: 14px !important;
+  white-space: nowrap !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  width: 100% !important; /* Sẽ fit với grid column */
+  justify-content: space-between !important;
+}
+
+
+
+.span-product-no{
+  padding-top: 1.5rem !important;
+}
+
+.parcel-seletor{
+  display: flex !important;
+  height: 32px !important;
+}
+
+.parcel-input {
+  border: none !important;
+  background: transparent !important;
+  height: 24px !important;
+  border-left: 1px #a8a8a8 solid !important;
+  padding-left: 15px;
+
+}
+
+/* Placeholder styling */
+.parcel-input::placeholder {
+  color: #666 !important;
+  opacity: 0.7 !important;
+}
+
+/* Focus state */
+.parcel-input:focus {
+  border-bottom: 2px solid #3f51b5 !important; /* Blue bottom border */
+}
+
+.select-parcel-button{
+  height: 32px !important;
+  line-height: 32px !important;
+}
+
+/*!* Remove browser default focus outline *!*/
+/*.parcel-input:focus-visible {*/
+/*  outline: none !important;*/
+/*}*/
+
+/* Style for the autocomplete panel */
+.parcel-autocomplete-container{
+  padding: 10px !important;
+}
+
+.parcel-option-list{
+  padding: 10px;
+}
+
+.parcel-option{
+  font-size: 1rem !important;
+}
