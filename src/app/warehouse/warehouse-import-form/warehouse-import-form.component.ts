@@ -11,13 +11,15 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs/index';
 import {Supplier} from '../../supplier/supplier.model';
-import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
+import {catchError, map, startWith, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs/internal/observable/of';
 import {SupplierService} from '../../supplier/supplier.service';
 import {WarehouseService} from '../warehouse.service';
 import {Product, ProductFilter} from '../../product/product.model';
 import {ProductService} from '../../product/product.service';
-import {WarehouseParcelFormDialogComponent} from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
+import {
+  WarehouseParcelFormDialogComponent
+} from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
 import {WarehouseDiscountDialogComponent} from '../warehouse-discount-dialog/warehouse-discount-dialog.component';
 import {SupplierFormDialogComponent} from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
 import {ProductMedicineDialogComponent} from '../../product/product-medicine-dialog/product-medicine-dialog.component';
@@ -34,16 +36,77 @@ import {ExpensesTransactionService} from '../../expenses-transaction/expenses-tr
 import {OptionStoreService} from '../../common/option-store.service';
 import {OptionStore} from '../../common/option-store.model';
 import {WarehouseExpensesComponent} from '../warehouse-expenses/warehouse-expenses.component';
-import {WarehouseParcelListDialogComponent} from '../warehouse-parcel-list-dialog/warehouse-parcel-list-dialog.component';
+import {
+  WarehouseParcelListDialogComponent
+} from '../warehouse-parcel-list-dialog/warehouse-parcel-list-dialog.component';
 import {WarehouseFormPriceDialogComponent} from '../warehouse-form-price-dialog/warehouse-form-price-dialog.component';
 import {SearchProductDialogComponent} from '../../common/search-product-dialog/search-product-dialog.component';
 import * as moment from 'moment';
 import {SearchSupplierDialogComponent} from '../../common/search-supplier-dialog/search-supplier-dialog.component';
-import { WarehouseUnitCreateDialogComponent } from '../warehouse-unit-create-dialog/warehouse-unit-create-dialog.component';
-import { WarehouseFormAmountComponent } from '../warehouse-form-amount/warehouse-form-amount.component';
-import { MatSelect } from '@angular/material/select';
-import { MatSelectionList, MatSelectionListChange } from '@angular/material/list';
+import {
+  WarehouseUnitCreateDialogComponent
+} from '../warehouse-unit-create-dialog/warehouse-unit-create-dialog.component';
+import {WarehouseFormAmountComponent} from '../warehouse-form-amount/warehouse-form-amount.component';
+import {MatSelect} from '@angular/material/select';
+import {MatSelectionList, MatSelectionListChange} from '@angular/material/list';
+import {COMMA, ENTER} from "@angular/cdk/keycodes";
+import {MatAutocomplete, MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
+import {
+  ParcelData,
+  WarehouseParcelFormDialogNewComponent
+} from "../warehouse-parcel-form-dialog-new/warehouse-parcel-form-dialog-new.component";
+import {
+  WarehouseParcelFormDialogAvailableComponent
+} from "../warehouse-parcel-form-dialog-available/warehouse-parcel-form-dialog-available.component";
+import {
+  WarehouseParcelFormDialogSelectComponent
+} from "../warehouse-parcel-form-dialog-select/warehouse-parcel-form-dialog-select.component";
 
+
+/////////////coding fake data
+// Base interface cho Parcel mới
+export interface NewParcel {
+  parcel_no: string;
+  expiration_date: Date;
+  quantity: number;
+}
+
+
+// Interface cho Parcel có sẵn trong kho
+// export interface AvailableParcel extends NewParcel {
+//   inventory: number;  // Số lượng tồn kho
+// }
+
+// Union type cho Parcel được chọn/thêm mới vào product
+// export type AddingParcel = {
+//   quantity: number;  // Số lượng muốn thêm vào product
+// } & (AvailableParcel | NewParcel);
+
+// Helper type để check loại của parcel
+type ParcelType = 'new' | 'available';
+/////////
+
+
+const items: object[] = [];
+for (let i = 1; i <= 10; i++) {
+  const item: object  = {
+    parcel_no: `Item-${i}`,              // String identifier
+    expiration_date: new Date(Date.now() + i * 86400000), // Expiration date offset by days
+    quantity_of_stock: Math.floor(Math.random() * 100) + 1,
+    quantity: 1
+  };
+  items.push(item);
+}
+
+let parcelsdataFake: object[] = [];
+const randomCount = Math.floor(Math.random() * 10); // Random number of items to select
+
+for (let j = 0; j < randomCount; j++) {
+  const randomIndex = Math.floor(Math.random() * items.length); // Select a random index
+  const baseItem = items[randomIndex];
+  parcelsdataFake.push(baseItem);
+}
+//end face data
 
 @Component({
   selector: 'app-warehouse-import-form',
@@ -101,7 +164,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   ];
 
   parcels: object[] = [];
-
   columnsHeader = {
     '#': '#',
     'product_no': 'Mã hàng',
@@ -185,6 +247,362 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   @ViewChild('inputField') inputField: ElementRef;
   @ViewChild('quantityInput') quantityInputRef: ElementRef;
   @ViewChild('unitInput') unitInputRef: MatSelect;
+
+  ///////////////// coding danh sach lo adding /////////////////
+
+  separatorKeysCodes: number[] = [ENTER, COMMA];
+  parcelItemControls: Map<number, FormControl> = new Map();
+  parcelFilteredItems: Map<number, Observable<object[]>> = new Map();
+  available_product_parcels: Map<string, object[]> = new Map();
+  @ViewChild('parcelInput') parcelInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('auto') matAutocomplete!: MatAutocomplete;
+
+  // create input for each row
+  getItemControl(product_index: number) {
+    if(!this.parcelItemControls.has(product_index)) {
+      this.parcelItemControls.set(product_index, new FormControl());
+      this.setupFilteredItems(product_index);
+    }
+    return this.parcelItemControls.get(product_index)!;
+  }
+
+  // when click into a option of autocomplete chip
+  selected(event: MatAutocompleteSelectedEvent, id: number) {
+    if (event.option.value == null) {
+      return;
+    }
+    const parcel = event.option.value;
+    this.openAddAvailableParcelDialog(id, parcel);
+    this.getItemControl(id)?.setValue(null);
+  }
+
+  // set up fields for typing and filter
+  private setupFilteredItems(product_index: number) {
+    const control = this.parcelItemControls.get(product_index)!;
+    const filterItems = control.valueChanges.pipe(
+      startWith(''),
+      switchMap((searchText: string|null) => {
+          if(searchText===null || typeof searchText !== 'string'){
+            return this.getAvailableItems(product_index);
+          }
+          return this._filter(product_index, searchText);
+        }
+      ));
+    this.parcelFilteredItems.set(product_index, filterItems);
+  }
+
+  // get available parcel is not added to product_parcels
+  private getAvailableItems(product_index: number): Observable<any[]> {
+    const product = this.data[product_index];
+    const product_id = product.product_id.toString();
+    const existingParcelNos = new Set(product.product_parcels.map(item => item['parcel_no']));
+
+    return this.productSer.getParcelNew(product_id).pipe(
+      map(res => {
+
+        if (res) {
+          // remove unnecessary field
+          res = (res as object[]).map(item => ({
+            parcel_no: item['parcel_no'],
+            expiration_date: item['expiration_date'],
+            quantity_of_stock: item['quantity_of_stock']
+          }));
+          this.available_product_parcels.set(product_id, res as object[]);
+          const availableParcelNos = this.available_product_parcels.get(product_id)?.map(item => ({
+            parcel_no: item['parcel_no'],
+            expiration_date: item['expiration_date'],
+            quantity_of_stock: item['quantity_of_stock']
+          })) || [];
+
+          return availableParcelNos.filter(item => !existingParcelNos.has(item['parcel_no']));
+        }
+        return [];
+      })
+    );
+  }
+
+  // handle the filter function
+  private _filter(product_index: number, searchText: string): Observable<any[]> {
+    const filterValue = searchText.toLowerCase();
+    return this.getAvailableItems(product_index).pipe(
+      map(items => items.filter(item =>
+        item['parcel_no'].toLowerCase().includes(filterValue)
+      ))
+    );
+  }
+
+  // get the list of filter items match with the typing
+  getFilterItems(id: number) {
+    return this.parcelFilteredItems.get(id)!;
+  }
+
+  // handle when remove chip from list
+  remove(id: number, item: object): void {
+    // Find the product in the data source
+    const product = this.data[id];
+
+    if (!product) return;
+    // Find the index of the item to remove
+    const indexItem = product.product_parcels.findIndex(
+      parcel => parcel['parcel_no'] === item['parcel_no']
+    );
+    const parcel = product.product_parcels[indexItem];
+    // add it to
+    const currentFilteredItems = this.parcelFilteredItems.get(id);
+    let perhapAvailableParcel = this.isAvailableParcel(product.product_parcels[indexItem], id);
+    if (perhapAvailableParcel) {
+      const availableParcel = this.data[id].product_parcels.find(p => p['parcel_no'] === parcel['parcel_no']);
+      // const newAvailableParcel  = {...perhapAvailableParcel, ...availableParcel['quantity']};
+      const { quantity: _, ...rest } = perhapAvailableParcel as any;
+      const newAvailableParcel = {
+        ...rest,
+        quantity: availableParcel['quantity']
+      };
+      item=newAvailableParcel;
+    }
+    if (currentFilteredItems && perhapAvailableParcel) {
+      // Create new observable with the removed item added back
+      const updatedFilteredItems = currentFilteredItems.pipe(
+        map(items => [...items, item])  // Add the item back to the array
+      );
+
+      // Update the map with new observable
+      this.parcelFilteredItems.set(id, updatedFilteredItems);
+    }
+
+    // Remove the item if found (note: changed from > 0 to >= 0)
+    if (indexItem >= 0) {
+      product.product_parcels.splice(indexItem, 1);
+      // Trigger change detection by creating a new reference
+    }
+    const allQuantities = product.product_parcels.map(item => Number(item['quantity']));
+    product.quantity = allQuantities.reduce((acc, curr) => acc + curr, 0);
+    this.recalculateItem(id);
+    this.productDataSource.data = [...this.data];
+  }
+
+  // because the chip list have 2 type of parcel (new and old) -> need to distinguish them to display the corresponding dialog
+  isAvailableParcel(parcel: object, product_index: number):object {
+    const product_id = this.data[product_index].product_id.toString();
+    const availableParcels = this.available_product_parcels.get(product_id);
+    return availableParcels.find(item => item['parcel_no'] == parcel['parcel_no']);
+  }
+  tmp_new_parcel_data ={
+    parcel_no: '',
+    expiration_date: null,
+    quantity: null,
+  };
+
+  // handle open when click to "them lo moi" or chip button -> new parcel
+  openAddNewParcelDialog(product_index: number, parcel: NewParcel = null) {
+    // validate if needed
+    if (parcel) {
+      // Validate update case
+      if (!parcel.parcel_no || !parcel.expiration_date) {
+        console.error('Invalid parcel data for update');
+        return;
+      }
+    }
+    // end validate
+    const product_id = this.data[product_index].product_id.toString();
+    const dialogData: ParcelData = parcel?
+      {...parcel, product_id: product_id}
+      : {...this.tmp_new_parcel_data , product_id: product_id};
+    const parcelDialogRef  = this.dialog.open(WarehouseParcelFormDialogNewComponent, {
+      width: '30%',
+      data: dialogData,
+    })
+
+      parcelDialogRef.afterClosed().subscribe(result => {
+        console.log('Result: ', result);
+        if(!result){return;}
+
+        const product = this.data.find(u => u.product_id.toString() == product_id);
+        if (!product) return;
+
+        const itemRow: object = {
+          parcel_no: result.parcel_no,
+          expiration_date: result.expiration_date,
+          quantity: result.quantity
+        }
+        // there are 2 type of case using this dialog:
+        //  - create new one (form start with null)
+        //  - update new one (form start with value)
+
+        // handle update case
+        if (parcel){
+          const index = product.product_parcels.findIndex(p => p['parcel_no'] === parcel.parcel_no);
+          if (index >= 0) {
+            product.product_parcels[index] = itemRow;
+          } else {
+            console.error('Parcel not found for update');
+            return;
+          }
+        }
+        // handle add case
+        else{
+          // handle convert day
+          const effDate = new Date(result.expiration_date.getTime() + (420 * 60 * 1000));
+          itemRow['expiration_date'] = effDate.toISOString().split('T')[0];
+          product.product_parcels.push(itemRow);
+        }
+
+        //review later -> reviewed (17/1/2025)
+        const allQuantities = product.product_parcels.map(item => Number(item['quantity']));
+        product.quantity = allQuantities.reduce((acc, curr) => acc + curr, 0);
+      });
+    // calculate the sum of quantity = sum of quantity of parcel
+    this.recalculateItem(product_index);
+    this.productDataSource.data = [...this.data];
+  }
+
+  // handle open when click to option -> available (old) parcel
+  openAddAvailableParcelDialog(product_index: number, parcel: object = null) {
+    const parcelDialogRef  = this.dialog.open(WarehouseParcelFormDialogAvailableComponent, {
+      width: '30%',
+      data: parcel,
+    });
+    parcelDialogRef.afterClosed().subscribe(result => {
+      result = {
+        parcel_no: result.parcel_no,
+        expiration_date: result.expiration_date,
+        quantity: result.quantity
+      }
+      console.log('Result: ', result);
+      // validate if needed
+
+      // end validate
+      const product = this.data[product_index];
+      if (!product) return;
+      const existingParcelIndex = product.product_parcels.findIndex(
+        p => p['parcel_no'] === result.parcel_no
+      );
+
+      // there are 2 type of case using this dialog:
+      //  - create new one (form start with null)
+      //  - update new one (form start with value)
+      if (existingParcelIndex >= 0) {
+        // Update existing parcel
+        product.product_parcels[existingParcelIndex] = result;
+      } else {
+        // Add new parcel
+        product.product_parcels.push(result);
+      }
+      //remove it from available
+      if (this.parcelFilteredItems.has(product_index)) {
+        // Get current filtered items observable
+        const currentFilteredItems = this.parcelFilteredItems.get(product_index);
+
+        // Create new observable excluding the selected parcel
+        const updatedFilteredItems = currentFilteredItems?.pipe(
+          map(items => items.filter(item => item['parcel_no'] !== result.parcel_no))
+        );
+
+        // Update the map with new observable
+        if (updatedFilteredItems) {
+          this.parcelFilteredItems.set(product_index, updatedFilteredItems);
+        }
+      }
+
+      //review later -> reviewed (17/1/2025)
+      const allQuantities = product.product_parcels.map(item => Number(item['quantity']));
+      product.quantity = allQuantities.reduce((acc, curr) => acc + curr, 0);
+      this.recalculateItem(product_index);
+      this.productDataSource.data = [...this.data];
+    });
+  }
+
+  // handle when the chip is selected -> choose the right dialog to display
+  handleSelectChip(index: number, parcel: object) {
+    // because we have 2 type of chip -> need to check this is new or old parcel (by view the quantity_of_stock)
+    let perhapAvailableParcel = this.isAvailableParcel(parcel, index);
+    // handle old case
+    if (perhapAvailableParcel) {
+      const availableParcel = this.data[index].product_parcels.find(p => p['parcel_no'] === parcel['parcel_no']);
+      const { quantity: _, ...rest } = perhapAvailableParcel as any;
+      const newAvailableParcel = {
+        ...rest,
+        quantity: availableParcel['quantity']
+      };
+      this.openAddAvailableParcelDialog(index, newAvailableParcel);
+    }
+    // handle new case
+    else{
+      console.log("New: ", parcel);
+      this.openAddNewParcelDialog(index, parcel as NewParcel);
+    }
+  }
+
+  // handle open when click "chon lo" icon -> dialog show all new parcels and available parcels
+  openParcelSelectionDialog(product_index: number) {
+    const product = this.data[product_index];
+    const product_id = product.product_id.toString();
+    if (!product) return;
+    //const selectedAvailable = [...product.product_parcels, ...this.getAvailableItems(product_index)];
+    let availableItems = this.available_product_parcels.get(product_id);
+    // get all parcel from product_parcels and available_product_parcels
+    // handle missing field
+    const selectedAvailable = [
+      ...availableItems.map(availItem => {
+        const existingParcel = product.product_parcels.find(
+          p => p['parcel_no'] === availItem['parcel_no']
+        );
+        if (existingParcel){
+          return {
+            ...availItem,
+            quantity: existingParcel['quantity']
+          };
+        } else{
+          return availItem;
+        }
+      }),
+      ...product.product_parcels.filter(
+        productParcel => !availableItems.some(
+          availItem => availItem['parcel_no'] === productParcel['parcel_no']
+        )
+      )
+    ];
+    const dialogRef = this.dialog.open(WarehouseParcelFormDialogSelectComponent, {
+      width: '40%',
+      data: {
+        product_id: product.product_id,
+        selectedParcels: selectedAvailable
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) return;
+      const product = this.data[product_index];
+      if (!product) return;
+
+      // Update parcels with quantities
+      product.product_parcels = result;
+
+      // update available = start available - result (it means remove these parcel from available parcels)
+      const exist = this.parcelFilteredItems.has(product_index);
+      if (exist) {
+        // Get current filtered items observable
+        const currentFilteredItems = this.getAvailableItems(product_index);
+        // Create Set of selected parcel_no for efficient lookup
+        const selectedParcelNos = new Set(product.product_parcels.map(p => p['parcel_no']));
+        // Filter out items that are already in product_parcels
+        const updatedFilteredItems = currentFilteredItems.filter(item => !selectedParcelNos.has(item['parcel_no']));
+
+        // Update the map with new observable
+        if (updatedFilteredItems) {
+          this.parcelFilteredItems.set(product_index, updatedFilteredItems);
+        }
+      }
+
+      //review later -> reviewed (17/1/2025)
+      const allQuantities = product.product_parcels.map(item => Number(item['quantity']));
+      product.quantity = allQuantities.reduce((acc, curr) => acc + curr, 0);
+      this.recalculateItem(product_index);
+      this.productDataSource.data = [...this.data];
+    });
+  }
+  //end coding renew parcel dialog
+
   ngOnInit() {
     this.filterColumns = this.displayedColumns.map(col => `filter-${col}`);
     this.productDataSource = new MatTableDataSource();
@@ -216,7 +634,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     });
 
     optionStorePromise.then(() => {
-
       this.allPermission = sessionStorage.getItem('allPermission').split(',');
       this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
 
@@ -317,7 +734,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
           this.form.controls['status'].disable();
           this.form.controls['quantity'].disable();
-
           this.loadData();
         });
       } else {
@@ -457,14 +873,11 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       const newData = [];
 
       let productIdsStr = res.body.map(item=>item.product.id).join(",");
-
-
       const productFilter = new ProductFilter();
       productFilter.id = productIdsStr;
       productFilter.expand = 'quantity';
       this.productSer.getList(productFilter).subscribe(res1=>{
         let productData = res1.body;
-
         res.body.forEach(item => {
           const warehouseProduct = new WarehouseProduct();
           if (this.updateModelId !== null) {
@@ -665,7 +1078,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
    * @param product
    */
   onSelectedProduct(product) {
-
     if(this.searchMode){
 
       if(!product["productUnits"]){
@@ -674,9 +1086,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       }
 
       this.tempProductId = product.id;
-
       this.selectUnits = product["productUnits"];
-
       this.quantityInputRef.nativeElement.focus();
       return;
     }
@@ -736,6 +1146,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       }
     });
     if (productExits === 0) {
+
+
       this.productSer.getDetail(product_id, 'productUnits,quantity').subscribe(res => {
         const warehouseProduct = new WarehouseProduct();
         warehouseProduct.product_id = res['id'];
@@ -752,6 +1164,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         warehouseProduct.product_parcels = [];
         warehouseProduct.vat = 0;
         warehouseProduct.vat_type = 'price';
+        console.log("PRODUCT: ", warehouseProduct);
 
         if (res['productUnits'].length > 0) {
           res['productUnits'].sort((a, b) => (a.value > b.value) ? 1 : -1);
@@ -771,6 +1184,14 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         this.recalculateWarehouse();
         this.selectProduct.patchValue(null);
       });
+      // coding handle get parcel
+      this.productSer.getParcel(product_id).subscribe(res => {
+        console.log("parcel: ", res);
+        if (res) {
+          this.available_product_parcels.set(product_id, [res]);
+        }
+      });
+      // end
     } else {
       this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
       this.recalculateWarehouse();
@@ -844,6 +1265,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     }
   }
 
+
   recalculateItem(i) {
     if (this.data[i] !== undefined) {
       const price = numeral(this.data[i]['price']).value();
@@ -863,7 +1285,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           this.data[i]['amount'] = this.data[i]['amount'] + (this.data[i]['amount'] * vat) / 100;
         }
       }
-
       this.recalculateWarehouse();
     }
   }
@@ -1030,7 +1451,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         });
         this.data[index]['quantity'] = quantity;
         this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
-
         this.recalculateWarehouse();
       }
       // console.log(result);
@@ -1404,6 +1824,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       if (result['event'] === 'Save') {
         this.handleAddProductToList(result['data']['id']);
       }
+
     });
   }
 
@@ -1585,4 +2006,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     }
     this.selectedProducts = [];
   }
+
+
+
 }

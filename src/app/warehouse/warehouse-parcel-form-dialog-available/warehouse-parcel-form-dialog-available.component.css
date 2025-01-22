@@ -1,0 +1,13 @@
+.quantity_parcel{
+  width: 50%;
+}
+/* Individual form field */
+.form-field {
+  margin-bottom: 8px; /* Tăng khoảng cách giữa form field và error text */
+}
+
+/*!* Error message *!*/
+/*mat-error {*/
+/*  top: 4px;*/
+/*  margin-top: 9px;*/
+/*}*/

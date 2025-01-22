@@ -1,0 +1,44 @@
+
+  <h2 mat-dialog-title>Chọn lô, hạn sử dụng</h2>
+
+  <mat-dialog-content>
+    <mat-form-field appearance="outline" class="search-field">
+      <input matInput placeholder="Tìm lô, hạn sử dụng" [formControl]="searchControl">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <div class="parcels-list">
+      <div *ngFor="let parcel of filteredParcels" class="parcel-item">
+        <div class="parcel-info">
+          <mat-chip [class.selected]="isSelected(parcel)"
+                    (click)="toggleParcelSelection(parcel)"
+                    [ngClass]="{'active': parcel.quantity > 0}">
+            {{parcel['parcel_no']}} - {{parcel['expiration_date'] | date:'dd/MM/yyyy'}}
+            <ng-container *ngIf="parcel['quantity_of_stock']">
+              - Tồn: {{parcel['quantity_of_stock']}}
+            </ng-container>          </mat-chip>
+        </div>
+        <div class="quantity-control">
+          <button mat-button class="quantity-button" (click)="decrement(parcel)">
+            <mat-icon>remove</mat-icon>
+          </button>
+
+          <input type="number"
+                 [(ngModel)]="parcel.quantity"
+                 class="quantity-input">
+
+          <button mat-button class="quantity-button" (click)="increment(parcel)">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-raised-button mat-button color="primary" (click)="onSave()"  tabindex="4"><mat-icon>save</mat-icon> Ok</button>
+    <button mat-raised-button mat-button  (click)="onCancel()"><mat-icon>cancel</mat-icon> Bỏ qua</button>
+    <!--    <button mat-button (click)="onCancel()">Bỏ qua</button>-->
+    <!--    <button mat-button color="primary" (click)="onSave()">Lưu</button>-->
+  </mat-dialog-actions>
+
