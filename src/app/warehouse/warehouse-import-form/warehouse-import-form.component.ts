@@ -43,6 +43,7 @@ import { WarehouseUnitCreateDialogComponent } from '../warehouse-unit-create-dia
 import { WarehouseFormAmountComponent } from '../warehouse-form-amount/warehouse-form-amount.component';
 import { MatSelect } from '@angular/material/select';
 import { MatSelectionList, MatSelectionListChange } from '@angular/material/list';
+import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 
 
 @Component({
@@ -75,7 +76,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   @ViewChild('productList') productList: MatSelectionList;
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
   @ViewChild('selectColumn') selectColumn;
-
+  @ViewChild('chooseProduct') matAutocomplete: MatAutocomplete;
+  @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
+  
   selectedProducts: Product[] = [];
   selectProduct = new FormControl();
   selectQuantity = new FormControl();
@@ -769,12 +772,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         });
         this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
         this.recalculateWarehouse();
-        this.selectProduct.patchValue(null);
+        // this.selectProduct.patchValue(null, { emitEvent : false });      
       });
     } else {
       this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
       this.recalculateWarehouse();
-      this.selectProduct.patchValue(null);
+      // this.selectProduct.patchValue(null, { emitEvent : false });
     }
   }
   handleAddProductToListWithQuickAdd(product_id) {
@@ -1603,5 +1606,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       this.handleAddProductToList(product.id);
     }
     this.selectedProducts = [];
+    this.productList.deselectAll();
+    this.autocompleteTrigger.closePanel();
   }
 }

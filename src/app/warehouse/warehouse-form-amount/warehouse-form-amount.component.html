@@ -14,7 +14,7 @@
     <div fxLayout="row wrap" class="row-wrap">
       <div fxFlex="auto">
         <mat-form-field style="text-align: right; font-size: 16px">
-          <input matInput  tabindex="1" formControlName="final_amount" type="text" min="0" autocomplete="off">
+          <input matInput  tabindex="1" formControlName="final_amount" (input)="onNumberInput($event, 'final_amount')" type="text" min="0" autocomplete="off">
         </mat-form-field>
       </div>
     </div>
