@@ -61,6 +61,8 @@ import {
 import {
   WarehouseParcelFormDialogSelectComponent
 } from "../warehouse-parcel-form-dialog-select/warehouse-parcel-form-dialog-select.component";
+import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from "@angular/material/core";
+import {MomentDateAdapter} from "@angular/material-moment-adapter";
 
 
 /////////////coding fake data
@@ -98,7 +100,28 @@ for (let j = 0; j < randomCount; j++) {
   selector: 'app-warehouse-import-form',
   templateUrl: './warehouse-import-form.component.html',
   styleUrls: ['./warehouse-import-form.component.css'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  providers: [
+    {
+      provide: DateAdapter,
+      useClass: MomentDateAdapter,
+      deps: [MAT_DATE_LOCALE]
+    },
+    {
+      provide: MAT_DATE_FORMATS,
+      useValue: {
+        parse: {
+          dateInput: 'DD/MM/YYYY',
+        },
+        display: {
+          dateInput: 'DD/MM/YYYY',
+          monthYearLabel: 'MMM YYYY',
+          dateA11yLabel: 'LL',
+          monthYearA11yLabel: 'MMMM YYYY',
+        },
+      },
+    }
+  ]
 })
 export class WarehouseImportFormComponent extends ListComponentBase implements OnInit {
 
@@ -433,8 +456,11 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         // handle add case
         else{
           // handle convert day
-          const effDate = new Date(result.expiration_date.getTime() + (420 * 60 * 1000));
-          itemRow['expiration_date'] = effDate.toISOString().split('T')[0];
+          const new_date = result.expiration_date._d;
+          itemRow['expiration_date'] = new_date.toISOString().split('T')[0];
+
+          // const effDate = new Date(result.expiration_date.getTime() + (420 * 60 * 1000));
+          // itemRow['expiration_date'] = effDate.toISOString().split('T')[0];
           product.product_parcels.push(itemRow);
         }
 
@@ -981,8 +1007,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         data['expensesTransactions'] = this.expensesTransactions;
         if (this.form.controls['date'].value !== null) {
           if (typeof this.form.controls['date'].value === 'object') {
-            const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
-            data['date'] = effDate.toISOString().split('T')[0];
+            // const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
+            // data['date'] = effDate.toISOString().split('T')[0];
+            const new_date = this.form.controls['date'].value._d;
+            data['date'] = new_date.toISOString().split('T')[0];
           } else {
             // @@ NGHIA
             const effDate = this.form.controls['date'].value;

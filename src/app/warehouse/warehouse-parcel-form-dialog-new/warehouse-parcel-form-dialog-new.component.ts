@@ -1,6 +1,8 @@
 import {Component, Inject, OnInit, Optional} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from "@angular/material/dialog";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from "@angular/material/core";
+import {MomentDateAdapter} from "@angular/material-moment-adapter";
 
 export interface ParcelData  {
   parcel_no: string;
@@ -16,6 +18,27 @@ export interface ParcelData  {
   selector: 'app-warehouse-parcel-form-dialog-new',
   styleUrls: ['./warehouse-parcel-form-dialog-new.component.css'],
   templateUrl: './warehouse-parcel-form-dialog-new.component.html',
+  providers: [
+    {
+      provide: DateAdapter,
+      useClass: MomentDateAdapter,
+      deps: [MAT_DATE_LOCALE]
+    },
+    {
+      provide: MAT_DATE_FORMATS,
+      useValue: {
+        parse: {
+          dateInput: 'DD/MM/YYYY',
+        },
+        display: {
+          dateInput: 'DD/MM/YYYY',
+          monthYearLabel: 'MMM YYYY',
+          dateA11yLabel: 'LL',
+          monthYearA11yLabel: 'MMMM YYYY',
+        },
+      },
+    }
+  ]
 })
 export class WarehouseParcelFormDialogNewComponent implements OnInit {
   parcelForm: FormGroup;
