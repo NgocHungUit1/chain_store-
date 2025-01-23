@@ -80,16 +80,16 @@ export class WarehouseFormPriceDialogComponent implements OnInit {
     // Early return for percentage-based VAT and discount
     if (controlName === "vat" && this.vat_type === "percent") return;
     if (controlName === "discount" && this.discount_type === "percent") return;
-    
+
     // Get the current form control and its current value
     const control = this.form.get(controlName);
 
     // Remove existing commas from the input
     let inputValue = event.target.value.replace(/,/g, '');
-    
+
     // Convert to number for validation
     const numValue = Number(inputValue);
-    
+
     if (!isNaN(numValue)) {
         const formattedValue = numeral(numValue).format('0,0');
         event.target.value = formattedValue;
@@ -103,7 +103,6 @@ export class WarehouseFormPriceDialogComponent implements OnInit {
 
   submit() {
     const data = this.form.getRawValue();
-    debugger;
     this.dialogRef.close(data);
   }
 

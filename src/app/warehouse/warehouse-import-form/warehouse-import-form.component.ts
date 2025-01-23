@@ -404,7 +404,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
       parcelDialogRef.afterClosed().subscribe(result => {
         console.log('Result: ', result);
-        debugger;
         if(!result){return;}
 
         const product = this.data.find(u => u.product_id.toString() == product_id);
@@ -1261,7 +1260,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   recalculateItem(i) {
-    debugger;
     if (this.data[i] !== undefined) {
       const price = numeral(this.data[i]['price']).value();
       if (this.data[i]['discount_type'] === 'price') {
