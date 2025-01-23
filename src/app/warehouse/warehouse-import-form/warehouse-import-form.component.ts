@@ -457,7 +457,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         else{
           // handle convert day
           const new_date = result.expiration_date._d;
-          itemRow['expiration_date'] = new_date.toISOString().split('T')[0];
+          const adjusted_date = new Date(new_date.getTime() + (7 * 60 * 60 * 1000)); // Add 7 hours
+          itemRow['expiration_date'] = adjusted_date.toISOString().split('T')[0];
 
           // const effDate = new Date(result.expiration_date.getTime() + (420 * 60 * 1000));
           // itemRow['expiration_date'] = effDate.toISOString().split('T')[0];
@@ -1010,7 +1011,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
             // const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
             // data['date'] = effDate.toISOString().split('T')[0];
             const new_date = this.form.controls['date'].value._d;
-            data['date'] = new_date.toISOString().split('T')[0];
+            const adjusted_date = new Date(new_date.getTime() + (7 * 60 * 60 * 1000)); // Add 7 hours
+            data['date'] = adjusted_date.toISOString().split('T')[0];
           } else {
             // @@ NGHIA
             const effDate = this.form.controls['date'].value;
