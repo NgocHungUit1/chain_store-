@@ -23,7 +23,7 @@
                  formControlName="expiration_date">
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
-          <mat-error class="field-error" *ngIf="parcelForm.get('expiration_date')?.invalid && parcelForm.get('expiration_date')?.touched">
+          <mat-error class="field-error" *ngIf="parcelForm.get('expiration_date')?.errors?.required">
             Hạn sử dụng là bắt buộc
           </mat-error>
         </mat-form-field>
