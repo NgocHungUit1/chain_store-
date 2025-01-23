@@ -62,7 +62,9 @@ import {
   WarehouseParcelFormDialogSelectComponent
 } from "../warehouse-parcel-form-dialog-select/warehouse-parcel-form-dialog-select.component";
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from "@angular/material/core";
-import {MomentDateAdapter} from "@angular/material-moment-adapter";
+import {MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter} from "@angular/material-moment-adapter";
+import {MY_FORMATS} from "../../sale/sale-main/sale-main.component";
+import {DatePipe} from "@angular/common";
 
 
 /////////////coding fake data
@@ -73,7 +75,6 @@ export interface NewParcel {
   quantity: number;
 }
 /////////
-
 
 const items: object[] = [];
 for (let i = 1; i <= 10; i++) {
@@ -101,26 +102,17 @@ for (let j = 0; j < randomCount; j++) {
   templateUrl: './warehouse-import-form.component.html',
   styleUrls: ['./warehouse-import-form.component.css'],
   encapsulation: ViewEncapsulation.None,
+  // use like sale-main component
+  // (but I think the good way is adding it into the module instead of component)
+  // maybe need to be refactored later
   providers: [
+    DatePipe,
     {
       provide: DateAdapter,
       useClass: MomentDateAdapter,
-      deps: [MAT_DATE_LOCALE]
+      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
     },
-    {
-      provide: MAT_DATE_FORMATS,
-      useValue: {
-        parse: {
-          dateInput: 'DD/MM/YYYY',
-        },
-        display: {
-          dateInput: 'DD/MM/YYYY',
-          monthYearLabel: 'MMM YYYY',
-          dateA11yLabel: 'LL',
-          monthYearA11yLabel: 'MMMM YYYY',
-        },
-      },
-    }
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ]
 })
 export class WarehouseImportFormComponent extends ListComponentBase implements OnInit {
@@ -455,11 +447,13 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         }
         // handle add case
         else{
-          // handle convert day
+
+          // handle convert day with momentAdapter to fix the typing date bug
           const new_date = result.expiration_date._d;
           const adjusted_date = new Date(new_date.getTime() + (7 * 60 * 60 * 1000)); // Add 7 hours
           itemRow['expiration_date'] = adjusted_date.toISOString().split('T')[0];
 
+          // this is the deprecated code
           // const effDate = new Date(result.expiration_date.getTime() + (420 * 60 * 1000));
           // itemRow['expiration_date'] = effDate.toISOString().split('T')[0];
           product.product_parcels.push(itemRow);
@@ -1008,10 +1002,14 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         data['expensesTransactions'] = this.expensesTransactions;
         if (this.form.controls['date'].value !== null) {
           if (typeof this.form.controls['date'].value === 'object') {
-            // const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
-            // data['date'] = effDate.toISOString().split('T')[0];
+            // handle convert day with momentAdapter to fix the typing date bug
             const new_date = this.form.controls['date'].value._d;
             const adjusted_date = new Date(new_date.getTime() + (7 * 60 * 60 * 1000)); // Add 7 hours
+
+            // this is the deprecated code
+            // const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
+            // data['date'] = effDate.toISOString().split('T')[0];
+
             data['date'] = adjusted_date.toISOString().split('T')[0];
           } else {
             // @@ NGHIA
