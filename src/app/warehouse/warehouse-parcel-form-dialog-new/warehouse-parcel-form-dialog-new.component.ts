@@ -45,7 +45,6 @@ export class WarehouseParcelFormDialogNewComponent implements OnInit {
     }
   }
   onSave(): void {
-    debugger;
     if (this.parcelForm.valid) {
 
       this.dialogRef.close(this.parcelForm.value);
