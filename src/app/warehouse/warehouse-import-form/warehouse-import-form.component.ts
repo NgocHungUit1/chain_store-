@@ -1933,7 +1933,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
     ref.afterClosed().subscribe(result => {
       if (result) {
-        debugger;
 
         const el = this.data[index];
         const am = numeral(result.final_amount).value();
