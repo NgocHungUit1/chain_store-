@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Thêm mới lô cho {{data['product_id']}}</h2>
+<h2 mat-dialog-title>Thêm mới lô cho {{data['product_name']}} ({{data['product_no']}})</h2>
 
 <form [formGroup]="parcelForm" (ngSubmit)="onSave()">
   <mat-dialog-content style="overflow: visible">

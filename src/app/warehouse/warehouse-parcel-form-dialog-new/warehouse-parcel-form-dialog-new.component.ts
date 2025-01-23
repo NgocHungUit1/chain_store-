@@ -7,6 +7,8 @@ export interface ParcelData  {
   expiration_date: Date;
   quantity: number;
   product_id: string;
+  product_name: string;
+  product_no: string;
 }
 
 
