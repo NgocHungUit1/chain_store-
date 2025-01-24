@@ -1003,9 +1003,15 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         if (this.form.controls['date'].value !== null) {
           if (typeof this.form.controls['date'].value === 'object') {
             // handle convert day with momentAdapter to fix the typing date bug
-            const new_date = this.form.controls['date'].value._d;
-            const adjusted_date = new Date(new_date.getTime() + (7 * 60 * 60 * 1000)); // Add 7 hours
-
+            let adjusted_date;
+            // handle case date not change (don't use moment) because of missing _d
+            if(!this.form.controls['date'].value._d) {
+              adjusted_date = this.form.controls['date'].value;
+            }
+            else{
+              const new_date = this.form.controls['date'].value._d;
+               adjusted_date = new Date(new_date.getTime() + (7 * 60 * 60 * 1000)); // Add 7 hours
+            }
             // this is the deprecated code
             // const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
             // data['date'] = effDate.toISOString().split('T')[0];
