@@ -32,7 +32,7 @@
           </button>
           <mat-autocomplete #chooseProduct="matAutocomplete" [displayWith]="displayProductFn" (optionSelected)="onSelectedProduct($event.option.value)">
             <mat-option [style.display]="'none'"></mat-option>
-            <ng-container *ngIf="searchMode">
+            <ng-container *ngIf="searchMode || !allow_multiple_select">
               <mat-option fxLayout="row" *ngFor="let product of filteredProducts | async" [value]="product"
                             style="min-height: 100px !important; line-height:20px !important;"
                             title="{{ product.product_name }}"
@@ -58,7 +58,7 @@
                 <mat-divider></mat-divider>
               </mat-option>
             </ng-container>
-            <ng-container *ngIf="!searchMode">
+            <ng-container *ngIf="!searchMode && allow_multiple_select">
               <mat-selection-list #productList [multiple]="true"
                 (selectionChange)="onProductSelectionChange($event)"
                 class = "custom-selection-list">
@@ -192,6 +192,10 @@
             <div class='d-flex' style='justify-content: space-between'>
               <div>Chỉnh sửa Thành tiền</div>
               <div><mat-slide-toggle color='primary' (click)='toggleAmountAdjustColumn()' [checked]='allow_amount_adjust'></mat-slide-toggle></div>
+            </div>
+            <div class='d-flex' style='justify-content: space-between'>
+              <div>Chọn nhiều hàng hóa</div>
+              <div><mat-slide-toggle color='primary' (click)='toggleMultipleSelectColumn()' [checked]='allow_multiple_select'></mat-slide-toggle></div>
             </div>
             <div class='d-flex' style='justify-content: space-between'>
               <div>Bộ lọc</div>

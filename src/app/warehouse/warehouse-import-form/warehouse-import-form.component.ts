@@ -161,6 +161,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   searchMode = localStorage.getItem("importForm-searchMode") ? JSON.parse(localStorage.getItem("importForm-searchMode")) : false;
   submitted = false;
   allow_amount_adjust = localStorage.getItem("importForm-allowAmountAdjust") ? JSON.parse(localStorage.getItem("importForm-allowAmountAdjust")) : false;
+  allow_multiple_select = localStorage.getItem("importForm-allowMultipleSelect") ? JSON.parse(localStorage.getItem("importForm-allowMultipleSelect")) : false;
   statuses = [
     {id: '10', name: 'Hoàn thành'},
     {id: '9', name: 'Lưu tạm'},
@@ -2014,6 +2015,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     setTimeout(()=>{
       this.allow_amount_adjust = !this.allow_amount_adjust;
       localStorage.setItem("importForm-allowAmountAdjust", JSON.stringify(this.allow_amount_adjust));
+    })
+  }
+  toggleMultipleSelectColumn(){
+    setTimeout(()=>{
+      this.allow_multiple_select = !this.allow_multiple_select;
+      localStorage.setItem("importForm-allowMultipleSelect", JSON.stringify(this.allow_multiple_select));
     })
   }
   isIncludes(column) {
