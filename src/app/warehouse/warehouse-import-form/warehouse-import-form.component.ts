@@ -178,7 +178,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     'product_unit_id': 'Đơn vị',
     'inventory_quantity': 'Tồn kho',
     'quantity': 'Tổng SL',
-    'price': 'Giá vốn',
+    'price': 'Đơn giá',
     'sell_price': 'Giá bán',
     // 'discount': 'Chiết khấu',//'Giảm giá',
     'amount': 'Thành tiền',
