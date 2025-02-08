@@ -183,6 +183,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     // 'discount': 'Chiết khấu',//'Giảm giá',
     'amount': 'Thành tiền',
     'actions': 'Hành động',
+    'add_row': 'Thêm dòng'
   };
   showFilters = localStorage.getItem("importForm-showFilters") ? JSON.parse(localStorage.getItem("importForm-showFilters")) : false;
   tempDataForQuickFilter = [];
@@ -203,6 +204,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     // 'discount',
     'amount',
     'actions',
+    'add_row'
   ];
   columnsToDisplay: string[] = [
     'image',
@@ -218,6 +220,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     // 'discount',
     'amount',
     'actions',
+    'add_row'
   ];
   data: WarehouseProduct[] = [];
   productDataSource = new MatTableDataSource<WarehouseProduct>([]);
@@ -252,8 +255,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   @ViewChild('inputField') inputField: ElementRef;
   @ViewChild('quantityInput') quantityInputRef: ElementRef;
   @ViewChild('unitInput') unitInputRef: MatSelect;
-
-  ///////////////// coding danh sach lo adding /////////////////
 
   separatorKeysCodes: number[] = [ENTER, COMMA];
   parcelItemControls: Map<number, FormControl> = new Map();
@@ -424,7 +425,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         console.log('Result: ', result);
         if(!result){return;}
 
-        const product = this.data.find(u => u.product_id.toString() == product_id);
+        const product = this.data[product_index];
         if (!product) return;
 
         const itemRow: object = {
@@ -448,7 +449,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         }
         // handle add case
         else{
-
           // handle convert day with momentAdapter to fix the typing date bug
           const new_date = result.expiration_date._d;
           const adjusted_date = new Date(new_date.getTime() + (7 * 60 * 60 * 1000)); // Add 7 hours
@@ -481,10 +481,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         expiration_date: result.expiration_date,
         quantity: result.quantity
       }
-      console.log('Result: ', result);
-      // validate if needed
 
-      // end validate
       const product = this.data[product_index];
       if (!product) return;
       const existingParcelIndex = product.product_parcels.findIndex(
@@ -614,7 +611,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       this.productDataSource.data = [...this.data];
     });
   }
-  //end coding renew parcel dialog
 
   ngOnInit() {
     this.filterColumns = this.displayedColumns.map(col => `filter-${col}`);
@@ -1196,6 +1192,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         warehouseProduct.product_parcels = [];
         warehouseProduct.vat = 0;
         warehouseProduct.vat_type = 'price';
+        warehouseProduct.isSubItem= false;
+        warehouseProduct.description = '';
+        warehouseProduct.master_product_id=product_id;
 
         if (res['productUnits'].length > 0) {
           res['productUnits'].sort((a, b) => (a.value > b.value) ? 1 : -1);
@@ -1215,14 +1214,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         this.recalculateWarehouse();
         // this.selectProduct.patchValue(null, { emitEvent : false });
       });
-      // coding handle get parcel
       this.productSer.getParcel(product_id).subscribe(res => {
         console.log("parcel: ", res);
         if (res) {
           this.available_product_parcels.set(product_id, [res]);
         }
       });
-      // end
     } else {
       this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
       this.recalculateWarehouse();
@@ -2063,4 +2060,30 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     this.productList.deselectAll();
     this.autocompleteTrigger.closePanel();
   }
+
+  //coding add new row
+  addNewRow(i: number) {
+    const oldItem = this.data[i];
+    const newItem = {...oldItem, description: '', master_product_id: oldItem.product_id, isSubItem: true, product_parcels: [], quantity: 0};
+    this.data.splice(i+1, 0, newItem);
+
+    this.productDataSource.data = [...this.data];
+    this.tempDataForQuickFilter = [...this.data];
+  }
+  shownNotes: Set<number> = new Set();  // Will store user IDs or indices of visible notes
+  // Add this method to check if note is shown
+  isNoteShown(i: number): boolean {
+    return this.shownNotes.has(i);
+  }
+  closeNote(index: number) {
+    this.shownNotes.delete(index);
+  }
+  toggleShowNote(i: number) {
+    if (this.shownNotes.has(i)) {
+      this.shownNotes.delete(i);
+    } else {
+      this.shownNotes.add(i);
+    }
+  }
+  // end coding
 }

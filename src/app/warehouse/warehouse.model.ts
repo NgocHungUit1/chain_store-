@@ -75,6 +75,10 @@ export class WarehouseProduct {
   productParcelsForViewHtml: string;
   vat: number;
   vat_type: string;
+  // new field for subItem feature
+  isSubItem: boolean;
+  master_product_id: number;
+  description: string;
 }
 
 export class WarehouseProductFilter extends ApiFilterBase {
