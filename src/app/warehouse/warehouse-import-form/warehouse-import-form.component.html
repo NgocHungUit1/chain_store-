@@ -277,9 +277,9 @@
                                 (click)="toggleShowNote(i)"
                                 class="note-button"
                                 [class.active]="isNoteShown(i)">
-                          <ng-container *ngIf="element.description; else noDescription">
+                          <ng-container *ngIf="element.note; else noDescription">
                             <span class="note-description">
-                              {{element.description}}
+                              {{element.note}}
                             </span>
                           </ng-container>
                           <ng-template #noDescription>
@@ -293,7 +293,7 @@
                       <div class="note-area open-close-container" *ngIf="isNoteShown(i)">
                         <textarea class="note-textarea"
                                   placeholder="Ghi chú..."
-                                  [(ngModel)]="element.description">
+                                  [(ngModel)]="element.note">
                         </textarea>
                       </div>
                     </div>

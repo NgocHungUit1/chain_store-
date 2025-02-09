@@ -204,7 +204,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     // 'discount',
     'amount',
     'actions',
-    'add_row'
+    //'add_row'
   ];
   columnsToDisplay: string[] = [
     'image',
@@ -1193,7 +1193,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         warehouseProduct.vat = 0;
         warehouseProduct.vat_type = 'price';
         warehouseProduct.isSubItem= false;
-        warehouseProduct.description = '';
+        warehouseProduct.note = '';
         warehouseProduct.master_product_id=product_id;
 
         if (res['productUnits'].length > 0) {
@@ -1397,11 +1397,38 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   removeProduct(i) {
     const newData = this.data;
-    const removedProduct = newData.splice(i, 1)[0];
+    // const removedProduct = newData.splice(i, 1)[0];
+    //
+    // this.tempDataForQuickFilter = this.tempDataForQuickFilter.filter(item=> item.product_id !== removedProduct.product_id);  // Update copy after removal
+    //this.data = newData;
 
-    this.tempDataForQuickFilter = this.tempDataForQuickFilter.filter(item=> item.product_id !== removedProduct.product_id);  // Update copy after removal
+    // we need to remove the subItem when remove the master Item
+    const selectedProduct = this.data[i];
 
-    this.data = newData;
+    // Filter out the selected product and its sub-items
+    if (selectedProduct.isSubItem) {
+      // If it's a sub-item, just remove that specific item
+      this.data = this.data.filter((item, index) => index !== i);
+    } else {
+      // If it's a master item, remove it and its sub-items
+      this.data = this.data.filter(item => {
+        return item !== selectedProduct &&
+          (!item.isSubItem || item.master_product_id !== selectedProduct.product_id);
+      });
+    }
+
+    // Update the tempDataForQuickFilter similarly
+    if (selectedProduct.isSubItem) {
+      this.tempDataForQuickFilter = this.tempDataForQuickFilter.filter((item, index) =>
+        index !== i
+      );
+    } else {
+      this.tempDataForQuickFilter = this.tempDataForQuickFilter.filter(item => {
+        return item !== selectedProduct &&
+          (!item.isSubItem || item.master_product_id  !== selectedProduct.product_id);
+      });
+    }
+
 
     this.recalculateWarehouse();
     this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
