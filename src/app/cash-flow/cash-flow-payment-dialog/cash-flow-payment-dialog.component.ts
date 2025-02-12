@@ -1,14 +1,17 @@
 import { Component, Inject, OnInit, Optional } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
-import { catchError, map, startWith } from 'rxjs/operators';
+import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 import { SupplierService } from '../../supplier/supplier.service';
 import { CashFlowService } from '../cash-flow.service';
-import { Supplier } from '../../supplier/supplier.model';
 import { of } from 'rxjs/internal/observable/of';
 import * as numeral from 'numeral';
+import {Supplier} from '../../supplier/supplier.model';
+import {Warehouse, WarehouseFilter} from '../../warehouse/warehouse.model';
+import {WarehouseService} from '../../warehouse/warehouse.service';
+import {InvoiceFilter} from '../../invoice/invoice.model';
 
 @Component({
   selector: 'app-cash-flow-payment-dialog',
@@ -19,8 +22,15 @@ export class CashFlowPaymentDialogComponent implements OnInit {
 
   form: FormGroup;
   loading = false;
+  isLoadingResults = false;
+  isSelectedSupplier = false;
   local_data: any;
   cash_flow_id: string = null;
+  public filteredSuppliers: Observable<Supplier[]>;
+
+  supplier: Supplier;
+
+  needToPayWarehouses: Warehouse[] = [];
 
   doi_tuong_nop_value: string[] = [
     'customer',
@@ -34,6 +44,15 @@ export class CashFlowPaymentDialogComponent implements OnInit {
     'employee': 'Nhân viên',
     'supplier': 'Nhà cung cấp',
     'orther': 'Khác',
+  };
+
+  methodValues: string[] = [
+    'supplier',
+    'other'
+  ];
+  methodLabels = {
+    'supplier': 'Chi nợ NCC',
+    'other': 'Chi khác',
   };
 
   fieldLabels = {
@@ -53,6 +72,7 @@ export class CashFlowPaymentDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<CashFlowPaymentDialogComponent>,
     public notifySer: NotifierService,
     public supplierService: SupplierService,
+    public warehouseService: WarehouseService,
     public cashFlowService: CashFlowService,
     private fb: FormBuilder,
     private dialog: MatDialog,
@@ -75,6 +95,7 @@ export class CashFlowPaymentDialogComponent implements OnInit {
     this.form = this.fb.group({
       no: [null, [Validators.required, Validators.maxLength(50)]],
       type: ['payment'],
+      method: ['supplier'],
       phone: [null],
       type_money: ['money'],
       doi_tuong_nop: [null, [Validators.required]],
@@ -103,10 +124,28 @@ export class CashFlowPaymentDialogComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
 
+    /**
+     * Tim kiem khach hang
+     */
+    this.filteredSuppliers = this.form.controls['ten_nguoi_nop'].valueChanges.pipe(
+      startWith(''),
+      // delay emits
+      debounceTime(300),
+      // use switch map so as to cancel previous subscribed events, before creating new once
+      switchMap(value => {
+        if (value !== '') {
+          // lookup from github
+          return this.lookupSupplier(value);
+        } else {
+          // if no value is present, return null
+          return of(null);
+        }
+      })
+    );
   }
 
   loadCashFlow(id) {
-    this.cashFlowService.getDetail(id).subscribe(cashFlow => {
+    this.cashFlowService.getDetail(id, 'items').subscribe(cashFlow => {
       // @ts-ignore
       const today = new Date(1000 * cashFlow['created_at']);
       const time = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
@@ -125,6 +164,34 @@ export class CashFlowPaymentDialogComponent implements OnInit {
         parent_table: cashFlow['parent_table']
       });
 
+      let ids = [];
+      let itemsData = {};
+      cashFlow.items.forEach((item, index) => {
+        ids.push(item.warehouse_id);
+        itemsData[item.warehouse_id] = item;
+      });
+
+      const filter = new WarehouseFilter();
+      filter.id = ids.join(',');
+      filter.pageSize = 200;
+      this.isLoadingResults = true;
+
+      let data = [];
+
+      this.warehouseService.getList(filter).subscribe(res => {
+        this.isLoadingResults = false;
+
+        res.body.forEach( (item, index) => {
+          let newItem = item;
+          newItem.need_to_pay_amount = itemsData[item.id]['need_to_process_amount'];
+          data.push(newItem);
+
+          this.form.addControl('needToPayWarehouses[' + index + ']', new FormControl(numeral(itemsData[item.id]['processed_amount']).format('0,0'), Validators.required));
+        });
+
+        this.needToPayWarehouses = data;
+      });
+
     });
   }
 
@@ -132,6 +199,19 @@ export class CashFlowPaymentDialogComponent implements OnInit {
     let date_created = '';
     if (this.form.valid) {
       const data = this.form.getRawValue();
+
+      let needToPayData = [];
+
+      this.needToPayWarehouses.forEach((item, index) => {
+        let needToPayItem = {
+          warehouse_id: item.id,
+          processed_amount: numeral(this.form.controls['needToPayWarehouses[' + index + ']'].value).value(),
+          need_to_process_amount: item['need_to_pay_amount']
+        };
+        needToPayData.push(needToPayItem);
+      });
+
+      data['warehouse_items'] = needToPayData;
 
       if (data['today'] !== null && typeof data['today'] === 'object') {
         let effDate;
@@ -201,7 +281,81 @@ export class CashFlowPaymentDialogComponent implements OnInit {
     event.target.value = numeral(event.target.value).format('0,0');
   }
 
+  onSelectedSupplier(supplier) {
+    // loadWarehouse need to pay
+    const filter = new WarehouseFilter();
+    filter.supplier_id = supplier.id;
+    filter.needToPay = 1;
+    filter.sort = 'created_at';
+    this.isLoadingResults = true;
 
+    let totalPaid = numeral(this.form.controls['value'].value ? this.form.controls['value'].value : 0).value();
+
+    this.warehouseService.getList(filter).subscribe(res => {
+      this.isLoadingResults = false;
+      let data = [];
+
+      res.body.forEach( (item, index) => {
+        let newItem = item;
+        let payItemAmount = item.remain_amount * -1;
+        newItem['need_to_pay_amount'] = payItemAmount;
+        data.push(newItem);
+
+        if (totalPaid >= payItemAmount) {
+          totalPaid -= payItemAmount;
+        } else {
+          payItemAmount = totalPaid;
+          totalPaid = 0;
+        }
+        this.form.addControl('needToPayWarehouses[' + index + ']', new FormControl(numeral(payItemAmount).format('0,0'), Validators.required));
+      });
+
+      this.needToPayWarehouses = data;
+    });
+    this.isSelectedSupplier = true;
+    this.form.controls['nguoi_nop_id'].patchValue(supplier.id);
+    this.form.controls['ten_nguoi_nop'].patchValue(supplier.name);
+  }
+
+  removeSupplier() {
+    this.form.controls['ten_nguoi_nop'].patchValue('');
+    this.form.controls['nguoi_nop_id'].patchValue(null);
+    this.isSelectedSupplier = false;
+    this.needToPayWarehouses.forEach((item, index) => {
+      this.form.removeControl('needToPayWarehouses[' + index + ']');
+    });
+    this.needToPayWarehouses = [];
+    this.supplier = null;
+  }
+
+  formatMoney(event: any, index) {
+    event.target.value = numeral(event.target.value).format('0,0');
+  }
+
+  shareItemAmount() {
+    let totalPaid = numeral(this.form.controls['value'].value ? this.form.controls['value'].value : 0).value();
+
+    this.needToPayWarehouses.forEach( (item, index) => {
+      let payItemAmount = item['need_to_pay_amount'];
+      if (totalPaid >= payItemAmount) {
+        totalPaid -= payItemAmount;
+      } else {
+        payItemAmount = totalPaid;
+        totalPaid = 0;
+      }
+      this.form.controls['needToPayWarehouses[' + index + ']'].patchValue(numeral(payItemAmount).format('0,0'));
+    });
+  }
+
+  sumTotalAmount() {
+    let totalAmount = 0;
+
+    this.needToPayWarehouses.forEach( (item, index) => {
+      totalAmount += numeral(this.form.controls['needToPayWarehouses[' + index + ']'].value).value();
+    });
+
+    this.form.controls['value'].patchValue(numeral(totalAmount).format('0,0'));
+  }
 
 
 }

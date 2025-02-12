@@ -330,7 +330,7 @@
                         type="text"
                         [formControl]="selectCustomer"
                         matInput
-                        [matAutocomplete]="chooseProduct"
+                        [matAutocomplete]="chooseCustomer"
                         placeholder="Tìm khách hàng (F4)"
                         [readonly]="localItemInvoice?.is_return == true"
                         #customerSearch />
@@ -338,7 +338,7 @@
                         <mat-icon>search</mat-icon>
                       </button>
                       <mat-autocomplete
-                        #chooseProduct="matAutocomplete"
+                        #chooseCustomer="matAutocomplete"
                         (optionSelected)="
                           onSelectedCustomer($event.option.value)
                         ">
@@ -404,7 +404,13 @@
                     *ngIf="isPointEnabled && customer"
                     class="customer-point"
                   >
-                    <span>Điểm: </span><span class="green">{{customer.total_point}}</span>
+                    <span>Điểm: </span><span class="green">{{customer.total_point | number}}</span>
+                  </div>
+                  <div
+                    *ngIf="customer && customer.total_debt > 0"
+                    class="customer-debt"
+                  >
+                    <span>Nợ: </span><span class="green">{{customer.total_debt | number}}</span>
                   </div>
                 </div>
               </div>

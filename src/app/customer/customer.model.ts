@@ -20,6 +20,7 @@ export class Customer {
   stt: number; // for view
   total_point: number;
   total_invoice: number;
+  total_debt: number;
 }
 
 

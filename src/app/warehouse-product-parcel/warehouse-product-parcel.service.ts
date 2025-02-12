@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment';
 import { AuthService } from '../authentication/auth.service';
 import {WarehouseProductParcel, WarehouseProductParcelFilter} from './warehouse-product-parcel.model';
 import {ProductFilter} from '../product/product.model';
+import {Group} from '../group/group.model';
 
 @Injectable({
   providedIn: 'root'
@@ -147,6 +148,11 @@ export class WarehouseProductParcelService {
     const _token = this.auth.getToken();
 
     return environment.apiUrl + '/warehouse-product-parcel/export?' + filter.toFilterString() + '&token=' + _token;
+  }
+
+  getDetail(id: string, expand: string) {
+    const url = environment.apiUrl + '/warehouse-product-parcel/' + id + '?expand=' + expand;
+    return this.http.get<WarehouseProductParcel>(url);
   }
 
 }

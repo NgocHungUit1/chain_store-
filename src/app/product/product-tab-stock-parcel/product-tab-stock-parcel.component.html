@@ -25,6 +25,17 @@
     <td mat-cell *matCellDef="let element"> {{ element.expiration_date }} </td>
   </ng-container>
 
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef> </th>
+    <td mat-cell *matCellDef="let element">
+      <button class="m-l-10" mat-raised-button color="primary" [disabled]="!canDo('Warehouse-Product-Parcel.Update')"
+              (click)="openChangeWarehouseProductStockFormDialog(element.id)">
+        <mat-icon>edit</mat-icon>
+        Cập nhật tồn kho
+      </button>
+    </td>
+  </ng-container>
+
   <tr mat-header-row *matHeaderRowDef="displayedColumns" class="header-element-row"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>

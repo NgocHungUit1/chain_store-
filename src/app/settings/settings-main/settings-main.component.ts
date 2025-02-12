@@ -55,6 +55,7 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
   isRateLimitReached = false;
   public connectForm: FormGroup;
   public storeForm: FormGroup;
+  public commForm: FormGroup;
   public pointSettingsForm: FormGroup;
 
   optionStore_transaction_expenses_order: OptionStore;
@@ -67,6 +68,9 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
   point_can_pay_by_point_after_invoices: OptionStore;
   point_dont_add_point_for_discount_invoice: OptionStore;
   point_dont_add_point_for_invoice_paid_by_point: OptionStore;
+
+  optionStore_comm_percent_product: OptionStore;
+  optionStore_comm_percent_invoice: OptionStore;
 
   needToSaveLogo = false;
   selectedFiles: ImageSnippet[] = [];
@@ -95,6 +99,11 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     this.storeForm = this.fb.group({
       description: [''],
       can_change_completed: [false],
+    });
+
+    this.commForm = this.fb.group({
+      comm_percent_product: [0],
+      comm_percent_invoice: [0],
     });
 
     this.pointSettingsForm = this.fb.group({
@@ -171,6 +180,16 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     this.optionStoreService.getValue('point_dont_add_point_for_invoice_paid_by_point').subscribe(res => {
       this.point_dont_add_point_for_invoice_paid_by_point = res;
       this.pointSettingsForm.patchValue({ point_dont_add_point_for_invoice_paid_by_point: res.value === 'true' });
+    });
+
+    this.optionStoreService.getValue('comm_percent_product').subscribe(res => {
+      this.optionStore_comm_percent_product = res;
+      this.commForm.patchValue({ comm_percent_product: res.value });
+    });
+
+    this.optionStoreService.getValue('comm_percent_invoice').subscribe(res => {
+      this.optionStore_comm_percent_invoice = res;
+      this.commForm.patchValue({ comm_percent_invoice: res.value });
     });
   }
 
@@ -321,6 +340,24 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
           this.notifySer.notify('success', 'Lưu thành công!');
         }
       });
+  }
+
+  saveComm() {
+    this.commForm.markAllAsTouched();
+    if (!this.commForm.valid) {
+      return;
+    }
+
+    const data = this.commForm.getRawValue();
+
+    this.optionStore_comm_percent_invoice.value = data['comm_percent_invoice'];
+    this.optionStore_comm_percent_product.value = data['comm_percent_product'];
+
+    this.optionStoreService.update(this.optionStore_comm_percent_invoice.id, this.optionStore_comm_percent_invoice).subscribe(res => {
+    });
+    this.optionStoreService.update(this.optionStore_comm_percent_product.id, this.optionStore_comm_percent_product).subscribe(res => {
+    });
+    this.notifySer.notify('success', 'Lưu thành công!');
   }
 
   async savePointSettings() {

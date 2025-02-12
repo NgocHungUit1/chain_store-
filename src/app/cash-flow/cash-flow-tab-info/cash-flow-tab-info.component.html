@@ -44,9 +44,13 @@
         </div>
 
         <div fxLayout="row wrap" *ngIf="cashFlow.parent_table !== null && cashFlow.parent_table !== undefined">
-          <div fxFlex="100">
+          <div fxFlex="100" *ngIf="cashFlow.type === 'receipt'">
+            Phiếu thu tự động được tạo gắn với {{ parentTableHeader[cashFlow.parent_table] }}
+            <a target="_blank" [routerLink]='"/transaction/invoice"' [queryParams]='{"InvoiceSearch[invoice_no]":cashFlow.code}'>{{ cashFlow.code }}</a>
+          </div>
+          <div fxFlex="100" *ngIf="cashFlow.type === 'payment'">
             Phiếu chi tự động được tạo gắn với {{ parentTableHeader[cashFlow.parent_table] }}
-            <span style="color:blue;"> {{cashFlow.code}} </span>
+            <a target="_blank" [routerLink]='"/transaction/warehouse"' [queryParams]='{"WarehouseSearch[keyword]":cashFlow.code}'>{{ cashFlow.code }}</a>
           </div>
         </div>
 
@@ -54,6 +58,49 @@
 
     </div>
   </div>
+
+  <div fxFlex="100" *ngIf="cashFlow.items.length > 0" style="margin-bottom: 10px;">
+    <table mat-table [dataSource]="cashFlow.items" class="">
+      <ng-container matColumnDef="#">
+        <th mat-header-cell *matHeaderCellDef class="text-center"> #</th>
+        <td mat-cell *matCellDef="let element;let i = index;" class="text-center"> {{i + 1}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="invoice_no">
+        <th mat-header-cell *matHeaderCellDef> Mã HĐ</th>
+        <td mat-cell *matCellDef="let element"><span *ngIf="this.invoiceData[element.invoice_id]">{{this.invoiceData[element.invoice_id].invoice_no}}</span></td>
+      </ng-container>
+
+      <ng-container matColumnDef="warehouse_no">
+        <th mat-header-cell *matHeaderCellDef> Mã HĐ</th>
+        <td mat-cell *matCellDef="let element"><span *ngIf="this.warehouseData[element.warehouse_id]">{{this.warehouseData[element.warehouse_id].no}}</span></td>
+      </ng-container>
+
+      <ng-container matColumnDef="invoice_date">
+        <th mat-header-cell *matHeaderCellDef> Ngày HĐ</th>
+        <td mat-cell *matCellDef="let element"><span *ngIf="this.invoiceData[element.invoice_id]">{{this.invoiceData[element.invoice_id]?.created_at * 1000 | date: 'dd/MM/yyyy'}}</span></td>
+      </ng-container>
+
+      <ng-container matColumnDef="warehouse_date">
+        <th mat-header-cell *matHeaderCellDef> Ngày HĐ</th>
+        <td mat-cell *matCellDef="let element"><span *ngIf="this.warehouseData[element.warehouse_id]">{{this.warehouseData[element.warehouse_id]?.created_at * 1000 | date: 'dd/MM/yyyy'}}</span></td>
+      </ng-container>
+
+      <ng-container matColumnDef="need_to_pay_amount">
+        <th mat-header-cell class="text-right" *matHeaderCellDef> Còn lại phải thanh toán</th>
+        <td mat-cell *matCellDef="let element" class="text-right"> {{element.need_to_process_amount | number }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="paid_amount">
+        <th mat-header-cell class="text-right" *matHeaderCellDef> Đã thanh toán</th>
+        <td mat-cell *matCellDef="let element" class="text-right"> {{element.processed_amount | number }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="this.cashFlow.type == 'receipt' ? ['#', 'invoice_no', 'invoice_date', 'need_to_pay_amount', 'paid_amount'] : ['#', 'warehouse_no', 'warehouse_date', 'need_to_pay_amount', 'paid_amount']" class="header-element-row"></tr>
+      <tr mat-row *matRowDef="let row; columns: this.cashFlow.type == 'receipt' ? ['#', 'invoice_no', 'invoice_date', 'need_to_pay_amount', 'paid_amount'] : ['#', 'warehouse_no', 'warehouse_date', 'need_to_pay_amount', 'paid_amount'];"></tr>
+    </table>
+  </div>
+
   <div fxFlex="100" align="end">
     <button class="m-r-10" mat-raised-button color="primary" (click)="openCashFlowReceiptDialog()">
       <mat-icon>edit</mat-icon>

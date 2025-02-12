@@ -1,5 +1,5 @@
 <div fxLayout="row" style="height: 100%">
-  <div fxFlex="75" style="height: 100%">
+  <div fxFlex="75" style="height: 100%; padding-right: 10px;">
     <mat-toolbar class="dv-header">
       <button mat-icon-button routerLink="/transaction/warehouse">
         <mat-icon>arrow_back</mat-icon>
@@ -8,10 +8,15 @@
       <div class='customer-filter-container'>
         <mat-form-field appearance='outline'
                         class='search-input'>
-          <input type="text" [formControl]="selectProduct" matInput [matAutocomplete]="chooseProduct"
+          <input
+          #inputField
+          type="text" [formControl]="selectProduct" matInput [matAutocomplete]="chooseProduct"
                  placeholder="Tìm hàng hóa theo mã hoặc tên">
           <button mat-icon-button matPrefix>
             <mat-icon>search</mat-icon>
+          </button>
+          <button mat-icon-button matSuffix [matTooltip]='"Thêm nhiều sản phẩm"' (click)="$event.stopImmediatePropagation();onAddProducts();" *ngIf='selectedProducts.length>0' style='color:#00fff7'>
+            <mat-icon>add_box</mat-icon>
           </button>
           <button mat-icon-button matSuffix [matTooltip]='"Chọn nhóm hàng"' (click)="$event.stopImmediatePropagation();openSearchProductDialog();">
             <mat-icon>list</mat-icon>
@@ -22,25 +27,55 @@
           <button mat-icon-button matSuffix [matTooltip]='"Thêm thuốc mới"' (click)="$event.stopImmediatePropagation();openProductMedicineDialog('Add', {});">
             <mat-icon>add_to_queue</mat-icon>
           </button>
-          <mat-autocomplete #chooseProduct="matAutocomplete" (optionSelected)="onSelectedProduct($event.option.value)">
-            <mat-option fxLayout="row" *ngFor="let product of filteredProducts | async" [value]="product"
-                        style="min-height: 70px; line-height:25px !important;"
-                        title="{{ product.product_name }}">
-              <img fxFlex="25" class="example-option-img" aria-hidden [src]="product.default_image" width="23">
-              <span fxFlex="75" style="margin-left: 5px; font-size: 13px;">
-                <b style="font-size: 12px;">{{ product.product_name }}</b><br>
-                {{ product.product_no }} &nbsp;  Giá : {{ product.original_price | number }}
-                &nbsp; - {{ product.base_unit }}
-              </span>
-              <mat-divider></mat-divider>
-            </mat-option>
+          <mat-autocomplete #chooseProduct="matAutocomplete" [displayWith]="displayProductFn" (optionSelected)="onSelectedProduct($event.option.value)">
+            <mat-option [style.display]="'none'"></mat-option>
+            <ng-container *ngIf="searchMode">
+              <mat-option fxLayout="row" *ngFor="let product of filteredProducts | async" [value]="product"
+                            style="min-height: 100px !important; line-height:25px !important;"
+                            title="{{ product.product_name }}"
+                            class="product-item">
+                  <img fxFlex="25" class="example-option-img" aria-hidden [src]="product.default_image" width="23">
+                  <span fxFlex="75" style="margin-left: 5px; font-size: 13px;" class = 'no-wrap'>
+                    <b style="font-size: 12px;">{{ product.product_name }}</b><br>
+                    {{ product.product_no }} &nbsp;  Giá : {{ product.original_price | number }}
+                    &nbsp; - {{ product.base_unit }} <br>
+                    Tồn kho: {{product.quantity.number}} <br>
+                    NSX: {{ product.manufacturerOne.name }}
+                  </span>
+                <mat-divider></mat-divider>
+              </mat-option>
+            </ng-container>
+            <ng-container *ngIf="!searchMode">
+              <mat-selection-list #productList [multiple]="true"
+                (selectionChange)="onProductSelectionChange($event)"
+                class = "custom-selection-list">
+                <mat-list-option *ngFor="let product of filteredProducts | async"
+                                [value]="product"
+                                checkboxPosition="before"
+                                style="height:100px !important; line-height:25px !important;"
+                                title="{{ product.product_name }}"
+                                class="product-item">
+                  <div fxLayout="row">
+                    <img fxFlex="25" class="example-option-img" aria-hidden [src]="product.default_image" width="23">
+                    <span fxFlex="75" style="margin-left: 5px; font-size: 13px;" class = 'no-wrap'>
+                      <b style="font-size: 12px;">{{ product.product_name }}</b><br>
+                      {{ product.product_no }} &nbsp; Giá : {{ product.original_price | number }}
+                      &nbsp; - {{ product.base_unit }} <br>
+                      Tồn kho: {{product.quantity.number}} <br>
+                      NSX: {{ product.manufacturerOne.name }}
+                    </span>
+                  </div>
+                  <mat-divider></mat-divider>
+                </mat-list-option>
+              </mat-selection-list>
+            </ng-container>
 
             <mat-option fxLayout="row" *ngFor="let medicine of filteredMedicines | async" [value]="medicine"
                         style="min-height: 70px; line-height:25px !important;"
                         title="{{ medicine.medicine_name }}">
-              <span fxFlex="100" style="margin-left: 5px; font-size: 13px;">
+              <span fxFlex="100" style="margin-left: 5px; font-size: 13px;" class = 'no-wrap'>
                 <b> {{ medicine.medicine_name }} </b> <br>
-                Nhà sản xuất: {{ medicine.manufacturer }}  <br>
+                NSX: {{ medicine.manufacturer }}  <br>
                 Mã thuốc: {{ medicine.medicine_no }} - Số đăng ký: {{ medicine.registration_no }}
                 - Đơn vị: {{ medicine.unit }}
               </span>
@@ -59,7 +94,38 @@
       </div>
 
 
+
+      <div  [hidden] = "!searchMode" style = "margin-left: 10px; font-size: 1rem;">
+        <mat-form-field appearance='outline'
+                        style="width:100px !important"
+                        class='search-input'>
+          <input #quantityInput type="number" [formControl]="selectQuantity" matInput
+                 placeholder="Số lượng" (keydown.enter)="onQuantityEnter()">
+        </mat-form-field>
+      </div>
+
+      <div  [hidden] = "!searchMode" style = "margin-left: 10px; font-size: 1rem;">
+        <mat-form-field appearance='outline' style="width:100px !important" class='search-input'>
+          <!-- Replace input with mat-select -->
+          <mat-select #unitInput [formControl]="selectUnit" placeholder="Đơn vị" (keydown.enter) = "onUnitEnter()">
+            <!-- Add options based on your needs -->
+            <mat-option *ngFor="let unit of selectUnits" [value]="unit">
+              {{unit.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+
       <div  fxFlex="1 1 0%"></div>
+      <button mat-raised-button
+        (click)="$event.stopImmediatePropagation();focusInput();"
+        [ngClass]="{'selected-button': searchMode}"
+        class='m-r-5 padding-x-10'
+        color ="primary">
+        <mat-icon>barcode_reader</mat-icon>
+      </button>
+
       <div style='position: relative'>
         <button mat-raised-button
                 class='m-r-5 padding-x-10'
@@ -79,16 +145,34 @@
               <div><mat-slide-toggle (click)='toggleColumn("product_unit_id")' color='primary' [checked]='isIncludes("product_unit_id")'></mat-slide-toggle></div>
             </div>
             <div class='d-flex' style='justify-content: space-between'>
+              <div>Tồn kho</div>
+              <div><mat-slide-toggle (click)='toggleColumn("inventory_quantity")' color='primary' [checked]='isIncludes("inventory_quantity")'></mat-slide-toggle></div>
+            </div>
+            <div class='d-flex' style='justify-content: space-between'>
               <div>Tổng SL</div>
               <div><mat-slide-toggle (click)='toggleColumn("quantity")' color='primary' [checked]='isIncludes("quantity")'></mat-slide-toggle></div>
             </div>
             <div class='d-flex' style='justify-content: space-between'>
-              <div>Giá nhập</div>
+              <div>Giá vốn</div>
               <div><mat-slide-toggle (click)='toggleColumn("price")' color='primary' [checked]='isIncludes("price")'></mat-slide-toggle></div>
             </div>
             <div class='d-flex' style='justify-content: space-between'>
-              <div>Thành tiền</div>
-              <div><mat-slide-toggle (click)='toggleColumn("amount")' color='primary' [checked]='isIncludes("amount")'></mat-slide-toggle></div>
+              <div>Giá bán</div>
+              <div><mat-slide-toggle (click)='toggleColumn("sell_price")' color='primary' [checked]='isIncludes("sell_price")'></mat-slide-toggle></div>
+            </div>
+            <div class='d-flex' style='justify-content: space-between'>
+              <div>Chỉnh sửa Thành tiền</div>
+              <div><mat-slide-toggle color='primary' (click)='toggleAmountAdjustColumn()' [checked]='allow_amount_adjust'></mat-slide-toggle></div>
+            </div>
+            <div class='d-flex' style='justify-content: space-between'>
+              <div>Bộ lọc</div>
+              <div>
+                <mat-slide-toggle
+                  (click)='toggleFilters()'
+                  color='primary'
+                  [checked]='showFilters'>
+                </mat-slide-toggle>
+              </div>
             </div>
           </div>
         </app-popover>
@@ -131,28 +215,49 @@
             <table mat-table [dataSource]="productDataSource" class="table warehouse-product-table no-wrap ">
 
               <ng-container matColumnDef="#">
-                <th mat-header-cell *matHeaderCellDef style="width: 25px;"> #</th>
+                <th mat-header-cell *matHeaderCellDef style="min-width: 35px;"> #</th>
                 <td mat-cell
-                    style="padding-top: 28px; vertical-align: top" *matCellDef="let element; let i = index;"> {{i + 1}}</td>
+                    style="padding-top: 10px; vertical-align: top" *matCellDef="let element; let i = index;"> {{i + 1}}</td>
+              </ng-container>
+
+              <!-- Index Filter -->
+              <ng-container matColumnDef="filter-#">
+                <th mat-header-cell *matHeaderCellDef style="min-width:35px"></th>
               </ng-container>
 
               <ng-container matColumnDef="product_name">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_name']}}</th>
+                <th mat-header-cell *matHeaderCellDef style="min-width:200px"> {{columnsHeader['product_name']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index" title="{{ element.product.product_name }}"
-                    style="padding-top: 1.5rem; vertical-align: top;">
+                    style="padding-top: 1.5rem; vertical-align: top">
 
-                  <span style="word-wrap: break-word; white-space: initial;">{{ element.product.product_name }}</span>
+                  <strong>
+                    <span *ngIf="element.product.product_name.length > 45">{{ element.product.product_name | slice:0:45 }}
+                      ...
+                    </span>
+                    <span *ngIf="element.product.product_name.length <= 45">{{ element.product.product_name }}</span>
+                  </strong>
                 </td>
               </ng-container>
 
+              <!-- Product Name Filter -->
+              <ng-container matColumnDef="filter-product_name">
+                <th mat-header-cell *matHeaderCellDef style="min-width:200px">
+                  <mat-form-field appearance="outline" class="w-full quick-filter-input">
+                    <input matInput (keyup)="applyFilter($event, 'product_name')" placeholder="Tìm tên sản phẩm">
+                  </mat-form-field>
+                </th>
+              </ng-container>
+
+              <!-- Product Number Column -->
+
               <ng-container matColumnDef="product_no">
-                <th mat-header-cell *matHeaderCellDef style='width: 250px;'> {{columnsHeader['product_no']}}</th>
+                <th mat-header-cell *matHeaderCellDef style='min-width: 80px;'> {{columnsHeader['product_no']}}</th>
                 <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
                   <div class="span-product-no" style='margin-bottom: 0.5rem;'>{{ element.product.product_no }}</div>
 
                   <div class='custom-filter-container warehouse-input'>
                     <mat-form-field  appearance='outline'
-                                     class='search-input' style='width: 100%!important; padding-left: 0'>
+                                     class='search-input' style='width: 250px!important; padding-left: 0'>
 
                       <mat-select multiple [(ngModel)]="data[i]['product_parcels']"
                                   (selectionChange)="onParcelSelectedChange(i, $event.value)"
@@ -173,10 +278,20 @@
                 </td>
               </ng-container>
 
+              <!-- Product No Filter -->
+              <ng-container matColumnDef="filter-product_no">
+                <th mat-header-cell *matHeaderCellDef style="min-width:80px">
+                  <mat-form-field appearance="outline" class="w-full quick-filter-input">
+                    <input matInput (keyup)="applyFilter($event, 'product_no')" placeholder="Tìm mã sản phẩm">
+                  </mat-form-field>
+                </th>
+              </ng-container>
+
+              <!-- Image Column -->
               <ng-container matColumnDef="image">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['image']}}</th>
                 <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; width: 100px' *matCellDef="let element; let i = index">
-                  <div style='width: 50px; height: 50px; object-fit: contain; border: 1px solid #c0c0c0'>
+                  <div style='width: 50px; height: 50px; object-fit: contain; border: 1px solid #c0c0c0; margin: 0 auto'>
                       <ng-container *ngIf='!element.product?.default_image'>
                         <img src='/assets/images/default-product.png' style='width: 100%;height: 100%;'>
                       </ng-container>
@@ -187,28 +302,59 @@
                 </td>
               </ng-container>
 
-              <ng-container matColumnDef="product_unit_id">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_unit_id']}}</th>
-                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
-                  <div style='display: flex;flex-direction: row;justify-content: flex-end;max-width: 100%'>
+              <!-- Image Filter -->
+              <ng-container matColumnDef="filter-image">
+                <th mat-header-cell *matHeaderCellDef></th>
+              </ng-container>
+
+              <!-- Product Unit Column -->
+
+             <ng-container matColumnDef="product_unit_id">
+                <th mat-header-cell *matHeaderCellDef style="min-width:100px; text-align: right;"> {{columnsHeader['product_unit_id']}}</th>
+                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; min-width:100px;' *matCellDef="let element; let i = index">
+                  <div style='display: flex;flex-direction: row;flex-wrap: nowrap;justify-content: center;padding-left:0.5rem; max-width: 150px !important;'>
                     <mat-form-field *ngIf="element.productUnits.length">
                       <mat-select matInput [(ngModel)]="data[i]['product_unit_id']"
                                   (selectionChange)="onUnitChange(i, $event)">
                         <mat-option *ngFor="let unit of element.productUnits" [value]="unit.id">{{unit.name}}</mat-option>
                       </mat-select>
+                      <button mat-icon-button matSuffix aria-label="add" (click)="$event.stopImmediatePropagation();openUnitCreateDialog(element);">
+                        <mat-icon style="margin-bottom: -10px; font-size: 1.5rem;">add</mat-icon>
+                      </button>
                     </mat-form-field>
-                    <button mat-icon-button matSuffix aria-label="add" (click)="openUnitCreateDialog(element);">
-                      <mat-icon>add</mat-icon>
-                    </button>
                   </div>
                 </td>
               </ng-container>
 
+              <!-- Product Unit Filter -->
+              <ng-container matColumnDef="filter-product_unit_id">
+                <th  mat-header-cell *matHeaderCellDef>
+                  <mat-form-field style="min-width:100px" appearance="outline" class="w-full quick-filter-input">
+                    <input matInput (keyup)="applyFilter($event, 'product_unit_id')" placeholder="Tìm đơn vị" style="min-width:100px">
+                  </mat-form-field>
+                </th>
+              </ng-container>
+
+              <!--Inventory Quantity Column -->
+              <ng-container matColumnDef="inventory_quantity">
+
+                 <th mat-header-cell *matHeaderCellDef style="min-width:60px; max-width:60px"> {{columnsHeader['inventory_quantity']}}</th>
+                <td mat-cell style='text-align:right; vertical-align: top; padding: 1.5rem 0.5rem 0 0; min-width:60px; max-width:60px;' *matCellDef="let element; let i = index">
+                 <span class="inventory_quantity-input" style="text-align: right">{{element['inventory_quantity']}}</span>
+                </td>
+              </ng-container>
+
+              <!--Inventory Quantity Filter -->
+              <ng-container matColumnDef="filter-inventory_quantity">
+                <th mat-header-cell *matHeaderCellDef style="min-width:60px; max-width:60px"></th>
+              </ng-container>
+
+              <!-- Quantity Column -->
               <ng-container matColumnDef="quantity">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['quantity']}}</th>
-                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
+                <th mat-header-cell *matHeaderCellDef style="min-width:60px"> {{columnsHeader['quantity']}}</th>
+                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; min-width:60px;' *matCellDef="let element; let i = index">
                   <mat-form-field>
-                    <input matInput  class="quantity-input" [value]="element['quantity']"
+                    <input matInput style="text-align: right" class="quantity-input" [value]="element['quantity']"
                            [(ngModel)]="data[i]['quantity']"
                            [disabled]="data[i]['product_parcels'].length > 1"
                            autocomplete="off" (keyup)="quantityChange($event,i)">
@@ -217,13 +363,19 @@
                 </td>
               </ng-container>
 
+              <!-- Quantity Filter -->
+              <ng-container matColumnDef="filter-quantity">
+                <th mat-header-cell *matHeaderCellDef style="min-width:60px"></th>
+              </ng-container>
+
+              <!-- Price Column -->
               <ng-container matColumnDef="price">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['price']}}</th>
-                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
+                <th mat-header-cell *matHeaderCellDef style="min-width:90px"> {{columnsHeader['price']}}</th>
+                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; min-width:90px' *matCellDef="let element; let i = index">
                   <mat-form-field class="text-right">
 
                     <input matInput
-                           [(ngModel)]="data[i]['price']" (keyup)="priceChange($event,i)">
+                    [ngModel]="data[i]['price'] | showValueExpenses: '0,0'" (keyup)="priceChange($event,i)">
                     <button mat-icon-button matPrefix
                             (click)="openPriceDialog(i)">
                       <mat-icon>add</mat-icon>
@@ -232,27 +384,73 @@
 
                 </td>
               </ng-container>
+              <!-- Price Filter -->
+              <ng-container matColumnDef="filter-price">
+                <th mat-header-cell *matHeaderCellDef style="min-width:90px"></th>
+              </ng-container>
 
+              <!-- Sell Price Column -->
+              <ng-container matColumnDef="sell_price">
+                <th mat-header-cell *matHeaderCellDef style="min-width:90px; max-width:90px; text-align: right;"> {{columnsHeader['sell_price']}}</th>
+                <td mat-cell style='text-align: right; vertical-align: top; padding: 1.5rem 0.5rem 0 0; min-width:90px; max-width:90px;' *matCellDef="let element; let i = index">
+                    <span class="inventory_quantity-input">{{element['sell_price'] | showValueExpenses: "0,0"}}</span>
+                </td>
+              </ng-container>
+              <!-- Sell Price Filter -->
+              <ng-container matColumnDef="filter-sell_price">
+                <th mat-header-cell *matHeaderCellDef style="min-width:90px; max-width:90px;"></th>
+              </ng-container>
+
+              <!-- Amount Column -->
               <ng-container matColumnDef="amount">
                 <th mat-header-cell *matHeaderCellDef
+                    style="min-width:90px; text-align: right;"
                     matTooltip="(Đơn giá * Số lượng) - Tiền CK">
                   {{columnsHeader['amount']}}
                 </th>
-                <td mat-cell style='vertical-align: top; padding: 1.5rem 0.5rem 0 0' *matCellDef="let element">
-                  <b>{{ element.amount | currency : 'VND' : ''}} </b>
-                </td>
+                <ng-container *matCellDef="let element; let i = index">
+                  <td *ngIf="allow_amount_adjust" mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; min-width:90px;'>
+                    <mat-form-field>
+                      <input style="text-align: right" 
+                             matInput 
+                             class="quantity-input" 
+                             [value]="element['amount'] | currency : 'VND' : ''"
+                             (click)="openAmountDialog(i)">
+                    </mat-form-field>
+                  </td>
+                  <td *ngIf="!allow_amount_adjust" 
+                      mat-cell 
+                      style='text-align:right; vertical-align: top; padding: 1.5rem 0.5rem 0 0; min-width:90px;'>
+                    <span>{{element['amount'] | currency : 'VND' : ''}}</span>
+                  </td>
+                </ng-container>
+              </ng-container>
+              <!-- Amount Filter -->
+              <ng-container matColumnDef="filter-amount">
+                <th mat-header-cell *matHeaderCellDef style="min-width:90px"></th>
               </ng-container>
 
+              <!-- Actions Column -->
               <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef style="width: 25px;"></th>
+                <th mat-header-cell *matHeaderCellDef></th>
                 <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0;' *matCellDef="let element; let i = index">
                   <button mat-icon-button (click)="removeProduct(i)">
                     <mat-icon>delete</mat-icon>
                   </button>
                 </td>
               </ng-container>
+              <!-- Actions Filter -->
+              <ng-container matColumnDef="filter-actions">
+                <th mat-header-cell *matHeaderCellDef></th>
+              </ng-container>
 
+              <!-- Header and Row Definitions -->
               <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+              <tr mat-header-row
+                  *matHeaderRowDef="filterColumns"
+                  class="filter-header-row"
+                  [style.display]="showFilters ? '' : 'none'">
+              </tr>
               <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>
           </div>

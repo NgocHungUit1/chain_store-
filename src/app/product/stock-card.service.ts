@@ -71,6 +71,12 @@ export class StockCardService {
     return this.http.post(url, data);
   }
 
+  getDownloadLink(filter?: StockCardFilter) {
+    const _token = this.auth.getToken();
+
+    return environment.apiUrl + '/stock-card/download?' + filter.toFilterString() + '&token=' + _token;
+  }
+
 }
 
 

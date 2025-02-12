@@ -33,6 +33,7 @@ export class Invoice {
   total_price: number;
   total_payment: number;
   discount_price: number;
+  need_to_pay_amount: number;
   discount: number;
   discount_type: string;
   note: string;
@@ -57,6 +58,7 @@ export class InvoiceFilter extends ApiFilterBase {
   id = '';
   invoice_no = '';
   customer_id = '';
+  needToPay = 0;
   discount = '';
   discount_type = '';
   note = '';
@@ -72,6 +74,8 @@ export class InvoiceFilter extends ApiFilterBase {
   order_national = '';
   product_id = '';
   users = '';
+  created_by = '';
+  keyword = '';
 
   getModelSearch() {
     return 'InvoiceSearch';

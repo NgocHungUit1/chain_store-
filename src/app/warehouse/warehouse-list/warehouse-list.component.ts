@@ -96,7 +96,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     'total_price': 'Tổng tiền',
     'discount_type': 'Loại giảm giá',
     'branch_id': 'Chi nhánh',
-    'price': 'Giá nhập',
+    'price': 'Giá vốn',
     'vat': 'VAT',
     'vat_type': 'Loại VAT',
     'discount': 'Giảm giá',

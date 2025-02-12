@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, Optional } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { Observable } from 'rxjs';
@@ -9,6 +9,10 @@ import { of } from 'rxjs/internal/observable/of';
 import { SupplierService } from '../../supplier/supplier.service';
 import { CashFlowService } from '../cash-flow.service';
 import * as numeral from 'numeral';
+import {Customer} from '../../customer/customer.model';
+import {CustomerService} from '../../customer/customer.service';
+import {InvoiceService} from '../../invoice/invoice.service';
+import {Invoice, InvoiceFilter} from '../../invoice/invoice.model';
 
 @Component({
   selector: 'app-cash-flow-receipt-dialog',
@@ -19,8 +23,13 @@ export class CashFlowReceiptDialogComponent implements OnInit {
 
   form: FormGroup;
   loading = false;
+  isSelectedCustomer = false;
   local_data: any;
   cash_flow_id: string = null;
+  customer: Customer;
+  isLoadingResults = false;
+
+  public filteredCustomers: Observable<Customer[]>;
 
   doi_tuong_nop_value: string[] = [
     'customer',
@@ -28,12 +37,22 @@ export class CashFlowReceiptDialogComponent implements OnInit {
     'supplier',
     'orther'
   ];
+  methodValues: string[] = [
+    'customer',
+    'other'
+  ];
+
+  needToPayInvoices: Invoice[] = [];
 
   doi_tuong_nop_label = {
     'customer': 'Khách hàng',
     'employee': 'Nhân viên',
     'supplier': 'Nhà cung cấp',
     'orther': 'Khác',
+  };
+  methodLabels = {
+    'customer': 'Thu nợ khách hàng',
+    'other': 'Thu khác',
   };
 
   fieldLabels = {
@@ -53,7 +72,9 @@ export class CashFlowReceiptDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<CashFlowReceiptDialogComponent>,
     public notifySer: NotifierService,
     public supplierService: SupplierService,
+    public customerService: CustomerService,
     public cashFlowService: CashFlowService,
+    public invoiceService: InvoiceService,
     private fb: FormBuilder,
     private dialog: MatDialog,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object
@@ -75,6 +96,7 @@ export class CashFlowReceiptDialogComponent implements OnInit {
     this.form = this.fb.group({
       no: [null, [Validators.required, Validators.maxLength(50)]],
       type: ['receipt'],
+      method: ['customer'],
       phone: [null],
       type_money: ['money'],
       doi_tuong_nop: [null, [Validators.required]],
@@ -103,10 +125,43 @@ export class CashFlowReceiptDialogComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
 
+    /**
+     * Tim kiem khach hang
+     */
+    this.filteredCustomers = this.form.controls['ten_nguoi_nop'].valueChanges.pipe(
+      startWith(''),
+      // delay emits
+      debounceTime(300),
+      // use switch map so as to cancel previous subscribed events, before creating new once
+      switchMap(value => {
+        if (value !== '') {
+          // lookup from github
+          return this.lookupCustomer(value);
+        } else {
+          // if no value is present, return null
+          return of(null);
+        }
+      })
+    );
+
+
+  }
+
+  lookupCustomer(value: string): Observable<Customer[]> {
+    if (value !== null) {
+      return this.customerService.autocomplete(value, 'total_point,total_invoice').pipe(
+        // map the item property of the github results as our return object
+        map(results => results),
+        // catch errors
+        catchError(_ => {
+          return of(null);
+        })
+      );
+    }
   }
 
   loadCashFlow(id) {
-    this.cashFlowService.getDetail(id).subscribe(cashFlow => {
+    this.cashFlowService.getDetail(id, 'items').subscribe(cashFlow => {
       // @ts-ignore
       const today = new Date(1000 * cashFlow['created_at']);
       const time = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
@@ -118,11 +173,40 @@ export class CashFlowReceiptDialogComponent implements OnInit {
         doi_tuong_nop: cashFlow['doi_tuong_nop'],
         nguoi_nop_id: cashFlow['nguoi_nop_id'],
         ten_nguoi_nop: cashFlow['ten_nguoi_nop'],
+        method: cashFlow['method'],
         value: numeral(cashFlow['value']).format('0,0'),
         note: cashFlow['note'],
         today: today,
         time: time,
         parent_table: cashFlow['parent_table']
+      });
+
+      let ids = [];
+      let itemsData = {};
+      cashFlow.items.forEach((item, index) => {
+        ids.push(item.invoice_id);
+        itemsData[item.invoice_id] = item;
+      });
+
+      const invoiceFilter = new InvoiceFilter();
+      invoiceFilter.id = ids.join(',');
+      invoiceFilter.pageSize = 200;
+      this.isLoadingResults = true;
+
+      let data = [];
+
+      this.invoiceService.getList(invoiceFilter).subscribe(res => {
+        this.isLoadingResults = false;
+
+        res.body.forEach( (item, index) => {
+          let newItem = item;
+          newItem.need_to_pay_amount = itemsData[item.id]['need_to_process_amount'];
+          data.push(newItem);
+
+          this.form.addControl('needToPayInvoices[' + index + ']', new FormControl(numeral(itemsData[item.id]['processed_amount']).format('0,0'), Validators.required));
+        });
+
+        this.needToPayInvoices = data;
       });
 
     });
@@ -132,6 +216,18 @@ export class CashFlowReceiptDialogComponent implements OnInit {
     let date_created = '';
     if (this.form.valid) {
       const data = this.form.getRawValue();
+      let needToPayData = [];
+
+      this.needToPayInvoices.forEach((item, index) => {
+        let needToPayInvoice = {
+          invoice_id: item.id,
+          processed_amount: numeral(this.form.controls['needToPayInvoices[' + index + ']'].value).value(),
+          need_to_process_amount: item.need_to_pay_amount
+        };
+        needToPayData.push(needToPayInvoice);
+      });
+
+      data['invoice_items'] = needToPayData;
 
       if (data['today'] !== null && typeof data['today'] === 'object') {
         let effDate;
@@ -201,5 +297,75 @@ export class CashFlowReceiptDialogComponent implements OnInit {
     event.target.value = numeral(event.target.value).format('0,0');
   }
 
+  onSelectedCustomer(customer) {
+    // loadInvoice need to pay
+    const invoiceFilter = new InvoiceFilter();
+    invoiceFilter.customer_id = customer.id;
+    invoiceFilter.needToPay = 1;
+    invoiceFilter.expand = 'need_to_pay_amount';
+    invoiceFilter.sort = 'created_at';
+    this.isLoadingResults = true;
+
+    let totalPaid = numeral(this.form.controls['value'].value ? this.form.controls['value'].value : 0).value();
+
+    this.invoiceService.getList(invoiceFilter).subscribe(res => {
+      this.isLoadingResults = false;
+      this.needToPayInvoices = res.body;
+
+      this.needToPayInvoices.forEach( (item, index) => {
+        let payItemAmount = item.need_to_pay_amount;
+        if (totalPaid >= payItemAmount) {
+          totalPaid -= payItemAmount;
+        } else {
+          payItemAmount = totalPaid;
+          totalPaid = 0;
+        }
+        this.form.addControl('needToPayInvoices[' + index + ']', new FormControl(numeral(payItemAmount).format('0,0'), Validators.required));
+      });
+    });
+    this.isSelectedCustomer = true;
+    this.form.controls['nguoi_nop_id'].patchValue(customer.id);
+    this.form.controls['ten_nguoi_nop'].patchValue(customer.name);
+  }
+
+  removeCustomer() {
+    this.form.controls['ten_nguoi_nop'].patchValue('');
+    this.form.controls['nguoi_nop_id'].patchValue(null);
+    this.isSelectedCustomer = false;
+    this.needToPayInvoices.forEach((item, index) => {
+      this.form.removeControl('needToPayInvoices[' + index + ']');
+    });
+    this.needToPayInvoices = [];
+    this.customer = null;
+  }
+
+  formatMoney(event: any, index) {
+    event.target.value = numeral(event.target.value).format('0,0');
+  }
+
+  shareItemAmount() {
+    let totalPaid = numeral(this.form.controls['value'].value ? this.form.controls['value'].value : 0).value();
+
+    this.needToPayInvoices.forEach( (item, index) => {
+      let payItemAmount = item.need_to_pay_amount;
+      if (totalPaid >= payItemAmount) {
+        totalPaid -= payItemAmount;
+      } else {
+        payItemAmount = totalPaid;
+        totalPaid = 0;
+      }
+      this.form.controls['needToPayInvoices[' + index + ']'].patchValue(numeral(payItemAmount).format('0,0'));
+    });
+  }
+
+  sumTotalAmount() {
+    let totalAmount = 0;
+
+    this.needToPayInvoices.forEach( (item, index) => {
+      totalAmount += numeral(this.form.controls['needToPayInvoices[' + index + ']'].value).value();
+    });
+
+    this.form.controls['value'].patchValue(numeral(totalAmount).format('0,0'));
+  }
 
 }
