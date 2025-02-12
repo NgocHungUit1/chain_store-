@@ -12,13 +12,17 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { DemoMaterialModule } from '../demo-material-module';
 import { DoctorRoutes } from './doctor.routing';
+import { DatetimeChooseFilterDialogComponent } from './datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
+import { DatetimeDefaultFilterDialogComponent } from './datetime-default-filter-dialog/datetime-default-filter-dialog.component';
 
 
 @NgModule({
   declarations: [
     DoctorListComponent,
     DoctorFormDialogComponent,
-    DoctorTabInfoComponent
+    DoctorTabInfoComponent,
+    DatetimeDefaultFilterDialogComponent,
+    DatetimeChooseFilterDialogComponent
   ],
   imports: [
     CommonModule,

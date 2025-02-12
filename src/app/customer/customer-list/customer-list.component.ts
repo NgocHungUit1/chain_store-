@@ -13,6 +13,11 @@ import { CustomerFormDialogComponent } from '../customer-form-dialog/customer-fo
 import {SupplierFormDialogComponent} from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
 import {CustomerUploadDialogComponent} from '../customer-upload-dialog/customer-upload-dialog.component';
 import {AuthService} from '../../authentication/auth.service';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { DateFilter } from '../../invoice/invoice.model';
+import { debounceTime } from 'rxjs/operators';
+import { DatetimeChooseFilterDialogComponent } from '../datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
+import { DatetimeDefaultFilterDialogComponent } from '../datetime-default-filter-dialog/datetime-default-filter-dialog.component';
 
 @Component({
   // selector: 'app-customer-list',
@@ -32,7 +37,8 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
     private service: CustomerService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
-    private authSer: AuthService
+    private authSer: AuthService,
+    private fb: FormBuilder
   ) {
     super();
   }
@@ -85,6 +91,12 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
   isRateLimitReached = false;
 
   amountData = {};
+
+  searchForm = new FormControl();
+  timeFilter: FormGroup;
+  titleTimeDefault = 'Tháng này';
+  titleTimeChoose = 'Lựa chọn khác';
+  currentDateFilter: DateFilter;
 
   buildFilterFromParams(): CustomerFilter {
     function write<K extends keyof CustomerFilter>(arg: CustomerFilter, key: K, value: CustomerFilter[K]): void {
@@ -141,6 +153,8 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
   }
 
   ngOnInit(): void {
+    this.initDateFilter();
+    this.buildFrom();
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
 
@@ -150,6 +164,25 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
         this.loadData();
         this.service.setLoadCustmer(false);
       }
+    });
+
+    this.searchForm.valueChanges.pipe(debounceTime(800)).subscribe(res => {
+      if (res !== '') {
+        this.apiFilter = this.buildFilterFromParams();
+        this.apiFilter.keyword = res;
+        this.loadData();
+      } else {
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+      }
+    });
+  }
+
+  buildFrom() {
+    this.timeFilter = this.fb.group({
+      typeTime: [
+        'default'
+      ],
     });
   }
 
@@ -184,4 +217,82 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
     return allPermissions.indexOf(permissionName) !== -1;
   }
 
+
+  openTimeDefault() {
+    const obj = {};
+    const dialogRef = this.dialog.open(DatetimeDefaultFilterDialogComponent, {
+      data: obj,
+      width: '40%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.title !== undefined) {
+        this.titleTimeDefault = result?.title;
+      }
+      const date = this.service.getDateFilter();
+      const date_from = new Date(date.date_from);
+      const date_to = new Date(date.date_to);
+      this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+      this.timeFilter.patchValue({
+        typeTime: 'default',
+      });
+    });
+  }
+
+  openTimeChoose() {
+    const obj = {};
+    const dialogRef = this.dialog.open(DatetimeChooseFilterDialogComponent, {
+      data: obj,
+      width: '40%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+      this.timeFilter.patchValue({
+        typeTime: 'choose',
+      });
+      const date = this.service.getDateFilter();
+      const date_from = new Date(date.date_from);
+      const date_to = new Date(date.date_to);
+      this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+    });
+  }
+
+  radioTimeChange(event: Event) {
+    if (this.timeFilter.controls['typeTime'].value === 'choose') {
+      const date = this.service.getDateFilter();
+      const date_from = new Date(date.date_from);
+      const date_to = new Date(date.date_to);
+      this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+    } else {
+      this.titleTimeChoose = 'Lựa chọn khác';
+    }
+  }
+
+  convertDate(date: Date) {
+    const month = date.getMonth() + 1;
+    return date.getDate() + '/' + month + '/' + date.getFullYear();
+  }
+
+
+  initDateFilter() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const first = new Date(year, month, 1);
+    const obj = new DateFilter();
+    // tháng này
+
+    obj.date_from = this.service.convertDateYYYYMMDD(first);
+    obj.date_to = this.service.convertDateYYYYMMDD(today);
+
+    const date_from = new Date(obj.date_from);
+    const date_to = new Date(obj.date_to);
+    this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+
+    this.currentDateFilter = obj;
+    this.service.setDateFilter(obj);
+  }
 }

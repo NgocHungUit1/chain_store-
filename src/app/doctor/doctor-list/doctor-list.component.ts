@@ -11,6 +11,12 @@ import { MatSort } from '@angular/material/sort';
 import { Doctor, DoctorFilter } from '../doctor.model';
 import { DoctorFormDialogComponent } from '../doctor-form-dialog/doctor-form-dialog.component';
 import { MoveDetail } from '../../move/move.model';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { DateFilter } from '../../invoice/invoice.model';
+import {
+  DatetimeDefaultFilterDialogComponent
+} from '../datetime-default-filter-dialog/datetime-default-filter-dialog.component';
+import { DatetimeChooseFilterDialogComponent } from '../datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
 
 @Component({
   selector: 'app-doctor-list',
@@ -30,7 +36,8 @@ export class DoctorListComponent extends ListComponentBase implements OnInit {
     private service: DoctorService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
-    private notifyService: NotifierService
+    private notifyService: NotifierService,
+    private fb: FormBuilder
   ) {
     super();
   }
@@ -70,6 +77,13 @@ export class DoctorListComponent extends ListComponentBase implements OnInit {
   isLoadingResults = true;
   isRateLimitReached = false;
 
+
+  searchForm = new FormControl();
+  timeFilter: FormGroup;
+  titleTimeDefault = 'Tháng này';
+  titleTimeChoose = 'Lựa chọn khác';
+  currentDateFilter: DateFilter;
+
   buildFilterFromParams(): DoctorFilter {
     function write<K extends keyof DoctorFilter>(arg: DoctorFilter, key: K, value: DoctorFilter[K]): void {
       arg[key] = value;
@@ -99,6 +113,8 @@ export class DoctorListComponent extends ListComponentBase implements OnInit {
   }
 
   ngOnInit(): void {
+    this.initDateFilter();
+    this.buildFrom();
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
 
@@ -109,6 +125,14 @@ export class DoctorListComponent extends ListComponentBase implements OnInit {
     //     this.service.setLoadCustmer(false);
     //   }
     // });
+  }
+
+  buildFrom() {
+    this.timeFilter = this.fb.group({
+      typeTime: [
+        'default'
+      ],
+    });
   }
 
   openDoctorFormDialog() {
@@ -124,5 +148,81 @@ export class DoctorListComponent extends ListComponentBase implements OnInit {
       }
     });
   }
+  openTimeDefault() {
+    const obj = {};
+    const dialogRef = this.dialog.open(DatetimeDefaultFilterDialogComponent, {
+      data: obj,
+      width: '40%',
+      minHeight: '80%',
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.title !== undefined) {
+        this.titleTimeDefault = result?.title;
+      }
+      const date = this.service.getDateFilter();
+      const date_from = new Date(date.date_from);
+      const date_to = new Date(date.date_to);
+      this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+      this.timeFilter.patchValue({
+        typeTime: 'default',
+      });
+    });
+  }
+
+  openTimeChoose() {
+    const obj = {};
+    const dialogRef = this.dialog.open(DatetimeChooseFilterDialogComponent, {
+      data: obj,
+      width: '40%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+      this.timeFilter.patchValue({
+        typeTime: 'choose',
+      });
+      const date = this.service.getDateFilter();
+      const date_from = new Date(date.date_from);
+      const date_to = new Date(date.date_to);
+      this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+    });
+  }
+
+  radioTimeChange(event: Event) {
+    if (this.timeFilter.controls['typeTime'].value === 'choose') {
+      const date = this.service.getDateFilter();
+      const date_from = new Date(date.date_from);
+      const date_to = new Date(date.date_to);
+      this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+    } else {
+      this.titleTimeChoose = 'Lựa chọn khác';
+    }
+  }
+
+  convertDate(date: Date) {
+    const month = date.getMonth() + 1;
+    return date.getDate() + '/' + month + '/' + date.getFullYear();
+  }
+
+
+  initDateFilter() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const first = new Date(year, month, 1);
+    const obj = new DateFilter();
+    // tháng này
+
+    obj.date_from = this.service.convertDateYYYYMMDD(first);
+    obj.date_to = this.service.convertDateYYYYMMDD(today);
+
+    const date_from = new Date(obj.date_from);
+    const date_to = new Date(obj.date_to);
+    this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+
+    this.currentDateFilter = obj;
+    this.service.setDateFilter(obj);
+  }
 }
