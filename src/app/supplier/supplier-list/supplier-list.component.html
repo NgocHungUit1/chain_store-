@@ -34,6 +34,36 @@
         </mat-expansion-panel>
       </mat-accordion>
     </div>
+
+    <form [formGroup]="statusFilter">
+      <mat-accordion multi >
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Trạng thái
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <!--<mat-form-field>
+            <mat-label>Đơn hàng</mat-label>
+            <mat-select formControlName="status" (selectionChange)="orderStatusFilterChange()" multiple>
+              <mat-option *ngFor="let item of statusFilterList"
+                          [value]="item.value">{{ item.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>-->
+          <div class='custom-filter-container__checkbox-container'>
+            <mat-checkbox *ngFor='let item of statusFilterList'
+                          color='primary'
+                          [checked]="statusFilter.value['status'].includes(item.value)"
+                          (change)='checkBoxFilterChange($event, item.value, "status")'
+            >
+              {{ item.name }}
+            </mat-checkbox>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </form>
   </mat-sidenav>
   <mat-sidenav-content>
     <mat-toolbar class="dv-header">

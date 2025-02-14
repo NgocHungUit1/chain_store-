@@ -92,6 +92,18 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
 
   amountData = {};
 
+  statusFilter: FormGroup;
+  statusFilterList = [
+    {
+      'value': '10',
+      'name': 'Hoạt động',
+    },
+    {
+      'value': '9',
+      'name': 'Ngưng hoạt động',
+    },
+  ];
+
   searchForm = new FormControl();
   timeFilter: FormGroup;
   titleTimeDefault = 'Tháng này';
@@ -113,6 +125,7 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.expand = 'province,district,ward';
+    filter.status = this.statusFilter.controls['status'].value;
     return filter;
   }
 
@@ -133,11 +146,16 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
         ids.push(elementData.id);
       });
 
+      const objDateFilter = this.service.getDateFilter();
+
       const idsStr = ids.join(',');
       const apiFil = new CustomerFilter();
       apiFil.ids = idsStr;
       apiFil.expand = 'total_amount,paid_amount,remain_amount';
       apiFil.pageSize = this.apiFilter.pageSize;
+      apiFil.date_from = objDateFilter.date_from;
+      apiFil.date_to = objDateFilter.date_to;
+
       const amountD = {};
       this.service.getListAmount(apiFil).subscribe(amountRes => {
         amountRes.body.forEach(item => {
@@ -166,6 +184,14 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
       }
     });
 
+    this.service.subscribeDateFilter.subscribe(obj => {
+      if (JSON.stringify(this.currentDateFilter) !== JSON.stringify(obj)) {
+        this.currentDateFilter = obj;
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+      }
+    });
+
     this.searchForm.valueChanges.pipe(debounceTime(800)).subscribe(res => {
       if (res !== '') {
         this.apiFilter = this.buildFilterFromParams();
@@ -182,6 +208,12 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
     this.timeFilter = this.fb.group({
       typeTime: [
         'default'
+      ],
+    });
+
+    this.statusFilter = this.fb.group({
+      status: [
+        ['10', '9']
       ],
     });
   }
@@ -275,6 +307,13 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
     const month = date.getMonth() + 1;
     return date.getDate() + '/' + month + '/' + date.getFullYear();
   }
+
+  checkBoxFilterChange($event: any, value: any, field: string) {
+    this.handleFilterCheckbox(this.statusFilter, field, value);
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
+  }
+
 
 
   initDateFilter() {

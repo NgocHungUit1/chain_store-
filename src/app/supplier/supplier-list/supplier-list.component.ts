@@ -97,10 +97,24 @@ export class SupplierListComponent extends ListComponentBase implements OnInit {
   titleTimeChoose = 'Lựa chọn khác';
   currentDateFilter: DateFilter;
 
+  statusFilter: FormGroup;
+  statusFilterList = [
+    {
+      'value': '10',
+      'name': 'Hoạt động',
+    },
+    {
+      'value': '9',
+      'name': 'Ngưng hoạt động',
+    },
+  ];
+
   buildFilterFromParams(): SupplierFilter {
     function write<K extends keyof SupplierFilter>(arg: SupplierFilter, key: K, value: SupplierFilter[K]): void {
       arg[key] = value;
     }
+
+    const objDateFilter = this.service.getDateFilter();
 
     const filter = new SupplierFilter();
     const objectKeys = Object.keys(filter) as Array<keyof SupplierFilter>;
@@ -112,6 +126,9 @@ export class SupplierListComponent extends ListComponentBase implements OnInit {
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.expand = 'province,district,ward,total_amount,paid_amount,remain_amount';
+    filter.status = this.statusFilter.controls['status'].value;
+    filter.date_from = objDateFilter.date_from;
+    filter.date_to = objDateFilter.date_to;
     return filter;
   }
 
@@ -146,12 +163,26 @@ export class SupplierListComponent extends ListComponentBase implements OnInit {
         this.loadData();
       }
     });
+
+    this.service.subscribeDateFilter.subscribe(obj => {
+      if (JSON.stringify(this.currentDateFilter) !== JSON.stringify(obj)) {
+        this.currentDateFilter = obj;
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+      }
+    });
   }
 
   buildFrom() {
     this.timeFilter = this.fb.group({
       typeTime: [
         'default'
+      ],
+    });
+
+    this.statusFilter = this.fb.group({
+      status: [
+        ['10', '9']
       ],
     });
   }
@@ -260,4 +291,11 @@ export class SupplierListComponent extends ListComponentBase implements OnInit {
     this.currentDateFilter = obj;
     this.service.setDateFilter(obj);
   }
+
+  checkBoxFilterChange($event: any, value: any, field: string) {
+    this.handleFilterCheckbox(this.statusFilter, field, value);
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
+  }
+
 }

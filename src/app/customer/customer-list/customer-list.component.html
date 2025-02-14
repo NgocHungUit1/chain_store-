@@ -6,34 +6,65 @@
 
 
     <div class='custom-filter-container__div-container'>
-    <mat-accordion multi>
-      <mat-expansion-panel [expanded]="true">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Thời gian
-          </mat-panel-title>
-        </mat-expansion-panel-header>
+      <mat-accordion multi>
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Thời gian
+            </mat-panel-title>
+          </mat-expansion-panel-header>
 
-        <form [formGroup]="timeFilter">
-          <mat-radio-group (change)="radioTimeChange($event)" formControlName="typeTime">
-            <mat-radio-button style="display: inline; " value="default"
-                              color='primary'
-                              (click)="openTimeDefault()">{{ titleTimeDefault }}
-              <button mat-icon-button aria-label="add">
-                <mat-icon>swap_vert</mat-icon>
-              </button>
-            </mat-radio-button>
-            <mat-radio-button style="display: inline; " value="choose" (click)="openTimeChoose()">{{ titleTimeChoose }}
-              <button mat-icon-button aria-label="add">
-                <mat-icon>date_range</mat-icon>
-              </button>
-            </mat-radio-button>
+          <form [formGroup]="timeFilter">
+            <mat-radio-group (change)="radioTimeChange($event)" formControlName="typeTime">
+              <mat-radio-button style="display: inline; " value="default"
+                                color='primary'
+                                (click)="openTimeDefault()">{{ titleTimeDefault }}
+                <button mat-icon-button aria-label="add">
+                  <mat-icon>swap_vert</mat-icon>
+                </button>
+              </mat-radio-button>
+              <mat-radio-button style="display: inline; " value="choose"
+                                (click)="openTimeChoose()">{{ titleTimeChoose }}
+                <button mat-icon-button aria-label="add">
+                  <mat-icon>date_range</mat-icon>
+                </button>
+              </mat-radio-button>
 
-          </mat-radio-group>
-        </form>
-      </mat-expansion-panel>
-    </mat-accordion>
+            </mat-radio-group>
+          </form>
+        </mat-expansion-panel>
+      </mat-accordion>
     </div>
+
+    <form [formGroup]="statusFilter">
+      <mat-accordion multi >
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Trạng thái
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <!--<mat-form-field>
+            <mat-label>Đơn hàng</mat-label>
+            <mat-select formControlName="status" (selectionChange)="orderStatusFilterChange()" multiple>
+              <mat-option *ngFor="let item of statusFilterList"
+                          [value]="item.value">{{ item.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>-->
+          <div class='custom-filter-container__checkbox-container'>
+            <mat-checkbox *ngFor='let item of statusFilterList'
+                          color='primary'
+                          [checked]="statusFilter.value['status'].includes(item.value)"
+                          (change)='checkBoxFilterChange($event, item.value, "status")'
+            >
+              {{ item.name }}
+            </mat-checkbox>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </form>
   </mat-sidenav>
   <mat-sidenav-content>
     <mat-toolbar class="dv-header">
@@ -61,11 +92,13 @@
         <mat-icon>add</mat-icon>
         Thêm mới
       </button>
-      <button mat-raised-button color="warn" (click)="openUploadDialog();" class="m-r-5 padding-x-10" *ngIf="canDo('Customer.Upload')">
+      <button mat-raised-button color="warn" (click)="openUploadDialog();" class="m-r-5 padding-x-10"
+              *ngIf="canDo('Customer.Upload')">
         <mat-icon>cloud_upload</mat-icon>
         Tải lên
       </button>
-      <a mat-raised-button color="accent" [href]="this.downloadLink" style="margin-right: 10px" [disabled]="isLoadingResults">
+      <a mat-raised-button color="accent" [href]="this.downloadLink" style="margin-right: 10px"
+         [disabled]="isLoadingResults">
         <mat-icon>cloud_download</mat-icon>
         Xuất Excel
       </a>
@@ -76,9 +109,9 @@
 
 
         <mat-select [(ngModel)]="displayedColumns" #selectColumn [multiple]="true"
-          style="width: 100%; display: inline-flex; margin-left: -20px; color: white" placeholder="Chọn cột">
+                    style="width: 100%; display: inline-flex; margin-left: -20px; color: white" placeholder="Chọn cột">
           <!--<mat-select-trigger></mat-select-trigger>-->
-          <mat-option *ngFor="let column of columnsToDisplay" [value]="column">{{columnsHeader[column]}}</mat-option>
+          <mat-option *ngFor="let column of columnsToDisplay" [value]="column">{{ columnsHeader[column] }}</mat-option>
         </mat-select>
       </div>
       <button style="margin-left: 10px" mat-raised-button color="primary" (click)="loadData()">
@@ -96,60 +129,66 @@
             </div>
           </div>
           <div class="table-responsive">
-            <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="" matSort (matSortChange)="onMatSortChange($event)">
+            <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="" matSort
+                   (matSortChange)="onMatSortChange($event)">
 
               <ng-container matColumnDef="#">
                 <th mat-header-cell *matHeaderCellDef> #</th>
-                <td mat-cell *matCellDef="let element"> {{element?.stt }}</td>
+                <td mat-cell *matCellDef="let element"> {{ element?.stt }}</td>
               </ng-container>
 
               <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['name']}}</th>
-                <td mat-cell *matCellDef="let element"> {{element.name}}</td>
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['name'] }}</th>
+                <td mat-cell *matCellDef="let element"> {{ element.name }}</td>
               </ng-container>
 
               <ng-container matColumnDef="company_name">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['company_name']}}</th>
-                <td mat-cell *matCellDef="let element"> {{element?.company_name}}</td>
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['company_name'] }}</th>
+                <td mat-cell *matCellDef="let element"> {{ element?.company_name }}</td>
               </ng-container>
 
               <ng-container matColumnDef="phone">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['phone']}}</th>
-                <td mat-cell *matCellDef="let element"> {{element.phone}}</td>
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['phone'] }}</th>
+                <td mat-cell *matCellDef="let element"> {{ element.phone }}</td>
               </ng-container>
 
               <ng-container matColumnDef="email">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['email']}}</th>
-                <td mat-cell *matCellDef="let element"> {{element.email}}</td>
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['email'] }}</th>
+                <td mat-cell *matCellDef="let element"> {{ element.email }}</td>
               </ng-container>
 
               <ng-container matColumnDef="tax_code">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['tax_code']}}</th>
-                <td mat-cell *matCellDef="let element"> {{element.tax_code}}</td>
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['tax_code'] }}</th>
+                <td mat-cell *matCellDef="let element"> {{ element.tax_code }}</td>
               </ng-container>
 
               <ng-container matColumnDef="total_amount">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['total_amount']}}</th>
-                <td mat-cell *matCellDef="let element"><span *ngIf="this.amountData[element.id]">{{this.amountData[element.id].total_amount | number}}</span></td>
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['total_amount'] }}</th>
+                <td mat-cell *matCellDef="let element"><span
+                  *ngIf="this.amountData[element.id]">{{ this.amountData[element.id].total_amount | number }}</span>
+                </td>
               </ng-container>
 
               <ng-container matColumnDef="paid_amount">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['paid_amount']}}</th>
-                <td mat-cell *matCellDef="let element"><span *ngIf="this.amountData[element.id]">{{this.amountData[element.id].paid_amount | number}}</span></td>
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['paid_amount'] }}</th>
+                <td mat-cell *matCellDef="let element"><span
+                  *ngIf="this.amountData[element.id]">{{ this.amountData[element.id].paid_amount | number }}</span></td>
               </ng-container>
 
               <ng-container matColumnDef="remain_amount">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['remain_amount']}}</th>
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['remain_amount'] }}</th>
                 <td mat-cell *matCellDef="let element">
                   <div *ngIf="this.amountData[element.id]">
-                    <span *ngIf="this.amountData[element.id].remain_amount * 1 > 0" style="color:red">{{this.amountData[element.id].remain_amount | number}}</span>
-                    <span *ngIf="this.amountData[element.id].remain_amount * 1 == 0" >{{this.amountData[element.id].remain_amount | number}}</span>
+                    <span *ngIf="this.amountData[element.id].remain_amount * 1 > 0"
+                          style="color:red">{{ this.amountData[element.id].remain_amount | number }}</span>
+                    <span
+                      *ngIf="this.amountData[element.id].remain_amount * 1 == 0">{{ this.amountData[element.id].remain_amount | number }}</span>
                   </div>
                 </td>
               </ng-container>
 
               <ng-container matColumnDef="status">
-                <th mat-header-cell *matHeaderCellDef> {{columnsHeader['status']}}</th>
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['status'] }}</th>
                 <td mat-cell *matCellDef="let element">
                   <label *ngIf="element.status == '9'" class="label label-warning">Ngưng hoạt động</label>
                   <label *ngIf="element.status == '10'" class="label label-success">Hoạt động</label>
@@ -159,7 +198,7 @@
               <ng-container matColumnDef="expandedDetail">
                 <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
                   <div class="example-element-detail"
-                    [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                       [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
                     <mat-tab-group style="width: 100%;">
                       <mat-tab label="Thông tin">
                         <ng-template matTabContent>
@@ -176,14 +215,14 @@
                           <app-customer-tab-point [customerId]="element.id"></app-customer-tab-point>
                         </ng-template>
                       </mat-tab>
-<!--                      <mat-tab label="Lịch sử mua hàng">-->
-<!--                        <app-history-invoice-tab [customer]="element"-->
-<!--                                                 [expandedElement]="element == expandedElement ? true : false"-->
-<!--                                                 (reload)="loadData()"></app-history-invoice-tab>-->
-<!--                      </mat-tab>-->
-<!--                      <mat-tab label="Dư nợ">-->
-<!--                        <app-customer-tab-debt></app-customer-tab-debt>-->
-<!--                      </mat-tab>-->
+                      <!--                      <mat-tab label="Lịch sử mua hàng">-->
+                      <!--                        <app-history-invoice-tab [customer]="element"-->
+                      <!--                                                 [expandedElement]="element == expandedElement ? true : false"-->
+                      <!--                                                 (reload)="loadData()"></app-history-invoice-tab>-->
+                      <!--                      </mat-tab>-->
+                      <!--                      <mat-tab label="Dư nợ">-->
+                      <!--                        <app-customer-tab-debt></app-customer-tab-debt>-->
+                      <!--                      </mat-tab>-->
                     </mat-tab-group>
                   </div>
                 </td>
@@ -191,14 +230,14 @@
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
               <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="example-element-row"
-                [class.example-expanded-row]="expandedElement === element"
-                (click)="expandedElement = expandedElement === element ? null : element">
+                  [class.example-expanded-row]="expandedElement === element"
+                  (click)="expandedElement = expandedElement === element ? null : element">
               </tr>
               <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
             </table>
           </div>
           <mat-paginator #paginator [length]="pageTotalCount" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
-            (page)="onMatPageChange($event)" [pageIndex]="page - 1" showFirstLastButtons></mat-paginator>
+                         (page)="onMatPageChange($event)" [pageIndex]="page - 1" showFirstLastButtons></mat-paginator>
         </div>
       </div>
     </div>

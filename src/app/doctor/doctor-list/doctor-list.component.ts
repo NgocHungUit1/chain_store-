@@ -10,7 +10,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Doctor, DoctorFilter } from '../doctor.model';
 import { DoctorFormDialogComponent } from '../doctor-form-dialog/doctor-form-dialog.component';
-import { MoveDetail } from '../../move/move.model';
+import {debounceTime} from 'rxjs/operators';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { DateFilter } from '../../invoice/invoice.model';
 import {
@@ -84,6 +84,19 @@ export class DoctorListComponent extends ListComponentBase implements OnInit {
   titleTimeChoose = 'Lựa chọn khác';
   currentDateFilter: DateFilter;
 
+  statusFilter: FormGroup;
+  statusFilterList = [
+    {
+      'value': '10',
+      'name': 'Hoạt động',
+    },
+    {
+      'value': '9',
+      'name': 'Ngưng hoạt động',
+    },
+  ];
+
+
   buildFilterFromParams(): DoctorFilter {
     function write<K extends keyof DoctorFilter>(arg: DoctorFilter, key: K, value: DoctorFilter[K]): void {
       arg[key] = value;
@@ -99,6 +112,7 @@ export class DoctorListComponent extends ListComponentBase implements OnInit {
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.expand = 'province,district,ward';
+    filter.status = this.statusFilter.controls['status'].value;
     return filter;
   }
 
@@ -118,19 +132,28 @@ export class DoctorListComponent extends ListComponentBase implements OnInit {
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
 
-    // this.service.subscribeLoadCustomer.subscribe(action => {
-    //   if (action === true) {
-    //     this.apiFilter = this.buildFilterFromParams();
-    //     this.loadData();
-    //     this.service.setLoadCustmer(false);
-    //   }
-    // });
+    this.searchForm.valueChanges.pipe(debounceTime(800)).subscribe(res => {
+      if (res !== '') {
+        this.apiFilter = this.buildFilterFromParams();
+        this.apiFilter.keyword = res;
+        this.loadData();
+      } else {
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+      }
+    });
   }
 
   buildFrom() {
     this.timeFilter = this.fb.group({
       typeTime: [
         'default'
+      ],
+    });
+
+    this.statusFilter = this.fb.group({
+      status: [
+        ['10', '9']
       ],
     });
   }
@@ -224,5 +247,11 @@ export class DoctorListComponent extends ListComponentBase implements OnInit {
 
     this.currentDateFilter = obj;
     this.service.setDateFilter(obj);
+  }
+
+  checkBoxFilterChange($event: any, value: any, field: string) {
+    this.handleFilterCheckbox(this.statusFilter, field, value);
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
   }
 }
