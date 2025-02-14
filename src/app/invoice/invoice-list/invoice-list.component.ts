@@ -562,7 +562,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     }
   }
 
-  refreshDatarefreshData() {
+  refreshData() {
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
     this.selection.clear();
