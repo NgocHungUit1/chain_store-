@@ -25,12 +25,6 @@ export class WarehouseFormAmountComponent implements OnInit {
   ) {
     this.local_data = { ...data };
     this.amount = this.local_data.amount;
-    this.price = this.local_data.price;
-    this.quantity = this.local_data.quantity;
-    this.discount = this.local_data.discount;
-    this.discount_type = this.local_data.discount_type;
-    this.vat = this.local_data.vat ? this.local_data.vat : 0;
-    this.vat_type = this.local_data.vat_type;
   }
 
   public form: FormGroup;
@@ -41,80 +35,39 @@ export class WarehouseFormAmountComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.fb.group({
-      amount: [numeral(numeral(this.quantity).value() * numeral(this.price).value()).format('0,0')],
-      price: [numeral(this.price)._value],
-      discount: [numeral(this.discount).format('0,0')],
-      discount_type: [this.discount_type],
-      vat: [numeral(this.vat).format('0,0')],
-      vat_type: [this.vat_type],
+      amount: [numeral(this.amount).format('0,0')],
       final_amount: [numeral(this.amount).format('0,0')],
     });
-
-    this.form.valueChanges.subscribe(res => {
-      const discount = numeral(res.discount)._value;
-      const amount = numeral(res.amount)._value;
-
-
-      if (res.discount_type === 'percent' && discount > 100) {
-        this.form.patchValue({ discount: 100 });
-      }
-
-      if (res.discount_type === 'price' && discount > amount) {
-        this.form.patchValue({ discount: res.amount });
-      }
-    });
   }
+
+  onNumberInput(event: any, controlName: string): void {
+    // Early return for percentage-based VAT and discount
+    if (controlName === "vat" && this.vat_type === "percent") return;
+    if (controlName === "discount" && this.discount_type === "percent") return;
+    
+    // Get the current form control and its current value
+    const control = this.form.get(controlName);
+
+    // Remove existing commas from the input
+    let inputValue = event.target.value.replace(/,/g, '');
+    
+    // Convert to number for validation
+    const numValue = Number(inputValue);
+    
+    if (!isNaN(numValue)) {
+        const formattedValue = numeral(numValue).format('0,0');
+        event.target.value = formattedValue;
+        control.setValue(formattedValue, { emitEvent: false });
+        this[controlName] = formattedValue;
+    } else {
+        event.target.value = this[controlName];
+        control.setValue(this[controlName], { emitEvent: false });
+    }
+  }
+  
 
   submit() {
     const data = this.form.getRawValue();
     this.dialogRef.close(data);
-  }
-
-  /**
-   * Format input number and recalculate final amount
-   * @param event Input event containing the field name and value
-   */
-  discountInputChange(event: any) {
-    const { name, value } = event.target;
-
-    // Format the input value using numeral
-    const formattedValue = numeral(value).format('0,0');
-    this.form.patchValue({ [name]: formattedValue }, { emitEvent: false });
-
-    // Get current form values
-    const formValues = this.form.getRawValue();
-    const amount = numeral(formValues.amount).value() || 0;
-    const discount = numeral(formValues.discount).value() || 0;
-    const vat = numeral(formValues.vat).value() || 0;
-
-    // Calculate discount amount
-    let discountAmount = 0;
-    if (formValues.discount_type === 'percent') {
-      discountAmount = amount * (discount / 100);
-    } else {
-      discountAmount = discount;
-    }
-
-    // Calculate amount after discount
-    const amountAfterDiscount = amount - discountAmount;
-
-    // Calculate vat amount
-    let vatAmount = 0;
-    if (formValues.vat_type === 'percent') {
-      vatAmount = amountAfterDiscount * (vat / 100);
-    } else {
-      vatAmount = vat;
-    }
-
-    const finalAmount = amountAfterDiscount + vatAmount;
-
-    // Update amount and final amount in the form
-    this.form.patchValue(
-      {
-        amount: numeral(amount).format('0,0'),
-        final_amount: numeral(finalAmount).format('0,0'),
-      },
-      { emitEvent: false }
-    );
   }
 }

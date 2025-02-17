@@ -43,6 +43,7 @@ import { GroupReportComponent } from './group/group-report/group-report.componen
 import {TreeViewModule} from '@syncfusion/ej2-angular-navigations';
 // import { InputSelectAllDirective } from './common/input-select-all/input-select-all.directive';
 import { registerLicense } from '@syncfusion/ej2-base';
+import { WarehouseParcelFormDialogNewComponent } from './warehouse/warehouse-parcel-form-dialog-new/warehouse-parcel-form-dialog-new.component';
 
 // Registering Syncfusion license key
 registerLicense('ORg4AjUWIQA/Gnt2V1hhQlJAfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hSn5UdkFjXXxccHNTRmZb');
@@ -69,6 +70,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     SearchSupplierDialogComponent,
     PopupConfirmDialogComponent,
     GroupReportComponent,
+    WarehouseParcelFormDialogNewComponent,
   ],
   imports: [
     BrowserModule,

@@ -235,6 +235,12 @@ export class ProductService {
     return this.http.get(url);
   }
 
+  getParcelNew(id: string) {
+    const url = environment.apiUrl + `/warehouse-product-parcel?WarehouseProductParcelSearch[product_id]=${id}&WarehouseProductParcelSearch[hasStock]=1`;
+    const res = this.http.get(url);
+    return res;
+  }
+
   getPdfBarcode(data = {}) {
     const url = environment.apiUrl + '/product/print-pdf-barcode';
     return this.http.post(url, data);

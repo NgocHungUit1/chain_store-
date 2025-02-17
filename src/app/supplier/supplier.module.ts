@@ -14,6 +14,8 @@ import { SupplierFormDialogComponent } from './supplier-form-dialog/supplier-for
 import { SupplierTabInfoComponent } from './supplier-tab-info/supplier-tab-info.component';
 import { SupplierTabDebtComponent } from './supplier-tab-debt/supplier-tab-debt.component';
 import {SupplierUploadDialogComponent} from './supplier-upload-dialog/supplier-upload-dialog.component';
+import { DatetimeChooseFilterDialogComponent } from './datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
+import { DatetimeDefaultFilterDialogComponent } from './datetime-default-filter-dialog/datetime-default-filter-dialog.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +23,9 @@ import {SupplierUploadDialogComponent} from './supplier-upload-dialog/supplier-u
     SupplierFormDialogComponent,
     SupplierTabInfoComponent,
     SupplierTabDebtComponent,
-    SupplierUploadDialogComponent
+    SupplierUploadDialogComponent,
+    DatetimeDefaultFilterDialogComponent,
+    DatetimeChooseFilterDialogComponent
   ],
   imports: [
     CommonModule,

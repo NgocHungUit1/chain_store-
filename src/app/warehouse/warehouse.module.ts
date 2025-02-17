@@ -27,6 +27,8 @@ import {CommonModule as DComonModule} from '../common/common.module';
 import { WarehouseUnitCreateDialogComponent } from './warehouse-unit-create-dialog/warehouse-unit-create-dialog.component';
 import { SharedModule } from '../shared/shared.module';
 import {WarehouseFormAmountComponent} from './warehouse-form-amount/warehouse-form-amount.component';
+import { WarehouseParcelFormDialogAvailableComponent } from './warehouse-parcel-form-dialog-available/warehouse-parcel-form-dialog-available.component';
+import { WarehouseParcelFormDialogSelectComponent } from './warehouse-parcel-form-dialog-select/warehouse-parcel-form-dialog-select.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +46,9 @@ import {WarehouseFormAmountComponent} from './warehouse-form-amount/warehouse-fo
     WarehouseProductMedicineDialogComponent,
     WarehouseFormPriceDialogComponent,
     WarehouseFormAmountComponent,
-    WarehouseUnitCreateDialogComponent
+    WarehouseUnitCreateDialogComponent,
+    WarehouseParcelFormDialogAvailableComponent,
+    WarehouseParcelFormDialogSelectComponent
   ],
   imports: [
     CommonModule,
