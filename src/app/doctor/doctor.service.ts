@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Customer, CustomerFilter } from '../customer/customer.model';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Doctor, DoctorFilter } from './doctor.model';
+import { DateFilter } from '../supplier/supplier.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DoctorService {
-
+  public dateFilter: BehaviorSubject<DateFilter> = new BehaviorSubject<DateFilter>(null);
   constructor(private http: HttpClient) { }
 
   getApiUrl(filter?: DoctorFilter) {
@@ -78,5 +79,20 @@ export class DoctorService {
   lock(id) {
     const url = environment.apiUrl + '/doctor/lock?id=' + id;
     return this.http.post(url, {});
+  }
+
+
+
+  setDateFilter(obj: DateFilter) {
+    this.dateFilter.next(obj);
+  }
+
+  getDateFilter() {
+    return this.dateFilter.value;
+  }
+
+  convertDateYYYYMMDD(date: Date) {
+    const month = date.getMonth() + 1;
+    return date.getFullYear() + '-' + month + '-' + date.getDate();
   }
 }

@@ -27,6 +27,7 @@ export class DoctorFilter extends ApiFilterBase {
   note = '';
   address = '';
   status = '';
+  keyword = '';
   page = 1;
   pageSize = 15;
   sort = '';
