@@ -76,7 +76,7 @@ export class WarehouseProduct {
   vat: number;
   vat_type: string;
   // new field for subItem feature
-  isSubItem: boolean;
+  is_sub_item: number;
   master_product_id: number;
 }
 

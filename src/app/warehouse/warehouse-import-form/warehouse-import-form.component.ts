@@ -880,7 +880,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     this.apiFilter = this.buildFilterFromParams();
     this.warehouseProductService.getList(this.apiFilter).subscribe(res => {
       const newData = [];
-
       const productIdsStr = res.body.map(item => item.product.id).join(',');
       const productFilter = new ProductFilter();
       productFilter.id = productIdsStr;
@@ -906,7 +905,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           warehouseProduct.product_parcels = item.productParcels !== undefined ? item.productParcels : [];
           warehouseProduct.vat = (item.vat !== null) ? item.vat : 0;
           warehouseProduct.vat_type = (item.vat_type !== null) ? item.vat_type : 'price';
-          warehouseProduct.isSubItem = item.is_sub_item == 1 ? true : false ;
+          warehouseProduct.is_sub_item = item.is_sub_item ?? 0;
           warehouseProduct.note = item.note || "";
           warehouseProduct.productUnits.forEach(productUnit => {
             productUnit['quantity_of_stock'] = (productData.find(prod => prod.id == item.product_id)?.quantity?.number / productUnit['value']);
@@ -1187,7 +1186,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         warehouseProduct.product_parcels = [];
         warehouseProduct.vat = 0;
         warehouseProduct.vat_type = 'price';
-        warehouseProduct.isSubItem = false;
+        warehouseProduct.is_sub_item = 0;
         warehouseProduct.note = '';
         warehouseProduct.master_product_id = product_id;
 
@@ -1400,26 +1399,26 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     const selectedProduct = this.data[i];
 
     // Filter out the selected product and its sub-items
-    if (selectedProduct.isSubItem) {
+    if (selectedProduct.is_sub_item === 1) {
       // If it's a sub-item, just remove that specific item
       this.data = this.data.filter((item, index) => index !== i);
     } else {
       // If it's a master item, remove it and its sub-items
       this.data = this.data.filter(item => {
         return item !== selectedProduct &&
-          (!item.isSubItem || item.master_product_id !== selectedProduct.product_id);
+          (item.is_sub_item === 0  || item.master_product_id !== selectedProduct.product_id);
       });
     }
 
     // Update the tempDataForQuickFilter similarly
-    if (selectedProduct.isSubItem) {
+    if (selectedProduct.is_sub_item ===1) {
       this.tempDataForQuickFilter = this.tempDataForQuickFilter.filter((item, index) =>
         index !== i
       );
     } else {
       this.tempDataForQuickFilter = this.tempDataForQuickFilter.filter(item => {
         return item !== selectedProduct &&
-          (!item.isSubItem || item.master_product_id  !== selectedProduct.product_id);
+          (item.is_sub_item===0 || item.master_product_id  !== selectedProduct.product_id);
       });
     }
 
@@ -2085,7 +2084,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   // coding add new row
   addNewRow(i: number) {
     const oldItem = this.data[i];
-    const newItem = {...oldItem, description: '', master_product_id: oldItem.product_id, isSubItem: true, product_parcels: [], quantity: 0};
+    const newItem = {...oldItem, description: '', master_product_id: oldItem.product_id, is_sub_item: 1, product_parcels: [], quantity: 0};
     this.data.splice(i + 1, 0, newItem);
 
     this.productDataSource.data = [...this.data];

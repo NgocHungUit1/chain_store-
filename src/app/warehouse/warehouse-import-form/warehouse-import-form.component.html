@@ -249,7 +249,7 @@
                 <th mat-header-cell *matHeaderCellDef style="min-width: 35px;"> #</th>
                 <td mat-cell
                     style="padding-top: 1.5rem; vertical-align: top" *matCellDef="let element; let i = index;">
-                  <span *ngIf="!element?.isSubItem">{{i + 1}}</span>
+                  <span *ngIf="element?.is_sub_item==0">{{i + 1}}</span>
                 </td>
               </ng-container>
 
@@ -264,7 +264,7 @@
                     style="padding-top: 1.5rem; vertical-align: top" class="no-wrap center-td">
                   <div class="product-name-container">
                     <div class="product-name-text">
-                      <strong *ngIf="!element?.isSubItem">
+                      <strong *ngIf="element?.is_sub_item==0">
                         <span *ngIf="element.product.product_name.length > 45">{{ element.product.product_name | slice:0:45 }}
                           ...
                         </span>
@@ -315,7 +315,7 @@
               <ng-container matColumnDef="product_no">
                 <th mat-header-cell *matHeaderCellDef style='min-width: 80px;'> {{columnsHeader['product_no']}}</th>
                 <td mat-cell style='vertical-align: top;' *matCellDef="let element; let i = index" class="center-td">
-                  <div class="span-product-no" style='margin-bottom: 0.5rem;' *ngIf="!element?.isSubItem">
+                  <div class="span-product-no" style='margin-bottom: 0.5rem;' *ngIf="element?.is_sub_item==0">
                     {{ element.product.product_no }}</div>
 
                   <div class="custom-parcel-filter-container">
@@ -381,7 +381,7 @@
               <ng-container matColumnDef="image">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['image']}}</th>
                 <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; width: 100px' *matCellDef="let element; let i = index">
-                  <div style='width: 50px; height: 50px; object-fit: contain; border: 1px solid #c0c0c0; margin: 0 auto' *ngIf="!element?.isSubItem">
+                  <div style='width: 50px; height: 50px; object-fit: contain; border: 1px solid #c0c0c0; margin: 0 auto' *ngIf="element?.is_sub_item==0">
                       <ng-container *ngIf='!element.product?.default_image'>
                         <img src='/assets/images/default-product.png' style='width: 100%;height: 100%;'>
                       </ng-container>
@@ -402,7 +402,7 @@
              <ng-container matColumnDef="product_unit_id">
                 <th mat-header-cell *matHeaderCellDef style="min-width:100px; text-align: right;"> {{columnsHeader['product_unit_id']}}</th>
                 <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; min-width:100px;' *matCellDef="let element; let i = index" class="center-td">
-                  <div style='display: flex;flex-direction: row;flex-wrap: nowrap;justify-content: center;padding-left:0.5rem; max-width: 150px !important;' *ngIf="!element?.isSubItem">
+                  <div style='display: flex;flex-direction: row;flex-wrap: nowrap;justify-content: center;padding-left:0.5rem; max-width: 150px !important;' *ngIf="element?.is_sub_item==0">
                     <mat-form-field *ngIf="element.productUnits.length">
                       <mat-select matInput [(ngModel)]="data[i]['product_unit_id']"
                                   (selectionChange)="onUnitChange(i, $event)">
@@ -429,7 +429,7 @@
               <ng-container matColumnDef="inventory_quantity">
                  <th mat-header-cell *matHeaderCellDef style="min-width:60px; max-width:60px"> {{columnsHeader['inventory_quantity']}}</th>
                 <td mat-cell style='text-align:right; vertical-align: top; padding: 1.5rem 0.5rem 0 0; min-width:60px; max-width:60px;' *matCellDef="let element; let i = index">
-                 <span class="inventory_quantity-input" style="text-align: right" *ngIf="!element?.isSubItem">{{element['inventory_quantity']}}</span>
+                 <span class="inventory_quantity-input" style="text-align: right" *ngIf="element?.is_sub_item==0">{{element['inventory_quantity']}}</span>
                 </td>
               </ng-container>
 
@@ -559,8 +559,8 @@
               </tr>
               <tr mat-row *matRowDef="let row; columns: displayedColumns;"
                   [ngClass]="{
-                    'sub-item-row': row.isSubItem,
-                    'master-item-row': !row.isSubItem
+                    'sub-item-row': row.is_sub_item==1,
+                    'master-item-row': row.is_sub_item==0
                   }"></tr>
             </table>
           </div>
