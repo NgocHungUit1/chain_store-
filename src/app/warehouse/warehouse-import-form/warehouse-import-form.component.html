@@ -195,6 +195,16 @@
                 </mat-slide-toggle>
               </div>
             </div>
+            <div class='d-flex' style='justify-content: space-between'>
+              <div>Thêm dòng</div>
+              <div>
+                <mat-slide-toggle
+                  (click)='toggleColumn("add_row")'
+                  color='primary'
+                  [checked]='isIncludes("add_row")'>
+                </mat-slide-toggle>
+              </div>
+            </div>
           </div>
         </app-popover>
       </div>
@@ -238,7 +248,9 @@
               <ng-container matColumnDef="#">
                 <th mat-header-cell *matHeaderCellDef style="min-width: 35px;"> #</th>
                 <td mat-cell
-                    style="padding-top: 1.5rem; vertical-align: top" *matCellDef="let element; let i = index;"> {{i + 1}}</td>
+                    style="padding-top: 1.5rem; vertical-align: top" *matCellDef="let element; let i = index;">
+                  <span *ngIf="element?.is_sub_item==0">{{i + 1}}</span>
+                </td>
               </ng-container>
 
               <!-- Index Filter -->
@@ -249,14 +261,43 @@
               <ng-container matColumnDef="product_name">
                 <th mat-header-cell *matHeaderCellDef style="min-width:200px"> {{columnsHeader['product_name']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index" title="{{ element.product.product_name }}"
-                    style="padding-top: 1.5rem; vertical-align: top">
+                    style="padding-top: 1.5rem; vertical-align: top" class="no-wrap center-td">
+                  <div class="product-name-container">
+                    <div class="product-name-text">
+                      <strong *ngIf="element?.is_sub_item==0">
+                        <span *ngIf="element.product.product_name.length > 45">{{ element.product.product_name | slice:0:45 }}
+                          ...
+                        </span>
+                        <span *ngIf="element.product.product_name.length <= 45">{{ element.product.product_name }}</span>
+                      </strong>
+                    </div>
+                    <div class="note-container" clickOutside (clickOutside)="closeNote(i)">
+                      <div class="note-icon">
+                        <button type="button"
+                                (click)="toggleShowNote(i)"
+                                class="note-button"
+                                [class.active]="isNoteShown(i)">
+                          <ng-container *ngIf="element.note; else noDescription">
+                            <span class="note-description">
+                              {{element.note}}
+                            </span>
+                          </ng-container>
+                          <ng-template #noDescription>
+                            <span class="note-description">Ghi chú...</span>
+                          </ng-template>
+                          <mat-icon>border_color</mat-icon>
+                        </button>
+                      </div>
 
-                  <strong>
-                    <span *ngIf="element.product.product_name.length > 45">{{ element.product.product_name | slice:0:45 }}
-                      ...
-                    </span>
-                    <span *ngIf="element.product.product_name.length <= 45">{{ element.product.product_name }}</span>
-                  </strong>
+
+                      <div class="note-area open-close-container" *ngIf="isNoteShown(i)">
+                        <textarea class="note-textarea"
+                                  placeholder="Ghi chú..."
+                                  [(ngModel)]="element.note">
+                        </textarea>
+                      </div>
+                    </div>
+                  </div>
                 </td>
               </ng-container>
 
@@ -273,10 +314,10 @@
 
               <ng-container matColumnDef="product_no">
                 <th mat-header-cell *matHeaderCellDef style='min-width: 80px;'> {{columnsHeader['product_no']}}</th>
-                <td mat-cell style='vertical-align: top;' *matCellDef="let element; let i = index">
-                  <div class="span-product-no" style='margin-bottom: 0.5rem;'>
+                <td mat-cell style='vertical-align: top;' *matCellDef="let element; let i = index" class="center-td">
+                  <div class="span-product-no" style='margin-bottom: 0.5rem;' *ngIf="element?.is_sub_item==0">
                     {{ element.product.product_no }}</div>
-<!--                    coding parcel -->
+
                   <div class="custom-parcel-filter-container">
                       <div class="chip-list">
                         <mat-chip-list #chiplist aria-label="Parcel selection">
@@ -340,7 +381,7 @@
               <ng-container matColumnDef="image">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['image']}}</th>
                 <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; width: 100px' *matCellDef="let element; let i = index">
-                  <div style='width: 50px; height: 50px; object-fit: contain; border: 1px solid #c0c0c0; margin: 0 auto'>
+                  <div style='width: 50px; height: 50px; object-fit: contain; border: 1px solid #c0c0c0; margin: 0 auto' *ngIf="element?.is_sub_item==0">
                       <ng-container *ngIf='!element.product?.default_image'>
                         <img src='/assets/images/default-product.png' style='width: 100%;height: 100%;'>
                       </ng-container>
@@ -360,8 +401,8 @@
 
              <ng-container matColumnDef="product_unit_id">
                 <th mat-header-cell *matHeaderCellDef style="min-width:100px; text-align: right;"> {{columnsHeader['product_unit_id']}}</th>
-                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; min-width:100px;' *matCellDef="let element; let i = index">
-                  <div style='display: flex;flex-direction: row;flex-wrap: nowrap;justify-content: center;padding-left:0.5rem; max-width: 150px !important;'>
+                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; min-width:100px;' *matCellDef="let element; let i = index" class="center-td">
+                  <div style='display: flex;flex-direction: row;flex-wrap: nowrap;justify-content: center;padding-left:0.5rem; max-width: 150px !important;' *ngIf="element?.is_sub_item==0">
                     <mat-form-field *ngIf="element.productUnits.length">
                       <mat-select matInput [(ngModel)]="data[i]['product_unit_id']"
                                   (selectionChange)="onUnitChange(i, $event)">
@@ -386,10 +427,9 @@
 
               <!--Inventory Quantity Column -->
               <ng-container matColumnDef="inventory_quantity">
-
                  <th mat-header-cell *matHeaderCellDef style="min-width:60px; max-width:60px"> {{columnsHeader['inventory_quantity']}}</th>
                 <td mat-cell style='text-align:right; vertical-align: top; padding: 1.5rem 0.5rem 0 0; min-width:60px; max-width:60px;' *matCellDef="let element; let i = index">
-                 <span class="inventory_quantity-input" style="text-align: right">{{element['inventory_quantity']}}</span>
+                 <span class="inventory_quantity-input" style="text-align: right" *ngIf="element?.is_sub_item==0">{{element['inventory_quantity']}}</span>
                 </td>
               </ng-container>
 
@@ -482,25 +522,46 @@
               <!-- Actions Column -->
               <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef></th>
-                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0;' *matCellDef="let element; let i = index">
+                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0;' *matCellDef="let element; let i = index" class="center-td">
                   <button mat-icon-button (click)="removeProduct(i)">
                     <mat-icon>delete</mat-icon>
                   </button>
                 </td>
               </ng-container>
+
+
               <!-- Actions Filter -->
               <ng-container matColumnDef="filter-actions">
                 <th mat-header-cell *matHeaderCellDef></th>
               </ng-container>
+
+              <!--              coding add new row-->
+              <ng-container matColumnDef="add_row">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0;' *matCellDef="let element; let i = index" class="center-td">
+                  <button mat-icon-button (click)="addNewRow(i)">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="filter-add_row">
+                <th mat-header-cell *matHeaderCellDef></th>
+              </ng-container>
+              <!--              end coding-->
 
               <!-- Header and Row Definitions -->
               <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
               <tr mat-header-row
                   *matHeaderRowDef="filterColumns"
                   class="filter-header-row"
-                  [style.display]="showFilters ? '' : 'none'">
+                  [style.display]="showFilters ? '' : 'none'"
+              >
               </tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                  [ngClass]="{
+                    'sub-item-row': row.is_sub_item==1,
+                    'master-item-row': row.is_sub_item==0
+                  }"></tr>
             </table>
           </div>
         </div>
