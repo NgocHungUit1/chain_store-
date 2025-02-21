@@ -2084,7 +2084,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   // coding add new row
   addNewRow(i: number) {
     const oldItem = this.data[i];
-    const newItem = {...oldItem, description: '', master_product_id: oldItem.product_id, is_sub_item: 1, product_parcels: [], quantity: 0};
+    const newItem = {...oldItem, note: '', master_product_id: oldItem.product_id, is_sub_item: 1, product_parcels: [], quantity: 0};
     this.data.splice(i + 1, 0, newItem);
 
     this.productDataSource.data = [...this.data];
