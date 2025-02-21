@@ -322,6 +322,7 @@
                       <div class="chip-list">
                         <mat-chip-list #chiplist aria-label="Parcel selection">
                           <mat-chip
+
                             class="chip-item"
                             *ngFor = "let parcel of data[i]['product_parcels']"
                             [selectable]="true"
@@ -400,8 +401,8 @@
               <!-- Product Unit Column -->
 
              <ng-container matColumnDef="product_unit_id">
-                <th mat-header-cell *matHeaderCellDef style="min-width:100px; text-align: right;"> {{columnsHeader['product_unit_id']}}</th>
-                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; min-width:100px;' *matCellDef="let element; let i = index" class="center-td">
+                <th mat-header-cell *matHeaderCellDef style="min-width:80px; text-align: right;"> {{columnsHeader['product_unit_id']}}</th>
+                <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; min-width:80px;' *matCellDef="let element; let i = index" class="center-td">
                   <div style='display: flex;flex-direction: row;flex-wrap: nowrap;justify-content: center;padding-left:0.5rem; max-width: 150px !important;' *ngIf="element?.is_sub_item==0">
                     <mat-form-field *ngIf="element.productUnits.length">
                       <mat-select matInput [(ngModel)]="data[i]['product_unit_id']"
@@ -418,9 +419,9 @@
 
               <!-- Product Unit Filter -->
               <ng-container matColumnDef="filter-product_unit_id">
-                <th  mat-header-cell *matHeaderCellDef>
-                  <mat-form-field style="min-width:100px" appearance="outline" class="w-full quick-filter-input">
-                    <input matInput (keyup)="applyFilter($event, 'product_unit_id')" placeholder="Tìm đơn vị" style="min-width:100px">
+                <th  mat-header-cell *matHeaderCellDef style="width:100px">
+                  <mat-form-field style="width:95px" appearance="outline" class="w-full quick-filter-input">
+                    <input matInput (keyup)="applyFilter($event, 'product_unit_id')" placeholder="Tìm đơn vị" style="width:100px">
                   </mat-form-field>
                 </th>
               </ng-container>
