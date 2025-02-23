@@ -438,3 +438,25 @@ html .page-wrapper .page-content {
     }
   }
 }
+
+//coding note
+.note-area {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 1002;
+  background: white;
+  border-radius: 4px;
+  height: 50px;
+  box-shadow: 0px 4px 10px 0 rgba(0,0,0,0.2);
+  display: flex;
+}
+
+.note-textarea {
+  border: none;
+  background: transparent;
+  overflow: clip;
+}
+.note-textarea:focus {
+  color: red;
+}

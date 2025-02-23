@@ -19,7 +19,7 @@
               <!--<span style="padding-right: 10px">{{  countProduct - i  }}</span>-->
               <span style="padding-right: 10px">{{ i + 1 }}</span>
             </div>
-            <div fxFlex="40">
+            <div fxFlex="34">
               <div
                 class="row-text row-product-name"
                 title="{{ itemProduct?.product?.product_name }}">
@@ -46,30 +46,82 @@
               <div class="span-product-no">
                 {{ itemProduct?.product?.product_no }}
               </div>
-              <div class="row-product-note d-flex align-items-center">
-                <span
-                  *ngIf="itemProduct?.product?.note_detail_sale === undefined"
-                  >Ghi chú liều dùng</span
-                >
-                <span
-                  class="product-note-txt"
-                  *ngIf="itemProduct?.product?.note_detail_sale"
-                  >{{ itemProduct?.product?.note_detail_sale }}</span
-                >
-                <button mat-icon-button>
-                  <mat-icon
-                    class="row-icon-edit"
-                    (click)="
-                      openNoteDetailOrderDialog(
-                        i,
-                        itemProduct?.product_unit_id,
-                        itemProduct?.product?.note_detail_sale
-                      )
-                    ">
-                    edit
-                  </mat-icon>
-                </button>
+              <div class="row-product-note d-flex align-items-center" *ngIf="isNoteShown(i)">
+<!--                <span-->
+<!--                  *ngIf="itemProduct?.product?.note_detail_sale === undefined"-->
+<!--                  >Ghi chú</span-->
+<!--                >-->
+<!--                <span-->
+<!--                  class="product-note-txt"-->
+<!--                  *ngIf="itemProduct?.product?.note_detail_sale"-->
+<!--                  >{{ itemProduct?.product?.note_detail_sale }}</span-->
+<!--                >-->
+<!--                <button mat-icon-button>-->
+<!--                  <mat-icon-->
+<!--                    class="row-icon-edit"-->
+<!--                    (click)="-->
+<!--                      openNoteDetailOrderDialog(-->
+<!--                        i,-->
+<!--                        itemProduct?.product_unit_id,-->
+<!--                        itemProduct?.product?.note_detail_sale-->
+<!--                      )-->
+<!--                    ">-->
+<!--                    edit-->
+<!--                  </mat-icon>-->
+<!--                </button>-->
+                  <textarea
+                    class="note-textarea" cdkTextareaAutosize
+                            placeholder="Ghi chú..."
+                            [(ngModel)]="itemProduct.product.note">
+                  </textarea>
               </div>
+<!--              <div class="custom-parcel-filter-container">-->
+<!--                <div class="chip-list">-->
+<!--                  <mat-chip-list #chiplist aria-label="Parcel selection">-->
+<!--                    <mat-chip-->
+<!--                      class="chip-item"-->
+<!--                      *ngFor = "let parcel of data[i]['product_parcels']"-->
+<!--                      [selectable]="true"-->
+<!--                      [removable]="true"-->
+<!--                      (click)="handleSelectChip(i, parcel)"-->
+<!--                      (removed) = "remove(i, parcel)">-->
+<!--                      {{parcel['parcel_no']}} - {{parcel['expiration_date'] | date:'dd/MM/yyyy'}} - SL: {{parcel['quantity']}}-->
+<!--                      <mat-icon matChipRemove>cancel</mat-icon>-->
+<!--                    </mat-chip>-->
+<!--                    <div class="parcel-seletor">-->
+<!--                      <div class="parcel-input-border">-->
+<!--                        <input-->
+<!--                          class="parcel-input"-->
+<!--                          placeholder="Nhập lô, hạn sử dụng"-->
+<!--                          #parcelInput-->
+<!--                          [formControl]="getItemControl(i)"-->
+<!--                          [matAutocomplete]="parcelAutocomplete"-->
+<!--                          [matChipInputFor]="chiplist"-->
+<!--                          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"-->
+<!--                        >-->
+<!--                      </div>-->
+<!--                      <button-->
+<!--                        mat-icon-button-->
+<!--                        type="button"-->
+<!--                        (click)="openParcelSelectionDialog(i)"-->
+<!--                        class="select-parcel-button"-->
+<!--                        matTooltip="Chọn lô"-->
+<!--                        matTooltipPosition="above"-->
+<!--                      >-->
+<!--                        <mat-icon>menu</mat-icon>-->
+<!--                      </button>-->
+<!--                    </div>-->
+<!--                  </mat-chip-list>-->
+<!--                  <mat-autocomplete #parcelAutocomplete="matAutocomplete" (optionSelected)="selected($event, i)" class="parcel-option-list" [panelWidth]="240">-->
+<!--                    <mat-option (click)="$event.stopPropagation(); openAddNewParcelDialog(i)" class="add-new-parcel" [value]="null">-->
+<!--                      <span style="color: #1a73e8; font-size: 1rem !important;">Thêm mới lô, hạn sử dụng</span>-->
+<!--                    </mat-option>-->
+<!--                    <mat-option *ngFor="let parcel of getFilterItems(i) | async" [value]="parcel" class="parcel-option">-->
+<!--                      {{parcel['parcel_no']}} - {{parcel['expiration_date'] | date:'dd/MM/yyyy'}} - tồn: {{parcel['quantity_of_stock']}}-->
+<!--                    </mat-option>-->
+<!--                  </mat-autocomplete>-->
+<!--                </div>-->
+<!--              </div>-->
             </div>
             <div fxFlex="2"></div>
             <div fxFlex="8" class="row-product-base-unit">
@@ -202,6 +254,43 @@
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
+            <div fxFlex="6" class="row-count-number">
+              <button mat-icon-button (click)="toggleShowMenu(i)">
+                <mat-icon>more_vertical</mat-icon>
+                <div class="note-area" *ngIf="isMenuShown(i)">
+                  <button mat-stroked-button (click)="toggleShowNote(i)">
+                   <mat-icon>border_color</mat-icon>   Ghi chú
+                  </button>
+                </div>
+              </button>
+
+<!--              <div class="note-container" clickOutside (clickOutside)="closeNote(i)">-->
+<!--                <div class="note-icon">-->
+<!--                  <button type="button"-->
+<!--                          (click)="toggleShowNote(i)"-->
+<!--                          class="note-button"-->
+<!--                          [class.active]="isNoteShown(i)">-->
+<!--                    <ng-container *ngIf="element.note; else noDescription">-->
+<!--                            <span class="note-description">-->
+<!--                              {{element.note}}-->
+<!--                            </span>-->
+<!--                    </ng-container>-->
+<!--                    <ng-template #noDescription>-->
+<!--                      <span class="note-description">Ghi chú...</span>-->
+<!--                    </ng-template>-->
+<!--                    <mat-icon>border_color</mat-icon>-->
+<!--                  </button>-->
+<!--                </div>-->
+
+
+<!--                <div class="note-area open-close-container" *ngIf="isNoteShown(i)">-->
+<!--                        <textarea class="note-textarea"-->
+<!--                                  placeholder="Ghi chú..."-->
+<!--                                  [(ngModel)]="element.note">-->
+<!--                        </textarea>-->
+<!--                </div>-->
+<!--              </div>-->
+            </div>
           </div>
         </div>
 
@@ -223,7 +312,7 @@
       <app-sale-list-product
         class="sale-list-product"
         [class.opened]="showList"></app-sale-list-product>
-    </div>
+    </div>¡
   </div>
   <div fxFlex=".5"></div>
   <div fxFlex="27">

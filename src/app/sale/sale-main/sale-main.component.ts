@@ -216,7 +216,6 @@ export class SaleMainComponent implements OnInit {
 
   async loadData() {
     const mItemInvoice = this.getNewItemInvoice();
-
     await this.handleAddPriceBookExist(mItemInvoice);
 
     await this.handleAddCustomerExist(mItemInvoice);
@@ -2151,5 +2150,32 @@ export class SaleMainComponent implements OnInit {
     const allPermissions = this.authSer.getPermissionsFromLocalStorage();
 
     return allPermissions.indexOf(permissionName) !== -1;
+  }
+
+  // start coding note (ghi chu)
+  shownNotes: Set<number> = new Set();  // Will store user IDs or indices of visible notes
+  shownMenus: Set<number> = new Set();  // Will store user IDs or indices of visible notes
+
+  toggleShowNote(i: number) {
+      if (this.shownNotes.has(i)) {
+        this.shownNotes.delete(i);
+      } else {
+        this.shownNotes.add(i);
+      }
+    }
+
+
+  isNoteShown(i: number) {
+    return this.shownNotes.has(i);
+  }
+  isMenuShown(i: number) {
+    return this.shownMenus.has(i);
+  }
+  toggleShowMenu(i: number) {
+    if (this.shownMenus.has(i)) {
+      this.shownMenus.delete(i);
+    } else {
+      this.shownMenus.add(i);
+    }
   }
 }
