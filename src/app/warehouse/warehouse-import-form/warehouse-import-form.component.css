@@ -264,17 +264,19 @@ tr.mat-header-row {
   width: 100% !important;
 }
 
-
+.mat-standard-chip {
+  min-height: 24px !important;
+}
 
 /* Style cho từng chip */
 .chip-item {
   /*background-color: rgba(0, 150, 136, 0.5) !important;*/
   background-color: white !important;
   color: #3f51b5 !important;
-  height: 32px !important;
+  height: 12px !important;
   border-radius: 4px !important;
   padding: 0 6px !important;
-  font-size: 12px !important;
+  font-size: 10px !important;
   white-space: nowrap !important;
   margin: 0 !important;
   box-sizing: border-box !important;
@@ -297,7 +299,7 @@ tr.mat-header-row {
 .parcel-input {
   border: none !important;
   background: transparent !important;
-  height: 24px !important;
+  height: 20px !important;
   border-left: 1px #a8a8a8 solid !important;
   padding-left: 10px;
   width: 130px !important;
@@ -320,6 +322,9 @@ tr.mat-header-row {
   color: #3f51b5 !important;
   font-size: 16px;
   width: 20px !important;
+  line-height: 32px !important;
+  height: 32px !important;
+  padding-right: 5px;
 }
 
 /*!* Remove browser default focus outline *!*/
@@ -389,9 +394,10 @@ tr.mat-header-row {
   border-color: #00897b;
 }
 
-
+.product-name-container
 .product-name-text {
-  flex: 1;
+  /*flex: 1;*/
+  white-space: pre-wrap !important;
 }
 
 .note-description{

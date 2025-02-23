@@ -260,18 +260,45 @@
 
               <ng-container matColumnDef="product_name">
                 <th mat-header-cell *matHeaderCellDef style="min-width:150px"> {{columnsHeader['product_name']}}</th>
-                <td mat-cell *matCellDef="let element; let i = index" title="{{ element.product.product_name }}"
-                    style="padding-top: 1.5rem; vertical-align: top" class="no-wrap center-td">
-                  <div class="product-name-container">
-                    <div class="product-name-text">
-                      <strong *ngIf="element?.is_sub_item==0">
-                        <span *ngIf="element.product.product_name.length > 20">{{ element.product.product_name | slice:0:20 }}
-                          ...
-                        </span>
-                        <span *ngIf="element.product.product_name.length <= 45">{{ element.product.product_name }}</span>
+                <td  mat-cell *matCellDef="let element; let i = index" title="{{ element.product.product_name }}"
+                    style="padding-top: 1.5rem; vertical-align: top; white-space: pre-wrap !important;" >
+                  <div class="product-name-container" style="white-space: pre-wrap !important;">
+                    <div class="product-name-text" style="white-space: pre-wrap !important;">
+                      <strong *ngIf="element?.is_sub_item==0" style="white-space: pre-wrap !important;">
+<!--                        <span *ngIf="element.product.product_name.length > 20">{{ element.product.product_name | slice:0:20 }}-->
+<!--                          ...-->
+<!--                        </span>-->
+<!--                        <span *ngIf="element.product.product_name.length <= 45">{{ element.product.product_name }}</span>-->
+                        <span style="white-space: pre-wrap !important;">{{ element.product.product_name }}</span>
+
                       </strong>
                     </div>
+                    <div class="note-container" clickOutside (clickOutside)="closeNote(i)">
+                      <div class="note-icon">
+                        <button type="button"
+                                (click)="toggleShowNote(i)"
+                                class="note-button"
+                                [class.active]="isNoteShown(i)">
+                          <ng-container *ngIf="element.note; else noDescription">
+                            <span class="note-description">
+                              {{element.note}}
+                            </span>
+                          </ng-container>
+                          <ng-template #noDescription>
+                            <span class="note-description">Ghi chú...</span>
+                          </ng-template>
+                          <mat-icon>border_color</mat-icon>
+                        </button>
+                      </div>
 
+
+                      <div class="note-area open-close-container" *ngIf="isNoteShown(i)">
+                        <textarea class="note-textarea"
+                                  placeholder="Ghi chú..."
+                                  [(ngModel)]="element.note">
+                        </textarea>
+                      </div>
+                    </div>
                   </div>
                 </td>
               </ng-container>
@@ -303,7 +330,7 @@
                             [removable]="true"
                             (click)="handleSelectChip(i, parcel)"
                             (removed) = "remove(i, parcel)">
-                            {{parcel['parcel_no']}} - {{parcel['expiration_date'] | date:'dd/MM/yyyy'}} - SL: {{parcel['quantity']}}
+                            {{parcel['parcel_no']}} - {{parcel['expiration_date'] | date:'dd/MM/yyyy'}} - SL:{{parcel['quantity']}}
                             <mat-icon matChipRemove>cancel</mat-icon>
                           </mat-chip>
                           <div class="parcel-seletor">
@@ -330,32 +357,7 @@
                             </mat-option>
                           </mat-autocomplete>
                       </div>
-                    <div class="note-container" clickOutside (clickOutside)="closeNote(i)">
-                      <div class="note-icon">
-                        <button type="button"
-                                (click)="toggleShowNote(i)"
-                                class="note-button"
-                                [class.active]="isNoteShown(i)">
-                          <ng-container *ngIf="element.note; else noDescription">
-                            <span class="note-description">
-                              {{element.note}}
-                            </span>
-                          </ng-container>
-                          <ng-template #noDescription>
-                            <span class="note-description">Ghi chú...</span>
-                          </ng-template>
-                          <mat-icon>border_color</mat-icon>
-                        </button>
-                      </div>
 
-
-                      <div class="note-area open-close-container" *ngIf="isNoteShown(i)">
-                        <textarea class="note-textarea"
-                                  placeholder="Ghi chú..."
-                                  [(ngModel)]="element.note">
-                        </textarea>
-                      </div>
-                    </div>
                   </div>
                     <div>
                       <button
