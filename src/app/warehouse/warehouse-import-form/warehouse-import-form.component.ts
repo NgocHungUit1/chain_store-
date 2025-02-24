@@ -284,7 +284,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       return;
     }
     const parcel = event.option.value;
-    this.openAddAvailableParcelDialog(id, parcel);
+    const product_no = this.data[id].product['product_no'];
+    this.openAddAvailableParcelDialog(id, parcel, product_no);
     this.getItemControl(id)?.setValue(null);
   }
 
@@ -469,10 +470,16 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   // handle open when click to option -> available (old) parcel
-  openAddAvailableParcelDialog(product_index: number, parcel: object = null) {
+  openAddAvailableParcelDialog(product_index: number, parcel: object = null, product_no: string) {
+    const data ={
+      expiration_date: parcel['expiration_date'],
+      quantity_of_stock: parcel['quantity_of_stock'],
+      parcel_no: parcel['parcel_no'],
+      product_no: product_no
+    };
     const parcelDialogRef  = this.dialog.open(WarehouseParcelFormDialogAvailableComponent, {
       width: '30%',
-      data: parcel,
+      data: data,
     });
     parcelDialogRef.afterClosed().subscribe(result => {
       result = {
@@ -533,7 +540,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         ...rest,
         quantity: availableParcel['quantity']
       };
-      this.openAddAvailableParcelDialog(index, newAvailableParcel);
+      const product_no = this.data[index].product['product_no'];
+      this.openAddAvailableParcelDialog(index, newAvailableParcel, product_no);
     } else {
       console.log('New: ', parcel);
       this.openAddNewParcelDialog(index, parcel as NewParcel);
