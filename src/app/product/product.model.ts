@@ -17,6 +17,8 @@ export class ProductUnit {
   latest_parcel_exp_date: string;
 }
 
+
+
 export class Product {
   id: string;
   product_no: string;

@@ -244,7 +244,6 @@ export class CartComponent implements OnInit, OnDestroy {
     if (this.amountProduct === null) {
       this.amountProduct = 1;
     }
-
     switch(this.iconChangeType) {
       case 'cached':
         // tim san pham

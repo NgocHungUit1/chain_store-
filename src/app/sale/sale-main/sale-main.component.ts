@@ -62,7 +62,13 @@ import { DatePipe } from '@angular/common';
 import * as moment from 'moment';
 import { StoreService } from '../../store/store.service';
 import {AuthService} from '../../authentication/auth.service';
-
+import { ProductService } from '../../product/product.service';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { NewParcel } from '../../warehouse/warehouse-import-form/warehouse-import-form.component';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import {
+  WarehouseParcelFormDialogSelectComponent
+} from '../../warehouse/warehouse-parcel-form-dialog-select/warehouse-parcel-form-dialog-select.component';
 export const MY_FORMATS = {
   parse: {
     dateInput: 'DD/MM/YYYY',
@@ -105,6 +111,8 @@ export class SaleMainComponent implements OnInit {
     private expensesOrderService: ExpensesOrderService,
     private authSer: AuthService,
     public storeSer: StoreService,
+    private productSer: ProductService,
+
   ) {
     this.optionStoreService.getValue('point_enabled').subscribe(res => {
       this.isPointEnabled = res.value === 'true';
@@ -229,6 +237,8 @@ export class SaleMainComponent implements OnInit {
     await this.handlePointDiscountSiderBar(mItemInvoice);
 
     await this.handlePaymentSiderBar(mItemInvoice);
+    debugger;
+    await this.handleLoadParcel(mItemInvoice);
 
     this.localItemInvoice = mItemInvoice;
   }
@@ -724,6 +734,7 @@ export class SaleMainComponent implements OnInit {
       }
     });
     this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
+      debugger;
       this.loadData().then(r => { });
     });
     this.isLoadingResults = false;
@@ -2006,7 +2017,6 @@ export class SaleMainComponent implements OnInit {
   onChangeProductUnit(e: any, itemProduct, i: number) {
     const units = itemProduct?.product?.productUnits;
     const item = units.find(element => element.id === e.value);
-
     const curListProduct = this.listProduct;
     curListProduct[i]['product_unit_id'] = item['id'];
     curListProduct[i]['product_unit_value'] = item['value'];
@@ -2163,8 +2173,6 @@ export class SaleMainComponent implements OnInit {
         this.shownNotes.add(i);
       }
     }
-
-
   isNoteShown(i: number) {
     return this.shownNotes.has(i);
   }
@@ -2176,6 +2184,255 @@ export class SaleMainComponent implements OnInit {
       this.shownMenus.delete(i);
     } else {
       this.shownMenus.add(i);
+    }
+  }
+  // start coding parcel
+  all_product_parcels: Map<string, object[]> = new Map();
+  available_product_parcels: Map<string, object[]> = new Map();
+  parcelItemControls: Map<number, FormControl> = new Map();
+  parcelFilteredItems: Map<number, Observable<object[]>> = new Map();
+  separatorKeysCodes: number[] = [ENTER, COMMA];
+
+  private getAvailableItems(product_index: number) {
+    debugger;
+    const product = this.listProduct[product_index];
+    const product_id = product.product_id.toString();
+    return this.available_product_parcels.get(product_id) || [];
+  }
+
+  // handle the filter function
+  private _filter(product_index: number, searchText: string) {
+    debugger;
+    const filterValue = searchText.toLowerCase();
+    return this.getAvailableItems(product_index)
+     .filter(item =>
+        item['parcel_no'].toLowerCase().includes(filterValue)
+      );
+  }
+
+  getFilterItems(id: number): Observable<object[]> {
+    return this.parcelFilteredItems.get(id) || of([]);
+  }
+
+  // set up fields for typing and filter
+  private setupFilteredItems(product_index: number) {
+    debugger;
+    const control = this.parcelItemControls.get(product_index)!;
+    const filterItems = control.valueChanges.pipe(
+      startWith(''),
+      map((searchText: string|null) => {
+          if (searchText === null || typeof searchText !== 'string') {
+            return this.getAvailableItems(product_index);
+          }
+          return this._filter(product_index, searchText);
+        }
+      ));
+    this.parcelFilteredItems.set(product_index, filterItems);
+  }
+
+  // create input for each row
+  getItemControl(product_index: number) {
+    if (!this.parcelItemControls.has(product_index)) {
+      this.parcelItemControls.set(product_index, new FormControl());
+      this.setupFilteredItems(product_index);
+    }
+    return this.parcelItemControls.get(product_index)!;
+  }
+
+  // when click into a option of autocomplete chip
+  selected(event: MatAutocompleteSelectedEvent, id: number) {
+    if (event.option.value == null) {
+      return;
+    }
+    const parcel = event.option.value;
+    //this.openAddAvailableParcelDialog(id, parcel);
+    this.getItemControl(id)?.setValue(null);
+  }
+  // handle when the chip is selected -> choose the right dialog to display
+  handleSelectChip(index: number, parcel: object) {
+
+      const availableParcel = this.listProduct[index].product_parcels.find(p => p['parcel_no'] === parcel['parcel_no']);
+
+      //this.openAddAvailableParcelDialog(index, newAvailableParcel);
+
+  }
+
+// handle when remove chip from list
+  removeParcel(id: number, item: object): void {
+    // Find the product in the data source
+    const product = this.listProduct[id];
+
+    if (!product) { return; }
+    // Find the index of the item to remove
+    const indexItem = product.product_parcels.findIndex(
+      parcel => parcel['parcel_no'] === item['parcel_no']
+    );
+    const parcel = product.product_parcels[indexItem];
+    // add it to
+    const currentFilteredItems = this.parcelFilteredItems.get(id);
+
+    const availableParcel = this.listProduct[id].product_parcels.find(p => p['parcel_no'] === parcel['parcel_no']);
+
+
+    if (currentFilteredItems) {
+      // Create new observable with the removed item added back
+      const updatedFilteredItems = currentFilteredItems.pipe(
+        map(items => [...items, item])  // Add the item back to the array
+      );
+
+      // Update the map with new observable
+      this.parcelFilteredItems.set(id, updatedFilteredItems);
+    }
+
+    // Remove the item if found (note: changed from > 0 to >= 0)
+    if (indexItem >= 0) {
+      product.product_parcels.splice(indexItem, 1);
+      // Trigger change detection by creating a new reference
+    }
+    const allQuantities = product.product_parcels.map(item => Number(item['quantity']));
+    product.quantity = allQuantities.reduce((acc, curr) => acc + curr, 0);
+
+  }
+
+
+  openParcelSelectionDialog(product_index: number) {
+    const product = this.listProduct[product_index];
+    const product_id = product.product_id.toString();
+    if (!product) { return; }
+    // const selectedAvailable = [...product.product_parcels, ...this.getAvailableItems(product_index)];
+    const availableItems = this.available_product_parcels.get(product_id);
+    // get all parcel from product_parcels and available_product_parcels
+    // handle missing field
+    const selectedAvailable = [
+      ...availableItems.map(availItem => {
+        const existingParcel = product.product_parcels.find(
+          p => p['parcel_no'] === availItem['parcel_no']
+        );
+        if (existingParcel) {
+          return {
+            ...availItem,
+            quantity: existingParcel['quantity']
+          };
+        } else {
+          return availItem;
+        }
+      }),
+      ...product.product_parcels.filter(
+        productParcel => !availableItems.some(
+          availItem => availItem['parcel_no'] === productParcel['parcel_no']
+        )
+      )
+    ];
+    const dialogRef = this.dialog.open(WarehouseParcelFormDialogSelectComponent, {
+      width: '40%',
+      data: {
+        product_id: product.product_id,
+        selectedParcels: selectedAvailable
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) { return; }
+      const product = this.listProduct[product_index];
+      if (!product) { return; }
+
+      // Update parcels with quantities
+      product.product_parcels = result;
+
+      // update available = start available - result (it means remove these parcel from available parcels)
+      const exist = this.parcelFilteredItems.has(product_index);
+      if (exist) {
+        // Get current filtered items observable
+        const currentFilteredItems = this.getAvailableItems(product_index);
+        // Create Set of selected parcel_no for efficient lookup
+        const selectedParcelNos = new Set(product.product_parcels.map(p => p['parcel_no']));
+        // Filter out items that are already in product_parcels
+        const updatedFilteredItems = currentFilteredItems.filter(item => !selectedParcelNos.has(item['parcel_no']));
+
+        // Update the map with new observable
+
+        this.available_product_parcels.set(product_id, updatedFilteredItems);
+        this.setupFilteredItems(product_index);
+
+      }
+
+      // review later -> reviewed (17/1/2025)
+      const allQuantities = product.product_parcels.map(item => Number(item['quantity']));
+      product.quantity = allQuantities.reduce((acc, curr) => acc + curr, 0);
+    });
+  }
+  private async handleLoadParcel(mItemInvoice: ItemInvoice) {
+    try {
+      console.log("Begin handleLoadParcel");
+      const listProduct = mItemInvoice.listProduct;
+
+      // Sử dụng Promise.all để đợi tất cả các request hoàn thành
+      await Promise.all(
+        listProduct.map(async (product) => {
+          console.log("Processing product:", product.product_id);
+          const product_id = product.product_id.toString();
+
+          // Chuyển đổi từ Observable thành Promise
+          return new Promise<void>((resolveProduct) => {
+            console.log("Creating Promise for product:", product_id);
+
+            this.productSer.getParcelNew(product_id).pipe(
+              map(res => {
+                console.log("Received response for product:", product_id);
+                if (res && Array.isArray(res) && res.length > 0) {
+                  return (res as object[]).map(item => ({
+                    parcel_no: item['parcel_no'],
+                    expiration_date: item['expiration_date'],
+                    quantity_of_stock: item['quantity_of_stock']
+                  }));
+                }
+                return [];
+              })
+            ).subscribe({
+              next: (formattedRes) => {
+                console.log("Processing formatted results for:", product_id);
+
+                if (formattedRes && formattedRes.length > 0) {
+                  this.all_product_parcels.set(product_id, formattedRes as object[]);
+
+                  const sortedParcels = [...formattedRes].sort((a, b) => {
+                    const dateA = new Date(a.expiration_date);
+                    const dateB = new Date(b.expiration_date);
+                    return dateA.getTime() - dateB.getTime();
+                  });
+
+                  if (!Array.isArray(product.product_parcels)) {
+                    product.product_parcels = [];
+                  }
+
+                  product.product_parcels.push(sortedParcels[0]);
+
+                  const availableParcels = formattedRes.filter(parcel =>
+                    parcel.parcel_no !== product.product_parcels[0].parcel_no
+                  );
+
+                  this.available_product_parcels.set(product_id, availableParcels);
+                }
+
+                console.log("Resolving Promise for product:", product_id);
+                resolveProduct();
+              },
+              error: (error) => {
+                console.error(`Error loading parcel for product ${product_id}:`, error);
+                resolveProduct(); // Vẫn resolve để không chặn các xử lý khác
+              }
+            });
+          });
+        })
+      );
+
+      console.log("All Promises resolved, updating listProduct");
+      this.listProduct = [...listProduct];
+      console.log("handleLoadParcel completed");
+      return this.listProduct;
+    } catch (error) {
+      console.error("Error in handleLoadParcel:", error);
+      throw error;
     }
   }
 }

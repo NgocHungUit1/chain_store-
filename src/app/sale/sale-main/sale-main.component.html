@@ -7,7 +7,6 @@
     <div class="container-main-sale">
       <div class="product-cart" [class.fixed-list]="showList">
         <!----------------------------------------- SALE-DETAIL-ORDER ---------------------------------------->
-
         <div
           *ngFor="let itemProduct of listProduct; let i = index"
           class="product-item">
@@ -75,53 +74,53 @@
                             [(ngModel)]="itemProduct.product.note">
                   </textarea>
               </div>
-<!--              <div class="custom-parcel-filter-container">-->
-<!--                <div class="chip-list">-->
-<!--                  <mat-chip-list #chiplist aria-label="Parcel selection">-->
-<!--                    <mat-chip-->
-<!--                      class="chip-item"-->
-<!--                      *ngFor = "let parcel of data[i]['product_parcels']"-->
-<!--                      [selectable]="true"-->
-<!--                      [removable]="true"-->
-<!--                      (click)="handleSelectChip(i, parcel)"-->
-<!--                      (removed) = "remove(i, parcel)">-->
-<!--                      {{parcel['parcel_no']}} - {{parcel['expiration_date'] | date:'dd/MM/yyyy'}} - SL: {{parcel['quantity']}}-->
-<!--                      <mat-icon matChipRemove>cancel</mat-icon>-->
-<!--                    </mat-chip>-->
-<!--                    <div class="parcel-seletor">-->
-<!--                      <div class="parcel-input-border">-->
-<!--                        <input-->
-<!--                          class="parcel-input"-->
-<!--                          placeholder="Nhập lô, hạn sử dụng"-->
-<!--                          #parcelInput-->
-<!--                          [formControl]="getItemControl(i)"-->
-<!--                          [matAutocomplete]="parcelAutocomplete"-->
-<!--                          [matChipInputFor]="chiplist"-->
-<!--                          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"-->
-<!--                        >-->
-<!--                      </div>-->
-<!--                      <button-->
-<!--                        mat-icon-button-->
-<!--                        type="button"-->
-<!--                        (click)="openParcelSelectionDialog(i)"-->
-<!--                        class="select-parcel-button"-->
-<!--                        matTooltip="Chọn lô"-->
-<!--                        matTooltipPosition="above"-->
-<!--                      >-->
-<!--                        <mat-icon>menu</mat-icon>-->
-<!--                      </button>-->
-<!--                    </div>-->
-<!--                  </mat-chip-list>-->
-<!--                  <mat-autocomplete #parcelAutocomplete="matAutocomplete" (optionSelected)="selected($event, i)" class="parcel-option-list" [panelWidth]="240">-->
-<!--                    <mat-option (click)="$event.stopPropagation(); openAddNewParcelDialog(i)" class="add-new-parcel" [value]="null">-->
-<!--                      <span style="color: #1a73e8; font-size: 1rem !important;">Thêm mới lô, hạn sử dụng</span>-->
-<!--                    </mat-option>-->
-<!--                    <mat-option *ngFor="let parcel of getFilterItems(i) | async" [value]="parcel" class="parcel-option">-->
-<!--                      {{parcel['parcel_no']}} - {{parcel['expiration_date'] | date:'dd/MM/yyyy'}} - tồn: {{parcel['quantity_of_stock']}}-->
-<!--                    </mat-option>-->
-<!--                  </mat-autocomplete>-->
-<!--                </div>-->
-<!--              </div>-->
+              <div class="custom-parcel-filter-container">
+<pre>
+  {{itemProduct | json}}
+</pre>
+                <div class="chip-list">
+                  <mat-chip-list #chiplist aria-label="Parcel selection">
+                    <mat-chip
+                      class="chip-item"
+                      *ngFor = "let parcel of itemProduct.product_parcels"
+                      [selectable]="true"
+                      [removable]="true"
+                      (click)="handleSelectChip(i, parcel)"
+                      (removed) = "removeParcel (i, parcel)">
+                      {{parcel['parcel_no']}} - {{parcel['expiration_date'] | date:'dd/MM/yyyy'}} - SL: {{parcel['quantity']}}
+                      <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                    <div class="parcel-seletor">
+                      <div class="parcel-input-border">
+                        <input
+                          class="parcel-input"
+                          placeholder="Nhập lô, hạn sử dụng"
+                          #parcelInput
+                          [formControl]="getItemControl(i)"
+                          [matAutocomplete]="parcelAutocomplete"
+                          [matChipInputFor]="chiplist"
+                          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                        >
+                      </div>
+                      <button
+                        mat-icon-button
+                        type="button"
+                        (click)="openParcelSelectionDialog(i)"
+                        class="select-parcel-button"
+                        matTooltip="Chọn lô"
+                        matTooltipPosition="above"
+                      >
+                        <mat-icon>menu</mat-icon>
+                      </button>
+                    </div>
+                  </mat-chip-list>
+                  <mat-autocomplete #parcelAutocomplete="matAutocomplete" (optionSelected)="selected($event, i)" class="parcel-option-list" [panelWidth]="240">
+                    <mat-option *ngFor="let parcel of getFilterItems(i) | async" [value]="parcel" class="parcel-option">
+                      {{parcel['parcel_no']}} - {{parcel['expiration_date'] | date:'dd/MM/yyyy'}} - tồn: {{parcel['quantity_of_stock']}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </div>
+              </div>
             </div>
             <div fxFlex="2"></div>
             <div fxFlex="8" class="row-product-base-unit">

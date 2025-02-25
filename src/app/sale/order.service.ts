@@ -228,7 +228,6 @@ export class OrderService {
     const listInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
-
     mItemInvoice = listItemInvoice.find(element => element.active === true);
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
       const listProduct: ProductInfo[] = [];
