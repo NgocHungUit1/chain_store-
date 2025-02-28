@@ -24,6 +24,7 @@ import { SaleExpensesDialogComponent } from './sale-expenses-dialog/sale-expense
 import { PrescriptionFormDialogComponent } from './prescription-form-dialog/prescription-form-dialog.component';
 import { MedicalFacilityFormDialogComponent } from './medical-facility-form-dialog/medical-facility-form-dialog.component';
 import {InputSelectAllModule} from '../common/input-select-all/input-select-all.module';
+import { SaleProductParcelSelectDialogComponent } from './sale-product-parcel-select-dialog/sale-product-parcel-select-dialog.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import {InputSelectAllModule} from '../common/input-select-all/input-select-all.
     TotalPricePipe,
     SaleExpensesDialogComponent,
     PrescriptionFormDialogComponent,
-    MedicalFacilityFormDialogComponent],
+    MedicalFacilityFormDialogComponent,
+    SaleProductParcelSelectDialogComponent],
     imports: [
         CommonModule,
         RouterModule.forChild(SaleRoutes),

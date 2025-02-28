@@ -69,6 +69,7 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import {
   WarehouseParcelFormDialogSelectComponent
 } from '../../warehouse/warehouse-parcel-form-dialog-select/warehouse-parcel-form-dialog-select.component';
+import { SaleProductParcelSelectDialogComponent } from '../sale-product-parcel-select-dialog/sale-product-parcel-select-dialog.component';
 export const MY_FORMATS = {
   parse: {
     dateInput: 'DD/MM/YYYY',
@@ -237,10 +238,10 @@ export class SaleMainComponent implements OnInit {
     await this.handlePointDiscountSiderBar(mItemInvoice);
 
     await this.handlePaymentSiderBar(mItemInvoice);
-    debugger;
-    await this.handleLoadParcel(mItemInvoice);
-
     this.localItemInvoice = mItemInvoice;
+
+    this.handleLoadParcel(mItemInvoice);
+    this.handleAddMasterTag(mItemInvoice);
   }
 
   getAutoPrintValue() {
@@ -671,6 +672,7 @@ export class SaleMainComponent implements OnInit {
             }
           });
           if (hasChanged) {
+
             this.orderService.setListInvoiceLocalStorage(listInvoice);
           }
         }
@@ -734,7 +736,6 @@ export class SaleMainComponent implements OnInit {
       }
     });
     this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
-      debugger;
       this.loadData().then(r => { });
     });
     this.isLoadingResults = false;
@@ -1603,7 +1604,6 @@ export class SaleMainComponent implements OnInit {
       return;
     }
     this.submitted = true;
-
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     let date_created = '';
@@ -1693,6 +1693,11 @@ export class SaleMainComponent implements OnInit {
         product_unit_id: element.product_unit_id,
         product_unit_value: element.product_unit_value,
         base_unit: element.base_unit,
+
+        // new parcel, add row task
+        parcel_no: element.product_parcels[0]?.parcel_no,
+        is_sub_item: element.product.is_sub_item,
+        master_product_id: element.product.master_product_id,
       });
     });
 
@@ -2167,14 +2172,44 @@ export class SaleMainComponent implements OnInit {
   shownMenus: Set<number> = new Set();  // Will store user IDs or indices of visible notes
 
   toggleShowNote(i: number) {
-      if (this.shownNotes.has(i)) {
-        this.shownNotes.delete(i);
-      } else {
-        this.shownNotes.add(i);
-      }
+    const noteText = this.listProduct[i].product.note_detail_sale;
+    // undefind, '' or exist
+    if(noteText==''){
+      delete this.listProduct[i].product.note_detail_sale;
+    } else if(noteText==undefined){
+      this.listProduct[i].product.note_detail_sale = '';
+    } else{
+      setTimeout(() => {
+        const textarea = document.querySelector(`.note-textarea-${i}`) as HTMLTextAreaElement;
+        if (textarea) {
+          textarea.focus();
+        }
+      }, 0);
     }
+    this.handleUpdateStorage();
+  }
+
+  // onNoteChange() {
+  //   // Get the current list of invoices from localStorage
+  //   const listInvoice = this.orderService.getListInvoiceLocalStorage();
+  //   const listItemInvoice = listInvoice.itemInvoice;
+  //   listItemInvoice.forEach(element => {
+  //     if (element.active === true) {
+  //       if (element.invoice_id === this.localItemInvoice.invoice_id) {
+  //         element.listProduct = this.listProduct;
+  //       }
+  //     }
+  //   });
+  //   this.orderService.setListInvoiceLocalStorage(listInvoice);
+  // }
+
   isNoteShown(i: number) {
-    return this.shownNotes.has(i);
+    const note = this.listProduct[i].product.note_detail_sale;
+    if(note==undefined){
+      return false;
+    } else {
+      return true;
+    }
   }
   isMenuShown(i: number) {
     return this.shownMenus.has(i);
@@ -2193,16 +2228,29 @@ export class SaleMainComponent implements OnInit {
   parcelFilteredItems: Map<number, Observable<object[]>> = new Map();
   separatorKeysCodes: number[] = [ENTER, COMMA];
 
+  handleUpdateStorage() {
+    const listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+
+      if (element.active === true) {
+        if (element.invoice_id === this.localItemInvoice.invoice_id) {
+          element.listProduct = this.listProduct;
+        }
+      }
+    });
+    this.orderService.setListInvoiceLocalStorage(listInvoice);
+  }
+
   private getAvailableItems(product_index: number) {
-    debugger;
     const product = this.listProduct[product_index];
     const product_id = product.product_id.toString();
-    return this.available_product_parcels.get(product_id) || [];
+    const parcels = this.available_product_parcels.get(product_id) || [];
+    return parcels;
   }
 
   // handle the filter function
   private _filter(product_index: number, searchText: string) {
-    debugger;
     const filterValue = searchText.toLowerCase();
     return this.getAvailableItems(product_index)
      .filter(item =>
@@ -2216,10 +2264,9 @@ export class SaleMainComponent implements OnInit {
 
   // set up fields for typing and filter
   private setupFilteredItems(product_index: number) {
-    debugger;
     const control = this.parcelItemControls.get(product_index)!;
     const filterItems = control.valueChanges.pipe(
-      startWith(''),
+      //startWith(''),
       map((searchText: string|null) => {
           if (searchText === null || typeof searchText !== 'string') {
             return this.getAvailableItems(product_index);
@@ -2229,7 +2276,11 @@ export class SaleMainComponent implements OnInit {
       ));
     this.parcelFilteredItems.set(product_index, filterItems);
   }
-
+  public onInputFocus(product_index: number): void {
+    // Show all available items when input gets focus
+    const availableItems = this.getAvailableItems(product_index);
+    this.parcelFilteredItems.set(product_index, of(availableItems));
+  }
   // create input for each row
   getItemControl(product_index: number) {
     if (!this.parcelItemControls.has(product_index)) {
@@ -2247,15 +2298,24 @@ export class SaleMainComponent implements OnInit {
     const parcel = event.option.value;
     //this.openAddAvailableParcelDialog(id, parcel);
     this.getItemControl(id)?.setValue(null);
+    this.listProduct[id].product_parcels.push(parcel);
+
+    const product = this.listProduct[id];
+    const product_id = product.product_id.toString();
+    const availableItems = this.available_product_parcels.get(product_id);
+    availableItems.filter(item => item["parcel_no"] != product.product_parcels[0].parcel_no);
+    const listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        if (element.invoice_id === this.localItemInvoice.invoice_id) {
+          element.listProduct = this.listProduct;
+        }
+      }
+    });
+    this.orderService.setListInvoiceLocalStorage(listInvoice);
   }
-  // handle when the chip is selected -> choose the right dialog to display
-  handleSelectChip(index: number, parcel: object) {
 
-      const availableParcel = this.listProduct[index].product_parcels.find(p => p['parcel_no'] === parcel['parcel_no']);
-
-      //this.openAddAvailableParcelDialog(index, newAvailableParcel);
-
-  }
 
 // handle when remove chip from list
   removeParcel(id: number, item: object): void {
@@ -2264,34 +2324,30 @@ export class SaleMainComponent implements OnInit {
 
     if (!product) { return; }
     // Find the index of the item to remove
-    const indexItem = product.product_parcels.findIndex(
-      parcel => parcel['parcel_no'] === item['parcel_no']
-    );
-    const parcel = product.product_parcels[indexItem];
+    const parcel = product.product_parcels[0];
+    product.product_parcels = [];
     // add it to
     const currentFilteredItems = this.parcelFilteredItems.get(id);
-
-    const availableParcel = this.listProduct[id].product_parcels.find(p => p['parcel_no'] === parcel['parcel_no']);
-
 
     if (currentFilteredItems) {
       // Create new observable with the removed item added back
       const updatedFilteredItems = currentFilteredItems.pipe(
-        map(items => [...items, item])  // Add the item back to the array
+        map(items => [...items, parcel])  // Add the item back to the array
       );
 
       // Update the map with new observable
       this.parcelFilteredItems.set(id, updatedFilteredItems);
     }
-
-    // Remove the item if found (note: changed from > 0 to >= 0)
-    if (indexItem >= 0) {
-      product.product_parcels.splice(indexItem, 1);
-      // Trigger change detection by creating a new reference
-    }
-    const allQuantities = product.product_parcels.map(item => Number(item['quantity']));
-    product.quantity = allQuantities.reduce((acc, curr) => acc + curr, 0);
-
+    const listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        if (element.invoice_id === this.localItemInvoice.invoice_id) {
+          element.listProduct = this.listProduct;
+        }
+      }
+    });
+    this.orderService.setListInvoiceLocalStorage(listInvoice);
   }
 
 
@@ -2303,31 +2359,14 @@ export class SaleMainComponent implements OnInit {
     const availableItems = this.available_product_parcels.get(product_id);
     // get all parcel from product_parcels and available_product_parcels
     // handle missing field
-    const selectedAvailable = [
-      ...availableItems.map(availItem => {
-        const existingParcel = product.product_parcels.find(
-          p => p['parcel_no'] === availItem['parcel_no']
-        );
-        if (existingParcel) {
-          return {
-            ...availItem,
-            quantity: existingParcel['quantity']
-          };
-        } else {
-          return availItem;
-        }
-      }),
-      ...product.product_parcels.filter(
-        productParcel => !availableItems.some(
-          availItem => availItem['parcel_no'] === productParcel['parcel_no']
-        )
-      )
-    ];
-    const dialogRef = this.dialog.open(WarehouseParcelFormDialogSelectComponent, {
+    const selectedParcel = product.product_parcels[0] || null;
+    const dialogRef = this.dialog.open(SaleProductParcelSelectDialogComponent, {
       width: '40%',
       data: {
         product_id: product.product_id,
-        selectedParcels: selectedAvailable
+        quantity: product.amount,
+        selectedParcel: selectedParcel,
+        allParcels: this.all_product_parcels.get(product_id),
       }
     });
 
@@ -2337,7 +2376,8 @@ export class SaleMainComponent implements OnInit {
       if (!product) { return; }
 
       // Update parcels with quantities
-      product.product_parcels = result;
+      product.product_parcels = [];
+      product.product_parcels.push(result.parcel);
 
       // update available = start available - result (it means remove these parcel from available parcels)
       const exist = this.parcelFilteredItems.has(product_index);
@@ -2350,30 +2390,82 @@ export class SaleMainComponent implements OnInit {
         const updatedFilteredItems = currentFilteredItems.filter(item => !selectedParcelNos.has(item['parcel_no']));
 
         // Update the map with new observable
-
         this.available_product_parcels.set(product_id, updatedFilteredItems);
         this.setupFilteredItems(product_index);
 
       }
+      product.amount = result.quantity;
+      this.listProduct = [...this.listProduct];
+      // review later -> reviewed
+      // add logic, if amount > quantity_of_stock -> add new row with another parcel
+      const sum_amount = product.amount;
+      let redu = 0;
+      let isLastParcel = false;
 
-      // review later -> reviewed (17/1/2025)
-      const allQuantities = product.product_parcels.map(item => Number(item['quantity']));
-      product.quantity = allQuantities.reduce((acc, curr) => acc + curr, 0);
+      if (product.amount > selectedParcel.quantity_of_stock) {
+        // Thêm parcel đầu tiên
+        product.amount = selectedParcel.quantity_of_stock;
+        redu += selectedParcel.quantity_of_stock;
+
+        // Lọc các parcel khả dụng (bỏ qua parcel đã chọn)
+        const availableParcels = this.getAvailableItems(product_index).filter(
+          parcel => parcel['parcel_no'] !== selectedParcel.parcel_no
+        );
+        const sortedParcels = [...availableParcels].sort((a, b) => {
+          const dateA = new Date(a["expiration_date"]);
+          const dateB = new Date(b["expiration_date"]);
+          return dateA.getTime() - dateB.getTime();
+        });
+        // Loop qua các parcel khác cho đến khi đạt đủ số lượng
+        for (let i = 0; i < sortedParcels.length; i++) {
+          const parcel = sortedParcels[i];
+
+          // Kiểm tra xem đã đủ số lượng chưa
+          if (redu >= sum_amount) {
+            break;
+          }
+
+          // Tính toán số lượng cần thêm
+          const remain = sum_amount - redu;
+
+          // Kiểm tra xem đây có phải là parcel cuối cùng không
+          isLastParcel = (i === sortedParcels.length - 1) || (redu + parcel["quantity_of_stock"] >= sum_amount);
+
+          let quantityToAdd;
+          if (isLastParcel) {
+            // Nếu là parcel cuối cùng, chỉ lấy phần remain
+            quantityToAdd = remain;
+          } else {
+            // Nếu không phải parcel cuối, lấy toàn bộ quantity_of_stock
+            quantityToAdd = Math.min(parcel["quantity_of_stock"], remain);
+          }
+
+          // Thêm parcel vào row mới với số lượng thích hợp
+          this.addNewRow(product_index, parcel, quantityToAdd);
+          redu += quantityToAdd;
+
+          // Nếu đủ số lượng thì dừng
+          if (redu >= sum_amount) {
+            break;
+          }
+        }
+      }
     });
   }
-  private async handleLoadParcel(mItemInvoice: ItemInvoice) {
+
+  private handleLoadParcel(mItemInvoice: ItemInvoice) {
     try {
       console.log("Begin handleLoadParcel");
       const listProduct = mItemInvoice.listProduct;
+      // Use Promise.all to wait for all requests to complete
+      listProduct.map(async (product) => {
 
-      // Sử dụng Promise.all để đợi tất cả các request hoàn thành
-      await Promise.all(
-        listProduct.map(async (product) => {
+        // check exist product_parcels ?
           console.log("Processing product:", product.product_id);
           const product_id = product.product_id.toString();
 
-          // Chuyển đổi từ Observable thành Promise
-          return new Promise<void>((resolveProduct) => {
+          // Convert Observable to Promise correctly
+          return new Promise<void>((resolveProduct, rejectProduct) => {
             console.log("Creating Promise for product:", product_id);
 
             this.productSer.getParcelNew(product_id).pipe(
@@ -2392,6 +2484,12 @@ export class SaleMainComponent implements OnInit {
               next: (formattedRes) => {
                 console.log("Processing formatted results for:", product_id);
 
+                // remove in future when api update
+                // delete duplicate element with the same percel_no
+                const uniqueParcels = formattedRes.filter((item, index, self) =>
+                  index === self.findIndex(t => t.parcel_no === item.parcel_no)
+                );
+                formattedRes = uniqueParcels;
                 if (formattedRes && formattedRes.length > 0) {
                   this.all_product_parcels.set(product_id, formattedRes as object[]);
 
@@ -2401,30 +2499,39 @@ export class SaleMainComponent implements OnInit {
                     return dateA.getTime() - dateB.getTime();
                   });
 
-                  if (!Array.isArray(product.product_parcels)) {
-                    product.product_parcels = [];
+                  if (!!product.product_parcels) {
+                    this.available_product_parcels.set(product_id, formattedRes);
                   }
+                  else {
+                    product.product_parcels = [];
+                    product.product_parcels.push(sortedParcels[0]);
 
-                  product.product_parcels.push(sortedParcels[0]);
-
-                  const availableParcels = formattedRes.filter(parcel =>
-                    parcel.parcel_no !== product.product_parcels[0].parcel_no
-                  );
-
-                  this.available_product_parcels.set(product_id, availableParcels);
+                    const availableParcels = formattedRes.filter(parcel => {
+                      if (product.product_parcels &&
+                        product.product_parcels.length > 0 &&
+                        product.product_parcels[0].parcel_no) {
+                        return parcel.parcel_no !== product.product_parcels[0].parcel_no;
+                      }
+                      return true;
+                    });
+                    this.available_product_parcels.set(product_id, availableParcels);
+                  }
                 }
-
                 console.log("Resolving Promise for product:", product_id);
-                resolveProduct();
+                resolveProduct(); // Resolve here correctly when done processing
               },
               error: (error) => {
                 console.error(`Error loading parcel for product ${product_id}:`, error);
-                resolveProduct(); // Vẫn resolve để không chặn các xử lý khác
+                rejectProduct(error); // Reject the promise instead of resolving it
+              },
+              complete: () => {
+                console.log(`Complete loading parcel for product ${product_id}`);
+                resolveProduct(); // Also resolve on complete
               }
             });
           });
-        })
-      );
+
+      });
 
       console.log("All Promises resolved, updating listProduct");
       this.listProduct = [...listProduct];
@@ -2434,5 +2541,59 @@ export class SaleMainComponent implements OnInit {
       console.error("Error in handleLoadParcel:", error);
       throw error;
     }
+  }
+
+  addNewRow(i: number, parcel: object = null, amount: number = 0) {
+    const oldItem = this.listProduct[i];
+    const oldProduct = {...oldItem.product};
+    if(oldProduct.note_detail_sale!=undefined) {
+      delete oldProduct.note_detail_sale;
+    }
+    oldProduct.is_sub_item = 1;
+    oldProduct.master_product_id = oldProduct.id;
+    let newItem: object = {};
+    if (parcel){
+       newItem = {...oldItem, product: oldProduct, product_parcels: [parcel], amount: amount};
+
+    } else{
+       newItem = {...oldItem, product: oldProduct, product_parcels: []};
+
+    }
+    this.listProduct.splice(i + 1, 0, newItem);
+
+    this.listProduct = [...this.listProduct];
+    this.handleUpdateStorage();
+  }
+
+  private handleAddMasterTag(mItemInvoice: ItemInvoice) {
+
+    const listProduct = mItemInvoice.listProduct;
+    listProduct.map((productInfor) => {
+      // add master_product_id = product_id
+      productInfor.product.master_product_id = productInfor.product.master_product_id ?? productInfor.product.id ;
+      // add is_sub_item = 0
+      productInfor.product.is_sub_item = productInfor.product.is_sub_item ?? 0;
+      return productInfor; // Make sure to return the modified product
+    });
+    this.listProduct = [...listProduct];
+    // update
+  }
+
+  // Lấy tất cả master products
+  getMasterProducts() {
+    return this.listProduct.filter(item => item.product.is_sub_item === 0);
+  }
+
+// Lấy tất cả sub-items cho một master product nhất định
+  getSubItemsForMaster(masterProduct) {
+    return this.listProduct.filter(item =>
+      item.product.is_sub_item === 1 &&
+      item.product.master_product_id === masterProduct.product.id
+    );
+  }
+
+// Lấy index của product trong listProduct
+  getProductIndex(product) {
+    return this.listProduct.findIndex(item => item === product);
   }
 }
