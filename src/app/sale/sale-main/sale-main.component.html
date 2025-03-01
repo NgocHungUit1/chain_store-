@@ -142,7 +142,7 @@
               <div fxFlex="2"></div>
               <div fxFlex="32">
                 <div class="row-product-note d-flex align-items-center" *ngIf="isNoteShown(getProductIndex(masterProduct))">
-                    <textarea class="note-textarea note-textarea-{{getProductIndex(masterProduct)}}" cdkTextareaAutosize
+                    <textarea #noteTextArea class="note-textarea note-textarea-{{getProductIndex(masterProduct)}}" cdkTextareaAutosize
                               placeholder="Ghi chú" [(ngModel)]="masterProduct.product.note_detail_sale"
                               (ngModelChange)="handleUpdateStorage()">
                     </textarea>
@@ -176,7 +176,7 @@
                       class="chip-item" *ngFor="let parcel of masterProduct.product_parcels"
                               [selectable]="true"
                               [disableRipple]="true"
-                              [removable]="true" (removed)="removeParcel(getProductIndex(masterProduct), parcel)">
+                              [removable]="true" (removed)="removeParcel(getProductIndex(masterProduct))">
                       {{ parcel['parcel_no'] }} - {{ parcel['expiration_date'] | date:'dd/MM/yyyy' }}
                       <mat-icon matChipRemove>cancel</mat-icon>
                     </mat-chip>
@@ -233,7 +233,7 @@
                   <div class="chip-list">
                     <mat-chip-list #chiplistSub aria-label="Parcel selection">
                       <mat-chip class="chip-item" *ngFor="let parcel of subItem.product_parcels" [selectable]="true"
-                                [removable]="true" (removed)="removeParcel(getProductIndex(subItem), parcel)">
+                                [removable]="true" (removed)="removeParcel(getProductIndex(subItem))">
                         {{ parcel['parcel_no'] }} - {{ parcel['expiration_date'] | date:'dd/MM/yyyy' }}
                         <mat-icon matChipRemove>cancel</mat-icon>
                       </mat-chip>
@@ -363,7 +363,7 @@
                 <div fxFlex="2"></div>
                 <div fxFlex="32">
                   <div class="row-product-note d-flex align-items-center" *ngIf="isNoteShown(getProductIndex(subItem))">
-                    <textarea class="note-textarea note-textarea-{{getProductIndex(subItem)}}" cdkTextareaAutosize
+                    <textarea #noteTextArea class="note-textarea note-textarea-{{getProductIndex(subItem)}}" cdkTextareaAutosize
                               placeholder="Ghi chú" [(ngModel)]="subItem.product.note_detail_sale"
                               (ngModelChange)="handleUpdateStorage()">
                     </textarea>

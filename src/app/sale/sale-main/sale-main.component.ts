@@ -1,30 +1,11 @@
-import { NationalPrescription } from './../../national-prescription/national-prescription.model';
-import {
-  Component,
-  ElementRef,
-  HostListener,
-  OnInit,
-  ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
-import {
-  FormControl,
-  FormBuilder,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { Component, ElementRef, HostListener, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { Observable } from 'rxjs';
 import { Product } from '../../product/product.model';
 import { OrderService } from '../order.service';
-import {
-  catchError,
-  debounceTime,
-  map,
-  startWith,
-  switchMap,
-} from 'rxjs/operators';
+import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/internal/observable/of';
 import { PriceList, PriceListFilter } from '../../price-book/price-list.model';
 import { PriceListService } from '../../price-book/price-list.service';
@@ -43,33 +24,19 @@ import * as numeral from 'numeral';
 import { OptionStoreService } from '../../common/option-store.service';
 import { OptionStore } from '../../common/option-store.model';
 import { ExpensesOrderService } from '../../expenses-order/expenses-order.service';
-import {
-  ExpensesOrder,
-  ExpensesOrderFilter,
-} from '../../expenses-order/expenses-order.model';
+import { ExpensesOrder, ExpensesOrderFilter } from '../../expenses-order/expenses-order.model';
 import { SaleExpensesDialogComponent } from '../sale-expenses-dialog/sale-expenses-dialog.component';
 import { PrescriptionFormDialogComponent } from '../prescription-form-dialog/prescription-form-dialog.component';
-import {
-  DateAdapter,
-  MAT_DATE_FORMATS,
-  MAT_DATE_LOCALE,
-} from '@angular/material/core';
-import {
-  MAT_MOMENT_DATE_ADAPTER_OPTIONS,
-  MomentDateAdapter,
-} from '@angular/material-moment-adapter';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DatePipe } from '@angular/common';
-import * as moment from 'moment';
 import { StoreService } from '../../store/store.service';
-import {AuthService} from '../../authentication/auth.service';
+import { AuthService } from '../../authentication/auth.service';
 import { ProductService } from '../../product/product.service';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { NewParcel } from '../../warehouse/warehouse-import-form/warehouse-import-form.component';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import {
-  WarehouseParcelFormDialogSelectComponent
-} from '../../warehouse/warehouse-parcel-form-dialog-select/warehouse-parcel-form-dialog-select.component';
 import { SaleProductParcelSelectDialogComponent } from '../sale-product-parcel-select-dialog/sale-product-parcel-select-dialog.component';
+
 export const MY_FORMATS = {
   parse: {
     dateInput: 'DD/MM/YYYY',
@@ -201,16 +168,10 @@ export class SaleMainComponent implements OnInit {
   @ViewChild('customerSearch') customerSearch: ElementRef;
   @ViewChild('customerPayment') customerPayment: ElementRef;
   @ViewChild('showListProd') showListProd: ElementRef;
+  @ViewChildren('noteTextArea') noteTextArea!: QueryList<ElementRef<HTMLTextAreaElement>>;
 
-  // start coding note (ghi chu)
-  shownNotes: Set<number> = new Set();  // Will store user IDs or indices of visible notes
-  shownMenus: Set<number> = new Set();  // Will store user IDs or indices of visible notes
-  // start coding parcel
-  all_product_parcels: Map<string, object[]> = new Map();
-  available_product_parcels: Map<string, object[]> = new Map();
-  parcelItemControls: Map<number, FormControl> = new Map();
-  parcelFilteredItems: Map<number, Observable<object[]>> = new Map();
-  separatorKeysCodes: number[] = [ENTER, COMMA];
+
+
 
   /**
    *  So sanh danh sach cu
@@ -815,7 +776,7 @@ export class SaleMainComponent implements OnInit {
     let newValue;
     if (event === 'up') {
       newValue = currentValue + 1;
-    } else{
+    } else {
       newValue = currentValue - 1;
     }
 
@@ -2187,53 +2148,75 @@ export class SaleMainComponent implements OnInit {
 
   canDo(permissionName: string): boolean {
     const allPermissions = this.authSer.getPermissionsFromLocalStorage();
-
     return allPermissions.indexOf(permissionName) !== -1;
   }
 
+
+
+
+  // Coding parcel + add row function
+  shownMenus: Set<number> = new Set();
+  all_product_parcels: Map<string, object[]> = new Map();
+  available_product_parcels: Map<string, object[]> = new Map();
+  parcelItemControls: Map<number, FormControl> = new Map();
+  parcelFilteredItems: Map<number, Observable<object[]>> = new Map();
+  separatorKeysCodes: number[] = [ENTER, COMMA];
+
+  /**
+   * Receive index and active 1 of 3 actions
+   * - If note is not showing -> show the initial textarea
+   * - If note is showing -> make it disappear
+   * - If note is containing value -> focus into it
+   * @param i
+   */
   toggleShowNote(i: number) {
-    const noteText = this.listProduct[i].product.note_detail_sale;
-    // undefind, '' or exist
-    if (noteText === '') {
+    const currentProduct = this.listProduct[i].product;
+    const noteText = currentProduct.note_detail_sale;
+    if (noteText == '') {
       delete this.listProduct[i].product.note_detail_sale;
-    } else if (noteText === undefined) {
+    } else if (noteText == undefined) {
       this.listProduct[i].product.note_detail_sale = '';
     } else {
-      setTimeout(() => {
-        const textarea = document.querySelector(`.note-textarea-${i}`) as HTMLTextAreaElement;
-        if (textarea) {
-          textarea.focus();
-        }
-      }, 0);
+      this.focusTextArea(i);
     }
     this.handleUpdateStorage();
   }
 
-  // onNoteChange() {
-  //   // Get the current list of invoices from localStorage
-  //   const listInvoice = this.orderService.getListInvoiceLocalStorage();
-  //   const listItemInvoice = listInvoice.itemInvoice;
-  //   listItemInvoice.forEach(element => {
-  //     if (element.active === true) {
-  //       if (element.invoice_id === this.localItemInvoice.invoice_id) {
-  //         element.listProduct = this.listProduct;
-  //       }
-  //     }
-  //   });
-  //   this.orderService.setListInvoiceLocalStorage(listInvoice);
-  // }
+  /**
+   * Helping toggleShowNote function to focus into a textArea
+   * @param i
+   * @private
+   */
+  private focusTextArea(i: number) {
+     setTimeout(() => {
+      const textAreaArray = this.noteTextArea.toArray();
+        if (textAreaArray[i]) {
+          textAreaArray[i].nativeElement.focus();
+        }
+    }, 0);
+  }
 
+  /**
+   * Decide a note is shown or not
+   * @param i
+   */
   isNoteShown(i: number) {
     const note = this.listProduct[i].product.note_detail_sale;
-    if (note === undefined) {
-      return false;
-    } else {
-      return true;
-    }
+    return note !== undefined;
   }
+
+  /**
+   * Decide a menu selection is shown or not
+   * @param i
+   */
   isMenuShown(i: number) {
     return this.shownMenus.has(i);
   }
+
+  /**
+   * Call when click into the menu icon to show the popup
+   * @param i
+   */
   toggleShowMenu(i: number) {
     if (this.shownMenus.has(i)) {
       this.shownMenus.delete(i);
@@ -2242,6 +2225,9 @@ export class SaleMainComponent implements OnInit {
     }
   }
 
+  /**
+   * This function must be called after change any pies of data to update the change into the localstorage
+   */
   handleUpdateStorage() {
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
@@ -2256,14 +2242,23 @@ export class SaleMainComponent implements OnInit {
     this.orderService.setListInvoiceLocalStorage(listInvoice);
   }
 
+  /**
+   * Get all values of parcels is not selected (copy the logic in warehourse import page)
+   * @param product_index
+   * @private
+   */
   private getAvailableItems(product_index: number) {
     const product = this.listProduct[product_index];
     const product_id = product.product_id.toString();
-    const parcels = this.available_product_parcels.get(product_id) || [];
-    return parcels;
+    return this.available_product_parcels.get(product_id) || [];
   }
 
-  // handle the filter function
+  /**
+   * Helper function to get the parcels in the selection list
+   * @param product_index
+   * @param searchText
+   * @private
+   */
   private _filter(product_index: number, searchText: string) {
     const filterValue = searchText.toLowerCase();
     return this.getAvailableItems(product_index)
@@ -2272,11 +2267,19 @@ export class SaleMainComponent implements OnInit {
       );
   }
 
+  /**
+   * Get parcels in the filter list
+   * @param id
+   */
   getFilterItems(id: number): Observable<object[]> {
     return this.parcelFilteredItems.get(id) || of([]);
   }
 
-  // set up fields for typing and filter
+  /**
+   * Set up fields for typing and filter
+   * @param product_index
+   * @private
+   */
   private setupFilteredItems(product_index: number) {
     const control = this.parcelItemControls.get(product_index)!;
     const filterItems = control.valueChanges.pipe(
@@ -2290,11 +2293,14 @@ export class SaleMainComponent implements OnInit {
       ));
     this.parcelFilteredItems.set(product_index, filterItems);
   }
+
+  // TODO: check later
   public onInputFocus(product_index: number): void {
     // Show all available items when input gets focus
     const availableItems = this.getAvailableItems(product_index);
     this.parcelFilteredItems.set(product_index, of(availableItems));
   }
+
   // create input for each row
   getItemControl(product_index: number) {
     if (!this.parcelItemControls.has(product_index)) {
@@ -2304,13 +2310,19 @@ export class SaleMainComponent implements OnInit {
     return this.parcelItemControls?.get(product_index);
   }
 
-  // when click into a option of autocomplete chip
+
+
+  /**
+   * When click into a option of autocomplete chip
+   * Put it into the product_parcels and remove from available
+   * @param event
+   * @param id
+   */
   selected(event: MatAutocompleteSelectedEvent, id: number) {
     if (event.option.value == null) {
       return;
     }
     const parcel = event.option.value;
-    // this.openAddAvailableParcelDialog(id, parcel);
     this.getItemControl(id)?.setValue(null);
     this.listProduct[id].product_parcels.push(parcel);
 
@@ -2331,48 +2343,35 @@ export class SaleMainComponent implements OnInit {
   }
 
 
-// handle when remove chip from list
-  removeParcel(id: number, item: object): void {
-    // Find the product in the data source
+  /**
+   * Opposite with the selectd function
+   * @param id
+   * @param item
+   */
+  removeParcel(id: number): void {
     const product = this.listProduct[id];
-
     if (!product) { return; }
-    // Find the index of the item to remove
     const parcel = product.product_parcels[0];
     product.product_parcels = [];
-    // add it to
     const currentFilteredItems = this.parcelFilteredItems.get(id);
-
     if (currentFilteredItems) {
-      // Create new observable with the removed item added back
       const updatedFilteredItems = currentFilteredItems.pipe(
         map(items => [...items, parcel])  // Add the item back to the array
       );
-
-      // Update the map with new observable
       this.parcelFilteredItems.set(id, updatedFilteredItems);
     }
-    const listInvoice = this.orderService.getListInvoiceLocalStorage();
-    const listItemInvoice = listInvoice.itemInvoice;
-    listItemInvoice.forEach(element => {
-      if (element.active === true) {
-        if (element.invoice_id === this.localItemInvoice.invoice_id) {
-          element.listProduct = this.listProduct;
-        }
-      }
-    });
-    this.orderService.setListInvoiceLocalStorage(listInvoice);
+    this.handleUpdateStorage();
   }
 
 
+  /**
+   * Handle open Selection Parcel Dialog, allow user enter number amount in the dialog with parcel
+   * @param product_index
+   */
   openParcelSelectionDialog(product_index: number) {
     const product = this.listProduct[product_index];
     const product_id = product.product_id.toString();
     if (!product) { return; }
-    // const selectedAvailable = [...product.product_parcels, ...this.getAvailableItems(product_index)];
-    const availableItems = this.available_product_parcels.get(product_id);
-    // get all parcel from product_parcels and available_product_parcels
-    // handle missing field
     const selectedParcel = product.product_parcels[0] || null;
     const dialogRef = this.dialog.open(SaleProductParcelSelectDialogComponent, {
       width: '40%',
@@ -2388,40 +2387,26 @@ export class SaleMainComponent implements OnInit {
       if (!result) { return; }
       const product = this.listProduct[product_index];
       if (!product) { return; }
-
-      // Update parcels with quantities
       product.product_parcels = [];
       product.product_parcels.push(result.parcel);
-
-      // update available = start available - result (it means remove these parcel from available parcels)
       const exist = this.parcelFilteredItems.has(product_index);
       if (exist) {
-        // Get current filtered items observable
         const currentFilteredItems = this.getAvailableItems(product_index);
-        // Create Set of selected parcel_no for efficient lookup
         const selectedParcelNos = new Set(product.product_parcels.map(p => p['parcel_no']));
-        // Filter out items that are already in product_parcels
         const updatedFilteredItems = currentFilteredItems.filter(item => !selectedParcelNos.has(item['parcel_no']));
-
-        // Update the map with new observable
         this.available_product_parcels.set(product_id, updatedFilteredItems);
         this.setupFilteredItems(product_index);
       }
 
       product.amount = result.quantity;
       this.listProduct = [...this.listProduct];
-      // review later -> reviewed
-      // add logic, if amount > quantity_of_stock -> add new row with another parcel
       const sum_amount = product.amount;
       let redu = 0;
       let isLastParcel = false;
 
       if (product.amount > selectedParcel.quantity_of_stock) {
-        // Thêm parcel đầu tiên
         product.amount = selectedParcel.quantity_of_stock;
         redu += selectedParcel.quantity_of_stock;
-
-        // Lọc các parcel khả dụng (bỏ qua parcel đã chọn)
         const availableParcels = this.getAvailableItems(product_index).filter(
           parcel => parcel['parcel_no'] !== selectedParcel.parcel_no
         );
@@ -2430,35 +2415,25 @@ export class SaleMainComponent implements OnInit {
           const dateB = new Date(b['expiration_date']);
           return dateA.getTime() - dateB.getTime();
         });
-        // Loop qua các parcel khác cho đến khi đạt đủ số lượng
         for (let i = 0; i < sortedParcels.length; i++) {
           const parcel = sortedParcels[i];
 
-          // Kiểm tra xem đã đủ số lượng chưa
           if (redu >= sum_amount) {
             break;
           }
-
-          // Tính toán số lượng cần thêm
           const remain = sum_amount - redu;
 
-          // Kiểm tra xem đây có phải là parcel cuối cùng không
           isLastParcel = (i === sortedParcels.length - 1) || (redu + parcel['quantity_of_stock'] >= sum_amount);
 
           let quantityToAdd;
           if (isLastParcel) {
-            // Nếu là parcel cuối cùng, chỉ lấy phần remain
             quantityToAdd = remain;
           } else {
-            // Nếu không phải parcel cuối, lấy toàn bộ quantity_of_stock
             quantityToAdd = Math.min(parcel['quantity_of_stock'], remain);
           }
-
-          // Thêm parcel vào row mới với số lượng thích hợp
           this.addNewRow(product_index, parcel, quantityToAdd);
           redu += quantityToAdd;
 
-          // Nếu đủ số lượng thì dừng
           if (redu >= sum_amount) {
             break;
           }
@@ -2466,9 +2441,15 @@ export class SaleMainComponent implements OnInit {
       }
     });
   }
+
+  /**
+   * Automation add one parcel if the current one smaller than amount input
+   * @param product_index
+   * @param new_input_amount
+   */
   handleAddRowIfNecessary(product_index: number, new_input_amount: number) {
     const product = this.listProduct[product_index];
-    if (product.product.is_sub_item){
+    if (product.product.is_sub_item) {
       return;
     }
     const selectedParcel = product.product_parcels[0];
@@ -2476,7 +2457,6 @@ export class SaleMainComponent implements OnInit {
     const sum_amount = new_input_amount;
     let redu = 0;
     let isLastParcel = false;
-    // Lọc các parcel khả dụng (bỏ qua parcel đã chọn)
     const availableParcels = this.getAvailableItems(product_index).filter(
       parcel => parcel['parcel_no'] !== selectedParcel.parcel_no
     );
@@ -2484,13 +2464,10 @@ export class SaleMainComponent implements OnInit {
       return;
     }
     const existSubItemProduct = this.listProduct[product_index + 1];
-
-    if(existSubItemProduct?.product?.is_sub_item){
+    if (existSubItemProduct?.product?.is_sub_item) {
       return;
     }
-
     if (sum_amount > selectedParcel.quantity_of_stock ) {
-      // Thêm parcel đầu tiên
       product.amount = selectedParcel.quantity_of_stock;
       redu += selectedParcel.quantity_of_stock;
 
@@ -2500,60 +2477,45 @@ export class SaleMainComponent implements OnInit {
         const dateB = new Date(b['expiration_date']);
         return dateA.getTime() - dateB.getTime();
       });
-      // Loop qua các parcel khác cho đến khi đạt đủ số lượng
       for (let i = 0; i < sortedParcels.length; i++) {
         const parcel = sortedParcels[i];
 
-        // Kiểm tra xem đã đủ số lượng chưa
         if (redu >= sum_amount) {
           break;
         }
-
-        // Tính toán số lượng cần thêm
         const remain = sum_amount - redu;
 
-        // Kiểm tra xem đây có phải là parcel cuối cùng không
         isLastParcel = (i === sortedParcels.length - 1) || (redu + parcel['quantity_of_stock'] >= sum_amount);
 
         let quantityToAdd;
         if (isLastParcel) {
-          // Nếu là parcel cuối cùng, chỉ lấy phần remain
           quantityToAdd = remain;
         } else {
-          // Nếu không phải parcel cuối, lấy toàn bộ quantity_of_stock
           quantityToAdd = Math.min(parcel['quantity_of_stock'], remain);
         }
 
-        // Thêm parcel vào row mới với số lượng thích hợp
-        debugger;
         this.addNewRow(product_index, parcel, quantityToAdd);
         redu += quantityToAdd;
-
-        // Nếu đủ số lượng thì dừng
         if (redu >= sum_amount) {
           break;
         }
       }
     }
   }
+
+  /**
+   * Main function use to call api and load parcels of each product
+   * @param mItemInvoice
+   * @private
+   */
   private handleLoadParcel(mItemInvoice: ItemInvoice) {
     try {
-      console.log('Begin handleLoadParcel');
       const listProduct = mItemInvoice.listProduct;
-      // Use Promise.all to wait for all requests to complete
       listProduct.map(async (product) => {
-
-        // check exist product_parcels ?
-          console.log('Processing product:', product.product_id);
           const product_id = product.product_id.toString();
-
-          // Convert Observable to Promise correctly
           return new Promise<void>((resolveProduct, rejectProduct) => {
-            console.log('Creating Promise for product:', product_id);
-
             this.productSer.getParcelNew(product_id).pipe(
               map(res => {
-                console.log('Received response for product:', product_id);
                 if (res && Array.isArray(res) && res.length > 0) {
                   return (res as object[]).map(item => ({
                     parcel_no: item['parcel_no'],
@@ -2565,10 +2527,6 @@ export class SaleMainComponent implements OnInit {
               })
             ).subscribe({
               next: (formattedRes) => {
-                console.log('Processing formatted results for:', product_id);
-
-                // remove in future when api update
-                // delete duplicate element with the same percel_no
                 const uniqueParcels = formattedRes.filter((item, index, self) =>
                   index === self.findIndex(t => t.parcel_no === item.parcel_no)
                 );
@@ -2599,32 +2557,32 @@ export class SaleMainComponent implements OnInit {
                     this.available_product_parcels.set(product_id, availableParcels);
                   }
                 }
-                console.log('Resolving Promise for product:', product_id);
-                resolveProduct(); // Resolve here correctly when done processing
+                resolveProduct();
               },
               error: (error) => {
                 console.error(`Error loading parcel for product ${product_id}:`, error);
-                rejectProduct(error); // Reject the promise instead of resolving it
+                rejectProduct(error);
               },
               complete: () => {
-                console.log(`Complete loading parcel for product ${product_id}`);
-                resolveProduct(); // Also resolve on complete
+                resolveProduct();
               }
             });
           });
 
       });
-
-      console.log('All Promises resolved, updating listProduct');
       this.listProduct = [...listProduct];
-      console.log('handleLoadParcel completed');
       return this.listProduct;
     } catch (error) {
-      console.error('Error in handleLoadParcel:', error);
       throw error;
     }
   }
 
+  /**
+   * Add a sub item of product
+   * @param i
+   * @param parcel
+   * @param amount
+   */
   addNewRow(i: number, parcel: object = null, amount: number = 0) {
     const oldItem = this.listProduct[i];
     const oldProduct = {...oldItem.product};
@@ -2634,7 +2592,6 @@ export class SaleMainComponent implements OnInit {
     oldProduct.is_sub_item = 1;
     oldProduct.master_product_id = oldProduct.id;
     let newItem: object = {};
-    debugger;
     if (parcel) {
        newItem = {...oldItem, product: oldProduct, product_parcels: [parcel], amount: amount};
     } else {
@@ -2642,13 +2599,17 @@ export class SaleMainComponent implements OnInit {
 
     }
     this.listProduct.splice(i + 1, 0, newItem);
-
     this.listProduct = [...this.listProduct];
     this.handleUpdateStorage();
   }
 
+  /**
+   * Data after getting from api missing master_product_id and is_sub_item now.
+   * So we need to inital them, maybe no need in the future
+   * @param mItemInvoice
+   * @private
+   */
   private handleAddMasterTag(mItemInvoice: ItemInvoice) {
-
     const listProduct = mItemInvoice.listProduct;
     listProduct.map((productInfor) => {
       // add master_product_id = product_id
@@ -2661,12 +2622,17 @@ export class SaleMainComponent implements OnInit {
     // update
   }
 
-  // Lấy tất cả master products
+  /**
+   * Get all master products
+   */
   getMasterProducts() {
     return this.listProduct.filter(item => item.product.is_sub_item === 0);
   }
 
-// Lấy tất cả sub-items cho một master product nhất định
+  /**
+   * Get all subitem of a master product
+    * @param masterProduct
+   */
   getSubItemsForMaster(masterProduct) {
     return this.listProduct.filter(item =>
       item.product.is_sub_item === 1 &&
@@ -2674,7 +2640,10 @@ export class SaleMainComponent implements OnInit {
     );
   }
 
-// Lấy index của product trong listProduct
+  /**
+   * Get the index of one row in the list
+   * @param product
+   */
   getProductIndex(product) {
     return this.listProduct.findIndex(item => item === product);
   }
