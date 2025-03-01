@@ -317,7 +317,7 @@ export class OrderService {
   /*
   Thay doi so luong san pham
   */
-  upAmountProduct(product: Product, i: any) {
+  upAmountProduct(i: any) {
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
@@ -333,26 +333,25 @@ export class OrderService {
     this.setListInvoiceLocalStorage(ListInvoice);
   }
 
-  upAmountProductReturn(product: Product, i: any) {
-    let ListInvoice = this.getListInvoiceLocalStorage();
-    const listItemInvoice = ListInvoice.itemInvoice;
+
+  upAmountProductReturn( i: any) {
+    const listInvoiceLocal = this.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoiceLocal.itemInvoice;
     let mItemInvoice = new ItemInvoice();
-
-    mItemInvoice = listItemInvoice.find(element => element.active === true);
-
+    mItemInvoice = listItemInvoice.find(itemInvoiceElement => itemInvoiceElement.active === true);
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
+      return;
     } else {
-      let listProduct = mItemInvoice.listProduct;
-      if (listProduct[i]['amount'] < listProduct[i]['max_amount_return']) {
-        listProduct[i]['amount'] = Number(listProduct[i]['amount']) + 1;
+      const listProductLocal = mItemInvoice.listProduct;
+      if (listProductLocal[i]['amount'] < listProductLocal[i]['max_amount_return']) {
+        listProductLocal[i]['amount'] = Number(listProductLocal[i]['amount']) + 1;
       }
-
-      mItemInvoice.listProduct = listProduct;
+      mItemInvoice.listProduct = listProductLocal;
     }
-    this.setListInvoiceLocalStorage(ListInvoice);
+    this.setListInvoiceLocalStorage(listInvoiceLocal);
   }
 
-  downAmountProduct(product: Product, i: any) {
+  downAmountProduct(i: any) {
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
@@ -405,20 +404,20 @@ export class OrderService {
   }
 
   inputAmountProduct(i: any, value: number) {
-    let ListInvoice = this.getListInvoiceLocalStorage();
-    const listItemInvoice = ListInvoice.itemInvoice;
+    const listInvoiceLocal = this.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoiceLocal.itemInvoice;
     let mItemInvoice = new ItemInvoice();
 
-    mItemInvoice = listItemInvoice.find(element => element.active === true);
+    mItemInvoice = listItemInvoice.find(itemInvoice => itemInvoice.active === true);
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
     } else {
-      let listProduct = mItemInvoice.listProduct;
+      const listProduct = mItemInvoice.listProduct;
       if (value >= 0) {
         listProduct[i]['amount'] = Number(value);
       }
       mItemInvoice.listProduct = listProduct;
     }
-    this.setListInvoiceLocalStorage(ListInvoice);
+    this.setListInvoiceLocalStorage(listInvoiceLocal);
   }
 
   inputAmountProductReturn(i: any, value: number) {

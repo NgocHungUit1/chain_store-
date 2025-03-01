@@ -24,15 +24,12 @@ html .page-wrapper .page-content {
   transition: height 200ms ease-out;
   overflow-x: hidden;
   overflow-y: auto;
-  background-color: white;
-  border-bottom: 1px solid #e1e1e1;
+  background-color: transparent;
   padding: 5px;
   -webkit-flex: 1;
   -ms-flex: 1;
   flex: 1;
   height: calc(100%);
-
-
 
   @media only screen and (max-width: 1349px) {
     //max-height: 300px;
@@ -57,13 +54,11 @@ html .page-wrapper .page-content {
     position: relative;
     background-color: #ffffff;
     border-radius: 8px;
-    //padding: 12px 16px;
     font-size: 14px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    //align-items: flex-end;
     &:hover {
       background-color: #ececec;
     }
@@ -75,7 +70,7 @@ html .page-wrapper .page-content {
 
       &-product-no {
         font-size: 12px;
-        padding-right: 5px;
+        //padding-right: 5px;
         padding-top: 4px;
       }
 
@@ -136,9 +131,11 @@ html .page-wrapper .page-content {
 
     &.master-item-row {
       border: 1px solid #eaeaea;
-    //  margin-bottom: 2px;
+      .row-product-note {
+        position: relative;
+        top: -8px;
+      }
     }
-
     &.sub-item-row {
       background-color: transparent;
       //border-top: 1px dashed #00897b;
@@ -146,7 +143,8 @@ html .page-wrapper .page-content {
       box-shadow: none;
       position: relative;
       width: 100%;
-      padding-top: 10px;
+      //padding-top: 10px;
+      padding-bottom: 15px;
       &:before {
         content: '';
         position: absolute;
@@ -154,7 +152,10 @@ html .page-wrapper .page-content {
         top: 0;
         height: 100%;
       }
-
+      .row-product-note{
+        position: relative;
+        top: 1px;
+      }
     }
 
   }
@@ -169,7 +170,6 @@ html .page-wrapper .page-content {
     line-height: 0.8;
   }
   .row-product-base-unit .mat-form-field {
-    /* Giảm chiều cao tổng thể */
     font-size: 14px;
     line-height: 1.2;
   }
@@ -177,6 +177,7 @@ html .page-wrapper .page-content {
     padding: 0.1em 0 !important;
     border-top-width: 0.5em !important;
   }
+
 }
 
 
@@ -483,9 +484,6 @@ html .page-wrapper .page-content {
   border: none;
   background: transparent;
   overflow: clip;
-}
-
-.note-textarea {
   width: 100%;
   padding: 5px 10px;
   border-radius: 5px;
@@ -498,6 +496,7 @@ html .page-wrapper .page-content {
   min-height: 24px;
   box-shadow: none;
   font-family: inherit;
+  margin-left: -10px;
 }
 
 .note-textarea:focus {
@@ -510,54 +509,184 @@ html .page-wrapper .page-content {
   opacity: 1;
 }
 .parcel-input{
-  width: 50px;
+  width: 50px !important;
+  height: 20px;
 }
 .parcel-input:focus {
-  border-bottom: 2px solid #3f51b5 !important; /* Blue bottom border */
+  border-bottom: 2px solid #3f51b5 !important;
 }
 
-.parcel-seletor .parcel-input-border input.mat-chip-input {
+.parcel-input-border input.mat-chip-input {
   width: 50px !important;
+  margin-top: 8.5px !important;
 }
-.select-parcel-button{
-  color: #3f51b5 !important;
-  font-size: 16px;
-  width: 20px !important;
-  line-height: 24px !important;
-  height: 24px !important;
-}
+
 .parcel-seletor{
   display: flex !important;
   height: 24px !important;
 }
 
+.chip-list {
+  display: flex;
+}
+
 .chip-item {
-  /*background-color: rgba(0, 150, 136, 0.5) !important;*/
   background-color: transparent !important;
   color: #3f51b5 !important;
   height: 12px !important;
   border-radius: 4px !important;
-  padding: 0 6px !important;
+  padding: 0 !important;
   font-size: 10px !important;
   white-space: nowrap !important;
   margin: 0 !important;
   box-sizing: border-box !important;
-  /*width: 100% !important; !* Sẽ fit với grid column *!*/
   width: "160px" !important;
   justify-content: space-between !important;
 }
 
+.row-item {
+  position: relative;
+}
 
 .dotted-divider {
   height: 1px;
-  border-bottom: 1px dotted #0000ff;
-  width: calc(100% - 30px); /* Điều chỉnh số 30px để tạo khoảng trống mong muốn */
-  margin: 15px 0 15px 30px;
-
+  border-bottom: 1px dashed #e0e0e0;
+  margin-bottom: 15px;
+  margin-left: 6%;
+  width: 100%;
 }
+
 .row-total-price{
     font-size: 12px;
     text-align: right;
     font-weight: 600;
     height: 13px;
 }
+
+
+
+.parcel-seletor{
+  display: flex !important;
+  height: 32px !important;
+}
+
+//
+///* Placeholder styling */
+//.parcel-input::placeholder {
+//  color: #666 !important;
+//  opacity: 0.7 !important;
+//}
+
+.parcel-input:focus {
+  border-bottom: none !important;
+}
+
+.select-parcel-button{
+  height: 16px !important;
+  line-height: 18px !important;
+  color: #3f51b5 !important;
+  background-color: transparent;
+  border: none;
+}
+
+.parcel-autocomplete-container{
+  padding: 10px !important;
+}
+
+.parcel-option-list{
+  padding: 10px;
+}
+
+.parcel-option{
+  font-size: 1rem !important;
+}
+.action-buttons-container {
+  padding-right: 0px;
+}
+
+.action-buttons-container button {
+  transition: transform 0.2s ease;
+}
+
+.action-buttons-container mat-icon:hover {
+  transform: scale(1.1);
+}
+
+.action-buttons-container mat-icon {
+  margin: 0 2px;
+}
+
+.is_morethan_stock{
+  color: red;
+}
+
+
+
+
+.row-product-no {
+  font-size: 12px;
+}
+
+.row-item {
+  padding: 0;
+  margin: 0;
+}
+
+.span-product-no,
+.chip-list {
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.chip-list {
+  display: flex;
+  align-items: center;
+}
+
+.parcel-input-border {
+  padding-left: 0;
+  margin-left: 0;
+}
+
+
+.mat-chip-list-wrapper{
+  margin: 0 !important;
+}
+
+
+.row-item {
+  padding: 0;
+  margin: 0;
+}
+
+.span-product-no,
+.chip-list {
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.chip-list {
+  display: flex;
+  align-items: center;
+}
+
+.parcel-input-border {
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.parcel-input {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+
+.chip-item {
+  background-color: transparent !important; /* Ensure the background is transparent */
+}
+
+.chip-item:hover {
+  background-color: transparent !important;
+}
+
+

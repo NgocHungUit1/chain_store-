@@ -13,14 +13,14 @@
           <div class="product-item master-item-row">
             <div fxLayout="row wrap" fxLayoutAlign="center center" class="row-item">
               <div fxFlex="2" class="row-product-no">
-                <span >{{ masterIndex + 1 }}</span>
+                <span>{{ masterIndex + 1 }}</span>
               </div>
-              <div fxFlex="15">
+              <div fxFlex="16">
                 <div class="span-product-no">
                   {{ masterProduct?.product?.product_no }}
                 </div>
               </div>
-              <div fxFlex="15">
+              <div fxFlex="16">
                 <div class="row-text row-product-name" title="{{ masterProduct?.product?.product_name }}">
                   <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                     {{ masterProduct.product?.product_name }}
@@ -33,7 +33,8 @@
                   <mat-form-field appearance="fill">
                     <mat-select [(value)]="masterProduct.product_unit_id" style="
                         position: relative;
-                        top: -3px;" (selectionChange)="onChangeProductUnit($event, masterProduct, getProductIndex(masterProduct))">
+                        top: -3px;"
+                                (selectionChange)="onChangeProductUnit($event, masterProduct, getProductIndex(masterProduct))">
                       <mat-option *ngFor="let unit of masterProduct.product?.productUnits" [value]="unit.id"
                                   [disabled]="localItemInvoice?.is_return == true">
                         {{ unit.name }}
@@ -48,33 +49,37 @@
                   <div fxLayout="row wrap">
                     <mat-form-field floatLabel="never" style="font-size: 20px; text-align: center">
                       <button matPrefix mat-icon-button class="row-button-edit-amount"
-                              (click)="upAmountProduct(masterProduct.product, getProductIndex(masterProduct))">
+                              (click)="adjustAmountProduct(getProductIndex(masterProduct), 'up')">
                         <mat-icon>keyboard_arrow_up</mat-icon>
                       </button>
                       <input matInput tabindex="3" min="0" class="row-amount-number" style="caret-color: red"
                              (change)="inputAmountProduct(getProductIndex(masterProduct), $event)"
-                             [value]="masterProduct?.amount" autocomplete="off" />
+                             [value]="masterProduct?.amount" autocomplete="off"
+                             [ngClass]="{'is_morethan_stock': masterProduct.product_parcels[0] && (masterProduct?.product_parcels[0]?.quantity_of_stock<masterProduct.amount ) }"
+                      />
                       <button matSuffix mat-icon-button class="row-button-edit-amount"
-                              (click)="downAmountProduct(masterProduct.product, getProductIndex(masterProduct))">
+                              (click)="adjustAmountProduct(getProductIndex(masterProduct), 'down')">
                         <mat-icon>keyboard_arrow_down</mat-icon>
                       </button>
                     </mat-form-field>
                   </div>
                 </div>
                 <ng-template #changeAmount>
-                  <!-- change amount on return -->
                   <div fxLayout="row wrap">
                     <mat-form-field floatLabel="never" style="font-size: 20px; text-align: center">
                       <button matPrefix mat-icon-button class="row-button-edit-amount"
-                              (click)="upAmountProductReturn(masterProduct.product, getProductIndex(masterProduct))">
+                              (click)="upAmountProductReturn(getProductIndex(masterProduct))">
                         <mat-icon>keyboard_arrow_up</mat-icon>
                       </button>
                       <input matInput tabindex="3" min="0" max="{{ masterProduct?.max_amount_return }}"
                              class="row-amount-number"
-                             (input)="inputAmountProductReturn(getProductIndex(masterProduct), $event.target.value)"
-                             value="{{ masterProduct?.amount }}" autocomplete="off" />
+                             (input)="inputAmountProductReturn(getProductIndex(masterProduct), $event)"
+                             value="{{ masterProduct?.amount }}" autocomplete="off"
+                             [ngClass]="{'is_morethan_stock': masterProduct.product_parcels[0] &&( masterProduct?.product_parcels[0]?.quantity_of_stock<masterProduct.amount ) }"
+                      />
+
                       <button matSuffix mat-icon-button class="row-button-edit-amount"
-                              (click)="downAmountProduct(masterProduct.product, getProductIndex(masterProduct))">
+                              (click)="downAmountProduct(getProductIndex(masterProduct))">
                         <mat-icon>keyboard_arrow_down</mat-icon>
                       </button>
                     </mat-form-field>
@@ -82,7 +87,7 @@
                   </div>
                 </ng-template>
               </div>
-
+              <div fxFlex="1"></div>
               <div fxFlex="13" class="row-edit-price">
                 <div fxLayout="row wrap">
                   <div fxFlex="100">
@@ -110,133 +115,173 @@
                   {{ masterProduct | totalPrice | number }}
                 </span>
               </div>
-              <div fxFlex="3" class="row-count-number">
-                <button mat-icon-button (click)="deleteProduct(getProductIndex(masterProduct))">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
-              <div fxFlex="3" class="row-count-number" style="display: flex; justify-content: center; align-items: center;">
-                <button mat-icon-button (click)="toggleShowMenu(getProductIndex(masterProduct))" style="display: flex; justify-content: center; align-items: center;">
-                  <mat-icon style="margin: 0;">more_vert</mat-icon>
-                  <div class="note-area" *ngIf="isMenuShown(getProductIndex(masterProduct))">
-                    <button mat-stroked-button (click)="toggleShowNote(getProductIndex(masterProduct))">
-                      <mat-icon>border_color</mat-icon> Ghi chú
-                    </button>
-                  </div>
-                </button>
-              </div>
-              <div fxFlex="3" class="row-count-number" >
-                <button mat-icon-button (click)="addNewRow(getProductIndex(masterProduct))">
-                  <mat-icon>add</mat-icon>
-                </button>
-              </div>
-              <div fxFlex="90" >
-                <div style="padding-bottom:15px;"  class="row-product-note d-flex align-items-center" *ngIf="isNoteShown(getProductIndex(masterProduct))">
-                  <textarea class="note-textarea note-textarea-{{getProductIndex(masterProduct)}}" cdkTextareaAutosize
-                            placeholder="Ghi chú..." [(ngModel)]="masterProduct.product.note_detail_sale"
-                            (ngModelChange)="handleUpdateStorage()">
-                  </textarea>
+
+              <div fxFlex="12" class="action-buttons-container">
+                <div fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="end center">
+                  <button mat-icon-button (click)="deleteProduct(getProductIndex(masterProduct))">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="toggleShowMenu(getProductIndex(masterProduct))">
+                    <mat-icon>more_vert</mat-icon>
+                    <div class="note-area" *ngIf="isMenuShown(getProductIndex(masterProduct))">
+                      <button mat-stroked-button (click)="toggleShowNote(getProductIndex(masterProduct))">
+                        <mat-icon>border_color</mat-icon>
+                        Ghi chú
+                      </button>
+                    </div>
+                  </button>
+                  <button mat-icon-button (click)="addNewRow(getProductIndex(masterProduct))">
+                    <mat-icon>add</mat-icon>
+                  </button>
                 </div>
               </div>
-              <div fxFlex="90" style="padding-bottom:15px;">
-                <div class="custom-parcel-filter-container">
+            </div>
+
+<!--            note item in master -->
+            <div fxLayout="row wrap" fxLayoutAlign="center center" class="row-item">
+              <div fxFlex="2"></div>
+              <div fxFlex="32">
+                <div class="row-product-note d-flex align-items-center" *ngIf="isNoteShown(getProductIndex(masterProduct))">
+                    <textarea class="note-textarea note-textarea-{{getProductIndex(masterProduct)}}" cdkTextareaAutosize
+                              placeholder="Ghi chú" [(ngModel)]="masterProduct.product.note_detail_sale"
+                              (ngModelChange)="handleUpdateStorage()">
+                    </textarea>
+                </div>
+              </div>
+              <div fxFlex="8" class="row-product-base-unit">
+              </div>
+              <div fxFlex="13" class="row-amount">
+              </div>
+              <div fxFlex="1"></div>
+              <div fxFlex="13" class="row-edit-price">
+              </div>
+              <div fxFlex="12" class="row-total-price">
+              </div>
+
+              <div fxFlex="12" class="action-buttons-container">
+              </div>
+            </div>
+<!--            end note item-->
+
+
+
+<!--            parcel item-->
+            <div fxLayout="row wrap" fxLayoutAlign="center center" class="product-item sub-item-row" style="margin-top: -8px">
+                <div fxFlex="2" class="row-product-no">
+                  <span> </span>
+                </div>
+                <div fxFlex="32" class="chip-list">
+                  <mat-chip-list #chiplist aria-label="Parcel selection">
+                    <mat-chip
+                      class="chip-item" *ngFor="let parcel of masterProduct.product_parcels"
+                              [selectable]="true"
+                              [disableRipple]="true"
+                              [removable]="true" (removed)="removeParcel(getProductIndex(masterProduct), parcel)">
+                      {{ parcel['parcel_no'] }} - {{ parcel['expiration_date'] | date:'dd/MM/yyyy' }}
+                      <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                    <div class="parcel-seletor">
+                      <div class="parcel-input-border"
+                           *ngIf="!masterProduct.product_parcels || masterProduct.product_parcels.length==0">
+                        <input class="parcel-input" placeholder="Nhập lô" #parcelInput
+                               [formControl]="getItemControl(getProductIndex(masterProduct))"
+                               (focus)="onInputFocus(getProductIndex(masterProduct))"
+                               [matAutocomplete]="parcelAutocomplete" [matChipInputFor]="chiplist"
+                               [matChipInputSeparatorKeyCodes]="separatorKeysCodes">
+                      </div>
+                    </div>
+                  </mat-chip-list>
+                  <button type="button"
+                          (click)="openParcelSelectionDialog(getProductIndex(masterProduct))"
+                          class="select-parcel-button"
+                          style="display: flex; justify-content: center; align-items: center;"
+                          matTooltip="Chọn lô" matTooltipPosition="above">
+                    ...
+                  </button>
+                  <mat-autocomplete #parcelAutocomplete="matAutocomplete"
+                                    (optionSelected)="selected($event, getProductIndex(masterProduct))"
+                                    class="parcel-option-list"
+                                    [panelWidth]="240">
+                    <mat-option *ngFor="let parcel of getFilterItems(getProductIndex(masterProduct)) | async"
+                                [value]="parcel" class="parcel-option">
+                      {{ parcel['parcel_no'] }} - {{ parcel['expiration_date'] | date:'dd/MM/yyyy' }} - tồn:
+                      {{ parcel['quantity_of_stock'] }}
+                    </mat-option>
+                  </mat-autocomplete>
+                </div>
+              <div fxFlex="8" class="row-product-base-unit">
+              </div>
+              <div fxFlex="13" class="row-amount">
+              </div>
+              <div fxFlex="1"></div>
+              <div fxFlex="13" class="row-edit-price">
+              </div>
+              <div fxFlex="12" class="row-total-price">
+              </div>
+
+              <div fxFlex="12" class="action-buttons-container">
+              </div>
+            </div>
+            <!--            subItem         -->
+            <div fxLayout="row wrap" fxLayoutAlign="center center"
+                 *ngFor="let subItem of getSubItemsForMaster(masterProduct); let subIndex = index"
+                 class="product-item sub-item-row">
+              <div class="dotted-divider"></div>
+              <div fxLayout="row wrap" fxLayoutAlign="center center" class="row-item">
+                <div fxFlex="2"></div>
+                <div fxFlex="32">
                   <div class="chip-list">
-                    <mat-chip-list #chiplist aria-label="Parcel selection">
-                      <mat-chip class="chip-item" *ngFor="let parcel of masterProduct.product_parcels" [selectable]="true"
-                                [removable]="true" (removed)="removeParcel(getProductIndex(masterProduct), parcel)">
-                        {{parcel['parcel_no']}} - {{parcel['expiration_date'] | date:'dd/MM/yyyy'}}
+                    <mat-chip-list #chiplistSub aria-label="Parcel selection">
+                      <mat-chip class="chip-item" *ngFor="let parcel of subItem.product_parcels" [selectable]="true"
+                                [removable]="true" (removed)="removeParcel(getProductIndex(subItem), parcel)">
+                        {{ parcel['parcel_no'] }} - {{ parcel['expiration_date'] | date:'dd/MM/yyyy' }}
                         <mat-icon matChipRemove>cancel</mat-icon>
                       </mat-chip>
-                      <div class="parcel-seletor">
-                        <div class="parcel-input-border"
-                             *ngIf="!masterProduct.product_parcels || masterProduct.product_parcels.length==0">
-                          <input class="parcel-input" placeholder="Nhập lô" #parcelInput
-                                 [formControl]="getItemControl(getProductIndex(masterProduct))"
-                                 (focus)="onInputFocus(getProductIndex(masterProduct))"
-                                 [matAutocomplete]="parcelAutocomplete" [matChipInputFor]="chiplist"
-                                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes">
-                        </div>
-                        <button  mat-icon-button type="button"
-                                (click)="openParcelSelectionDialog(getProductIndex(masterProduct))" class="select-parcel-button"
-                                 style="display: flex; justify-content: center; align-items: center;"
-                                 matTooltip="Chọn lô" matTooltipPosition="above">
-                          ...
-                        </button>
-
+                      <div class="parcel-input-border"
+                           *ngIf="!subItem.product_parcels || subItem.product_parcels.length==0">
+                        <input class="parcel-input" placeholder="Nhập lô" #parcelInput
+                               [formControl]="getItemControl(getProductIndex(subItem))"
+                               (focus)="onInputFocus(getProductIndex(subItem))"
+                               [matAutocomplete]="parcelAutocompleteSub" [matChipInputFor]="chiplistSub"
+                               [matChipInputSeparatorKeyCodes]="separatorKeysCodes">
                       </div>
                     </mat-chip-list>
-                    <mat-autocomplete #parcelAutocomplete="matAutocomplete"
-                                      (optionSelected)="selected($event, getProductIndex(masterProduct))" class="parcel-option-list"
+                    <button mat-icon-button type="button"
+                            (click)="openParcelSelectionDialog(getProductIndex(subItem))"
+                            class="select-parcel-button" matTooltip="Chọn lô" matTooltipPosition="above">
+                      ...
+                    </button>
+
+                    <mat-autocomplete #parcelAutocompleteSub="matAutocomplete"
+                                      (optionSelected)="selected($event, getProductIndex(subItem))"
+                                      class="parcel-option-list"
                                       [panelWidth]="240">
-                      <mat-option *ngFor="let parcel of getFilterItems(getProductIndex(masterProduct)) | async"
-                                  [value]="parcel" class="parcel-option">
-                        {{parcel['parcel_no']}} - {{parcel['expiration_date'] | date:'dd/MM/yyyy'}} - tồn:
-                        {{parcel['quantity_of_stock']}}
+                      <mat-option *ngFor="let parcel of getFilterItems(getProductIndex(subItem)) | async"
+                                  [value]="parcel"
+                                  class="parcel-option">
+                        {{ parcel['parcel_no'] }} - {{ parcel['expiration_date'] | date:'dd/MM/yyyy' }} - tồn:
+                        {{ parcel['quantity_of_stock'] }}
                       </mat-option>
                     </mat-autocomplete>
                   </div>
                 </div>
-              </div>
-            </div>
-<!--            subItem-->
-            <div fxLayout="row wrap" fxLayoutAlign="center center" *ngFor="let subItem of getSubItemsForMaster(masterProduct); let subIndex = index"
-                 class="product-item sub-item-row">
-              <div class="dotted-divider"></div>
-              <div fxLayout="row wrap" fxLayoutAlign="center center" class="row-item">
-                <div fxFlex="31">
-                  <div class="custom-parcel-filter-container">
-                    <div class="chip-list">
-                      <mat-chip-list #chiplistSub aria-label="Parcel selection">
-                        <mat-chip class="chip-item" *ngFor="let parcel of subItem.product_parcels" [selectable]="true"
-                                  [removable]="true" (removed)="removeParcel(getProductIndex(subItem), parcel)">
-                          {{parcel['parcel_no']}} - {{parcel['expiration_date'] | date:'dd/MM/yyyy'}}
-                          <mat-icon matChipRemove>cancel</mat-icon>
-                        </mat-chip>
-                        <div class="parcel-seletor">
-                          <div class="parcel-input-border" *ngIf="!subItem.product_parcels || subItem.product_parcels.length==0">
-                            <input class="parcel-input" placeholder="Nhập lô" #parcelInput
-                                   [formControl]="getItemControl(getProductIndex(subItem))"
-                                   (focus)="onInputFocus(getProductIndex(subItem))"
-                                   [matAutocomplete]="parcelAutocompleteSub" [matChipInputFor]="chiplistSub"
-                                   [matChipInputSeparatorKeyCodes]="separatorKeysCodes">
-                          </div>
-                          <button mat-icon-button type="button" (click)="openParcelSelectionDialog(getProductIndex(subItem))"
-                                  class="select-parcel-button" matTooltip="Chọn lô" matTooltipPosition="above">
-                            <mat-icon>menu</mat-icon>
-                          </button>
-                        </div>
-                      </mat-chip-list>
-                      <mat-autocomplete #parcelAutocompleteSub="matAutocomplete"
-                                        (optionSelected)="selected($event, getProductIndex(subItem))" class="parcel-option-list"
-                                        [panelWidth]="240">
-                        <mat-option *ngFor="let parcel of getFilterItems(getProductIndex(subItem)) | async" [value]="parcel"
-                                    class="parcel-option">
-                          {{parcel['parcel_no']}} - {{parcel['expiration_date'] | date:'dd/MM/yyyy'}} - tồn:
-                          {{parcel['quantity_of_stock']}}
-                        </mat-option>
-                      </mat-autocomplete>
-                    </div>
-                  </div>
-                </div>
                 <div fxFlex="8" class="row-product-base-unit">
-                  <div fxLayout="row wrap">
-
-                  </div>
                 </div>
-
                 <div fxFlex="13" class="row-amount">
                   <div *ngIf="localItemInvoice?.is_return !== true; else changeAmountSub">
                     <div fxLayout="row wrap">
                       <mat-form-field floatLabel="never" style="font-size: 20px; text-align: center">
                         <button matPrefix mat-icon-button class="row-button-edit-amount"
-                                (click)="upAmountProduct(subItem.product, getProductIndex(subItem))">
+                                (click)="adjustAmountProduct(getProductIndex(subItem), 'up')">
                           <mat-icon>keyboard_arrow_up</mat-icon>
                         </button>
                         <input matInput tabindex="3" min="0" class="row-amount-number" style="caret-color: red"
                                (change)="inputAmountProduct(getProductIndex(subItem), $event)" [value]="subItem?.amount"
-                               autocomplete="off" />
+                               autocomplete="off"
+                               [ngClass]="{'is_morethan_stock': subItem.product_parcels[0] &&( subItem?.product_parcels[0]?.quantity_of_stock<subItem.amount ) }"
+                        />
                         <button matSuffix mat-icon-button class="row-button-edit-amount"
-                                (click)="downAmountProduct(subItem.product, getProductIndex(subItem))">
+                                (click)="adjustAmountProduct(getProductIndex(subItem), 'down')">
                           <mat-icon>keyboard_arrow_down</mat-icon>
                         </button>
                       </mat-form-field>
@@ -246,21 +291,25 @@
                     <div fxLayout="row wrap">
                       <mat-form-field floatLabel="never" style="font-size: 20px; text-align: center">
                         <button matPrefix mat-icon-button class="row-button-edit-amount"
-                                (click)="upAmountProductReturn(subItem.product, getProductIndex(subItem))">
+                                (click)="upAmountProductReturn(getProductIndex(subItem))">
                           <mat-icon>keyboard_arrow_up</mat-icon>
                         </button>
-                        <input matInput tabindex="3" min="0" max="{{ subItem?.max_amount_return }}" class="row-amount-number"
+                        <input matInput tabindex="3" min="0" max="{{ subItem?.max_amount_return }}"
+                               class="row-amount-number"
+                               [ngClass]="{'is_morethan_stock': subItem.product_parcels[0] &&( subItem?.product_parcels[0]?.quantity_of_stock<subItem.amount ) }"
                                (input)="inputAmountProductReturn(getProductIndex(subItem), $event.target.value)"
                                value="{{ subItem?.amount }}" autocomplete="off" />
                         <button matSuffix mat-icon-button class="row-button-edit-amount"
-                                (click)="downAmountProduct(subItem.product, getProductIndex(subItem))">
+                                (click)="downAmountProduct(getProductIndex(subItem))">
                           <mat-icon>keyboard_arrow_down</mat-icon>
                         </button>
                       </mat-form-field>
+
                       <span class="amount-cell-sub">/{{ subItem?.max_amount_return }}</span>
                     </div>
                   </ng-template>
                 </div>
+                <div fxFlex="1"></div>
                 <div fxFlex="13" class="row-edit-price">
                   <div fxLayout="row wrap">
                     <div fxFlex="100">
@@ -288,50 +337,57 @@
                     {{ subItem | totalPrice | number }}
                   </span>
                 </div>
-
-
-
-                <div fxFlex="3" class="row-count-number" >
-                  <button mat-icon-button (click)="deleteProduct(getProductIndex(subItem))">
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                </div>
-                <div fxFlex="3" class="row-count-number">
-                  <button mat-icon-button (click)="toggleShowMenu(getProductIndex(subItem))">
-                    <mat-icon>more_vertical</mat-icon>
-                    <div class="note-area" *ngIf="isMenuShown(getProductIndex(subItem))">
-                      <button mat-stroked-button (click)="toggleShowNote(getProductIndex(subItem))">
-                        <mat-icon>border_color</mat-icon> Ghi chú
-                      </button>
-                    </div>
-                  </button>
-                </div>
-                <div fxFlex="3" class="row-count-number">
-                  <button mat-icon-button (click)="addNewRow(getProductIndex(subItem))">
-                    <mat-icon>add</mat-icon>
-                  </button>
-                </div>
-
-
-
-                <div fxFlex="100">
-
-                  <div class="row-product-note d-flex align-items-center" *ngIf="isNoteShown(getProductIndex(subItem))">
-                  <textarea class="note-textarea note-textarea-{{getProductIndex(subItem)}}" cdkTextareaAutosize
-                            placeholder="Ghi chú..." [(ngModel)]="subItem.product.note_detail_sale"
-                            (ngModelChange)="handleUpdateStorage()">
-                  </textarea>
+                <div fxFlex="12" class="action-buttons-container">
+                  <div fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="end center">
+                    <button mat-icon-button (click)="deleteProduct(getProductIndex(subItem))">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="toggleShowMenu(getProductIndex(subItem))">
+                      <mat-icon>more_vert</mat-icon>
+                      <div class="note-area" *ngIf="isMenuShown(getProductIndex(subItem))">
+                        <button mat-stroked-button (click)="toggleShowNote(getProductIndex(subItem))">
+                          <mat-icon>border_color</mat-icon>
+                          Ghi chú
+                        </button>
+                      </div>
+                    </button>
+                    <button mat-icon-button (click)="addNewRow(getProductIndex(subItem))">
+                      <mat-icon>add</mat-icon>
+                    </button>
                   </div>
+                </div>
+              </div>
+
+<!--              note in subitem-->
+              <div fxLayout="row wrap" fxLayoutAlign="center center" class="row-item">
+                <div fxFlex="2"></div>
+                <div fxFlex="32">
+                  <div class="row-product-note d-flex align-items-center" *ngIf="isNoteShown(getProductIndex(subItem))">
+                    <textarea class="note-textarea note-textarea-{{getProductIndex(subItem)}}" cdkTextareaAutosize
+                              placeholder="Ghi chú" [(ngModel)]="subItem.product.note_detail_sale"
+                              (ngModelChange)="handleUpdateStorage()">
+                    </textarea>
+                  </div>
+                </div>
+                <div fxFlex="8" class="row-product-base-unit">
+                </div>
+                <div fxFlex="13" class="row-amount">
+                </div>
+                <div fxFlex="1"></div>
+                <div fxFlex="13" class="row-edit-price">
+                </div>
+                <div fxFlex="12" class="row-total-price">
+                </div>
+                <div fxFlex="12" class="action-buttons-container">
                 </div>
               </div>
             </div>
 
+
+
+
           </div>
-
-          <!-- Sub-items for this master -->
-
         </ng-container>
-
 
 
         <!--------------------------------------- END SALE-DETAIL-ORDER ------------------------------------------>
@@ -345,13 +401,13 @@
           #showListProd
           style=""
           (click)="showList = !showList">
-          <mat-icon *ngIf="showList">zoom_out </mat-icon>
+          <mat-icon *ngIf="showList">zoom_out</mat-icon>
           <mat-icon *ngIf="!showList">zoom_in</mat-icon>
         </button>
       </div>
-<!--      <app-sale-list-product-->
-<!--        class="sale-list-product"-->
-<!--        [class.opened]="showList"></app-sale-list-product>-->
+      <!--      <app-sale-list-product-->
+      <!--        class="sale-list-product"-->
+      <!--        [class.opened]="showList"></app-sale-list-product>-->
     </div>
   </div>
   <div fxFlex=".5"></div>
@@ -461,7 +517,7 @@
                           *ngFor="let customer of filteredCustomers | async"
                           [value]="customer">
                           <span
-                            >{{ customer.name }} -
+                          >{{ customer.name }} -
                             <small>{{ customer.phone }}</small></span
                           >
                         </mat-option>
@@ -480,7 +536,8 @@
                         matSuffix>
                         <mat-icon
                           (click)="openSaleCustomerFormDialogComponent()"
-                          >add</mat-icon
+                        >add
+                        </mat-icon
                         >
                       </button>
 
@@ -509,17 +566,17 @@
                       </mat-form-field>
                     </div>
                   </div>
-                    <div
+                  <div
                     *ngIf="isPointEnabled && customer"
                     class="customer-point"
                   >
-                    <span>Điểm: </span><span class="green">{{customer.total_point | number}}</span>
+                    <span>Điểm: </span><span class="green">{{ customer.total_point | number }}</span>
                   </div>
                   <div
                     *ngIf="customer && customer.total_debt > 0"
                     class="customer-debt"
                   >
-                    <span>Nợ: </span><span class="green">{{customer.total_debt | number}}</span>
+                    <span>Nợ: </span><span class="green">{{ customer.total_debt | number }}</span>
                   </div>
                 </div>
               </div>
@@ -573,14 +630,14 @@
                       <span
                         matBadge="{{ countProduct }}"
                         matBadgeOverlap="false"
-                        >Tổng tiền hàng
+                      >Tổng tiền hàng
                       </span>
                     </div>
                     <ng-template #tongTienHang>
                       <span
                         matBadge="{{ countProduct }}"
                         matBadgeOverlap="false"
-                        >Tổng tiền hàng trả
+                      >Tổng tiền hàng trả
                       </span>
                     </ng-template>
                   </div>
@@ -596,7 +653,7 @@
                         (change)="recalculateTotalAmount();"
                         formControlName="total_amount"
                         (keyup)="inputformatNumber($event)"
-                        />
+                      />
                     </mat-form-field>
                   </div>
                 </div>
@@ -673,11 +730,11 @@
                   fxLayoutAlign="start center"
                   class="price-discount">
                   <div fxFlex="50" class="price-discount-text">
-                    <span>Dùng điểm: </span><span class="point-can-use">-{{pointCanUse}}</span>
+                    <span>Dùng điểm: </span><span class="point-can-use">-{{ pointCanUse }}</span>
                     <mat-slide-toggle
                       [checked]="isUsePoint"
                       (change)="onChangeSlideToggleUsePoint($event)"
-                      >
+                    >
                     </mat-slide-toggle>
                   </div>
                   <div fxFlex="50" class="price-discount-number">
@@ -809,7 +866,7 @@
                     </div>
                   </div>
                 </div>
-                <ng-template #is_return_tienThuaTraKhach> </ng-template>
+                <ng-template #is_return_tienThuaTraKhach></ng-template>
               </div>
 
               <div class="order-note">
@@ -828,7 +885,7 @@
                 <mat-slide-toggle
                   [checked]="autoPrint"
                   (change)="onChangeSlideToggleTuDongInHoaDon($event)"
-                  >Tự động in hóa đơn
+                >Tự động in hóa đơn
                 </mat-slide-toggle>
                 <mat-slide-toggle
                   style="margin-left: 15px"

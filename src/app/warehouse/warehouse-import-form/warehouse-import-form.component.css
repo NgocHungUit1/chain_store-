@@ -361,6 +361,7 @@ tr.mat-header-row {
   align-items: center;  /* Align items to top */
   max-width: 200px;       /* Set maximum width for button */
   text-align: left;       /* Align text to left */
+
 }
 
 .note-container {
