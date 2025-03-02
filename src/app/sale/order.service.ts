@@ -280,20 +280,32 @@ export class OrderService {
 
   deleteProduct(i: any) {
     const listInvoice = this.getListInvoiceLocalStorage();
-
+    debugger;
     listInvoice.itemInvoice.forEach(mItemInvoice => {
       if (mItemInvoice.active === true) {
         if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
         } else {
           const listProduct = mItemInvoice.listProduct;
+          const deletedProduct = listProduct[i].product;
           const resultListProduct = [];
           let deleteSampleId = null;
           listProduct.forEach((eProductInfo, index) => {
-            if (i !== index) {
-              resultListProduct.push(eProductInfo);
-            } else {
-              if (eProductInfo.sample_prescription_id !== undefined && eProductInfo.sample_prescription_id !== null) {
-                deleteSampleId = eProductInfo.sample_prescription_id;
+            // handle delete sub item
+            if (deletedProduct.is_sub_item==1) {
+              if (i !== index ) {
+                resultListProduct.push(eProductInfo);
+              } else {
+                if (eProductInfo.sample_prescription_id !== undefined && eProductInfo.sample_prescription_id !== null) {
+                  deleteSampleId = eProductInfo.sample_prescription_id;
+                }
+              }
+            } else { // handle delete master item (delete it's sub item also)
+              if (i !== index && eProductInfo.product.master_product_id != deletedProduct.id ) {
+                resultListProduct.push(eProductInfo);
+              } else {
+                if (eProductInfo.sample_prescription_id !== undefined && eProductInfo.sample_prescription_id !== null) {
+                  deleteSampleId = eProductInfo.sample_prescription_id;
+                }
               }
             }
           });
