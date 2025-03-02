@@ -19,6 +19,17 @@ html .page-wrapper .page-content {
   height: calc(100% - 12px);
 }
 
+.sidebar-order-bottom {
+  min-height: 160px; /* 67px (payment button) + 10px (margin-bottom) + ~60px (support/help content) */
+}
+
+.sidebar-order-bottom-buttons {
+  display: flex;
+  flex-direction: row; /* Horizontal alignment */
+  justify-content: space-between; /* Distribute space between items */
+  align-items: center; /* Vertically center all items */
+  gap: 5px;
+}
 /*  sale detail order  */
 .product-cart {
   transition: height 200ms ease-out;
@@ -403,7 +414,7 @@ Popup parcel list
 
   .price-product-number,
   .price-discount-number {
-    font-size: 12px;
+    font-size: 18px;
     text-align: right;
   }
 
@@ -461,7 +472,7 @@ Popup parcel list
   }
 
   .support-content {
-    font-size: 11px;
+    font-size: 15px;
     color: #666666;
     margin: 10px;
 
@@ -579,6 +590,11 @@ Popup parcel list
           display: none;
         }
       }
+      &.time-picker {
+        .mat-form-field-wrapper {
+          padding: 2px !important;
+        }
+      }
     }
 
     .customer-action {
@@ -620,3 +636,152 @@ Popup parcel list
   }
 }
 
+/* src/app/payment/payment.component.css */
+
+/* Container for the entire payment selector */
+.payment-selector {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Styling for the payment method radio buttons */
+.payment-methods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 20px;
+}
+
+/* Ensure radio buttons are styled consistently */
+.payment-methods mat-radio-button {
+  margin-right: 10px;
+}
+
+/* Container for the amount or method-specific sections */
+.amount-container {
+  margin-top: 20px;
+  padding: 15px;
+  // border: 1px solid #e0e0e0;
+  // border-radius: 4px;
+  // background-color: #f9f9f9;
+}
+
+/* Tiền mặt (Cash) Layout: Grid of buttons */
+.cash-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  gap: 10px;
+}
+
+.cash-layout button {
+  padding: 10px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.cash-layout button.selected {
+  background-color: #1976d2; /* Material Design blue */
+  color: white;
+}
+
+/* Chuyển khoản (Bank Transfer) Layout */
+.bank-transfer-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.qr-code-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.qr-code {
+  width: 100px;
+  height: 100px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.bank-details {
+  flex: 1;
+}
+
+.bank-select {
+  width: 100%;
+}
+
+.add-account-btn {
+  border: 1px solid #1976d2 !important;
+  color: #1976d2 !important;
+  padding: 8px 16px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.add-account-btn:hover {
+  background-color: #e3f2fd; /* Light blue hover effect */
+}
+
+.action-buttons {
+  font-size: 11px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+
+.action-buttons-info{
+    color: blue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.action-buttons-qr{
+  color: gray !important;
+  font-size: 12px;
+}
+
+.action-buttons button {
+  color: #1976d2;
+}
+
+.no-bank-message {
+  color: #666;
+  font-style: italic;
+}
+
+/* Thẻ (Card) Layout: Slider */
+.card-layout {
+  padding: 20px 0;
+}
+
+.card-layout mat-slider {
+  width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .payment-methods {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .qr-code-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .qr-code {
+    margin-bottom: 10px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+}

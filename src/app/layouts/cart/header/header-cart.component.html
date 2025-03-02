@@ -103,8 +103,37 @@
 <!-- ============================================================== -->
 <!-- Profile - style you can find in header.scss -->
 <!-- ============================================================== -->
+<button 
+  class="ml-xs overflow-visible" 
+  mat-icon-button 
+  [matMenuTriggerFor]="printSetting" 
+  [ngStyle]="{ 'opacity': autoPrint ? '1' : '0.5' }"
+  style="margin-right: 10px">
+  <mat-icon>print</mat-icon>
+</button>
+
+
+<mat-menu #printSetting="matMenu" class="mymegamenu">
+  <div style="display: flex; flex-direction: column; gap: 10px; padding: 10px;">
+    <mat-slide-toggle
+      [checked]="autoPrint"
+      (change)="onChangeSlideToggleTuDongInHoaDon()"
+      (click)="onToggleClick($event)">
+      Tự động in hóa đơn
+    </mat-slide-toggle>
+    <mat-slide-toggle
+      [checked]="autoPrintInSoLo"
+      (change)="onChangeSlideToggleInSoLo($event)"
+      (click)="onToggleClick($event)">
+      In số lô
+    </mat-slide-toggle>
+  </div>
+</mat-menu>
+
 <button [matMenuTriggerFor]="profile" mat-icon-button class="m-r-5">
-  <img src="assets/images/users/doctor.jpg" alt="user" class="profile-pic"></button>
+  <img src="assets/images/users/doctor.jpg" alt="user" class="profile-pic">
+</button>
+
 <mat-menu #profile="matMenu" class="mymegamenu">
 <!--  <button mat-menu-item>-->
 <!--    <mat-icon>settings</mat-icon>-->

@@ -31,11 +31,13 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DatePipe } from '@angular/common';
 import { StoreService } from '../../store/store.service';
-import { AuthService } from '../../authentication/auth.service';
 import { ProductService } from '../../product/product.service';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { SaleProductParcelSelectDialogComponent } from '../sale-product-parcel-select-dialog/sale-product-parcel-select-dialog.component';
+import {AuthService} from '../../authentication/auth.service';
+import { SharedDataService } from '../../shared/shared-data.service';
+import { BankAccountDialogComponent } from '../bank-account-dialog/bank-account-dialog.component';
 
 export const MY_FORMATS = {
   parse: {
@@ -78,6 +80,7 @@ export class SaleMainComponent implements OnInit {
     private optionStoreService: OptionStoreService,
     private expensesOrderService: ExpensesOrderService,
     private authSer: AuthService,
+    private sharedDataSer: SharedDataService,
     public storeSer: StoreService,
     private productSer: ProductService,
 
@@ -156,14 +159,22 @@ export class SaleMainComponent implements OnInit {
 
   prescription_id: null; // ban theo don thuoc
 
-  canNegativeStock = false;
-  isPointEnabled = false;
-  pointToCashRate = 0;
-  canPayByPointAfterInvoices = 0;
-  isUsePoint = false;
-  pointCanUse = 0;
-  numberPointDiscount = 0;
-
+  canNegativeStock: boolean = false;
+  isPointEnabled: boolean = false;
+  pointToCashRate: number = 0;
+  canPayByPointAfterInvoices: number = 0;
+  isUsePoint: boolean = false;
+  pointCanUse: number = 0;
+  numberPointDiscount: number = 0;
+  paymentForm: FormGroup;
+  paymentMethods: string[] = ['Tiền mặt', 'Chuyển khoản'];
+  amounts: number[] = [20000, 50000, 100000, 200000, 500000];
+  selectedMethod: string = this.paymentMethods[0];
+  selectedAmount: number | null = null;
+  selectedBank: any;
+  selectedWallet: any;
+  bankAccounts: any[] = [];
+  wallets: any[] = [];
   @ViewChild('prescription') prescription;
   @ViewChild('customerSearch') customerSearch: ElementRef;
   @ViewChild('customerPayment') customerPayment: ElementRef;
@@ -224,6 +235,10 @@ export class SaleMainComponent implements OnInit {
         this.autoPrint = true;
       }
     });
+
+    this.sharedDataSer.isInSoLo$.subscribe(res=>{
+      this.autoPrintInSoLo = res;
+    })
   }
 
   handleExpenseOrder() {
@@ -407,6 +422,14 @@ export class SaleMainComponent implements OnInit {
           this.listProductUnitIdChooseOld = listProductUnitIdChoose;
           this.common_idOld = priceBookID;
           const common_id = priceBookID;
+
+          const groupProductIdCommonPrice =
+          listProductOLD !== null
+            ? listProductOLD.reduce((r, a) => {
+              r[a.product_id] = [...(r[a.product_id] || []), a];
+              return r;
+            }, {})
+            : [];
           /**
            * tien hanh xu ly add common_price vao list
            */
@@ -442,12 +465,15 @@ export class SaleMainComponent implements OnInit {
                   this.listProduct.forEach(elementData => {
                     // debugger;
                     if (group[elementData.product_unit_id] !== undefined) {
-                      elementData.common_price =
-                        group[elementData.product_unit_id][0]['price'];
+                      if(groupProductIdCommonPrice[elementData.product_id] && groupProductIdCommonPrice[elementData.product_id].length >= 1)
+                        elementData.common_price = groupProductIdCommonPrice[elementData.product_id][0].common_price;
+                      else
+                        elementData.common_price = group[elementData.product_unit_id][0]['price'];
+                      
                       if (!(elementData.sample_prescription_id !== undefined && elementData.sample_prescription_id !== null)) {
                         if (elementData.product.end_price === undefined) {
                           this.sumPrice +=
-                            group[elementData.product_unit_id][0]['price'] *
+                            elementData.common_price *
                             elementData.amount; // gia chung * so luong
                         } else {
                           this.sumPrice +=
@@ -455,11 +481,14 @@ export class SaleMainComponent implements OnInit {
                         }
                       }
                     } else {
-                      elementData.common_price = elementData.product.sell_price;
+                      if(groupProductIdCommonPrice[elementData.product_id] && groupProductIdCommonPrice[elementData.product_id].length >= 1)
+                        elementData.common_price = groupProductIdCommonPrice[elementData.product_id][0].common_price;
+                      else
+                        elementData.common_price = elementData.product.sell_price;
                       if (!(elementData.sample_prescription_id !== undefined && elementData.sample_prescription_id !== null)) {
                         if (elementData.product.end_price === undefined) {
                           this.sumPrice +=
-                            elementData.product.sell_price * elementData.amount; // gia ban * so luong
+                            elementData.common_price * elementData.amount; // gia ban * so luong
                         } else {
                           this.sumPrice +=
                             elementData.product.end_price * elementData.amount; // gia ban * so luong
@@ -610,6 +639,7 @@ export class SaleMainComponent implements OnInit {
       invoice_id: [null],
       total_amount: [0],
       prescription_id: [null], // ban thuoc theo don
+      selectedMethod: ['Tiền mặt'] // Default value
     });
 
     if (this.form.controls['branch_id'].value == null) {
@@ -746,13 +776,13 @@ export class SaleMainComponent implements OnInit {
       debounceTime(300),
       // use switch map so as to cancel previous subscribed events, before creating new once
       switchMap(value => {
-        if (value !== '') {
+        // if (value !== '') {
           // lookup from github
           return this.lookupUser(value);
-        } else {
-          // if no value is present, return null
-          return of(null);
-        }
+        // } else {
+        //   // if no value is present, return null
+        //   return of(null);
+        // }
       })
     );
   }
@@ -1004,6 +1034,19 @@ export class SaleMainComponent implements OnInit {
     dialogRef.afterClosed().subscribe(mItemInvoiceActive => {
       if (mItemInvoiceActive !== undefined) {
         this.handlePaymentSiderBar(mItemInvoiceActive);
+      }
+    });
+  }
+
+  openBankAccountsDialog() {
+    const dialogRef = this.dialog.open(BankAccountDialogComponent, {
+      width: '40%',
+      // minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(mItemInvoiceActive => {
+      if (mItemInvoiceActive !== undefined) {
+        // this.handlePaymentSiderBar(mItemInvoiceActive);
       }
     });
   }
@@ -1583,8 +1626,221 @@ export class SaleMainComponent implements OnInit {
   }
 
   // ------------------------------------------------------ PAYMENT ----------------------------------------------------------//
+  printPreInvoice(preInvoiceData: any) {
+    let _font_size = '11px';
+    let _font_size_store = '13px';
+    let _margin = '4px';
+    let _padding = '3px';
+    let _solo = 'text-align:left;';
+  
+    // Determine print type (K58 or A4)
+    this.optionStoreService.getValue('print_type').subscribe(res => {
+      if (res.value === 'K58') {
+        _font_size = '11px';
+        _margin = '4px';
+        _padding = '3px';
+        _solo = 'text-align:left;';
+      } else { // A4
+        _font_size = '14px';
+        _font_size_store = '16px';
+        _margin = '6px';
+        _padding = '6px';
+        _solo = 'text-align:left; min-width: 100px;';
+      }
+  
+      // Use preInvoiceData instead of fetching from service
+      const customer_name = preInvoiceData?.customer?.name || 'Khách lẻ';
+      const customer_phone = preInvoiceData?.customer?.phone || '';
+      const invoiceDate = preInvoiceData?.created_at ? new Date(preInvoiceData.created_at) : new Date();
 
+
+      console.log({invoiceDate})
+      let printContent = '<title>Pre-Invoice</title>'; // Temporary title
+      printContent += `
+        <style>
+          p, table, div {
+            font-family: Arial, sans-serif;
+            font-size: ${_font_size};
+            margin: ${_margin};
+          }
+          table, th, td {
+            border-collapse: collapse;
+            border: 1px solid black;
+            width: 100%;
+          }
+          td, th {
+            border: 1px solid black;
+            text-align: left;
+            padding: ${_padding};
+          }
+        </style>
+        <section style="padding: 10px; font-size: ${_font_size}">
+          ${this.logo ? `<p style="text-align:center; margin-bottom: 10px"><img src="${this.logo}" style="max-width: 160px;"></p>` : ''}
+          <p style="text-align:center; font-size: ${_font_size_store}">${preInvoiceData?.store?.name || 'Store Name'}</p>
+          <p style="text-align:center;">${preInvoiceData?.store?.address || 'Store Address'}</p>
+          <p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG (DỰ THẢO)</p>
+          <p style="text-align:center; font-weight:600;">Số HĐ: Chưa lưu</p>
+          <p style="text-align:center;">Ngày ${invoiceDate.getDate()} tháng ${invoiceDate.getMonth()} năm ${invoiceDate.getFullYear()}</p>
+          <br>
+      `;
+  
+      // Customer info
+      const { nationalPrescription } = preInvoiceData || {};
+      if (nationalPrescription) {
+        printContent += `
+          <p>Mã đơn thuốc: <b>${nationalPrescription.nationalPrescriptionId || ''}</b></p>
+          <p>Tên đơn vị: <b>${nationalPrescription.medicalFacilityName || ''}</b></p>
+          <p>Họ tên: <b>${nationalPrescription.patientName || ''}</b></p>
+          <p>SĐT: <b>${nationalPrescription.patientPhoneNumber || ''}</b></p>
+          <p>Ngày sinh: <b>${nationalPrescription.patientDOB || ''}</b>
+                Cân nặng: <b>${nationalPrescription.patientWeight || ''}</b>
+                Giới tính: <b>${nationalPrescription.patientSex || ''}</b></p>
+          <br>
+          <p><b>Chẩn đoán:</b> ${nationalPrescription?.diagnostics?.[0]?.conclusion || ''}</p>
+        `;
+      } else {
+        printContent += `<p style="">Khách hàng: ${customer_name}</p>`;
+        if (customer_phone) {
+          printContent += `<p style="">SĐT: ${customer_phone}</p>`;
+        }
+      }
+  
+      printContent += `
+        <br>
+        <table>
+          <tr>
+            <th>Tên thuốc</th>
+            <th style="text-align:center;">SL</th>
+            ${this.autoPrintInSoLo ? `<th style="${_solo}">Số lô</th>` : ''}
+            <th style="text-align:center;">T.Tiền</th>
+          </tr>
+      `;
+  
+      // Product details
+      const detail = preInvoiceData?.detail || [];
+      detail.forEach((element: any) => {
+        if (!element?.base_unit) {
+          printContent += `
+            <tr>
+              <td>${element.product?.product_name || ''}<br>${element.price || 0}</td>
+              <td style="text-align:center;">${element.amount || 0}</td>
+              ${this.autoPrintInSoLo ? `<td style="text-align:left;">${element.so_lo || ''}</td>` : ''}
+              <td style="text-align:right;">${element.total || 0}</td>
+            </tr>
+          `;
+        } else {
+          printContent += `
+            <tr>
+              <td>${element.product?.product_name || ''} - ${element?.base_unit || ''}<br>${element.price || 0}</td>
+              <td style="text-align:center;">${element.amount || 0}</td>
+              ${this.autoPrintInSoLo ? `<td style="text-align:left;">${element.so_lo || ''}</td>` : ''}
+              <td style="text-align:right;">${element.total || 0}</td>
+            </tr>
+          `;
+        }
+      });
+  
+      // Totals
+      const colspan = this.autoPrintInSoLo ? 3 : 2;
+      printContent += `
+        <tr>
+          <td style="text-align:right; font-weight:600;" colspan="${colspan}">Tổng tiền hàng :</td>
+          <td style="text-align:right; font-weight:600;">${preInvoiceData?.total_price || 0}</td>
+        </tr>
+        <tr>
+          <td style="text-align:right; font-weight:600;" colspan="${colspan}">Chiết khấu :</td>
+          <td style="text-align:right; font-weight:600;">${preInvoiceData?.discount || 0}</td>
+        </tr>
+        <tr>
+          <td style="text-align:right; font-weight:600;" colspan="${colspan}">Tổng thanh toán :</td>
+          <td style="text-align:right; font-weight:600;">${preInvoiceData?.sum_payment || 0}</td>
+        </tr>
+      `;
+      if (preInvoiceData?.debt != null) {
+        printContent += `
+          <tr>
+            <td style="text-align:right; font-weight:600;" colspan="${colspan}">Còn nợ :</td>
+            <td style="text-align:right; font-weight:600;">${preInvoiceData.debt}</td>
+          </tr>
+        `;
+      }
+      printContent += `</table>`;
+  
+      // Footer
+      printContent += `
+        <br>
+        ${this.description && this.description.length > 0
+          ? `<p style="text-align:center; font-style: italic;">${this.description}</p>`
+          : `<p style="text-align:center; font-style: italic;">Cám ơn và hẹn gặp lại.</p>`}
+        </section>
+      `;
+  
+      const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+      WindowPrt.document.write(printContent);
+      WindowPrt.document.close();
+      WindowPrt.focus();
+      WindowPrt.print();
+      // WindowPrt.close(); // Uncomment if you want to auto-close after printing
+    });
+  }
+
+  async getPreInvoiceData(): Promise<any> {
+    debugger;
+    const activeInvoice = this.localItemInvoice || new ItemInvoice();
+    const formData = this.form.getRawValue();
+  
+    const detail = this.listProduct.map(item => ({
+      product: { product_name: item.product.product_name },
+      base_unit: item.base_unit || null,
+      price: item.common_price || item.product.sell_price || item.product.end_price || 0,
+      amount: item.amount || 0,
+      total: (item.common_price || item.product.sell_price || item.product.end_price || 0) * (item.amount || 0),
+      so_lo: item.so_lo || ''
+    }));
+  
+    const totalPrice = this.sumPrice;
+    const discount = this.discount_type === 'price' ? this.discount : Math.round((this.sumPrice * this.discount) / 100);
+    const sumPayment = totalPrice - this.numberDiscount - this.numberPointDiscount + this.expenseOrder;
+    const debt = this.tienKhachNo > 0 ? this.tienKhachNo : null;
+  
+    // Await store data
+    const storeRes = await this.storeSer.getDetail().toPromise();
+    const storeData = {
+      name: storeRes['name'] || 'Store Name',    // Adjust if property names differ
+      address: storeRes['address'] || 'Store Address'
+    };
+  
+    const today = formData.today instanceof Date ? formData.today : new Date();
+    const createdAt = formData.today && formData.time
+      ? `${this.dp.transform(today, 'yyyy-MM-dd')} ${formData.time}`
+      : new Date().toLocaleString();
+  
+    return {
+      store: storeData,
+      customer: this.customer || activeInvoice.customer || { name: 'Khách lẻ', phone: '' },
+      detail: detail,
+      total_price: totalPrice,
+      discount: discount || 0,
+      sum_payment: sumPayment,
+      debt: debt,
+      nationalPrescription: activeInvoice.prescription_id ? this.getNationalPrescriptionData(activeInvoice.prescription_id) : null,
+      invoice_no: activeInvoice.invoice_name || 'Chưa lưu',
+      created_at: createdAt
+    };
+  }
+  
+  private getNationalPrescriptionData(prescriptionId: string): any {
+    // Placeholder: Replace with actual logic if available
+    return null;
+  }
+  
+  async printPreInvoiceHandler() {
+    const preInvoiceData = await this.getPreInvoiceData();
+    this.printPreInvoice(preInvoiceData);
+  }
+  
   payment() {
+    this.getAutoPrintValue();
     if (this.submitted) {
       return;
     }
@@ -1970,25 +2226,25 @@ export class SaleMainComponent implements OnInit {
    *  Tu dong in hoa don
    * @param e
    */
-  onChangeSlideToggleTuDongInHoaDon(e: any) {
-    this.autoPrint = e.checked;
-    // console.log(this.optionStore_auto_print);
-    // console.log(this.autoPrint);
-    this.optionStore_auto_print.value = this.autoPrint === false ? 'no' : 'yes';
-    this.optionStoreService
-      .update(this.optionStore_auto_print.id, this.optionStore_auto_print)
-      .subscribe(res => {
-        console.log(res);
-      });
-  }
+  // onChangeSlideToggleTuDongInHoaDon(e: any) {
+  //   this.autoPrint = e.checked;
+  //   // console.log(this.optionStore_auto_print);
+  //   // console.log(this.autoPrint);
+  //   this.optionStore_auto_print.value = this.autoPrint === false ? 'no' : 'yes';
+  //   this.optionStoreService
+  //     .update(this.optionStore_auto_print.id, this.optionStore_auto_print)
+  //     .subscribe(res => {
+  //       console.log(res);
+  //     });
+  // }
 
   /**
    * In so lo
    * @param e
    */
-  onChangeSlideToggleInSoLo(e: any) {
-    this.autoPrintInSoLo = e.checked;
-  }
+  // onChangeSlideToggleInSoLo(e: any) {
+  //   this.autoPrintInSoLo = e.checked;
+  // }
 
   onChangeSlideToggleUsePoint(e: any) {
     this.isUsePoint = e.checked;
@@ -2116,6 +2372,7 @@ export class SaleMainComponent implements OnInit {
   }
 
   recalculateTotalAmount() {
+    // debugger;
     const formTotalAmount = numeral(this.form.controls['total_amount'].value).value();
     this.sumPrice = formTotalAmount;
     this.localItemInvoice.total_amount = formTotalAmount;
@@ -2124,6 +2381,7 @@ export class SaleMainComponent implements OnInit {
   }
 
   checkToAdjustItemPriceByTotalDiff() {
+    
     let realTotal = 0;
     this.listProduct.forEach(item => {
       realTotal += (item.product.end_price > 0 ? item.product.end_price : item.common_price) * item.amount;
@@ -2646,5 +2904,24 @@ export class SaleMainComponent implements OnInit {
    */
   getProductIndex(product) {
     return this.listProduct.findIndex(item => item === product);
+  }
+  
+  public clickHelp() {
+    window.open('https://rx20.vn/huong-dan-su-dung/', '_black');
+  }
+
+  selectAmount(amount: number): void {
+    this.selectedAmount = amount;
+    this.updateCustomerPay(amount);
+  }
+  updateCustomerPay(amount: number): void {
+    debugger;
+    // Update the customerPay form control with the selected amount
+    this.form.get('customerPay')?.setValue(numeral(amount.toString()).format('0,0'));
+
+    this.tinhLaiTienThua();
+  }
+  onMethodChange(): void {
+    console.log(`Selected payment method: ${this.selectedMethod}`);
   }
 }

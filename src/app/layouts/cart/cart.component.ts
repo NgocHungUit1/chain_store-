@@ -71,6 +71,8 @@ export class CartComponent implements OnInit, OnDestroy {
   public productsHistory: Observable<Product[]>;
   listmItemInvoice: ItemInvoice[] = [];
 
+  selectedProductValue: Product
+
   //
   activeLink = 0;
 
@@ -78,10 +80,13 @@ export class CartComponent implements OnInit, OnDestroy {
 
   amountProduct = 1;
 
+  searchMode = false;
+
   public storeDetail: object = null;
   logo = 'assets/images/Rx20_16x16_op1-1207.png';
 
   @ViewChild('inputSearch') inputSearch: ElementRef;
+  @ViewChild('inputQuantity') inputQuantity: ElementRef;
 
   canNegativeStock: boolean = false;
 
@@ -244,6 +249,36 @@ export class CartComponent implements OnInit, OnDestroy {
     if (this.amountProduct === null) {
       this.amountProduct = 1;
     }
+    
+    if(this.searchMode){
+      this.selectedProductValue = product;
+      this.inputQuantity.nativeElement.focus();
+      return;
+    }
+
+    this.addProduct(product);
+
+    this.selectProduct.patchValue(null);
+    this.inputSearch.nativeElement.blur(); // un focus
+  }
+
+  getListProducts() {
+    let mItemInvoice = new ItemInvoice();
+    this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
+      const listItemInvoice = ListInvoice.itemInvoice;
+      listItemInvoice.forEach(element => {
+        if (element.active === true) {
+          mItemInvoice = element;
+        }
+      });
+    });
+    return mItemInvoice.listProduct;
+  }
+
+  addProduct(product){
+    const listProducts = this.getListProducts();
+    const existingQuantity = listProducts?.find(item=>item.product_id == product.id)?.amount ?? 0;
+
     switch(this.iconChangeType) {
       case 'cached':
         // tim san pham
@@ -252,7 +287,7 @@ export class CartComponent implements OnInit, OnDestroy {
         console.log(this.canNegativeStock);
         if (
           this.canNegativeStock || (product['quantity_of_stock'] > 0 &&
-          product['quantity_of_stock'] >= this.amountProduct
+          product['quantity_of_stock'] >= this.amountProduct + existingQuantity
         )) {
           this.handlePriceListProduct(product);
         } else {
@@ -286,8 +321,6 @@ export class CartComponent implements OnInit, OnDestroy {
         break;
       default:
     }
-    this.selectProduct.patchValue(null);
-    this.inputSearch.nativeElement.blur(); // un focus
   }
 
   handlePriceListProduct(product: Product, samplePrescriptionId = null) {
@@ -357,5 +390,25 @@ export class CartComponent implements OnInit, OnDestroy {
       event.preventDefault();
       this.inputSearch.nativeElement.focus();
     }
+  }
+
+  focusInput() {
+    // This will programmatically focus the input field
+    this.inputSearch.nativeElement.focus();
+
+    this.searchMode = !this.searchMode;
+    // this.selectedProducts = [];
+  }
+  onQuantityEnter(){
+    this.addProduct(this.selectedProductValue);
+    this.selectedProductValue = null;
+    this.selectProduct.patchValue(null);
+    this.amountProduct = 1;
+    this.inputSearch.nativeElement.focus();
+  }
+
+  displayProductFn(product: any): string {
+    if (!product) return ''; // Handle null/undefined
+    return product.product_name; // Show only the product name
   }
 }

@@ -1,4 +1,4 @@
-<div fxLayout="row" style="height: 100%">
+<div fxLayout="row" style="height: 100%" class="root-import-form">
   <div fxFlex="75" style="height: 100%; padding-right: 10px;">
     <mat-toolbar class="dv-header">
       <button mat-icon-button routerLink="/transaction/warehouse">
@@ -36,7 +36,7 @@
               <mat-option fxLayout="row" *ngFor="let product of filteredProducts | async" [value]="product"
                             style="min-height: 100px !important; line-height:20px !important;"
                             title="{{ product.product_name }}"
-                            class="product-item">
+                            class="product-item-import-form">
                   <div fxFlex="25" style="display: flex; justify-content: center; align-items: center;">
                     <ng-container *ngIf='product?.default_image'>
                       <img class="example-option-img" aria-hidden [src]="product.default_image" style="object-fit: contain; width:70px; height:70px;">
@@ -67,7 +67,7 @@
                                 checkboxPosition="before"
                                 style="height:100px !important; line-height:20px !important;"
                                 title="{{ product.product_name }}"
-                                class="product-item"
+                                class="product-item-import-form"
                                 backgroundColor="primary">
                   <div fxLayout="row">
                     <div fxFlex="25" style="display: flex; justify-content: center; align-items: center;">

@@ -25,6 +25,9 @@ import { PrescriptionFormDialogComponent } from './prescription-form-dialog/pres
 import { MedicalFacilityFormDialogComponent } from './medical-facility-form-dialog/medical-facility-form-dialog.component';
 import {InputSelectAllModule} from '../common/input-select-all/input-select-all.module';
 import { SaleProductParcelSelectDialogComponent } from './sale-product-parcel-select-dialog/sale-product-parcel-select-dialog.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { PaymentModule } from '../payment/payment.module';
+import { BankAccountDialogComponent } from './bank-account-dialog/bank-account-dialog.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +44,8 @@ import { SaleProductParcelSelectDialogComponent } from './sale-product-parcel-se
     SaleExpensesDialogComponent,
     PrescriptionFormDialogComponent,
     MedicalFacilityFormDialogComponent,
-    SaleProductParcelSelectDialogComponent],
+    SaleProductParcelSelectDialogComponent,
+    BankAccountDialogComponent],
     imports: [
         CommonModule,
         RouterModule.forChild(SaleRoutes),
@@ -54,7 +58,8 @@ import { SaleProductParcelSelectDialogComponent } from './sale-product-parcel-se
         Ng2SearchPipeModule,
         DemoMaterialModule,
         AngularImageViewerModule,
-        InputSelectAllModule
+        InputSelectAllModule,
+        MatDatepickerModule,
     ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

@@ -105,7 +105,7 @@
   padding-left: 0px !important;
 }
 
-.mat-form-field-wrapper {
+:host ::ng-deep .mat-form-field-wrapper {
   padding-bottom: 2px;
 }
 
@@ -121,13 +121,13 @@ tr.mat-header-row {
   background-color: rgb(0, 150, 136) !important;
 }
 
-.product-item {
+.product-item-import-form {
   background-color: rgba(0, 150, 136, 0.1) !important;
 }
 
-.product-item:hover,
-.product-item.mat-active,
-.product-item.mat-selected{
+.product-item-import-form:hover,
+.product-item-import-form.mat-active,
+.product-item-import-form.mat-selected{
   background-color: rgba(0, 150, 136, 0.3) !important;
 }
 

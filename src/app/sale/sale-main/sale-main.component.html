@@ -413,13 +413,12 @@
       <!-- <app-sale-siderbar-order></app-sale-siderbar-order> -->
       <!---------------------------------------  SALE-SIDER-BAR-ORDER ------------------------------------------>
       <div class="main-sale-sidebar-order">
-        <form [formGroup]="form" style="height: 100%">
+        <form [formGroup]="form">
           <div
             class="d-flex"
             style="
               flex-direction: column;
               justify-content: space-between;
-              height: 100%;
             ">
             <!-- top -->
             <div class="sidebar-order-top">
@@ -456,13 +455,14 @@
                       <div fxFlex.gt-sm="40" fxFlex.gt-xs="49" fxFlex="100">
                         <mat-form-field class="date-picker">
                           <input
-                            (input)="changeDateTime($event,'date')"
-                            class="input-search"
+                          (input)="changeDateTime($event,'date')"
+                          class="input-search"
                             matInput
                             [matDatepicker]="date_picker"
                             formControlName="today"
                             placeholder="Ngày"
                             required="required"
+                            (click)="date_picker.open()"
                           />
                           <mat-datepicker-toggle
                             matSuffix
@@ -472,7 +472,7 @@
                       </div>
                       <div fxFlex="2"></div>
                       <div fxFlex.gt-sm="50" fxFlex.gt-xs="49" fxFlex="100">
-                        <mat-form-field class="date-picker">
+                        <mat-form-field class="time-picker">
                           <input
                             (input)="changeDateTime($event,'time')"
                             class="input-search"
@@ -795,71 +795,155 @@
                   </div>
                 </ng-template>
               </div>
-
-              <div
-                class="customer-pay"
-                *ngIf="localItemInvoice?.is_return !== true">
+              <div *ngIf="listProduct && listProduct.length > 0">
                 <div
-                  fxLayout="row wrap"
-                  fxLayoutAlign="start center"
-                  class="customer-pay">
-                  <div fxFlex="50" class="customer-pay-text">
-                    <span>Khách thanh toán (F2)</span>
-                  </div>
-                  <div fxFlex="50" class="customer-pay-number">
-                    <mat-form-field
-                      floatLabel="never"
-                      style="text-align: right">
-                      <button mat-icon-button matPrefix>
-                        <mat-icon class="row-edit-customer-pay-number">
-                          credit_card
-                        </mat-icon>
-                      </button>
-                      <input
-                        matInput
-                        type="text"
-                        style="color: black"
-                        formControlName="customerPay"
-                        (keyup)="inputformatNumber($event); tinhLaiTienThua();"
-                        autocomplete="off"
-                        #customerPayment />
-                    </mat-form-field>
+                  class="customer-pay"
+                  *ngIf="localItemInvoice?.is_return !== true">
+                  <div
+                    fxLayout="row wrap"
+                    fxLayoutAlign="start center"
+                    class="customer-pay">
+                    <div fxFlex="50" class="customer-pay-text">
+                      <span>Khách thanh toán (F2)</span>
+                    </div>
+                    <div fxFlex="50" class="customer-pay-number">
+                      <mat-form-field
+                        floatLabel="never"
+                        style="text-align: right">
+                        <button mat-icon-button matPrefix>
+                          <mat-icon class="row-edit-customer-pay-number">
+                            credit_card
+                          </mat-icon>
+                        </button>
+                        <input
+                          matInput
+                          type="text"
+                          style="color: black"
+                          formControlName="customerPay"
+                          (keyup)="inputformatNumber($event); tinhLaiTienThua();"
+                          autocomplete="off"
+                          #customerPayment />
+                      </mat-form-field>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="note-pay">
-                Thanh toán = 0 sẽ mặc định thanh toán hết.
-              </div>
+                <div class="note-pay">
+                  Thanh toán = 0 sẽ mặc định thanh toán hết.
+                </div>
 
-              <div class="excess-cash">
-                <div
-                  *ngIf="
-                    localItemInvoice?.is_return !== true;
-                    else is_return_tienThuaTraKhach
-                  ">
-                  <div fxLayout="row wrap" class="excess-cash">
-                    <div fxFlex="50" class="cexcess-cash-text label-text">
-                      <span
-                        *ngIf="tienThuaTraKhach > 0; else textTienThuaTraKhach">
-                        Tiền thừa trả khách
-                      </span>
-                      <ng-template #textTienThuaTraKhach>
-                        <span> Nợ </span>
-                      </ng-template>
-                    </div>
-                    <div fxFlex="50" class="excess-cash-number">
-                      <span
-                        *ngIf="
-                          tienThuaTraKhach > 0;
-                          else templateTienThuaTraKhach
-                        ">
-                        {{ tienThuaTraKhach | number }}
-                      </span>
-                      <ng-template #templateTienThuaTraKhach>
-                        <span>
-                          {{ tienKhachNo | number }}
+                <div class="excess-cash">
+                  <div
+                    *ngIf="
+                      localItemInvoice?.is_return !== true;
+                      else is_return_tienThuaTraKhach
+                    ">
+                    <div fxLayout="row wrap" class="excess-cash">
+                      <div fxFlex="50" class="cexcess-cash-text label-text">
+                        <span
+                          *ngIf="tienThuaTraKhach > 0; else textTienThuaTraKhach">
+                          Tiền thừa trả khách
                         </span>
+                        <ng-template #textTienThuaTraKhach>
+                          <span> Nợ </span>
+                        </ng-template>
+                      </div>
+                      <div fxFlex="50" class="excess-cash-number">
+                        <span
+                          *ngIf="
+                            tienThuaTraKhach > 0;
+                            else templateTienThuaTraKhach
+                          ">
+                          {{ tienThuaTraKhach | number }}
+                        </span>
+                        <ng-template #templateTienThuaTraKhach>
+                          <span>
+                            {{ tienKhachNo | number }}
+                          </span>
+                        </ng-template>
+                      </div>
+                    </div>
+                  </div>
+                  <ng-template #is_return_tienThuaTraKhach> </ng-template>
+                </div>
+
+                <div class="order-note">
+                  <mat-form-field class="example-full-width">
+                    <mat-label>Ghi chú</mat-label>
+                    <textarea
+                      rows="1"
+                      matInput
+                      placeholder=""
+                      formControlName="noteSiderBar"
+                      (keyup)="saveNoteSiderBar($event)"></textarea>
+                  </mat-form-field>
+                </div>
+                <!-- Inside the <form [formGroup]="form"> -->
+                <div class="payment-selector">
+                  <!-- Payment method selection -->
+                  <mat-radio-group
+                    formControlName="selectedMethod"
+                    class="payment-methods"
+                    (change)="onMethodChange()"
+                  >
+                    <mat-radio-button
+                      *ngFor="let method of paymentMethods"
+                      [value]="method"
+                    >
+                      {{ method }}
+                    </mat-radio-button>
+                  </mat-radio-group>
+
+                  <!-- Different layouts based on selected method -->
+                  <div class="amount-container" *ngIf="form.get('selectedMethod')?.value">
+                    <!-- Cash (Tiền mặt) Layout: Buttons in a grid -->
+                    <div *ngIf="form.get('selectedMethod')?.value === 'Tiền mặt'" class="cash-layout">
+                      <button
+                        *ngFor="let amount of amounts"
+                        mat-raised-button
+                        [class.selected]="selectedAmount === amount"
+                        (click)="selectAmount(amount)"
+                      >
+                        {{ amount | number }}
+                      </button>
+                    </div>
+
+                    <!-- Bank Transfer (Chuyển khoản) Layout: QR Code and Bank Details -->
+                    <div *ngIf="form.get('selectedMethod')?.value === 'Chuyển khoản'" class="bank-transfer-layout">
+                      <div class="qr-code-section" *ngIf="bankAccounts.length > 0; else noBankAccounts">
+                        <img [src]="selectedBank.qrCodeUrl" alt="QR Code" class="qr-code" />
+                        <div class="bank-details">
+                          <mat-form-field appearance="fill" class="bank-select">
+                            <mat-label>Bank Account</mat-label>
+                            <mat-select [(ngModel)]="selectedBank" [ngModelOptions]="{standalone: true}">
+                              <mat-option *ngFor="let bank of bankAccounts" [value]="bank">
+                                {{ bank.bankName }} - {{ bank.accountNumber }} - {{ bank.accountHolder }}
+                              </mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                        </div>
+                        <button mat-stroked-button class="add-account-btn">
+                          + Thêm tài khoản ngân hàng
+                        </button>
+                      </div>
+                      <ng-template #noBankAccounts>
+                        <div class="no-bank-message">
+                          Bạn chưa có tài khoản ngân hàng
+                        </div>
+                        <button (click)="openBankAccountsDialog()" mat-stroked-button class="add-account-btn">
+                          + Thêm tài khoản ngân hàng
+                        </button>
                       </ng-template>
+                      <!-- Inside the bank-transfer-layout -->
+                      <div class="action-buttons">
+                        <button mat-stroked-button  class="action-buttons-qr">
+                          <mat-icon>qr_code</mat-icon>
+                          Hiện mã QR
+                        </button>
+                        <mat-icon style="color:gray;cursor:pointer">info</mat-icon>
+                        <div class="action-buttons-info" style="cursor:pointer">
+                          Nhận thông báo giao dịch?
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -877,31 +961,39 @@
                     (keyup)="saveNoteSiderBar($event)"></textarea>
                 </mat-form-field>
               </div>
-
-              <span class="custom-slide-toggle" mat-menu-item>
-                <mat-slide-toggle
-                  [checked]="autoPrint"
-                  (change)="onChangeSlideToggleTuDongInHoaDon($event)"
-                >Tự động in hóa đơn
-                </mat-slide-toggle>
-                <mat-slide-toggle
-                  style="margin-left: 15px"
-                  checked="false"
-                  (change)="onChangeSlideToggleInSoLo($event)">
-                  In số lô
-                </mat-slide-toggle>
-              </span>
+                <!-- <span class="custom-slide-toggle" mat-menu-item>
+                  <mat-slide-toggle
+                    [checked]="autoPrint"
+                    (change)="onChangeSlideToggleTuDongInHoaDon($event)"
+                    >Tự động in hóa đơn
+                  </mat-slide-toggle>
+                  <mat-slide-toggle
+                    style="margin-left: 15px"
+                    checked="false"
+                    (change)="onChangeSlideToggleInSoLo($event)">
+                    In số lô
+                  </mat-slide-toggle>
+                </span> -->
+              </div>
             </div>
             <!-- top -->
 
             <!-- bottom -->
             <div class="sidebar-order-bottom">
+              <div class="sidebar-order-bottom-buttons">
+                <button
+                  style="width: 60px; background-color: gray !important;"
+                  mat-button
+                  class="payment-button"
+                  (click)="printPreInvoiceHandler()">
+                  <span>In</span>
+                </button>
               <div
                 *ngIf="
                   localItemInvoice?.is_return !== true;
                   else buttonThanhToan
                 "
-                style="margin-top: auto">
+                style="margin-top: auto; flex-grow: 1;">
                 <button
                   mat-button
                   class="payment-button btn-success {{
@@ -912,21 +1004,29 @@
                   <span>Thanh toán (F7)</span>
                 </button>
               </div>
-              <ng-template #buttonThanhToan>
-                <button
-                  mat-button
-                  class="payment-button btn-success"
-                  (click)="returns()">
-                  <span>Trả hàng</span>
-                </button>
-              </ng-template>
+                <ng-template #buttonThanhToan>
+                  <button
+                    mat-button
+                    class="payment-button btn-success"
+                    (click)="returns()">
+                    <span>Trả hàng</span>
+                  </button>
+                </ng-template>
+              </div>
+              <div style = "display: flex; justify-content: center; align-items: center;">
+                <div class="support-content" style = "display: flex; justify-content: center; align-items: center; margin-top: 13px;">
+                    <mat-icon style ="font-size: 24px;">phone</mat-icon> 
+                    Hỗ trợ KH 0972 574 506
+                </div>
 
-              <span class="support-content">
-                <mat-icon>phone</mat-icon> Hỗ trợ khách hàng 0972 574 506
-              </span>
+                <button mat-button style = "padding-left: 0px; padding-right: 0px" (click)="clickHelp()">
+                  <mat-icon>help</mat-icon>
+                  <span>Hướng dẫn sử dụng</span>
+                </button>
+              </div>
             </div>
             <!-- bottom -->
-          </div>
+          <!-- </div> -->
         </form>
       </div>
 
