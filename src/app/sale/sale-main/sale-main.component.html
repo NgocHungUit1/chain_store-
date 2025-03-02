@@ -180,7 +180,6 @@
                       {{ parcel['parcel_no'] }} - {{ parcel['expiration_date'] | date:'dd/MM/yyyy' }}
                       <mat-icon matChipRemove>cancel</mat-icon>
                     </mat-chip>
-                    <div class="parcel-seletor">
                       <div class="parcel-input-border"
                            *ngIf="!masterProduct.product_parcels || masterProduct.product_parcels.length==0">
                         <input class="parcel-input" placeholder="Nhập lô" #parcelInput
@@ -189,12 +188,10 @@
                                [matAutocomplete]="parcelAutocomplete" [matChipInputFor]="chiplist"
                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes">
                       </div>
-                    </div>
                   </mat-chip-list>
                   <button type="button"
                           (click)="openParcelSelectionDialog(getProductIndex(masterProduct))"
                           class="select-parcel-button"
-                          style="display: flex; justify-content: center; align-items: center;"
                           matTooltip="Chọn lô" matTooltipPosition="above">
                     ...
                   </button>
