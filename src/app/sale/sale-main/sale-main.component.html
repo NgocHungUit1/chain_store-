@@ -795,6 +795,17 @@
                   </div>
                 </ng-template>
               </div>
+              <div class="order-note">
+                <mat-form-field class="example-full-width">
+                  <mat-label>Ghi chú</mat-label>
+                  <textarea
+                    rows="1"
+                    matInput
+                    placeholder=""
+                    formControlName="noteSiderBar"
+                    (keyup)="saveNoteSiderBar($event)"></textarea>
+                </mat-form-field>
+              </div>
               <div *ngIf="listProduct && listProduct.length > 0">
                 <div
                   class="customer-pay"
@@ -864,18 +875,6 @@
                     </div>
                   </div>
                   <ng-template #is_return_tienThuaTraKhach> </ng-template>
-                </div>
-
-                <div class="order-note">
-                  <mat-form-field class="example-full-width">
-                    <mat-label>Ghi chú</mat-label>
-                    <textarea
-                      rows="1"
-                      matInput
-                      placeholder=""
-                      formControlName="noteSiderBar"
-                      (keyup)="saveNoteSiderBar($event)"></textarea>
-                  </mat-form-field>
                 </div>
                 <!-- Inside the <form [formGroup]="form"> -->
                 <div class="payment-selector">
@@ -950,17 +949,6 @@
                 <ng-template #is_return_tienThuaTraKhach></ng-template>
               </div>
 
-              <div class="order-note">
-                <mat-form-field class="example-full-width">
-                  <mat-label>Ghi chú</mat-label>
-                  <textarea
-                    rows="1"
-                    matInput
-                    placeholder=""
-                    formControlName="noteSiderBar"
-                    (keyup)="saveNoteSiderBar($event)"></textarea>
-                </mat-form-field>
-              </div>
                 <!-- <span class="custom-slide-toggle" mat-menu-item>
                   <mat-slide-toggle
                     [checked]="autoPrint"
