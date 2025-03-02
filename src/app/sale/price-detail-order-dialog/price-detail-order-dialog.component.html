@@ -1,5 +1,15 @@
 <div mat-dialog-content>
   <form [formGroup]="form" class="mat-h3">
+
+    <div fxLayout="row wrap">
+      <mat-form-field>
+        <mat-label>Gía Nhập</mat-label>
+        <!-- <input matInput type="text" tabindex="1" formControlName="commonPriceDetailOrder" value="{{ commonPriceDetailOrderText | number }}"> -->
+        <input matInput type="text" value="{{ product.original_price | number }}" disabled="true"
+               style="color:black">
+      </mat-form-field>
+    </div>
+
     <div fxLayout="row wrap">
       <mat-form-field>
         <mat-label>Đơn giá</mat-label>

@@ -34,6 +34,11 @@ export class PaymentSiderBar {
 
 // Cau truc don hang
 
+interface Parcel {
+  parcel_no: string;
+  expiration_date: string;
+  quantity_of_stock: number;
+}
 export class ProductInfo {
   product_id: string;
   sample_prescription_id: string;
@@ -47,6 +52,7 @@ export class ProductInfo {
 
   is_return: boolean;
   max_amount_return: number;
+  product_parcels: Parcel[];
 }
 
 export class ItemInvoice {

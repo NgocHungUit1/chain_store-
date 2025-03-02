@@ -24,18 +24,12 @@ html .page-wrapper .page-content {
   transition: height 200ms ease-out;
   overflow-x: hidden;
   overflow-y: auto;
-  background-color: white;
-  border-bottom: 1px solid #e1e1e1;
+  background-color: transparent;
   padding: 5px;
   -webkit-flex: 1;
   -ms-flex: 1;
   flex: 1;
   height: calc(100%);
-
-  /*&.fixed-list {
-    height: calc(100% - 440px) ;
-    max-height: 480px;
-  }*/
 
   @media only screen and (max-width: 1349px) {
     //max-height: 300px;
@@ -57,13 +51,118 @@ html .page-wrapper .page-content {
   }
 
   .product-item {
-    padding: 0 10px;
-    border: 1px solid #ececec;
-    border-radius: 3px;
-    font-size: 12px;
-
+    position: relative;
+    background-color: #ffffff;
+    border-radius: 8px;
+    font-size: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
     &:hover {
       background-color: #ececec;
+    }
+
+    /**
+    Popup behind the more_vert icon
+     */
+    .note-area {
+      position: absolute;
+      top: calc(100% + 4px);
+      right: 0;
+      z-index: 1002;
+      background: white;
+      border-radius: 4px;
+      height: 50px;
+      box-shadow: 0px 4px 10px 0 rgba(0,0,0,0.2);
+      display: flex;
+    }
+
+    /**
+    Textarea in the row
+     */
+    .note-textarea {
+      border: none;
+      background: transparent;
+      overflow: visible;
+      width: 100%;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      color: #333;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      resize: none;
+      box-sizing: border-box;
+      min-height: 24px;
+      box-shadow: none;
+      font-family: inherit;
+      margin-left: -10px;
+    }
+    .note-textarea:focus {
+      border-color: #4285f4;
+      box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.1);
+    }
+    .note-textarea::placeholder {
+      color: #999;
+      opacity: 1;
+    }
+
+    /**
+    Chip list parcel and each elements inside it
+     */
+    .chip-list {
+      padding-left: 0;
+      margin-left: 0;
+      display: flex;
+      align-items: center;
+
+      .chip-item {
+        background-color: transparent !important;
+        color: #3f51b5 !important;
+        height: 12px !important;
+        border-radius: 4px !important;
+        padding: 0 !important;
+        font-size: 10px !important;
+        white-space: nowrap !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+        justify-content: space-between !important;
+      }
+
+      .parcel-seletor{
+        display: flex !important;
+        height: 24px !important;
+      }
+      .parcel-input-border input.mat-chip-input {
+        width: 50px !important;
+        margin-top: 8.5px !important;
+      }
+      .parcel-input{
+        width: 50px !important;
+        height: 20px;
+      }
+      .select-parcel-button{
+        height: 16px !important;
+        line-height: 18px !important;
+        color: #3f51b5 !important;
+        background-color: transparent;
+        border: none;
+      }
+      .parcel-autocomplete-container{
+        padding: 10px !important;
+      }
+    }
+
+    /**
+    Create a line separate between subitem with each others and with master item
+     */
+    .dotted-divider {
+      height: 1px;
+      border-bottom: 1px dashed #e0e0e0;
+      margin-bottom: 15px;
+      margin-left: 5%;
+      width: 100%;
     }
 
     .row {
@@ -73,7 +172,8 @@ html .page-wrapper .page-content {
 
       &-product-no {
         font-size: 12px;
-        padding-right: 5px;
+        //padding-right: 5px;
+        padding-top: 4px;
       }
 
       &-text {
@@ -82,20 +182,13 @@ html .page-wrapper .page-content {
 
       &-product-name {
         font-size: 12px;
+        padding-top: 4px;
       }
 
-      &-product-note {
-        color: #666666;
-
-        .product-note-txt {
-          display: inline-block;
-          max-width: 330px;
-        }
-      }
 
       &-count-number {
         font-size: 12px;
-        min-width: 60px;
+        min-width: 30px;
         text-align: right;
       }
 
@@ -127,6 +220,7 @@ html .page-wrapper .page-content {
         font-size: 12px;
         text-align: right;
         font-weight: 600;
+        height: 13px;
       }
     }
 
@@ -136,8 +230,112 @@ html .page-wrapper .page-content {
       padding-top: 4px;
       padding-right: 4px;
     }
+
+    .row-total-price{
+      font-size: 12px;
+      text-align: right;
+      font-weight: 600;
+      height: 13px;
+    }
+    .row-product-no {
+      font-size: 12px;
+    }
+
+    /**
+    Master item row (main row)
+     */
+    &.master-item-row {
+      border: 1px solid #eaeaea;
+      .row-product-note {
+        position: relative;
+        top: -8px;
+      }
+    }
+    /**
+    Sub item row (inside the master row)
+     */
+    &.sub-item-row {
+      background-color: transparent;
+      border-radius:  0 !important;
+      box-shadow: none;
+      position: relative;
+      width: 100%;
+      padding-bottom: 15px;
+      &:before {
+        content: '';
+        position: absolute;
+        left: -15px;
+        top: 0;
+        height: 100%;
+      }
+      .row-product-note{
+        position: relative;
+        top: 1px;
+      }
+    }
+
+  }
+
+  /**
+  Guaranty all mat-form-field in the line, avoid this __---
+   */
+  .row-item {
+    width: 100%;
+    position: relative;
+    padding: 0;
+    margin: 0;
+  }
+  .row-edit-price mat-form-field,
+  .row-product-base-unit mat-form-field,
+  .row-amount mat-form-field {
+    width: 100%;
+    line-height: 0.8;
+  }
+  .row-product-base-unit .mat-form-field {
+    font-size: 14px;
+    line-height: 1.2;
+  }
+  .row-product-base-unit .mat-form-field-infix {
+    padding: 0.1em 0 !important;
+    border-top-width: 0.5em !important;
+  }
+
+  /**
+  Style for group of 3 action buttons
+   */
+  .action-buttons-container {
+    padding-right: 0px;
+  }
+  .action-buttons-container button {
+    transition: transform 0.2s ease;
+  }
+
+  .action-buttons-container mat-icon:hover {
+    transform: scale(1.1);
+  }
+  .action-buttons-container mat-icon {
+    margin: 0 2px;
+  }
+
+  /**
+  Adjust the color of amount to red when more than stock
+   */
+  .is_morethan_stock{
+    color: red;
+  }
+
+}
+/**
+Popup parcel list
+ */
+.parcel-option-list{
+  padding: 10px;
+  .parcel-option{
+    font-size: 1rem !important;
   }
 }
+
+
 
 .sale-list-product {
   position: fixed;
@@ -169,25 +367,8 @@ html .page-wrapper .page-content {
     padding: 0;
   }
 }
-/*  sale detail order  */
 
-.product-list {
-  &--icon {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    height: 10px;
-    width: 30px;
 
-    &-style {
-      width: 29px;
-      height: 2px;
-      background: #a1a1a1;
-      margin-top: 2px;
-      display: block;
-    }
-  }
-}
 
 /*  sale sidebar order  */
 .main-sale-sidebar-order {
@@ -438,3 +619,4 @@ html .page-wrapper .page-content {
     }
   }
 }
+

@@ -230,12 +230,13 @@ tr.mat-header-row {
 /* Container chính */
 .custom-parcel-filter-container {
   display: flex !important;
+  flex-direction: column !important;
   align-items: flex-start !important;
-  gap: 8px !important;
+  /*gap: 8px !important;*/
   width: 100% !important;
   margin-top: 8px !important;
   min-height: 40px !important;
-  padding-right: 10px !important;
+  /*padding-right: 10px !important;*/
   padding-bottom: 10px !important;
 }
 
@@ -250,25 +251,37 @@ tr.mat-header-row {
 }
 
 /* Container cho chips */
+/*.mat-chip-list-wrapper {*/
+/*  display: grid !important;*/
+/*  grid-template-columns: repeat(1, 1fr) !important;*/
+/*  gap: 8px !important;*/
+/*  width: 100% !important;*/
+/*}*/
 .mat-chip-list-wrapper {
-  display: grid !important;
-  grid-template-columns: repeat(3, 1fr) !important;
-  gap: 8px !important;
+  display: flex !important;
+
+  /*gap: 8px !important;*/
   width: 100% !important;
+}
+
+.mat-standard-chip {
+  min-height: 24px !important;
 }
 
 /* Style cho từng chip */
 .chip-item {
-  background-color: rgba(0, 150, 136, 0.5) !important;
-  color: white !important;
-  height: 32px !important;
+  /*background-color: rgba(0, 150, 136, 0.5) !important;*/
+  background-color: white !important;
+  color: #3f51b5 !important;
+  height: 12px !important;
   border-radius: 4px !important;
-  padding: 0 12px !important;
-  font-size: 14px !important;
+  padding: 0 6px !important;
+  font-size: 10px !important;
   white-space: nowrap !important;
   margin: 0 !important;
   box-sizing: border-box !important;
-  width: 100% !important; /* Sẽ fit với grid column */
+  /*width: 100% !important; !* Sẽ fit với grid column *!*/
+  width: "160px" !important;
   justify-content: space-between !important;
 }
 
@@ -286,10 +299,10 @@ tr.mat-header-row {
 .parcel-input {
   border: none !important;
   background: transparent !important;
-  height: 24px !important;
+  height: 20px !important;
   border-left: 1px #a8a8a8 solid !important;
-  padding-left: 15px;
-
+  padding-left: 10px;
+  width: 130px !important;
 }
 
 /* Placeholder styling */
@@ -304,8 +317,14 @@ tr.mat-header-row {
 }
 
 .select-parcel-button{
-  height: 32px !important;
+  /*height: 32px !important;*/
+  /*line-height: 32px !important;*/
+  color: #3f51b5 !important;
+  font-size: 16px;
+  width: 20px !important;
   line-height: 32px !important;
+  height: 32px !important;
+  padding-right: 5px;
 }
 
 /*!* Remove browser default focus outline *!*/
@@ -342,6 +361,7 @@ tr.mat-header-row {
   align-items: center;  /* Align items to top */
   max-width: 200px;       /* Set maximum width for button */
   text-align: left;       /* Align text to left */
+
 }
 
 .note-container {
@@ -375,9 +395,10 @@ tr.mat-header-row {
   border-color: #00897b;
 }
 
-
+.product-name-container
 .product-name-text {
-  flex: 1;
+  /*flex: 1;*/
+  white-space: pre-wrap !important;
 }
 
 .note-description{
