@@ -1,0 +1,515 @@
+html .page-wrapper .page-content {
+  padding: 0;
+}
+
+@media only screen and (max-width: 1366px) {
+  .main-sale {
+    max-height: 715px;
+  }
+}
+
+.container-main-sale {
+  height: calc(100% - 12px);
+}
+
+.container-action-sale {
+  background-color: #ffffff;
+  position: relative;
+  bottom: 0;
+  height: calc(100% - 12px);
+}
+
+/*  sale detail order  */
+.product-cart {
+  transition: height 200ms ease-out;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: transparent;
+  padding: 5px;
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  height: 100%;
+  /**
+  Guaranty all mat-form-field in the line, avoid this __---
+   */
+  /**
+  Style for group of 3 action buttons
+   */
+  /**
+  Adjust the color of amount to red when more than stock
+   */
+}
+.product-cart .mat-input-element {
+  font-size: 12px;
+}
+.product-cart .mat-icon-button {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+}
+.product-cart .mat-icon-button .mat-icon {
+  font-size: 12px !important;
+}
+.product-cart .product-item {
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  /**
+  Popup behind the more_vert icon
+   */
+  /**
+  Textarea in the row
+   */
+  /**
+  Chip list parcel and each elements inside it
+   */
+  /**
+  Create a line separate between subitem with each others and with master item
+   */
+  /**
+  Master item row (main row)
+   */
+  /**
+  Sub item row (inside the master row)
+   */
+}
+.product-cart .product-item:hover {
+  background-color: #ececec;
+}
+.product-cart .product-item .note-area {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 1002;
+  background: white;
+  border-radius: 4px;
+  height: 50px;
+  box-shadow: 0px 4px 10px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+}
+.product-cart .product-item .note-textarea {
+  border: none;
+  background: transparent;
+  overflow: visible;
+  width: 100%;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  color: #333;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  resize: none;
+  box-sizing: border-box;
+  min-height: 24px;
+  box-shadow: none;
+  font-family: inherit;
+  margin-left: -10px;
+}
+.product-cart .product-item .note-textarea:focus {
+  border-color: #4285f4;
+  box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.1);
+}
+.product-cart .product-item .note-textarea::placeholder {
+  color: #999;
+  opacity: 1;
+}
+.product-cart .product-item .chip-list {
+  padding-left: 0;
+  margin-left: 0;
+  display: flex;
+  align-items: center;
+}
+.product-cart .product-item .chip-list .chip-item {
+  background-color: transparent !important;
+  color: #3f51b5 !important;
+  height: 12px !important;
+  border-radius: 4px !important;
+  padding: 0 !important;
+  font-size: 10px !important;
+  white-space: nowrap !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  justify-content: space-between !important;
+}
+.product-cart .product-item .chip-list .parcel-seletor {
+  display: flex !important;
+  height: 24px !important;
+}
+.product-cart .product-item .chip-list .parcel-input-border input.mat-chip-input {
+  width: 50px !important;
+  margin-top: 8.5px !important;
+}
+.product-cart .product-item .chip-list .parcel-input {
+  width: 50px !important;
+  height: 20px;
+}
+.product-cart .product-item .chip-list .select-parcel-button {
+  height: 16px !important;
+  line-height: 18px !important;
+  color: #3f51b5 !important;
+  background-color: transparent;
+  border: none;
+}
+.product-cart .product-item .chip-list .parcel-autocomplete-container {
+  padding: 10px !important;
+}
+.product-cart .product-item .dotted-divider {
+  height: 1px;
+  border-bottom: 1px dashed #e0e0e0;
+  margin-bottom: 15px;
+  margin-left: 5%;
+  width: 100%;
+}
+.product-cart .product-item .row-item {
+  position: relative;
+}
+.product-cart .product-item .row-product-no {
+  font-size: 12px;
+  padding-top: 4px;
+}
+.product-cart .product-item .row-text {
+  padding-top: 10px;
+}
+.product-cart .product-item .row-product-name {
+  font-size: 12px;
+  padding-top: 4px;
+}
+.product-cart .product-item .row-count-number {
+  font-size: 12px;
+  min-width: 30px;
+  text-align: right;
+}
+.product-cart .product-item .row-amount {
+  font-size: 20px;
+  min-width: 120px;
+  max-width: 150px;
+}
+.product-cart .product-item .row-edit-price {
+  min-width: 100px;
+}
+.product-cart .product-item .row-product-base-unit {
+  padding-top: 12px;
+  padding-right: 5px;
+  min-width: 80px;
+}
+.product-cart .product-item .row-icon-edit {
+  font-size: 12px;
+}
+.product-cart .product-item .row-icon-edit-price {
+  font-size: 20px;
+}
+.product-cart .product-item .row-total-price {
+  font-size: 12px;
+  text-align: right;
+  font-weight: 600;
+  height: 13px;
+}
+.product-cart .product-item .span-product-no {
+  font-size: 12px;
+  color: black;
+  padding-top: 4px;
+  padding-right: 4px;
+}
+.product-cart .product-item .row-total-price {
+  font-size: 12px;
+  text-align: right;
+  font-weight: 600;
+  height: 13px;
+}
+.product-cart .product-item .row-product-no {
+  font-size: 12px;
+}
+.product-cart .product-item.master-item-row {
+  border: 1px solid #eaeaea;
+}
+.product-cart .product-item.master-item-row .row-product-note {
+  position: relative;
+  top: -8px;
+}
+.product-cart .product-item.sub-item-row {
+  background-color: transparent;
+  border-radius: 0 !important;
+  box-shadow: none;
+  position: relative;
+  width: 100%;
+  padding-bottom: 15px;
+}
+.product-cart .product-item.sub-item-row:before {
+  content: "";
+  position: absolute;
+  left: -15px;
+  top: 0;
+  height: 100%;
+}
+.product-cart .product-item.sub-item-row .row-product-note {
+  position: relative;
+  top: 1px;
+}
+.product-cart .row-item {
+  width: 100%;
+  position: relative;
+  padding: 0;
+  margin: 0;
+}
+.product-cart .row-edit-price mat-form-field,
+.product-cart .row-product-base-unit mat-form-field,
+.product-cart .row-amount mat-form-field {
+  width: 100%;
+  line-height: 0.8;
+}
+.product-cart .row-product-base-unit .mat-form-field {
+  font-size: 14px;
+  line-height: 1.2;
+}
+.product-cart .row-product-base-unit .mat-form-field-infix {
+  padding: 0.1em 0 !important;
+  border-top-width: 0.5em !important;
+}
+.product-cart .action-buttons-container {
+  padding-right: 0px;
+}
+.product-cart .action-buttons-container button {
+  transition: transform 0.2s ease;
+}
+.product-cart .action-buttons-container mat-icon:hover {
+  transform: scale(1.1);
+}
+.product-cart .action-buttons-container mat-icon {
+  margin: 0 2px;
+}
+.product-cart .is_morethan_stock {
+  color: red;
+}
+
+/**
+Popup parcel list
+ */
+.parcel-option-list {
+  padding: 10px;
+}
+.parcel-option-list .parcel-option {
+  font-size: 1rem !important;
+}
+
+.sale-list-product {
+  position: fixed;
+  left: 5px;
+  bottom: 55px;
+  width: 0px;
+  height: 0px;
+  opacity: 0;
+  border: 1px solid #e0e0e0;
+  border-top: 0;
+  transition: all 0.3s ease-in-out;
+}
+.sale-list-product.opened {
+  width: 71%;
+  height: 440px;
+  opacity: 1;
+}
+
+.show-list-btn {
+  position: fixed;
+  z-index: 1;
+  bottom: 10px;
+  width: 40px;
+  height: 40px;
+  line-height: 1;
+}
+.show-list-btn .mat-button-wrapper {
+  padding: 0;
+}
+
+/*  sale sidebar order  */
+.main-sale-sidebar-order {
+  margin: 12px;
+  height: calc(100% - 44px);
+}
+.main-sale-sidebar-order .ban-thuoc-theo-don span {
+  font-size: 12px;
+}
+.main-sale-sidebar-order .custom-title-invoice,
+.main-sale-sidebar-order .customer-pay,
+.main-sale-sidebar-order .customer-need,
+.main-sale-sidebar-order .excess-cash,
+.main-sale-sidebar-order .order-discount,
+.main-sale-sidebar-order .point-discount,
+.main-sale-sidebar-order .note-pay {
+  margin-top: 10px;
+}
+.main-sale-sidebar-order .order-detail {
+  margin-top: 2rem;
+}
+.main-sale-sidebar-order .price-product-text,
+.main-sale-sidebar-order .price-discount-text {
+  font-size: 12px;
+  text-align: left;
+}
+.main-sale-sidebar-order .price-product-number,
+.main-sale-sidebar-order .price-discount-number {
+  font-size: 12px;
+  text-align: right;
+}
+.main-sale-sidebar-order .label-text,
+.main-sale-sidebar-order .customer-pay-text {
+  font-size: 12px;
+  text-align: left;
+}
+.main-sale-sidebar-order .customer-need-text {
+  font-weight: 600;
+}
+.main-sale-sidebar-order .customer-need-number {
+  color: #56ad51;
+  font-size: 20px;
+  text-align: right;
+  font-weight: 600;
+}
+.main-sale-sidebar-order .customer-pay-number,
+.main-sale-sidebar-order .excess-cash-number {
+  font-size: 18px;
+  text-align: right;
+}
+.main-sale-sidebar-order .note-pay {
+  font-weight: 400;
+  font-size: 12px;
+  font-style: italic;
+  color: red;
+  text-align: right;
+}
+.main-sale-sidebar-order .order-note {
+  padding-top: 2px;
+}
+.main-sale-sidebar-order .custom-slide-toggle {
+  margin-top: -12px;
+}
+.main-sale-sidebar-order .payment-button {
+  width: 100%;
+  height: 67px;
+  background-color: #56ad51 !important;
+  bottom: 0px;
+  margin-bottom: 10px;
+}
+.main-sale-sidebar-order .payment-button span {
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+}
+.main-sale-sidebar-order .support-content {
+  font-size: 11px;
+  color: #666666;
+  margin: 10px;
+}
+.main-sale-sidebar-order .support-content .mat-icon {
+  font-size: 11px;
+  align-items: center;
+}
+
+.disable {
+  background-color: #a6aba6 !important;
+}
+
+.amount-cell-sub {
+  margin-top: -24px;
+  font-size: 19px;
+  text-align: right;
+  display: inline-block;
+  width: 100%;
+  margin-right: 17px;
+}
+
+.input-search {
+  font-size: 12px;
+}
+
+.user-action .input-search {
+  font-size: 12px;
+}
+
+.prescription {
+  font-size: 12px;
+}
+.prescription span {
+  border-bottom: 1px solid transparent;
+  cursor: default;
+}
+.prescription-checked {
+  font-size: 12px;
+  color: blue;
+}
+.prescription-checked span.prescription-text {
+  border-bottom: 1px solid blue;
+  cursor: pointer;
+}
+
+.price-discount-number .mat-form-field-infix,
+.customer-pay-number .mat-form-field-infix {
+  padding: 0.2375em 0;
+}
+
+.container-action-sale .mat-form-field:not(.mat-form-field-can-float) .mat-form-field-wrapper,
+.product-cart .mat-form-field:not(.mat-form-field-can-float) .mat-form-field-wrapper {
+  padding-bottom: 0;
+}
+
+.container-action-sale .mat-form-field:not(.mat-form-field-can-float) .mat-form-field-infix,
+.product-cart .mat-form-field:not(.mat-form-field-can-float) .mat-form-field-infix {
+  border-top: 0;
+}
+
+.container-action-sale .mat-form-field:not(.mat-form-field-can-float) .mat-form-field-underline,
+.product-cart .mat-form-field:not(.mat-form-field-can-float) .mat-form-field-underline {
+  bottom: 0;
+}
+
+.cart .mat-form-field.mat-focused .mat-form-field-infix, .cart .mat-form-field.mat-form-field-should-float .mat-form-field-infix {
+  border-top: 0.44375em solid transparent;
+  border-bottom: 0.24375em solid transparent;
+}
+.cart .mat-form-field-appearance-fill .mat-select-arrow-wrapper {
+  transform: unset;
+}
+.cart .mat-form-field-appearance-legacy.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label,
+.cart .mat-form-field-appearance-legacy.mat-form-field-can-float .mat-input-server:focus + .mat-form-field-label-wrapper .mat-form-field-label {
+  display: none;
+}
+.cart .main-sale-sidebar-order .md-datepicker-button {
+  display: none;
+}
+.cart .main-sale-sidebar-order .mat-form-field.date-picker .mat-form-field-suffix {
+  display: none;
+}
+.cart .main-sale-sidebar-order .customer-action .mat-form-field-infix {
+  border: 0;
+}
+.cart .main-sale-sidebar-order .customer-action .customer-point {
+  color: green;
+  margin: -0.625rem 0 1rem 0;
+}
+.cart .main-sale-sidebar-order .customer-action .customer-debt {
+  color: red;
+  margin: -0.625rem 0 1rem 1rem;
+}
+.cart .main-sale-sidebar-order .point-discount .point-can-use {
+  color: red;
+}
+.cart .main-sale-sidebar-order .point-discount .mat-slide-toggle {
+  margin-left: 0.5rem;
+}
+.cart .main-sale-sidebar-order .pricebook-action .mat-form-field-wrapper {
+  padding-bottom: 0;
+}
+.cart .main-sale-sidebar-order .pricebook-action .mat-form-field-appearance-legacy .mat-form-field-underline {
+  bottom: 0;
+}
+.cart .main-sale-sidebar-order .pricebook-action .mat-form-field-infix {
+  border: 0;
+}
+
+/*# sourceMappingURL=sale-main.component.css.map */
