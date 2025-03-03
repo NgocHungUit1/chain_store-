@@ -653,6 +653,20 @@ Popup parcel list
   flex-wrap: wrap;
   gap: 5px;
   margin-bottom: 20px;
+  .mat-radio-button.mat-accent.mat-radio-checked {
+    .mat-radio-outer-circle {
+      border-color: #56ad51 !important; // Green border for the outer circle
+    }
+    
+    .mat-radio-inner-circle {
+      background-color: #56ad51 !important; // Green fill for the inner circle
+    }
+  }
+  
+  // Optional - style the ripple effect when clicked
+  .mat-radio-ripple .mat-ripple-element {
+    background-color: rgba(86, 173, 81, 0.26) !important; // Lighter green for the ripple
+  }
 }
 
 /* Ensure radio buttons are styled consistently */
@@ -667,6 +681,10 @@ Popup parcel list
   // border: 1px solid #e0e0e0;
   // border-radius: 4px;
   // background-color: #f9f9f9;
+  button.selected {
+    background-color: #56ad51 !important;
+    color: white !important; /* For better contrast */
+  }
 }
 
 /* Tiền mặt (Cash) Layout: Grid of buttons */
@@ -789,4 +807,51 @@ Popup parcel list
 }
 .container-page{
   flex-flow: nowrap !important;
+}
+/* Add styles for the info container and card */
+.bank-transfer-layout .action-buttons .info-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 5px; /* Space between the icon and text */
+}
+
+.bank-transfer-layout .action-buttons .info-card {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 5px); /* Position above the info container with a 5px gap */
+  left: 50%; /* Position the left edge at 50% of the info-container’s width */
+  transform: translateX(-50%); /* Shift the card left by 50% of its own width to center it */  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 15px;
+  width: 300px;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Adjusted shadow to look better when above */
+  z-index: 10; /* Ensure the card appears above other elements */
+}
+
+/* Show the card on hover with display: flex */
+.bank-transfer-layout .action-buttons .info-container:hover .info-card {
+  display: flex; /* Using flex to avoid layout breaks */
+  flex-direction: column; /* Ensure content inside the card stacks vertically */
+}
+
+/* Style the card's content */
+.bank-transfer-layout .action-buttons .info-card h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  color: #333;
+}
+
+.bank-transfer-layout .action-buttons .info-card p {
+  margin: 0 0 10px;
+  font-size: 14px;
+  color: #555;
+}
+
+.bank-transfer-layout .action-buttons .info-card ol {
+  margin: 0 0 15px;
+  padding-left: 20px;
+  font-size: 14px;
+  color: #555;
 }

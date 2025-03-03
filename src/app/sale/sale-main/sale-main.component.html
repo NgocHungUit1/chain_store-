@@ -411,7 +411,12 @@
     </div>
   </div>
   <div fxFlex=".5"></div>
-  <div fxFlex="27">
+  <div fxFlex="27" 
+    style="border-radius: 8px;
+    font-size: 14px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    margin-top: 5px;
+  ">
     <div class="container-action-sale">
       <!-- <app-sale-siderbar-order></app-sale-siderbar-order> -->
       <!---------------------------------------  SALE-SIDER-BAR-ORDER ------------------------------------------>
@@ -798,17 +803,7 @@
                   </div>
                 </ng-template>
               </div>
-              <div class="order-note">
-                <mat-form-field class="example-full-width">
-                  <mat-label>Ghi chú</mat-label>
-                  <textarea
-                    rows="1"
-                    matInput
-                    placeholder=""
-                    formControlName="noteSiderBar"
-                    (keyup)="saveNoteSiderBar($event)"></textarea>
-                </mat-form-field>
-              </div>
+             
               <div *ngIf="listProduct && listProduct.length > 0">
                 <div
                   class="customer-pay"
@@ -879,6 +874,17 @@
                   </div>
                   <ng-template #is_return_tienThuaTraKhach> </ng-template>
                 </div>
+                <div class="order-note">
+                  <mat-form-field class="example-full-width">
+                    <mat-label>Ghi chú</mat-label>
+                    <textarea
+                      rows="1"
+                      matInput
+                      placeholder=""
+                      formControlName="noteSiderBar"
+                      (keyup)="saveNoteSiderBar($event)"></textarea>
+                  </mat-form-field>
+                </div>
                 <!-- Inside the <form [formGroup]="form"> -->
                 <div class="payment-selector">
                   <!-- Payment method selection -->
@@ -937,11 +943,25 @@
                       </ng-template>
                       <!-- Inside the bank-transfer-layout -->
                       <div class="action-buttons">
-                        <button mat-stroked-button  class="action-buttons-qr">
+                        <button (click)="openPaymentQrDialog()" mat-stroked-button class="action-buttons-qr">
                           <mat-icon>qr_code</mat-icon>
                           Hiện mã QR
                         </button>
-                        <mat-icon style="color:gray;cursor:pointer">info</mat-icon>
+                        
+                        <!-- Wrap the info icon and text in a container for hover -->
+                        <div class="info-container">
+                          <mat-icon style="color:gray;cursor:pointer">info</mat-icon>
+                          <!-- Info card that appears on hover -->
+                          <div class="info-card">
+                            <p><b>Giúp khách hàng mua hàng tự động nhập thông tin số tài khoản, số tiền cần thanh toán qua các bước sau:
+                            </b></p>
+                            <ol>
+                              <li>Thu ngân in mã QR đưa cho khách hàng</li>
+                              <li>Khách hàng quét mã QR này bằng ứng dụng mobile của ngân hàng (có hỗ trợ VietQR).</li>
+                              <li>Khách hàng kiểm tra lại thông tin và thực hiện chuyển khoản.</li>
+                            </ol>
+                          </div>
+                        </div>
                         <div class="action-buttons-info" style="cursor:pointer">
                           Nhận thông báo giao dịch?
                         </div>

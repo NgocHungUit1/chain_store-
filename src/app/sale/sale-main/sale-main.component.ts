@@ -38,6 +38,7 @@ import { SaleProductParcelSelectDialogComponent } from '../sale-product-parcel-s
 import {AuthService} from '../../authentication/auth.service';
 import { SharedDataService } from '../../shared/shared-data.service';
 import { BankAccountDialogComponent } from '../bank-account-dialog/bank-account-dialog.component';
+import { PaymentQrDialogComponent } from '../payment-qr-dialog/payment-qr-dialog.component';
 
 export const MY_FORMATS = {
   parse: {
@@ -1102,6 +1103,18 @@ export class SaleMainComponent implements OnInit {
       }
     }
     this.handleExpenseOrder();
+  }
+
+  openPaymentQrDialog() {
+    const dialogRef = this.dialog.open(PaymentQrDialogComponent, {
+      width: '40%',
+      minWidth: '750px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+      }
+    });
   }
 
   openSaleCustomerFormDialogComponent() {
@@ -2924,4 +2937,6 @@ export class SaleMainComponent implements OnInit {
   onMethodChange(): void {
     console.log(`Selected payment method: ${this.selectedMethod}`);
   }
+
+
 }
