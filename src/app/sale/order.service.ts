@@ -280,7 +280,6 @@ export class OrderService {
 
   deleteProduct(i: any) {
     const listInvoice = this.getListInvoiceLocalStorage();
-    debugger;
     listInvoice.itemInvoice.forEach(mItemInvoice => {
       if (mItemInvoice.active === true) {
         if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {

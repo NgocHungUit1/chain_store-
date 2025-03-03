@@ -185,11 +185,6 @@ html .page-wrapper .page-content {
   min-width: 30px;
   text-align: right;
 }
-.product-cart .product-item  {
-  font-size: 20px;
-  min-width: 120px;
-  max-width: 150px;
-}
 .product-cart .product-item .row-edit-price {
   min-width: 80px;
 }
