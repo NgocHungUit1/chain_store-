@@ -383,8 +383,8 @@ Popup parcel list
 /*  sale sidebar order  */
 .main-sale-sidebar-order {
   margin: 12px;
-  height: calc(100% - 44px);
-
+  //height: calc(100% - 44px);
+  height: 100%;
   .ban-thuoc-theo-don {
     span {
       font-size: 12px;
@@ -783,4 +783,7 @@ Popup parcel list
     flex-direction: column;
     gap: 10px;
   }
+}
+.container-page{
+  flex-flow: nowrap !important;
 }
