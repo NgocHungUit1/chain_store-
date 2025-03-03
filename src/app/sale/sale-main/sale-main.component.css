@@ -113,8 +113,7 @@ html .page-wrapper .page-content {
   margin-left: -10px;
 }
 .product-cart .product-item .note-textarea:focus {
-  border-color: #4285f4;
-  box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.1);
+  box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.5);
 }
 .product-cart .product-item .note-textarea::placeholder {
   color: #999;
@@ -186,13 +185,13 @@ html .page-wrapper .page-content {
   min-width: 30px;
   text-align: right;
 }
-.product-cart .product-item .row-amount {
+.product-cart .product-item  {
   font-size: 20px;
   min-width: 120px;
   max-width: 150px;
 }
 .product-cart .product-item .row-edit-price {
-  min-width: 100px;
+  min-width: 80px;
 }
 .product-cart .product-item .row-product-base-unit {
   padding-top: 12px;
