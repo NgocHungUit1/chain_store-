@@ -10,7 +10,7 @@ html .page-wrapper .page-content {
 }
 
 .container-main-sale {
-  height: calc(100% - 12px);
+  height: calc(100% - 50px);
 }
 
 .container-action-sale {
@@ -55,6 +55,10 @@ html .page-wrapper .page-content {
 }
 .product-cart .mat-input-element {
   font-size: 12px;
+  margin-left: 0px !important;
+}
+.product-cart .mat-chip-list-wrapper {
+  margin-left: 0px !important;
 }
 .product-cart .mat-icon-button {
   display: inline-block;

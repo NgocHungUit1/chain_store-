@@ -9,7 +9,7 @@ html .page-wrapper .page-content {
 }
 
 .container-main-sale {
-  height: calc(100% - 12px);
+  height: calc(100% - 50px);
 }
 
 .container-action-sale {
@@ -48,8 +48,11 @@ html .page-wrapper .page-content {
 
   .mat-input-element {
     font-size: 12px;
+    margin-left: 0px !important;
   }
-
+  .mat-chip-list-wrapper {
+    margin-left: 0px !important;
+  }
   .mat-icon-button {
     display: inline-block;
     width: 24px;
