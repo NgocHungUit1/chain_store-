@@ -39,6 +39,7 @@ import {AuthService} from '../../authentication/auth.service';
 import { SharedDataService } from '../../shared/shared-data.service';
 import { BankAccountDialogComponent } from '../bank-account-dialog/bank-account-dialog.component';
 import { PaymentQrDialogComponent } from '../payment-qr-dialog/payment-qr-dialog.component';
+import { TransactionNotifyDialogComponent } from '../transaction-notify-dialog/bank-account-dialog.component';
 
 export const MY_FORMATS = {
   parse: {
@@ -51,7 +52,11 @@ export const MY_FORMATS = {
     monthYearA11yLabel: 'MMMM YYYY',
   },
 };
-
+interface BankAccount {
+  bankName: string;
+  accountNumber: string;
+  accountHolder: string;
+}
 @Component({
   selector: 'app-sale-main',
   encapsulation: ViewEncapsulation.None,
@@ -175,6 +180,9 @@ export class SaleMainComponent implements OnInit {
   selectedBank: any;
   selectedWallet: any;
   bankAccounts: any[] = [];
+  filteredBankAccounts: any[] = [];
+  searchTerm: string = '';
+  isDropdownOpen: boolean = false;
   wallets: any[] = [];
   @ViewChild('prescription') prescription;
   @ViewChild('customerSearch') customerSearch: ElementRef;
@@ -221,6 +229,11 @@ export class SaleMainComponent implements OnInit {
     await this.handlePointDiscountSiderBar(mItemInvoice);
 
     await this.handlePaymentSiderBar(mItemInvoice);
+    
+    await this.loadBankAccounts();
+
+    this.filteredBankAccounts = [...this.bankAccounts];
+
     this.localItemInvoice = mItemInvoice;
 
     this.handleLoadParcel(mItemInvoice);
@@ -1041,8 +1054,9 @@ export class SaleMainComponent implements OnInit {
 
   openBankAccountsDialog() {
     const dialogRef = this.dialog.open(BankAccountDialogComponent, {
-      width: '40%',
-      // minHeight: '80%',
+      width: '500px',
+      minHeight: '300px',
+      panelClass: 'rounded-dialog'
     });
 
     dialogRef.afterClosed().subscribe(mItemInvoiceActive => {
@@ -1107,8 +1121,20 @@ export class SaleMainComponent implements OnInit {
 
   openPaymentQrDialog() {
     const dialogRef = this.dialog.open(PaymentQrDialogComponent, {
-      width: '40%',
-      minWidth: '750px',
+      // width: '40%',
+      // minWidth: '750px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+      }
+    });
+  }
+
+  openTransactionNotifyDialog() {
+    const dialogRef = this.dialog.open(TransactionNotifyDialogComponent, {
+      width: '800px',
+      data: this.selectedBank
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -2935,8 +2961,68 @@ export class SaleMainComponent implements OnInit {
     this.tinhLaiTienThua();
   }
   onMethodChange(): void {
-    console.log(`Selected payment method: ${this.selectedMethod}`);
+    console.
+    log(`Selected payment method: ${this.selectedMethod}`);
+  }
+  async loadBankAccounts() {
+    // Option 1: Direct assignment
+    this.bankAccounts = [
+      { 
+        id: 1, 
+        bankName: 'Chase Bank', 
+        accountNumber: '****4567', 
+        accountHolder: 'John Doe' 
+      },
+      { 
+        id: 2, 
+        bankName: 'Bank of America', 
+        accountNumber: '****7890', 
+        accountHolder: 'Jane Smith' 
+      },
+      { 
+        id: 3, 
+        bankName: 'Wells Fargo', 
+        accountNumber: '****2345', 
+        accountHolder: 'Robert Johnson' 
+      }
+    ];
+    
+    // Option 2: From a service
+    // this.yourService.getBankAccounts().subscribe(accounts => {
+    //   this.bankAccounts = accounts;
+    // });
   }
 
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
 
+  filterBanks() {
+    if (!this.searchTerm) {
+      this.filteredBankAccounts = [...this.bankAccounts];
+      return;
+    }
+    
+    const term = this.searchTerm.toLowerCase();
+    this.filteredBankAccounts = this.bankAccounts.filter(bank => 
+      bank.bankName.toLowerCase().includes(term) || 
+      bank.accountNumber.includes(term) || 
+      bank.accountHolder.toLowerCase().includes(term)
+    );
+  }
+
+  selectBank(bank: BankAccount | null) {
+    this.selectedBank = bank;
+    this.isDropdownOpen = false;
+  }
+
+  // Close dropdown when clicking outside
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const element = event.target as HTMLElement;
+    if (!element.closest('.bank-dropdown-container')) {
+      this.isDropdownOpen = false;
+    }
+  }
 }
+

@@ -1,0 +1,70 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2>Đăng ký dịch vụ thông báo thanh toán QR</h2>
+    <button mat-icon-button (click)="onCancel()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="dialog-content">
+    <form [formGroup]="bankAccountForm" style="width: 100%">
+      <div fxLayout="row wrap" class="input-layout">
+        <div fxFlex="30">
+          <div class="bank-form--label">Ngân hàng</div>
+        </div>
+        <div fxFlex="70">
+          <div class="field-display">{{ data.bankName || 'N/A' }}</div>
+        </div>
+      </div>
+      <div fxLayout="row wrap" class="input-layout">
+        <div fxFlex="30">
+          <div class="bank-form--label">Số tài khoản</div>
+        </div>
+        <div fxFlex="70">
+          <div class="field-display">{{ data.accountNumber || 'N/A' }}</div>
+        </div>
+      </div>
+      <div fxLayout="row wrap" class="input-layout">
+        <div fxFlex="30">
+          <div class="bank-form--label">Chủ tài khoản</div>
+        </div>
+        <div fxFlex="70">
+          <div class="field-display">{{ data.accountHolder || 'N/A' }}</div>
+        </div>
+      </div>
+      <div fxLayout="row wrap" class="input-layout">
+        <div fxFlex="30">
+          <div class="bank-form--label">Số điện thoại</div>
+        </div>
+        <div fxFlex="70">
+          <mat-form-field class="full-width">
+            <input matInput formControlName="phone" placeholder="Nhập số điện thoại đã đăng ký với ngân hàng"/>
+          </mat-form-field>
+        </div>
+      </div>
+      
+      <!-- Agreement Checkbox with improved text wrapping -->
+      <div class="agreement-container">
+        <mat-checkbox formControlName="agreementChecked" class="agreement-checkbox">
+          <div class="agreement-text">
+            Tôi đã đọc và đồng ý để {{ data.bankName }} cung cấp thông tin giao dịch trên tài khoản của tôi cho KiotViet và đồng ý 
+            <a href="javascript:void(0)" class="terms-link">Điều kiện và điều khoản sử dụng dịch vụ</a>
+          </div>
+        </mat-checkbox>
+      </div>
+    </form>
+  </div>
+
+  <div class="dialog-actions">
+    <button mat-button (click)="onCancel()" class="cancel-button">
+      Bỏ qua
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onSave()"
+      [disabled]="bankAccountForm.invalid">
+      Đăng ký
+    </button>
+  </div>
+</div>
