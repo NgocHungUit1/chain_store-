@@ -1692,9 +1692,7 @@ export class SaleMainComponent implements OnInit {
       const customer_phone = preInvoiceData?.customer?.phone || '';
       const invoiceDate = preInvoiceData?.created_at ? new Date(preInvoiceData.created_at) : new Date();
 
-
-      console.log({invoiceDate})
-      let printContent = '<title>Pre-Invoice</title>'; // Temporary title
+      let printContent = '<title>Chi nhánh trung tâm - Bán hàng</title>'; // Temporary title
       printContent += `
         <style>
           p, table, div {
@@ -1823,8 +1821,10 @@ export class SaleMainComponent implements OnInit {
     });
   }
 
+  
+
   async getPreInvoiceData(): Promise<any> {
-    debugger;
+    // debugger;
     const activeInvoice = this.localItemInvoice || new ItemInvoice();
     const formData = this.form.getRawValue();
   
@@ -1867,6 +1867,196 @@ export class SaleMainComponent implements OnInit {
       created_at: createdAt
     };
   }
+
+  printPreInvoiceV2(preInvoiceData: any) {
+    let _font_size = '11px';
+    let _font_size_store = '13px';
+    let _margin = '4px';
+    let _padding = '3px';
+    let _solo = 'text-align:left;';
+  
+    // Determine print type (K58 or A4)
+    this.optionStoreService.getValue('print_type').subscribe(res => {
+      if (res.value === 'K58') {
+        _font_size = '11px';
+        _margin = '4px';
+        _padding = '3px';
+        _solo = 'text-align:left;';
+      } else { // A4
+        _font_size = '14px';
+        _font_size_store = '16px';
+        _margin = '6px';
+        _padding = '6px';
+        _solo = 'text-align:left; min-width: 100px;';
+      }
+  
+      // debugger;
+      // Use preInvoiceData instead of fetching from service
+      const customer_name = preInvoiceData?.customer?.name || 'Khách lẻ';
+      const customer_phone = preInvoiceData?.customer?.phone || '';
+      const invoiceDate = preInvoiceData?.created_at ? new Date(preInvoiceData.created_at) : new Date();
+  
+      // debugger;
+      let printContent = '<title>Chi nhánh trung tâm - Bán hàng</title>'; // Temporary title
+      printContent += `
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+          }
+          p, div {
+            font-size: ${_font_size};
+            margin: ${_margin};
+            padding: 0;
+            line-height: 1.2;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: ${_font_size};
+          }
+          th, td {
+            padding: ${_padding};
+            text-align: left;
+          }
+          .center {
+            text-align: center;
+          }
+          .bold {
+            font-weight: bold;
+          }
+          .right {
+            text-align: right;
+          }
+  
+          .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+          }
+          .header-border {
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
+          }
+          
+          .top-border {
+            border-top: 1px dashed black;
+          }
+        </style>
+        <section style="padding: 5px; font-size: ${_font_size}; width: 100%;">
+          ${`<p class="center"><img src="${this.logo??'assets/images/Rx20_16x16_op1-1207.png'}" style="max-width: 120px;"></p>`}
+          <p class="center bold" style="font-size: ${_font_size_store}">${preInvoiceData?.store?.name || 'Store Name'}</p>
+          <p class="center">${preInvoiceData?.store?.address || 'Store Address'}</p>
+          <p class="center bold">HÓA ĐƠN TẠM TÍNH</p>
+          <p class="center bold">Số HĐ: Chưa lưu</p>
+          <p class="center">Ngày ${invoiceDate.getDate()} tháng ${invoiceDate.getMonth() + 1} năm ${invoiceDate.getFullYear()}</p>
+      `;
+  
+      // Customer info
+      const { nationalPrescription } = preInvoiceData || {};
+      if (nationalPrescription) {
+        printContent += `
+          <p>Mã đơn thuốc: <b>${nationalPrescription.nationalPrescriptionId || ''}</b></p>
+          <p>Tên đơn vị: <b>${nationalPrescription.medicalFacilityName || ''}</b></p>
+          <p>Họ tên: <b>${nationalPrescription.patientName || ''}</b></p>
+          <p>SĐT: <b>${nationalPrescription.patientPhoneNumber || ''}</b></p>
+          <p>Ngày sinh: <b>${nationalPrescription.patientDOB || ''}</b>
+            Cân nặng: <b>${nationalPrescription.patientWeight || ''}</b>
+            Giới tính: <b>${nationalPrescription.patientSex || ''}</b></p>
+          <br>
+          <p><b>Chẩn đoán:</b> ${nationalPrescription?.diagnostics?.[0]?.conclusion || ''}</p>
+        `;
+      } else {
+        printContent += `<p>Khách hàng: ${customer_name}</p>`;
+        if (customer_phone) {
+          printContent += `<p>SĐT: ${customer_phone}</p>`;
+        }
+      }
+  
+      printContent += `
+      
+      <table>
+        <tr class="header-border">
+          <th style="width: 40%;">Đơn giá</th>
+          <th style="width: 20%; text-align: center;">SL</th>
+          <th style="width: 40%; text-align: right;">Thành tiền</th>
+        </tr>
+      `;
+  
+      // Product details
+      const detail = preInvoiceData?.detail || [];
+      detail.forEach((element: any) => {
+        if (!element?.base_unit) {
+          printContent += `
+            <tr>
+              <td colspan="3">${element.product?.product_name || ''}</td>
+            </tr>
+            <tr>
+              <td>${numeral(element.price || 0).format('0,0')}</td>
+              <td style="text-align: center;">${element.amount || 0}</td>
+              <td style="text-align: right;">${numeral(element.total || 0).format('0,0')}</td>
+            </tr>
+          `;
+        } else {
+          printContent += `
+            <tr>
+              <td colspan="3">${element.product?.product_name || ''} - (${element?.base_unit || ''})</td>
+            </tr>
+            <tr>
+              <td>${numeral(element.price || 0).format('0,0')}</td>
+              <td style="text-align: center;">${element.amount || 0}</td>
+              <td style="text-align: right;">${numeral(element.total || 0).format('0,0')}</td>
+            </tr>
+          `;
+        }
+      });
+  
+      // Totals
+      printContent += `
+        <tr class="top-border">
+          <td colspan="2" class="right bold">Tổng tiền hàng :</td>
+          <td class="right bold">${numeral(preInvoiceData?.total_price || 0).format('0,0')}</td>
+        </tr>
+        <tr>
+          <td colspan="2" class="right bold">Chiết khấu :</td>
+          <td class="right bold">${numeral(preInvoiceData?.discount || 0).format('0,0')}</td>
+        </tr>
+        <tr>
+          <td colspan="2" class="right bold">Tổng thanh toán :</td>
+          <td class="right bold">${numeral(preInvoiceData?.sum_payment || 0).format('0,0')}</td>
+        </tr>
+      `;
+      if (preInvoiceData?.debt != null) {
+        printContent += `
+          <tr>
+            <td colspan="2" class="right bold">Còn nợ :</td>
+            <td class="right bold">${numeral(preInvoiceData.debt).format('0,0')}</td>
+          </tr>
+        `;
+      }
+      printContent += `</table>`;
+      printContent += `<p>${this.numberToVietnameseText(+preInvoiceData?.sum_payment || 0)}</p>`
+  
+      // Footer with QR code
+      printContent += `
+        <br>
+        <p class="center"><img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Cám%20ơn%20và%20hẹn%20gặp%20lại" style="width: 80px; height: 80px;"></p>
+        <p class="center" style="font-style: italic;">Cám ơn và hẹn gặp lại!</p>
+        <p class="center" style="font-size: 9px;">POWERED BY KIOTVIET</p>
+        </section>
+      `;
+  
+      console.log({printContent})
+  
+      const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+      WindowPrt.document.write(printContent);
+      WindowPrt.document.close();
+      WindowPrt.focus();
+      WindowPrt.print();
+      // WindowPrt.close(); // Uncomment if you want to auto-close after printing
+    });
+  }
   
   private getNationalPrescriptionData(prescriptionId: string): any {
     // Placeholder: Replace with actual logic if available
@@ -1875,7 +2065,7 @@ export class SaleMainComponent implements OnInit {
   
   async printPreInvoiceHandler() {
     const preInvoiceData = await this.getPreInvoiceData();
-    this.printPreInvoice(preInvoiceData);
+    this.printPreInvoiceV2(preInvoiceData);
   }
   
   payment() {
@@ -2954,7 +3144,6 @@ export class SaleMainComponent implements OnInit {
     this.updateCustomerPay(amount);
   }
   updateCustomerPay(amount: number): void {
-    debugger;
     // Update the customerPay form control with the selected amount
     this.form.get('customerPay')?.setValue(numeral(amount.toString()).format('0,0'));
 
@@ -3023,6 +3212,125 @@ export class SaleMainComponent implements OnInit {
     if (!element.closest('.bank-dropdown-container')) {
       this.isDropdownOpen = false;
     }
+  }
+
+
+  numberToVietnameseText(number) {
+    // Handle invalid input
+    if (isNaN(number) || number < 0) {
+      return "Invalid input";
+    }
+    
+    // Format the number with commas
+    const formattedNumber = number.toLocaleString('vi-VN');
+    
+    // Convert number to Vietnamese words
+    const vietnameseWords = this.convertNumberToVietnameseWords(number);
+    
+    // Return the formatted string
+    return `${vietnameseWords} đồng chẵn`;
+  }
+  
+  /**
+   * Converts a number to Vietnamese words
+   * @param {number} number - The number to convert
+   * @returns {string} Vietnamese words representation of the number
+   */
+  convertNumberToVietnameseWords(number:number) {
+    const units = ["", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
+    const teens = ["", "mười một", "mười hai", "mười ba", "mười bốn", "mười lăm", "mười sáu", "mười bảy", "mười tám", "mười chín"];
+    const tens = ["", "mười", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi"];
+    const scales = ["", "nghìn", "triệu", "tỷ", "nghìn tỷ", "triệu tỷ"];
+    
+    // Handle zero
+    if (number === 0) {
+      return "Không";
+    }
+    
+    // Convert to string and pad to handle groups of 3 digits
+    let numStr = number.toString();
+    // Ensure string length is multiple of 3 by padding with leading zeros
+    const remainder = numStr.length % 3;
+    if (remainder > 0) {
+      numStr = '0'.repeat(3 - remainder) + numStr;
+    }
+    
+    // Split into groups of 3 digits
+    const groups = [];
+    for (let i = 0; i < numStr.length; i += 3) {
+      groups.push(numStr.substring(i, i + 3));
+    }
+    
+    // Process each group
+    const results = [];
+    groups.forEach((group, index) => {
+      const groupIndex = groups.length - 1 - index;
+      const groupValue = parseInt(group);
+      
+      if (groupValue > 0) {
+        const groupText = this.convertGroupToVietnamese(group);
+        const scaleText = groupIndex > 0 ? " " + scales[groupIndex] : "";
+        results.push(groupText + scaleText);
+      }
+    });
+    
+    // Join groups and capitalize first letter
+    let result = results.join(" ");
+    return result.charAt(0).toUpperCase() + result.slice(1);
+  }
+  
+  /**
+   * Converts a 3-digit group to Vietnamese words
+   * @param {string} group - 3-digit group as string
+   * @returns {string} Vietnamese words for the group
+   */
+   convertGroupToVietnamese(group) {
+    const units = ["", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
+    const digits = group.split('').map(d => parseInt(d));
+    
+    let result = "";
+    
+    // Handle hundreds
+    if (digits[0] > 0) {
+      result += units[digits[0]] + " trăm";
+    }
+    
+    // Handle tens and units
+    if (digits[1] > 0) {
+      // Add space if we already have hundreds
+      if (result !== "") {
+        result += " ";
+      }
+      
+      if (digits[1] === 1) {
+        // Special case for "mười"
+        result += "mười";
+      } else {
+        result += units[digits[1]] + " mươi";
+      }
+      
+      // Handle units
+      if (digits[2] > 0) {
+        if (digits[2] === 1 && digits[1] !== 0) {
+          // Special case for "một" after a "mươi"
+          result += " mốt";
+        } else if (digits[2] === 5 && digits[1] !== 0) {
+          // Special case for "năm" after a "mươi"
+          result += " lăm";
+        } else {
+          result += " " + units[digits[2]];
+        }
+      }
+    } else if (digits[2] > 0) {
+      // Only units, no tens
+      // Add space if we already have hundreds
+      if (result !== "") {
+        result += " lẻ ";
+      }
+      result += units[digits[2]];
+    }
+    
+    return result;
   }
 }
 
