@@ -2062,7 +2062,7 @@ export class SaleMainComponent implements OnInit {
         <br>
         <p class="center"><img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Cám%20ơn%20và%20hẹn%20gặp%20lại" style="width: 80px; height: 80px;"></p>
         <p class="center" style="font-style: italic;">Cám ơn và hẹn gặp lại!</p>
-        <p class="center" style="font-size: 9px;">POWERED BY KIOTVIET</p>
+        <p class="center" style="font-size: 9px;">POWERED BY rx20.vn</p>
         </section>
       `;
   

@@ -903,7 +903,7 @@ Popup parcel list
 }
 
 .bank-options {
-  max-height: 200px;
+  max-height: 80px;
   overflow-y: auto;
 }
 
@@ -911,12 +911,29 @@ Popup parcel list
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: 8px 16px;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .bank-option:hover {
+  background-color: #f5f5f5;
+}
+
+.add-bank-option {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.add-bank-option--text{
+  font-weight: bold;
+}
+
+.add-bank-option:hover {
   background-color: #f5f5f5;
 }
 

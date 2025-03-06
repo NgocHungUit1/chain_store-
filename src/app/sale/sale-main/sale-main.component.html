@@ -977,13 +977,18 @@
                                     </div>
                                     <mat-icon *ngIf="selectedBank && selectedBank.accountNumber === bank.accountNumber">check</mat-icon>
                                   </div>
+                                  
+                                  <div 
+                                    class="add-bank-option">
+                                    <div class="add-bank-option--text" (click)="openBankAccountsDialog()">+ Thêm tài khoản ngân hàng</div>
+                                  </div>
                                 </div>
                               </div>
                             </div>
                           </div>
-                          <button mat-stroked-button (click)="openBankAccountsDialog()" class="add-account-btn">
+                          <!-- <button mat-stroked-button (click)="openBankAccountsDialog()" class="add-account-btn">
                             + Thêm tài khoản ngân hàng
-                          </button>
+                          </button> -->
                         </div>
                     
                         <!-- Actions Button - Only show when a bank is selected -->
