@@ -68,6 +68,7 @@
           [formControl]="selectProduct"
           matInput
           (focus)="focusInputSearch($event)"
+          (keydown.enter)="onkeydown($event)"
           #inputSearch
           [matAutocomplete]="chooseProduct"
           [placeholder]="placeholderSearch" />
@@ -80,7 +81,8 @@
         <mat-autocomplete
           [displayWith]="displayProductFn"
           #chooseProduct="matAutocomplete"
-          (optionSelected)="onSelectedProduct($event.option.value)">
+          (optionSelected)="onSelectedProduct($event.option.value)"
+          >
           <mat-option class="option-search"
             fxLayout="row"
             *ngFor="let product of filteredProducts | async"

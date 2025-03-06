@@ -3,7 +3,7 @@
 </div>
 
 <div class="container-page" fxLayout="row wrap" style="height: 100%; ">
-  <div fxFlex="72.5" class="main-sale">
+  <div fxFlex="68.5" class="main-sale">
     <div class="container-main-sale">
       <div class="product-cart" [class.fixed-list]="showList">
         <!----------------------------------------- SALE-DETAIL-ORDER ---------------------------------------->
@@ -411,7 +411,12 @@
     </div>
   </div>
   <div fxFlex=".5"></div>
-  <div fxFlex="27">
+  <div fxFlex="31" 
+    style="border-radius: 8px;
+    font-size: 14px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    margin-top: 5px;
+  ">
     <div class="container-action-sale">
       <!-- <app-sale-siderbar-order></app-sale-siderbar-order> -->
       <!---------------------------------------  SALE-SIDER-BAR-ORDER ------------------------------------------>
@@ -798,17 +803,7 @@
                   </div>
                 </ng-template>
               </div>
-              <div class="order-note">
-                <mat-form-field class="example-full-width">
-                  <mat-label>Ghi chú</mat-label>
-                  <textarea
-                    rows="1"
-                    matInput
-                    placeholder=""
-                    formControlName="noteSiderBar"
-                    (keyup)="saveNoteSiderBar($event)"></textarea>
-                </mat-form-field>
-              </div>
+             
               <div *ngIf="listProduct && listProduct.length > 0">
                 <div
                   class="customer-pay"
@@ -879,6 +874,17 @@
                   </div>
                   <ng-template #is_return_tienThuaTraKhach> </ng-template>
                 </div>
+                <div class="order-note">
+                  <mat-form-field class="example-full-width">
+                    <mat-label>Ghi chú</mat-label>
+                    <textarea
+                      rows="1"
+                      matInput
+                      placeholder=""
+                      formControlName="noteSiderBar"
+                      (keyup)="saveNoteSiderBar($event)"></textarea>
+                  </mat-form-field>
+                </div>
                 <!-- Inside the <form [formGroup]="form"> -->
                 <div class="payment-selector">
                   <!-- Payment method selection -->
@@ -908,42 +914,107 @@
                         {{ amount | number }}
                       </button>
                     </div>
-
                     <!-- Bank Transfer (Chuyển khoản) Layout: QR Code and Bank Details -->
-                    <div *ngIf="form.get('selectedMethod')?.value === 'Chuyển khoản'" class="bank-transfer-layout">
-                      <div class="qr-code-section" *ngIf="bankAccounts.length > 0; else noBankAccounts">
-                        <img [src]="selectedBank.qrCodeUrl" alt="QR Code" class="qr-code" />
-                        <div class="bank-details">
-                          <mat-form-field appearance="fill" class="bank-select">
-                            <mat-label>Bank Account</mat-label>
-                            <mat-select [(ngModel)]="selectedBank" [ngModelOptions]="{standalone: true}">
-                              <mat-option *ngFor="let bank of bankAccounts" [value]="bank">
-                                {{ bank.bankName }} - {{ bank.accountNumber }} - {{ bank.accountHolder }}
-                              </mat-option>
-                            </mat-select>
-                          </mat-form-field>
+                    <div *ngIf="form.get('selectedMethod')?.value === 'Chuyển khoản'" class="bank-transfer-layout" fxLayout="row wrap">
+                      <!-- QR Section - Only show when a bank is selected -->
+                      <ng-container *ngIf="selectedBank">
+                        <div fxFlex="20">
+                          <img 
+                          [src]="selectedBank?.qrCodeUrl || 'assets/images/default/qr-code.png'" 
+                          alt="QR Code" class="qr-code" />
                         </div>
-                        <button mat-stroked-button class="add-account-btn">
-                          + Thêm tài khoản ngân hàng
-                        </button>
-                      </div>
-                      <ng-template #noBankAccounts>
-                        <div class="no-bank-message">
-                          Bạn chưa có tài khoản ngân hàng
+                        <div fxFlex="5"></div>
+                      </ng-container>
+                      
+                      <!-- Bank selection section - Always show, but adjust flex based on whether a bank is selected -->
+                      <div class="bank-transfer-layout--right" [fxFlex]="selectedBank ? '75' : '100'">
+                        <!-- Select Box and add button -->
+                        <div class="qr-code-section" *ngIf="bankAccounts.length > 0; else noBankAccounts">
+                          <div class="bank-details">
+                            <div class="bank-dropdown-container">
+                              <!-- Selected Bank Display -->
+                              <div class="selected-bank" (click)="toggleDropdown()">
+                                <span *ngIf="selectedBank">
+                                  {{ selectedBank.bankName }} - {{ selectedBank.accountNumber }} - {{ selectedBank.accountHolder }}
+                                </span>
+                                <span *ngIf="!selectedBank">-Tài khoản nhận-</span>
+                                <mat-icon>{{ isDropdownOpen ? 'arrow_drop_up' : 'arrow_drop_down' }}</mat-icon>
+                              </div>
+                              
+                              <!-- Dropdown Panel -->
+                              <div class="dropdown-panel" *ngIf="isDropdownOpen">
+                                <!-- Search Input -->
+                                <div class="search-container">
+                                  <input 
+                                    type="text" 
+                                    placeholder="Nhập tên, số tài khoản ngân hàng" 
+                                    [(ngModel)]="searchTerm" 
+                                    (input)="filterBanks()"
+                                    [ngModelOptions]="{standalone: true}">
+                                  <mat-icon>search</mat-icon>
+                                </div>
+                                
+                                <!-- Bank Options -->
+                                <div class="bank-options">
+                                  <!-- Empty/Blank Option -->
+                                  <div 
+                                    class="bank-option" 
+                                    [class.selected]="!selectedBank"
+                                    (click)="selectBank(null)">
+                                    <div class="blank-option">-Tài khoản nhận-</div>
+                                    <mat-icon *ngIf="!selectedBank">check</mat-icon>
+                                  </div>
+                                  
+                                  <!-- Bank Account Options -->
+                                  <div 
+                                    *ngFor="let bank of filteredBankAccounts" 
+                                    class="bank-option" 
+                                    [class.selected]="selectedBank && selectedBank.accountNumber === bank.accountNumber"
+                                    (click)="selectBank(bank)">
+                                    <div>
+                                      <div class="bank-name">{{ bank.bankName }} - {{ bank.accountNumber }}</div>
+                                      <div class="account-holder">{{ bank.accountHolder }}</div>
+                                    </div>
+                                    <mat-icon *ngIf="selectedBank && selectedBank.accountNumber === bank.accountNumber">check</mat-icon>
+                                  </div>
+                                  
+                                  <div 
+                                    class="add-bank-option">
+                                    <div class="add-bank-option--text" (click)="openBankAccountsDialog()">+ Thêm tài khoản ngân hàng</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- <button mat-stroked-button (click)="openBankAccountsDialog()" class="add-account-btn">
+                            + Thêm tài khoản ngân hàng
+                          </button> -->
                         </div>
-                        <button (click)="openBankAccountsDialog()" mat-stroked-button class="add-account-btn">
-                          + Thêm tài khoản ngân hàng
-                        </button>
-                      </ng-template>
-                      <!-- Inside the bank-transfer-layout -->
-                      <div class="action-buttons">
-                        <button mat-stroked-button  class="action-buttons-qr">
-                          <mat-icon>qr_code</mat-icon>
-                          Hiện mã QR
-                        </button>
-                        <mat-icon style="color:gray;cursor:pointer">info</mat-icon>
-                        <div class="action-buttons-info" style="cursor:pointer">
-                          Nhận thông báo giao dịch?
+                    
+                        <!-- Actions Button - Only show when a bank is selected -->
+                        <div class="action-buttons" *ngIf="selectedBank">
+                          <button (click)="openPaymentQrDialog()" mat-stroked-button class="action-buttons-qr">
+                            <mat-icon>qr_code</mat-icon>
+                            Hiện mã QR
+                          </button>
+                          
+                          <!-- Wrap the info icon and text in a container for hover -->
+                          <div class="info-container">
+                            <mat-icon style="color:gray;cursor:pointer">info</mat-icon>
+                            <!-- Info card that appears on hover -->
+                            <div class="info-card">
+                              <p><b>Giúp khách hàng mua hàng tự động nhập thông tin số tài khoản, số tiền cần thanh toán qua các bước sau:
+                              </b></p>
+                              <ol>
+                                <li>Thu ngân in mã QR đưa cho khách hàng</li>
+                                <li>Khách hàng quét mã QR này bằng ứng dụng mobile của ngân hàng (có hỗ trợ VietQR).</li>
+                                <li>Khách hàng kiểm tra lại thông tin và thực hiện chuyển khoản.</li>
+                              </ol>
+                            </div>
+                          </div>
+                          <div class="action-buttons-info" style="cursor:pointer" (click)="openTransactionNotifyDialog()">
+                            Nhận thông báo giao dịch?
+                          </div>
                         </div>
                       </div>
                     </div>

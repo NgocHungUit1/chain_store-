@@ -1,54 +1,73 @@
 <div class="dialog-container">
   <div class="dialog-header">
-    <h2>Thêm tài khoản</h2>
+    <h2 class ="mat-dialog-title">Thêm tài khoản</h2>
     <button mat-icon-button (click)="onCancel()">
       <mat-icon>close</mat-icon>
     </button>
   </div>
 
   <div class="dialog-content">
-    <form [formGroup]="bankAccountForm">
+    <form [formGroup]="bankAccountForm" style="width: 100%">
       <h3>Thông tin tài khoản</h3>
-      
-      <mat-form-field class="full-width">
-        <mat-label>Số tài khoản</mat-label>
-        <input matInput formControlName="accountNumber" placeholder="Nhập số tài khoản">
-        <mat-error *ngIf="bankAccountForm.get('accountNumber')?.hasError('required')">
-          Số tài khoản là bắt buộc
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field class="full-width">
-        <mat-label>Ngân hàng</mat-label>
-        <mat-select formControlName="bankName">
-          <mat-option value="Vietcombank">Vietcombank</mat-option>
-          <mat-option value="BIDV">BIDV</mat-option>
-          <mat-option value="Techcombank">Techcombank</mat-option>
-          <mat-option value="VPBank">VPBank</mat-option>
-          <mat-option value="MB Bank">MB Bank</mat-option>
-        </mat-select>
-        <mat-error *ngIf="bankAccountForm.get('bankName')?.hasError('required')">
-          Ngân hàng là bắt buộc
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field class="full-width">
-        <mat-label>Chủ tài khoản</mat-label>
-        <input matInput formControlName="accountHolder" placeholder="Nhập tên chủ tài khoản">
-        <mat-error *ngIf="bankAccountForm.get('accountHolder')?.hasError('required')">
-          Chủ tài khoản là bắt buộc
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field class="full-width">
-        <mat-label>Ghi chú</mat-label>
-        <textarea matInput formControlName="note" placeholder="Nhập ghi chú"></textarea>
-      </mat-form-field>
+      <div fxLayout="row wrap" class="input-layout" class="input-layout">
+        <div fxFlex="30">
+          <div class="bank-form--label">Số tài khoản</div>
+        </div>
+        <div fxFlex="70">
+          <mat-form-field class="full-width">
+            <input matInput formControlName="accountNumber" placeholder="Nhập số tài khoản"/>
+          </mat-form-field>
+        </div>
+      </div>
+      <div fxLayout="row wrap" class="input-layout">
+        <div fxFlex="30">
+          <div class="bank-form--label">Ngân hàng</div>
+        </div>
+        <div fxFlex="70">
+          <mat-form-field class="full-width">
+            <mat-select formControlName="bankName">
+              <mat-option value="Vietcombank">Vietcombank</mat-option>
+              <mat-option value="BIDV">BIDV</mat-option>
+              <mat-option value="Techcombank">Techcombank</mat-option>
+              <mat-option value="VPBank">VPBank</mat-option>
+              <mat-option value="MB Bank">MB Bank</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <div fxLayout="row wrap" class="input-layout">
+        <div fxFlex="30">
+          <div class="bank-form--label">Chủ tài khoản</div>
+        </div>
+        <div fxFlex="70">
+          <mat-form-field class="full-width">
+            <input matInput formControlName="accountHolder" placeholder="Nhập tên chủ tài khoản"/>
+          </mat-form-field>
+        </div>
+      </div>
+      <div fxLayout="row wrap" class="input-layout">
+        <div fxFlex="30">
+          <div class="bank-form--label">Ghi chú</div>
+        </div>
+        <div fxFlex="70">
+          <mat-form-field class="full-width">
+            <textarea matInput formControlName="note" placeholder="Nhập ghi chú"></textarea>
+          </mat-form-field>
+        </div>
+      </div>
     </form>
   </div>
 
   <div class="dialog-actions">
-    <button mat-button (click)="onCancel()" class="cancel-button">Bỏ qua</button>
-    <button mat-raised-button color="primary" (click)="onSave()" [disabled]="bankAccountForm.invalid">Lưu</button>
+    <button mat-button (click)="onCancel()" class="cancel-button">
+      Bỏ qua
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onSave()"
+      [disabled]="bankAccountForm.invalid">
+      Lưu
+    </button>
   </div>
 </div>

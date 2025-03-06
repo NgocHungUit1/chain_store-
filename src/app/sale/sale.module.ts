@@ -28,6 +28,8 @@ import { SaleProductParcelSelectDialogComponent } from './sale-product-parcel-se
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { PaymentModule } from '../payment/payment.module';
 import { BankAccountDialogComponent } from './bank-account-dialog/bank-account-dialog.component';
+import { PaymentQrDialogComponent } from './payment-qr-dialog/payment-qr-dialog.component';
+import { TransactionNotifyDialogComponent } from './transaction-notify-dialog/bank-account-dialog.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +47,10 @@ import { BankAccountDialogComponent } from './bank-account-dialog/bank-account-d
     PrescriptionFormDialogComponent,
     MedicalFacilityFormDialogComponent,
     SaleProductParcelSelectDialogComponent,
-    BankAccountDialogComponent],
+    BankAccountDialogComponent,
+    PaymentQrDialogComponent,
+    TransactionNotifyDialogComponent,
+  ],
     imports: [
         CommonModule,
         RouterModule.forChild(SaleRoutes),

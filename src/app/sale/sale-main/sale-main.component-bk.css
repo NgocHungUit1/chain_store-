@@ -164,7 +164,7 @@ html .page-wrapper .page-content {
 .payment-button {
   width: 100%;
   height: 67px;
-  background-color: #56ad51 !important;
+  background-color: #009688 !important;
   bottom: 0px;
   margin-bottom: 10px;
 }
@@ -191,6 +191,7 @@ html .page-wrapper .page-content {
 .label-text {
   font-size: 15px;
   text-align: left;
+  color: #009688;
   /*padding-top: 18px;*/
 }
 
@@ -252,7 +253,7 @@ html .page-wrapper .page-content {
 
 .customer-need-number {
   /*padding-top: 18px;*/
-  color: #56ad51;
+  color: #009688;
   font-size: 20px;
   text-align: right;
   font-weight: 600;

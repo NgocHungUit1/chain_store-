@@ -38,6 +38,8 @@ import { SaleProductParcelSelectDialogComponent } from '../sale-product-parcel-s
 import {AuthService} from '../../authentication/auth.service';
 import { SharedDataService } from '../../shared/shared-data.service';
 import { BankAccountDialogComponent } from '../bank-account-dialog/bank-account-dialog.component';
+import { PaymentQrDialogComponent } from '../payment-qr-dialog/payment-qr-dialog.component';
+import { TransactionNotifyDialogComponent } from '../transaction-notify-dialog/bank-account-dialog.component';
 
 export const MY_FORMATS = {
   parse: {
@@ -50,7 +52,11 @@ export const MY_FORMATS = {
     monthYearA11yLabel: 'MMMM YYYY',
   },
 };
-
+interface BankAccount {
+  bankName: string;
+  accountNumber: string;
+  accountHolder: string;
+}
 @Component({
   selector: 'app-sale-main',
   encapsulation: ViewEncapsulation.None,
@@ -174,6 +180,9 @@ export class SaleMainComponent implements OnInit {
   selectedBank: any;
   selectedWallet: any;
   bankAccounts: any[] = [];
+  filteredBankAccounts: any[] = [];
+  searchTerm: string = '';
+  isDropdownOpen: boolean = false;
   wallets: any[] = [];
   @ViewChild('prescription') prescription;
   @ViewChild('customerSearch') customerSearch: ElementRef;
@@ -220,6 +229,11 @@ export class SaleMainComponent implements OnInit {
     await this.handlePointDiscountSiderBar(mItemInvoice);
 
     await this.handlePaymentSiderBar(mItemInvoice);
+    
+    await this.loadBankAccounts();
+
+    this.filteredBankAccounts = [...this.bankAccounts];
+
     this.localItemInvoice = mItemInvoice;
 
     this.handleLoadParcel(mItemInvoice);
@@ -1040,8 +1054,9 @@ export class SaleMainComponent implements OnInit {
 
   openBankAccountsDialog() {
     const dialogRef = this.dialog.open(BankAccountDialogComponent, {
-      width: '40%',
-      // minHeight: '80%',
+      width: '500px',
+      minHeight: '300px',
+      panelClass: 'rounded-dialog'
     });
 
     dialogRef.afterClosed().subscribe(mItemInvoiceActive => {
@@ -1102,6 +1117,30 @@ export class SaleMainComponent implements OnInit {
       }
     }
     this.handleExpenseOrder();
+  }
+
+  openPaymentQrDialog() {
+    const dialogRef = this.dialog.open(PaymentQrDialogComponent, {
+      // width: '40%',
+      // minWidth: '750px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+      }
+    });
+  }
+
+  openTransactionNotifyDialog() {
+    const dialogRef = this.dialog.open(TransactionNotifyDialogComponent, {
+      width: '800px',
+      data: this.selectedBank
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+      }
+    });
   }
 
   openSaleCustomerFormDialogComponent() {
@@ -1653,9 +1692,7 @@ export class SaleMainComponent implements OnInit {
       const customer_phone = preInvoiceData?.customer?.phone || '';
       const invoiceDate = preInvoiceData?.created_at ? new Date(preInvoiceData.created_at) : new Date();
 
-
-      console.log({invoiceDate})
-      let printContent = '<title>Pre-Invoice</title>'; // Temporary title
+      let printContent = '<title>Chi nhánh trung tâm - Bán hàng</title>'; // Temporary title
       printContent += `
         <style>
           p, table, div {
@@ -1784,8 +1821,10 @@ export class SaleMainComponent implements OnInit {
     });
   }
 
+  
+
   async getPreInvoiceData(): Promise<any> {
-    debugger;
+    // debugger;
     const activeInvoice = this.localItemInvoice || new ItemInvoice();
     const formData = this.form.getRawValue();
   
@@ -1828,6 +1867,215 @@ export class SaleMainComponent implements OnInit {
       created_at: createdAt
     };
   }
+
+  printPreInvoiceV2(preInvoiceData: any) {
+    let _font_size = '11px';
+    let _font_size_store = '13px';
+    let _margin = '4px';
+    let _padding = '3px';
+    let _solo = 'text-align:left;';
+  
+    // Determine print type (K58 or A4)
+    this.optionStoreService.getValue('print_type').subscribe(res => {
+      if (res.value === 'K58') {
+        _font_size = '11px';
+        _margin = '4px';
+        _padding = '3px';
+        _solo = 'text-align:left;';
+      } else { // A4
+        _font_size = '14px';
+        _font_size_store = '16px';
+        _margin = '6px';
+        _padding = '6px';
+        _solo = 'text-align:left; min-width: 100px;';
+      }
+  
+      // Use preInvoiceData instead of fetching from service
+      const customer_name = preInvoiceData?.customer?.name || 'Khách lẻ';
+      const customer_phone = preInvoiceData?.customer?.phone || '';
+      const invoiceDate = preInvoiceData?.created_at ? new Date(preInvoiceData.created_at) : new Date();
+  
+      let printContent = '<title>Chi nhánh trung tâm - Bán hàng</title>'; // Temporary title
+      printContent += `
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+          }
+          p, div {
+            font-size: ${_font_size};
+            margin: ${_margin};
+            padding: 0;
+            line-height: 1.2;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: ${_font_size};
+          }
+          th, td {
+            padding: ${_padding};
+            text-align: left;
+          }
+          .center {
+            text-align: center;
+          }
+          .bold {
+            font-weight: bold;
+          }
+          .right {
+            text-align: right;
+          }
+  
+          .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+          }
+          .header-border {
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
+          }
+          
+          .top-border {
+            border-top: 1px dashed black;
+          }
+        </style>
+        <section style="padding: 5px; font-size: ${_font_size}; width: 100%;">
+          ${`<p class="center"><img src="${this.logo??'assets/images/Rx20_16x16_op1-1207.png'}" style="max-width: 120px;"></p>`}
+          <p class="center bold" style="font-size: ${_font_size_store}">${preInvoiceData?.store?.name || 'Store Name'}</p>
+          <p class="center">${preInvoiceData?.store?.address || 'Store Address'}</p>
+          <p class="center bold">HÓA ĐƠN TẠM TÍNH</p>
+          <p class="center bold">Số HĐ: Chưa lưu</p>
+          <p class="center">Ngày ${invoiceDate.getDate()} tháng ${invoiceDate.getMonth() + 1} năm ${invoiceDate.getFullYear()}</p>
+      `;
+  
+      // Customer info
+      const { nationalPrescription } = preInvoiceData || {};
+      if (nationalPrescription) {
+        printContent += `
+          <p>Mã đơn thuốc: <b>${nationalPrescription.nationalPrescriptionId || ''}</b></p>
+          <p>Tên đơn vị: <b>${nationalPrescription.medicalFacilityName || ''}</b></p>
+          <p>Họ tên: <b>${nationalPrescription.patientName || ''}</b></p>
+          <p>SĐT: <b>${nationalPrescription.patientPhoneNumber || ''}</b></p>
+          <p>Ngày sinh: <b>${nationalPrescription.patientDOB || ''}</b>
+            Cân nặng: <b>${nationalPrescription.patientWeight || ''}</b>
+            Giới tính: <b>${nationalPrescription.patientSex || ''}</b></p>
+          <br>
+          <p><b>Chẩn đoán:</b> ${nationalPrescription?.diagnostics?.[0]?.conclusion || ''}</p>
+        `;
+      } else {
+        printContent += `<p>Khách hàng: ${customer_name}</p>`;
+        if (customer_phone) {
+          printContent += `<p>SĐT: ${customer_phone}</p>`;
+        }
+      }
+  
+      printContent += `
+      
+      <table>
+        <tr class="header-border">
+          <th style="width: 40%;">Đơn giá</th>
+          <th style="width: 20%; text-align: center;">SL</th>`;
+      
+      // Add Số lô column header if needed
+      if (this.autoPrintInSoLo === true) {
+        printContent += `<th style="${_solo}">Số lô</th>`;
+      }
+      
+      printContent += `<th style="width: 40%; text-align: right;">Thành tiền</th>
+        </tr>
+      `;
+  
+      // Product details
+      const detail = preInvoiceData?.detail || [];
+      detail.forEach((element: any) => {
+        if (!element?.base_unit) {
+          printContent += `
+            <tr>
+              <td colspan="${this.autoPrintInSoLo ? '4' : '3'}">${element.product?.product_name || ''}</td>
+            </tr>
+            <tr>
+              <td>${numeral(element.price || 0).format('0,0')}</td>
+              <td style="text-align: center;">${element.amount || 0}</td>`;
+          
+          // Add Số lô cell if needed
+          if (this.autoPrintInSoLo === true) {
+            printContent += `<td style="text-align:left;">${element.so_lo || ''}</td>`;
+          }
+          
+          printContent += `<td style="text-align: right;">${numeral(element.total || 0).format('0,0')}</td>
+            </tr>
+          `;
+        } else {
+          printContent += `
+            <tr>
+              <td colspan="${this.autoPrintInSoLo ? '4' : '3'}">${element.product?.product_name || ''} - (${element?.base_unit || ''})</td>
+            </tr>
+            <tr>
+              <td>${numeral(element.price || 0).format('0,0')}</td>
+              <td style="text-align: center;">${element.amount || 0}</td>`;
+          
+          // Add Số lô cell if needed
+          if (this.autoPrintInSoLo === true) {
+            printContent += `<td style="text-align:left;">${element.so_lo || ''}</td>`;
+          }
+          
+          printContent += `<td style="text-align: right;">${numeral(element.total || 0).format('0,0')}</td>
+            </tr>
+          `;
+        }
+      });
+  
+      // Determine the colspan based on whether _solo is included
+      const colspan = this.autoPrintInSoLo ? '3' : '2';
+  
+      // Totals
+      printContent += `
+        <tr class="top-border">
+          <td colspan="${colspan}" class="right bold">Tổng tiền hàng :</td>
+          <td class="right bold">${numeral(preInvoiceData?.total_price || 0).format('0,0')}</td>
+        </tr>
+        <tr>
+          <td colspan="${colspan}" class="right bold">Chiết khấu :</td>
+          <td class="right bold">${numeral(preInvoiceData?.discount || 0).format('0,0')}</td>
+        </tr>
+        <tr>
+          <td colspan="${colspan}" class="right bold">Tổng thanh toán :</td>
+          <td class="right bold">${numeral(preInvoiceData?.sum_payment || 0).format('0,0')}</td>
+        </tr>
+      `;
+      if (preInvoiceData?.debt != null) {
+        printContent += `
+          <tr>
+            <td colspan="${colspan}" class="right bold">Còn nợ :</td>
+            <td class="right bold">${numeral(preInvoiceData.debt).format('0,0')}</td>
+          </tr>
+        `;
+      }
+      printContent += `</table>`;
+      printContent += `<p>${this.numberToVietnameseText(+preInvoiceData?.sum_payment || 0)}</p>`
+  
+      // Footer with QR code
+      printContent += `
+        <br>
+        <p class="center"><img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Cám%20ơn%20và%20hẹn%20gặp%20lại" style="width: 80px; height: 80px;"></p>
+        <p class="center" style="font-style: italic;">Cám ơn và hẹn gặp lại!</p>
+        <p class="center" style="font-size: 9px;">POWERED BY rx20.vn</p>
+        </section>
+      `;
+  
+      console.log({printContent})
+  
+      const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+      WindowPrt.document.write(printContent);
+      WindowPrt.document.close();
+      WindowPrt.focus();
+      WindowPrt.print();
+      // WindowPrt.close(); // Uncomment if you want to auto-close after printing
+    });
+  }
   
   private getNationalPrescriptionData(prescriptionId: string): any {
     // Placeholder: Replace with actual logic if available
@@ -1836,7 +2084,7 @@ export class SaleMainComponent implements OnInit {
   
   async printPreInvoiceHandler() {
     const preInvoiceData = await this.getPreInvoiceData();
-    this.printPreInvoice(preInvoiceData);
+    this.printPreInvoiceV2(preInvoiceData);
   }
   
   payment() {
@@ -2915,13 +3163,193 @@ export class SaleMainComponent implements OnInit {
     this.updateCustomerPay(amount);
   }
   updateCustomerPay(amount: number): void {
-    debugger;
     // Update the customerPay form control with the selected amount
     this.form.get('customerPay')?.setValue(numeral(amount.toString()).format('0,0'));
 
     this.tinhLaiTienThua();
   }
   onMethodChange(): void {
-    console.log(`Selected payment method: ${this.selectedMethod}`);
+    console.
+    log(`Selected payment method: ${this.selectedMethod}`);
+  }
+  async loadBankAccounts() {
+    // Option 1: Direct assignment
+    this.bankAccounts = [
+      { 
+        id: 1, 
+        bankName: 'Chase Bank', 
+        accountNumber: '****4567', 
+        accountHolder: 'John Doe' 
+      },
+      { 
+        id: 2, 
+        bankName: 'Bank of America', 
+        accountNumber: '****7890', 
+        accountHolder: 'Jane Smith' 
+      },
+      { 
+        id: 3, 
+        bankName: 'Wells Fargo', 
+        accountNumber: '****2345', 
+        accountHolder: 'Robert Johnson' 
+      }
+    ];
+    
+    // Option 2: From a service
+    // this.yourService.getBankAccounts().subscribe(accounts => {
+    //   this.bankAccounts = accounts;
+    // });
+  }
+
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  filterBanks() {
+    if (!this.searchTerm) {
+      this.filteredBankAccounts = [...this.bankAccounts];
+      return;
+    }
+    
+    const term = this.searchTerm.toLowerCase();
+    this.filteredBankAccounts = this.bankAccounts.filter(bank => 
+      bank.bankName.toLowerCase().includes(term) || 
+      bank.accountNumber.includes(term) || 
+      bank.accountHolder.toLowerCase().includes(term)
+    );
+  }
+
+  selectBank(bank: BankAccount | null) {
+    this.selectedBank = bank;
+    this.isDropdownOpen = false;
+  }
+
+  // Close dropdown when clicking outside
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const element = event.target as HTMLElement;
+    if (!element.closest('.bank-dropdown-container')) {
+      this.isDropdownOpen = false;
+    }
+  }
+
+
+  numberToVietnameseText(number) {
+    // Handle invalid input
+    if (isNaN(number) || number < 0) {
+      return "Invalid input";
+    }
+    
+    // Format the number with commas
+    const formattedNumber = number.toLocaleString('vi-VN');
+    
+    // Convert number to Vietnamese words
+    const vietnameseWords = this.convertNumberToVietnameseWords(number);
+    
+    // Return the formatted string
+    return `${vietnameseWords} đồng chẵn`;
+  }
+  
+  /**
+   * Converts a number to Vietnamese words
+   * @param {number} number - The number to convert
+   * @returns {string} Vietnamese words representation of the number
+   */
+  convertNumberToVietnameseWords(number:number) {
+    const units = ["", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
+    const teens = ["", "mười một", "mười hai", "mười ba", "mười bốn", "mười lăm", "mười sáu", "mười bảy", "mười tám", "mười chín"];
+    const tens = ["", "mười", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi"];
+    const scales = ["", "nghìn", "triệu", "tỷ", "nghìn tỷ", "triệu tỷ"];
+    
+    // Handle zero
+    if (number === 0) {
+      return "Không";
+    }
+    
+    // Convert to string and pad to handle groups of 3 digits
+    let numStr = number.toString();
+    // Ensure string length is multiple of 3 by padding with leading zeros
+    const remainder = numStr.length % 3;
+    if (remainder > 0) {
+      numStr = '0'.repeat(3 - remainder) + numStr;
+    }
+    
+    // Split into groups of 3 digits
+    const groups = [];
+    for (let i = 0; i < numStr.length; i += 3) {
+      groups.push(numStr.substring(i, i + 3));
+    }
+    
+    // Process each group
+    const results = [];
+    groups.forEach((group, index) => {
+      const groupIndex = groups.length - 1 - index;
+      const groupValue = parseInt(group);
+      
+      if (groupValue > 0) {
+        const groupText = this.convertGroupToVietnamese(group);
+        const scaleText = groupIndex > 0 ? " " + scales[groupIndex] : "";
+        results.push(groupText + scaleText);
+      }
+    });
+    
+    // Join groups and capitalize first letter
+    let result = results.join(" ");
+    return result.charAt(0).toUpperCase() + result.slice(1);
+  }
+  
+  /**
+   * Converts a 3-digit group to Vietnamese words
+   * @param {string} group - 3-digit group as string
+   * @returns {string} Vietnamese words for the group
+   */
+   convertGroupToVietnamese(group) {
+    const units = ["", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
+    const digits = group.split('').map(d => parseInt(d));
+    
+    let result = "";
+    
+    // Handle hundreds
+    if (digits[0] > 0) {
+      result += units[digits[0]] + " trăm";
+    }
+    
+    // Handle tens and units
+    if (digits[1] > 0) {
+      // Add space if we already have hundreds
+      if (result !== "") {
+        result += " ";
+      }
+      
+      if (digits[1] === 1) {
+        // Special case for "mười"
+        result += "mười";
+      } else {
+        result += units[digits[1]] + " mươi";
+      }
+      
+      // Handle units
+      if (digits[2] > 0) {
+        if (digits[2] === 1 && digits[1] !== 0) {
+          // Special case for "một" after a "mươi"
+          result += " mốt";
+        } else if (digits[2] === 5 && digits[1] !== 0) {
+          // Special case for "năm" after a "mươi"
+          result += " lăm";
+        } else {
+          result += " " + units[digits[2]];
+        }
+      }
+    } else if (digits[2] > 0) {
+      // Only units, no tens
+      // Add space if we already have hundreds
+      if (result !== "") {
+        result += " lẻ ";
+      }
+      result += units[digits[2]];
+    }
+    
+    return result;
   }
 }
+
