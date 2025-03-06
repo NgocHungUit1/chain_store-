@@ -1890,13 +1890,11 @@ export class SaleMainComponent implements OnInit {
         _solo = 'text-align:left; min-width: 100px;';
       }
   
-      // debugger;
       // Use preInvoiceData instead of fetching from service
       const customer_name = preInvoiceData?.customer?.name || 'Khách lẻ';
       const customer_phone = preInvoiceData?.customer?.phone || '';
       const invoiceDate = preInvoiceData?.created_at ? new Date(preInvoiceData.created_at) : new Date();
   
-      // debugger;
       let printContent = '<title>Chi nhánh trung tâm - Bán hàng</title>'; // Temporary title
       printContent += `
         <style>
@@ -1979,8 +1977,14 @@ export class SaleMainComponent implements OnInit {
       <table>
         <tr class="header-border">
           <th style="width: 40%;">Đơn giá</th>
-          <th style="width: 20%; text-align: center;">SL</th>
-          <th style="width: 40%; text-align: right;">Thành tiền</th>
+          <th style="width: 20%; text-align: center;">SL</th>`;
+      
+      // Add Số lô column header if needed
+      if (this.autoPrintInSoLo === true) {
+        printContent += `<th style="${_solo}">Số lô</th>`;
+      }
+      
+      printContent += `<th style="width: 40%; text-align: right;">Thành tiền</th>
         </tr>
       `;
   
@@ -1990,47 +1994,62 @@ export class SaleMainComponent implements OnInit {
         if (!element?.base_unit) {
           printContent += `
             <tr>
-              <td colspan="3">${element.product?.product_name || ''}</td>
+              <td colspan="${this.autoPrintInSoLo ? '4' : '3'}">${element.product?.product_name || ''}</td>
             </tr>
             <tr>
               <td>${numeral(element.price || 0).format('0,0')}</td>
-              <td style="text-align: center;">${element.amount || 0}</td>
-              <td style="text-align: right;">${numeral(element.total || 0).format('0,0')}</td>
+              <td style="text-align: center;">${element.amount || 0}</td>`;
+          
+          // Add Số lô cell if needed
+          if (this.autoPrintInSoLo === true) {
+            printContent += `<td style="text-align:left;">${element.so_lo || ''}</td>`;
+          }
+          
+          printContent += `<td style="text-align: right;">${numeral(element.total || 0).format('0,0')}</td>
             </tr>
           `;
         } else {
           printContent += `
             <tr>
-              <td colspan="3">${element.product?.product_name || ''} - (${element?.base_unit || ''})</td>
+              <td colspan="${this.autoPrintInSoLo ? '4' : '3'}">${element.product?.product_name || ''} - (${element?.base_unit || ''})</td>
             </tr>
             <tr>
               <td>${numeral(element.price || 0).format('0,0')}</td>
-              <td style="text-align: center;">${element.amount || 0}</td>
-              <td style="text-align: right;">${numeral(element.total || 0).format('0,0')}</td>
+              <td style="text-align: center;">${element.amount || 0}</td>`;
+          
+          // Add Số lô cell if needed
+          if (this.autoPrintInSoLo === true) {
+            printContent += `<td style="text-align:left;">${element.so_lo || ''}</td>`;
+          }
+          
+          printContent += `<td style="text-align: right;">${numeral(element.total || 0).format('0,0')}</td>
             </tr>
           `;
         }
       });
   
+      // Determine the colspan based on whether _solo is included
+      const colspan = this.autoPrintInSoLo ? '3' : '2';
+  
       // Totals
       printContent += `
         <tr class="top-border">
-          <td colspan="2" class="right bold">Tổng tiền hàng :</td>
+          <td colspan="${colspan}" class="right bold">Tổng tiền hàng :</td>
           <td class="right bold">${numeral(preInvoiceData?.total_price || 0).format('0,0')}</td>
         </tr>
         <tr>
-          <td colspan="2" class="right bold">Chiết khấu :</td>
+          <td colspan="${colspan}" class="right bold">Chiết khấu :</td>
           <td class="right bold">${numeral(preInvoiceData?.discount || 0).format('0,0')}</td>
         </tr>
         <tr>
-          <td colspan="2" class="right bold">Tổng thanh toán :</td>
+          <td colspan="${colspan}" class="right bold">Tổng thanh toán :</td>
           <td class="right bold">${numeral(preInvoiceData?.sum_payment || 0).format('0,0')}</td>
         </tr>
       `;
       if (preInvoiceData?.debt != null) {
         printContent += `
           <tr>
-            <td colspan="2" class="right bold">Còn nợ :</td>
+            <td colspan="${colspan}" class="right bold">Còn nợ :</td>
             <td class="right bold">${numeral(preInvoiceData.debt).format('0,0')}</td>
           </tr>
         `;

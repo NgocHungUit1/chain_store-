@@ -61,6 +61,7 @@ export class CartComponent implements OnInit, OnDestroy {
   sidebarOpened;
   placeholderSearch = 'Tìm sản phẩm (F3)';
   iconChangeType = 'cached';
+  barcode: string;
   public showSearch = false;
 
   public config: PerfectScrollbarConfigInterface = {};
@@ -103,7 +104,7 @@ export class CartComponent implements OnInit, OnDestroy {
     private notifySer: NotifierService,
     private optionStoreService: OptionStoreService,
     private storeSer: StoreService,
-    protected customerService: CustomerService
+    protected customerService: CustomerService,
   ) {
     this.mobileQuery = media.matchMedia('(min-width: 768px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -410,5 +411,31 @@ export class CartComponent implements OnInit, OnDestroy {
   displayProductFn(product: any): string {
     if (!product) return ''; // Handle null/undefined
     return product.product_name; // Show only the product name
+  }
+
+  
+  onkeydown($event) {
+    this.barcode = $event.target.value;
+    // console.log(this.barcode);
+    this.productSer.addproductBarcode(this.barcode).subscribe(res => {
+      // console.log(res);
+      if (res['errors']) {
+        this.notifySer.notify('warning', res['errors']);
+      }
+      if (res !== null) {
+        if (this.amountProduct === null) {
+          this.amountProduct = 1;
+        }
+
+        if (this.searchMode) {
+          this.selectedProductValue = res;
+          this.inputQuantity.nativeElement.focus();
+          return;
+        } else {
+          this.handlePriceListProduct(res);
+        }
+      }
+    });
+    $event.target.value = '';
   }
 }
