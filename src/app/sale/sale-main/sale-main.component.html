@@ -46,7 +46,7 @@
               <div fxFlex="10" class="row-amount">
                 <div *ngIf="localItemInvoice?.is_return !== true; else changeAmount">
                   <div fxLayout="row wrap">
-                    <mat-form-field *ngIf="masterProduct?.product_parcels"
+                    <mat-form-field
                                     floatLabel="never" style="font-size: 20px; text-align: center">
                       <button matPrefix mat-icon-button class="row-button-edit-amount"
                               (click)="adjustAmountProduct(getProductIndex(masterProduct), 'up')">
@@ -56,7 +56,7 @@
                         matInput tabindex="3" min="0" class="row-amount-number" style="caret-color: red"
                         (change)="inputAmountProduct(getProductIndex(masterProduct), $event)"
                         [value]="masterProduct?.amount" autocomplete="off"
-                        [ngClass]="{'is_morethan_stock': masterProduct?.product_parcels[0] && (masterProduct?.product_parcels[0]?.quantity_of_stock<masterProduct.amount ) }"
+                        [ngClass]="{'is_morethan_stock': masterProduct && masterProduct?.product_parcels && masterProduct?.product_parcels[0] && (masterProduct?.product_parcels[0]?.quantity_of_stock<masterProduct.amount ) }"
                       />
                       <button matSuffix mat-icon-button class="row-button-edit-amount"
                               (click)="adjustAmountProduct(getProductIndex(masterProduct), 'down')">
@@ -76,7 +76,7 @@
                              class="row-amount-number"
                              (input)="inputAmountProductReturn(getProductIndex(masterProduct), $event)"
                              value="{{ masterProduct?.amount }}" autocomplete="off"
-                             [ngClass]="{'is_morethan_stock': masterProduct.product_parcels[0] &&( masterProduct?.product_parcels[0]?.quantity_of_stock<masterProduct.amount ) }"
+                             [ngClass]="{'is_morethan_stock': masterProduct && masterProduct?.product_parcels && masterProduct.product_parcels[0] &&( masterProduct?.product_parcels[0]?.quantity_of_stock<masterProduct.amount ) }"
                       />
 
                       <button matSuffix mat-icon-button class="row-button-edit-amount"

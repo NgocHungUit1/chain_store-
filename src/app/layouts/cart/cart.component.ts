@@ -436,6 +436,5 @@ export class CartComponent implements OnInit, OnDestroy {
         }
       }
     });
-    $event.target.value = '';
   }
 }
