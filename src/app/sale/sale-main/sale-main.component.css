@@ -97,9 +97,6 @@ html .page-wrapper .page-content {
   Sub item row (inside the master row)
    */
 }
-.product-cart .product-item:hover {
-  background-color: #ececec;
-}
 .product-cart .product-item .note-area {
   position: absolute;
   top: calc(100% + 4px);
@@ -248,7 +245,7 @@ html .page-wrapper .page-content {
 }
 .product-cart .product-item.master-item-row:hover {
   border: #00897b 1px solid;
-  box-shadow: 0 0.2rem 1rem rgba(0, 0, 0, 0.08);
+  box-shadow: 0 0.8rem 0.8rem rgba(0, 128, 128, 0.3);
 }
 .product-cart .product-item.sub-item-row {
   background-color: transparent;

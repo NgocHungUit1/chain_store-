@@ -73,9 +73,9 @@ html .page-wrapper .page-content {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    &:hover {
-      background-color: #ececec;
-    }
+    //&:hover {
+    //  background-color: #ececec;
+    //}
 
     /**
     Popup behind the more_vert icon
@@ -267,7 +267,7 @@ html .page-wrapper .page-content {
       }
       &:hover{
         border: #00897b 1px solid;
-        box-shadow: 0 0.2rem 1rem rgba(0, 0, 0, 0.08);
+        box-shadow: 0 0.8rem 0.8rem rgba(0, 128, 128, 0.3);
       }
     }
     /**
