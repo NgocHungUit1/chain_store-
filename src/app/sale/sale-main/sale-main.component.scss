@@ -73,9 +73,9 @@ html .page-wrapper .page-content {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    &:hover {
-      background-color: #ececec;
-    }
+    //&:hover {
+    //  background-color: #ececec;
+    //}
 
     /**
     Popup behind the more_vert icon
@@ -259,9 +259,15 @@ html .page-wrapper .page-content {
      */
     &.master-item-row {
       border: 1px solid #eaeaea;
+      box-shadow: 0 0.5rem 0.5rem rgba(0, 128, 128, 0.2);
+      margin-bottom: 0.5px;
       .row-product-note {
         position: relative;
         top: -8px;
+      }
+      &:hover{
+        border: #00897b 1px solid;
+        box-shadow: 0 0.8rem 0.8rem rgba(0, 128, 128, 0.3);
       }
     }
     /**
@@ -271,6 +277,7 @@ html .page-wrapper .page-content {
       background-color: transparent;
       border-radius:  0 !important;
       box-shadow: none;
+
       position: relative;
       width: 100%;
       padding-bottom: 15px;
