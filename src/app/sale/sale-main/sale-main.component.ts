@@ -2184,9 +2184,9 @@ export class SaleMainComponent implements OnInit {
         base_unit: element.base_unit,
 
         // new parcel, add row task
-        parcel_no: element.product_parcels[0]?.parcel_no,
-        is_sub_item: element.product.is_sub_item,
-        master_product_id: element.product.master_product_id,
+        parcel_no: element?.product_parcels?.[0]?.parcel_no,
+        is_sub_item: element?.product?.is_sub_item,
+        master_product_id: element?.product?.master_product_id,
       });
     });
 

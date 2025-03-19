@@ -157,6 +157,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   expensesTransactions: ExpensesTransaction[] = [];
   optionStore_transaction_expenses: OptionStore;
   tempProductId = null;
+  barcode: string;
 
   searchMode = localStorage.getItem('importForm-searchMode') ? JSON.parse(localStorage.getItem('importForm-searchMode')) : false;
   submitted = false;
@@ -2111,6 +2112,30 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     } else {
       this.shownNotes.add(i);
     }
+  }
+
+  enterBarcode($event) {
+    this.barcode = $event.target.value;
+    // console.log(this.barcode);
+    this.productSer.addproductBarcode(this.barcode).subscribe(res => {
+      // console.log(res);
+      if (res['errors']) {
+        this.notifySer.notify('warning', res['errors']);
+      }
+      if (res !== null) {
+        // if (this.amountProduct === null) {
+        //   this.amountProduct = 1;
+        // }
+
+        // if (this.searchMode) {
+        //   this.selectedProductValue = res;
+        //   this.inputQuantity.nativeElement.focus();
+        //   return;
+        // } else {
+        this.onSelectedProduct(res);
+        // }
+      }
+    });
   }
   // end coding
 }

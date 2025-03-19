@@ -10,7 +10,7 @@
                         class='search-input'>
           <input
           #inputField
-          type="text" [formControl]="selectProduct" matInput [matAutocomplete]="chooseProduct"
+          type="text" [formControl]="selectProduct" matInput [matAutocomplete]="chooseProduct" (keydown.enter)="enterBarcode($event)"
                  placeholder="Tìm hàng hóa theo mã hoặc tên">
           <button mat-icon-button matPrefix>
             <mat-icon>search</mat-icon>
