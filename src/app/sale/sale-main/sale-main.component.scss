@@ -20,7 +20,12 @@ html .page-wrapper .page-content {
 }
 
 .sidebar-order-bottom {
-  min-height: 160px; /* 67px (payment button) + 10px (margin-bottom) + ~60px (support/help content) */
+  // min-height: 160px; /* 67px (payment button) + 10px (margin-bottom) + ~60px (support/help content) */
+  position: fixed;
+  z-index: 1;
+  bottom: 0px;
+  right: 15px;
+  width: 29%;
 }
 
 .sidebar-order-bottom-buttons {
@@ -602,7 +607,7 @@ Popup parcel list
       &.time-picker {
         .mat-form-field-wrapper {
           font-size: 11px;
-          padding: 4px !important;
+          padding: 3.8px !important;
         }
       }
     }
