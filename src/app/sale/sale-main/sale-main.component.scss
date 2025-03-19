@@ -19,13 +19,15 @@ html .page-wrapper .page-content {
   height: calc(100% - 12px);
 }
 
+.sidebar-order-top{
+  max-height: 600px; /* Adjust this value */
+  overflow-y: auto; /* Add a scrollbar if content exceeds max-height */
+  overflow-x: hidden; /* Hide the horizontal scrollbar */
+}
 .sidebar-order-bottom {
+  margin-top: auto;
   // min-height: 160px; /* 67px (payment button) + 10px (margin-bottom) + ~60px (support/help content) */
-  position: fixed;
-  z-index: 1;
-  bottom: 0px;
-  right: 15px;
-  width: 29%;
+  z-index: 100;
 }
 
 .sidebar-order-bottom-buttons {
