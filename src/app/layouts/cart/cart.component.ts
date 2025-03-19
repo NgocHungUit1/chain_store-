@@ -253,7 +253,7 @@ export class CartComponent implements OnInit, OnDestroy {
     
     if(this.searchMode){
       this.selectedProductValue = product;
-      this.inputQuantity.nativeElement.focus();
+      this.inputQuantity.nativeElement.select();
       return;
     }
 
@@ -432,7 +432,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
         if (this.searchMode) {
           this.selectedProductValue = res;
-          this.inputQuantity.nativeElement.focus();
+          // this.inputQuantity.nativeElement.focus();
           this.inputQuantity.nativeElement.select();
           return;
         } else {
