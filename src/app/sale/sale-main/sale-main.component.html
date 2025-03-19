@@ -421,12 +421,13 @@
       <!-- <app-sale-siderbar-order></app-sale-siderbar-order> -->
       <!---------------------------------------  SALE-SIDER-BAR-ORDER ------------------------------------------>
       <div class="main-sale-sidebar-order">
-        <form [formGroup]="form">
+        <form [formGroup]="form" style="height: 100%;">
           <div
             class="d-flex"
             style="
               flex-direction: column;
               justify-content: space-between;
+              height: 94%;
             ">
             <!-- top -->
             <div class="sidebar-order-top">
@@ -620,7 +621,7 @@
               <ng-template #titleHoaDon>
                 <label class="mat-h3 "> Trả hàng </label>
               </ng-template>
-            </div>-->
+              </div>-->
 
               <!-- <mat-divider></mat-divider> -->
 
@@ -1036,7 +1037,6 @@
                     In số lô
                   </mat-slide-toggle>
                 </span> -->
-              </div>
             </div>
             <!-- top -->
 
@@ -1076,11 +1076,11 @@
                 </ng-template>
               </div>
               <div style = "display: flex; justify-content: center; align-items: center; color: #009688;">
-                <div class="support-content" style = "display: flex; justify-content: center; align-items: center; margin-top: 13px;">
+                <div class="support-content" style = "display: flex; justify-content: center; align-items: center;">
                     <mat-icon style ="font-size: 24px; margin-right: 5px;">phone</mat-icon>
                     Hỗ trợ KH 0972 574 506
                 </div>
-
+  
                 <button mat-button style = "padding-left: 0px; padding-right: 0px" (click)="clickHelp()">
                   <mat-icon style="margin-right: 5px;">help</mat-icon>
                   <span>Hướng dẫn sử dụng</span>
@@ -1088,6 +1088,7 @@
               </div>
             </div>
             <!-- bottom -->
+          </div>
           <!-- </div> -->
         </form>
       </div>
