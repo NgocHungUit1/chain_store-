@@ -415,6 +415,9 @@ export class CartComponent implements OnInit, OnDestroy {
 
   
   onkeydown($event) {
+    if (isNaN($event.target.value)) {
+      return;
+    }
     this.barcode = $event.target.value;
     // console.log(this.barcode);
     this.productSer.addproductBarcode(this.barcode).subscribe(res => {
@@ -430,11 +433,13 @@ export class CartComponent implements OnInit, OnDestroy {
         if (this.searchMode) {
           this.selectedProductValue = res;
           this.inputQuantity.nativeElement.focus();
+          this.inputQuantity.nativeElement.select();
           return;
         } else {
           this.handlePriceListProduct(res);
         }
       }
-    });
+    }); 
+    $event.target.value = '';
   }
 }

@@ -432,7 +432,7 @@
             <div class="sidebar-order-top">
               <div class="user-action">
                 <div fxLayout="row wrap">
-                  <div fxFlex="49">
+                  <div fxFlex="58">
                     <mat-form-field>
                       <input
                         class="input-search-user input-search"
@@ -458,7 +458,7 @@
                     </mat-form-field>
                   </div>
                   <div fxFlex="2"></div>
-                  <div fxFlex="49">
+                  <div fxFlex="40">
                     <div fxLayout="row wrap flex-end">
                       <div fxFlex.gt-sm="40" fxFlex.gt-xs="49" fxFlex="100">
                         <mat-form-field class="date-picker">
@@ -1044,7 +1044,7 @@
             <div class="sidebar-order-bottom">
               <div class="sidebar-order-bottom-buttons">
                 <button
-                  style="width: 60px; background-color: gray !important;"
+                  style="width: 80px; background-color: gray !important;"
                   mat-button
                   class="payment-button"
                   (click)="printPreInvoiceHandler()">
@@ -1075,14 +1075,14 @@
                   </button>
                 </ng-template>
               </div>
-              <div style = "display: flex; justify-content: center; align-items: center;">
+              <div style = "display: flex; justify-content: center; align-items: center; color: #009688; position: fixed; z-index: 1; bottom: 0px; right: 15px;">
                 <div class="support-content" style = "display: flex; justify-content: center; align-items: center; margin-top: 13px;">
-                    <mat-icon style ="font-size: 24px;">phone</mat-icon>
+                    <mat-icon style ="font-size: 24px; margin-right: 5px;">phone</mat-icon>
                     Hỗ trợ KH 0972 574 506
                 </div>
 
                 <button mat-button style = "padding-left: 0px; padding-right: 0px" (click)="clickHelp()">
-                  <mat-icon>help</mat-icon>
+                  <mat-icon style="margin-right: 5px;">help</mat-icon>
                   <span>Hướng dẫn sử dụng</span>
                 </button>
               </div>
