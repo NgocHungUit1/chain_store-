@@ -183,6 +183,24 @@ const MENUITEMS = [
       {state: 'debt-suppliers', name: 'Công nợ trả', type: 'link', icon: 'money_off', permissions: ['Report.Supplier-Debt']},
     ]
   },
+  {
+    state: 'follow-book',
+    name: 'Sổ theo dõi',
+    type: 'sub',
+    icon: 'library_books',
+    permissions: ['Report.Stock', 'Report.Product-Sale',
+      'Warehouse-Product-Parcel.Expiration', 'Option-Store.Update',
+      'Store.Upload-Logo', 'Branch.Update-Connect',
+      'Store.Update-Info'
+      , 'Report.Export-Import-Detail'
+      , 'Group.Report'
+      , 'Report.Customers-Debt'
+      , 'Invoice.End-Day-Report'
+    ],
+    children: [
+      {state: 'quanlity-control', name: 'Kiểm soát chất lượng', type: 'link', icon: 'brightness_1', permissions: ['Invoice.End-Day-Report']},
+    ]
+  },
   // {
   //     state: 'material',
   //     name: 'Ui',
