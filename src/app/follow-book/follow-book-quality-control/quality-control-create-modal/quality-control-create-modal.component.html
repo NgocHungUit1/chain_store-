@@ -1,0 +1,149 @@
+<div class="modal-container">
+  <mat-toolbar color="primary" class="modal-header">
+    <span>Tạo mới kiểm soát chất lượng</span>
+    <span class="spacer"></span>
+    <button mat-icon-button (click)="onClose()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <div class="modal-content">
+    <div class="main-section">
+      <div class="search-container">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Tìm kiếm sản phẩm theo tên, mã sản phẩm, mã vạch</mat-label>
+          <input matInput [formControl]="mainForm.get('productSearch')" autocomplete="off">
+          <mat-spinner matSuffix diameter="20" *ngIf="isLoading"></mat-spinner>
+          <button mat-icon-button matSuffix *ngIf="!isLoading">
+            <mat-icon>search</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <!-- Dropdown kết quả tìm kiếm -->
+        <div class="search-results" *ngIf="searchResults.length > 0">
+          <div class="search-result-item" *ngFor="let product of searchResults" (click)="selectProduct(product)">
+            <div class="product-code">{{product.product_no}}</div>
+            <div class="product-name">{{product.product_name}}</div>
+            <div class="product-quantity">SL: {{product.quantity?.number || 0}} {{product.base_unit}}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="quality-control-table">
+          <thead>
+            <tr>
+              <th>STT</th>
+              <th>Mã/Tên sản phẩm</th>
+              <th>Lô-HSD</th>
+              <th>Số lượng</th>
+              <th>Đơn vị tính</th>
+              <th>Lý do</th>
+              <th>Nhận xét chất lượng</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of productRows">
+              <td>{{row.index}}</td>
+              <td>
+                <div class="product-info">
+                  <div class="product-code">{{row.productNo}}</div>
+                  <div class="product-name">{{row.productName}}</div>
+                </div>
+              </td>
+              <td>
+                <mat-form-field appearance="outline" class="lot-select">
+                  <mat-select [(ngModel)]="row.selectedLot" (selectionChange)="onLotChange(row)">
+                    <mat-option *ngFor="let lot of row.lotOptions" [value]="lot.parcel_no">
+                      {{formatLotDisplay(lot)}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </td>
+              <td>
+                <input type="text" [(ngModel)]="row.quantity" readonly class="form-input" [title]="'Số lượng tồn: ' + row.quantityOfStock">
+              </td>
+              <td>
+                <input type="text" [(ngModel)]="row.unit" readonly class="form-input">
+              </td>
+              <td>
+                <mat-form-field appearance="outline" class="full-width">
+                  <input type="text" matInput [(ngModel)]="row.reason"
+                         [matAutocomplete]="reasonAuto"
+                         placeholder="Nhập lý do">
+                  <mat-autocomplete #reasonAuto="matAutocomplete">
+                    <mat-option *ngFor="let option of reasonOptions" [value]="option">
+                      {{option}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field appearance="outline" class="full-width">
+                  <input type="text" matInput [(ngModel)]="row.qualityNote"
+                         [matAutocomplete]="qualityAuto"
+                         placeholder="Nhập nhận xét">
+                  <mat-autocomplete #qualityAuto="matAutocomplete">
+                    <mat-option *ngFor="let option of qualityNoteOptions" [value]="option">
+                      {{option}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </td>
+              <td>
+                <button mat-icon-button color="warn" (click)="removeRow(row.index)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="info-section" [formGroup]="infoForm">
+      <h3>THÔNG TIN PHIẾU</h3>
+      <div class="info-form">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Ngày</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="date">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Loại thời gian</mat-label>
+            <mat-select formControlName="timeType">
+              <mat-option value="Ngày">Ngày</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Tiêu đề</mat-label>
+          <input matInput formControlName="title">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Lý do</mat-label>
+          <textarea matInput formControlName="reason" rows="3"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Ghi chú</mat-label>
+          <textarea matInput formControlName="note" rows="3"></textarea>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+
+  <mat-toolbar class="modal-footer">
+    <span class="spacer"></span>
+    <button mat-raised-button (click)="onClose()" class="mr-2">Trở về</button>
+    <button mat-raised-button color="primary" (click)="onSubmit()">Lưu</button>
+  </mat-toolbar>
+</div>

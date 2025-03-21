@@ -11,49 +11,141 @@
               Thời gian
             </mat-panel-title>
           </mat-expansion-panel-header>
-        </mat-expansion-panel>
 
+          <form [formGroup]="timeFilter">
+            <mat-radio-group (change)="radioTimeChange($event)"
+                           color='primary' formControlName="typeTime">
+              <mat-radio-button style="display: block; margin-bottom: 10px;" value="default"
+                              (click)="openTimeDefault()">
+                {{ titleTimeDefault }}
+                <button mat-icon-button aria-label="add">
+                  <mat-icon>swap_vert</mat-icon>
+                </button>
+              </mat-radio-button>
 
-        <mat-expansion-panel [expanded]="true">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              Loại chứng từ
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-
-
+              <mat-radio-button style="display: block;" value="choose"
+                              (click)="openTimeChoose()">
+                {{ titleTimeChoose }}
+                <button mat-icon-button aria-label="add">
+                  <mat-icon>date_range</mat-icon>
+                </button>
+              </mat-radio-button>
+            </mat-radio-group>
+          </form>
         </mat-expansion-panel>
       </mat-accordion>
     </div>
-
   </mat-sidenav>
+
   <mat-sidenav-content>
     <mat-toolbar class="dv-header">
       <button mat-icon-button (click)="leftside.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
 
-      <span fxFlex="1 1 0%"></span>
+      <h3 class="page-title">SỐ KIỂM SOÁT CHẤT LƯỢNG ĐỊNH KỲ VÀ ĐỘT XUẤT</h3>
 
-      <button mat-raised-button color="primary" [matMenuTriggerFor]="createMenu" style="margin-right: 10px">
+      <span class="spacer"></span>
+
+      <button mat-raised-button color="primary" (click)="openCreateModal()" style="margin-right: 10px">
         <mat-icon>add</mat-icon>
         Tạo mới
       </button>
+
       <div class="diva-column-select">
         <button mat-raised-button color="primary" (click)="selectColumn.toggle();">
           <mat-icon>menu</mat-icon>
         </button>
         <mat-select [(ngModel)]="displayedColumns" #selectColumn [multiple]="true"
-                    style="width: 100%; display: inline-flex; margin-left: -20px; color: white" placeholder="Chọn cột">
+                    style="width: 100%; display: inline-flex; margin-left: -20px; color: white">
           <mat-option *ngFor="let column of columnsToDisplay" [value]="column">{{columnsHeader[column]}}</mat-option>
         </mat-select>
       </div>
-      <button style="margin-left: 10px" mat-raised-button color="primary" (click)="loadData()">
+
+      <button style="margin-left: 10px"
+              mat-raised-button
+              color="primary"
+              (click)="refreshData()">
         <mat-icon>refresh</mat-icon>
         Làm mới
       </button>
     </mat-toolbar>
 
+    <div class="table-container">
+      <div class="loading-shade" *ngIf="isLoadingResults">
+        <mat-spinner></mat-spinner>
+      </div>
 
+      <table mat-table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="stt">
+          <th mat-header-cell *matHeaderCellDef>STT</th>
+          <td mat-cell *matCellDef="let row">{{row.stt}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="no">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Tên số</th>
+          <td mat-cell *matCellDef="let row">{{row.title}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Ngày thực hiện</th>
+          <td mat-cell *matCellDef="let row">{{row.date | date:'dd/MM/yyyy'}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="reason">
+          <th mat-header-cell *matHeaderCellDef>Lý do</th>
+          <td mat-cell *matCellDef="let row">{{row.reason}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="note">
+          <th mat-header-cell *matHeaderCellDef>Ghi chú</th>
+          <td mat-cell *matCellDef="let row">{{row.note}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Trạng thái</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="status-badge" [ngClass]="row.status === 10 ? 'status-success' : 'status-warning'">
+              {{getStatusText(row.status)}}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Hành động</th>
+          <td mat-cell *matCellDef="let row">
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+              <mat-icon>settings</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="openDetailModal(row)">
+                <mat-icon color="primary">info</mat-icon>
+                <span>Chi tiết</span>
+              </button>
+              <button mat-menu-item (click)="openEditModal(row)">
+                <mat-icon color="primary">edit</mat-icon>
+                <span>Sửa</span>
+              </button>
+              <button mat-menu-item (click)="exportToExcel(row)">
+                <mat-icon color="primary">file_download</mat-icon>
+                <span>Xuất</span>
+              </button>
+              <button mat-menu-item (click)="deleteQualityCheck(row)">
+                <mat-icon color="warn">delete</mat-icon>
+                <span>Xóa</span>
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <mat-paginator [length]="totalItems"
+                    [pageSize]="10"
+                    [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
+    </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

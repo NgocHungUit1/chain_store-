@@ -1,0 +1,19 @@
+<div class="confirm-dialog">
+  <h2 mat-dialog-title>{{ data.title }}</h2>
+
+  <mat-dialog-content>
+    <div class="content-message">
+      <p>{{ data.content }}</p>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onNoClick()">Bỏ qua</button>
+    <button mat-raised-button
+            color="warn"
+            (click)="onYesClick()"
+            [mat-dialog-close]="{event: 'confirm'}">
+      Đồng ý
+    </button>
+  </mat-dialog-actions>
+</div>
