@@ -129,6 +129,7 @@ const MENUITEMS = [
       {state: 'branch', name: 'Chi nhánh', type: 'link', icon: 'business', permissions: ['Branch.List']},
       {state: 'timesheet', name: 'Chấm công', type: 'link', icon: 'calendar_today', permissions: ['Timesheet.List']},
       {state: 'pay-sheet', name: 'Bảng tính lương', type: 'link', icon: 'assessment', permissions: ['Pay-Sheet.List']},
+      {state: 'bank-account', name: 'Tài khoản ngân hàng', type: 'link', icon: 'account_balance_wallet', permissions: ['Bank-Account.List']},
       {state: 'common', name: 'Thiết lập chung', type: 'link', icon: 'settings', permissions: [
         'Option-Store.Update',
           'Store.Upload-Logo', 'Branch.Update-Connect',
