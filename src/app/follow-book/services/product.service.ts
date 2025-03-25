@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { Product } from '../models/product.interface';
 import { Parcel } from '../models/parcel.interface';
 import { QualityControlRequest } from '../models/quality-control.interface';
@@ -10,7 +11,7 @@ import { QualityCheck, QualityCheckResponse, QualityCheckFilter, QualityCheckDet
   providedIn: 'root'
 })
 export class ProductService {
-  private baseUrl = 'http://localhost:31080/v1';
+  private baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
@@ -35,23 +36,24 @@ export class ProductService {
     return this.http.post(`${this.baseUrl}/quality-check/create-with-details`, data);
   }
 
-  getQualityChecks(filter: QualityCheckFilter): Observable<HttpResponse<any>> {
+  getQualityChecks(filter?: QualityCheckFilter): Observable<HttpResponse<any>> {
     const url = this.baseUrl + '/quality-check' + this.getApiUrl(filter);
-    return this.http.get<QualityCheckResponse>(url, {observe: 'response'});
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
-  getApiUrl(filter?: QualityCheckFilter) {
+  getApiUrl(filter?: any): string {
+    if (!filter) {
+      return '';
+    }
+
     if (!filter.page) {
       filter.page = 1;
     }
-
     if (!filter.pageSize) {
-      filter.pageSize = 20;
+      filter.pageSize = 15;
     }
 
-    let url = '?' + filter.toFilterString();
-
-    return url;
+    return '?' + filter.toFilterString();
   }
 
   getQualityCheckDetail(id: number): Observable<any> {
