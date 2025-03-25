@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Product } from '../models/product.interface';
 import { Parcel } from '../models/parcel.interface';
@@ -35,8 +35,23 @@ export class ProductService {
     return this.http.post(`${this.baseUrl}/quality-check/create-with-details`, data);
   }
 
-  getQualityChecks(filter: QualityCheckFilter): Observable<QualityCheckResponse> {
-    return this.http.get<QualityCheckResponse>(`${this.baseUrl}/quality-check`, { params: filter as any });
+  getQualityChecks(filter: QualityCheckFilter): Observable<HttpResponse<any>> {
+    const url = this.baseUrl + '/quality-check' + this.getApiUrl(filter);
+    return this.http.get<QualityCheckResponse>(url, {observe: 'response'});
+  }
+
+  getApiUrl(filter?: QualityCheckFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '?' + filter.toFilterString();
+
+    return url;
   }
 
   getQualityCheckDetail(id: number): Observable<any> {

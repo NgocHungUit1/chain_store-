@@ -37,7 +37,7 @@
     </div>
   </mat-sidenav>
 
-  <mat-sidenav-content>
+  <mat-sidenav-content style="height: unset;">
     <mat-toolbar class="dv-header">
       <button mat-icon-button (click)="leftside.toggle()">
         <mat-icon>menu</mat-icon>
@@ -142,10 +142,13 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
 
-      <mat-paginator [length]="totalItems"
-                    [pageSize]="10"
-                    [pageSizeOptions]="[5, 10, 25, 100]">
-      </mat-paginator>
+      <mat-paginator #paginator
+                         [length]='pageTotalCount'
+                         [pageSize]='pageSize'
+                         [pageSizeOptions]='pageSizeOptions'
+                         (page)='onMatPageChange($event)'
+                         [pageIndex]='page - 1'
+                         showFirstLastButtons></mat-paginator>
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

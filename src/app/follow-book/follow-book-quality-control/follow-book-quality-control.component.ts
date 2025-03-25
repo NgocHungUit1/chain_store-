@@ -13,13 +13,26 @@ import { DatetimeChooseFilterDialogComponent } from '../components/datetime-choo
 import { QualityControlDetailModalComponent } from './quality-control-detail-modal/quality-control-detail-modal.component';
 import { PopupConfirmDialogComponent } from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 import { NotifierService } from 'angular-notifier';
+import { ListComponentBase } from '../../shared/base';
+import { ActivatedRoute } from '@angular/router';
+import { Quantity } from '../../product/product.model';
 
 @Component({
   selector: 'app-follow-book-quality-control',
   templateUrl: './follow-book-quality-control.component.html',
   styleUrls: ['./follow-book-quality-control.component.scss']
 })
-export class FollowBookQualityControlComponent implements OnInit, AfterViewInit {
+export class FollowBookQualityControlComponent extends ListComponentBase implements OnInit {
+  constructor(
+    private dialog: MatDialog,
+    private route: ActivatedRoute,
+    private productService: ProductService,
+    private fb: FormBuilder,
+    private notifyService: NotifierService
+  ) {
+    super();
+    this.initTimeFilter();
+  }
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -45,15 +58,7 @@ export class FollowBookQualityControlComponent implements OnInit, AfterViewInit 
   titleTimeChoose = '1/3/2025 - 20/3/2025';
   dateFrom: Date = new Date();
   dateTo: Date = new Date();
-
-  constructor(
-    private dialog: MatDialog,
-    private productService: ProductService,
-    private fb: FormBuilder,
-    private notifyService: NotifierService
-  ) {
-    this.initTimeFilter();
-  }
+  apiFilter: QualityCheckFilter;
 
   private initTimeFilter() {
     this.timeFilter = this.fb.group({
@@ -95,9 +100,7 @@ export class FollowBookQualityControlComponent implements OnInit, AfterViewInit 
             this.dateTo = today;
             break;
         }
-        this.loadData().subscribe(response => {
-          this.handleDataResponse(response);
-        });
+        this.loadData();
       }
     });
   }
@@ -117,9 +120,7 @@ export class FollowBookQualityControlComponent implements OnInit, AfterViewInit 
         this.dateFrom = new Date(result.fromDate);
         this.dateTo = new Date(result.toDate);
         this.titleTimeChoose = this.formatDisplayDate(this.dateFrom) + ' - ' + this.formatDisplayDate(this.dateTo);
-        this.loadData().subscribe(response => {
-          this.handleDataResponse(response);
-        });
+        this.loadData();
       }
     });
   }
@@ -132,29 +133,30 @@ export class FollowBookQualityControlComponent implements OnInit, AfterViewInit 
   }
 
   ngOnInit(): void {
-    this.loadData().subscribe(response => {
-      this.handleDataResponse(response);
-    });
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
   }
 
-  ngAfterViewInit() {
-    // If you need to react to sort changes
-    this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
-
-    merge(this.sort.sortChange, this.paginator.page, this.dateControl.valueChanges)
-      .pipe(
-        startWith({}),
-        switchMap(() => {
-          this.isLoadingResults = true;
-          return this.loadData();
-        }),
-        catchError(() => {
-          this.isLoadingResults = false;
-          return observableOf({ data: [], total: 0 });
-        })
-      ).subscribe(response => {
-        this.handleDataResponse(response);
-      });
+  /**
+   * Tạo lại bộ filter
+   * @returns
+   */
+  buildFilterFromParams():QualityCheckFilter{
+    function write<K extends keyof QualityCheckFilter>(arg: QualityCheckFilter, key: K, value: QualityCheckFilter[K]): void {
+      arg[key] = value;
+    }
+    const filter = new QualityCheckFilter();
+    const objectKeys = Object.keys(filter) as Array<keyof QualityCheckFilter>;
+    for (const attr of objectKeys) {
+      write(filter, attr, this.route.snapshot.queryParams['QualityFilterCheckSearch[' + attr + ']']);
+    }
+    filter.page = this.route.snapshot.queryParams['page'];
+    filter.pageSize = this.route.snapshot.queryParams['pageSize'];
+    filter.sort = this.route.snapshot.queryParams['sort'];
+    filter.date_from = this.route.snapshot.queryParams['QualityCheckSearch[date_from]'];
+    filter.date_to = this.route.snapshot.queryParams['QualityCheckSearch[date_to]'];
+    filter.status = 10; // sao lại để 10 không thấy đổi
+    return filter;
   }
 
   private handleDataResponse(response: any) {
@@ -171,17 +173,25 @@ export class FollowBookQualityControlComponent implements OnInit, AfterViewInit 
     }
   }
 
-  loadData() {
-    const filter: QualityCheckFilter = {
-      page: this.paginator?.pageIndex + 1 || 1,
-      pageSize: this.paginator?.pageSize || 10,
-      sort: this.sort?.active ? `${this.sort.active},${this.sort.direction}` : undefined,
-      'QualityCheckSearch[date_from]': this.formatDate(this.dateFrom),
-      'QualityCheckSearch[date_to]': this.formatDate(this.dateTo),
-      'QualityCheckSearch[status]': 10
-    };
-
-    return this.productService.getQualityChecks(filter);
+  /**
+   * Ghi đè lại lớp BaseModel để gọi lại data
+   */
+  loadData():void {
+    this.apiFilter.date_from = this.formatDate(this.dateFrom);
+    this.apiFilter.date_to = this.formatDate(this.dateTo);
+    this.productService.getQualityChecks(this.apiFilter).subscribe(res => {
+      this.isLoadingResults = false;
+      let data = res.body;
+      if (data && Array.isArray(data)) {
+        this.dataSource = data.map((item, index) => ({
+          ...item,
+          stt: index + 1
+        }));
+      } else {
+        this.dataSource = [];
+      }
+      this.reloadFilter(res);
+    });
   }
 
   openCreateModal(): void {
@@ -202,18 +212,8 @@ export class FollowBookQualityControlComponent implements OnInit, AfterViewInit 
 
   refreshData(): void {
     this.isLoadingResults = true;
-    this.paginator.pageIndex = 0;
-
-    const filter: QualityCheckFilter = {
-      page: 1,
-      pageSize: this.paginator?.pageSize || 10,
-      sort: this.sort?.active ? `${this.sort.active},${this.sort.direction}` : undefined,
-      'QualityCheckSearch[date_from]': this.formatDate(this.dateFrom),
-      'QualityCheckSearch[date_to]': this.formatDate(this.dateTo),
-      'QualityCheckSearch[status]': 10
-    };
-
-    this.productService.getQualityChecks(filter).subscribe({
+    this.apiFilter = this.buildFilterFromParams();
+    this.productService.getQualityChecks(this.apiFilter).subscribe({
       next: (response) => {
         this.handleDataResponse(response);
         this.notifyService.notify('success', 'Làm mới dữ liệu thành công');

@@ -1,3 +1,5 @@
+import { ApiFilterBase } from "../../shared/base";
+
 export interface QualityCheck {
   id: number;
   no: string;
@@ -20,13 +22,13 @@ export interface QualityCheckResponse {
   total: number;
 }
 
-export interface QualityCheckFilter {
-  page?: number;
-  pageSize?: number;
-  sort?: string;
-  'QualityCheckSearch[date_from]'?: string;
-  'QualityCheckSearch[date_to]'?: string;
-  'QualityCheckSearch[status]'?: number;
+export class QualityCheckFilter extends ApiFilterBase{
+  date_from = '';
+  date_to = '';
+  status = 10
+  getModelSearch() {
+    return 'QualityCheckSearch';
+  }
 }
 
 export enum QualityCheckStatus {
@@ -35,8 +37,8 @@ export enum QualityCheckStatus {
 }
 
 export interface QualityCheckDetail {
-  id?: number;
-  quality_check_id?: number;
+  id: number|null;
+  quality_check_id: number|null;
   product_id: number;
   warehouse_product_parcel_id: string;
   parcel_no: string;
