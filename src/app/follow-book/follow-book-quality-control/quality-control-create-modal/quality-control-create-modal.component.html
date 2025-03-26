@@ -10,14 +10,20 @@
   <div class="modal-content">
     <div class="main-section">
       <div class="search-container">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Tìm kiếm sản phẩm theo tên, mã sản phẩm, mã vạch</mat-label>
-          <input matInput [formControl]="mainForm.get('productSearch')" autocomplete="off">
-          <mat-spinner matSuffix diameter="20" *ngIf="isLoading"></mat-spinner>
-          <button mat-icon-button matSuffix *ngIf="!isLoading">
+        <div class="simple-search-input">
+          <span class="search-icon">
             <mat-icon>search</mat-icon>
-          </button>
-        </mat-form-field>
+          </span>
+          <input
+            #searchInput
+            type="text"
+            placeholder="Tìm kiếm sản phẩm theo tên, mã sản phẩm, mã vạch"
+            (input)="onSearchInput($event)"
+          >
+          <span class="spinner-wrapper" *ngIf="isLoading">
+            <mat-spinner diameter="20"></mat-spinner>
+          </span>
+        </div>
 
         <!-- Dropdown kết quả tìm kiếm -->
         <div class="search-results" *ngIf="searchResults.length > 0">
@@ -89,6 +95,7 @@
                       {{option}}
                     </mat-option>
                   </mat-autocomplete>
+                  <mat-hint *ngIf="!row.qualityNote">Mặc định: Đạt</mat-hint>
                 </mat-form-field>
               </td>
               <td>

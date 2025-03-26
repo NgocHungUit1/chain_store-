@@ -92,7 +92,7 @@ export class FollowBookQualityControlComponent extends ListComponentBase impleme
   buildFilterFromParams(): QualityCheckFilter {
     const filter = new QualityCheckFilter();
     filter.page = this.page || 1;
-    filter.pageSize = this.pageSize || 15;
+    filter.pageSize = this.pageSize || 10;
     filter.expand = 'total';
     filter.status = 10;
 

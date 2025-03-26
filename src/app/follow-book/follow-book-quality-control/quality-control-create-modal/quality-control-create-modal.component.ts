@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ProductService } from '../../services/product.service';
@@ -39,6 +39,7 @@ export class QualityControlCreateModalComponent implements OnInit {
   productRows: ProductRow[] = [];
   currentIndex = 1;
   isEdit = false;
+  defaultQualityNote = 'Đạt';
 
   // Thêm các tùy chọn cứng
   reasonOptions = [
@@ -61,6 +62,9 @@ export class QualityControlCreateModalComponent implements OnInit {
     { value: 1, label: 'Đạt' },
     { value: 0, label: 'Không đạt' }
   ];
+
+  @ViewChild('searchInput') searchInput: ElementRef;
+  private searchTimer: any;
 
   constructor(
     private dialogRef: MatDialogRef<QualityControlCreateModalComponent>,
@@ -110,6 +114,14 @@ export class QualityControlCreateModalComponent implements OnInit {
           this.isLoading = false;
         }
       });
+
+    if (!this.isEdit) {
+      this.productRows.forEach(row => {
+        if (!row.qualityNote) {
+          row.qualityNote = 'Đạt';
+        }
+      });
+    }
   }
 
   async selectProduct(product: Product): Promise<void> {
@@ -128,16 +140,23 @@ export class QualityControlCreateModalComponent implements OnInit {
         quantityOfStock: '0',
         unit: product.base_unit,
         reason: '',
-        qualityNote: '',
-        result: 1, // Default to Đạt
-        qualityClassification: 'Loại A' // Default value
+        qualityNote: this.defaultQualityNote,
+        result: 1,
+        qualityClassification: 'Loại A'
       };
 
       this.productRows.push(newRow);
+
+      // Xóa kết quả tìm kiếm
       this.searchResults = [];
-      this.mainForm.get('productSearch')?.setValue('');
+
+      // Xóa input
+      if (this.searchInput && this.searchInput.nativeElement) {
+        this.searchInput.nativeElement.value = '';
+      }
     } catch (error) {
       console.error('Error fetching parcels:', error);
+      this.notifyService.notify('error', 'Có lỗi xảy ra khi lấy thông tin lô hàng');
     } finally {
       this.isLoading = false;
     }
@@ -201,6 +220,12 @@ export class QualityControlCreateModalComponent implements OnInit {
   }
 
   onSubmit(): void {
+    this.productRows.forEach(row => {
+      if (!row.qualityNote) {
+        row.qualityNote = 'Đạt';
+      }
+    });
+
     if (this.infoForm.valid && this.productRows.length > 0) {
       const formattedDate = this.formatDate(this.infoForm.get('date')?.value);
 
@@ -267,5 +292,60 @@ export class QualityControlCreateModalComponent implements OnInit {
 
   refreshData(): void {
     // Implementation of refreshData method
+  }
+
+  onSearchInput(event: Event) {
+    // Clear previous timer
+    if (this.searchTimer) {
+      clearTimeout(this.searchTimer);
+    }
+
+    // Get input value
+    const input = event.target as HTMLInputElement;
+    const keyword = input.value.trim();
+
+    // Set new timer with shorter delay
+    this.searchTimer = setTimeout(() => {
+      this.performSearch(keyword);
+    }, 100); // Giảm xuống 100ms thay vì 300ms
+  }
+
+  private performSearch(keyword: string) {
+    if (!keyword || keyword.length < 2) {
+      this.searchResults = [];
+      return;
+    }
+
+    this.isLoading = true;
+    this.productService.searchProducts(keyword).subscribe({
+      next: (results) => {
+        this.searchResults = results;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error searching products:', error);
+        this.searchResults = [];
+        this.isLoading = false;
+      }
+    });
+  }
+
+  @HostListener('document:click', ['$event'])
+  handleClickOutside(event: MouseEvent) {
+    const searchContainer = document.querySelector('.search-container');
+    const target = event.target as HTMLElement;
+
+    if (searchContainer && !searchContainer.contains(target)) {
+      this.searchResults = [];
+    }
+  }
+
+  ngAfterViewInit() {
+    // Focus vào input search sau khi modal được hiển thị
+    setTimeout(() => {
+      if (this.searchInput && this.searchInput.nativeElement) {
+        this.searchInput.nativeElement.focus();
+      }
+    }, 300);
   }
 }
