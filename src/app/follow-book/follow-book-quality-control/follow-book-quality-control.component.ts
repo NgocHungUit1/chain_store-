@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -6,16 +6,16 @@ import { ProductService } from '../services/product.service';
 import { QualityControlCreateModalComponent } from './quality-control-create-modal/quality-control-create-modal.component';
 import { QualityCheck, QualityCheckFilter } from '../models/quality-check.interface';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
-import { merge, of as observableOf } from 'rxjs';
-import { catchError, map, startWith, switchMap } from 'rxjs/operators';
-import { DatetimeDefaultFilterDialogComponent } from '../components/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
-import { DatetimeChooseFilterDialogComponent } from '../components/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
-import { QualityControlDetailModalComponent } from './quality-control-detail-modal/quality-control-detail-modal.component';
-import { PopupConfirmDialogComponent } from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 import { NotifierService } from 'angular-notifier';
 import { ListComponentBase } from '../../shared/base';
 import { ActivatedRoute } from '@angular/router';
-import { Quantity } from '../../product/product.model';
+import { QualityControlDetailModalComponent } from './quality-control-detail-modal/quality-control-detail-modal.component';
+import { PopupConfirmDialogComponent } from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
+import { debounceTime } from 'rxjs/operators';
+import * as moment from 'moment';
+import { DateFilter } from '../../invoice/invoice.model';
+import { DatetimeDefaultFilterDialogComponent } from '../components/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
+import { DatetimeChooseFilterDialogComponent } from '../components/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
 
 @Component({
   selector: 'app-follow-book-quality-control',
@@ -23,22 +23,6 @@ import { Quantity } from '../../product/product.model';
   styleUrls: ['./follow-book-quality-control.component.scss']
 })
 export class FollowBookQualityControlComponent extends ListComponentBase implements OnInit {
-  constructor(
-    private dialog: MatDialog,
-    private route: ActivatedRoute,
-    private productService: ProductService,
-    private fb: FormBuilder,
-    private notifyService: NotifierService
-  ) {
-    super();
-    this.initTimeFilter();
-  }
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
-
-  isLoadingResults = true;
-  dataSource: QualityCheck[] = [];
-  totalItems = 0;
 
   displayedColumns = ['stt', 'no', 'date', 'reason', 'note', 'status', 'actions'];
   columnsToDisplay = ['stt', 'no', 'date', 'reason', 'note', 'status', 'actions'];
@@ -52,54 +36,152 @@ export class FollowBookQualityControlComponent extends ListComponentBase impleme
     'actions': 'Hành động'
   };
 
-  dateControl = new FormControl(new Date());
-  timeFilter: FormGroup;
-  titleTimeDefault = 'Tháng này';
-  titleTimeChoose = '1/3/2025 - 20/3/2025';
-  dateFrom: Date = new Date();
-  dateTo: Date = new Date();
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+
+  isLoadingResults = false;
+  dataSource = [];
   apiFilter: QualityCheckFilter;
 
-  private initTimeFilter() {
-    this.timeFilter = this.fb.group({
-      typeTime: ['default']
+  // Search functionality
+  searchForm = new FormControl();
+
+  // Filter date từ base
+  timeFilter: FormGroup;
+  titleTimeDefault = 'Tháng này';
+  titleTimeChoose = 'Lựa chọn khác';
+  currentDateFilter: DateFilter;
+
+  constructor(
+    private dialog: MatDialog,
+    private route: ActivatedRoute,
+    private productService: ProductService,
+    private fb: FormBuilder,
+    private notifyService: NotifierService
+  ) {
+    super();
+  }
+
+  ngOnInit(): void {
+    this.initDateFilter();
+    this.buildFrom();
+    this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
+
+    // Setup search functionality
+    this.searchForm.valueChanges.pipe(debounceTime(300)).subscribe(value => {
+      if (value !== '') {
+        this.apiFilter = this.buildFilterFromParams();
+        this.apiFilter.search_string = value;
+        this.loadData();
+      } else {
+        this.apiFilter = this.buildFilterFromParams();
+        this.loadData();
+      }
     });
   }
 
-  radioTimeChange(event: any) {
-    if (this.timeFilter.get('typeTime').value === 'choose') {
-      const date_from = new Date(this.dateControl.value);
-      const date_to = new Date();
-      this.titleTimeChoose = this.formatDisplayDate(date_from) + ' - ' + this.formatDisplayDate(date_to);
-    } else {
-      this.titleTimeChoose = 'Lựa chọn khác';
+  buildFrom() {
+    this.timeFilter = this.fb.group({
+      typeTime: [
+        'default'
+      ],
+    });
+  }
+
+  buildFilterFromParams(): QualityCheckFilter {
+    const filter = new QualityCheckFilter();
+    filter.page = this.page || 1;
+    filter.pageSize = this.pageSize || 15;
+    filter.expand = 'total';
+    filter.status = 10;
+
+    // Thêm filter date - CHỈ khi không bỏ qua filter
+    if (this.currentDateFilter && !this.currentDateFilter.skip_filter) {
+      filter.date_from = this.currentDateFilter.date_from;
+      filter.date_to = this.currentDateFilter.date_to;
     }
+
+    return filter;
+  }
+
+  loadData(summary = true): void {
+    this.isLoadingResults = true;
+
+    this.productService.getQualityChecks(this.apiFilter).subscribe(res => {
+      if (res && res.body) {
+        this.dataSource = res.body;
+        let stt = 0;
+        this.dataSource.forEach(item => {
+          stt++;
+          item.stt = this.pageSize * (this.page - 1) + stt;
+        });
+
+        this.reloadFilter(res);
+      }
+      this.isLoadingResults = false;
+    }, error => {
+      console.error('Error loading data:', error);
+      this.isLoadingResults = false;
+    });
+  }
+
+  getStatusText(status: number): string {
+    return status === 10 ? 'Hoàn thành' : 'Chưa hoàn thành';
+  }
+
+  refreshData(): void {
+    this.loadData();
+  }
+
+  // Date filter methods
+  initDateFilter() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const first = new Date(year, month, 1);
+
+    this.currentDateFilter = {
+      title: 'Tháng này',
+      filter_key: 'thisMonth',
+      date_from: this.formatDate(first),
+      date_to: this.formatDate(today),
+      skip_filter: false
+    };
+
+    this.titleTimeDefault = this.currentDateFilter.title;
+    this.titleTimeChoose = 'Lựa chọn khác';
+  }
+
+  formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  convertDate(date: Date) {
+    const month = date.getMonth() + 1;
+    return date.getDate() + '/' + month + '/' + date.getFullYear();
   }
 
   openTimeDefault() {
     const dialogRef = this.dialog.open(DatetimeDefaultFilterDialogComponent, {
-      width: '40%',
-      minHeight: '80%'
+      width: '600px',
+      position: { top: '100px' },
+      panelClass: 'simple-dialog'
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result?.title) {
+      if (result) {
+        this.currentDateFilter = result;
         this.titleTimeDefault = result.title;
-        const today = new Date();
-        switch(result.value) {
-          case 'thisMonth':
-            this.dateFrom = new Date(today.getFullYear(), today.getMonth(), 1);
-            this.dateTo = today;
-            break;
-          case 'lastMonth':
-            this.dateFrom = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-            this.dateTo = new Date(today.getFullYear(), today.getMonth(), 0);
-            break;
-          case 'thisYear':
-            this.dateFrom = new Date(today.getFullYear(), 0, 1);
-            this.dateTo = today;
-            break;
-        }
+
+        this.timeFilter.patchValue({
+          typeTime: 'default',
+        });
+
+        this.apiFilter = this.buildFilterFromParams();
         this.loadData();
       }
     });
@@ -107,91 +189,35 @@ export class FollowBookQualityControlComponent extends ListComponentBase impleme
 
   openTimeChoose() {
     const dialogRef = this.dialog.open(DatetimeChooseFilterDialogComponent, {
-      width: '40%',
-      minHeight: '80%',
-      data: {
-        fromDate: this.dateFrom,
-        toDate: this.dateTo
-      }
+      width: '350px',
+      position: { top: '100px' },
+      data: this.currentDateFilter,
+      panelClass: 'simple-dialog'
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.dateFrom = new Date(result.fromDate);
-        this.dateTo = new Date(result.toDate);
-        this.titleTimeChoose = this.formatDisplayDate(this.dateFrom) + ' - ' + this.formatDisplayDate(this.dateTo);
+        this.currentDateFilter = result;
+        this.titleTimeChoose = result.title;
+
+        this.timeFilter.patchValue({
+          typeTime: 'choose',
+        });
+
+        this.apiFilter = this.buildFilterFromParams();
         this.loadData();
       }
     });
   }
 
-  private formatDisplayDate(date: Date): string {
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  }
-
-  ngOnInit(): void {
-    this.apiFilter = this.buildFilterFromParams();
-    this.loadData();
-  }
-
-  /**
-   * Tạo lại bộ filter
-   * @returns
-   */
-  buildFilterFromParams():QualityCheckFilter{
-    function write<K extends keyof QualityCheckFilter>(arg: QualityCheckFilter, key: K, value: QualityCheckFilter[K]): void {
-      arg[key] = value;
-    }
-    const filter = new QualityCheckFilter();
-    const objectKeys = Object.keys(filter) as Array<keyof QualityCheckFilter>;
-    for (const attr of objectKeys) {
-      write(filter, attr, this.route.snapshot.queryParams['QualityFilterCheckSearch[' + attr + ']']);
-    }
-    filter.page = this.route.snapshot.queryParams['page'];
-    filter.pageSize = this.route.snapshot.queryParams['pageSize'];
-    filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.date_from = this.route.snapshot.queryParams['QualityCheckSearch[date_from]'];
-    filter.date_to = this.route.snapshot.queryParams['QualityCheckSearch[date_to]'];
-    filter.status = 10; // sao lại để 10 không thấy đổi
-    return filter;
-  }
-
-  private handleDataResponse(response: any) {
-    this.isLoadingResults = false;
-    if (response && Array.isArray(response)) {
-      this.dataSource = response.map((item, index) => ({
-        ...item,
-        stt: index + 1
-      }));
-      this.totalItems = response.length;
+  radioTimeChange(event: Event) {
+    if (this.timeFilter.controls['typeTime'].value === 'choose') {
+      const date_from = new Date(this.currentDateFilter.date_from);
+      const date_to = new Date(this.currentDateFilter.date_to);
+      this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
     } else {
-      this.dataSource = [];
-      this.totalItems = 0;
+      this.titleTimeChoose = 'Lựa chọn khác';
     }
-  }
-
-  /**
-   * Ghi đè lại lớp BaseModel để gọi lại data
-   */
-  loadData():void {
-    this.apiFilter.date_from = this.formatDate(this.dateFrom);
-    this.apiFilter.date_to = this.formatDate(this.dateTo);
-    this.productService.getQualityChecks(this.apiFilter).subscribe(res => {
-      this.isLoadingResults = false;
-      let data = res.body;
-      if (data && Array.isArray(data)) {
-        this.dataSource = data.map((item, index) => ({
-          ...item,
-          stt: index + 1
-        }));
-      } else {
-        this.dataSource = [];
-      }
-      this.reloadFilter(res);
-    });
   }
 
   openCreateModal(): void {
@@ -203,40 +229,11 @@ export class FollowBookQualityControlComponent extends ListComponentBase impleme
       panelClass: 'full-screen-modal'
     });
 
-        dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.refreshData();
       }
     });
-  }
-
-  refreshData(): void {
-    this.isLoadingResults = true;
-    this.apiFilter = this.buildFilterFromParams();
-    this.productService.getQualityChecks(this.apiFilter).subscribe({
-      next: (response) => {
-        this.handleDataResponse(response);
-        this.notifyService.notify('success', 'Làm mới dữ liệu thành công');
-      },
-      error: (error) => {
-        console.error('Error refreshing data:', error);
-        this.notifyService.notify('error', 'Có lỗi khi làm mới dữ liệu');
-      },
-      complete: () => {
-        this.isLoadingResults = false;
-      }
-    });
-  }
-
-  private formatDate(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-
-  getStatusText(status: number): string {
-    return status === 10 ? 'Hoàn thành' : 'Chưa hoàn thành';
   }
 
   openDetailModal(row: any): void {
@@ -270,8 +267,8 @@ export class FollowBookQualityControlComponent extends ListComponentBase impleme
   deleteQualityCheck(row: any): void {
     const obj = {
       action: 'Delete',
-      title: 'Xác nhận xóa danh sách đã chọn .',
-      content: 'Thông tin sản phẩm đã xác nhận hoàn thành trước đó sẽ được hệ thống tạo thẻ kho xóa đi !'
+      title: 'Xác nhận xóa danh sách đã chọn.',
+      content: 'Thông tin sản phẩm đã xác nhận hoàn thành trước đó sẽ được hệ thống tạo thẻ kho xóa đi!'
     };
 
     const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
@@ -299,20 +296,13 @@ export class FollowBookQualityControlComponent extends ListComponentBase impleme
     this.isLoadingResults = true;
     this.productService.exportQualityControlToExcel(row.id).subscribe({
       next: (response) => {
-        // Tạo blob từ response
         const blob = new Blob([response], { type: 'application/vnd.ms-excel' });
-
-        // Tạo URL cho blob
         const url = window.URL.createObjectURL(blob);
-
-        // Tạo element a để download
         const a = document.createElement('a');
         a.href = url;
         a.download = `quality-control-${row.id}.xlsx`;
         document.body.appendChild(a);
         a.click();
-
-        // Cleanup
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpResponse, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Product } from '../models/product.interface';
@@ -36,9 +36,36 @@ export class ProductService {
     return this.http.post(`${this.baseUrl}/quality-check/create-with-details`, data);
   }
 
-  getQualityChecks(filter?: QualityCheckFilter): Observable<HttpResponse<any>> {
-    const url = this.baseUrl + '/quality-check' + this.getApiUrl(filter);
-    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  getQualityChecks(filter: QualityCheckFilter): Observable<any> {
+    let params = new HttpParams();
+
+    // Thêm các tham số cơ bản
+    params = params.set('page', filter.page.toString());
+    params = params.set('pageSize', filter.pageSize.toString());
+    params = params.set('expand', filter.expand);
+
+    if (filter.status !== undefined) {
+      params = params.set('QualityCheckSearch[status]', filter.status.toString());
+    }
+
+    // Thêm search string nếu có
+    if (filter.search_string) {
+      params = params.set('QualityCheckSearch[search]', filter.search_string);
+    }
+
+    // Chỉ thêm filter date khi có giá trị
+    if (filter.date_from) {
+      params = params.set('QualityCheckSearch[date_from]', filter.date_from);
+    }
+
+    if (filter.date_to) {
+      params = params.set('QualityCheckSearch[date_to]', filter.date_to);
+    }
+
+    return this.http.get(`${this.baseUrl}/quality-check`, {
+      params,
+      observe: 'response'
+    });
   }
 
   getApiUrl(filter?: any): string {
