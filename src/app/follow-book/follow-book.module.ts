@@ -27,6 +27,15 @@ import { QualityControlDetailModalComponent } from './follow-book-quality-contro
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { FollowBookMedicineTrackingComponent } from './follow-book-medicine-tracking/follow-book-medicine-tracking.component';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatSelectModule } from '@angular/material/select';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
   declarations: [
@@ -34,7 +43,8 @@ import { MatMenuModule } from '@angular/material/menu';
     QualityControlCreateModalComponent,
     DatetimeDefaultFilterDialogComponent,
     DatetimeChooseFilterDialogComponent,
-    QualityControlDetailModalComponent
+    QualityControlDetailModalComponent,
+    FollowBookMedicineTrackingComponent
   ],
   imports: [
     CommonModule,
@@ -59,7 +69,15 @@ import { MatMenuModule } from '@angular/material/menu';
     MatButtonModule,
     MatTableModule,
     MatIconModule,
-    MatMenuModule
+    MatMenuModule,
+    MatSidenavModule,
+    MatToolbarModule,
+    MatSelectModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatExpansionModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   exports: [
     // Xóa ConfirmDialogComponent khỏi exports
