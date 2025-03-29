@@ -92,7 +92,7 @@ export class FollowBookMedicineTrackingComponent extends ListComponentBase imple
     const filter: any = {};
     filter.page = this.page || 1;
     filter.pageSize = this.pageSize || 10;
-    filter.expand = 'invoiceDetails,customer,payment,store,user,returns,today,time,createdFormat';
+    filter.expand = 'invoiceDetails,prescription,customer,payment,store,user,returns,today,time,createdFormat';
 
     if (this.currentDateFilter) {
       filter.date_from = this.currentDateFilter.date_from;
@@ -118,18 +118,22 @@ export class FollowBookMedicineTrackingComponent extends ListComponentBase imple
       response => {
         if (response && response.body) {
           this.dataSource = response.body.map((invoice: any, index: number) => {
-            const details = invoice.invoiceDetails.map((detail: any) => ({
+            const details = invoice.invoiceDetails ? invoice.invoiceDetails.map((detail: any) => ({
               medicine_name: detail.product.product_name,
               unit: detail.base_unit,
               quantity: detail.amount
-            }));
+            })) : [];
+
+            const prescription = invoice.prescription ? {
+              doctor_name: invoice.prescription.doctor?.doctor_name || ''
+            } : { doctor_name: '' };
 
             return {
               stt: (this.page - 1) * this.pageSize + index + 1,
               invoice_no: invoice.invoice_no,
               createdFormat: invoice.createdFormat,
               details: details,
-              bs_name: invoice.doctor_name || '',
+              bs_name: prescription.doctor_name,
               bn_name: invoice.customer?.name || '',
               address: invoice.customer?.address || '',
               age: this.calculateAge(invoice.customer?.dob) || '',

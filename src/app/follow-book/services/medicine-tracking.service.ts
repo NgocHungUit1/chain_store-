@@ -22,6 +22,7 @@ export class MedicineTrackingService {
 
     params = params.set('InvoiceSearch[order_status]', 'pending,done');
     params = params.set('InvoiceSearch[order_national]', 'yes,no');
+    params = params.set('InvoiceSearch[has_prescription]', '1');
 
     if (filter.search_string) {
       params = params.set('InvoiceSearch[search]', filter.search_string);
@@ -35,6 +36,8 @@ export class MedicineTrackingService {
       params = params.set('InvoiceSearch[date_to]', filter.date_to);
     }
 
+
+
     return this.http.get(`${this.baseUrl}/invoice`, {
       params,
       observe: 'response'
@@ -44,7 +47,8 @@ export class MedicineTrackingService {
   exportToExcel(dateFilter: any): Observable<any> {
     let params = new HttpParams()
       .set('InvoiceSearch[order_status]', 'pending,done')
-      .set('InvoiceSearch[order_national]', 'yes,no');
+      .set('InvoiceSearch[order_national]', 'yes,no')
+      .set('InvoiceSearch[has_prescription]', '1');
 
     // Thêm filter ngày
     if (dateFilter?.date_from) {

@@ -28,4 +28,5 @@ export interface MedicineTrackingFilter {
   search_string?: string;
   date_from?: string;
   date_to?: string;
+  has_prescription?: boolean;
 }
