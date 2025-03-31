@@ -3095,7 +3095,7 @@ export class SaleMainComponent implements OnInit {
    * @param amount
    */
   addNewRow(i: number, parcel: object = null, amount: number = 0) {
-    const oldItem = this.listProduct[i];
+    const oldItem = {...this.listProduct[i]};
     const oldProduct = {...oldItem.product};
     if (oldItem.note != undefined) {
       delete oldItem.note;
