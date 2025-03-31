@@ -191,21 +191,19 @@ const MENUITEMS = [
   },
   {
     state: 'follow-book',
-    name: 'Sổ theo dõi',
+    name: 'Sổ sách',
     type: 'sub',
     icon: 'library_books',
     permissions: [
-      'Report.Stock',
-      'Report.Product-Sale',
-      'Warehouse-Product-Parcel.Expiration',
-      'Option-Store.Update',
-      'Store.Upload-Logo',
-      'Branch.Update-Connect',
-      'Store.Update-Info',
-      'Report.Export-Import-Detail',
-      'Group.Report',
-      'Report.Customers-Debt',
-      'Invoice.End-Day-Report'
+      'Quality-Check.All',
+      'Quality-Check.Create-With-Details',
+      'Quality-Check.Delete',
+      'Quality-Check.List',
+      'Quality-Check.Update',
+      'Quality-Check.View',
+      'Invoice.List'
+
+
     ],
     children: [
       {
@@ -214,16 +212,9 @@ const MENUITEMS = [
         type: 'link',
         icon: 'brightness_1',
         permissions: [
-          'Quality-Check-Detail.All',
-          'Quality-Check-Detail.Create',
-          'Quality-Check-Detail.Delete',
-          'Quality-Check-Detail.List',
-          'Quality-Check-Detail.Update',
-          'Quality-Check-Detail.View',
           'Quality-Check.All',
-          'Quality-Check.Create',
+          'Quality-Check.Create-With-Details',
           'Quality-Check.Delete',
-          'Quality-Check.Export',
           'Quality-Check.List',
           'Quality-Check.Update',
           'Quality-Check.View'
@@ -231,12 +222,11 @@ const MENUITEMS = [
       },
       {
         state: 'medicine-tracking',
-        name: 'Sổ theo dõi bán thuốc',
+        name: 'Bán thuốc',
         type: 'link',
         icon: 'brightness_1',
         permissions: [
-          'Report.Customer',
-          'Invoice.End-Day-Report'
+          'Invoice.List',
         ]
       }
     ]
