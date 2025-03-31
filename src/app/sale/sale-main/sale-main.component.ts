@@ -229,7 +229,7 @@ export class SaleMainComponent implements OnInit {
     await this.handlePointDiscountSiderBar(mItemInvoice);
 
     await this.handlePaymentSiderBar(mItemInvoice);
-    
+
     await this.loadBankAccounts();
 
     this.filteredBankAccounts = [...this.bankAccounts];
@@ -316,6 +316,7 @@ export class SaleMainComponent implements OnInit {
     let mItemInvoice = new ItemInvoice();
     this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
       const listItemInvoice = ListInvoice.itemInvoice;
+      console.log("LIST item invoice: ", listItemInvoice);
       listItemInvoice.forEach(element => {
         if (element.active === true) {
           mItemInvoice = element;
@@ -483,7 +484,7 @@ export class SaleMainComponent implements OnInit {
                         elementData.common_price = groupProductIdCommonPrice[elementData.product_id][0].common_price;
                       else
                         elementData.common_price = group[elementData.product_unit_id][0]['price'];
-                      
+
                       if (!(elementData.sample_prescription_id !== undefined && elementData.sample_prescription_id !== null)) {
                         if (elementData.product.end_price === undefined) {
                           this.sumPrice +=
@@ -1671,7 +1672,7 @@ export class SaleMainComponent implements OnInit {
     let _margin = '4px';
     let _padding = '3px';
     let _solo = 'text-align:left;';
-  
+
     // Determine print type (K58 or A4)
     this.optionStoreService.getValue('print_type').subscribe(res => {
       if (res.value === 'K58') {
@@ -1686,7 +1687,7 @@ export class SaleMainComponent implements OnInit {
         _padding = '6px';
         _solo = 'text-align:left; min-width: 100px;';
       }
-  
+
       // Use preInvoiceData instead of fetching from service
       const customer_name = preInvoiceData?.customer?.name || 'Khách lẻ';
       const customer_phone = preInvoiceData?.customer?.phone || '';
@@ -1720,7 +1721,7 @@ export class SaleMainComponent implements OnInit {
           <p style="text-align:center;">Ngày ${invoiceDate.getDate()} tháng ${invoiceDate.getMonth()} năm ${invoiceDate.getFullYear()}</p>
           <br>
       `;
-  
+
       // Customer info
       const { nationalPrescription } = preInvoiceData || {};
       if (nationalPrescription) {
@@ -1741,7 +1742,7 @@ export class SaleMainComponent implements OnInit {
           printContent += `<p style="">SĐT: ${customer_phone}</p>`;
         }
       }
-  
+
       printContent += `
         <br>
         <table>
@@ -1752,7 +1753,7 @@ export class SaleMainComponent implements OnInit {
             <th style="text-align:center;">T.Tiền</th>
           </tr>
       `;
-  
+
       // Product details
       const detail = preInvoiceData?.detail || [];
       detail.forEach((element: any) => {
@@ -1776,7 +1777,7 @@ export class SaleMainComponent implements OnInit {
           `;
         }
       });
-  
+
       // Totals
       const colspan = this.autoPrintInSoLo ? 3 : 2;
       printContent += `
@@ -1802,7 +1803,7 @@ export class SaleMainComponent implements OnInit {
         `;
       }
       printContent += `</table>`;
-  
+
       // Footer
       printContent += `
         <br>
@@ -1811,7 +1812,7 @@ export class SaleMainComponent implements OnInit {
           : `<p style="text-align:center; font-style: italic;">Cám ơn và hẹn gặp lại.</p>`}
         </section>
       `;
-  
+
       const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
       WindowPrt.document.write(printContent);
       WindowPrt.document.close();
@@ -1821,13 +1822,13 @@ export class SaleMainComponent implements OnInit {
     });
   }
 
-  
+
 
   async getPreInvoiceData(): Promise<any> {
     // debugger;
     const activeInvoice = this.localItemInvoice || new ItemInvoice();
     const formData = this.form.getRawValue();
-  
+
     const detail = this.listProduct.map(item => ({
       product: { product_name: item.product.product_name },
       base_unit: item.base_unit || null,
@@ -1836,24 +1837,24 @@ export class SaleMainComponent implements OnInit {
       total: (item.common_price || item.product.sell_price || item.product.end_price || 0) * (item.amount || 0),
       so_lo: item.so_lo || ''
     }));
-  
+
     const totalPrice = this.sumPrice;
     const discount = this.discount_type === 'price' ? this.discount : Math.round((this.sumPrice * this.discount) / 100);
     const sumPayment = totalPrice - this.numberDiscount - this.numberPointDiscount + this.expenseOrder;
     const debt = this.tienKhachNo > 0 ? this.tienKhachNo : null;
-  
+
     // Await store data
     const storeRes = await this.storeSer.getDetail().toPromise();
     const storeData = {
       name: storeRes['name'] || 'Store Name',    // Adjust if property names differ
       address: storeRes['address'] || 'Store Address'
     };
-  
+
     const today = formData.today instanceof Date ? formData.today : new Date();
     const createdAt = formData.today && formData.time
       ? `${this.dp.transform(today, 'yyyy-MM-dd')} ${formData.time}`
       : new Date().toLocaleString();
-  
+
     return {
       store: storeData,
       customer: this.customer || activeInvoice.customer || { name: 'Khách lẻ', phone: '' },
@@ -1874,7 +1875,7 @@ export class SaleMainComponent implements OnInit {
     let _margin = '4px';
     let _padding = '3px';
     let _solo = 'text-align:left;';
-  
+
     // Determine print type (K58 or A4)
     this.optionStoreService.getValue('print_type').subscribe(res => {
       if (res.value === 'K58') {
@@ -1889,12 +1890,12 @@ export class SaleMainComponent implements OnInit {
         _padding = '6px';
         _solo = 'text-align:left; min-width: 100px;';
       }
-  
+
       // Use preInvoiceData instead of fetching from service
       const customer_name = preInvoiceData?.customer?.name || 'Khách lẻ';
       const customer_phone = preInvoiceData?.customer?.phone || '';
       const invoiceDate = preInvoiceData?.created_at ? new Date(preInvoiceData.created_at) : new Date();
-  
+
       let printContent = '<title>Chi nhánh trung tâm - Bán hàng</title>'; // Temporary title
       printContent += `
         <style>
@@ -1928,7 +1929,7 @@ export class SaleMainComponent implements OnInit {
           .right {
             text-align: right;
           }
-  
+
           .invoice-table {
             width: 100%;
             border-collapse: collapse;
@@ -1937,7 +1938,7 @@ export class SaleMainComponent implements OnInit {
             border-top: 1px solid black;
             border-bottom: 1px solid black;
           }
-          
+
           .top-border {
             border-top: 1px dashed black;
           }
@@ -1950,7 +1951,7 @@ export class SaleMainComponent implements OnInit {
           <p class="center bold">Số HĐ: Chưa lưu</p>
           <p class="center">Ngày ${invoiceDate.getDate()} tháng ${invoiceDate.getMonth() + 1} năm ${invoiceDate.getFullYear()}</p>
       `;
-  
+
       // Customer info
       const { nationalPrescription } = preInvoiceData || {};
       if (nationalPrescription) {
@@ -1971,23 +1972,23 @@ export class SaleMainComponent implements OnInit {
           printContent += `<p>SĐT: ${customer_phone}</p>`;
         }
       }
-  
+
       printContent += `
-      
+
       <table>
         <tr class="header-border">
           <th style="width: 40%;">Đơn giá</th>
           <th style="width: 20%; text-align: center;">SL</th>`;
-      
+
       // Add Số lô column header if needed
       if (this.autoPrintInSoLo === true) {
         printContent += `<th style="${_solo}">Số lô</th>`;
       }
-      
+
       printContent += `<th style="width: 40%; text-align: right;">Thành tiền</th>
         </tr>
       `;
-  
+
       // Product details
       const detail = preInvoiceData?.detail || [];
       detail.forEach((element: any) => {
@@ -1999,12 +2000,12 @@ export class SaleMainComponent implements OnInit {
             <tr>
               <td>${numeral(element.price || 0).format('0,0')}</td>
               <td style="text-align: center;">${element.amount || 0}</td>`;
-          
+
           // Add Số lô cell if needed
           if (this.autoPrintInSoLo === true) {
             printContent += `<td style="text-align:left;">${element.so_lo || ''}</td>`;
           }
-          
+
           printContent += `<td style="text-align: right;">${numeral(element.total || 0).format('0,0')}</td>
             </tr>
           `;
@@ -2016,21 +2017,21 @@ export class SaleMainComponent implements OnInit {
             <tr>
               <td>${numeral(element.price || 0).format('0,0')}</td>
               <td style="text-align: center;">${element.amount || 0}</td>`;
-          
+
           // Add Số lô cell if needed
           if (this.autoPrintInSoLo === true) {
             printContent += `<td style="text-align:left;">${element.so_lo || ''}</td>`;
           }
-          
+
           printContent += `<td style="text-align: right;">${numeral(element.total || 0).format('0,0')}</td>
             </tr>
           `;
         }
       });
-  
+
       // Determine the colspan based on whether _solo is included
       const colspan = this.autoPrintInSoLo ? '3' : '2';
-  
+
       // Totals
       printContent += `
         <tr class="top-border">
@@ -2056,7 +2057,7 @@ export class SaleMainComponent implements OnInit {
       }
       printContent += `</table>`;
       printContent += `<p>${this.numberToVietnameseText(+preInvoiceData?.sum_payment || 0)}</p>`
-  
+
       // Footer with QR code
       printContent += `
         <br>
@@ -2065,9 +2066,9 @@ export class SaleMainComponent implements OnInit {
         <p class="center" style="font-size: 9px;">POWERED BY rx20.vn</p>
         </section>
       `;
-  
+
       console.log({printContent})
-  
+
       const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
       WindowPrt.document.write(printContent);
       WindowPrt.document.close();
@@ -2076,17 +2077,17 @@ export class SaleMainComponent implements OnInit {
       // WindowPrt.close(); // Uncomment if you want to auto-close after printing
     });
   }
-  
+
   private getNationalPrescriptionData(prescriptionId: string): any {
     // Placeholder: Replace with actual logic if available
     return null;
   }
-  
+
   async printPreInvoiceHandler() {
     const preInvoiceData = await this.getPreInvoiceData();
     this.printPreInvoiceV2(preInvoiceData);
   }
-  
+
   payment() {
     this.getAutoPrintValue();
     if (this.submitted) {
@@ -2176,7 +2177,7 @@ export class SaleMainComponent implements OnInit {
         product_id: element.product.id,
         amount: element.amount,
         price: price,
-        note: element.product?.note_detail_sale,
+        note: element.note,
         discount: discount,
         discount_type: discount_type,
         product_unit_id: element.product_unit_id,
@@ -2371,7 +2372,7 @@ export class SaleMainComponent implements OnInit {
           product_id: element.product.id,
           amount: element.amount,
           price: price,
-          note: element.product?.note_detail_sale,
+          note: element.note,
           discount: discount,
           discount_type: discount_type,
           product_unit_id: element.product_unit_id,
@@ -2629,7 +2630,7 @@ export class SaleMainComponent implements OnInit {
   }
 
   checkToAdjustItemPriceByTotalDiff() {
-    
+
     let realTotal = 0;
     this.listProduct.forEach(item => {
       realTotal += (item.product.end_price > 0 ? item.product.end_price : item.common_price) * item.amount;
@@ -2676,12 +2677,12 @@ export class SaleMainComponent implements OnInit {
    * @param i
    */
   toggleShowNote(i: number) {
-    const currentProduct = this.listProduct[i].product;
-    const noteText = currentProduct.note_detail_sale;
+    const currentProduct = this.listProduct[i];
+    const noteText = currentProduct.note;
     if (noteText == '') {
-      delete this.listProduct[i].product.note_detail_sale;
+      delete this.listProduct[i].note;
     } else if (noteText == undefined) {
-      this.listProduct[i].product.note_detail_sale = '';
+      this.listProduct[i].note = '';
     } else {
       this.focusTextArea(i);
     }
@@ -2707,7 +2708,7 @@ export class SaleMainComponent implements OnInit {
    * @param i
    */
   isNoteShown(i: number) {
-    const note = this.listProduct[i].product.note_detail_sale;
+    const note = this.listProduct[i].note;
     return note !== undefined;
   }
 
@@ -3050,8 +3051,12 @@ export class SaleMainComponent implements OnInit {
                     this.available_product_parcels.set(product_id, formattedRes);
                   } else {
                     product.product_parcels = [];
-                    product.product_parcels.push(sortedParcels[0]);
-
+                    if (product.parcel_no) {
+                      const choseParcel = sortedParcels.find(parcel => parcel.parcel_no == product.parcel_no);
+                      product.product_parcels.push(choseParcel);
+                    } else {
+                      product.product_parcels.push(sortedParcels[0]);
+                    }
                     const availableParcels = formattedRes.filter(parcel => {
                       if (product.product_parcels &&
                         product.product_parcels.length > 0 &&
@@ -3092,8 +3097,8 @@ export class SaleMainComponent implements OnInit {
   addNewRow(i: number, parcel: object = null, amount: number = 0) {
     const oldItem = this.listProduct[i];
     const oldProduct = {...oldItem.product};
-    if (oldProduct.note_detail_sale != undefined) {
-      delete oldProduct.note_detail_sale;
+    if (oldItem.note != undefined) {
+      delete oldItem.note;
     }
     oldProduct.is_sub_item = 1;
     oldProduct.master_product_id = oldProduct.id;
@@ -3102,7 +3107,6 @@ export class SaleMainComponent implements OnInit {
        newItem = {...oldItem, product: oldProduct, product_parcels: [parcel], amount: amount};
     } else {
        newItem = {...oldItem, product: oldProduct, product_parcels: [], amount: 1};
-
     }
     this.listProduct.splice(i + 1, 0, newItem);
     this.listProduct = [...this.listProduct];
@@ -3119,9 +3123,9 @@ export class SaleMainComponent implements OnInit {
     const listProduct = mItemInvoice.listProduct;
     listProduct.map((productInfor) => {
       // add master_product_id = product_id
-      productInfor.product.master_product_id = productInfor.product.master_product_id ?? productInfor.product.id ;
+      productInfor.product.master_product_id = productInfor.master_product_id || productInfor.product.master_product_id || productInfor.product.id;
       // add is_sub_item = 0
-      productInfor.product.is_sub_item = productInfor.product.is_sub_item ?? 0;
+      productInfor.product.is_sub_item = productInfor.is_sub_item || productInfor.product.is_sub_item || 0;
       return productInfor; // Make sure to return the modified product
     });
     this.listProduct = [...listProduct];
@@ -3153,7 +3157,7 @@ export class SaleMainComponent implements OnInit {
   getProductIndex(product) {
     return this.listProduct.findIndex(item => item === product);
   }
-  
+
   public clickHelp() {
     window.open('https://rx20.vn/huong-dan-su-dung/', '_black');
   }
@@ -3175,26 +3179,26 @@ export class SaleMainComponent implements OnInit {
   async loadBankAccounts() {
     // Option 1: Direct assignment
     this.bankAccounts = [
-      { 
-        id: 1, 
-        bankName: 'Chase Bank', 
-        accountNumber: '****4567', 
-        accountHolder: 'John Doe' 
+      {
+        id: 1,
+        bankName: 'Chase Bank',
+        accountNumber: '****4567',
+        accountHolder: 'John Doe'
       },
-      { 
-        id: 2, 
-        bankName: 'Bank of America', 
-        accountNumber: '****7890', 
-        accountHolder: 'Jane Smith' 
+      {
+        id: 2,
+        bankName: 'Bank of America',
+        accountNumber: '****7890',
+        accountHolder: 'Jane Smith'
       },
-      { 
-        id: 3, 
-        bankName: 'Wells Fargo', 
-        accountNumber: '****2345', 
-        accountHolder: 'Robert Johnson' 
+      {
+        id: 3,
+        bankName: 'Wells Fargo',
+        accountNumber: '****2345',
+        accountHolder: 'Robert Johnson'
       }
     ];
-    
+
     // Option 2: From a service
     // this.yourService.getBankAccounts().subscribe(accounts => {
     //   this.bankAccounts = accounts;
@@ -3210,11 +3214,11 @@ export class SaleMainComponent implements OnInit {
       this.filteredBankAccounts = [...this.bankAccounts];
       return;
     }
-    
+
     const term = this.searchTerm.toLowerCase();
-    this.filteredBankAccounts = this.bankAccounts.filter(bank => 
-      bank.bankName.toLowerCase().includes(term) || 
-      bank.accountNumber.includes(term) || 
+    this.filteredBankAccounts = this.bankAccounts.filter(bank =>
+      bank.bankName.toLowerCase().includes(term) ||
+      bank.accountNumber.includes(term) ||
       bank.accountHolder.toLowerCase().includes(term)
     );
   }
@@ -3239,17 +3243,17 @@ export class SaleMainComponent implements OnInit {
     if (isNaN(number) || number < 0) {
       return "Invalid input";
     }
-    
+
     // Format the number with commas
     const formattedNumber = number.toLocaleString('vi-VN');
-    
+
     // Convert number to Vietnamese words
     const vietnameseWords = this.convertNumberToVietnameseWords(number);
-    
+
     // Return the formatted string
     return `${vietnameseWords} đồng chẵn`;
   }
-  
+
   /**
    * Converts a number to Vietnamese words
    * @param {number} number - The number to convert
@@ -3260,12 +3264,12 @@ export class SaleMainComponent implements OnInit {
     const teens = ["", "mười một", "mười hai", "mười ba", "mười bốn", "mười lăm", "mười sáu", "mười bảy", "mười tám", "mười chín"];
     const tens = ["", "mười", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi"];
     const scales = ["", "nghìn", "triệu", "tỷ", "nghìn tỷ", "triệu tỷ"];
-    
+
     // Handle zero
     if (number === 0) {
       return "Không";
     }
-    
+
     // Convert to string and pad to handle groups of 3 digits
     let numStr = number.toString();
     // Ensure string length is multiple of 3 by padding with leading zeros
@@ -3273,31 +3277,31 @@ export class SaleMainComponent implements OnInit {
     if (remainder > 0) {
       numStr = '0'.repeat(3 - remainder) + numStr;
     }
-    
+
     // Split into groups of 3 digits
     const groups = [];
     for (let i = 0; i < numStr.length; i += 3) {
       groups.push(numStr.substring(i, i + 3));
     }
-    
+
     // Process each group
     const results = [];
     groups.forEach((group, index) => {
       const groupIndex = groups.length - 1 - index;
       const groupValue = parseInt(group);
-      
+
       if (groupValue > 0) {
         const groupText = this.convertGroupToVietnamese(group);
         const scaleText = groupIndex > 0 ? " " + scales[groupIndex] : "";
         results.push(groupText + scaleText);
       }
     });
-    
+
     // Join groups and capitalize first letter
     let result = results.join(" ");
     return result.charAt(0).toUpperCase() + result.slice(1);
   }
-  
+
   /**
    * Converts a 3-digit group to Vietnamese words
    * @param {string} group - 3-digit group as string
@@ -3306,28 +3310,28 @@ export class SaleMainComponent implements OnInit {
    convertGroupToVietnamese(group) {
     const units = ["", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
     const digits = group.split('').map(d => parseInt(d));
-    
+
     let result = "";
-    
+
     // Handle hundreds
     if (digits[0] > 0) {
       result += units[digits[0]] + " trăm";
     }
-    
+
     // Handle tens and units
     if (digits[1] > 0) {
       // Add space if we already have hundreds
       if (result !== "") {
         result += " ";
       }
-      
+
       if (digits[1] === 1) {
         // Special case for "mười"
         result += "mười";
       } else {
         result += units[digits[1]] + " mươi";
       }
-      
+
       // Handle units
       if (digits[2] > 0) {
         if (digits[2] === 1 && digits[1] !== 0) {
@@ -3348,7 +3352,7 @@ export class SaleMainComponent implements OnInit {
       }
       result += units[digits[2]];
     }
-    
+
     return result;
   }
 }
