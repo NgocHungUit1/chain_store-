@@ -210,7 +210,7 @@ const MENUITEMS = [
         state: 'quanlity-control',
         name: 'Kiểm soát chất lượng',
         type: 'link',
-        icon: 'brightness_1',
+        icon: 'fact_check',
         permissions: [
           'Quality-Check.All',
           'Quality-Check.Create-With-Details',
@@ -222,9 +222,9 @@ const MENUITEMS = [
       },
       {
         state: 'medicine-tracking',
-        name: 'Bán thuốc',
+        name: 'Bán thuốc theo đơn',
         type: 'link',
-        icon: 'brightness_1',
+        icon: 'medication',
         permissions: [
           'Invoice.List',
         ]
