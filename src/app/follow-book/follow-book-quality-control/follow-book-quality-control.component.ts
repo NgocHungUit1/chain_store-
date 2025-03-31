@@ -97,10 +97,8 @@ export class FollowBookQualityControlComponent extends ListComponentBase impleme
     filter.status = 10;
 
     // Thêm filter date - CHỈ khi không bỏ qua filter
-    if (this.currentDateFilter && !this.currentDateFilter.skip_filter) {
       filter.date_from = this.currentDateFilter.date_from;
       filter.date_to = this.currentDateFilter.date_to;
-    }
 
     return filter;
   }
@@ -142,14 +140,11 @@ export class FollowBookQualityControlComponent extends ListComponentBase impleme
     const first = new Date(year, month, 1);
 
     this.currentDateFilter = {
-      title: 'Tháng này',
-      filter_key: 'thisMonth',
       date_from: this.formatDate(first),
       date_to: this.formatDate(today),
-      skip_filter: false
     };
 
-    this.titleTimeDefault = this.currentDateFilter.title;
+    this.titleTimeDefault = 'Tháng này';
     this.titleTimeChoose = 'Lựa chọn khác';
   }
 
