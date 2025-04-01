@@ -38,7 +38,7 @@ export class MedicineTrackingService {
 
 
 
-    return this.http.get(`${this.baseUrl}/invoice`, {
+    return this.http.get(`${this.baseUrl}/invoice/medicine-tracking`, {
       params,
       observe: 'response'
     });
