@@ -1003,28 +1003,39 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         data['expensesTransactions'] = this.expensesTransactions;
         if (this.form.controls['date'].value !== null) {
           if (typeof this.form.controls['date'].value === 'object') {
-            // handle convert day with momentAdapter to fix the typing date bug
-            let adjusted_date;
-            // handle case date not change (don't use moment) because of missing _d
-            if(!this.form.controls['date'].value._d) {
-              adjusted_date = this.form.controls['date'].value;
-            }
-            else{
-              const new_date = this.form.controls['date'].value._d;
-               adjusted_date = new Date(new_date.getTime() + (7 * 60 * 60 * 1000)); // Add 7 hours
-            }
-            // this is the deprecated code
-            // const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
-            // data['date'] = effDate.toISOString().split('T')[0];
+            let expDate = new Date(this.form.controls['date'].value.valueOf() + (420 * 60 * 1000));
 
-            data['date'] = adjusted_date.toISOString().split('T')[0];
+            data['date'] = expDate.toISOString().split('T')[0];
           } else {
-            // @@ NGHIA
             const effDate = this.form.controls['date'].value;
             data['date'] = effDate.split('T')[0];
             data['date'] = moment(data['date'], 'YYYY-MM-DD').add(1, 'days').format('YYYY-MM-DD');
           }
         }
+        // if (this.form.controls['date'].value !== null) {
+        //   if (typeof this.form.controls['date'].value === 'object') {
+        //     // handle convert day with momentAdapter to fix the typing date bug
+        //     let adjusted_date;
+        //     // handle case date not change (don't use moment) because of missing _d
+        //     if(!this.form.controls['date'].value._d) {
+        //       adjusted_date = this.form.controls['date'].value;
+        //     }
+        //     else{
+        //       const new_date = this.form.controls['date'].value._d;
+        //        adjusted_date = new Date(new_date.getTime() + (7 * 60 * 60 * 1000)); // Add 7 hours
+        //     }
+        //     // this is the deprecated code
+        //     // const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
+        //     // data['date'] = effDate.toISOString().split('T')[0];
+        //
+        //     data['date'] = adjusted_date.toISOString().split('T')[0];
+        //   } else {
+        //     // @@ NGHIA
+        //     const effDate = this.form.controls['date'].value;
+        //     data['date'] = effDate.split('T')[0];
+        //     data['date'] = moment(data['date'], 'YYYY-MM-DD').add(1, 'days').format('YYYY-MM-DD');
+        //   }
+        // }
         this.data.forEach(element => {
           element.price = numeral(element.price).value();
           element.amount = numeral(element.amount).value();
