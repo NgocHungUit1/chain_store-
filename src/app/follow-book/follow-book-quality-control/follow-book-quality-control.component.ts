@@ -20,7 +20,7 @@ import { DatetimeChooseFilterDialogComponent } from '../components/datetime-choo
 @Component({
   selector: 'app-follow-book-quality-control',
   templateUrl: './follow-book-quality-control.component.html',
-  styleUrls: ['./follow-book-quality-control.component.scss']
+  styleUrls: ['../shared/follow-book.component.scss', './follow-book-quality-control.component.scss']
 })
 export class FollowBookQualityControlComponent extends ListComponentBase implements OnInit {
 

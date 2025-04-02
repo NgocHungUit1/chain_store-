@@ -14,7 +14,7 @@ import { MedicineTrackingService } from '../services/medicine-tracking.service';
 @Component({
   selector: 'app-follow-book-medicine-tracking',
   templateUrl: './follow-book-medicine-tracking.component.html',
-  styleUrls: ['./follow-book-medicine-tracking.component.scss']
+  styleUrls: ['../shared/follow-book.component.scss', './follow-book-medicine-tracking.component.scss']
 })
 export class FollowBookMedicineTrackingComponent extends ListComponentBase implements OnInit {
   displayedColumns = ['stt', 'invoice_no', 'createdFormat', 'medicine_name', 'unit', 'quantity', 'bs_name', 'bn_name', 'address', 'age', 'diagnosis'];

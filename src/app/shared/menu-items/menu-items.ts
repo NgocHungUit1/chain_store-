@@ -201,7 +201,7 @@ const MENUITEMS = [
       'Quality-Check.List',
       'Quality-Check.Update',
       'Quality-Check.View',
-      'Invoice.List'
+      'Invoice.Medicine-Tracking'
 
 
     ],
