@@ -226,7 +226,7 @@ const MENUITEMS = [
         type: 'link',
         icon: 'medication',
         permissions: [
-          'Invoice.List',
+          'Invoice.Medicine-Tracking',
         ]
       }
     ]
