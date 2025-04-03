@@ -1,6 +1,6 @@
 <div class="modal-container">
   <mat-toolbar class="modal-header">
-    <h2>Kiểm soát chất lượng</h2>
+    <h2>{{isEdit ? 'Cập nhật' : 'Tạo mới'}} kiểm soát chất lượng</h2>
     <span class="spacer"></span>
     <button mat-icon-button mat-dialog-close>
       <mat-icon>close</mat-icon>
@@ -91,10 +91,15 @@
                   <mat-hint *ngIf="!row.qualityNote">Mặc định: Đạt</mat-hint>
                 </mat-form-field>
               </td>
-              <td>
-                <button mat-icon-button color="warn" (click)="removeRow(row.index)">
-                  <mat-icon>delete</mat-icon>
-                </button>
+              <td class="action-column">
+                <div class="action-buttons">
+                  <button mat-icon-button color="warn"
+                          (click)="removeRow(row.index)"
+                          matTooltip="Xóa dòng này"
+                          class="delete-button">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
               </td>
             </tr>
 

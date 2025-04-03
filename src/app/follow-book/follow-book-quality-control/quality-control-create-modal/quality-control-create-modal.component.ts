@@ -92,14 +92,31 @@ export class QualityControlCreateModalComponent implements OnInit {
     });
 
     if (this.isEdit && data.qualityCheck) {
-      this.loadEditData(data.qualityCheck);
+      this.loadEditData();
     }
   }
 
   ngOnInit(): void {
+    // Khởi tạo các tùy chọn
+    this.reasonOptions = [
+      'Định kỳ',
+      'Đột xuất',
+      'Kiểm tra định kỳ',
+      'Kiểm tra chất lượng'
+    ];
+    this.qualityNoteOptions = [
+      'Đạt',
+      'Không đạt',
+      'Tốt',
+      'Không tốt',
+      'Đạt yêu cầu',
+      'Không đạt yêu cầu'
+    ];
+
+    // Kiểm tra nếu là chế độ chỉnh sửa
     if (this.isEdit && this.data?.qualityCheck) {
-      // Nếu là chế độ chỉnh sửa, load dữ liệu từ qualityCheck
-      this.loadEditData(this.data.qualityCheck);
+      // Nếu là chế độ chỉnh sửa, load dữ liệu từ API thông qua data đã được truyền vào
+      this.loadEditData();
     } else {
       // Nếu là chế độ tạo mới, load tất cả sản phẩm
       this.loadAllProducts();
@@ -179,7 +196,38 @@ export class QualityControlCreateModalComponent implements OnInit {
   }
 
   removeRow(index: number): void {
-    this.productRows = this.productRows.filter(row => row.index !== index);
+    console.log('Removing row with index:', index);
+    console.log('Before removal - total rows:', this.productRows.length);
+
+    // Tìm và xóa dòng từ danh sách chính
+    const rowIndex = this.productRows.findIndex(row => row.index === index);
+    if (rowIndex !== -1) {
+      this.productRows.splice(rowIndex, 1);
+
+      // Cập nhật lại STT cho tất cả các dòng
+      this.productRows.forEach((row, i) => {
+        row.index = i + 1;
+      });
+
+      // Cập nhật lại danh sách đã lọc
+      this.filteredRows = [...this.productRows];
+
+      // Tính lại tổng số trang
+      this.totalPages = Math.ceil(this.filteredRows.length / this.pageSize);
+
+      // Đảm bảo trang hiện tại không vượt quá tổng số trang
+      if (this.currentPage > this.totalPages && this.totalPages > 0) {
+        this.currentPage = this.totalPages;
+      } else if (this.totalPages === 0) {
+        this.currentPage = 1;
+      }
+
+      // Hiển thị thông báo
+      this.notifyService.notify('success', 'Đã xóa sản phẩm khỏi danh sách');
+    }
+
+    console.log('After removal - total rows:', this.productRows.length);
+    console.log('Current page:', this.currentPage, 'Total pages:', this.totalPages);
   }
 
   formatLotDisplay(parcel: Parcel): string {
@@ -192,50 +240,73 @@ export class QualityControlCreateModalComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  private loadEditData(qualityCheck: any) {
+  private loadEditData(): void {
+    // Lấy dữ liệu từ data đã được truyền vào
+    const qualityCheck = this.data.qualityCheck;
+    const qualityCheckDetail = this.data.qualityCheckDetail;
+
+    // Cập nhật thông tin form
     this.infoForm.patchValue({
       date: new Date(qualityCheck.date),
-      title: qualityCheck.title,
-      reason: qualityCheck.reason,
-      note: qualityCheck.note
+      title: qualityCheck.title || `Sổ kiểm soát chất lượng định kỳ đột xuất ngày ${this.formatDateForTitle(new Date(qualityCheck.date))}`,
+      reason: qualityCheck.reason || '',
+      note: qualityCheck.note || ''
     });
 
-    // Load product details
-    qualityCheck.details.forEach(async (detail: any) => {
-      try {
-        const product = {
-          id: detail.product_id,
-          product_no: detail.product_info.product_no,
-          product_name: detail.product_info.product_name,
-          base_unit: detail.product_info.base_unit
+    // Kiểm tra xem có dữ liệu chi tiết không
+    if (qualityCheckDetail && qualityCheckDetail.details && qualityCheckDetail.details.length > 0) {
+      // Xử lý dữ liệu chi tiết
+      this.isLoading = true;
+
+      // Chuyển đổi details thành productRows
+      const details = qualityCheckDetail.details;
+      this.currentIndex = 1;
+      this.productRows = [];
+
+      details.forEach(detail => {
+        // Tạo đối tượng Parcel
+        const parcel: Parcel = {
+          id: detail.warehouse_product_parcel_id,
+          parcel_no: detail.parcel_no,
+          expiration_date: detail.expiration_date,
+          quantity_of_stock: detail.quantity.toString()
         };
 
-        const parcels = await this.productService.getParcelsByProduct(product.id.toString()).toPromise();
-
-        const newRow: ProductRow = {
+        // Tạo ProductRow
+        const productRow: ProductRow = {
           index: this.currentIndex++,
-          productId: product.id.toString(),
-          productNo: product.product_no,
-          productName: product.product_name,
+          id: detail.id, // ID của chi tiết để cập nhật
+          productId: detail.product_id.toString(),
+          productNo: detail.product_info ? detail.product_info.product_no : '',
+          productName: detail.product_info ? detail.product_info.product_name : '',
           selectedLot: detail.parcel_no,
-          lotOptions: parcels || [],
+          lotOptions: [parcel], // Thêm lô đã chọn
           quantity: detail.quantity.toString(),
-          quantityOfStock: detail.parcel_info.quantity_of_stock,
-          unit: product.base_unit,
-          reason: detail.note,
-          qualityNote: detail.quality_comment,
+          quantityOfStock: detail.parcel_info ? detail.parcel_info.quantity_of_stock : '',
+          unit: detail.product_info ? detail.product_info.base_unit : '',
+          reason: detail.note || '',
+          qualityNote: detail.quality_comment || this.defaultQualityNote,
           result: detail.result,
-          qualityClassification: detail.quality_classification
+          qualityClassification: detail.quality_classification || 'Loại A'
         };
 
-        this.productRows.push(newRow);
-      } catch (error) {
-        console.error('Error loading product details:', error);
-      }
-    });
+        this.productRows.push(productRow);
+      });
+
+      // Cập nhật danh sách đã lọc và phân trang
+      this.filteredRows = [...this.productRows];
+      this.totalPages = Math.ceil(this.filteredRows.length / this.pageSize);
+      this.currentPage = 1;
+
+      this.isLoading = false;
+    } else {
+      console.warn('No details found in quality check detail response');
+      this.isLoading = false;
+    }
   }
 
   onSubmit(): void {
+    // Đảm bảo tất cả các dòng đều có giá trị mặc định
     this.productRows.forEach(row => {
       if (!row.qualityNote) {
         row.qualityNote = 'Đạt';
@@ -254,8 +325,9 @@ export class QualityControlCreateModalComponent implements OnInit {
         status: QualityCheckStatus.COMPLETED,
         details: this.productRows.map(row => {
           const selectedParcel = row.lotOptions.find(lot => lot.parcel_no === row.selectedLot);
+
           return {
-            id: this.isEdit ? row.id : undefined,
+            id: this.isEdit && row.id ? row.id : undefined, // Sử dụng ID từ dữ liệu nếu là chế độ chỉnh sửa
             product_id: parseInt(row.productId),
             warehouse_product_parcel_id: selectedParcel?.id,
             parcel_no: row.selectedLot,
@@ -268,6 +340,9 @@ export class QualityControlCreateModalComponent implements OnInit {
           };
         })
       };
+
+      // Log để kiểm tra
+      console.log('Submit payload:', payload);
 
       this.isLoading = true;
       const request = this.isEdit ?
@@ -282,6 +357,7 @@ export class QualityControlCreateModalComponent implements OnInit {
         error: (error) => {
           console.error('Error:', error);
           this.notifyService.notify('error', this.isEdit ? 'Có lỗi xảy ra khi cập nhật' : 'Có lỗi xảy ra khi tạo mới');
+          this.isLoading = false;
         },
         complete: () => {
           this.isLoading = false;
@@ -467,4 +543,13 @@ export class QualityControlCreateModalComponent implements OnInit {
 
   // Thêm Math object để sử dụng trong template
   Math = Math;
+
+  // Thêm phương thức formatDateForTitle
+  formatDateForTitle(date: Date): string {
+    return date.toLocaleDateString('vi-VN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  }
 }

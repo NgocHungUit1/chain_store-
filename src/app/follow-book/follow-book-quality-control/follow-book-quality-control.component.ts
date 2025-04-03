@@ -243,18 +243,38 @@ export class FollowBookQualityControlComponent extends ListComponentBase impleme
   }
 
   openEditModal(row: any): void {
-    const dialogRef = this.dialog.open(QualityControlCreateModalComponent, {
-      width: '100vw',
-      height: '100vh',
-      maxWidth: '100vw',
-      maxHeight: '100vh',
-      panelClass: 'full-screen-modal',
-      data: { isEdit: true, qualityCheck: row }
-    });
+    // Hiển thị loading
+    this.isLoadingResults = true;
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.refreshData();
+    // Gọi API để lấy chi tiết phiếu kiểm soát chất lượng
+    this.productService.getQualityCheckDetail(row.id).subscribe({
+      next: (response) => {
+        // Mở modal với dữ liệu chi tiết
+        const dialogRef = this.dialog.open(QualityControlCreateModalComponent, {
+          width: '100vw',
+          height: '100vh',
+          maxWidth: '100vw',
+          maxHeight: '100vh',
+          panelClass: 'full-screen-modal',
+          data: {
+            isEdit: true,
+            qualityCheck: row,
+            qualityCheckDetail: response
+          }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            this.refreshData();
+          }
+        });
+
+        this.isLoadingResults = false;
+      },
+      error: (error) => {
+        console.error('Error loading quality control details:', error);
+        this.notifyService.notify('error', 'Không thể tải chi tiết phiếu kiểm soát chất lượng');
+        this.isLoadingResults = false;
       }
     });
   }

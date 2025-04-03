@@ -17,19 +17,21 @@ export interface DateFilterResult {
 
       <div class="filter-sections">
         <div class="filter-section">
-          <div class="filter-header">Theo ngày</div>
+          <div class="filter-header">Theo năm</div>
           <div class="filter-options">
-            <button class="filter-option" (click)="selectTime('today')">Hôm nay</button>
-            <button class="filter-option" (click)="selectTime('yesterday')">Hôm qua</button>
-            <button class="filter-option" (click)="selectTime('allTime')">Toàn thời gian</button>
+            <button class="filter-option" (click)="selectTime('thisYear')">Năm nay</button>
+            <button class="filter-option" (click)="selectTime('lastYear')">Năm trước</button>
+            <button class="filter-option" (click)="selectTime('last3Years')">3 năm gần đây</button>
           </div>
         </div>
 
         <div class="filter-section">
-          <div class="filter-header">Theo tuần</div>
+          <div class="filter-header">Theo quý</div>
           <div class="filter-options">
-            <button class="filter-option" (click)="selectTime('thisWeek')">Tuần này</button>
-            <button class="filter-option" (click)="selectTime('lastWeek')">Tuần trước</button>
+            <button class="filter-option" (click)="selectTime('q1')">Quý 1</button>
+            <button class="filter-option" (click)="selectTime('q2')">Quý 2</button>
+            <button class="filter-option" (click)="selectTime('q3')">Quý 3</button>
+            <button class="filter-option" (click)="selectTime('q4')">Quý 4</button>
           </div>
         </div>
 
@@ -38,8 +40,7 @@ export interface DateFilterResult {
           <div class="filter-options">
             <button class="filter-option" (click)="selectTime('thisMonth')">Tháng này</button>
             <button class="filter-option" (click)="selectTime('lastMonth')">Tháng trước</button>
-            <button class="filter-option" (click)="selectTime('last3Months')">3 tháng trước</button>
-            <button class="filter-option" (click)="selectTime('last6Months')">6 tháng trước</button>
+            <button class="filter-option" (click)="selectTime('allTime')">Toàn thời gian</button>
           </div>
         </div>
       </div>
@@ -72,36 +73,41 @@ export interface DateFilterResult {
 
     .filter-sections {
       display: flex;
-      padding: 15px;
-      gap: 15px;
+      justify-content: space-between;
+      padding: 20px;
+      gap: 20px;
     }
 
     .filter-section {
       flex: 1;
+      max-width: 220px;
     }
 
     .filter-header {
       font-size: 14px;
       font-weight: 500;
       color: #333;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #eee;
     }
 
     .filter-options {
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 8px;
     }
 
     .filter-option {
       background: none;
       border: none;
       text-align: left;
-      padding: 8px 5px;
+      padding: 10px;
       font-size: 14px;
       cursor: pointer;
-      border-radius: 3px;
+      border-radius: 4px;
       color: #333;
+      transition: background-color 0.2s;
     }
 
     .filter-option:hover {
@@ -149,39 +155,9 @@ export class DatetimeDefaultFilterDialogComponent {
     };
 
     switch(filter_key) {
-      case 'today':
-        result.title = 'Hôm nay';
-        result.date_from = this.formatDate(today);
-        result.date_to = this.formatDate(today);
-        break;
-
-      case 'yesterday':
-        const yesterday = new Date(today);
-        yesterday.setDate(yesterday.getDate() - 1);
-        result.title = 'Hôm qua';
-        result.date_from = this.formatDate(yesterday);
-        result.date_to = this.formatDate(yesterday);
-        break;
-
       case 'allTime':
         result.title = 'Toàn thời gian';
         result.skip_filter = true;
-        break;
-
-      case 'thisWeek':
-        const mondayThisWeek = this.getMondayOfCurrentWeek(today);
-        result.title = 'Tuần này';
-        result.date_from = this.formatDate(mondayThisWeek);
-        result.date_to = this.formatDate(today);
-        break;
-
-      case 'lastWeek':
-        const mondayLastWeek = this.getMondayOfLastWeek(today);
-        const sundayLastWeek = new Date(mondayLastWeek);
-        sundayLastWeek.setDate(sundayLastWeek.getDate() + 6);
-        result.title = 'Tuần trước';
-        result.date_from = this.formatDate(mondayLastWeek);
-        result.date_to = this.formatDate(sundayLastWeek);
         break;
 
       case 'thisMonth':
@@ -199,39 +175,70 @@ export class DatetimeDefaultFilterDialogComponent {
         result.date_to = this.formatDate(lastDayOfLastMonth);
         break;
 
-      case 'last3Months':
-        const date3MonthsAgo = new Date(today);
-        date3MonthsAgo.setMonth(date3MonthsAgo.getMonth() - 3);
-        result.title = '3 tháng trước';
-        result.date_from = this.formatDate(date3MonthsAgo);
+      case 'q1':
+        const firstDayQ1 = new Date(today.getFullYear(), 0, 1);
+        const lastDayQ1 = new Date(today.getFullYear(), 3, 0);
+        result.title = 'Quý 1 ' + today.getFullYear();
+        result.date_from = this.formatDate(firstDayQ1);
+        result.date_to = this.formatDate(lastDayQ1);
+        break;
+
+      case 'q2':
+        const firstDayQ2 = new Date(today.getFullYear(), 3, 1);
+        const lastDayQ2 = new Date(today.getFullYear(), 6, 0);
+        result.title = 'Quý 2 ' + today.getFullYear();
+        result.date_from = this.formatDate(firstDayQ2);
+        result.date_to = this.formatDate(lastDayQ2);
+        break;
+
+      case 'q3':
+        const firstDayQ3 = new Date(today.getFullYear(), 6, 1);
+        const lastDayQ3 = new Date(today.getFullYear(), 9, 0);
+        result.title = 'Quý 3 ' + today.getFullYear();
+        result.date_from = this.formatDate(firstDayQ3);
+        result.date_to = this.formatDate(lastDayQ3);
+        break;
+
+      case 'q4':
+        const firstDayQ4 = new Date(today.getFullYear(), 9, 1);
+        const lastDayQ4 = new Date(today.getFullYear(), 12, 0);
+        result.title = 'Quý 4 ' + today.getFullYear();
+        result.date_from = this.formatDate(firstDayQ4);
+        result.date_to = this.formatDate(lastDayQ4);
+        break;
+
+      case 'thisYear':
+        const firstDayOfYear = new Date(today.getFullYear(), 0, 1);
+        result.title = 'Năm ' + today.getFullYear();
+        result.date_from = this.formatDate(firstDayOfYear);
         result.date_to = this.formatDate(today);
         break;
 
-      case 'last6Months':
-        const date6MonthsAgo = new Date(today);
-        date6MonthsAgo.setMonth(date6MonthsAgo.getMonth() - 6);
-        result.title = '6 tháng trước';
-        result.date_from = this.formatDate(date6MonthsAgo);
+      case 'lastYear':
+        const firstDayOfLastYear = new Date(today.getFullYear() - 1, 0, 1);
+        const lastDayOfLastYear = new Date(today.getFullYear() - 1, 11, 31);
+        result.title = 'Năm ' + (today.getFullYear() - 1);
+        result.date_from = this.formatDate(firstDayOfLastYear);
+        result.date_to = this.formatDate(lastDayOfLastYear);
+        break;
+
+      case 'last3Years':
+        const date3YearsAgo = new Date(today);
+        date3YearsAgo.setFullYear(date3YearsAgo.getFullYear() - 3);
+        date3YearsAgo.setMonth(0);
+        date3YearsAgo.setDate(1);
+        result.title = '3 năm gần đây';
+        result.date_from = this.formatDate(date3YearsAgo);
         result.date_to = this.formatDate(today);
+        break;
+
+      default:
+        result.title = 'Tùy chọn';
+        result.skip_filter = true;
         break;
     }
 
     this.dialogRef.close(result);
-  }
-
-  private getMondayOfCurrentWeek(date: Date): Date {
-    const dayOfWeek = date.getDay();
-    const diff = date.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
-    const monday = new Date(date);
-    monday.setDate(diff);
-    return monday;
-  }
-
-  private getMondayOfLastWeek(date: Date): Date {
-    const mondayThisWeek = this.getMondayOfCurrentWeek(date);
-    const mondayLastWeek = new Date(mondayThisWeek);
-    mondayLastWeek.setDate(mondayLastWeek.getDate() - 7);
-    return mondayLastWeek;
   }
 
   private formatDate(date: Date): string {

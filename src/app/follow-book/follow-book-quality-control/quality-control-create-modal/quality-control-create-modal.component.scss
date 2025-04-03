@@ -222,6 +222,24 @@
   .full-width {
     width: 100%;
   }
+
+  td:last-child {
+    text-align: center;
+    width: 70px;
+
+    button.mat-mini-fab {
+      width: 36px;
+      height: 36px;
+      line-height: 36px;
+
+      .mat-icon {
+        font-size: 18px;
+        line-height: 18px;
+        height: 18px;
+        width: 18px;
+      }
+    }
+  }
 }
 
 .mr-2 {
@@ -604,6 +622,7 @@
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   margin-bottom: 16px;
+  overflow-x: visible;
 }
 
 /* Đảm bảo header của table luôn hiển thị khi scroll */
@@ -713,7 +732,7 @@
 
 /* Làm rõ khi hover row */
 .quality-control-table tbody tr:hover {
-  background-color: #f5f9ff;
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
 /* Tối ưu hóa chiều cao của input fields */
@@ -1174,5 +1193,34 @@ mat-form-field {
   .info-section {
     width: 500px;
   }
+}
+
+/* Cải thiện style cho nút xóa */
+.action-column {
+  padding: 0 !important;
+  width: 60px;
+  text-align: center;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.delete-button {
+  background-color: rgba(244, 67, 54, 0.1);
+
+  &:hover {
+    background-color: rgba(244, 67, 54, 0.2);
+  }
+
+  .mat-icon {
+    color: #f44336;
+  }
+}
+
+/* Đảm bảo nút không bị che phủ bởi các phần tử khác */
+.quality-control-table td {
+  position: relative;
 }
 
