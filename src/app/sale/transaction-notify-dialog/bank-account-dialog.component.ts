@@ -28,9 +28,9 @@ export class TransactionNotifyDialogComponent {
       data = {};
     }
     this.bankAccountForm = this.fb.group({
-      accountNumber: [data.accountNumber || '', [Validators.required]],
-      bankName: [data.bankName || '', [Validators.required]],
-      accountHolder: [data.accountHolder || '', [Validators.required]],
+      account_number: [data.account_number || '', [Validators.required]],
+      bank_code: [data.bank_code || '', [Validators.required]],
+      account_name: [data.account_name || '', [Validators.required]],
       phone: [data.phone || '']
     });
   }
