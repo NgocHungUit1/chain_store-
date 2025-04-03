@@ -32,6 +32,10 @@ export class ProductService {
     return this.http.get<Parcel[]>(`${this.baseUrl}/quality-check-detail/get-parcels-by-product/${productId}`);
   }
 
+  getAllParcels(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/quality-check-detail/get-all-parcels`);
+  }
+
   createQualityControl(data: QualityControlRequest): Observable<any> {
     return this.http.post(`${this.baseUrl}/quality-check/create-with-details`, data);
   }

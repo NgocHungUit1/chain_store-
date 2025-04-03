@@ -40,6 +40,11 @@ export class QualityControlCreateModalComponent implements OnInit {
   currentIndex = 1;
   isEdit = false;
   defaultQualityNote = 'Đạt';
+  searchText = '';
+  filteredRows: ProductRow[] = [];
+  pageSize = 10;
+  currentPage = 1;
+  totalPages = 1;
 
   // Thêm các tùy chọn cứng
   reasonOptions = [
@@ -92,6 +97,14 @@ export class QualityControlCreateModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (this.isEdit && this.data?.qualityCheck) {
+      // Nếu là chế độ chỉnh sửa, load dữ liệu từ qualityCheck
+      this.loadEditData(this.data.qualityCheck);
+    } else {
+      // Nếu là chế độ tạo mới, load tất cả sản phẩm
+      this.loadAllProducts();
+    }
+
     // Add search listener
     this.mainForm.get('productSearch')?.valueChanges
       .pipe(
@@ -122,6 +135,9 @@ export class QualityControlCreateModalComponent implements OnInit {
         }
       });
     }
+
+    // Khởi tạo danh sách đã lọc
+    this.filteredRows = [...this.productRows];
   }
 
   async selectProduct(product: Product): Promise<void> {
@@ -348,4 +364,112 @@ export class QualityControlCreateModalComponent implements OnInit {
       }
     }, 300);
   }
+
+  // Thêm phương thức mới để load tất cả sản phẩm
+  loadAllProducts(): void {
+    this.isLoading = true;
+    this.productService.getAllParcels().subscribe({
+      next: (response) => {
+        console.log('API Response:', response);
+        this.processAllProductsData(response);
+        console.log('ProductRows after processing:', this.productRows);
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading products:', error);
+        this.isLoading = false;
+        this.notifyService.notify('error', 'Có lỗi xảy ra khi tải dữ liệu sản phẩm');
+      }
+    });
+  }
+
+  // Thêm phương thức để xử lý dữ liệu từ API
+  processAllProductsData(data: any[]): void {
+    // Reset danh sách sản phẩm hiện tại
+    this.productRows = [];
+    this.currentIndex = 1;
+
+    // Xử lý và thêm từng sản phẩm vào bảng
+    if (Array.isArray(data)) {
+      data.forEach(item => {
+        // Kiểm tra xem item.product có tồn tại không
+        if (!item.product) {
+          console.warn('Product information missing:', item);
+          return; // Skip this item
+        }
+
+        // Tạo đối tượng Parcel từ dữ liệu API
+        const parcel: Parcel = {
+          id: item.warehouse_product_id,
+          parcel_no: item.parcel_no,
+          expiration_date: item.expiration_date,
+          quantity_of_stock: item.quantity_of_stock
+        };
+
+        // Tạo ProductRow để hiển thị
+        const productRow: ProductRow = {
+          index: this.currentIndex++,
+          productId: item.product?.id || '',
+          productNo: item.product?.product_no || '',
+          productName: item.product?.product_name || '',
+          selectedLot: item.parcel_no,
+          lotOptions: [parcel],
+          quantity: item.quantity_of_stock,
+          quantityOfStock: item.quantity_of_stock,
+          unit: item.product?.base_unit || '',
+          reason: '',
+          qualityNote: this.defaultQualityNote,
+          result: 1,
+          qualityClassification: 'Loại A'
+        };
+
+        this.productRows.push(productRow);
+      });
+    }
+
+    // Cập nhật danh sách đã lọc và phân trang
+    this.filteredRows = [...this.productRows];
+    this.totalPages = Math.ceil(this.filteredRows.length / this.pageSize);
+    this.currentPage = 1;
+  }
+
+  // Thêm phương thức lọc dữ liệu
+  filterData(): void {
+    if (!this.searchText) {
+      this.filteredRows = [...this.productRows];
+    } else {
+      const searchLower = this.searchText.toLowerCase();
+      this.filteredRows = this.productRows.filter(row =>
+        row.productNo.toLowerCase().includes(searchLower) ||
+        row.productName.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Cập nhật tổng số trang và reset về trang 1
+    this.totalPages = Math.ceil(this.filteredRows.length / this.pageSize);
+    this.currentPage = 1;
+  }
+
+  // Phương thức xử lý sự kiện tìm kiếm
+  onSearch(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.searchText = input.value;
+    this.filterData();
+  }
+
+  // Phương thức lấy danh sách dòng cho trang hiện tại
+  getCurrentPageRows(): ProductRow[] {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    return this.filteredRows.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  // Phương thức chuyển trang
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
+
+  // Thêm Math object để sử dụng trong template
+  Math = Math;
 }

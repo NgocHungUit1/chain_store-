@@ -9,33 +9,28 @@
 
   <div class="modal-content">
     <div class="main-section">
-      <div class="search-container">
-        <div class="simple-search-input">
-          <span class="search-icon">
-            <mat-icon>search</mat-icon>
-          </span>
-          <input
-            #searchInput
-            type="text"
-            placeholder="Tìm kiếm sản phẩm theo tên, mã sản phẩm, mã vạch"
-            (input)="onSearchInput($event)"
-          >
-          <span class="spinner-wrapper" *ngIf="isLoading">
-            <mat-spinner diameter="20"></mat-spinner>
-          </span>
-        </div>
+      <!-- Thêm thông báo loading -->
+      <div class="loading-container" *ngIf="isLoading">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Đang tải dữ liệu sản phẩm...</p>
+      </div>
 
-        <!-- Dropdown kết quả tìm kiếm -->
-        <div class="search-results" *ngIf="searchResults.length > 0">
-          <div class="search-result-item" *ngFor="let product of searchResults" (click)="selectProduct(product)">
-            <div class="product-code">{{product.product_no}}</div>
-            <div class="product-name">{{product.product_name}}</div>
-            <div class="product-quantity">SL: {{product.quantity?.number || 0}} {{product.base_unit}}</div>
-          </div>
+      <!-- Thêm thanh tìm kiếm -->
+      <div class="search-filter-container" *ngIf="!isLoading && productRows.length > 0">
+        <div class="local-search">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input type="text" placeholder="Tìm kiếm theo mã hoặc tên sản phẩm"
+                 (input)="onSearch($event)" [value]="searchText">
+        </div>
+        <div class="results-info">
+          Hiển thị {{filteredRows.length > 0 ? (currentPage-1)*pageSize + 1 : 0}} -
+          {{Math.min(currentPage*pageSize, filteredRows.length)}}
+          của {{filteredRows.length}} kết quả
         </div>
       </div>
 
-      <div class="table-container">
+      <!-- Thêm class scrollable-table-container để có thể scroll -->
+      <div class="table-container scrollable-table-container" *ngIf="!isLoading">
         <table class="quality-control-table">
           <thead>
             <tr>
@@ -50,12 +45,14 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let row of productRows">
+            <!-- Thay đổi từ productRows thành getCurrentPageRows() -->
+            <tr *ngFor="let row of getCurrentPageRows()">
               <td>{{row.index}}</td>
               <td>
                 <div class="product-info">
                   <div class="product-code">{{row.productNo}}</div>
                   <div class="product-name">{{row.productName}}</div>
+                  <div class="product-unit" *ngIf="row.unit">Đơn vị: {{row.unit}}</div>
                 </div>
               </td>
               <td>
@@ -106,6 +103,25 @@
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Thêm phân trang -->
+      <div class="pagination-container" *ngIf="!isLoading && filteredRows.length > pageSize">
+        <button mat-icon-button [disabled]="currentPage === 1" (click)="changePage(1)">
+          <mat-icon>first_page</mat-icon>
+        </button>
+        <button mat-icon-button [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+
+        <span class="page-info">{{currentPage}} / {{totalPages}}</span>
+
+        <button mat-icon-button [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+        <button mat-icon-button [disabled]="currentPage === totalPages" (click)="changePage(totalPages)">
+          <mat-icon>last_page</mat-icon>
+        </button>
       </div>
     </div>
 
