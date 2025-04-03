@@ -1,21 +1,19 @@
 <div class="modal-container">
-  <mat-toolbar color="primary" class="modal-header">
-    <span>Kiểm soát chất lượng</span>
+  <mat-toolbar class="modal-header">
+    <h2>Kiểm soát chất lượng</h2>
     <span class="spacer"></span>
-    <button mat-icon-button (click)="onClose()">
+    <button mat-icon-button mat-dialog-close>
       <mat-icon>close</mat-icon>
     </button>
   </mat-toolbar>
 
   <div class="modal-content">
     <div class="main-section">
-      <!-- Thêm thông báo loading -->
       <div class="loading-container" *ngIf="isLoading">
         <mat-spinner diameter="40"></mat-spinner>
         <p>Đang tải dữ liệu sản phẩm...</p>
       </div>
 
-      <!-- Thêm thanh tìm kiếm -->
       <div class="search-filter-container" *ngIf="!isLoading && productRows.length > 0">
         <div class="local-search">
           <mat-icon class="search-icon">search</mat-icon>
@@ -29,7 +27,6 @@
         </div>
       </div>
 
-      <!-- Thêm class scrollable-table-container để có thể scroll -->
       <div class="table-container scrollable-table-container" *ngIf="!isLoading">
         <table class="quality-control-table">
           <thead>
@@ -45,7 +42,6 @@
             </tr>
           </thead>
           <tbody>
-            <!-- Thay đổi từ productRows thành getCurrentPageRows() -->
             <tr *ngFor="let row of getCurrentPageRows()">
               <td>{{row.index}}</td>
               <td>
@@ -101,11 +97,16 @@
                 </button>
               </td>
             </tr>
+
+            <tr *ngIf="filteredRows.length === 0">
+              <td colspan="8" class="no-data">
+                <div>Không tìm thấy dữ liệu phù hợp</div>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
 
-      <!-- Thêm phân trang -->
       <div class="pagination-container" *ngIf="!isLoading && filteredRows.length > pageSize">
         <button mat-icon-button [disabled]="currentPage === 1" (click)="changePage(1)">
           <mat-icon>first_page</mat-icon>
@@ -128,23 +129,12 @@
     <div class="info-section" [formGroup]="infoForm">
       <h3>THÔNG TIN PHIẾU</h3>
       <div class="info-form">
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Ngày</mat-label>
-            <input matInput [matDatepicker]="picker" formControlName="date">
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-          </mat-form-field>
-        </div>
-
-        <div class="form-row">
-          <mat-form-field appearance="outline">
-            <mat-label>Loại thời gian</mat-label>
-            <mat-select formControlName="timeType">
-              <mat-option value="Ngày">Ngày</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Ngày</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="date">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Tiêu đề</mat-label>
@@ -153,12 +143,12 @@
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Lý do</mat-label>
-          <textarea matInput formControlName="reason" rows="3"></textarea>
+          <textarea matInput formControlName="reason" rows="4"></textarea>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Ghi chú</mat-label>
-          <textarea matInput formControlName="note" rows="3"></textarea>
+          <textarea matInput formControlName="note" rows="4"></textarea>
         </mat-form-field>
       </div>
     </div>
@@ -166,7 +156,10 @@
 
   <mat-toolbar class="modal-footer">
     <span class="spacer"></span>
-    <button mat-raised-button (click)="onClose()" class="mr-2">Trở về</button>
-    <button mat-raised-button color="primary" (click)="onSubmit()">Lưu</button>
+    <button mat-button mat-dialog-close>Hủy</button>
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="isLoading">
+      <span *ngIf="!isLoading">{{isEdit ? 'Cập nhật' : 'Tạo mới'}}</span>
+      <mat-spinner diameter="20" *ngIf="isLoading" style="margin: 0 auto;"></mat-spinner>
+    </button>
   </mat-toolbar>
 </div>

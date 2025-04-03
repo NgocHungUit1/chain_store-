@@ -383,24 +383,19 @@ export class QualityControlCreateModalComponent implements OnInit {
     });
   }
 
-  // Thêm phương thức để xử lý dữ liệu từ API
   processAllProductsData(data: any[]): void {
-    // Reset danh sách sản phẩm hiện tại
     this.productRows = [];
     this.currentIndex = 1;
 
-    // Xử lý và thêm từng sản phẩm vào bảng
     if (Array.isArray(data)) {
       data.forEach(item => {
-        // Kiểm tra xem item.product có tồn tại không
         if (!item.product) {
           console.warn('Product information missing:', item);
           return; // Skip this item
         }
 
-        // Tạo đối tượng Parcel từ dữ liệu API
         const parcel: Parcel = {
-          id: item.warehouse_product_id,
+          id: item.id,
           parcel_no: item.parcel_no,
           expiration_date: item.expiration_date,
           quantity_of_stock: item.quantity_of_stock

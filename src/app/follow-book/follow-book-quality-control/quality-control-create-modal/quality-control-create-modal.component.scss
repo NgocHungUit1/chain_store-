@@ -1,10 +1,18 @@
 .modal-container {
-  height: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   background-color: #f5f5f5;
+  overflow: hidden;
 
   .modal-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: #009688;
+    color: white;
+    padding: 0 16px;
+
     .spacer {
       flex: 1 1 auto;
     }
@@ -15,7 +23,8 @@
     display: flex;
     padding: 20px;
     gap: 20px;
-    overflow: auto;
+    overflow: hidden;
+    max-height: calc(100vh - 128px);
 
     .main-section {
       flex: 1;
@@ -23,27 +32,48 @@
       border-radius: 4px;
       padding: 20px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      max-height: 100%;
+      overflow: hidden;
 
-      .search-container {
-        margin-bottom: 20px;
+      .search-filter-container {
+        flex-shrink: 0;
       }
 
       .table-container {
-        overflow-x: auto;
+        flex: 1;
+        overflow: auto;
+        margin-bottom: 16px;
+      }
+
+      .pagination-container {
+        flex-shrink: 0;
+        margin-top: auto;
+        padding: 12px 0;
+        background-color: white;
+        border-top: 1px solid #f0f0f0;
       }
     }
 
     .info-section {
-      width: 400px;
+      width: 450px;
       background: white;
-      border-radius: 4px;
-      padding: 20px;
+      border-radius: 8px;
+      padding: 24px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      overflow-y: auto;
+      max-height: 100%;
 
       h3 {
-        margin-top: 0;
-        margin-bottom: 20px;
         color: #333;
+        font-size: 20px;
+        margin-top: 0;
+        margin-bottom: 24px;
+        font-weight: 600;
+        text-align: center;
+        border-bottom: 2px solid #009688;
+        padding-bottom: 10px;
       }
 
       .info-form {
@@ -56,14 +86,52 @@
             flex: 1;
           }
         }
+
+        mat-form-field {
+          width: 100%;
+          margin-bottom: 20px;
+        }
+
+        textarea {
+          min-height: 100px !important;
+          resize: vertical;
+        }
+
+        ::ng-deep .mat-form-field-wrapper {
+          margin: 0;
+          padding: 0;
+        }
+
+        ::ng-deep .mat-form-field-label {
+          font-weight: 500;
+          color: #444;
+        }
+
+        ::ng-deep .mat-form-field.mat-focused .mat-form-field-outline-thick {
+          color: #009688 !important;
+        }
+
+        ::ng-deep .mat-input-element {
+          padding: 2px 0;
+          font-size: 14px;
+          color: #333;
+        }
+
+        ::ng-deep .mat-datepicker-toggle {
+          color: #009688;
+        }
       }
     }
   }
 
   .modal-footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
     padding: 8px 16px;
     background: white;
     border-top: 1px solid #ddd;
+    box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
 
     .spacer {
       flex: 1 1 auto;
@@ -529,10 +597,13 @@
 
 /* Style cho scrollable table container */
 .scrollable-table-container {
-  max-height: 500px;
+  flex: 1;
   overflow-y: auto;
-  margin-bottom: 20px;
+  max-height: none !important;
+  min-height: 500px;
   border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  margin-bottom: 16px;
 }
 
 /* Đảm bảo header của table luôn hiển thị khi scroll */
@@ -541,5 +612,567 @@
   top: 0;
   z-index: 10;
   background-color: #f5f5f5;
+}
+
+/* Cải thiện hiển thị phân trang */
+.pagination-container {
+  padding: 12px 0;
+  margin-top: 0;
+  background-color: white;
+  border-top: 1px solid #f0f0f0;
+  flex-shrink: 0;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Trường hợp không có dữ liệu */
+.no-data {
+  text-align: center;
+  padding: 32px !important;
+  color: #757575;
+  font-style: italic;
+}
+
+/* Đảm bảo table có đủ kích thước */
+.quality-control-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+/* Điều chỉnh kích thước của từng cột trong bảng */
+.quality-control-table th:nth-child(1),
+.quality-control-table td:nth-child(1) {
+  width: 50px; /* STT */
+}
+
+.quality-control-table th:nth-child(2),
+.quality-control-table td:nth-child(2) {
+  width: 180px; /* Mã/Tên sản phẩm */
+}
+
+.quality-control-table th:nth-child(3),
+.quality-control-table td:nth-child(3) {
+  width: 180px; /* Lô-HSD - Tăng kích thước lên */
+  min-width: 180px; /* Đảm bảo kích thước tối thiểu */
+}
+
+.quality-control-table th:nth-child(4),
+.quality-control-table td:nth-child(4) {
+  width: 80px; /* Số lượng */
+}
+
+.quality-control-table th:nth-child(5),
+.quality-control-table td:nth-child(5) {
+  width: 80px; /* Đơn vị tính */
+}
+
+.quality-control-table th:nth-child(6),
+.quality-control-table td:nth-child(6) {
+  width: 120px; /* Lý do - Giảm kích thước xuống */
+}
+
+.quality-control-table th:nth-child(7),
+.quality-control-table td:nth-child(7) {
+  width: 120px; /* Nhận xét chất lượng - Giảm kích thước xuống */
+}
+
+.quality-control-table th:nth-child(8),
+.quality-control-table td:nth-child(8) {
+  width: 60px; /* Thao tác */
+}
+
+/* Làm nổi bật phân trang */
+.pagination-container {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  margin-top: 0;
+  background-color: #f9f9f9;
+}
+
+.pagination-container button {
+  background-color: white;
+  margin: 0 2px;
+
+  &:disabled {
+    color: #ccc;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: #f0f0f0;
+  }
+}
+
+.pagination-container .page-info {
+  margin: 0 16px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Làm rõ khi hover row */
+.quality-control-table tbody tr:hover {
+  background-color: #f5f9ff;
+}
+
+/* Tối ưu hóa chiều cao của input fields */
+mat-form-field {
+  margin-bottom: -1.25em;
+}
+
+/* Đảm bảo form-field có chiều cao nhỏ gọn */
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+  padding: 0.5em 0 !important;
+  height: 32px !important;
+}
+
+/* Cải thiện hiển thị các input */
+.form-input {
+  height: 32px;
+  padding: 4px 8px;
+}
+
+/* Đảm bảo scrollbar luôn hiển thị đẹp mắt */
+.scrollable-table-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollable-table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.scrollable-table-container::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.scrollable-table-container::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* Điều chỉnh modal container để hiển thị toàn màn hình */
+.modal-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f5f5;
+  overflow: hidden; /* Ngăn scroll của toàn bộ modal */
+
+  .modal-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: #009688;
+    color: white;
+    padding: 0 16px;
+
+    .spacer {
+      flex: 1 1 auto;
+    }
+  }
+
+  .modal-content {
+    flex: 1;
+    display: flex;
+    padding: 20px;
+    gap: 20px;
+    overflow: hidden; /* Ngăn scroll ở cấp độ container */
+    max-height: calc(100vh - 128px); /* Chiều cao tối đa = viewport height - (header + footer) */
+
+    .main-section {
+      flex: 1;
+      background: white;
+      border-radius: 4px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      max-height: 100%;
+      overflow: hidden; /* Ngăn scroll ở cấp độ section */
+
+      /* Đảm bảo phần tìm kiếm và tiêu đề không bị scroll */
+      .search-filter-container {
+        flex-shrink: 0;
+      }
+
+      /* Cho phép scroll chỉ ở phần bảng */
+      .table-container {
+        flex: 1;
+        overflow: auto;
+        margin-bottom: 16px; /* Tạo không gian cho phân trang */
+      }
+
+      /* Đảm bảo phần phân trang luôn hiển thị ở cuối và không bị scroll */
+      .pagination-container {
+        flex-shrink: 0;
+        margin-top: auto;
+        padding: 12px 0;
+        background-color: white;
+        border-top: 1px solid #f0f0f0;
+      }
+    }
+
+    .info-section {
+      width: 450px;
+      background: white;
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      overflow-y: auto;
+      max-height: 100%;
+
+      h3 {
+        color: #333;
+        font-size: 20px;
+        margin-top: 0;
+        margin-bottom: 24px;
+        font-weight: 600;
+        text-align: center;
+        border-bottom: 2px solid #009688;
+        padding-bottom: 10px;
+      }
+
+      .info-form {
+        .form-row {
+          display: flex;
+          gap: 16px;
+          margin-bottom: 16px;
+
+          mat-form-field {
+            flex: 1;
+          }
+        }
+
+        mat-form-field {
+          width: 100%;
+          margin-bottom: 20px;
+        }
+
+        textarea {
+          min-height: 100px !important;
+          resize: vertical;
+        }
+
+        ::ng-deep .mat-form-field-wrapper {
+          margin: 0;
+          padding: 0;
+        }
+
+        ::ng-deep .mat-form-field-label {
+          font-weight: 500;
+          color: #444;
+        }
+
+        ::ng-deep .mat-form-field.mat-focused .mat-form-field-outline-thick {
+          color: #009688 !important;
+        }
+
+        ::ng-deep .mat-input-element {
+          padding: 2px 0;
+          font-size: 14px;
+          color: #333;
+        }
+
+        ::ng-deep .mat-datepicker-toggle {
+          color: #009688;
+        }
+      }
+    }
+  }
+
+  .modal-footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
+    padding: 8px 16px;
+    background: white;
+    border-top: 1px solid #ddd;
+    box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
+
+    .spacer {
+      flex: 1 1 auto;
+    }
+
+    button {
+      margin-left: 8px;
+    }
+  }
+}
+
+/* Cải thiện hiển thị phân trang */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 0;
+  background-color: white;
+  z-index: 50;
+
+  .page-info {
+    margin: 0 16px;
+    font-size: 14px;
+    color: #555;
+    font-weight: 500;
+  }
+
+  button {
+    color: #555;
+    margin: 0 4px;
+
+    &:disabled {
+      color: #ccc;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: #f5f5f5;
+    }
+  }
+}
+
+/* Cải thiện hiển thị bảng */
+.scrollable-table-container {
+  max-height: calc(100% - 120px); /* Để lại không gian cho phân trang */
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+}
+
+/* Đảm bảo header của bảng cố định khi scroll */
+.quality-control-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: #f5f5f5;
+    padding: 12px 16px;
+    font-weight: 500;
+    text-align: left;
+    border-bottom: 2px solid #e0e0e0;
+    box-shadow: 0 1px 0 0 #e0e0e0;
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: middle;
+  }
+}
+
+/* Cải thiện thanh tìm kiếm */
+.local-search {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 0 12px;
+  height: 40px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  width: 350px;
+
+  .search-icon {
+    color: #757575;
+    margin-right: 8px;
+  }
+
+  input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    height: 100%;
+    outline: none;
+    color: #333;
+
+    &::placeholder {
+      color: #9e9e9e;
+    }
+  }
+}
+
+/* Trường hợp không có dữ liệu */
+.no-data {
+  text-align: center;
+  padding: 32px !important;
+  color: #757575;
+  font-style: italic;
+}
+
+/* Loading indicator */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 40px 0;
+
+  p {
+    margin-top: 16px;
+    font-size: 16px;
+    color: #666;
+  }
+}
+
+/* Cải thiện hiển thị của cột Lô-HSD */
+.lot-select {
+  width: 100%;
+  min-width: 160px;
+}
+
+/* Đảm bảo chữ trong ô select không bị cắt */
+::ng-deep .mat-select-value {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Đảm bảo cột Lý do và Nhận xét có kích thước phù hợp */
+.full-width {
+  width: 100%;
+}
+
+/* Tùy chỉnh kích thước font trong dropdown để phù hợp hơn */
+::ng-deep .mat-option-text {
+  font-size: 13px;
+}
+
+/* Cải thiện hiển thị ngày tháng trong dropdown */
+::ng-deep .mat-option {
+  line-height: 36px;
+  height: 36px;
+  padding: 0 12px;
+}
+
+/* Tối ưu hiển thị cho màn hình nhỏ */
+@media (max-width: 1400px) {
+  .modal-content {
+    .info-section {
+      width: 400px;
+    }
+  }
+}
+
+@media (min-width: 1600px) {
+  .modal-content {
+    .info-section {
+      width: 500px;
+    }
+  }
+}
+
+/* Cải thiện hiển thị phần thông tin phiếu */
+.info-section {
+  width: 450px;
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  overflow-y: auto;
+  max-height: 100%;
+
+  h3 {
+    color: #333;
+    font-size: 20px;
+    margin-top: 0;
+    margin-bottom: 24px;
+    font-weight: 600;
+    text-align: center;
+    border-bottom: 2px solid #009688;
+    padding-bottom: 10px;
+  }
+
+  .info-form {
+    .form-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+
+      mat-form-field {
+        flex: 1;
+      }
+    }
+
+    // Đảm bảo tất cả form-field có khoảng cách đồng nhất
+    mat-form-field {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    // Đảm bảo các textarea có chiều cao đồng nhất
+    textarea {
+      min-height: 100px !important;
+      resize: vertical;
+    }
+
+    // Cải thiện hiển thị cho các input
+    ::ng-deep .mat-form-field-wrapper {
+      margin: 0;
+      padding: 0;
+    }
+
+    // Làm nổi bật các label
+    ::ng-deep .mat-form-field-label {
+      font-weight: 500;
+      color: #444;
+    }
+
+    // Cải thiện hiển thị outline khi focus
+    ::ng-deep .mat-form-field.mat-focused .mat-form-field-outline-thick {
+      color: #009688 !important;
+    }
+
+    // Làm đẹp các input
+    ::ng-deep .mat-input-element {
+      padding: 2px 0;
+      font-size: 14px;
+      color: #333;
+    }
+
+    // Cải thiện icon datepicker
+    ::ng-deep .mat-datepicker-toggle {
+      color: #009688;
+    }
+  }
+}
+
+/* Cải thiện các khối textarea */
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+  padding: 1em 0 1em 0 !important;
+  height: auto !important;
+}
+
+/* Cải thiện style cho input date */
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-flex {
+  padding: 0 8px !important;
+  margin-top: 0 !important;
+}
+
+/* Đảm bảo các trường input có chiều cao đồng nhất */
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+  top: 0 !important;
+}
+
+/* Làm đẹp các trường input */
+::ng-deep .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+  transform: translateY(-1.2em) scale(0.75) !important;
+}
+
+/* Điều chỉnh kích thước phần thông tin phiếu dựa trên kích thước màn hình */
+@media (max-width: 1400px) {
+  .info-section {
+    width: 400px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .info-section {
+    width: 500px;
+  }
 }
 
