@@ -2118,6 +2118,25 @@ export class SaleMainComponent implements OnInit {
 
     const customer = mItemInvoice.customer;
 
+    // --- Determine Payment Method and Bank Account ---
+    let paymentMethodValue = 'cash'; // Default to cash
+    let bankAccountId;
+    debugger;
+    const selectedPaymentMethod = this.form.get('selectedMethod').value;
+
+    if (selectedPaymentMethod === 'Chuyển khoản') {
+        paymentMethodValue = 'bank_transfer';
+        if (this.selectedBank) { // Check if a bank is selected
+            bankAccountId = this.selectedBank.id
+        } else {
+            this.notifySer.notify('warning', 'Vui lòng chọn tài khoản ngân hàng thanh toán!');
+            this.submitted = false;
+        }
+    } else if (selectedPaymentMethod === 'Tiền mặt') {
+        paymentMethodValue = 'cash'; 
+        bankAccountId = null;
+    }
+
     if (this.selectUser.value === '') {
       this.notifySer.notify('warning', 'Chưa chọn tên nhân viên !');
       this.submitted = false;
@@ -2241,7 +2260,8 @@ export class SaleMainComponent implements OnInit {
       },
       UserID: mItemInvoice.user.id,
       InvoiceDetail: invoiceDetail,
-      PaymentMethod: 'cash', // mItemInvoice.paymentSiderBar?.type,
+      PaymentMethod: paymentMethodValue,
+      BankAccountId: bankAccountId,
       PaymentPrice: this.sumPrice - this.numberDiscount - this.numberPointDiscount + this.expenseOrder, // tien thanh toan
       usedPoint: this.isUsePoint ? this.pointCanUse : 0,
       KhachNo: this.tienKhachNo,
@@ -3181,8 +3201,7 @@ export class SaleMainComponent implements OnInit {
     this.tinhLaiTienThua();
   }
   onMethodChange(): void {
-    console.
-    log(`Selected payment method: ${this.selectedMethod}`);
+    // console.log(`Selected payment method: ${this.selectedMethod}`);
   }
 
   loadBankAccounts() {
