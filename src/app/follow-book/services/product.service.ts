@@ -87,8 +87,13 @@ export class ProductService {
     return '?' + filter.toFilterString();
   }
 
+  /**
+   * Lấy thông tin chi tiết của phiếu kiểm soát chất lượng
+   * @param id ID của phiếu kiểm soát chất lượng
+   * @returns Observable chứa thông tin chi tiết của phiếu
+   */
   getQualityCheckDetail(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/quality-check/${id}`);
+    return this.http.get(`${this.baseUrl}/quality-check/${id}?expand=details`);
   }
 
   deleteQualityCheck(id: number): Observable<any> {

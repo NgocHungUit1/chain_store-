@@ -191,4 +191,65 @@ table {
 .toolbar-buttons-group {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
+  height: 36px;
+  min-height: 36px;
+  margin-right: 8px;
+}
+
+.toolbar-buttons-group button.mat-raised-button {
+  height: 36px !important;
+  line-height: 36px !important;
+  margin: 0 4px !important;
+  padding: 0 12px !important;
+  min-width: auto !important;
+}
+
+.toolbar-buttons-group .mat-icon {
+  font-size: 18px !important;
+  height: 18px !important;
+  width: 18px !important;
+  line-height: 18px !important;
+  margin-right: 4px !important;
+  vertical-align: middle !important;
+}
+
+.diva-column-select {
+  display: flex !important;
+  align-items: center !important;
+  margin: 0 8px !important;
+  height: 36px !important;
+
+  button {
+    height: 36px !important;
+    width: 36px !important;
+    padding: 0 !important;
+    min-width: 36px !important;
+
+    .mat-icon {
+      margin-right: 0 !important;
+    }
+  }
+
+  mat-select {
+    width: 0 !important;
+    opacity: 0 !important;
+    position: absolute !important;
+  }
+}
+
+.dv-header {
+  height: 64px !important;
+  min-height: 64px !important;
+  padding: 0 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  box-sizing: border-box !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
+}
+
+.spacer {
+  flex: 1 1 auto !important;
+  min-width: 8px !important;
 }
