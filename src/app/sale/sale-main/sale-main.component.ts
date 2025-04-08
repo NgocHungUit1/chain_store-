@@ -2,7 +2,7 @@ import { Component, ElementRef, HostListener, OnInit, QueryList, ViewChild, View
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { Product } from '../../product/product.model';
 import { OrderService } from '../order.service';
 import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
@@ -40,6 +40,8 @@ import { SharedDataService } from '../../shared/shared-data.service';
 import { BankAccountDialogComponent } from '../bank-account-dialog/bank-account-dialog.component';
 import { PaymentQrDialogComponent } from '../payment-qr-dialog/payment-qr-dialog.component';
 import { TransactionNotifyDialogComponent } from '../transaction-notify-dialog/bank-account-dialog.component';
+import { BankAccountService } from '../../bank-account/bank-account.service';
+import { BankAccountFilter } from '../../bank-account/bank-account.model';
 
 export const MY_FORMATS = {
   parse: {
@@ -53,9 +55,9 @@ export const MY_FORMATS = {
   },
 };
 interface BankAccount {
-  bankName: string;
-  accountNumber: string;
-  accountHolder: string;
+  bank_code: string;
+  account_number: string;
+  account_name: string;
 }
 @Component({
   selector: 'app-sale-main',
@@ -89,6 +91,7 @@ export class SaleMainComponent implements OnInit {
     private sharedDataSer: SharedDataService,
     public storeSer: StoreService,
     private productSer: ProductService,
+    private bankAccountSer: BankAccountService,
 
   ) {
     this.optionStoreService.getValue('point_enabled').subscribe(res => {
@@ -107,6 +110,7 @@ export class SaleMainComponent implements OnInit {
       this.canNegativeStock = res.value === 'yes';
     });
   }
+  private loadBankAccountsSubject = new Subject<void>(); // Subject to trigger debouncing
 
   optionStore_auto_print: OptionStore = null;
 
@@ -184,6 +188,7 @@ export class SaleMainComponent implements OnInit {
   searchTerm: string = '';
   isDropdownOpen: boolean = false;
   wallets: any[] = [];
+  bankAccountFilter: BankAccountFilter = new BankAccountFilter();
   @ViewChild('prescription') prescription;
   @ViewChild('customerSearch') customerSearch: ElementRef;
   @ViewChild('customerPayment') customerPayment: ElementRef;
@@ -229,8 +234,14 @@ export class SaleMainComponent implements OnInit {
     await this.handlePointDiscountSiderBar(mItemInvoice);
 
     await this.handlePaymentSiderBar(mItemInvoice);
+
+    this.loadBankAccountsSubject.pipe(
+      debounceTime(300) // Wait for 300ms of inactivity
+    ).subscribe(() => {
+      this.loadBankAccounts(); // Call the actual function after debounce
+    });
     
-    await this.loadBankAccounts();
+    this.triggerLoadBankAccounts();
 
     this.filteredBankAccounts = [...this.bankAccounts];
 
@@ -1059,9 +1070,10 @@ export class SaleMainComponent implements OnInit {
       panelClass: 'rounded-dialog'
     });
 
-    dialogRef.afterClosed().subscribe(mItemInvoiceActive => {
-      if (mItemInvoiceActive !== undefined) {
-        // this.handlePaymentSiderBar(mItemInvoiceActive);
+    dialogRef.afterClosed().subscribe(bankAccount => {
+      if (bankAccount !== undefined) {
+        this.selectedBank = bankAccount
+        this.triggerLoadBankAccounts();
       }
     });
   }
@@ -2106,6 +2118,25 @@ export class SaleMainComponent implements OnInit {
 
     const customer = mItemInvoice.customer;
 
+    // --- Determine Payment Method and Bank Account ---
+    let paymentMethodValue = 'cash'; // Default to cash
+    let bankAccountId;
+    debugger;
+    const selectedPaymentMethod = this.form.get('selectedMethod').value;
+
+    if (selectedPaymentMethod === 'Chuyển khoản') {
+        paymentMethodValue = 'bank_transfer';
+        if (this.selectedBank) { // Check if a bank is selected
+            bankAccountId = this.selectedBank.id
+        } else {
+            this.notifySer.notify('warning', 'Vui lòng chọn tài khoản ngân hàng thanh toán!');
+            this.submitted = false;
+        }
+    } else if (selectedPaymentMethod === 'Tiền mặt') {
+        paymentMethodValue = 'cash'; 
+        bankAccountId = null;
+    }
+
     if (this.selectUser.value === '') {
       this.notifySer.notify('warning', 'Chưa chọn tên nhân viên !');
       this.submitted = false;
@@ -2229,7 +2260,8 @@ export class SaleMainComponent implements OnInit {
       },
       UserID: mItemInvoice.user.id,
       InvoiceDetail: invoiceDetail,
-      PaymentMethod: 'cash', // mItemInvoice.paymentSiderBar?.type,
+      PaymentMethod: paymentMethodValue,
+      BankAccountId: bankAccountId,
       PaymentPrice: this.sumPrice - this.numberDiscount - this.numberPointDiscount + this.expenseOrder, // tien thanh toan
       usedPoint: this.isUsePoint ? this.pointCanUse : 0,
       KhachNo: this.tienKhachNo,
@@ -3169,39 +3201,29 @@ export class SaleMainComponent implements OnInit {
     this.tinhLaiTienThua();
   }
   onMethodChange(): void {
-    console.
-    log(`Selected payment method: ${this.selectedMethod}`);
+    // console.log(`Selected payment method: ${this.selectedMethod}`);
   }
-  async loadBankAccounts() {
-    // Option 1: Direct assignment
-    this.bankAccounts = [
-      { 
-        id: 1, 
-        bankName: 'Chase Bank', 
-        accountNumber: '****4567', 
-        accountHolder: 'John Doe' 
-      },
-      { 
-        id: 2, 
-        bankName: 'Bank of America', 
-        accountNumber: '****7890', 
-        accountHolder: 'Jane Smith' 
-      },
-      { 
-        id: 3, 
-        bankName: 'Wells Fargo', 
-        accountNumber: '****2345', 
-        accountHolder: 'Robert Johnson' 
-      }
-    ];
-    
-    // Option 2: From a service
-    // this.yourService.getBankAccounts().subscribe(accounts => {
-    //   this.bankAccounts = accounts;
-    // });
+
+  loadBankAccounts() {
+    function write<K extends keyof BankAccountFilter>(arg: BankAccountFilter, key: K, value: BankAccountFilter[K]): void {
+      arg[key] = value;
+    }
+
+    write(this.bankAccountFilter, 'page', 1);
+    write(this.bankAccountFilter, 'pageSize', 1000);
+    write(this.bankAccountFilter, 'status', '10,9');
+    write(this.bankAccountFilter, 'expand', 'province,district,ward');
+
+    this.bankAccountSer.getList(this.bankAccountFilter).subscribe((res) => {
+      this.bankAccounts = res.body
+      if(!this.selectedBank)
+        this.selectedBank = this.bankAccounts[0];
+      this.filterBanks();
+    });
   }
 
   toggleDropdown() {
+    this.triggerLoadBankAccounts();
     this.isDropdownOpen = !this.isDropdownOpen;
   }
 
@@ -3213,10 +3235,15 @@ export class SaleMainComponent implements OnInit {
     
     const term = this.searchTerm.toLowerCase();
     this.filteredBankAccounts = this.bankAccounts.filter(bank => 
-      bank.bankName.toLowerCase().includes(term) || 
-      bank.accountNumber.includes(term) || 
-      bank.accountHolder.toLowerCase().includes(term)
+      bank.bank_code.toLowerCase().includes(term) || 
+      bank.account_number.includes(term) || 
+      bank.account_name.toLowerCase().includes(term)
     );
+  }
+
+  // Function to trigger the debounced loadBankAccounts
+  triggerLoadBankAccounts(): void {
+    this.loadBankAccountsSubject.next(); // Emit an event to the Subject
   }
 
   selectBank(bank: BankAccount | null) {
