@@ -36,6 +36,10 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { FollowBookInventoryTrackingComponent } from './follow-book-inventory-tracking/follow-book-inventory-tracking.component';
+import { FollowBookCustomerTransactionComponent } from './follow-book-customer-transaction/follow-book-customer-transaction.component';
+import { CustomerTransactionService } from './services/customer-transaction.service';
+import { InventoryTrackingService } from './services/inventory-tracking.service';
 
 @NgModule({
   declarations: [
@@ -44,7 +48,9 @@ import { MatInputModule } from '@angular/material/input';
     DatetimeDefaultFilterDialogComponent,
     DatetimeChooseFilterDialogComponent,
     QualityControlDetailModalComponent,
-    FollowBookMedicineTrackingComponent
+    FollowBookMedicineTrackingComponent,
+    FollowBookInventoryTrackingComponent,
+    FollowBookCustomerTransactionComponent
   ],
   imports: [
     CommonModule,
@@ -81,6 +87,10 @@ import { MatInputModule } from '@angular/material/input';
   ],
   exports: [
     // Xóa ConfirmDialogComponent khỏi exports
+  ],
+  providers: [
+    InventoryTrackingService,
+    CustomerTransactionService
   ]
 })
 export class FollowBookModule { }

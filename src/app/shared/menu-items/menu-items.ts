@@ -201,9 +201,8 @@ const MENUITEMS = [
       'Quality-Check.List',
       'Quality-Check.Update',
       'Quality-Check.View',
-      'Invoice.Medicine-Tracking'
-
-
+      'Invoice.Medicine-Tracking',
+     'Warehouse-Product-Parcel.Tracking'
     ],
     children: [
       {
@@ -217,7 +216,8 @@ const MENUITEMS = [
           'Quality-Check.Delete',
           'Quality-Check.List',
           'Quality-Check.Update',
-          'Quality-Check.View'
+          'Quality-Check.View',
+
         ]
       },
       {
@@ -228,7 +228,18 @@ const MENUITEMS = [
         permissions: [
           'Invoice.Medicine-Tracking',
         ]
-      }
+      },
+      {
+        state: 'inventory-tracking',
+        name: 'Xuất nhập tồn thuốc KSĐB',
+        type: 'link',
+        icon: 'inventory',
+        permissions: [
+          'Warehouse-Product-Parcel.Tracking',
+        ]
+      },
+
+
     ]
   },
   // {
