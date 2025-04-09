@@ -238,6 +238,13 @@ const MENUITEMS = [
           'Warehouse-Product-Parcel.Tracking',
         ]
       },
+      // {
+      //   state: 'customer-transaction',
+      //   name: 'Giao dịch khách hàng',
+      //   type: 'link',
+      //   icon: 'person',
+      //   permissions: [    'Quality-Check.All']
+      // }
 
 
     ]

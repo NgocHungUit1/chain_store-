@@ -86,11 +86,7 @@ import { InventoryTrackingService } from './services/inventory-tracking.service'
     MatInputModule
   ],
   exports: [
-    // Xóa ConfirmDialogComponent khỏi exports
   ],
-  providers: [
-    InventoryTrackingService,
-    CustomerTransactionService
-  ]
+
 })
 export class FollowBookModule { }
