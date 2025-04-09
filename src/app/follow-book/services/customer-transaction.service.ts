@@ -25,6 +25,7 @@ export class CustomerTransactionService {
     // Lọc trạng thái đơn hàng
     params = params.set('InvoiceSearch[order_status]', 'pending,done');
     params = params.set('InvoiceSearch[order_national]', 'yes,no');
+    params = params.set('InvoiceSearch[group_id]', '32459');
 
     // Lọc theo customer_id nếu có
     if (filter.customer_id) {
@@ -49,7 +50,8 @@ export class CustomerTransactionService {
   exportToExcel(dateFilter: any): Observable<any> {
     let params = new HttpParams()
       .set('InvoiceSearch[order_status]', 'pending,done')
-      .set('InvoiceSearch[order_national]', 'yes,no');
+      .set('InvoiceSearch[order_national]', 'yes,no')
+      .set('InvoiceSearch[group_id]', '32459');
 
     // Lọc theo customer_id nếu có
     if (dateFilter.customer_id) {
@@ -65,7 +67,8 @@ export class CustomerTransactionService {
       params = params.set('InvoiceSearch[date_to]', dateFilter.date_to);
     }
 
-    return this.http.get(`${this.baseUrl}/invoice/export-customer-detail`, {
+    // Sử dụng API endpoint mới: export-medicine-log
+    return this.http.get(`${this.baseUrl}/invoice/export-medicine-log`, {
       params,
       responseType: 'blob'
     });

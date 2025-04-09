@@ -108,7 +108,7 @@ export class FollowBookCustomerTransactionComponent extends ListComponentBase im
                   stt: (this.page - 1) * this.pageSize + this.dataSource.length + 1,
                   date: invoice.createdFormat,
                   medicine_name: detail.product ? detail.product.product_name : 'N/A',
-                  ingredients: '', // API không cung cấp thông tin này
+                  ingredients: detail.product && detail.product.medicine ? detail.product.medicine.name : 'N/A',
                   unit: detail.base_unit,
                   quantity: detail.amount,
                   customer_name: invoice.customer ? invoice.customer.name : 'Khách lẻ',
@@ -224,6 +224,9 @@ export class FollowBookCustomerTransactionComponent extends ListComponentBase im
   exportExcel(): void {
     this.isLoadingResults = true;
 
+    // Log thông tin xuất Excel
+    console.log('Exporting data with filters:', this.currentDateFilter);
+
     this.customerTransactionService.exportToExcel(this.currentDateFilter).subscribe(
       (response: any) => {
         const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -231,11 +234,13 @@ export class FollowBookCustomerTransactionComponent extends ListComponentBase im
         const link = document.createElement('a');
         link.href = url;
 
+        // Đặt tên file với ngày tháng
         const dateStr = this.currentDateFilter.date_from ?
           `_${this.currentDateFilter.date_from}_${this.currentDateFilter.date_to}` :
           '';
         link.download = `so-theo-doi-khach-hang${dateStr}.xlsx`;
 
+        // Tự động click để tải file
         link.click();
         window.URL.revokeObjectURL(url);
         this.isLoadingResults = false;
