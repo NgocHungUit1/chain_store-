@@ -3241,7 +3241,7 @@ export class SaleMainComponent implements OnInit {
     this.filteredBankAccounts = this.bankAccounts.filter(bank =>
       bank.bank_code.toLowerCase().includes(term) ||
       bank.account_number.includes(term) ||
-      bank.account_name.toLowerCase().includes(term)
+      bank.account_name.toLowerCase().includes(term));
   }
 
   // Function to trigger the debounced loadBankAccounts
