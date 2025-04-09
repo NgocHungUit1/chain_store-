@@ -936,7 +936,7 @@
                               <!-- Selected Bank Display -->
                               <div class="selected-bank" (click)="toggleDropdown()">
                                 <span *ngIf="selectedBank">
-                                  {{ selectedBank.bankName }} - {{ selectedBank.accountNumber }} - {{ selectedBank.accountHolder }}
+                                  {{ selectedBank.bank_code }} - {{ selectedBank.account_number }} - {{ selectedBank.account_name }}
                                 </span>
                                 <span *ngIf="!selectedBank">-Tài khoản nhận-</span>
                                 <mat-icon>{{ isDropdownOpen ? 'arrow_drop_up' : 'arrow_drop_down' }}</mat-icon>
@@ -970,13 +970,13 @@
                                   <div
                                     *ngFor="let bank of filteredBankAccounts"
                                     class="bank-option"
-                                    [class.selected]="selectedBank && selectedBank.accountNumber === bank.accountNumber"
+                                    [class.selected]="selectedBank && selectedBank.account_number === bank.account_number"
                                     (click)="selectBank(bank)">
                                     <div>
-                                      <div class="bank-name">{{ bank.bankName }} - {{ bank.accountNumber }}</div>
-                                      <div class="account-holder">{{ bank.accountHolder }}</div>
+                                      <div class="bank-name">{{ bank.bank_code }} - {{ bank.account_number }}</div>
+                                      <div class="account-holder">{{ bank.account_name }}</div>
                                     </div>
-                                    <mat-icon *ngIf="selectedBank && selectedBank.accountNumber === bank.accountNumber">check</mat-icon>
+                                    <mat-icon *ngIf="selectedBank && selectedBank.account_number === bank.account_number">check</mat-icon>
                                   </div>
 
                                   <div
@@ -991,7 +991,14 @@
                             + Thêm tài khoản ngân hàng
                           </button> -->
                         </div>
-
+                        <ng-template #noBankAccounts>
+                          <div class="no-bank-message">
+                            Bạn chưa có tài khoản ngân hàng
+                          </div>
+                          <button (click)="openBankAccountsDialog()" mat-stroked-button class="add-account-btn">
+                            + Thêm tài khoản ngân hàng
+                          </button>
+                        </ng-template>
                         <!-- Actions Button - Only show when a bank is selected -->
                         <div class="action-buttons" *ngIf="selectedBank">
                           <button (click)="openPaymentQrDialog()" mat-stroked-button class="action-buttons-qr">

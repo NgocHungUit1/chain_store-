@@ -1,6 +1,8 @@
 <div class="dialog-container">
   <div class="dialog-header">
-    <h2 class ="mat-dialog-title">Thêm tài khoản</h2>
+    <div>
+      <h2 style="margin: 0;" class ="mat-dialog-title">Thêm tài khoản</h2>
+    </div>
     <button mat-icon-button (click)="onCancel()">
       <mat-icon>close</mat-icon>
     </button>
@@ -8,14 +10,14 @@
 
   <div class="dialog-content">
     <form [formGroup]="bankAccountForm" style="width: 100%">
-      <h3>Thông tin tài khoản</h3>
+      <h5>Thông tin tài khoản</h5>
       <div fxLayout="row wrap" class="input-layout" class="input-layout">
         <div fxFlex="30">
           <div class="bank-form--label">Số tài khoản</div>
         </div>
         <div fxFlex="70">
           <mat-form-field class="full-width">
-            <input matInput formControlName="accountNumber" placeholder="Nhập số tài khoản"/>
+            <input matInput formControlName="account_number" placeholder="Nhập số tài khoản"/>
           </mat-form-field>
         </div>
       </div>
@@ -25,12 +27,10 @@
         </div>
         <div fxFlex="70">
           <mat-form-field class="full-width">
-            <mat-select formControlName="bankName">
-              <mat-option value="Vietcombank">Vietcombank</mat-option>
-              <mat-option value="BIDV">BIDV</mat-option>
-              <mat-option value="Techcombank">Techcombank</mat-option>
-              <mat-option value="VPBank">VPBank</mat-option>
-              <mat-option value="MB Bank">MB Bank</mat-option>
+            <mat-select formControlName="bank_code">
+              <mat-option *ngFor="let code of bankCodes" [value]="code">
+                {{this.bankCodesObj[code]}}
+              </mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -41,7 +41,7 @@
         </div>
         <div fxFlex="70">
           <mat-form-field class="full-width">
-            <input matInput formControlName="accountHolder" placeholder="Nhập tên chủ tài khoản"/>
+            <input matInput formControlName="account_name" placeholder="Nhập tên chủ tài khoản"/>
           </mat-form-field>
         </div>
       </div>

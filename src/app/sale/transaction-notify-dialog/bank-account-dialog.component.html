@@ -13,7 +13,7 @@
           <div class="bank-form--label">Ngân hàng</div>
         </div>
         <div fxFlex="70">
-          <div class="field-display">{{ data.bankName || 'N/A' }}</div>
+          <div class="field-display">{{ data.bank_code || 'N/A' }}</div>
         </div>
       </div>
       <div fxLayout="row wrap" class="input-layout">
@@ -21,7 +21,7 @@
           <div class="bank-form--label">Số tài khoản</div>
         </div>
         <div fxFlex="70">
-          <div class="field-display">{{ data.accountNumber || 'N/A' }}</div>
+          <div class="field-display">{{ data.account_number || 'N/A' }}</div>
         </div>
       </div>
       <div fxLayout="row wrap" class="input-layout">
@@ -29,7 +29,7 @@
           <div class="bank-form--label">Chủ tài khoản</div>
         </div>
         <div fxFlex="70">
-          <div class="field-display">{{ data.accountHolder || 'N/A' }}</div>
+          <div class="field-display">{{ data.account_name || 'N/A' }}</div>
         </div>
       </div>
       <div fxLayout="row wrap" class="input-layout">
@@ -47,7 +47,7 @@
       <div class="agreement-container">
         <mat-checkbox formControlName="agreementChecked" class="agreement-checkbox">
           <div class="agreement-text">
-            Tôi đã đọc và đồng ý để {{ data.bankName }} cung cấp thông tin giao dịch trên tài khoản của tôi cho rx20.vn và đồng ý 
+            Tôi đã đọc và đồng ý để {{ data.bank_code }} cung cấp thông tin giao dịch trên tài khoản của tôi cho rx20.vn và đồng ý 
             <a href="javascript:void(0)" class="terms-link">Điều kiện và điều khoản sử dụng dịch vụ</a>
           </div>
         </mat-checkbox>
