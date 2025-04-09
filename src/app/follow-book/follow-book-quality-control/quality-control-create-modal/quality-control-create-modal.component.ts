@@ -73,7 +73,7 @@ export class QualityControlCreateModalComponent implements OnInit {
 
   constructor(
     private dialogRef: MatDialogRef<QualityControlCreateModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { isEdit: boolean; qualityCheck: any },
+    @Inject(MAT_DIALOG_DATA) public data: { isEdit: boolean; qualityCheck: any; qualityCheckDetail: any },
     private fb: FormBuilder,
     private productService: ProductService,
     private notifyService: NotifierService
