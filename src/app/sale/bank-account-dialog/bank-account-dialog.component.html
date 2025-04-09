@@ -51,23 +51,23 @@
         </div>
         <div fxFlex="70">
           <mat-form-field class="full-width">
-            <textarea matInput formControlName="note" placeholder="Nhập ghi chú"></textarea>
+            <textarea rows="1" matInput formControlName="note" placeholder="Nhập ghi chú"></textarea>
           </mat-form-field>
         </div>
       </div>
     </form>
   </div>
-
-  <div class="dialog-actions">
-    <button mat-button (click)="onCancel()" class="cancel-button">
-      Bỏ qua
-    </button>
+  
+  <div mat-dialog-actions align="end" class="dialog-actions">
     <button
       mat-raised-button
       color="primary"
       (click)="onSave()"
       [disabled]="bankAccountForm.invalid">
-      Lưu
+      <mat-icon class="m-r-5">save</mat-icon>Lưu
+    </button>
+    <button mat-raised-button (click)="onCancel()" class="cancel-button">
+      <mat-icon class="m-r-5">cancel</mat-icon>Bỏ qua
     </button>
   </div>
 </div>

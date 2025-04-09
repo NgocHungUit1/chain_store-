@@ -20,7 +20,7 @@ html .page-wrapper .page-content {
 }
 
 .sidebar-order-top{
-  max-height: 600px; /* Adjust this value */
+  height: 100%; /* Adjust this value */
   overflow-y: auto; /* Add a scrollbar if content exceeds max-height */
   overflow-x: hidden; /* Hide the horizontal scrollbar */
 }
@@ -657,7 +657,7 @@ Popup parcel list
 
 /* Container for the entire payment selector */
 .payment-selector {
-  padding: 20px;
+  padding: 10px;
   max-width: 600px;
   margin: 0 auto;
 }
@@ -883,8 +883,8 @@ Popup parcel list
   border-radius: 4px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 100;
-  max-height: 300px;
-  overflow-y: auto;
+  // max-height: 320px;
+  // overflow-y: auto;
 }
 
 .search-container {
@@ -918,7 +918,8 @@ Popup parcel list
 }
 
 .bank-options {
-  max-height: 80px;
+  max-height: calc(100vh - 770px);
+  min-height: 120px;
   overflow-y: auto;
 }
 
