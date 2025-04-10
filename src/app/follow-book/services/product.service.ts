@@ -117,7 +117,10 @@ export class ProductService {
   }
 
   exportQualityControlToExcel(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/quality-check/${id}/export`, {
+    const params = new HttpParams().set('id', id.toString());
+
+    return this.http.get(`${this.baseUrl}/quality-check/export`, {
+      params: params,
       responseType: 'blob'
     });
   }
