@@ -1212,154 +1212,203 @@ export class SaleMainComponent implements OnInit {
   printInvoice(invoice_id: number) {
     let _font_size = '11px';
     let _font_size_store = '13px';
-    let _margin = '4px;';
-    let _padding = '3px;';
+    let _margin = '4px';
+    let _padding = '3px';
     let _solo = 'text-align:left;';
+    
     this.optionStoreService.getValue('print_type').subscribe(res => {
-      // console.log(res);
       if (res.value === 'K58') {
-        _font_size = '11px;';
-        _margin = '4px;';
-        _padding = '3px;';
+        _font_size = '11px';
+        _margin = '4px';
+        _padding = '3px';
         _solo = 'text-align:left;';
       } else { // A4
-        _font_size = '14px;';
+        _font_size = '14px';
         _font_size_store = '16px';
-        _margin = '6px;';
-        _padding = '6px;';
+        _margin = '6px';
+        _padding = '6px';
         _solo = 'text-align:left; min-width: 100px;';
       }
-
+  
       this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
         const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
         const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
+        
+        debugger
         let printContent = '<title>' + res?.invoice_no + '</title>';
-        printContent += '<style> ' +
-          'p,table,div {' +
-          'font-family: Arial, sans-serif;' +
-          'font-size: ' + _font_size +
-          'margin: ' + _margin +
-          '}' +
-          'table, th, td {' +
-          // 'font-family: arial, sans-serif;' +
-          'border-collapse: collapse;' +
-          'border: 1px solid black;' +
-          'width: 100%;' +
-          '}' +
-          'td, th {' +
-          'border: 1px solid black;' +
-          'text-align: left;' +
-          'padding: ' + _padding +
-          '}</style>' +
-          '<section style="padding: 10px; font-size: ' + _font_size + ' ">' +
-          (this.logo !== null ? '<p style="text-align:center; margin-bottom: 10px"><img src="' + this.logo + '" style="max-width: 160px;"></p>' : '') +
-          '<p style="text-align:center;font-size: ' + _font_size_store + '">' + res?.store?.name + '</p>' +
-          '<p style="text-align:center;">' + res?.store?.address + '</p>' +
-          '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
-          '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +
-          '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
-          '<br>';
-
+        printContent += `
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 0;
+              width: 100%;
+            }
+            p, div {
+              font-size: ${_font_size};
+              margin: ${_margin};
+              padding: 0;
+              line-height: 1.2;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              font-size: ${_font_size};
+            }
+            th, td {
+              padding: ${_padding};
+              text-align: left;
+            }
+            .center {
+              text-align: center;
+            }
+            .bold {
+              font-weight: bold;
+            }
+            .right {
+              text-align: right;
+            }
+  
+            .invoice-table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            .header-border {
+              border-top: 1px solid black;
+              border-bottom: 1px solid black;
+            }
+  
+            .top-border {
+              border-top: 1px dashed black;
+            }
+          </style>
+          <section style="padding: 5px; font-size: ${_font_size}; width: 100%;">
+            ${this.logo ? `<p class="center"><img src="${this.logo}" style="max-width: 120px;"></p>` : 
+                          `<p class="center"><img src="assets/images/Rx20_16x16_op1-1207.png" style="max-width: 120px;"></p>`}
+            <p class="center bold" style="font-size: ${_font_size_store}">${res?.store?.name || 'Store Name'}</p>
+            <p class="center">${res?.store?.address || 'Store Address'}</p>
+            <p class="center bold">HÓA ĐƠN BÁN HÀNG</p>
+            <p class="center bold">Số HĐ: ${res?.invoice_no}</p>
+            <p class="center">Ngày ${res?.created_at}</p>
+        `;
+  
         // Customer info
         const { nationalPrescription } = res;
         if (nationalPrescription) {
-          printContent +=
-            '<p>Mã đơn thuốc: <b>' + nationalPrescription.nationalPrescriptionId + '</b></p>' +
-            '<p>Tên đơn vị: <b>' + nationalPrescription.medicalFacilityName + '</b></p>' +
-            '<p>Họ tên: <b>' + nationalPrescription.patientName + '</b></p>' +
-            '<p>SĐT: <b>' + nationalPrescription.patientPhoneNumber + '</b></p>' +
-            '<p>Ngày sinh: <b>' + nationalPrescription.patientDOB + '</b>' +
-            '&nbsp;&nbsp;&nbsp;&nbsp;Cân nặng: <b>' + nationalPrescription.patientWeight + '</b>' +
-            '&nbsp;&nbsp;&nbsp;&nbsp;Giới tính: <b>' + nationalPrescription.patientSex + '</b></p>' +
-            '<br>' +
-            '<p><b>Chẩn đoán:</b> ' + nationalPrescription?.diagnostics[0]?.conclusion + '</p>';
+          printContent += `
+            <p>Mã đơn thuốc: <b>${nationalPrescription.nationalPrescriptionId || ''}</b></p>
+            <p>Tên đơn vị: <b>${nationalPrescription.medicalFacilityName || ''}</b></p>
+            <p>Họ tên: <b>${nationalPrescription.patientName || ''}</b></p>
+            <p>SĐT: <b>${nationalPrescription.patientPhoneNumber || ''}</b></p>
+            <p>Ngày sinh: <b>${nationalPrescription.patientDOB || ''}</b>
+              Cân nặng: <b>${nationalPrescription.patientWeight || ''}</b>
+              Giới tính: <b>${nationalPrescription.patientSex || ''}</b></p>
+            <br>
+            <p><b>Chẩn đoán:</b> ${nationalPrescription?.diagnostics?.[0]?.conclusion || ''}</p>
+          `;
         } else {
-          printContent += '<p style="">Khách hàng: ' + customer_name + '</p style="">';
-          if (customer_phone !== '') {
-            printContent += '<p style="">SĐT: ' + customer_phone + '</p>';
+          printContent += `<p>Khách hàng: ${customer_name}</p>`;
+          if (customer_phone) {
+            printContent += `<p>SĐT: ${customer_phone}</p>`;
           }
         }
-
-        printContent +=
-          '<br>' +
-          '<table>' +
-          '<tr>' +
-          '<th>Tên thuốc</th>' +
-          '<th style="text-align:center;">SL</th>';
-
+  
+        printContent += `
+          <table>
+            <tr class="header-border">
+              <th style="width: 40%;">Đơn giá</th>
+              <th style="width: 20%; text-align: center;">SL</th>`;
+  
+        // Add Số lô column header if needed
         if (this.autoPrintInSoLo === true) {
-          printContent += '<th style="' + _solo + '">Số lô</th>';
+          printContent += `<th style="${_solo}">Số lô</th>`;
         }
-
-        printContent += '<th style="text-align:center;">T.Tiền</th>' +
-          '</tr>';
-
-        const detail = res.detail;
-
-        /**
-         * Chi tiet don hang
-         */
-        // tslint:disable-next-line:no-shadowed-variable
+  
+        printContent += `<th style="width: 40%; text-align: right;">Thành tiền</th>
+            </tr>
+        `;
+  
+        // Product details
+        const detail = res.detail || [];
         detail.forEach(element => {
-          if (element?.base_unit == null) {
-            printContent += '<tr>' +
-              '<td>' + element.product?.product_name + '<br>' + element.price + '</td>' +
-              '<td style="text-align:center;">' + element.amount + '</td>';
+          if (!element?.base_unit) {
+            printContent += `
+              <tr>
+                <td colspan="${this.autoPrintInSoLo ? '4' : '3'}">${element.product?.product_name || ''}</td>
+              </tr>
+              <tr>
+                <td>${numeral(element.price || 0).format('0,0')}</td>
+                <td style="text-align: center;">${element.amount || 0}</td>`;
+  
+            // Add Số lô cell if needed
             if (this.autoPrintInSoLo === true) {
-              printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
+              printContent += `<td style="text-align:left;">${element.so_lo || ''}</td>`;
             }
-            printContent += '<td style="text-align:right;">' + element.total + '</td>' +
-              '</tr>';
+  
+            printContent += `<td style="text-align: right;">${numeral(element.total || 0).format('0,0')}</td>
+              </tr>
+            `;
           } else {
-            printContent += '<tr>' +
-              '<td>' + element.product?.product_name + ' - ' + element?.base_unit + '<br>' + element.price + '</td>' +
-              '<td style="text-align:center;">' + element.amount + '</td>';
+            printContent += `
+              <tr>
+                <td colspan="${this.autoPrintInSoLo ? '4' : '3'}">${element.product?.product_name || ''} - (${element?.base_unit || ''})</td>
+              </tr>
+              <tr>
+                <td>${numeral(element.price || 0).format('0,0')}</td>
+                <td style="text-align: center;">${element.amount || 0}</td>`;
+  
+            // Add Số lô cell if needed
             if (this.autoPrintInSoLo === true) {
-              printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
+              printContent += `<td style="text-align:left;">${element.so_lo || ''}</td>`;
             }
-            printContent += '<td style="text-align:right;">' + element.total + '</td>' +
-              '</tr>';
+  
+            printContent += `<td style="text-align: right;">${numeral(element.total || 0).format('0,0')}</td>
+              </tr>
+            `;
           }
         });
-
-        /**
-         * Tong tien hang
-         */
-        let colspan = 2;
-        if (this.autoPrintInSoLo === true) {
-          colspan = 3;
-        }
-        printContent += '<tr>' +
-          '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng tiền hàng :</td>' +
-          '<td style="text-align:right; font-weight:600;">' + res.total_price + '</td>' +
-          '</tr>';
-        printContent += '<tr>' +
-          '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Chiết khấu :</td>' +
-          '<td style="text-align:right; font-weight:600;">' + res.discount + '</td>' +
-          '</tr>';
-        printContent += '<tr>' +
-          '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng thanh toán :</td>' +
-          '<td style="text-align:right; font-weight:600;">' + res.sum_payment + '</td>' +
-          '</tr>';
+  
+        // Determine the colspan based on whether _solo is included
+        const colspan = this.autoPrintInSoLo ? '3' : '2';
+  
+        // Totals
+        printContent += `
+          <tr class="top-border">
+            <td colspan="${colspan}" class="right bold">Tổng tiền hàng :</td>
+            <td class="right bold">${numeral(res?.total_price || 0).format('0,0')}</td>
+          </tr>
+          <tr>
+            <td colspan="${colspan}" class="right bold">Chiết khấu :</td>
+            <td class="right bold">${numeral(res?.discount || 0).format('0,0')}</td>
+          </tr>
+          <tr>
+            <td colspan="${colspan}" class="right bold">Tổng thanh toán :</td>
+            <td class="right bold">${numeral(res?.sum_payment || 0).format('0,0')}</td>
+          </tr>
+        `;
+        
         if (res.debt !== null) {
-          printContent += '<tr>' +
-            '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Còn nợ :</td>' +
-            '<td style="text-align:right; font-weight:600;">' + res.debt + '</td>' +
-            '</tr>';
+          printContent += `
+            <tr>
+              <td colspan="${colspan}" class="right bold">Còn nợ :</td>
+              <td class="right bold">${numeral(res.debt).format('0,0')}</td>
+            </tr>
+          `;
         }
-        printContent += '</table>';
-
-        // Footer
-        printContent += '<br>';
-        if (this.description !== null && this.description.length > 0) {
-          printContent += '<p style="text-align:center; font-style: italic;" >' + this.description + '</p>';
-        } else {
-          printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
-        }
-        // printContent += '<p style="text-align:left; font-size: 12px;font-style: italic;" >Hổ trợ : 0972 574 506</p>';
-
-        printContent += '</section>';
-
+        
+        printContent += `</table>`;
+        debugger;
+        // Add Vietnamese text for the amount
+        printContent += `<p>${this.numberToVietnameseText(numeral(res?.sum_payment).value() || 0)}</p>`;
+  
+        // Footer with QR code
+        printContent += `
+          <br>
+          <p class="center"><img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Cám%20ơn%20và%20hẹn%20gặp%20lại" style="width: 80px; height: 80px;"></p>
+          <p class="center" style="font-style: italic;">Cám ơn và hẹn gặp lại!</p>
+          <p class="center" style="font-size: 9px;">POWERED BY rx20.vn</p>
+          </section>`;
+  
         const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
         WindowPrt.document.write(printContent);
         WindowPrt.document.close();
@@ -1369,6 +1418,7 @@ export class SaleMainComponent implements OnInit {
       });
     });
   }
+  
 
   printInvoiceOld(invoice_id: number) {
     this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
