@@ -20,9 +20,11 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatListModule } from '@angular/material/list';
-import { DatetimeDefaultFilterDialogComponent } from './components/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
-import { DatetimeChooseFilterDialogComponent } from './components/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
-import { MatButtonModule } from '@angular/material/button';
+import {
+  DatetimeDefaultFilterDialogComponent,
+  DatetimeChooseFilterDialogComponent,
+  InventoryDetailModalComponent
+} from './components';
 import { QualityControlDetailModalComponent } from './follow-book-quality-control/quality-control-detail-modal/quality-control-detail-modal.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
@@ -40,6 +42,7 @@ import { FollowBookInventoryTrackingComponent } from './follow-book-inventory-tr
 import { FollowBookCustomerTransactionComponent } from './follow-book-customer-transaction/follow-book-customer-transaction.component';
 import { CustomerTransactionService } from './services/customer-transaction.service';
 import { InventoryTrackingService } from './services/inventory-tracking.service';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [
@@ -50,7 +53,8 @@ import { InventoryTrackingService } from './services/inventory-tracking.service'
     QualityControlDetailModalComponent,
     FollowBookMedicineTrackingComponent,
     FollowBookInventoryTrackingComponent,
-    FollowBookCustomerTransactionComponent
+    FollowBookCustomerTransactionComponent,
+    InventoryDetailModalComponent
   ],
   imports: [
     CommonModule,
@@ -87,6 +91,8 @@ import { InventoryTrackingService } from './services/inventory-tracking.service'
   ],
   exports: [
   ],
-
+  entryComponents: [
+    InventoryDetailModalComponent
+  ]
 })
 export class FollowBookModule { }

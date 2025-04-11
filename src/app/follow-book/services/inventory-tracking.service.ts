@@ -22,8 +22,6 @@ export class InventoryTrackingService {
 
     params = params.set('WarehouseProductParcelSearch[hasStock]', '1');
 
-    // Lọc theo nhóm thuốc kiểm soát đặc biệt
-    params = params.set('WarehouseProductParcelSearch[group_id]', '32459');
 
     if (filter.date_from) {
       params = params.set('WarehouseProductParcelSearch[date_from]', filter.date_from);
@@ -47,7 +45,6 @@ export class InventoryTrackingService {
   exportToExcel(dateFilter: any): Observable<any> {
     let params = new HttpParams()
       .set('WarehouseProductParcelSearch[hasStock]', '1')
-      .set('group_id', '32459');
 
     if (dateFilter?.date_from) {
       params = params.set('WarehouseProductParcelSearch[date_from]', dateFilter.date_from);
@@ -57,6 +54,31 @@ export class InventoryTrackingService {
     }
 
     return this.http.get(`${this.baseUrl}/warehouse-product-parcel/export-special-medicine`, {
+      params,
+      responseType: 'blob'
+    });
+  }
+
+  getProductStockCardDetails(filter: any): Observable<any> {
+    let params = new HttpParams()
+      .set('per-page', filter.pageSize.toString())
+      .set('page', filter.page.toString())
+      .set('pageSize', filter.pageSize.toString())
+      .set('StockCardSearch[product_id]', filter.product_id.toString())
+      .set('expand', 'supplier');
+
+    return this.http.get(`${this.baseUrl}/stock-card`, {
+      params,
+      observe: 'response'
+    });
+  }
+
+  exportStockCardToExcel(productId: number): Observable<any> {
+    let params = new HttpParams()
+      .set('StockCardSearch[product_id]', productId.toString())
+      .set('expand', 'supplier,product');
+
+    return this.http.get(`${this.baseUrl}/stock-card/export`, {
       params,
       responseType: 'blob'
     });

@@ -10,6 +10,7 @@ import { DatetimeDefaultFilterDialogComponent } from '../components/datetime-def
 import { DatetimeChooseFilterDialogComponent } from '../components/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
 import { InventoryTrackingService } from '../services/inventory-tracking.service';
 import * as XLSX from 'xlsx';
+import { InventoryDetailModalComponent } from '../components/inventory-detail-modal/inventory-detail-modal.component';
 
 @Component({
   selector: 'app-follow-book-inventory-tracking',
@@ -17,20 +18,15 @@ import * as XLSX from 'xlsx';
   styleUrls: ['../shared/follow-book.component.scss', './follow-book-inventory-tracking.component.scss']
 })
 export class FollowBookInventoryTrackingComponent extends ListComponentBase implements OnInit {
-  displayedColumns = ['stt', 'date', 'document_no', 'supplier', 'product_info', 'unit', 'parcel_no', 'expiration_date', 'imports', 'exports', 'final_stock'];
-  columnsToDisplay = ['stt', 'date', 'document_no', 'supplier', 'product_info', 'unit', 'parcel_no', 'expiration_date', 'imports', 'exports', 'final_stock'];
+  displayedColumns = ['stt', 'product_info', 'unit', 'expiration_date', 'final_stock', 'actions'];
+  columnsToDisplay = ['stt', 'product_info', 'unit', 'expiration_date', 'final_stock', 'actions'];
   columnsHeader = {
     'stt': 'STT',
-    'date': 'Ngày tháng',
-    'document_no': 'Số chứng từ xuất nhập',
-    'supplier': 'Nơi xuất nhập',
     'product_info': 'Mã/Tên sản phẩm',
     'unit': 'Đơn vị',
-    'parcel_no': 'Lô',
     'expiration_date': 'HSD',
-    'imports': 'Nhập',
-    'exports': 'Xuất',
-    'final_stock': 'Tồn cuối'
+    'final_stock': 'Tồn cuối',
+    'actions': 'Thao tác'
   };
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -246,5 +242,20 @@ export class FollowBookInventoryTrackingComponent extends ListComponentBase impl
         this.notifyService.notify('error', 'Có lỗi xảy ra khi xuất file Excel');
       }
     );
+  }
+
+  openDetailModal(productId: number): void {
+    // Không cần gọi API ở đây nữa, để component modal tự xử lý
+    const modalData = {
+      productInfo: this.dataSource.find(item => item.product.id === productId)
+    };
+
+    // Mở modal với dữ liệu
+    const dialogRef = this.dialog.open(InventoryDetailModalComponent, {
+      width: '90%',
+      maxWidth: '1200px',
+      data: modalData,
+      panelClass: 'inventory-detail-modal'
+    });
   }
 }

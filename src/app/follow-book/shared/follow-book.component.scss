@@ -31,6 +31,16 @@
   align-items: center;
   height: 64px;
   padding: 0 16px;
+  width: 100%;
+  overflow: hidden;
+  height: 64px !important;
+  min-height: 64px !important;
+  padding: 0 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  box-sizing: border-box !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
 }
 
 .page-title {
@@ -41,8 +51,9 @@
 
 .spacer {
   flex: 1 1 auto;
+  flex: 1 1 auto !important;
+  min-width: 8px !important;
 }
-
 
 .loading-shade {
   position: absolute;
@@ -61,6 +72,27 @@
   display: flex;
   align-items: center;
   margin: 0 8px;
+  display: flex !important;
+  align-items: center !important;
+  margin: 0 8px !important;
+  height: 36px !important;
+}
+
+.diva-column-select button {
+  height: 36px !important;
+  width: 36px !important;
+  padding: 0 !important;
+  min-width: 36px !important;
+}
+
+.diva-column-select button .mat-icon {
+  margin-right: 0 !important;
+}
+
+.diva-column-select mat-select {
+  width: 0 !important;
+  opacity: 0 !important;
+  position: absolute !important;
 }
 
 .status-badge {
@@ -79,7 +111,6 @@
   color: #f57f17;
 }
 
-/* Fix cho mat-sidenav-content vỡ layout */
 mat-sidenav-content {
   height: 100% !important;
   display: flex !important;
@@ -87,7 +118,6 @@ mat-sidenav-content {
   overflow: hidden !important;
 }
 
-/* Style cho các button nhất quán */
 button.mat-raised-button {
   height: 36px;
   line-height: 36px;
@@ -111,53 +141,87 @@ button.mat-raised-button {
   margin-right: 4px;
 }
 
-/* Đảm bảo bảng hiển thị đúng - Style chung cho table */
 table {
   width: 100%;
   min-width: 800px;
   border-collapse: collapse;
+}
 
-  th, td {
-    border: 1px solid #e0e0e0;
-    padding: 8px 12px;
-    text-align: left;
-  }
+table th, table td {
+  border: 1px solid #e0e0e0;
+  padding: 6px 12px;
+  text-align: left;
+  height: 36px;
+}
 
-  th {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    font-weight: 500;
-    color: rgba(0, 0, 0, 0.87);
-    background: #f5f5f5;
-    border-bottom: 2px solid #ddd;
-  }
+table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.6);
+  background-color: #dcf4fc !important;
+  border-bottom: 1px solid #e0e0e0;
+  height: 45px !important;
+  padding: 0 12px !important;
+  vertical-align: middle;
+}
 
-  .mat-column-quantity {
-    text-align: right;
-    width: 100px;
-  }
+table .mat-column-quantity {
+  text-align: right;
+  width: 100px;
+}
 
-  a {
-    color: #1976d2;
-    text-decoration: none;
+table a {
+  color: #1976d2;
+  text-decoration: none;
+}
 
-    &:hover {
-      text-decoration: underline;
-    }
-  }
+table a:hover {
+  text-decoration: underline;
+}
 
-  tr:hover {
-    background-color: rgba(0, 0, 0, 0.04);
-  }
+table tr:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
 
-  td div {
-    margin: 4px 0;
-    &:not(:last-child) {
-      border-bottom: 1px solid #eee;
-      padding-bottom: 4px;
-    }
-  }
+table td div {
+  margin: 2px 0;
+}
+
+table td div:not(:last-child) {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 2px;
+}
+
+.mat-header-cell {
+  background-color: #dcf4fc !important;
+  height: 45px !important;
+  padding: 0 12px !important;
+  color: rgba(0, 0, 0, 0.6) !important;
+  font-weight: 600 !important;
+  border: 1px solid #e0e0e0 !important;
+  vertical-align: middle !important;
+}
+
+.mat-cell {
+  padding: 6px 12px !important;
+  border: 1px solid #e0e0e0 !important;
+  vertical-align: middle !important;
+  height: 36px !important;
+}
+
+.mat-header-row {
+  position: sticky;
+  top: 0;
+  background-color: #dcf4fc !important;
+  z-index: 100;
+  height: 45px !important;
+}
+
+.mat-row {
+  height: 36px !important;
+  min-height: 36px !important;
 }
 
 .mat-column-stt {
@@ -174,18 +238,6 @@ table {
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   margin: 16px;
-}
-
-.mat-header-row {
-  position: sticky;
-  top: 0;
-  background-color: #f5f5f5;
-  z-index: 100;
-}
-
-.dv-header {
-  width: 100%;
-  overflow: hidden;
 }
 
 .toolbar-buttons-group {
@@ -214,42 +266,76 @@ table {
   vertical-align: middle !important;
 }
 
-.diva-column-select {
+mat-radio-group {
+  display: flex !important;
+  flex-direction: column !important;
+  margin: 5px 0 !important;
+}
+
+mat-radio-button {
   display: flex !important;
   align-items: center !important;
-  margin: 0 8px !important;
-  height: 36px !important;
-
-  button {
-    height: 36px !important;
-    width: 36px !important;
-    padding: 0 !important;
-    min-width: 36px !important;
-
-    .mat-icon {
-      margin-right: 0 !important;
-    }
-  }
-
-  mat-select {
-    width: 0 !important;
-    opacity: 0 !important;
-    position: absolute !important;
-  }
+  margin: 5px 0 !important;
 }
 
-.dv-header {
-  height: 64px !important;
-  min-height: 64px !important;
-  padding: 0 16px !important;
+mat-radio-button ::ng-deep .mat-radio-label {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  white-space: nowrap !important;
+  width: 100% !important;
+}
+
+mat-radio-button ::ng-deep .mat-radio-label-content {
   display: flex !important;
   align-items: center !important;
-  justify-content: space-between !important;
-  box-sizing: border-box !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
+  white-space: nowrap !important;
 }
 
-.spacer {
-  flex: 1 1 auto !important;
-  min-width: 8px !important;
+mat-radio-button button {
+  margin-left: 4px !important;
+  height: 32px !important;
+  width: 32px !important;
+  line-height: 32px !important;
 }
+
+mat-radio-button button mat-icon {
+  font-size: 18px !important;
+  height: 18px !important;
+  width: 18px !important;
+  line-height: 18px !important;
+}
+
+mat-expansion-panel-header {
+  height: auto !important;
+  padding: 12px 16px !important;
+}
+
+mat-expansion-panel-content {
+  padding: 0 16px 16px !important;
+}
+
+mat-expansion-panel {
+  margin-bottom: 8px !important;
+}
+
+button[mat-icon-button] {
+  height: 32px !important;
+  width: 32px !important;
+  line-height: 32px !important;
+  padding: 0 !important;
+  min-width: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+mat-radio-button[style*="display: inline"] {
+  display: flex !important;
+  align-items: center !important;
+  margin-bottom: 8px !important;
+}
+
+mat-radio-button[style*="display: inline"] ::ng-deep .mat-radio-label {
+  display: flex !important;
+  align-items: center !important;
+}
+

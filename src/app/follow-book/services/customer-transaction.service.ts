@@ -25,7 +25,7 @@ export class CustomerTransactionService {
     // Lọc trạng thái đơn hàng
     params = params.set('InvoiceSearch[order_status]', 'pending,done');
     params = params.set('InvoiceSearch[order_national]', 'yes,no');
-    params = params.set('InvoiceSearch[group_id]', '32459');
+    params = params.set('InvoiceSearch[group_type]', 'special');
 
     // Lọc theo customer_id nếu có
     if (filter.customer_id) {
@@ -51,7 +51,7 @@ export class CustomerTransactionService {
     let params = new HttpParams()
       .set('InvoiceSearch[order_status]', 'pending,done')
       .set('InvoiceSearch[order_national]', 'yes,no')
-      .set('InvoiceSearch[group_id]', '32459');
+      .set('InvoiceSearch[group_type]', 'special');
 
     // Lọc theo customer_id nếu có
     if (dateFilter.customer_id) {

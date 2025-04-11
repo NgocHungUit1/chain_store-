@@ -28,7 +28,7 @@ export class FollowBookQualityControlComponent extends ListComponentBase impleme
   columnsToDisplay = ['stt', 'no', 'date', 'reason', 'note', 'status', 'actions'];
   columnsHeader = {
     'stt': 'STT',
-    'no': 'Tên số',
+    'no': 'Tên sổ',
     'date': 'Ngày thực hiện',
     'reason': 'Lý do',
     'note': 'Ghi chú',

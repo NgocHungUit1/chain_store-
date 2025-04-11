@@ -109,7 +109,11 @@ export class ProductService {
   }
 
   updateQualityControl(id: number, payload: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/quality-check/${id}/update-with-details`, payload);
+    const params = new HttpParams().set('id', id.toString());
+
+    return this.http.put(`${this.baseUrl}/quality-check/update-with-details`, payload, {
+      params: params
+    });
   }
 
   deleteQualityControl(id: number): Observable<any> {
