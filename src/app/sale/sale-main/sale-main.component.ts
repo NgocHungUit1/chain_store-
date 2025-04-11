@@ -55,6 +55,7 @@ export const MY_FORMATS = {
   },
 };
 interface BankAccount {
+  id: string;
   bank_code: string;
   account_number: string;
   account_name: string;
@@ -181,7 +182,8 @@ export class SaleMainComponent implements OnInit {
   amounts: number[] = [20000, 50000, 100000, 200000, 500000];
   selectedMethod: string = this.paymentMethods[0];
   selectedAmount: number | null = null;
-  selectedBank: any;
+  selectedBankAccount: BankAccount;
+  selectedBankQr: string;
   selectedWallet: any;
   bankAccounts: any[] = [];
   filteredBankAccounts: any[] = [];
@@ -1072,7 +1074,7 @@ export class SaleMainComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(bankAccount => {
       if (bankAccount !== undefined) {
-        this.selectedBank = bankAccount
+        this.selectedBankAccount = bankAccount
         this.triggerLoadBankAccounts();
       }
     });
@@ -1133,8 +1135,13 @@ export class SaleMainComponent implements OnInit {
 
   openPaymentQrDialog() {
     const dialogRef = this.dialog.open(PaymentQrDialogComponent, {
-      // width: '40%',
-      // minWidth: '750px',
+      data:{
+          accountName: this.selectedBankAccount.account_name,
+          accountNumber: this.selectedBankAccount.account_number,
+          bankCode: this.selectedBankAccount.bank_code,
+          qrImageUrl: this.selectedBankQr,
+      }
+      
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -1146,7 +1153,7 @@ export class SaleMainComponent implements OnInit {
   openTransactionNotifyDialog() {
     const dialogRef = this.dialog.open(TransactionNotifyDialogComponent, {
       width: '800px',
-      data: this.selectedBank
+      data: this.selectedBankAccount
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -2176,8 +2183,8 @@ export class SaleMainComponent implements OnInit {
 
     if (selectedPaymentMethod === 'Chuyển khoản') {
         paymentMethodValue = 'bank_transfer';
-        if (this.selectedBank) { // Check if a bank is selected
-            bankAccountId = this.selectedBank.id
+        if (this.selectedBankAccount) { // Check if a bank is selected
+            bankAccountId = this.selectedBankAccount.id
         } else {
             this.notifySer.notify('warning', 'Vui lòng chọn tài khoản ngân hàng thanh toán!');
             this.submitted = false;
@@ -3266,8 +3273,10 @@ export class SaleMainComponent implements OnInit {
 
     this.bankAccountSer.getList(this.bankAccountFilter).subscribe((res) => {
       this.bankAccounts = res.body
-      if(!this.selectedBank)
-        this.selectedBank = this.bankAccounts[0];
+      if(!this.selectedBankAccount){
+        this.selectedBankAccount = this.bankAccounts[0];
+        this.selectedBankQr = this.getQrCode(this.selectedBankAccount);
+      }
       this.filterBanks();
     });
   }
@@ -3296,9 +3305,15 @@ export class SaleMainComponent implements OnInit {
     this.loadBankAccountsSubject.next(); // Emit an event to the Subject
   }
 
-  selectBank(bank: BankAccount | null) {
-    this.selectedBank = bank;
+  selectBankAccount(bankAccount: BankAccount | null) {
+    this.selectedBankAccount = bankAccount;
+    this.selectedBankQr = this.getQrCode(bankAccount);
     this.isDropdownOpen = false;
+  }
+
+  getQrCode(bankAccount: any): string {
+    const qrCode = `assets/images/default/qr-code.png`;
+    return qrCode;
   }
 
   // Close dropdown when clicking outside
