@@ -3279,7 +3279,9 @@ export class SaleMainComponent implements OnInit {
       this.bankAccounts = res.body
       if(!this.selectedBankAccount){
         this.selectedBankAccount = this.bankAccounts[0];
-        this.selectedBankQr = this.getQrCode(this.selectedBankAccount);
+        this.getQrCode(this.selectedBankAccount).subscribe(qrCode=>{
+          this.selectedBankQr = qrCode;
+        });
       }
       this.filterBanks();
     });
@@ -3310,13 +3312,15 @@ export class SaleMainComponent implements OnInit {
 
   selectBankAccount(bankAccount: BankAccount | null) {
     this.selectedBankAccount = bankAccount;
-    this.selectedBankQr = this.getQrCode(bankAccount);
+    this.getQrCode(bankAccount).subscribe(qrCode=>{
+      this.selectedBankQr = qrCode
+    });
     this.isDropdownOpen = false;
   }
 
-  getQrCode(bankAccount: any): string {
+  getQrCode(bankAccount: any): Observable<string> {
     const qrCode = `assets/images/default/qr-code.png`;
-    return qrCode;
+    return of(qrCode);
   }
 
   // Close dropdown when clicking outside
