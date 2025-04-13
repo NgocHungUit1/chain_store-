@@ -202,7 +202,13 @@ const MENUITEMS = [
       'Quality-Check.Update',
       'Quality-Check.View',
       'Invoice.Medicine-Tracking',
-     'Warehouse-Product-Parcel.Tracking'
+      'Warehouse-Product-Parcel.Tracking',
+      'Customer-Complaint.ALL',
+      'Customer-Complaint.List',
+      'Customer-Complaint.Create',
+      'Customer-Complaint.Update',
+      'Customer-Complaint.Delete',
+      'Customer-Complaint.View',
     ],
     children: [
       {
@@ -217,7 +223,6 @@ const MENUITEMS = [
           'Quality-Check.List',
           'Quality-Check.Update',
           'Quality-Check.View',
-
         ]
       },
       {
@@ -243,10 +248,15 @@ const MENUITEMS = [
         name: 'Giao dịch khách hàng',
         type: 'link',
         icon: 'person',
-        permissions: [    'Quality-Check.All']
-      }
-
-
+        permissions: ['Quality-Check.All']
+      },
+      // {
+      //   state: 'customer-complaint',
+      //   name: 'Khách hàng khiếu nại',
+      //   type: 'link',
+      //   icon: 'feedback',
+      //   permissions: ['Customer-Complaint.All']
+      // }
     ]
   },
   // {

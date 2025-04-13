@@ -124,20 +124,34 @@ export class FollowBookMedicineTrackingComponent extends ListComponentBase imple
               quantity: detail.amount
             })) : [];
 
-            const prescription = invoice.prescription ? {
-              doctor_name: invoice.prescription.doctor?.doctor_name || ''
-            } : { doctor_name: '' };
+            let bs_name = '';
+            let bn_name = '';
+            let address = '';
+            let age = '';
+            let diagnosis = '';
+
+            if (invoice.prescription) {
+              bs_name = invoice.prescription.doctor?.doctor_name || '';
+              bn_name = invoice.prescription.name || invoice.customer?.name || '';
+              address = invoice.prescription.address || invoice.customer?.address || '';
+              age = invoice.prescription.age || (invoice.customer?.dob ? this.calculateAge(invoice.customer.dob).toString() : '');
+              diagnosis = invoice.prescription.note || '';
+            } else if (invoice.customer) {
+              bn_name = invoice.customer.name || '';
+              address = invoice.customer.address || '';
+              age = invoice.customer.dob ? this.calculateAge(invoice.customer.dob).toString() : '';
+            }
 
             return {
               stt: (this.page - 1) * this.pageSize + index + 1,
               invoice_no: invoice.invoice_no,
               createdFormat: invoice.createdFormat,
               details: details,
-              bs_name: prescription.doctor_name,
-              bn_name: invoice.customer?.name || '',
-              address: invoice.customer?.address || '',
-              age: this.calculateAge(invoice.customer?.dob) || '',
-              diagnosis: invoice.diagnosis || ''
+              bs_name: bs_name,
+              bn_name: bn_name,
+              address: address,
+              age: age,
+              diagnosis: diagnosis
             };
           });
 

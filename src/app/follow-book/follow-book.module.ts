@@ -43,6 +43,8 @@ import { FollowBookCustomerTransactionComponent } from './follow-book-customer-t
 import { CustomerTransactionService } from './services/customer-transaction.service';
 import { InventoryTrackingService } from './services/inventory-tracking.service';
 import { MatButtonModule } from '@angular/material/button';
+import { FollowBookCustomerComplaintComponent, DeleteConfirmationDialog } from './follow-book-customer-complaint/follow-book-customer-complaint.component';
+import { CustomerComplaintFormDialogComponent } from './follow-book-customer-complaint/customer-complaint-form-dialog/customer-complaint-form-dialog.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +56,10 @@ import { MatButtonModule } from '@angular/material/button';
     FollowBookMedicineTrackingComponent,
     FollowBookInventoryTrackingComponent,
     FollowBookCustomerTransactionComponent,
-    InventoryDetailModalComponent
+    InventoryDetailModalComponent,
+    FollowBookCustomerComplaintComponent,
+    CustomerComplaintFormDialogComponent,
+    DeleteConfirmationDialog
   ],
   imports: [
     CommonModule,
@@ -91,8 +96,11 @@ import { MatButtonModule } from '@angular/material/button';
   ],
   exports: [
   ],
+
   entryComponents: [
-    InventoryDetailModalComponent
+    InventoryDetailModalComponent,
+    DeleteConfirmationDialog,
+    CustomerComplaintFormDialogComponent
   ]
 })
 export class FollowBookModule { }
