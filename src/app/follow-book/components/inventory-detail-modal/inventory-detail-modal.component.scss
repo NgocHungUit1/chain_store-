@@ -203,3 +203,40 @@ button.mat-raised-button .mat-icon {
   width: 18px;
   line-height: 18px;
 }
+
+/* Cập nhật lại styles cho bảng */
+::ng-deep .inventory-detail-table {
+  width: 100%;
+
+  /* Header styles */
+  .mat-header-cell {
+    background-color: #dcf4fc !important;
+    color: #000000 !important;
+    font-weight: 500;
+    padding: 8px 16px !important;
+    border: 1px solid #e0e0e0 !important;
+    text-align: left;
+    font-size: 13px;
+    height: 40px !important;
+    line-height: 1.2;
+  }
+
+  /* Cell styles */
+  .mat-cell {
+    padding: 8px 16px !important;
+    border: 1px solid #e0e0e0 !important;
+    font-size: 13px;
+    height: 40px !important;
+    line-height: 1.2;
+    color: #000000 !important;
+  }
+
+  /* Row styles */
+  .mat-header-row {
+    height: 40px !important;
+  }
+
+  .mat-row {
+    height: 40px !important;
+  }
+}

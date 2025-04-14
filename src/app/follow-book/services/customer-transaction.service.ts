@@ -14,10 +14,10 @@ export class CustomerTransactionService {
   getCustomerTransactions(filter: any): Observable<any> {
     let params = new HttpParams();
 
-    // Các tham số phân trang
-    params = params.set('per-page', filter.pageSize.toString());
-    params = params.set('page', filter.page.toString());
-    params = params.set('pageSize', filter.pageSize.toString());
+    // Bỏ các tham số phân trang
+    // params = params.set('per-page', filter.pageSize.toString());
+    // params = params.set('page', filter.page.toString());
+    // params = params.set('pageSize', filter.pageSize.toString());
 
     // Tham số mở rộng
     params = params.set('expand', 'customer,payment,store,user,returns,today,time,createdFormat,invoiceDetails');

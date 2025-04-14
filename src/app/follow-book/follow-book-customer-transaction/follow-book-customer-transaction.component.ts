@@ -72,10 +72,9 @@ export class FollowBookCustomerTransactionComponent extends ListComponentBase im
 
   buildFilterFromParams(): any {
     const filter: any = {};
-    filter.page = this.page || 1;
-    filter.pageSize = this.pageSize || 10;
 
-    // Check if customer_id is in the URL
+    // Bỏ các tham số phân trang
+    // Chỉ giữ lại filter theo customer_id và date
     const customerId = this.route.snapshot.queryParamMap.get('customer_id');
     if (customerId) {
       this.currentDateFilter.customer_id = customerId;
@@ -96,16 +95,15 @@ export class FollowBookCustomerTransactionComponent extends ListComponentBase im
     this.customerTransactionService.getCustomerTransactions(this.apiFilter).subscribe(
       response => {
         if (response && response.body) {
-          // Reset dataSource
           this.dataSource = [];
+          let stt = 1;
 
-          // Process each invoice
-          response.body.forEach((invoice: any, invoiceIndex: number) => {
-            // Process each invoice detail
+          // Xử lý từng hóa đơn và hiển thị tất cả chi tiết
+          response.body.forEach((invoice: any) => {
             if (invoice.invoiceDetails && invoice.invoiceDetails.length > 0) {
-              invoice.invoiceDetails.forEach((detail: any, detailIndex: number) => {
+              invoice.invoiceDetails.forEach((detail: any) => {
                 this.dataSource.push({
-                  stt: (this.page - 1) * this.pageSize + this.dataSource.length + 1,
+                  stt: stt++,
                   date: invoice.createdFormat,
                   medicine_name: detail.product ? detail.product.product_name : 'N/A',
                   ingredients: detail.product && detail.product.medicine ? detail.product.medicine.name : 'N/A',
@@ -117,10 +115,6 @@ export class FollowBookCustomerTransactionComponent extends ListComponentBase im
               });
             }
           });
-
-          if (response.headers.get('X-Pagination-Total-Count')) {
-            this.totalItems = parseInt(response.headers.get('X-Pagination-Total-Count'));
-          }
         }
         this.isLoadingResults = false;
       },

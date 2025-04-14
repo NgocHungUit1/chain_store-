@@ -250,13 +250,13 @@ const MENUITEMS = [
         icon: 'person',
         permissions: ['Quality-Check.All']
       },
-      // {
-      //   state: 'customer-complaint',
-      //   name: 'Khách hàng khiếu nại',
-      //   type: 'link',
-      //   icon: 'feedback',
-      //   permissions: ['Customer-Complaint.All']
-      // }
+      {
+        state: 'customer-complaint',
+        name: 'Khách hàng khiếu nại',
+        type: 'link',
+        icon: 'feedback',
+        permissions: ['Customer-Complaint.All']
+      }
     ]
   },
   // {
