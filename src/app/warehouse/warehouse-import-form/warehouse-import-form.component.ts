@@ -1131,6 +1131,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
     if (product.product_type !== undefined) {
       this.handleAddProductToList(product.id);
+      this.selectProduct.patchValue(null);
     } else {
       sessionStorage.setItem('medicine', JSON.stringify(product));
       // this.openProductMedicineDialog('Add', {});
