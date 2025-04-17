@@ -1,0 +1,65 @@
+<h2 mat-dialog-title>Chi tiết phiếu theo dõi vệ sinh</h2>
+
+<div mat-dialog-content>
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Đang tải dữ liệu...</p>
+  </div>
+
+  <div *ngIf="!isLoading && logbookDetails" class="detail-content">
+    <div class="detail-header">
+      <div class="detail-info">
+        <div class="info-group">
+          <p><strong>Tháng:</strong> {{ logbookDetails.month }}</p>
+          <p>
+            <strong>Trạng thái:</strong>
+            <span [ngClass]="getStatusClass(logbookDetails.status)">
+              {{ getStatusText(logbookDetails.status) }}
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table class="hygiene-table">
+        <thead>
+          <tr>
+            <th>Ngày</th>
+            <th>Lau nền nhà</th>
+            <th>Lau tủ lễ</th>
+            <th>Lau tủ, bàn ghế</th>
+            <th>Lau quạt, điều hòa</th>
+            <th>Lau tủ, kệ</th>
+            <th>Lau tường, trần nhà</th>
+            <th>Sắp xếp thuốc</th>
+            <th>Người thực hiện</th>
+            <th>Người kiểm tra</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let detail of logbookDetails.details">
+            <td>{{ detail.date | date: 'dd/MM/yyyy' }}</td>
+            <td><span *ngIf="detail.clean_floor === 1" class="check-icon">✓</span></td>
+            <td><span *ngIf="detail.clean_cabinet === 1" class="check-icon">✓</span></td>
+            <td><span *ngIf="detail.clean_furniture === 1" class="check-icon">✓</span></td>
+            <td><span *ngIf="detail.clean_fan_ac === 1" class="check-icon">✓</span></td>
+            <td><span *ngIf="detail.clean_shelf === 1" class="check-icon">✓</span></td>
+            <td><span *ngIf="detail.clean_wall_ceiling === 1" class="check-icon">✓</span></td>
+            <td><span *ngIf="detail.arrange_medicine === 1" class="check-icon">✓</span></td>
+            <td>{{ detail.implementer }}</td>
+            <td>{{ detail.inspector }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" (click)="exportToExcel()" [disabled]="isExporting || isLoading">
+    <mat-spinner diameter="20" *ngIf="isExporting"></mat-spinner>
+    <span *ngIf="!isExporting"><mat-icon>cloud_download</mat-icon> Xuất Excel</span>
+  </button>
+  <button mat-button (click)="onClose()">Đóng</button>
+</div>

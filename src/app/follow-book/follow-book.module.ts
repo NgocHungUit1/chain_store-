@@ -45,6 +45,18 @@ import { InventoryTrackingService } from './services/inventory-tracking.service'
 import { MatButtonModule } from '@angular/material/button';
 import { FollowBookCustomerComplaintComponent, DeleteConfirmationDialog } from './follow-book-customer-complaint/follow-book-customer-complaint.component';
 import { CustomerComplaintFormDialogComponent } from './follow-book-customer-complaint/customer-complaint-form-dialog/customer-complaint-form-dialog.component';
+import { FollowBookTraineeComponent } from './follow-book-trainee/follow-book-trainee.component';
+import { TraineeFormDialogComponent } from './follow-book-trainee/trainee-form-dialog/trainee-form-dialog.component';
+import { CustomerComplaintService } from './services/customer-complaint.service';
+import { MedicineTrackingService } from './services/medicine-tracking.service';
+import { ProductService } from './services/product.service';
+import { TraineeService } from './services/trainee.service';
+import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import { PopupConfirmDialogComponent } from '../shared/confirm-dialog/popup-confirm-dialog.component';
+import { FollowBookHygieneComponent } from './follow-book-hygiene/follow-book-hygiene.component';
+import { HygieneLogbookCreateModalComponent } from './follow-book-hygiene/hygiene-logbook-create-modal/hygiene-logbook-create-modal.component';
+import { HygieneLogbookDetailModalComponent } from './follow-book-hygiene/hygiene-logbook-detail-modal/hygiene-logbook-detail-modal.component';
+import { HygieneLogbookService } from './services/hygiene-logbook.service';
 
 @NgModule({
   declarations: [
@@ -59,7 +71,13 @@ import { CustomerComplaintFormDialogComponent } from './follow-book-customer-com
     InventoryDetailModalComponent,
     FollowBookCustomerComplaintComponent,
     CustomerComplaintFormDialogComponent,
-    DeleteConfirmationDialog
+    DeleteConfirmationDialog,
+    FollowBookTraineeComponent,
+    TraineeFormDialogComponent,
+    ConfirmDialogComponent,
+    FollowBookHygieneComponent,
+    HygieneLogbookCreateModalComponent,
+    HygieneLogbookDetailModalComponent
   ],
   imports: [
     CommonModule,
@@ -96,11 +114,17 @@ import { CustomerComplaintFormDialogComponent } from './follow-book-customer-com
   ],
   exports: [
   ],
-
   entryComponents: [
+    QualityControlCreateModalComponent,
+    QualityControlDetailModalComponent,
+    DatetimeDefaultFilterDialogComponent,
+    DatetimeChooseFilterDialogComponent,
     InventoryDetailModalComponent,
-    DeleteConfirmationDialog,
-    CustomerComplaintFormDialogComponent
+    ConfirmDialogComponent,
+    CustomerComplaintFormDialogComponent,
+    TraineeFormDialogComponent,
+    HygieneLogbookCreateModalComponent,
+    HygieneLogbookDetailModalComponent
   ]
 })
 export class FollowBookModule { }

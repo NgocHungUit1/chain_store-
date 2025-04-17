@@ -1,0 +1,59 @@
+// Định dạng cho hàng chứa checkbox
+.checkbox-row {
+  height: 50px;
+  background-color: white;
+  text-align: center;
+}
+
+.checkbox-row td {
+  vertical-align: middle;
+}
+
+// Định dạng chung cho bảng
+.hygiene-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.hygiene-table th {
+  background-color: #dcf4fc;
+  padding: 10px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.hygiene-table td {
+  padding: 8px;
+  text-align: center;
+  border: 1px solid #e0e0e0;
+}
+
+// Định dạng cho input text
+.text-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 5px;
+}
+
+// Định dạng phần header form
+.form-header {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.month-field {
+  flex: 1;
+}
+
+.status-field {
+  flex: 1;
+}
+
+// Định dạng cho container bảng
+.table-container {
+  max-height: 500px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}

@@ -209,6 +209,14 @@ const MENUITEMS = [
       'Customer-Complaint.Update',
       'Customer-Complaint.Delete',
       'Customer-Complaint.View',
+      'Supplier.List',
+      'Trainee.All',
+      'Trainee.List',
+      'Trainee.Create',
+      'Trainee.Update',
+      'Trainee.Delete',
+      'Trainee.View',
+      'Hygiene-Logbook.All',
     ],
     children: [
       {
@@ -256,7 +264,10 @@ const MENUITEMS = [
         type: 'link',
         icon: 'feedback',
         permissions: ['Customer-Complaint.All']
-      }
+      },
+      { state: 'supplier-tracking', name: 'Nhà cung cấp', type: 'link', icon: 'people', permissions: ['Supplier.List'] },
+      { state: 'trainee', name: 'Đào tạo học viên', type: 'link', icon: 'person', permissions: ['Trainee.All'] },
+      // { state: 'hygiene', name: 'Vệ sinh', type: 'link', icon: 'person', permissions: ['Hygiene-Logbook.All'] },
     ]
   },
   // {

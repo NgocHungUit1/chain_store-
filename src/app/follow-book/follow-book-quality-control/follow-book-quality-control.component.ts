@@ -283,7 +283,6 @@ export class FollowBookQualityControlComponent extends ListComponentBase impleme
     const obj = {
       action: 'Delete',
       title: 'Xác nhận xóa danh sách đã chọn.',
-      content: 'Thông tin sản phẩm đã xác nhận hoàn thành trước đó sẽ được hệ thống tạo thẻ kho xóa đi!'
     };
 
     const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {

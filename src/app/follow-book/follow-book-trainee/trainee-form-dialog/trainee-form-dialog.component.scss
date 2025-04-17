@@ -1,0 +1,114 @@
+:host {
+  display: block;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.left-panel, .right-panel {
+  flex: 1;
+  padding: 10px;
+}
+
+.left-panel {
+  border-right: 1px solid #e0e0e0;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.form-field {
+  flex: 1;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.add-button {
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+}
+
+.add-button .mat-icon {
+  font-size: 16px;
+  line-height: 16px;
+  height: 16px;
+  width: 16px;
+}
+
+.details-container {
+  margin-top: 10px;
+  max-height: 450px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.detail-item {
+  margin-bottom: 16px;
+  padding: 8px;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.detail-header h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1976d2;
+}
+
+.detail-divider {
+  margin: 20px 0;
+}
+
+mat-dialog-actions {
+  padding: 16px 0;
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+mat-dialog-content {
+  margin: 0 -24px;
+  padding: 0 24px;
+  max-height: 70vh;
+}
+
+button[type="submit"] {
+  min-width: 100px;
+  position: relative;
+}
+
+button[type="submit"] mat-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

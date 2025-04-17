@@ -4,6 +4,8 @@ import { FollowBookMedicineTrackingComponent } from './follow-book-medicine-trac
 import { FollowBookInventoryTrackingComponent } from './follow-book-inventory-tracking/follow-book-inventory-tracking.component';
 import { FollowBookCustomerTransactionComponent } from './follow-book-customer-transaction/follow-book-customer-transaction.component';
 import { FollowBookCustomerComplaintComponent } from './follow-book-customer-complaint/follow-book-customer-complaint.component';
+import { FollowBookTraineeComponent } from './follow-book-trainee/follow-book-trainee.component';
+import { FollowBookHygieneComponent } from './follow-book-hygiene/follow-book-hygiene.component';
 
 export const FollowBookRoutes: Routes = [
   {
@@ -25,5 +27,17 @@ export const FollowBookRoutes: Routes = [
   {
     path: 'customer-complaint',
     component: FollowBookCustomerComplaintComponent
+  },
+  {
+    path: 'supplier-tracking',
+    loadChildren: () => import('../supplier/supplier.module').then(m => m.SupplierModule)
+  },
+  {
+    path: 'trainee',
+    component: FollowBookTraineeComponent
+  },
+  {
+    path: 'hygiene',
+    component: FollowBookHygieneComponent
   }
 ];

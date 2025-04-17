@@ -1,0 +1,102 @@
+.toolbar-buttons-group {
+  display: flex;
+  align-items: center;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.status-completed {
+  background-color: #4caf50;
+}
+
+.status-pending {
+  background-color: #ff9800;
+}
+
+.no-data {
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+  color: #666;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.table-container {
+  position: relative;
+  max-height: calc(100vh - 180px);
+  overflow: auto !important;
+}
+
+table {
+  width: 100%;
+}
+
+/* Định dạng header */
+::ng-deep .mat-header-cell {
+  background-color: #dcf4fc !important;
+  color: #000000 !important;
+  font-weight: 500;
+  padding: 8px 16px !important;
+  border: 1px solid #e0e0e0 !important;
+  text-align: left;
+  font-size: 13px;
+  height: 40px !important;
+  line-height: 1.2;
+}
+
+/* Định dạng cells */
+::ng-deep .mat-cell {
+  padding: 8px 16px !important;
+  border: 1px solid #e0e0e0 !important;
+  font-size: 13px;
+  height: 40px !important;
+  line-height: 1.2;
+  color: #000000 !important;
+}
+
+/* Định dạng các cột */
+.mat-column-stt {
+  width: 60px;
+  text-align: center !important;
+}
+
+.mat-column-month {
+  width: 150px;
+}
+
+.mat-column-status {
+  width: 150px;
+}
+
+.mat-column-actions {
+  width: 100px;
+  text-align: center !important;
+}
+
+/* Cập nhật styles cho toolbar */
+.dv-header {
+  background-color: #fff;
+  color: rgba(0, 0, 0, 0.87);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Cải thiện phân trang giống page mẫu */
+::ng-deep .mat-paginator {
+  background-color: #f5f5f5;
+  border-top: 1px solid #e0e0e0;
+}
+
+::ng-deep .mat-paginator-container {
+  min-height: 48px;
+  padding: 0 16px !important;
+  justify-content: flex-start !important;
+}

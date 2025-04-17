@@ -1,0 +1,182 @@
+<h2 mat-dialog-title>
+  {{data.isDetail ? 'Chi tiết học viên' : (data.isEdit ? 'Cập nhật thông tin học viên' : 'Thêm học viên mới')}}
+</h2>
+
+<form [formGroup]="traineeForm" (ngSubmit)="onSubmit()">
+  <div mat-dialog-content>
+    <div class="form-container">
+      <div class="left-panel">
+        <h3 class="section-title">Thông tin học viên</h3>
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Họ và tên</mat-label>
+            <input matInput formControlName="name" required>
+            <mat-error *ngIf="traineeForm.get('name').invalid && traineeForm.get('name').touched">
+              Vui lòng nhập tên học viên
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Giới tính</mat-label>
+            <mat-select formControlName="gender" required>
+              <mat-option *ngFor="let gender of genderOptions" [value]="gender.value">
+                {{gender.viewValue}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="traineeForm.get('gender').invalid && traineeForm.get('gender').touched">
+              Vui lòng chọn giới tính
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Ngày sinh</mat-label>
+            <input matInput [matDatepicker]="birthPicker" formControlName="birth_date"
+                   (dateChange)="birthDateChanged($event)" required>
+            <mat-datepicker-toggle matSuffix [for]="birthPicker"></mat-datepicker-toggle>
+            <mat-datepicker #birthPicker></mat-datepicker>
+            <mat-hint>Định dạng: YYYY-MM-DD</mat-hint>
+            <mat-error *ngIf="traineeForm.get('birth_date').invalid && traineeForm.get('birth_date').touched">
+              Vui lòng nhập ngày sinh
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Trình độ</mat-label>
+            <input matInput formControlName="education_level" required>
+            <mat-error *ngIf="traineeForm.get('education_level').invalid && traineeForm.get('education_level').touched">
+              Vui lòng nhập trình độ
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Ngày vào nhà thuốc</mat-label>
+            <input matInput [matDatepicker]="joinPicker" formControlName="join_date"
+                   (dateChange)="joinDateChanged($event)" required>
+            <mat-datepicker-toggle matSuffix [for]="joinPicker"></mat-datepicker-toggle>
+            <mat-datepicker #joinPicker></mat-datepicker>
+            <mat-hint>Định dạng: YYYY-MM-DD</mat-hint>
+            <mat-error *ngIf="traineeForm.get('join_date').invalid && traineeForm.get('join_date').touched">
+              Vui lòng nhập ngày vào nhà thuốc
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Trạng thái</mat-label>
+            <mat-select formControlName="status" required>
+              <mat-option *ngFor="let status of statusOptions" [value]="status.value">
+                {{status.viewValue}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="traineeForm.get('status').invalid && traineeForm.get('status').touched">
+              Vui lòng chọn trạng thái
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Số điện thoại</mat-label>
+            <input matInput formControlName="phone">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" type="email">
+            <mat-error *ngIf="traineeForm.get('email').invalid && traineeForm.get('email').touched">
+              Vui lòng nhập email hợp lệ
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field full-width">
+            <mat-label>Địa chỉ</mat-label>
+            <input matInput formControlName="address">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <h3 class="section-title">
+          Chi tiết đào tạo
+          <button type="button" mat-mini-fab color="primary" (click)="addDetail()" class="add-button">
+            <mat-icon>add</mat-icon>
+          </button>
+        </h3>
+
+        <div formArrayName="details" class="details-container">
+          <div *ngFor="let detail of detailsFormArray.controls; let i = index" [formGroupName]="i" class="detail-item">
+            <div class="detail-header">
+              <h4>Thông tin đào tạo #{{i + 1}}</h4>
+              <button type="button" mat-icon-button color="warn" (click)="removeDetail(i)" *ngIf="detailsFormArray.length > 1">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Ngày đào tạo</mat-label>
+                <input matInput [matDatepicker]="datePicker" formControlName="date"
+                       (dateChange)="detailDateChanged($event, i)" required>
+                <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+                <mat-datepicker #datePicker></mat-datepicker>
+                <mat-hint>Định dạng: YYYY-MM-DD</mat-hint>
+                <mat-error *ngIf="detail.get('date').invalid && detail.get('date').touched">
+                  Vui lòng nhập ngày đào tạo
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Người hướng dẫn</mat-label>
+                <input matInput formControlName="instructor_name" required>
+                <mat-error *ngIf="detail.get('instructor_name').invalid && detail.get('instructor_name').touched">
+                  Vui lòng nhập tên người hướng dẫn
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Kết quả</mat-label>
+                <input matInput formControlName="result">
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="form-field full-width">
+                <mat-label>Nội dung đào tạo</mat-label>
+                <textarea matInput formControlName="content" rows="3" required></textarea>
+                <mat-error *ngIf="detail.get('content').invalid && detail.get('content').touched">
+                  Vui lòng nhập nội dung đào tạo
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="form-field full-width">
+                <mat-label>Ghi chú</mat-label>
+                <textarea matInput formControlName="note" rows="2"></textarea>
+              </mat-form-field>
+            </div>
+
+            <mat-divider *ngIf="i < detailsFormArray.length - 1" class="detail-divider"></mat-divider>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div mat-dialog-actions align="end">
+    <button mat-button (click)="onNoClick()" type="button" [disabled]="isSubmitting">
+      {{data.isDetail ? 'Đóng' : 'Hủy bỏ'}}
+    </button>
+    <button mat-raised-button color="primary" type="submit" *ngIf="!data.isDetail" [disabled]="isSubmitting">
+      <mat-spinner diameter="20" *ngIf="isSubmitting"></mat-spinner>
+      <span *ngIf="!isSubmitting">{{data.isEdit ? 'Cập nhật' : 'Thêm mới'}}</span>
+    </button>
+  </div>
+</form>
