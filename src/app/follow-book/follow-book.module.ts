@@ -52,7 +52,6 @@ import { MedicineTrackingService } from './services/medicine-tracking.service';
 import { ProductService } from './services/product.service';
 import { TraineeService } from './services/trainee.service';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
-import { PopupConfirmDialogComponent } from '../shared/confirm-dialog/popup-confirm-dialog.component';
 import { FollowBookHygieneComponent } from './follow-book-hygiene/follow-book-hygiene.component';
 import { HygieneLogbookCreateModalComponent } from './follow-book-hygiene/hygiene-logbook-create-modal/hygiene-logbook-create-modal.component';
 import { HygieneLogbookDetailModalComponent } from './follow-book-hygiene/hygiene-logbook-detail-modal/hygiene-logbook-detail-modal.component';
