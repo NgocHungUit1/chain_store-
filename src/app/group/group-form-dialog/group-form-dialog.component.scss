@@ -1,0 +1,12 @@
+.special-type-checkbox {
+  margin: 10px 0 20px;
+}
+
+/* Tùy chỉnh kích thước checkbox nếu cần */
+::ng-deep .mat-checkbox-layout {
+  white-space: normal !important;
+}
+
+::ng-deep .mat-checkbox-inner-container {
+  margin-right: 10px;
+}

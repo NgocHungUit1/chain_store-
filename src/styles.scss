@@ -1,0 +1,17 @@
+.full-screen-modal {
+  .mat-dialog-container {
+    padding: 0;
+    border-radius: 0;
+  }
+
+  .mat-dialog-content {
+    margin: 0;
+    padding: 0;
+    max-height: none;
+  }
+}
+
+// Nếu có scroll bar không mong muốn, thêm:
+.cdk-global-overlay-wrapper {
+  overflow: hidden;
+}

@@ -1,0 +1,170 @@
+<div class="modal-container">
+  <mat-toolbar class="modal-header">
+    <h2>{{isEdit ? 'Cập nhật' : 'Tạo mới'}} kiểm soát chất lượng</h2>
+    <span class="spacer"></span>
+    <button mat-icon-button mat-dialog-close>
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <div class="modal-content">
+    <div class="main-section">
+      <div class="loading-container" *ngIf="isLoading">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Đang tải dữ liệu sản phẩm...</p>
+      </div>
+
+      <div class="search-filter-container" *ngIf="!isLoading && productRows.length > 0">
+        <div class="local-search">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input type="text" placeholder="Tìm kiếm theo mã hoặc tên sản phẩm"
+                 (input)="onSearch($event)" [value]="searchText">
+        </div>
+        <div class="results-info">
+          Hiển thị {{filteredRows.length > 0 ? (currentPage-1)*pageSize + 1 : 0}} -
+          {{Math.min(currentPage*pageSize, filteredRows.length)}}
+          của {{filteredRows.length}} kết quả
+        </div>
+      </div>
+
+      <div class="table-container scrollable-table-container" *ngIf="!isLoading">
+        <table class="quality-control-table">
+          <thead>
+            <tr>
+              <th>STT</th>
+              <th>Mã/Tên sản phẩm</th>
+              <th>Lô-HSD</th>
+              <th>Số lượng</th>
+              <th>Đơn vị tính</th>
+              <th>Nhận xét</th>
+              <th>Phân loại chất lượng</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of getCurrentPageRows()">
+              <td>{{row.index}}</td>
+              <td>
+                <div class="product-info">
+                  <div class="product-code">{{row.productNo}}</div>
+                  <div class="product-name">{{row.productName}}</div>
+                  <div class="product-unit" *ngIf="row.unit">Đơn vị: {{row.unit}}</div>
+                </div>
+              </td>
+              <td>
+                <mat-form-field appearance="outline" class="lot-select">
+                  <mat-select [(ngModel)]="row.selectedLot" (selectionChange)="onLotChange(row)">
+                    <mat-option *ngFor="let lot of row.lotOptions" [value]="lot.parcel_no">
+                      {{formatLotDisplay(lot)}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </td>
+              <td>
+                <input type="text" [(ngModel)]="row.quantity" readonly class="form-input" [title]="'Số lượng tồn: ' + row.quantityOfStock">
+              </td>
+              <td>
+                <input type="text" [(ngModel)]="row.unit" readonly class="form-input">
+              </td>
+              <td>
+                <mat-form-field appearance="outline" class="full-width">
+                  <input type="text" matInput [(ngModel)]="row.reason"
+                         [matAutocomplete]="reasonAuto"
+                         placeholder="Nhập lý do">
+                  <mat-autocomplete #reasonAuto="matAutocomplete">
+                    <mat-option *ngFor="let option of reasonOptions" [value]="option">
+                      {{option}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field appearance="outline" class="full-width">
+                  <input type="text" matInput [(ngModel)]="row.qualityNote"
+                         [matAutocomplete]="qualityAuto"
+                         placeholder="Nhập nhận xét">
+                  <mat-autocomplete #qualityAuto="matAutocomplete">
+                    <mat-option *ngFor="let option of qualityNoteOptions" [value]="option">
+                      {{option}}
+                    </mat-option>
+                  </mat-autocomplete>
+                  <mat-hint *ngIf="!row.qualityNote">Mặc định: Đạt</mat-hint>
+                </mat-form-field>
+              </td>
+              <td class="action-column">
+                <div class="action-buttons">
+                  <button mat-icon-button color="warn"
+                          (click)="removeRow(row.index)"
+                          matTooltip="Xóa dòng này"
+                          class="delete-button">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="filteredRows.length === 0">
+              <td colspan="8" class="no-data">
+                <div>Không tìm thấy dữ liệu phù hợp</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination-container" *ngIf="!isLoading && filteredRows.length > pageSize">
+        <button mat-icon-button [disabled]="currentPage === 1" (click)="changePage(1)">
+          <mat-icon>first_page</mat-icon>
+        </button>
+        <button mat-icon-button [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+
+        <span class="page-info">{{currentPage}} / {{totalPages}}</span>
+
+        <button mat-icon-button [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+        <button mat-icon-button [disabled]="currentPage === totalPages" (click)="changePage(totalPages)">
+          <mat-icon>last_page</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="info-section" [formGroup]="infoForm">
+      <h3>THÔNG TIN PHIẾU</h3>
+      <div class="info-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Ngày</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="date">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Tiêu đề</mat-label>
+          <input matInput formControlName="title">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Lý do</mat-label>
+          <textarea matInput formControlName="reason" rows="4"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Ghi chú</mat-label>
+          <textarea matInput formControlName="note" rows="4"></textarea>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+
+  <mat-toolbar class="modal-footer">
+    <span class="spacer"></span>
+    <button mat-button mat-dialog-close>Hủy</button>
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="isLoading">
+      <span *ngIf="!isLoading">{{isEdit ? 'Cập nhật' : 'Tạo mới'}}</span>
+      <mat-spinner diameter="20" *ngIf="isLoading" style="margin: 0 auto;"></mat-spinner>
+    </button>
+  </mat-toolbar>
+</div>

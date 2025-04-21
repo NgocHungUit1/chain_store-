@@ -1,0 +1,242 @@
+@import '../../shared/follow-book.component.scss';
+
+.product-info-header {
+  background-color: #f8f8f8;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.product-info-row {
+  display: flex;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.product-info-label {
+  min-width: 150px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.product-info-value {
+  flex: 1;
+}
+
+.product-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.product-info-table td {
+  padding: 5px 10px;
+}
+
+.product-info-table td:nth-child(odd) {
+  width: 15%;
+  font-weight: bold;
+}
+
+.product-info-table td:nth-child(even) {
+  width: 18%;
+}
+
+.table-container {
+  position: relative;
+  max-height: calc(100vh - 320px);
+  overflow: auto !important;
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
+}
+
+/* Bảng tóm tắt Nhập/Xuất/Tồn cuối */
+.stock-summary-table {
+  width: 100%;
+  margin-bottom: 10px;
+  border-collapse: collapse;
+}
+
+.stock-summary-table th,
+.stock-summary-table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  width: 33.33%;
+}
+
+.stock-summary-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+table {
+  width: 100%;
+}
+
+.text-right {
+  text-align: right !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+th.mat-header-cell {
+  background-color: #1976d2 !important;
+  color: white !important;
+  font-weight: 500;
+  padding: 12px 16px !important;
+  border: 1px solid #1565c0 !important;
+  text-align: left;
+  font-size: 14px;
+}
+
+th.mat-header-cell.text-center {
+  text-align: center;
+}
+
+td.mat-cell {
+  padding: 12px 16px !important;
+  border: 1px solid #e0e0e0 !important;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+td.mat-cell:nth-child(4) {
+  white-space: normal;
+  max-width: 200px;
+}
+
+.mat-column-stt {
+  width: 70px !important;
+  text-align: center !important;
+}
+.mat-column-date {
+  width: 120px !important;
+}
+.mat-column-document_no {
+  width: 150px !important;
+}
+.mat-column-supplier {
+  width: 200px !important;
+}
+.mat-column-parcel_no {
+  width: 100px !important;
+}
+.mat-column-imports,
+.mat-column-exports,
+.mat-column-final_stock {
+  width: 100px !important;
+  text-align: right !important;
+}
+
+.no-data {
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+  color: #888;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+mat-dialog-actions {
+  padding: 15px 0;
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+mat-dialog-actions button {
+  margin-left: 8px;
+}
+
+h2.mat-dialog-title {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+  padding: 0 0 8px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+/* Cải thiện Paginator */
+::ng-deep .mat-paginator {
+  background-color: #f5f5f5;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* Thêm style cho nút Export */
+.export-btn {
+  background-color: #4caf50 !important;
+  margin-right: 8px;
+}
+
+button.mat-raised-button {
+  height: 36px;
+  line-height: 36px;
+  padding: 0 16px;
+  margin: 0 4px;
+  font-weight: 500;
+}
+
+button.mat-raised-button .mat-icon {
+  margin-right: 4px;
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+  line-height: 18px;
+}
+
+/* Cập nhật lại styles cho bảng */
+::ng-deep .inventory-detail-table {
+  width: 100%;
+
+  /* Header styles */
+  .mat-header-cell {
+    background-color: #dcf4fc !important;
+    color: #000000 !important;
+    font-weight: 500;
+    padding: 8px 16px !important;
+    border: 1px solid #e0e0e0 !important;
+    text-align: left;
+    font-size: 13px;
+    height: 40px !important;
+    line-height: 1.2;
+  }
+
+  /* Cell styles */
+  .mat-cell {
+    padding: 8px 16px !important;
+    border: 1px solid #e0e0e0 !important;
+    font-size: 13px;
+    height: 40px !important;
+    line-height: 1.2;
+    color: #000000 !important;
+  }
+
+  /* Row styles */
+  .mat-header-row {
+    height: 40px !important;
+  }
+
+  .mat-row {
+    height: 40px !important;
+  }
+}

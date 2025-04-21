@@ -53,6 +53,7 @@ export class GroupFormDialogComponent implements OnInit {
             // alias: [null],
             // note: [null],
             // description: [null],
+            isSpecial: [false]
         });
     }
 
@@ -72,6 +73,9 @@ export class GroupFormDialogComponent implements OnInit {
 
     loadModel(id) {
         this.groupService.getDetail(id, '').subscribe(group => {
+            // Kiểm tra cả isSpecial và type=special
+            const isSpecial = group['isSpecial'] || (group['type'] === 'special');
+
             this.form.patchValue({
                 id: group['id'],
                 // no: group['no'],
@@ -80,8 +84,8 @@ export class GroupFormDialogComponent implements OnInit {
                 // alias: group['alias'],
                 // description: group['description'],
                 // note: group['note'],
+                isSpecial: isSpecial
             });
-
         });
     }
 
@@ -90,9 +94,14 @@ export class GroupFormDialogComponent implements OnInit {
         if (this.form.valid) {
             const data = this.form.getRawValue();
 
+            // Thêm trường type=special nếu isSpecial được tick
+            if (data.isSpecial === true) {
+                data.type = 'special';
+            }
+
             if (this.group_id !== null && this.group_id !== undefined) {
                 this.groupService.update(this.group_id, data).subscribe(res => {
-                    this.notifySer.notify('success', 'Cập nhật  thành công!');
+                    this.notifySer.notify('success', 'Cập nhật thành công!');
                     this.dialogRef.close(res);
                 }, (error) => {
                     if (error.status === 422) {

@@ -1,0 +1,46 @@
+.no-data {
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+  color: #666;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  display: inline-block;
+}
+
+.status-success {
+  background-color: #b9f6ca;
+  color: #1b5e20;
+}
+
+.status-warning {
+  background-color: #fff9c4;
+  color: #f57f17;
+}
+
+.mat-column-actions {
+  width: 80px;
+}
+
+.mat-column-stt {
+  width: 70px;
+}
+
+.mat-column-complaint_date {
+  width: 120px;
+}
+
+.mat-column-status {
+  width: 120px;
+}
+
+.mat-column-address {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

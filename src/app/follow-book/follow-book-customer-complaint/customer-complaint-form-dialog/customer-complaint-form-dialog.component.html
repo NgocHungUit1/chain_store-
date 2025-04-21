@@ -1,0 +1,113 @@
+<h2 mat-dialog-title>{{data.isEdit ? 'Cập nhật khiếu nại khách hàng' : 'Thêm mới khiếu nại khách hàng'}}</h2>
+<mat-dialog-content>
+  <form [formGroup]="complaintForm" class="complaint-form">
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Ngày khiếu nại</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="complaint_date" required>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="complaintForm.get('complaint_date').hasError('required')">
+          Vui lòng chọn ngày khiếu nại
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="customer-section">
+      <h3 class="section-title">Thông tin khách hàng</h3>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Tìm kiếm khách hàng</mat-label>
+          <input type="text"
+                matInput
+                formControlName="customerInput"
+                [matAutocomplete]="auto"
+                placeholder="Nhập tên hoặc số điện thoại để tìm kiếm"
+                [disabled]="isExistingCustomer">
+          <mat-autocomplete #auto="matAutocomplete"
+                          [displayWith]="displayCustomerFn"
+                          (optionSelected)="onCustomerSelected($event)">
+            <mat-option *ngFor="let customer of filteredCustomers | async" [value]="customer">
+              {{ customer.name }} - {{ customer.phone || 'Không có SĐT' }}
+            </mat-option>
+          </mat-autocomplete>
+          <button *ngIf="isExistingCustomer" mat-icon-button matSuffix (click)="clearSelectedCustomer()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint *ngIf="!isExistingCustomer">Nhập để tìm kiếm hoặc điền thông tin mới bên dưới</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row" *ngIf="!isExistingCustomer">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Tên khách hàng</mat-label>
+          <input matInput formControlName="customer_name" required>
+          <mat-error *ngIf="complaintForm.get('customer_name').hasError('required')">
+            Vui lòng nhập tên khách hàng
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Số điện thoại</mat-label>
+          <input matInput formControlName="phone">
+        </mat-form-field>
+      </div>
+
+      <div class="form-row" *ngIf="!isExistingCustomer">
+        <mat-form-field appearance="outline" class="form-field full-width">
+          <mat-label>Địa chỉ</mat-label>
+          <input matInput formControlName="address">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field full-width">
+        <mat-label>Nội dung khiếu nại</mat-label>
+        <textarea matInput formControlName="complaint_content" rows="3" required></textarea>
+        <mat-error *ngIf="complaintForm.get('complaint_content').hasError('required')">
+          Vui lòng nhập nội dung khiếu nại
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Người tiếp nhận</mat-label>
+        <input matInput formControlName="recipient" required>
+        <mat-error *ngIf="complaintForm.get('recipient').hasError('required')">
+          Vui lòng nhập tên người tiếp nhận
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Trạng thái</mat-label>
+        <mat-select formControlName="status" required>
+          <mat-option [value]="9">Đang xử lý</mat-option>
+          <mat-option [value]="10">Đã giải quyết</mat-option>
+        </mat-select>
+        <mat-error *ngIf="complaintForm.get('status').hasError('required')">
+          Vui lòng chọn trạng thái
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field full-width">
+        <mat-label>Cách giải quyết</mat-label>
+        <textarea matInput formControlName="resolution" rows="3"></textarea>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="false">Hủy</button>
+  <button mat-raised-button color="primary"
+          (click)="onSubmit()"
+          [disabled]="complaintForm.invalid || isSubmitting">
+    {{data.isEdit ? 'Cập nhật' : 'Tạo mới'}}
+    <mat-spinner *ngIf="isSubmitting" diameter="20" style="margin-left: 8px;"></mat-spinner>
+  </button>
+</mat-dialog-actions>

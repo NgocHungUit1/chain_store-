@@ -1,0 +1,132 @@
+.text-right {
+  text-align: right;
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+
+  .product-code {
+    font-weight: 500;
+    color: #1976d2;
+    margin-bottom: 4px;
+  }
+
+  .product-name {
+    color: #424242;
+  }
+}
+
+/* Định dạng các cột số liệu */
+.mat-column-imports,
+.mat-column-exports,
+.mat-column-final_stock {
+  text-align: right;
+  width: 100px;
+}
+
+/* Định dạng cột Mã/Tên sản phẩm */
+.mat-column-product_info {
+  min-width: 200px;
+}
+
+/* Định dạng cột Đơn vị */
+.mat-column-unit {
+  width: 80px;
+}
+
+/* Định dạng cột STT */
+.mat-column-stt {
+  width: 60px;
+}
+
+/* Định dạng cột Lô */
+.mat-column-parcel_no {
+  width: 120px;
+}
+
+/* Định dạng cột HSD */
+.mat-column-expiration_date {
+  width: 120px;
+}
+
+/* Định dạng cột mới */
+.mat-column-date {
+  width: 120px;
+}
+
+.mat-column-document_no {
+  width: 150px;
+}
+
+.mat-column-supplier {
+  min-width: 180px;
+}
+
+/* Đảm bảo các cột số liệu cân đối */
+.mat-cell, .mat-header-cell {
+  padding: 0 16px;
+}
+
+/* Style nút Export Excel */
+.export-btn {
+  display: flex;
+  align-items: center;
+}
+
+/* Style phần loading */
+.loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Style phần không có dữ liệu */
+.no-data {
+  text-align: center;
+  padding: 20px;
+  font-size: 16px;
+  color: #757575;
+}
+
+/* Style cho phần lọc thời gian */
+.filter-item {
+  margin-bottom: 20px;
+}
+
+.filter-label {
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.radio-option {
+  margin-bottom: 10px;
+}
+
+/* Fix một số vấn đề UI */
+.mat-toolbar .page-title {
+  margin: 0 16px;
+  font-size: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toolbar-buttons-group {
+  display: flex;
+  align-items: center;
+}
+
+.mat-icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -122,7 +122,6 @@ export class SamplePrescriptionListComponent extends ListComponentBase implement
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.expand = 'store,user';
     filter.status = this.orderStatusFilter.controls['status'].value;
-
     return filter;
   }
 
@@ -147,7 +146,6 @@ export class SamplePrescriptionListComponent extends ListComponentBase implement
       this.reloadFilter(res);
       this.isLoadingResults = false;
     });
-
   }
 
 

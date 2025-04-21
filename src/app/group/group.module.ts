@@ -12,6 +12,7 @@ import { DemoMaterialModule } from '../demo-material-module';
 import { GroupFormDialogComponent } from './group-form-dialog/group-form-dialog.component';
 import { GroupTabInfoComponent } from './group-tab-info/group-tab-info.component';
 import { SharedModule } from '../shared/shared.module';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 
 @NgModule({
@@ -28,6 +29,7 @@ import { SharedModule } from '../shared/shared.module';
     Ng2SearchPipeModule,
     DemoMaterialModule,
     SharedModule,
+    MatCheckboxModule,
   ],
 })
 export class GroupModule { }

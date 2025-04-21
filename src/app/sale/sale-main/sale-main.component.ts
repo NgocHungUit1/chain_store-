@@ -1720,7 +1720,9 @@ export class SaleMainComponent implements OnInit {
         price_book_id: this.form.controls['priceBookID'].value,
         branch_id: this.form.controls['branch_id'].value,
         expenses_order_price: this.expenseOrder,
-        prescription_id: this.prescription.checked ? mItemInvoice.prescription_id : null,
+        prescription_id: this.prescription.checked
+                         ? (mItemInvoice.prescription_id || this.prescription_id)
+                         : null,
         national_pharmacy_no: this.prescription.checked ? mItemInvoice.national_pharmacy_no : null
       },
       UserID: mItemInvoice.user.id,
@@ -1732,6 +1734,7 @@ export class SaleMainComponent implements OnInit {
       ExpenseOrders: this.expenseOrders,
       date_created: date_created,
     };
+    console.log(dataInvoice);
 
     /**
      * Kiem tra invoice_id la don moi hay don cap nhat

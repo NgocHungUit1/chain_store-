@@ -1,0 +1,144 @@
+<h2 mat-dialog-title>{{data?.isEdit ? 'Cập nhật phiếu theo dõi vệ sinh' : 'Tạo mới phiếu theo dõi vệ sinh'}}</h2>
+
+<form [formGroup]="logbookForm" (ngSubmit)="onSubmit()">
+  <div mat-dialog-content>
+    <div class="form-header">
+      <mat-form-field appearance="outline" class="month-field">
+        <mat-label>Tháng</mat-label>
+        <input matInput type="month" formControlName="month" (change)="onMonthChange()" required>
+        <mat-error *ngIf="logbookForm.get('month')?.invalid && logbookForm.get('month')?.touched">
+          Vui lòng chọn tháng
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="status-field">
+        <mat-label>Trạng thái</mat-label>
+        <mat-select formControlName="status" required>
+          <mat-option *ngFor="let option of statusOptions" [value]="option.value">
+            {{option.viewValue}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="logbookForm.get('status')?.invalid && logbookForm.get('status')?.touched">
+          Vui lòng chọn trạng thái
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="table-container">
+      <table class="hygiene-table">
+        <thead>
+          <tr>
+            <th>Ngày</th>
+            <th class="row-toggle-column"></th>
+            <th>Lau nền nhà</th>
+            <th>Lau tủ lễ</th>
+            <th>Lau tủ, bàn ghế</th>
+            <th>Lau quạt, điều hòa</th>
+            <th>Lau tủ, kệ</th>
+            <th>Lau tường, trần nhà</th>
+            <th>Sắp xếp thuốc</th>
+            <th>Người thực hiện</th>
+            <th>Người kiểm tra</th>
+          </tr>
+        </thead>
+        <tbody formArrayName="details">
+          <!-- Hàng đầu tiên với checkboxes, giống như ảnh thứ 2 -->
+          <tr class="checkbox-row">
+            <td></td>
+            <td class="row-toggle-column"></td>
+            <td>
+              <mat-checkbox (change)="toggleColumnCheckbox('clean_floor')" color="primary"></mat-checkbox>
+            </td>
+            <td>
+              <mat-checkbox (change)="toggleColumnCheckbox('clean_cabinet')" color="primary"></mat-checkbox>
+            </td>
+            <td>
+              <mat-checkbox (change)="toggleColumnCheckbox('clean_furniture')" color="primary"></mat-checkbox>
+            </td>
+            <td>
+              <mat-checkbox (change)="toggleColumnCheckbox('clean_fan_ac')" color="primary"></mat-checkbox>
+            </td>
+            <td>
+              <mat-checkbox (change)="toggleColumnCheckbox('clean_shelf')" color="primary"></mat-checkbox>
+            </td>
+            <td>
+              <mat-checkbox (change)="toggleColumnCheckbox('clean_wall_ceiling')" color="primary"></mat-checkbox>
+            </td>
+            <td>
+              <mat-checkbox (change)="toggleColumnCheckbox('arrange_medicine')" color="primary"></mat-checkbox>
+            </td>
+            <td></td>
+            <td></td>
+          </tr>
+
+          <!-- Các hàng dữ liệu -->
+          <tr *ngFor="let detail of detailsFormArray.controls; let i = index" [formGroupName]="i">
+            <td class="date-cell">
+              {{detail.get('date')?.value | date: 'dd/MM/yyyy'}}
+              <input type="hidden" formControlName="date">
+            </td>
+            <td class="row-toggle-column">
+              <mat-checkbox (change)="toggleRowCheckbox(i)" color="primary"></mat-checkbox>
+            </td>
+            <td>
+              <mat-checkbox
+                [checked]="detail.get('clean_floor')?.value == 1"
+                (change)="toggleCheckbox('clean_floor', i)"
+                color="primary"></mat-checkbox>
+            </td>
+            <td>
+              <mat-checkbox
+                [checked]="detail.get('clean_cabinet')?.value == 1"
+                (change)="toggleCheckbox('clean_cabinet', i)"
+                color="primary"></mat-checkbox>
+            </td>
+            <td>
+              <mat-checkbox
+                [checked]="detail.get('clean_furniture')?.value == 1"
+                (change)="toggleCheckbox('clean_furniture', i)"
+                color="primary"></mat-checkbox>
+            </td>
+            <td>
+              <mat-checkbox
+                [checked]="detail.get('clean_fan_ac')?.value == 1"
+                (change)="toggleCheckbox('clean_fan_ac', i)"
+                color="primary"></mat-checkbox>
+            </td>
+            <td>
+              <mat-checkbox
+                [checked]="detail.get('clean_shelf')?.value == 1"
+                (change)="toggleCheckbox('clean_shelf', i)"
+                color="primary"></mat-checkbox>
+            </td>
+            <td>
+              <mat-checkbox
+                [checked]="detail.get('clean_wall_ceiling')?.value == 1"
+                (change)="toggleCheckbox('clean_wall_ceiling', i)"
+                color="primary"></mat-checkbox>
+            </td>
+            <td>
+              <mat-checkbox
+                [checked]="detail.get('arrange_medicine')?.value == 1"
+                (change)="toggleCheckbox('arrange_medicine', i)"
+                color="primary"></mat-checkbox>
+            </td>
+            <td>
+              <input matInput formControlName="implementer" class="text-input">
+            </td>
+            <td>
+              <input matInput formControlName="inspector" class="text-input">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div mat-dialog-actions align="end">
+    <button mat-button (click)="onNoClick()" type="button" [disabled]="isSubmitting">Hủy bỏ</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="isSubmitting">
+      <mat-spinner diameter="20" *ngIf="isSubmitting"></mat-spinner>
+      <span *ngIf="!isSubmitting">{{data?.isEdit ? 'Cập nhật' : 'Tạo mới'}}</span>
+    </button>
+  </div>
+</form>
