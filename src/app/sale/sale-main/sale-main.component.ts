@@ -3318,11 +3318,36 @@ export class SaleMainComponent implements OnInit {
     this.isDropdownOpen = false;
   }
 
-  getQrCode(bankAccount: any): Observable<string> {
-    const qrCode = `assets/images/default/qr-code.png`;
-    return of(qrCode);
-  }
+    getQrCode(bankAccount: BankAccount): Observable<string> {
+      if (!bankAccount) {
+        // fallback image
+        return of(`assets/images/default/qr-code.png`);
+      }
+    
+      const template    = 'qr_only'; // or 'compact2' | 'compact' | 'print'
+      const namePart    = bankAccount.account_name
+        ? `&accountName=${encodeURIComponent(bankAccount.account_name)}`
+        : '';
 
+      //A short payment memo or description (up to 25 chars).
+      const info = ""
+
+      const infoPart    = info
+        ? `&addInfo=${encodeURIComponent(info)}`
+        : '';
+    
+      const amountPart  = 10;
+
+      // Use acqId (6‑digit BIN) as BANK_ID; adjust if you have a text code instead
+      const url = [
+        `https://img.vietqr.io/image/`,
+        `${bankAccount.bank_code}-${bankAccount.account_number}-${template}.png`,
+        `?${amountPart}${namePart}${infoPart}`
+      ].join('');
+    
+      return of(url);
+    }
+  
   // Close dropdown when clicking outside
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
