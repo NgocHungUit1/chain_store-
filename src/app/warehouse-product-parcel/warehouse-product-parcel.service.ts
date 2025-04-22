@@ -30,6 +30,21 @@ export class WarehouseProductParcelService {
     return url;
   }
 
+  getApiUrlByProduct(filter?: WarehouseProductParcelFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/warehouse-product-parcel/index-by-product?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
   getApiUrlExpiration(filter?: WarehouseProductParcelFilter) {
     if (!filter.page) {
       filter.page = 1;
@@ -96,6 +111,10 @@ export class WarehouseProductParcelService {
 
   getList(filter?: WarehouseProductParcelFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + this.getApiUrl(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+  getListByProduct(filter?: WarehouseProductParcelFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiUrlByProduct(filter);
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
