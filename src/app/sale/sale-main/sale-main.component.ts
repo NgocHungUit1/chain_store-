@@ -1,11 +1,11 @@
-import { Component, ElementRef, HostListener, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation } from '@angular/core';
+import { Component, DoCheck, ElementRef, HostListener, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { Observable, Subject } from 'rxjs';
 import { Product } from '../../product/product.model';
 import { OrderService } from '../order.service';
-import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
+import { catchError, debounceTime, finalize, map, startWith, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/internal/observable/of';
 import { PriceList, PriceListFilter } from '../../price-book/price-list.model';
 import { PriceListService } from '../../price-book/price-list.service';
@@ -75,7 +75,7 @@ interface BankAccount {
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
-export class SaleMainComponent implements OnInit {
+export class SaleMainComponent implements OnInit, DoCheck {
   constructor(
     public dp: DatePipe,
     private fb: FormBuilder,
@@ -182,7 +182,6 @@ export class SaleMainComponent implements OnInit {
   amounts: number[] = [20000, 50000, 100000, 200000, 500000];
   selectedMethod: string = this.paymentMethods[0];
   selectedAmount: number | null = null;
-  selectedBankAccount: BankAccount;
   selectedBankQr: string;
   selectedWallet: any;
   bankAccounts: any[] = [];
@@ -197,9 +196,43 @@ export class SaleMainComponent implements OnInit {
   @ViewChild('showListProd') showListProd: ElementRef;
   @ViewChildren('noteTextArea') noteTextArea!: QueryList<ElementRef<HTMLTextAreaElement>>;
 
+  private _prevTotal = this.total;
+  private _selectedBankAccount: BankAccount|null = null;
 
+  get total(): number {
+    return this.sumPrice
+         - this.numberDiscount
+         - this.numberPointDiscount
+         + this.expenseOrder;
+  }
+  get selectedBankAccount(): BankAccount|null {
+    return this._selectedBankAccount;
+  }
+  set selectedBankAccount(acct: BankAccount|null) {
+    this._selectedBankAccount = acct;
 
+    if (!acct) {
+      // no bank → clear QR
+      this.selectedBankQr = '';
+      return;
+    }
 
+    // show spinner
+    this.isLoadingResults = true;
+
+    // fetch the new QR, hide spinner when done
+    this.getQrCode(acct)
+      .pipe(finalize(() => this.isLoadingResults = false))
+      .subscribe(qr => {
+        debugger;
+        this.selectedBankQr = qr;
+      });
+  }
+  onTotalChange() {
+    this.getQrCode(this.selectedBankAccount).subscribe(qrCode=>{
+      this.selectedBankQr = qrCode
+    });    // …do whatever you need here…
+  }
   /**
    *  So sanh danh sach cu
    * @param listProductUnitIdChoose
@@ -237,11 +270,6 @@ export class SaleMainComponent implements OnInit {
 
     await this.handlePaymentSiderBar(mItemInvoice);
 
-    this.loadBankAccountsSubject.pipe(
-      debounceTime(300) // Wait for 300ms of inactivity
-    ).subscribe(() => {
-      this.loadBankAccounts(); // Call the actual function after debounce
-    });
 
     this.triggerLoadBankAccounts();
 
@@ -812,6 +840,19 @@ export class SaleMainComponent implements OnInit {
         // }
       })
     );
+    this.loadBankAccountsSubject.pipe(
+      debounceTime(300) // Wait for 300ms of inactivity
+    ).subscribe(() => {
+      this.loadBankAccounts(); // Call the actual function after debounce
+    });
+  }
+
+  ngDoCheck() {
+    const t = this.total;
+    if (t !== this._prevTotal) {
+      this._prevTotal = t;
+      this.onTotalChange();
+    }
   }
 
   /**
@@ -3310,19 +3351,41 @@ export class SaleMainComponent implements OnInit {
     this.loadBankAccountsSubject.next(); // Emit an event to the Subject
   }
 
-  selectBankAccount(bankAccount: BankAccount | null) {
-    this.selectedBankAccount = bankAccount;
-    this.getQrCode(bankAccount).subscribe(qrCode=>{
-      this.selectedBankQr = qrCode
-    });
+  selectBankAccount(bank: BankAccount|null) {
+    this.selectedBankAccount = bank;
     this.isDropdownOpen = false;
   }
 
-  getQrCode(bankAccount: any): Observable<string> {
-    const qrCode = `assets/images/default/qr-code.png`;
-    return of(qrCode);
-  }
+  getQrCode(bankAccount: BankAccount): Observable<string> {
+    if (!bankAccount) {
+      // fallback image
+      return of(`assets/images/default/qr-code.png`);
+    }
+  
+    const template    = 'qr_only'; // or 'compact2' | 'compact' | 'print'
+    const namePart    = bankAccount.account_name
+      ? `&accountName=${encodeURIComponent(bankAccount.account_name)}`
+      : '';
 
+    //A short payment memo or description (up to 25 chars).
+    const info = ""
+
+    const infoPart    = info
+      ? `&addInfo=${encodeURIComponent(info)}`
+      : '';
+  
+    const amountPart  = this.total;
+
+    // Use acqId (6‑digit BIN) as BANK_ID; adjust if you have a text code instead
+    const url = [
+      `https://img.vietqr.io/image/`,
+      `${bankAccount.bank_code}-${bankAccount.account_number}-${template}.png`,
+      `?amount=${amountPart}&accountName=${namePart}&addInfo${infoPart}`
+    ].join('');
+  
+    return of(url);
+  }
+  
   // Close dropdown when clicking outside
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {

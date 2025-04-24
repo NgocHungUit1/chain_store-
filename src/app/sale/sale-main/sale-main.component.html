@@ -777,9 +777,7 @@
                       <input
                         matInput
                         type="text"
-                        value="{{
-                          sumPrice - numberDiscount - numberPointDiscount + expenseOrder | number
-                        }}"
+                        [value]="total | number"
                         [readonly]="true"
                         autocomplete="off" />
                     </div>
