@@ -36,6 +36,7 @@
       flex-direction: column;
       max-height: 100%;
       overflow: hidden;
+      min-width: 75%;
 
       .search-filter-container {
         flex-shrink: 0;
@@ -57,7 +58,8 @@
     }
 
     .info-section {
-      width: 450px;
+      width: 350px;
+      max-width: 25%;
       background: white;
       border-radius: 8px;
       padding: 24px;
@@ -669,13 +671,12 @@
 
 .quality-control-table th:nth-child(2),
 .quality-control-table td:nth-child(2) {
-  width: 180px; /* Mã/Tên sản phẩm */
+  width: 160px; /* Mã/Tên sản phẩm */
 }
 
 .quality-control-table th:nth-child(3),
 .quality-control-table td:nth-child(3) {
-  width: 180px; /* Lô-HSD - Tăng kích thước lên */
-  min-width: 180px; /* Đảm bảo kích thước tối thiểu */
+  width: 160px; /* Lô-HSD */
 }
 
 .quality-control-table th:nth-child(4),
@@ -690,12 +691,14 @@
 
 .quality-control-table th:nth-child(6),
 .quality-control-table td:nth-child(6) {
-  width: 120px; /* Lý do - Giảm kích thước xuống */
+  width: 150px; /* Lý do */
+  min-width: 150px;
 }
 
 .quality-control-table th:nth-child(7),
 .quality-control-table td:nth-child(7) {
-  width: 120px; /* Nhận xét chất lượng - Giảm kích thước xuống */
+  width: 150px; /* Phân loại chất lượng */
+  min-width: 150px;
 }
 
 .quality-control-table th:nth-child(8),

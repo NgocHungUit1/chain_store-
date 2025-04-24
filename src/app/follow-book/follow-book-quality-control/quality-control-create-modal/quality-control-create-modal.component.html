@@ -70,7 +70,7 @@
                 <mat-form-field appearance="outline" class="full-width">
                   <input type="text" matInput [(ngModel)]="row.reason"
                          [matAutocomplete]="reasonAuto"
-                         placeholder="Nhập lý do">
+                         placeholder="Nhập nhận xét">
                   <mat-autocomplete #reasonAuto="matAutocomplete">
                     <mat-option *ngFor="let option of reasonOptions" [value]="option">
                       {{option}}

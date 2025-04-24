@@ -1,0 +1,104 @@
+<div class="dialog-wrapper">
+  <h2 mat-dialog-title>{{ dialogTitle }}</h2>
+
+  <form [formGroup]="drugReactionForm" (ngSubmit)="onSubmit()">
+    <mat-dialog-content>
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Ngày ghi nhận phản ứng</mat-label>
+          <input matInput [matDatepicker]="reportDatePicker" formControlName="report_date" required>
+          <mat-datepicker-toggle matSuffix [for]="reportDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #reportDatePicker></mat-datepicker>
+          <mat-error *ngIf="drugReactionForm.get('report_date').hasError('required')">
+            Vui lòng chọn ngày ghi nhận
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Họ tên người bệnh, tuổi</mat-label>
+          <input matInput formControlName="patient_name" required>
+          <mat-error *ngIf="drugReactionForm.get('patient_name').hasError('required')">
+            Vui lòng nhập họ tên người bệnh
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Địa chỉ, điện thoại</mat-label>
+          <input matInput formControlName="patient_contact" required>
+          <mat-error *ngIf="drugReactionForm.get('patient_contact').hasError('required')">
+            Vui lòng nhập địa chỉ và điện thoại
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Tên thuốc, nồng độ/hàm lượng, nhà sản xuất</mat-label>
+          <input matInput formControlName="drug_name" required>
+          <mat-error *ngIf="drugReactionForm.get('drug_name').hasError('required')">
+            Vui lòng nhập tên thuốc
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row two-columns">
+        <mat-form-field appearance="outline">
+          <mat-label>Số lô</mat-label>
+          <input matInput formControlName="batch_number" required>
+          <mat-error *ngIf="drugReactionForm.get('batch_number').hasError('required')">
+            Vui lòng nhập số lô
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Hạn dùng</mat-label>
+          <input matInput [matDatepicker]="expiryDatePicker" formControlName="expiry_date" required>
+          <mat-datepicker-toggle matSuffix [for]="expiryDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #expiryDatePicker></mat-datepicker>
+          <mat-error *ngIf="drugReactionForm.get('expiry_date').hasError('required')">
+            Vui lòng chọn hạn dùng
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Dấu hiệu phản ứng thông tin</mat-label>
+          <textarea matInput formControlName="reaction_description" rows="3" required></textarea>
+          <mat-error *ngIf="drugReactionForm.get('reaction_description').hasError('required')">
+            Vui lòng nhập dấu hiệu phản ứng
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Người nhận</mat-label>
+          <input matInput formControlName="recipient" required>
+          <mat-error *ngIf="drugReactionForm.get('recipient').hasError('required')">
+            Vui lòng nhập người nhận
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Hướng xử trí</mat-label>
+          <textarea matInput formControlName="resolution" rows="3"></textarea>
+        </mat-form-field>
+      </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <button mat-button type="button" (click)="onCancel()" [disabled]="isLoading">Hủy</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="drugReactionForm.invalid || isLoading">
+        <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+        <span *ngIf="!isLoading">{{ data.isEdit ? 'Cập nhật' : 'Thêm mới' }}</span>
+      </button>
+    </mat-dialog-actions>
+  </form>
+</div>

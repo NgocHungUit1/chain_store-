@@ -1,0 +1,29 @@
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.form-field {
+  flex: 1;
+  min-width: 200px;
+}
+
+.form-field-full {
+  flex: 1 0 100%;
+  width: 100%;
+}
+
+mat-dialog-content {
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+:host ::ng-deep .mat-form-field-wrapper {
+  margin-bottom: 0;
+}
+
+:host ::ng-deep .mat-form-field-subscript-wrapper {
+  margin-top: 0;
+}
