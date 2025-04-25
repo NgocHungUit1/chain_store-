@@ -224,7 +224,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     this.getQrCode(acct)
       .pipe(finalize(() => this.isLoadingResults = false))
       .subscribe(qr => {
-        debugger;
+        // debugger;
         this.selectedBankQr = qr;
       });
   }
@@ -1445,7 +1445,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
         }
         
         printContent += `</table>`;
-        debugger;
+        // debugger;
         // Add Vietnamese text for the amount
         printContent += `<p>${this.numberToVietnameseText(numeral(res?.sum_payment).value() || 0)}</p>`;
   
@@ -2219,7 +2219,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     // --- Determine Payment Method and Bank Account ---
     let paymentMethodValue = 'cash'; // Default to cash
     let bankAccountId;
-    debugger;
+    // debugger;
     const selectedPaymentMethod = this.form.get('selectedMethod').value;
 
     if (selectedPaymentMethod === 'Chuyển khoản') {
