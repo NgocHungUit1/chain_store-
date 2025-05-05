@@ -1,0 +1,121 @@
+<h2 mat-dialog-title>{{ data?.isEdit ? 'Cập nhật phiếu theo dõi thuốc bị thu hồi' : 'Tạo mới phiếu theo dõi thuốc bị thu hồi' }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div mat-dialog-content>
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Số, ngày tháng của công văn</mat-label>
+        <input matInput formControlName="document_number" required>
+        <mat-error *ngIf="form.get('document_number').invalid">
+          Vui lòng nhập số công văn
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Ngày</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="date" required>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="form.get('date').invalid">
+          Vui lòng chọn ngày
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Tên thuốc bị thu hồi</mat-label>
+        <input matInput formControlName="medicine_name" required>
+        <mat-error *ngIf="form.get('medicine_name').invalid">
+          Vui lòng nhập tên thuốc
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Số lô, hạn dùng</mat-label>
+        <input matInput formControlName="batch_number" required>
+        <mat-error *ngIf="form.get('batch_number').invalid">
+          Vui lòng nhập số lô, hạn dùng
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field-full">
+        <mat-label>Công ty sản xuất/nhập khẩu</mat-label>
+        <input matInput formControlName="manufacturer" required>
+        <mat-error *ngIf="form.get('manufacturer').invalid">
+          Vui lòng nhập công ty sản xuất
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Số lượng thuốc đã mua</mat-label>
+        <input matInput type="number" formControlName="quantity" min="0" required>
+        <mat-error *ngIf="form.get('quantity').hasError('required')">
+          Vui lòng nhập số lượng thuốc
+        </mat-error>
+        <mat-error *ngIf="form.get('quantity').hasError('min')">
+          Số lượng không được nhỏ hơn 0
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Số lượng đã bán</mat-label>
+        <input matInput type="number" formControlName="units_sold" min="0" required>
+        <mat-error *ngIf="form.get('units_sold').hasError('required')">
+          Vui lòng nhập số lượng đã bán
+        </mat-error>
+        <mat-error *ngIf="form.get('units_sold').hasError('min')">
+          Số lượng không được nhỏ hơn 0
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Số lượng thu hồi từ khách</mat-label>
+        <input matInput type="number" formControlName="returned_amount" min="0" required>
+        <mat-error *ngIf="form.get('returned_amount').hasError('required')">
+          Vui lòng nhập số lượng thu hồi
+        </mat-error>
+        <mat-error *ngIf="form.get('returned_amount').hasError('min')">
+          Số lượng không được nhỏ hơn 0
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field-full">
+        <mat-label>Khách hàng trả lại thuốc (Tên - Địa chỉ)</mat-label>
+        <textarea matInput formControlName="customer_info" rows="2"></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Người nhận</mat-label>
+        <input matInput formControlName="receiver" required>
+        <mat-error *ngIf="form.get('receiver').invalid">
+          Vui lòng nhập người nhận
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field-full">
+        <mat-label>Xử lý của cơ sở</mat-label>
+        <textarea matInput formControlName="notes" rows="2"></textarea>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="onCancel()">Hủy</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="isSubmitting">
+      {{ data?.isEdit ? 'Cập nhật' : 'Tạo mới' }}
+    </button>
+  </div>
+</form>

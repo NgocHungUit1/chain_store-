@@ -160,6 +160,28 @@
       </div>
     </div>
 
+    <!-- Thêm phần upload ảnh sau các trường hiện có -->
+    <h3>Hình ảnh đơn thuốc</h3>
+    <div fxLayout="row wrap">
+      <input type="file" id="file-input" #imageInput accept="image/*" (change)="processFile(imageInput)"
+              style="display: none">
+      <ul class="product-upload-image">
+        <li class="show selected-image" *ngFor="let image of selectedFiles; index as i"
+            [id]="'selected-image-'+i">
+          <img [src]="image.src">
+          <a class="delete-image" (click)="removeSelectedImage(i)" title="Xóa ảnh">
+            <mat-icon>remove_circle_outline</mat-icon>
+          </a>
+        </li>
+        <li *ngFor="let imgBtn of imageButtons; index as i;" [class]="imageButtons[i]['isShow'] ? 'show' : ''">
+          <label for="file-input">
+            <span class="add-image-text">+ Thêm</span>
+            <img src="/assets/images/default-product-img.jpg">
+          </label>
+        </li>
+      </ul>
+    </div>
+
   </form>
 </div>
 <div mat-dialog-actions align="end">

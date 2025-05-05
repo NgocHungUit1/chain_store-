@@ -1,0 +1,33 @@
+.dialog-wrapper {
+  padding: 0 16px;
+}
+
+mat-dialog-content {
+  min-height: 200px;
+}
+
+.form-row {
+  margin-bottom: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.two-columns {
+  display: flex;
+  gap: 16px;
+
+  mat-form-field {
+    flex: 1;
+  }
+}
+
+mat-spinner {
+  display: inline-block;
+  margin-right: 8px;
+}
+
+textarea {
+  min-height: 60px;
+}

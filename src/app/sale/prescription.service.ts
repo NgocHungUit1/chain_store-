@@ -64,4 +64,14 @@ export class PrescriptionService {
     const url = environment.apiUrl + '/prescription/render-no';
     return this.http.get<string>(url);
   }
+
+  // Thêm phương thức mới để tạo hoặc cập nhật đơn thuốc có ảnh
+  createWithFormData(formData: FormData) {
+    return this.http.post(`${environment.apiUrl}/prescription`, formData);
+  }
+
+  // Thêm phương thức cập nhật với FormData
+  updateWithFormData(id: string, formData: FormData) {
+    return this.http.put(`${environment.apiUrl}/prescription/${id}`, formData);
+  }
 }

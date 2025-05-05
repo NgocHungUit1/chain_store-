@@ -217,8 +217,8 @@ const MENUITEMS = [
       'Trainee.Delete',
       'Trainee.View',
       'Hygiene-Logbook.All',
-      // 'Medicine-Recall.All',
-      // 'Adverse-Drug-Reaction.All',
+      'Medicine-Recall.All',
+      'Adverse-Drug-Reaction.All',
     ],
     children: [
       {
@@ -255,24 +255,24 @@ const MENUITEMS = [
       },
       {
         state: 'customer-transaction',
-        name: 'Giao dịch khách hàng',
+        name: 'Theo dõi khách hàng',
         type: 'link',
         icon: 'person',
         permissions: ['Quality-Check.List']
       },
       {
         state: 'customer-complaint',
-        name: 'Khách hàng khiếu nại',
+        name: 'Theo dõi khiếu nại',
         type: 'link',
         icon: 'feedback',
         permissions: ['Customer-Complaint.List']
       },
       { state: 'supplier-tracking', name: 'Nhà cung cấp', type: 'link', icon: 'people', permissions: ['Supplier.List'] },
       { state: 'trainee', name: 'Đào tạo học viên', type: 'link', icon: 'person', permissions: ['Trainee.List'] },
-      // { state: 'medicine-recall', name: 'Thuốc bị thu hồi', type: 'link', icon: 'medication', permissions: ['Medicine-Recall.List'] },
-      // { state: 'drug-reaction', name: 'Tác dụng phụ thuốc', type: 'link', icon: 'medication', permissions: ['Adverse-Drug-Reaction.List'] },
+      { state: 'medicine-recall', name: 'Thuốc bị thu hồi', type: 'link', icon: 'medication', permissions: ['Medicine-Recall.List'] },
+      { state: 'drug-reaction', name: 'Tác dụng phụ thuốc', type: 'link', icon: 'medication', permissions: ['Adverse-Drug-Reaction.List'] },
 
-      // { state: 'hygiene', name: 'Vệ sinh', type: 'link', icon: 'person', permissions: ['Hygiene-Logbook.All'] },
+      //{ state: 'hygiene', name: 'Vệ sinh', type: 'link', icon: 'person', permissions: ['Hygiene-Logbook.All'] },
     ]
   },
   // {

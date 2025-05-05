@@ -1,0 +1,174 @@
+.page-container {
+  padding: 16px;
+}
+
+.page-header {
+  margin-bottom: 20px;
+
+  .header-title {
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+}
+
+.search-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.search-input {
+  width: 100%;
+}
+
+.filter-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-container {
+  position: relative;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+th.mat-header-cell {
+  background-color: #dcf4fc;
+  font-weight: bold;
+  text-align: center;
+  padding: 8px;
+  white-space: nowrap;
+}
+
+td.mat-cell {
+  padding: 8px;
+}
+
+.no-data {
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+  color: #666;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  display: inline-block;
+}
+
+.status-success {
+  background-color: #b9f6ca;
+  color: #1b5e20;
+}
+
+.status-warning {
+  background-color: #fff9c4;
+  color: #f57f17;
+}
+
+.mat-column-actions {
+  width: 80px;
+}
+
+.mat-column-stt {
+  width: 70px;
+}
+
+.mat-column-date {
+  width: 120px;
+}
+
+.mat-column-document_number {
+  width: 150px;
+}
+
+.mat-column-medicine_name {
+  min-width: 200px;
+}
+
+.mat-column-batch_number {
+  min-width: 100px;
+}
+
+.mat-column-manufacturer {
+  min-width: 150px;
+}
+
+.mat-column-quantity,
+.mat-column-units_sold,
+.mat-column-returned_amount {
+  width: 100px;
+  text-align: center;
+}
+
+.mat-column-receiver {
+  width: 120px;
+}
+
+::ng-deep {
+  .mat-column-stt {
+    width: 70px;
+  }
+
+  .mat-column-actions {
+    width: 80px;
+  }
+
+  .mat-column-date {
+    width: 120px;
+  }
+
+  .mat-column-document_number {
+    width: 150px;
+  }
+
+  .mat-column-medicine_name {
+    min-width: 200px;
+  }
+
+  .mat-column-batch_number {
+    min-width: 100px;
+  }
+
+  .mat-column-manufacturer {
+    min-width: 150px;
+  }
+
+  .mat-column-quantity,
+  .mat-column-units_sold,
+  .mat-column-returned_amount {
+    width: 100px;
+    text-align: center;
+  }
+
+  .mat-column-receiver {
+    width: 120px;
+  }
+}

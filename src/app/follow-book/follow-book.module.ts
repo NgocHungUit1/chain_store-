@@ -47,15 +47,14 @@ import { FollowBookCustomerComplaintComponent, DeleteConfirmationDialog } from '
 import { CustomerComplaintFormDialogComponent } from './follow-book-customer-complaint/customer-complaint-form-dialog/customer-complaint-form-dialog.component';
 import { FollowBookTraineeComponent } from './follow-book-trainee/follow-book-trainee.component';
 import { TraineeFormDialogComponent } from './follow-book-trainee/trainee-form-dialog/trainee-form-dialog.component';
-import { CustomerComplaintService } from './services/customer-complaint.service';
-import { MedicineTrackingService } from './services/medicine-tracking.service';
-import { ProductService } from './services/product.service';
-import { TraineeService } from './services/trainee.service';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { FollowBookHygieneComponent } from './follow-book-hygiene/follow-book-hygiene.component';
 import { HygieneLogbookCreateModalComponent } from './follow-book-hygiene/hygiene-logbook-create-modal/hygiene-logbook-create-modal.component';
 import { HygieneLogbookDetailModalComponent } from './follow-book-hygiene/hygiene-logbook-detail-modal/hygiene-logbook-detail-modal.component';
-import { HygieneLogbookService } from './services/hygiene-logbook.service';
+import { FollowBookMedicineRecallComponent } from './follow-book-medicine-recall/follow-book-medicine-recall.component';
+import { MedicineRecallFormDialogComponent } from './follow-book-medicine-recall/medicine-recall-form-dialog/medicine-recall-form-dialog.component';
+import { FollowBookDrugReactionComponent } from './follow-book-drug-reaction/follow-book-drug-reaction.component';
+import { DrugReactionFormDialogComponent } from './follow-book-drug-reaction/drug-reaction-form-dialog/drug-reaction-form-dialog.component';
 
 @NgModule({
   declarations: [
@@ -76,7 +75,11 @@ import { HygieneLogbookService } from './services/hygiene-logbook.service';
     ConfirmDialogComponent,
     FollowBookHygieneComponent,
     HygieneLogbookCreateModalComponent,
-    HygieneLogbookDetailModalComponent
+    HygieneLogbookDetailModalComponent,
+    FollowBookMedicineRecallComponent,
+    MedicineRecallFormDialogComponent,
+    FollowBookDrugReactionComponent,
+    DrugReactionFormDialogComponent
   ],
   imports: [
     CommonModule,
@@ -111,8 +114,7 @@ import { HygieneLogbookService } from './services/hygiene-logbook.service';
     MatFormFieldModule,
     MatInputModule
   ],
-  exports: [
-  ],
+  exports: [],
   entryComponents: [
     QualityControlCreateModalComponent,
     QualityControlDetailModalComponent,
@@ -123,7 +125,10 @@ import { HygieneLogbookService } from './services/hygiene-logbook.service';
     CustomerComplaintFormDialogComponent,
     TraineeFormDialogComponent,
     HygieneLogbookCreateModalComponent,
-    HygieneLogbookDetailModalComponent
-  ]
+    HygieneLogbookDetailModalComponent,
+    MedicineRecallFormDialogComponent,
+    DrugReactionFormDialogComponent
+  ],
+
 })
 export class FollowBookModule { }
