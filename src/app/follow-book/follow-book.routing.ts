@@ -8,6 +8,7 @@ import { FollowBookTraineeComponent } from './follow-book-trainee/follow-book-tr
 import { FollowBookHygieneComponent } from './follow-book-hygiene/follow-book-hygiene.component';
 import { FollowBookMedicineRecallComponent } from './follow-book-medicine-recall/follow-book-medicine-recall.component';
 import { FollowBookDrugReactionComponent } from './follow-book-drug-reaction/follow-book-drug-reaction.component';
+import { FollowBookInvalidPrescriptionComponent } from './follow-book-invalid-prescription/follow-book-invalid-prescription.component';
 export const FollowBookRoutes: Routes = [
   {
     path: 'quanlity-control',
@@ -48,5 +49,9 @@ export const FollowBookRoutes: Routes = [
   {
     path: 'drug-reaction',
     component: FollowBookDrugReactionComponent
+  },
+  {
+    path: 'invalid-prescription',
+    component: FollowBookInvalidPrescriptionComponent
   }
 ];

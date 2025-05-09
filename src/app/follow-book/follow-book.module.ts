@@ -55,7 +55,8 @@ import { FollowBookMedicineRecallComponent } from './follow-book-medicine-recall
 import { MedicineRecallFormDialogComponent } from './follow-book-medicine-recall/medicine-recall-form-dialog/medicine-recall-form-dialog.component';
 import { FollowBookDrugReactionComponent } from './follow-book-drug-reaction/follow-book-drug-reaction.component';
 import { DrugReactionFormDialogComponent } from './follow-book-drug-reaction/drug-reaction-form-dialog/drug-reaction-form-dialog.component';
-
+import { FollowBookInvalidPrescriptionComponent } from './follow-book-invalid-prescription/follow-book-invalid-prescription.component';
+import { InvalidPrescriptionFormDialogComponent } from './follow-book-invalid-prescription/invalid-prescription-form-dialog/invalid-prescription-form-dialog.component';
 @NgModule({
   declarations: [
     FollowBookQualityControlComponent,
@@ -79,7 +80,9 @@ import { DrugReactionFormDialogComponent } from './follow-book-drug-reaction/dru
     FollowBookMedicineRecallComponent,
     MedicineRecallFormDialogComponent,
     FollowBookDrugReactionComponent,
-    DrugReactionFormDialogComponent
+    DrugReactionFormDialogComponent,
+    FollowBookInvalidPrescriptionComponent,
+    InvalidPrescriptionFormDialogComponent
   ],
   imports: [
     CommonModule,
@@ -127,7 +130,8 @@ import { DrugReactionFormDialogComponent } from './follow-book-drug-reaction/dru
     HygieneLogbookCreateModalComponent,
     HygieneLogbookDetailModalComponent,
     MedicineRecallFormDialogComponent,
-    DrugReactionFormDialogComponent
+    DrugReactionFormDialogComponent,
+    InvalidPrescriptionFormDialogComponent
   ],
 
 })

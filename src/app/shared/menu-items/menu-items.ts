@@ -219,11 +219,12 @@ const MENUITEMS = [
       'Hygiene-Logbook.All',
       'Medicine-Recall.All',
       'Adverse-Drug-Reaction.All',
+      'Invalid-Prescription.All',
     ],
     children: [
       {
         state: 'quanlity-control',
-        name: 'Kiểm soát chất lượng',
+        name: 'Kiểm soát chất lượng định kỳ',
         type: 'link',
         icon: 'fact_check',
         permissions: [
@@ -237,7 +238,7 @@ const MENUITEMS = [
       },
       {
         state: 'medicine-tracking',
-        name: 'Bán thuốc theo đơn',
+        name: 'Theo dõi bán thuốc theo đơn',
         type: 'link',
         icon: 'medication',
         permissions: [
@@ -255,24 +256,24 @@ const MENUITEMS = [
       },
       {
         state: 'customer-transaction',
-        name: 'Theo dõi khách hàng',
+        name: 'Thông tin chi tiết khách hàng',
         type: 'link',
         icon: 'person',
         permissions: ['Quality-Check.List']
       },
       {
         state: 'customer-complaint',
-        name: 'Theo dõi khiếu nại',
+        name: 'Theo dõi khách hàng khiếu nại',
         type: 'link',
         icon: 'feedback',
         permissions: ['Customer-Complaint.List']
       },
-      { state: 'supplier-tracking', name: 'Nhà cung cấp', type: 'link', icon: 'people', permissions: ['Supplier.List'] },
-      { state: 'trainee', name: 'Đào tạo học viên', type: 'link', icon: 'person', permissions: ['Trainee.List'] },
-      { state: 'medicine-recall', name: 'Thuốc bị thu hồi', type: 'link', icon: 'medication', permissions: ['Medicine-Recall.List'] },
-      { state: 'drug-reaction', name: 'Tác dụng phụ thuốc', type: 'link', icon: 'medication', permissions: ['Adverse-Drug-Reaction.List'] },
-
-      //{ state: 'hygiene', name: 'Vệ sinh', type: 'link', icon: 'person', permissions: ['Hygiene-Logbook.All'] },
+      { state: 'supplier-tracking', name: ' Sổ theo doi nhà cung cấp', type: 'link', icon: 'people', permissions: ['Supplier.List'] },
+      { state: 'trainee', name: 'Sổ theo dõi đào tạo', type: 'link', icon: 'person', permissions: ['Trainee.List'] },
+      { state: 'medicine-recall', name: 'Sổ theo dõi thuốc bị thu hồi', type: 'link', icon: 'medication', permissions: ['Medicine-Recall.List'] },
+      { state: 'drug-reaction', name: 'Sổ theo dõi tác dụng phụ thuốc', type: 'link', icon: 'medication', permissions: ['Adverse-Drug-Reaction.List'] },
+      { state: 'invalid-prescription', name: 'Sổ theo dõi đơn thuốc không hợp lệ', type: 'link', icon: 'medication', permissions: ['Invalid-Prescription.List'] },
+      { state: 'hygiene', name: 'Vệ sinh', type: 'link', icon: 'person', permissions: ['Hygiene-Logbook.List'] },
     ]
   },
   // {
