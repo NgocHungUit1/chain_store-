@@ -232,6 +232,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     this.getQrCode(this.selectedBankAccount).subscribe(qrCode=>{
       this.selectedBankQr = qrCode
     });    // …do whatever you need here…
+    this.tinhLaiTienThua();
   }
   /**
    *  So sanh danh sach cu
