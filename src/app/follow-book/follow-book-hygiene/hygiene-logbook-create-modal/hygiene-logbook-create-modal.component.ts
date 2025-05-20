@@ -180,7 +180,7 @@ export class HygieneLogbookCreateModalComponent implements OnInit {
           this.isSubmitting = false;
         },
         error => {
-          this.notifier.notify('error', 'Có lỗi xảy ra khi tạo phiếu!');
+          this.notifier.notify('error', 'Phiếu vệ sinh cho tháng này đã tồn tại,vui lòng tạo phiếu khác');
           this.isSubmitting = false;
         }
       );

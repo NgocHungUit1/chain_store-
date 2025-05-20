@@ -48,10 +48,9 @@ export class QualityControlCreateModalComponent implements OnInit {
 
   // Thêm các tùy chọn cứng
   reasonOptions = [
-    'Định kỳ',
-    'Đột xuất',
-    'Kiểm tra định kỳ',
-    'Kiểm tra chất lượng'
+    'Bao bì nguyên vẹn',
+    'Thuốc không biến màu',
+    'Không bị biến dạng'
   ];
 
   qualityNoteOptions = [
@@ -99,10 +98,9 @@ export class QualityControlCreateModalComponent implements OnInit {
   ngOnInit(): void {
     // Khởi tạo các tùy chọn
     this.reasonOptions = [
-      'Định kỳ',
-      'Đột xuất',
-      'Kiểm tra định kỳ',
-      'Kiểm tra chất lượng'
+      'Bao bì nguyên vẹn',
+      'Thuốc không biến màu',
+      'Không bị biến dạng'
     ];
     this.qualityNoteOptions = [
       'Đạt',

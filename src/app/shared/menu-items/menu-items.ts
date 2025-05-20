@@ -256,7 +256,7 @@ const MENUITEMS = [
       },
       {
         state: 'customer-transaction',
-        name: 'Thông tin chi tiết khách hàng',
+        name: 'Thông tin chi tiết khách hàng KSĐB',
         type: 'link',
         icon: 'person',
         permissions: ['Quality-Check.List']
@@ -273,7 +273,7 @@ const MENUITEMS = [
       { state: 'medicine-recall', name: 'Sổ theo dõi thuốc bị thu hồi', type: 'link', icon: 'medication', permissions: ['Medicine-Recall.List'] },
       { state: 'drug-reaction', name: 'Sổ theo dõi tác dụng phụ thuốc', type: 'link', icon: 'medication', permissions: ['Adverse-Drug-Reaction.List'] },
       { state: 'invalid-prescription', name: 'Sổ theo dõi đơn thuốc không hợp lệ', type: 'link', icon: 'medication', permissions: ['Invalid-Prescription.List'] },
-      { state: 'hygiene', name: 'Vệ sinh', type: 'link', icon: 'person', permissions: ['Hygiene-Logbook.List'] },
+      { state: 'hygiene', name: 'Sổ theo dõi vệ sinh', type: 'link', icon: 'person', permissions: ['Hygiene-Logbook.List'] },
     ]
   },
   // {
