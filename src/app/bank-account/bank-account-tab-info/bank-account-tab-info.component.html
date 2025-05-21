@@ -1,0 +1,53 @@
+<div fxLayout="row wrap" *ngIf="model !== null" class="m-b-20">
+  <div fxFlex="100">
+    <h3 style="color: #009688">{{model.name}}</h3>
+  </div>
+  <div fxFlex="100">
+    <div fxLayout="row wrap">
+      <div fxFlex="58" class="product-info">
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Số tài khoản:</span> <strong>{{model.account_number}}</strong>
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Tên tài khoản:</span> {{model.account_name}}
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Ngân hàng:</span> {{this.bankCodesObj[model.bank_code]}}
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Trạng thái:</span>
+            <label *ngIf="model.status == '9'" class="label label-warning">Ngưng hoạt động</label>
+            <label *ngIf="model.status == '10'" class="label label-success">Hoạt động</label>
+          </div>
+        </div>
+
+
+        <div fxLayout="row wrap" class="product-info-row product-info-row-last">
+          <div fxFlex="100" class="product-info-field">
+            <span class="product-field-label">Ghi chú:</span> {{model.note}}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div fxFlex="100" align="end">
+    <button class="m-r-10" mat-raised-button color="primary" (click)="openFormDialog(this.model.id)">
+      <mat-icon>edit</mat-icon>
+      Cập nhật
+    </button>
+    <button class="m-r-10" mat-raised-button color="accent" (click)="lock()" *ngIf="this.model.status == '10'">
+      <mat-icon>lock</mat-icon>
+      Ngừng hoạt động
+    </button>
+    <button class="m-r-10" mat-raised-button color="accent" (click)="activate()" *ngIf="this.model.status == '9'">
+      <mat-icon>lock_open</mat-icon>
+      Kích hoạt
+    </button>
+  </div>
+</div>

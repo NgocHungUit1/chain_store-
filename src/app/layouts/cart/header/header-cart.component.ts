@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../authentication/auth.service';
@@ -7,19 +7,24 @@ import { OrderService } from '../../../sale/order.service';
 import { ProductService } from '../../../product/product.service';
 import { Product } from '../../../product/product.model';
 import { NotifierService } from 'angular-notifier';
+import { OptionStore } from '../../../common/option-store.model';
+import { OptionStoreService } from '../../../common/option-store.service';
+import { SharedDataService } from '../../../shared/shared-data.service';
 
 @Component({
   selector: 'app-header-cart',
   templateUrl: './header-cart.component.html',
   styleUrls: ['./header-cart.component.css']
 })
-export class AppHeaderCartComponent {
+export class AppHeaderCartComponent implements OnInit {
 
   constructor(
     private route: Router,
     private authSer: AuthService,
     private orderService: OrderService,
     private productSer: ProductService,
+    private optionStoreService: OptionStoreService,
+    private shareDataSer: SharedDataService,
     public notifierSer: NotifierService,
   ) {
 
@@ -94,6 +99,15 @@ export class AppHeaderCartComponent {
 
   barcode: string;
 
+  autoPrint: boolean = true;
+  autoPrintInSoLo = false;
+
+  optionStore_auto_print: OptionStore = null;
+
+  ngOnInit(): void {
+    this.getAutoPrintValue();
+  }
+
   logout() {
     this.authSer.logout().subscribe(res => {
       if (res) {
@@ -136,4 +150,36 @@ export class AppHeaderCartComponent {
 
   }
 
+  onChangeSlideToggleTuDongInHoaDon() {
+    this.autoPrint = !this.autoPrint;
+    this.optionStore_auto_print.value = this.autoPrint === false ? 'no' : 'yes';
+    this.optionStoreService
+      .update(this.optionStore_auto_print.id, this.optionStore_auto_print)
+      .subscribe(_ => {
+      });
+    if(!this.autoPrint){
+      this.shareDataSer.setInSoLo(false);
+      this.autoPrintInSoLo = false;
+    }
+  }
+
+  getAutoPrintValue() {
+    this.optionStoreService.getValue('auto_print').subscribe(res => {
+      this.optionStore_auto_print = res;
+      if (res.value === 'no') {
+        this.autoPrint = false;
+      } else {
+        this.autoPrint = true;
+      }
+    });
+  }
+
+  onChangeSlideToggleInSoLo(e: any) {
+    this.autoPrintInSoLo = e.checked;
+    this.shareDataSer.setInSoLo(e.checked);
+  }
+
+  onToggleClick(event: MouseEvent) {
+    event.stopPropagation();
+  }
 }

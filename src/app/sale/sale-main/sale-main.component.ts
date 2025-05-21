@@ -1,30 +1,11 @@
-import { NationalPrescription } from './../../national-prescription/national-prescription.model';
-import {
-  Component,
-  ElementRef,
-  HostListener,
-  OnInit,
-  ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
-import {
-  FormControl,
-  FormBuilder,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { Component, DoCheck, ElementRef, HostListener, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { Product } from '../../product/product.model';
 import { OrderService } from '../order.service';
-import {
-  catchError,
-  debounceTime,
-  map,
-  startWith,
-  switchMap,
-} from 'rxjs/operators';
+import { catchError, debounceTime, finalize, map, startWith, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/internal/observable/of';
 import { PriceList, PriceListFilter } from '../../price-book/price-list.model';
 import { PriceListService } from '../../price-book/price-list.service';
@@ -33,7 +14,7 @@ import { PriceDetailOrderDialogComponent } from '../price-detail-order-dialog/pr
 import { PriceListProductService } from '../../price-book/price-list-product.service';
 import { ItemInvoice } from '../order.model';
 import { Customer } from '../../customer/customer.model';
-import { SaleCustomerFormDialogComponent }   from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
+import { SaleCustomerFormDialogComponent } from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
 import { PaymentSiderbarDialogComponent } from '../payment-siderbar-dialog/payment-siderbar-dialog.component';
 import { DiscountSiderbarDialogComponent } from '../discount-siderbar-dialog/discount-siderbar-dialog.component';
 import { CustomerService } from '../../customer/customer.service';
@@ -43,25 +24,24 @@ import * as numeral from 'numeral';
 import { OptionStoreService } from '../../common/option-store.service';
 import { OptionStore } from '../../common/option-store.model';
 import { ExpensesOrderService } from '../../expenses-order/expenses-order.service';
-import {
-  ExpensesOrder,
-  ExpensesOrderFilter,
-} from '../../expenses-order/expenses-order.model';
+import { ExpensesOrder, ExpensesOrderFilter } from '../../expenses-order/expenses-order.model';
 import { SaleExpensesDialogComponent } from '../sale-expenses-dialog/sale-expenses-dialog.component';
 import { PrescriptionFormDialogComponent } from '../prescription-form-dialog/prescription-form-dialog.component';
-import {
-  DateAdapter,
-  MAT_DATE_FORMATS,
-  MAT_DATE_LOCALE,
-} from '@angular/material/core';
-import {
-  MAT_MOMENT_DATE_ADAPTER_OPTIONS,
-  MomentDateAdapter,
-} from '@angular/material-moment-adapter';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DatePipe } from '@angular/common';
-import * as moment from 'moment';
 import { StoreService } from '../../store/store.service';
+import { ProductService } from '../../product/product.service';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { SaleProductParcelSelectDialogComponent } from '../sale-product-parcel-select-dialog/sale-product-parcel-select-dialog.component';
 import {AuthService} from '../../authentication/auth.service';
+import { SharedDataService } from '../../shared/shared-data.service';
+import { BankAccountDialogComponent } from '../bank-account-dialog/bank-account-dialog.component';
+import { PaymentQrDialogComponent } from '../payment-qr-dialog/payment-qr-dialog.component';
+import { TransactionNotifyDialogComponent } from '../transaction-notify-dialog/bank-account-dialog.component';
+import { BankAccountService } from '../../bank-account/bank-account.service';
+import { BankAccountFilter } from '../../bank-account/bank-account.model';
 
 export const MY_FORMATS = {
   parse: {
@@ -74,7 +54,12 @@ export const MY_FORMATS = {
     monthYearA11yLabel: 'MMMM YYYY',
   },
 };
-
+interface BankAccount {
+  id: string;
+  bank_code: string;
+  account_number: string;
+  account_name: string;
+}
 @Component({
   selector: 'app-sale-main',
   encapsulation: ViewEncapsulation.None,
@@ -90,7 +75,7 @@ export const MY_FORMATS = {
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
-export class SaleMainComponent implements OnInit {
+export class SaleMainComponent implements OnInit, DoCheck {
   constructor(
     public dp: DatePipe,
     private fb: FormBuilder,
@@ -104,7 +89,11 @@ export class SaleMainComponent implements OnInit {
     private optionStoreService: OptionStoreService,
     private expensesOrderService: ExpensesOrderService,
     private authSer: AuthService,
+    private sharedDataSer: SharedDataService,
     public storeSer: StoreService,
+    private productSer: ProductService,
+    private bankAccountSer: BankAccountService,
+
   ) {
     this.optionStoreService.getValue('point_enabled').subscribe(res => {
       this.isPointEnabled = res.value === 'true';
@@ -122,6 +111,7 @@ export class SaleMainComponent implements OnInit {
       this.canNegativeStock = res.value === 'yes';
     });
   }
+  private loadBankAccountsSubject = new Subject<void>(); // Subject to trigger debouncing
 
   optionStore_auto_print: OptionStore = null;
 
@@ -187,12 +177,63 @@ export class SaleMainComponent implements OnInit {
   isUsePoint: boolean = false;
   pointCanUse: number = 0;
   numberPointDiscount: number = 0;
-
+  paymentForm: FormGroup;
+  paymentMethods: string[] = ['Tiền mặt', 'Chuyển khoản'];
+  amounts: number[] = [20000, 50000, 100000, 200000, 500000];
+  selectedMethod: string = this.paymentMethods[0];
+  selectedAmount: number | null = null;
+  selectedBankQr: string;
+  selectedWallet: any;
+  bankAccounts: any[] = [];
+  filteredBankAccounts: any[] = [];
+  searchTerm: string = '';
+  isDropdownOpen: boolean = false;
+  wallets: any[] = [];
+  bankAccountFilter: BankAccountFilter = new BankAccountFilter();
   @ViewChild('prescription') prescription;
   @ViewChild('customerSearch') customerSearch: ElementRef;
   @ViewChild('customerPayment') customerPayment: ElementRef;
   @ViewChild('showListProd') showListProd: ElementRef;
+  @ViewChildren('noteTextArea') noteTextArea!: QueryList<ElementRef<HTMLTextAreaElement>>;
 
+  private _prevTotal = this.total;
+  private _selectedBankAccount: BankAccount|null = null;
+
+  get total(): number {
+    return this.sumPrice
+         - this.numberDiscount
+         - this.numberPointDiscount
+         + this.expenseOrder;
+  }
+  get selectedBankAccount(): BankAccount|null {
+    return this._selectedBankAccount;
+  }
+  set selectedBankAccount(acct: BankAccount|null) {
+    this._selectedBankAccount = acct;
+
+    if (!acct) {
+      // no bank → clear QR
+      this.selectedBankQr = '';
+      return;
+    }
+
+    // show spinner
+    this.isLoadingResults = true;
+
+    // fetch the new QR, hide spinner when done
+    this.getQrCode(acct)
+      .pipe(finalize(() => this.isLoadingResults = false))
+      .subscribe(qr => {
+        // debugger;
+        this.selectedBankQr = qr;
+      });
+  }
+  onTotalChange() {
+    this.getQrCode(this.selectedBankAccount).subscribe(qrCode=>{
+      this.selectedBankQr = qrCode
+    });    // …do whatever you need here…
+    // this.tinhLaiTienThua(); Tín: khách thanh toán = 0 thì mặc định thanh toán hết => nợ = 0
+  }
   /**
    *  So sanh danh sach cu
    * @param listProductUnitIdChoose
@@ -216,7 +257,6 @@ export class SaleMainComponent implements OnInit {
 
   async loadData() {
     const mItemInvoice = this.getNewItemInvoice();
-
     await this.handleAddPriceBookExist(mItemInvoice);
 
     await this.handleAddCustomerExist(mItemInvoice);
@@ -231,7 +271,15 @@ export class SaleMainComponent implements OnInit {
 
     await this.handlePaymentSiderBar(mItemInvoice);
 
+
+    this.triggerLoadBankAccounts();
+
+    this.filteredBankAccounts = [...this.bankAccounts];
+
     this.localItemInvoice = mItemInvoice;
+
+    this.handleLoadParcel(mItemInvoice);
+    this.handleAddMasterTag(mItemInvoice);
   }
 
   getAutoPrintValue() {
@@ -243,6 +291,10 @@ export class SaleMainComponent implements OnInit {
         this.autoPrint = true;
       }
     });
+
+    this.sharedDataSer.isInSoLo$.subscribe(res=>{
+      this.autoPrintInSoLo = res;
+    })
   }
 
   handleExpenseOrder() {
@@ -426,6 +478,14 @@ export class SaleMainComponent implements OnInit {
           this.listProductUnitIdChooseOld = listProductUnitIdChoose;
           this.common_idOld = priceBookID;
           const common_id = priceBookID;
+
+          const groupProductIdCommonPrice =
+          listProductOLD !== null
+            ? listProductOLD.reduce((r, a) => {
+              r[a.product_id] = [...(r[a.product_id] || []), a];
+              return r;
+            }, {})
+            : [];
           /**
            * tien hanh xu ly add common_price vao list
            */
@@ -461,12 +521,15 @@ export class SaleMainComponent implements OnInit {
                   this.listProduct.forEach(elementData => {
                     // debugger;
                     if (group[elementData.product_unit_id] !== undefined) {
-                      elementData.common_price =
-                        group[elementData.product_unit_id][0]['price'];
+                      if(groupProductIdCommonPrice[elementData.product_id] && groupProductIdCommonPrice[elementData.product_id].length >= 1)
+                        elementData.common_price = groupProductIdCommonPrice[elementData.product_id][0].common_price;
+                      else
+                        elementData.common_price = group[elementData.product_unit_id][0]['price'];
+
                       if (!(elementData.sample_prescription_id !== undefined && elementData.sample_prescription_id !== null)) {
                         if (elementData.product.end_price === undefined) {
                           this.sumPrice +=
-                            group[elementData.product_unit_id][0]['price'] *
+                            elementData.common_price *
                             elementData.amount; // gia chung * so luong
                         } else {
                           this.sumPrice +=
@@ -474,11 +537,14 @@ export class SaleMainComponent implements OnInit {
                         }
                       }
                     } else {
-                      elementData.common_price = elementData.product.sell_price;
+                      if(groupProductIdCommonPrice[elementData.product_id] && groupProductIdCommonPrice[elementData.product_id].length >= 1)
+                        elementData.common_price = groupProductIdCommonPrice[elementData.product_id][0].common_price;
+                      else
+                        elementData.common_price = elementData.product.sell_price;
                       if (!(elementData.sample_prescription_id !== undefined && elementData.sample_prescription_id !== null)) {
                         if (elementData.product.end_price === undefined) {
                           this.sumPrice +=
-                            elementData.product.sell_price * elementData.amount; // gia ban * so luong
+                            elementData.common_price * elementData.amount; // gia ban * so luong
                         } else {
                           this.sumPrice +=
                             elementData.product.end_price * elementData.amount; // gia ban * so luong
@@ -629,6 +695,7 @@ export class SaleMainComponent implements OnInit {
       invoice_id: [null],
       total_amount: [0],
       prescription_id: [null], // ban thuoc theo don
+      selectedMethod: ['Tiền mặt'] // Default value
     });
 
     if (this.form.controls['branch_id'].value == null) {
@@ -662,6 +729,7 @@ export class SaleMainComponent implements OnInit {
             }
           });
           if (hasChanged) {
+
             this.orderService.setListInvoiceLocalStorage(listInvoice);
           }
         }
@@ -764,15 +832,28 @@ export class SaleMainComponent implements OnInit {
       debounceTime(300),
       // use switch map so as to cancel previous subscribed events, before creating new once
       switchMap(value => {
-        if (value !== '') {
+        // if (value !== '') {
           // lookup from github
           return this.lookupUser(value);
-        } else {
-          // if no value is present, return null
-          return of(null);
-        }
+        // } else {
+        //   // if no value is present, return null
+        //   return of(null);
+        // }
       })
     );
+    this.loadBankAccountsSubject.pipe(
+      debounceTime(300) // Wait for 300ms of inactivity
+    ).subscribe(() => {
+      this.loadBankAccounts(); // Call the actual function after debounce
+    });
+  }
+
+  ngDoCheck() {
+    const t = this.total;
+    if (t !== this._prevTotal) {
+      this._prevTotal = t;
+      this.onTotalChange();
+    }
   }
 
   /**
@@ -788,27 +869,41 @@ export class SaleMainComponent implements OnInit {
     this.handleExpenseOrder();
   }
 
-  upAmountProduct(product: Product, i: any) {
-    this.orderService.upAmountProduct(product, i);
+  adjustAmountProduct(i: any, event) {
+    const product = this.listProduct[i];
+    const currentValue = product['amount'];
+    let newValue;
+    if (event === 'up') {
+      newValue = currentValue + 1;
+    } else {
+      newValue = currentValue - 1;
+    }
+
+    this.orderService.inputAmountProduct(i, newValue);
+    this.handleAddRowIfNecessary(i, newValue);
+    this.handleExpenseOrder();
+
+  }
+
+  upAmountProductReturn( i: any) {
+    this.orderService.upAmountProductReturn(i);
+  }
+
+  downAmountProduct(product_id) {
+    this.orderService.downAmountProduct(product_id);
     this.handleExpenseOrder();
   }
 
-  upAmountProductReturn(product: Product, i: any) {
-    this.orderService.upAmountProductReturn(product, i);
+  inputAmountProduct(product_index, event) {
+    const value = Number(event.target.value);
+    this.orderService.inputAmountProduct(product_index, value);
+    this.handleAddRowIfNecessary(product_index, value);
   }
 
-  downAmountProduct(product_id, i: any) {
-    this.orderService.downAmountProduct(product_id, i);
-    this.handleExpenseOrder();
-  }
-
-  inputAmountProduct(product_id, event) {
-    event.target.value = Number(event.target.value);
-    this.orderService.inputAmountProduct(product_id, event.target.value);
-  }
-
-  inputAmountProductReturn(product_id, value) {
-    this.orderService.inputAmountProductReturn(product_id, value);
+  inputAmountProductReturn(product_index: number, event) {
+    const value = event.target.value;
+    this.orderService.inputAmountProductReturn(product_index, value);
+    this.handleAddRowIfNecessary(product_index, value);
   }
 
   openNoteDetailOrderDialog(
@@ -1012,6 +1107,21 @@ export class SaleMainComponent implements OnInit {
     });
   }
 
+  openBankAccountsDialog() {
+    const dialogRef = this.dialog.open(BankAccountDialogComponent, {
+      width: '500px',
+      minHeight: '300px',
+      panelClass: 'rounded-dialog'
+    });
+
+    dialogRef.afterClosed().subscribe(bankAccount => {
+      if (bankAccount !== undefined) {
+        this.selectedBankAccount = bankAccount
+        this.triggerLoadBankAccounts();
+      }
+    });
+  }
+
   /**
    * Xu ly thanh toan siderbar
    */
@@ -1063,6 +1173,35 @@ export class SaleMainComponent implements OnInit {
       }
     }
     this.handleExpenseOrder();
+  }
+
+  openPaymentQrDialog() {
+    const dialogRef = this.dialog.open(PaymentQrDialogComponent, {
+      data:{
+          accountName: this.selectedBankAccount.account_name,
+          accountNumber: this.selectedBankAccount.account_number,
+          bankCode: this.selectedBankAccount.bank_code,
+          qrImageUrl: this.selectedBankQr,
+      }
+
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+      }
+    });
+  }
+
+  openTransactionNotifyDialog() {
+    const dialogRef = this.dialog.open(TransactionNotifyDialogComponent, {
+      width: '800px',
+      data: this.selectedBankAccount
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+      }
+    });
   }
 
   openSaleCustomerFormDialogComponent() {
@@ -1122,153 +1261,202 @@ export class SaleMainComponent implements OnInit {
   printInvoice(invoice_id: number) {
     let _font_size = '11px';
     let _font_size_store = '13px';
-    let _margin = '4px;';
-    let _padding = '3px;';
+    let _margin = '4px';
+    let _padding = '3px';
     let _solo = 'text-align:left;';
+
     this.optionStoreService.getValue('print_type').subscribe(res => {
-      // console.log(res);
       if (res.value === 'K58') {
-        _font_size = '11px;';
-        _margin = '4px;';
-        _padding = '3px;';
+        _font_size = '11px';
+        _margin = '4px';
+        _padding = '3px';
         _solo = 'text-align:left;';
       } else { // A4
-        _font_size = '14px;';
+        _font_size = '14px';
         _font_size_store = '16px';
-        _margin = '6px;';
-        _padding = '6px;';
+        _margin = '6px';
+        _padding = '6px';
         _solo = 'text-align:left; min-width: 100px;';
       }
 
       this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
         const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
         const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
+
+        debugger
         let printContent = '<title>' + res?.invoice_no + '</title>';
-        printContent += '<style> ' +
-          'p,table,div {' +
-          'font-family: Arial, sans-serif;' +
-          'font-size: ' + _font_size +
-          'margin: ' + _margin +
-          '}' +
-          'table, th, td {' +
-          // 'font-family: arial, sans-serif;' +
-          'border-collapse: collapse;' +
-          'border: 1px solid black;' +
-          'width: 100%;' +
-          '}' +
-          'td, th {' +
-          'border: 1px solid black;' +
-          'text-align: left;' +
-          'padding: ' + _padding +
-          '}</style>' +
-          '<section style="padding: 10px; font-size: ' + _font_size + ' ">' +
-          (this.logo !== null ? '<p style="text-align:center; margin-bottom: 10px"><img src="' + this.logo + '" style="max-width: 160px;"></p>' : '') +
-          '<p style="text-align:center;font-size: ' + _font_size_store + '">' + res?.store?.name + '</p>' +
-          '<p style="text-align:center;">' + res?.store?.address + '</p>' +
-          '<p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG</p>' +
-          '<p style="text-align:center; font-weight:600;">Số HĐ: ' + res?.invoice_no + '</p>' +
-          '<p style="text-align:center;"> ' + res?.created_at + ' </p>' +
-          '<br>';
+        printContent += `
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 0;
+              width: 100%;
+            }
+            p, div {
+              font-size: ${_font_size};
+              margin: ${_margin};
+              padding: 0;
+              line-height: 1.2;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              font-size: ${_font_size};
+            }
+            th, td {
+              padding: ${_padding};
+              text-align: left;
+            }
+            .center {
+              text-align: center;
+            }
+            .bold {
+              font-weight: bold;
+            }
+            .right {
+              text-align: right;
+            }
+
+            .invoice-table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            .header-border {
+              border-top: 1px solid black;
+              border-bottom: 1px solid black;
+            }
+
+            .top-border {
+              border-top: 1px dashed black;
+            }
+          </style>
+          <section style="padding: 5px; font-size: ${_font_size}; width: 100%;">
+            ${this.logo ? `<p class="center"><img src="${this.logo}" style="max-width: 120px;"></p>` :
+                          `<p class="center"><img src="assets/images/Rx20_16x16_op1-1207.png" style="max-width: 120px;"></p>`}
+            <p class="center bold" style="font-size: ${_font_size_store}">${res?.store?.name || 'Store Name'}</p>
+            <p class="center">${res?.store?.address || 'Store Address'}</p>
+            <p class="center bold">HÓA ĐƠN BÁN HÀNG</p>
+            <p class="center bold">Số HĐ: ${res?.invoice_no}</p>
+            <p class="center">Ngày ${res?.created_at}</p>
+        `;
 
         // Customer info
         const { nationalPrescription } = res;
         if (nationalPrescription) {
-          printContent +=
-            '<p>Mã đơn thuốc: <b>' + nationalPrescription.nationalPrescriptionId + '</b></p>' +
-            '<p>Tên đơn vị: <b>' + nationalPrescription.medicalFacilityName + '</b></p>' +
-            '<p>Họ tên: <b>' + nationalPrescription.patientName + '</b></p>' +
-            '<p>SĐT: <b>' + nationalPrescription.patientPhoneNumber + '</b></p>' +
-            '<p>Ngày sinh: <b>' + nationalPrescription.patientDOB + '</b>' +
-            '&nbsp;&nbsp;&nbsp;&nbsp;Cân nặng: <b>' + nationalPrescription.patientWeight + '</b>' +
-            '&nbsp;&nbsp;&nbsp;&nbsp;Giới tính: <b>' + nationalPrescription.patientSex + '</b></p>' +
-            '<br>' +
-            '<p><b>Chẩn đoán:</b> ' + nationalPrescription?.diagnostics[0]?.conclusion + '</p>';
+          printContent += `
+            <p>Mã đơn thuốc: <b>${nationalPrescription.nationalPrescriptionId || ''}</b></p>
+            <p>Tên đơn vị: <b>${nationalPrescription.medicalFacilityName || ''}</b></p>
+            <p>Họ tên: <b>${nationalPrescription.patientName || ''}</b></p>
+            <p>SĐT: <b>${nationalPrescription.patientPhoneNumber || ''}</b></p>
+            <p>Ngày sinh: <b>${nationalPrescription.patientDOB || ''}</b>
+              Cân nặng: <b>${nationalPrescription.patientWeight || ''}</b>
+              Giới tính: <b>${nationalPrescription.patientSex || ''}</b></p>
+            <br>
+            <p><b>Chẩn đoán:</b> ${nationalPrescription?.diagnostics?.[0]?.conclusion || ''}</p>
+          `;
         } else {
-          printContent += '<p style="">Khách hàng: ' + customer_name + '</p style="">';
-          if (customer_phone !== '') {
-            printContent += '<p style="">SĐT: ' + customer_phone + '</p>';
+          printContent += `<p>Khách hàng: ${customer_name}</p>`;
+          if (customer_phone) {
+            printContent += `<p>SĐT: ${customer_phone}</p>`;
           }
         }
 
-        printContent +=
-          '<br>' +
-          '<table>' +
-          '<tr>' +
-          '<th>Tên thuốc</th>' +
-          '<th style="text-align:center;">SL</th>';
+        printContent += `
+          <table>
+            <tr class="header-border">
+              <th style="width: 40%;">Đơn giá</th>
+              <th style="width: 20%; text-align: center;">SL</th>`;
 
+        // Add Số lô column header if needed
         if (this.autoPrintInSoLo === true) {
-          printContent += '<th style="' + _solo + '">Số lô</th>';
+          printContent += `<th style="${_solo}">Số lô</th>`;
         }
 
-        printContent += '<th style="text-align:center;">T.Tiền</th>' +
-          '</tr>';
+        printContent += `<th style="width: 40%; text-align: right;">Thành tiền</th>
+            </tr>
+        `;
 
-        const detail = res.detail;
-
-        /**
-         * Chi tiet don hang
-         */
-        // tslint:disable-next-line:no-shadowed-variable
+        // Product details
+        const detail = res.detail || [];
         detail.forEach(element => {
-          if (element?.base_unit == null) {
-            printContent += '<tr>' +
-              '<td>' + element.product?.product_name + '<br>' + element.price + '</td>' +
-              '<td style="text-align:center;">' + element.amount + '</td>';
+          if (!element?.base_unit) {
+            printContent += `
+              <tr>
+                <td colspan="${this.autoPrintInSoLo ? '4' : '3'}">${element.product?.product_name || ''}</td>
+              </tr>
+              <tr>
+                <td>${numeral(element.price || 0).format('0,0')}</td>
+                <td style="text-align: center;">${element.amount || 0}</td>`;
+
+            // Add Số lô cell if needed
             if (this.autoPrintInSoLo === true) {
-              printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
+              printContent += `<td style="text-align:left;">${element.so_lo || ''}</td>`;
             }
-            printContent += '<td style="text-align:right;">' + element.total + '</td>' +
-              '</tr>';
+
+            printContent += `<td style="text-align: right;">${numeral(element.total || 0).format('0,0')}</td>
+              </tr>
+            `;
           } else {
-            printContent += '<tr>' +
-              '<td>' + element.product?.product_name + ' - ' + element?.base_unit + '<br>' + element.price + '</td>' +
-              '<td style="text-align:center;">' + element.amount + '</td>';
+            printContent += `
+              <tr>
+                <td colspan="${this.autoPrintInSoLo ? '4' : '3'}">${element.product?.product_name || ''} - (${element?.base_unit || ''})</td>
+              </tr>
+              <tr>
+                <td>${numeral(element.price || 0).format('0,0')}</td>
+                <td style="text-align: center;">${element.amount || 0}</td>`;
+
+            // Add Số lô cell if needed
             if (this.autoPrintInSoLo === true) {
-              printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
+              printContent += `<td style="text-align:left;">${element.so_lo || ''}</td>`;
             }
-            printContent += '<td style="text-align:right;">' + element.total + '</td>' +
-              '</tr>';
+
+            printContent += `<td style="text-align: right;">${numeral(element.total || 0).format('0,0')}</td>
+              </tr>
+            `;
           }
         });
 
-        /**
-         * Tong tien hang
-         */
-        let colspan = 2;
-        if (this.autoPrintInSoLo === true) {
-          colspan = 3;
-        }
-        printContent += '<tr>' +
-          '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng tiền hàng :</td>' +
-          '<td style="text-align:right; font-weight:600;">' + res.total_price + '</td>' +
-          '</tr>';
-        printContent += '<tr>' +
-          '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Chiết khấu :</td>' +
-          '<td style="text-align:right; font-weight:600;">' + res.discount + '</td>' +
-          '</tr>';
-        printContent += '<tr>' +
-          '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng thanh toán :</td>' +
-          '<td style="text-align:right; font-weight:600;">' + res.sum_payment + '</td>' +
-          '</tr>';
+        // Determine the colspan based on whether _solo is included
+        const colspan = this.autoPrintInSoLo ? '3' : '2';
+
+        // Totals
+        printContent += `
+          <tr class="top-border">
+            <td colspan="${colspan}" class="right bold">Tổng tiền hàng :</td>
+            <td class="right bold">${numeral(res?.total_price || 0).format('0,0')}</td>
+          </tr>
+          <tr>
+            <td colspan="${colspan}" class="right bold">Chiết khấu :</td>
+            <td class="right bold">${numeral(res?.discount || 0).format('0,0')}</td>
+          </tr>
+          <tr>
+            <td colspan="${colspan}" class="right bold">Tổng thanh toán :</td>
+            <td class="right bold">${numeral(res?.sum_payment || 0).format('0,0')}</td>
+          </tr>
+        `;
+
         if (res.debt !== null) {
-          printContent += '<tr>' +
-            '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Còn nợ :</td>' +
-            '<td style="text-align:right; font-weight:600;">' + res.debt + '</td>' +
-            '</tr>';
+          printContent += `
+            <tr>
+              <td colspan="${colspan}" class="right bold">Còn nợ :</td>
+              <td class="right bold">${numeral(res.debt).format('0,0')}</td>
+            </tr>
+          `;
         }
-        printContent += '</table>';
 
-        // Footer
-        printContent += '<br>';
-        if (this.description !== null && this.description.length > 0) {
-          printContent += '<p style="text-align:center; font-style: italic;" >' + this.description + '</p>';
-        } else {
-          printContent += '<p style="text-align:center;font-style: italic;" >Cám ơn và hẹn gặp lại.</p>';
-        }
-        // printContent += '<p style="text-align:left; font-size: 12px;font-style: italic;" >Hổ trợ : 0972 574 506</p>';
+        printContent += `</table>`;
+        // debugger;
+        // Add Vietnamese text for the amount
+        printContent += `<p>${this.numberToVietnameseText(numeral(res?.sum_payment).value() || 0)}</p>`;
 
-        printContent += '</section>';
+        // Footer with QR code
+        printContent += `
+          <br>
+          <p class="center"><img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Cám%20ơn%20và%20hẹn%20gặp%20lại" style="width: 80px; height: 80px;"></p>
+          <p class="center" style="font-style: italic;">Cám ơn và hẹn gặp lại!</p>
+          <p class="center" style="font-size: 9px;">POWERED BY rx20.vn</p>
+          </section>`;
 
         const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
         WindowPrt.document.write(printContent);
@@ -1279,6 +1467,7 @@ export class SaleMainComponent implements OnInit {
       });
     });
   }
+
 
   printInvoiceOld(invoice_id: number) {
     this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
@@ -1587,13 +1776,434 @@ export class SaleMainComponent implements OnInit {
   }
 
   // ------------------------------------------------------ PAYMENT ----------------------------------------------------------//
+  printPreInvoice(preInvoiceData: any) {
+    let _font_size = '11px';
+    let _font_size_store = '13px';
+    let _margin = '4px';
+    let _padding = '3px';
+    let _solo = 'text-align:left;';
+
+    // Determine print type (K58 or A4)
+    this.optionStoreService.getValue('print_type').subscribe(res => {
+      if (res.value === 'K58') {
+        _font_size = '11px';
+        _margin = '4px';
+        _padding = '3px';
+        _solo = 'text-align:left;';
+      } else { // A4
+        _font_size = '14px';
+        _font_size_store = '16px';
+        _margin = '6px';
+        _padding = '6px';
+        _solo = 'text-align:left; min-width: 100px;';
+      }
+
+      // Use preInvoiceData instead of fetching from service
+      const customer_name = preInvoiceData?.customer?.name || 'Khách lẻ';
+      const customer_phone = preInvoiceData?.customer?.phone || '';
+      const invoiceDate = preInvoiceData?.created_at ? new Date(preInvoiceData.created_at) : new Date();
+
+      let printContent = '<title>Chi nhánh trung tâm - Bán hàng</title>'; // Temporary title
+      printContent += `
+        <style>
+          p, table, div {
+            font-family: Arial, sans-serif;
+            font-size: ${_font_size};
+            margin: ${_margin};
+          }
+          table, th, td {
+            border-collapse: collapse;
+            border: 1px solid black;
+            width: 100%;
+          }
+          td, th {
+            border: 1px solid black;
+            text-align: left;
+            padding: ${_padding};
+          }
+        </style>
+        <section style="padding: 10px; font-size: ${_font_size}">
+          ${this.logo ? `<p style="text-align:center; margin-bottom: 10px"><img src="${this.logo}" style="max-width: 160px;"></p>` : ''}
+          <p style="text-align:center; font-size: ${_font_size_store}">${preInvoiceData?.store?.name || 'Store Name'}</p>
+          <p style="text-align:center;">${preInvoiceData?.store?.address || 'Store Address'}</p>
+          <p style="text-align:center; font-weight:600;">HÓA ĐƠN BÁN HÀNG (DỰ THẢO)</p>
+          <p style="text-align:center; font-weight:600;">Số HĐ: Chưa lưu</p>
+          <p style="text-align:center;">Ngày ${invoiceDate.getDate()} tháng ${invoiceDate.getMonth()} năm ${invoiceDate.getFullYear()}</p>
+          <br>
+      `;
+
+      // Customer info
+      const { nationalPrescription } = preInvoiceData || {};
+      if (nationalPrescription) {
+        printContent += `
+          <p>Mã đơn thuốc: <b>${nationalPrescription.nationalPrescriptionId || ''}</b></p>
+          <p>Tên đơn vị: <b>${nationalPrescription.medicalFacilityName || ''}</b></p>
+          <p>Họ tên: <b>${nationalPrescription.patientName || ''}</b></p>
+          <p>SĐT: <b>${nationalPrescription.patientPhoneNumber || ''}</b></p>
+          <p>Ngày sinh: <b>${nationalPrescription.patientDOB || ''}</b>
+                Cân nặng: <b>${nationalPrescription.patientWeight || ''}</b>
+                Giới tính: <b>${nationalPrescription.patientSex || ''}</b></p>
+          <br>
+          <p><b>Chẩn đoán:</b> ${nationalPrescription?.diagnostics?.[0]?.conclusion || ''}</p>
+        `;
+      } else {
+        printContent += `<p style="">Khách hàng: ${customer_name}</p>`;
+        if (customer_phone) {
+          printContent += `<p style="">SĐT: ${customer_phone}</p>`;
+        }
+      }
+
+      printContent += `
+        <br>
+        <table>
+          <tr>
+            <th>Tên thuốc</th>
+            <th style="text-align:center;">SL</th>
+            ${this.autoPrintInSoLo ? `<th style="${_solo}">Số lô</th>` : ''}
+            <th style="text-align:center;">T.Tiền</th>
+          </tr>
+      `;
+
+      // Product details
+      const detail = preInvoiceData?.detail || [];
+      detail.forEach((element: any) => {
+        if (!element?.base_unit) {
+          printContent += `
+            <tr>
+              <td>${element.product?.product_name || ''}<br>${element.price || 0}</td>
+              <td style="text-align:center;">${element.amount || 0}</td>
+              ${this.autoPrintInSoLo ? `<td style="text-align:left;">${element.so_lo || ''}</td>` : ''}
+              <td style="text-align:right;">${element.total || 0}</td>
+            </tr>
+          `;
+        } else {
+          printContent += `
+            <tr>
+              <td>${element.product?.product_name || ''} - ${element?.base_unit || ''}<br>${element.price || 0}</td>
+              <td style="text-align:center;">${element.amount || 0}</td>
+              ${this.autoPrintInSoLo ? `<td style="text-align:left;">${element.so_lo || ''}</td>` : ''}
+              <td style="text-align:right;">${element.total || 0}</td>
+            </tr>
+          `;
+        }
+      });
+
+      // Totals
+      const colspan = this.autoPrintInSoLo ? 3 : 2;
+      printContent += `
+        <tr>
+          <td style="text-align:right; font-weight:600;" colspan="${colspan}">Tổng tiền hàng :</td>
+          <td style="text-align:right; font-weight:600;">${preInvoiceData?.total_price || 0}</td>
+        </tr>
+        <tr>
+          <td style="text-align:right; font-weight:600;" colspan="${colspan}">Chiết khấu :</td>
+          <td style="text-align:right; font-weight:600;">${preInvoiceData?.discount || 0}</td>
+        </tr>
+        <tr>
+          <td style="text-align:right; font-weight:600;" colspan="${colspan}">Tổng thanh toán :</td>
+          <td style="text-align:right; font-weight:600;">${preInvoiceData?.sum_payment || 0}</td>
+        </tr>
+      `;
+      if (preInvoiceData?.debt != null) {
+        printContent += `
+          <tr>
+            <td style="text-align:right; font-weight:600;" colspan="${colspan}">Còn nợ :</td>
+            <td style="text-align:right; font-weight:600;">${preInvoiceData.debt}</td>
+          </tr>
+        `;
+      }
+      printContent += `</table>`;
+
+      // Footer
+      printContent += `
+        <br>
+        ${this.description && this.description.length > 0
+          ? `<p style="text-align:center; font-style: italic;">${this.description}</p>`
+          : `<p style="text-align:center; font-style: italic;">Cám ơn và hẹn gặp lại.</p>`}
+        </section>
+      `;
+
+      const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+      WindowPrt.document.write(printContent);
+      WindowPrt.document.close();
+      WindowPrt.focus();
+      WindowPrt.print();
+      // WindowPrt.close(); // Uncomment if you want to auto-close after printing
+    });
+  }
+
+
+
+  async getPreInvoiceData(): Promise<any> {
+    // debugger;
+    const activeInvoice = this.localItemInvoice || new ItemInvoice();
+    const formData = this.form.getRawValue();
+
+    const detail = this.listProduct.map(item => ({
+      product: { product_name: item.product.product_name },
+      base_unit: item.base_unit || null,
+      price: item.common_price || item.product.sell_price || item.product.end_price || 0,
+      amount: item.amount || 0,
+      total: (item.common_price || item.product.sell_price || item.product.end_price || 0) * (item.amount || 0),
+      so_lo: item.so_lo || ''
+    }));
+
+    const totalPrice = this.sumPrice;
+    const discount = this.discount_type === 'price' ? this.discount : Math.round((this.sumPrice * this.discount) / 100);
+    const sumPayment = totalPrice - this.numberDiscount - this.numberPointDiscount + this.expenseOrder;
+    const debt = this.tienKhachNo > 0 ? this.tienKhachNo : null;
+
+    // Await store data
+    const storeRes = await this.storeSer.getDetail().toPromise();
+    const storeData = {
+      name: storeRes['name'] || 'Store Name',    // Adjust if property names differ
+      address: storeRes['address'] || 'Store Address'
+    };
+
+    const today = formData.today instanceof Date ? formData.today : new Date();
+    const createdAt = formData.today && formData.time
+      ? `${this.dp.transform(today, 'yyyy-MM-dd')} ${formData.time}`
+      : new Date().toLocaleString();
+
+    return {
+      store: storeData,
+      customer: this.customer || activeInvoice.customer || { name: 'Khách lẻ', phone: '' },
+      detail: detail,
+      total_price: totalPrice,
+      discount: discount || 0,
+      sum_payment: sumPayment,
+      debt: debt,
+      nationalPrescription: activeInvoice.prescription_id ? this.getNationalPrescriptionData(activeInvoice.prescription_id) : null,
+      invoice_no: activeInvoice.invoice_name || 'Chưa lưu',
+      created_at: createdAt
+    };
+  }
+
+  printPreInvoiceV2(preInvoiceData: any) {
+    let _font_size = '11px';
+    let _font_size_store = '13px';
+    let _margin = '4px';
+    let _padding = '3px';
+    let _solo = 'text-align:left;';
+
+    // Determine print type (K58 or A4)
+    this.optionStoreService.getValue('print_type').subscribe(res => {
+      if (res.value === 'K58') {
+        _font_size = '11px';
+        _margin = '4px';
+        _padding = '3px';
+        _solo = 'text-align:left;';
+      } else { // A4
+        _font_size = '14px';
+        _font_size_store = '16px';
+        _margin = '6px';
+        _padding = '6px';
+        _solo = 'text-align:left; min-width: 100px;';
+      }
+
+      // Use preInvoiceData instead of fetching from service
+      const customer_name = preInvoiceData?.customer?.name || 'Khách lẻ';
+      const customer_phone = preInvoiceData?.customer?.phone || '';
+      const invoiceDate = preInvoiceData?.created_at ? new Date(preInvoiceData.created_at) : new Date();
+
+      let printContent = '<title>Chi nhánh trung tâm - Bán hàng</title>'; // Temporary title
+      printContent += `
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+          }
+          p, div {
+            font-size: ${_font_size};
+            margin: ${_margin};
+            padding: 0;
+            line-height: 1.2;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: ${_font_size};
+          }
+          th, td {
+            padding: ${_padding};
+            text-align: left;
+          }
+          .center {
+            text-align: center;
+          }
+          .bold {
+            font-weight: bold;
+          }
+          .right {
+            text-align: right;
+          }
+
+          .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+          }
+          .header-border {
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
+          }
+
+          .top-border {
+            border-top: 1px dashed black;
+          }
+        </style>
+        <section style="padding: 5px; font-size: ${_font_size}; width: 100%;">
+          ${`<p class="center"><img src="${this.logo??'assets/images/Rx20_16x16_op1-1207.png'}" style="max-width: 120px;"></p>`}
+          <p class="center bold" style="font-size: ${_font_size_store}">${preInvoiceData?.store?.name || 'Store Name'}</p>
+          <p class="center">${preInvoiceData?.store?.address || 'Store Address'}</p>
+          <p class="center bold">HÓA ĐƠN TẠM TÍNH</p>
+          <p class="center bold">Số HĐ: Chưa lưu</p>
+          <p class="center">Ngày ${invoiceDate.getDate()} tháng ${invoiceDate.getMonth() + 1} năm ${invoiceDate.getFullYear()}</p>
+      `;
+
+      // Customer info
+      const { nationalPrescription } = preInvoiceData || {};
+      if (nationalPrescription) {
+        printContent += `
+          <p>Mã đơn thuốc: <b>${nationalPrescription.nationalPrescriptionId || ''}</b></p>
+          <p>Tên đơn vị: <b>${nationalPrescription.medicalFacilityName || ''}</b></p>
+          <p>Họ tên: <b>${nationalPrescription.patientName || ''}</b></p>
+          <p>SĐT: <b>${nationalPrescription.patientPhoneNumber || ''}</b></p>
+          <p>Ngày sinh: <b>${nationalPrescription.patientDOB || ''}</b>
+            Cân nặng: <b>${nationalPrescription.patientWeight || ''}</b>
+            Giới tính: <b>${nationalPrescription.patientSex || ''}</b></p>
+          <br>
+          <p><b>Chẩn đoán:</b> ${nationalPrescription?.diagnostics?.[0]?.conclusion || ''}</p>
+        `;
+      } else {
+        printContent += `<p>Khách hàng: ${customer_name}</p>`;
+        if (customer_phone) {
+          printContent += `<p>SĐT: ${customer_phone}</p>`;
+        }
+      }
+
+      printContent += `
+
+      <table>
+        <tr class="header-border">
+          <th style="width: 40%;">Đơn giá</th>
+          <th style="width: 20%; text-align: center;">SL</th>`;
+
+      // Add Số lô column header if needed
+      if (this.autoPrintInSoLo === true) {
+        printContent += `<th style="${_solo}">Số lô</th>`;
+      }
+
+      printContent += `<th style="width: 40%; text-align: right;">Thành tiền</th>
+        </tr>
+      `;
+
+      // Product details
+      const detail = preInvoiceData?.detail || [];
+      detail.forEach((element: any) => {
+        if (!element?.base_unit) {
+          printContent += `
+            <tr>
+              <td colspan="${this.autoPrintInSoLo ? '4' : '3'}">${element.product?.product_name || ''}</td>
+            </tr>
+            <tr>
+              <td>${numeral(element.price || 0).format('0,0')}</td>
+              <td style="text-align: center;">${element.amount || 0}</td>`;
+
+          // Add Số lô cell if needed
+          if (this.autoPrintInSoLo === true) {
+            printContent += `<td style="text-align:left;">${element.so_lo || ''}</td>`;
+          }
+
+          printContent += `<td style="text-align: right;">${numeral(element.total || 0).format('0,0')}</td>
+            </tr>
+          `;
+        } else {
+          printContent += `
+            <tr>
+              <td colspan="${this.autoPrintInSoLo ? '4' : '3'}">${element.product?.product_name || ''} - (${element?.base_unit || ''})</td>
+            </tr>
+            <tr>
+              <td>${numeral(element.price || 0).format('0,0')}</td>
+              <td style="text-align: center;">${element.amount || 0}</td>`;
+
+          // Add Số lô cell if needed
+          if (this.autoPrintInSoLo === true) {
+            printContent += `<td style="text-align:left;">${element.so_lo || ''}</td>`;
+          }
+
+          printContent += `<td style="text-align: right;">${numeral(element.total || 0).format('0,0')}</td>
+            </tr>
+          `;
+        }
+      });
+
+      // Determine the colspan based on whether _solo is included
+      const colspan = this.autoPrintInSoLo ? '3' : '2';
+
+      // Totals
+      printContent += `
+        <tr class="top-border">
+          <td colspan="${colspan}" class="right bold">Tổng tiền hàng :</td>
+          <td class="right bold">${numeral(preInvoiceData?.total_price || 0).format('0,0')}</td>
+        </tr>
+        <tr>
+          <td colspan="${colspan}" class="right bold">Chiết khấu :</td>
+          <td class="right bold">${numeral(preInvoiceData?.discount || 0).format('0,0')}</td>
+        </tr>
+        <tr>
+          <td colspan="${colspan}" class="right bold">Tổng thanh toán :</td>
+          <td class="right bold">${numeral(preInvoiceData?.sum_payment || 0).format('0,0')}</td>
+        </tr>
+      `;
+      if (preInvoiceData?.debt != null) {
+        printContent += `
+          <tr>
+            <td colspan="${colspan}" class="right bold">Còn nợ :</td>
+            <td class="right bold">${numeral(preInvoiceData.debt).format('0,0')}</td>
+          </tr>
+        `;
+      }
+      printContent += `</table>`;
+      printContent += `<p>${this.numberToVietnameseText(+preInvoiceData?.sum_payment || 0)}</p>`
+
+      // Footer with QR code
+      printContent += `
+        <br>
+        <p class="center"><img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Cám%20ơn%20và%20hẹn%20gặp%20lại" style="width: 80px; height: 80px;"></p>
+        <p class="center" style="font-style: italic;">Cám ơn và hẹn gặp lại!</p>
+        <p class="center" style="font-size: 9px;">POWERED BY rx20.vn</p>
+        </section>
+      `;
+
+      console.log({printContent})
+
+      const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+      WindowPrt.document.write(printContent);
+      WindowPrt.document.close();
+      WindowPrt.focus();
+      WindowPrt.print();
+      // WindowPrt.close(); // Uncomment if you want to auto-close after printing
+    });
+  }
+
+  private getNationalPrescriptionData(prescriptionId: string): any {
+    // Placeholder: Replace with actual logic if available
+    return null;
+  }
+
+  async printPreInvoiceHandler() {
+    const preInvoiceData = await this.getPreInvoiceData();
+    this.printPreInvoiceV2(preInvoiceData);
+  }
 
   payment() {
+    this.getAutoPrintValue();
     if (this.submitted) {
       return;
     }
     this.submitted = true;
-
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     let date_created = '';
@@ -1606,6 +2216,25 @@ export class SaleMainComponent implements OnInit {
     });
 
     const customer = mItemInvoice.customer;
+
+    // --- Determine Payment Method and Bank Account ---
+    let paymentMethodValue = 'cash'; // Default to cash
+    let bankAccountId;
+    // debugger;
+    const selectedPaymentMethod = this.form.get('selectedMethod').value;
+
+    if (selectedPaymentMethod === 'Chuyển khoản') {
+        paymentMethodValue = 'bank_transfer';
+        if (this.selectedBankAccount) { // Check if a bank is selected
+            bankAccountId = this.selectedBankAccount.id
+        } else {
+            this.notifySer.notify('warning', 'Vui lòng chọn tài khoản ngân hàng thanh toán!');
+            this.submitted = false;
+        }
+    } else if (selectedPaymentMethod === 'Tiền mặt') {
+        paymentMethodValue = 'cash';
+        bankAccountId = null;
+    }
 
     if (this.selectUser.value === '') {
       this.notifySer.notify('warning', 'Chưa chọn tên nhân viên !');
@@ -1677,12 +2306,17 @@ export class SaleMainComponent implements OnInit {
         product_id: element.product.id,
         amount: element.amount,
         price: price,
-        note: element.product?.note_detail_sale,
+        note: element.note,
         discount: discount,
         discount_type: discount_type,
         product_unit_id: element.product_unit_id,
         product_unit_value: element.product_unit_value,
         base_unit: element.base_unit,
+
+        // new parcel, add row task
+        parcel_no: element?.product_parcels?.[0]?.parcel_no,
+        is_sub_item: element?.product?.is_sub_item,
+        master_product_id: element?.product?.master_product_id,
       });
     });
 
@@ -1727,7 +2361,8 @@ export class SaleMainComponent implements OnInit {
       },
       UserID: mItemInvoice.user.id,
       InvoiceDetail: invoiceDetail,
-      PaymentMethod: 'cash', // mItemInvoice.paymentSiderBar?.type,
+      PaymentMethod: paymentMethodValue,
+      BankAccountId: bankAccountId,
       PaymentPrice: this.sumPrice - this.numberDiscount - this.numberPointDiscount + this.expenseOrder, // tien thanh toan
       usedPoint: this.isUsePoint ? this.pointCanUse : 0,
       KhachNo: this.tienKhachNo,
@@ -1870,7 +2505,7 @@ export class SaleMainComponent implements OnInit {
           product_id: element.product.id,
           amount: element.amount,
           price: price,
-          note: element.product?.note_detail_sale,
+          note: element.note,
           discount: discount,
           discount_type: discount_type,
           product_unit_id: element.product_unit_id,
@@ -1973,25 +2608,25 @@ export class SaleMainComponent implements OnInit {
    *  Tu dong in hoa don
    * @param e
    */
-  onChangeSlideToggleTuDongInHoaDon(e: any) {
-    this.autoPrint = e.checked;
-    // console.log(this.optionStore_auto_print);
-    // console.log(this.autoPrint);
-    this.optionStore_auto_print.value = this.autoPrint === false ? 'no' : 'yes';
-    this.optionStoreService
-      .update(this.optionStore_auto_print.id, this.optionStore_auto_print)
-      .subscribe(res => {
-        console.log(res);
-      });
-  }
+  // onChangeSlideToggleTuDongInHoaDon(e: any) {
+  //   this.autoPrint = e.checked;
+  //   // console.log(this.optionStore_auto_print);
+  //   // console.log(this.autoPrint);
+  //   this.optionStore_auto_print.value = this.autoPrint === false ? 'no' : 'yes';
+  //   this.optionStoreService
+  //     .update(this.optionStore_auto_print.id, this.optionStore_auto_print)
+  //     .subscribe(res => {
+  //       console.log(res);
+  //     });
+  // }
 
   /**
    * In so lo
    * @param e
    */
-  onChangeSlideToggleInSoLo(e: any) {
-    this.autoPrintInSoLo = e.checked;
-  }
+  // onChangeSlideToggleInSoLo(e: any) {
+  //   this.autoPrintInSoLo = e.checked;
+  // }
 
   onChangeSlideToggleUsePoint(e: any) {
     this.isUsePoint = e.checked;
@@ -2010,7 +2645,6 @@ export class SaleMainComponent implements OnInit {
   onChangeProductUnit(e: any, itemProduct, i: number) {
     const units = itemProduct?.product?.productUnits;
     const item = units.find(element => element.id === e.value);
-
     const curListProduct = this.listProduct;
     curListProduct[i]['product_unit_id'] = item['id'];
     curListProduct[i]['product_unit_value'] = item['value'];
@@ -2120,6 +2754,7 @@ export class SaleMainComponent implements OnInit {
   }
 
   recalculateTotalAmount() {
+    // debugger;
     const formTotalAmount = numeral(this.form.controls['total_amount'].value).value();
     this.sumPrice = formTotalAmount;
     this.localItemInvoice.total_amount = formTotalAmount;
@@ -2128,6 +2763,7 @@ export class SaleMainComponent implements OnInit {
   }
 
   checkToAdjustItemPriceByTotalDiff() {
+
     let realTotal = 0;
     this.listProduct.forEach(item => {
       realTotal += (item.product.end_price > 0 ? item.product.end_price : item.common_price) * item.amount;
@@ -2152,7 +2788,738 @@ export class SaleMainComponent implements OnInit {
 
   canDo(permissionName: string): boolean {
     const allPermissions = this.authSer.getPermissionsFromLocalStorage();
-
     return allPermissions.indexOf(permissionName) !== -1;
   }
+
+  // Coding parcel + add row function
+  shownMenus: Set<number> = new Set();
+  all_product_parcels: Map<string, object[]> = new Map();
+  available_product_parcels: Map<string, object[]> = new Map();
+  parcelItemControls: Map<number, FormControl> = new Map();
+  parcelFilteredItems: Map<number, Observable<object[]>> = new Map();
+  separatorKeysCodes: number[] = [ENTER, COMMA];
+
+  /**
+   * Receive index and active 1 of 3 actions
+   * - If note is not showing -> show the initial textarea
+   * - If note is showing -> make it disappear
+   * - If note is containing value -> focus into it
+   * @param i
+   */
+  toggleShowNote(i: number) {
+    const currentProduct = this.listProduct[i];
+    const noteText = currentProduct.note;
+    if (noteText == '') {
+      delete this.listProduct[i].note;
+    } else if (noteText == undefined) {
+      this.listProduct[i].note = '';
+    } else {
+      this.focusTextArea(i);
+    }
+    this.handleUpdateStorage();
+  }
+
+  /**
+   * Helping toggleShowNote function to focus into a textArea
+   * @param i
+   * @private
+   */
+  private focusTextArea(i: number) {
+     setTimeout(() => {
+      const textAreaArray = this.noteTextArea.toArray();
+        if (textAreaArray[i]) {
+          textAreaArray[i].nativeElement.focus();
+        }
+    }, 0);
+  }
+
+  /**
+   * Decide a note is shown or not
+   * @param i
+   */
+  isNoteShown(i: number) {
+    const note = this.listProduct[i].note;
+    return note !== undefined;
+  }
+
+  /**
+   * Decide a menu selection is shown or not
+   * @param i
+   */
+  isMenuShown(i: number) {
+    return this.shownMenus.has(i);
+  }
+
+  /**
+   * Call when click into the menu icon to show the popup
+   * @param i
+   */
+  toggleShowMenu(i: number) {
+    if (this.shownMenus.has(i)) {
+      this.shownMenus.delete(i);
+    } else {
+      this.shownMenus.add(i);
+    }
+  }
+
+  /**
+   * This function must be called after change any pies of data to update the change into the localstorage
+   */
+  handleUpdateStorage() {
+    const listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+
+      if (element.active === true) {
+        if (element.invoice_id === this.localItemInvoice.invoice_id) {
+          element.listProduct = this.listProduct;
+        }
+      }
+    });
+    this.orderService.setListInvoiceLocalStorage(listInvoice);
+  }
+
+  /**
+   * Get all values of parcels is not selected (copy the logic in warehourse import page)
+   * @param product_index
+   * @private
+   */
+  private getAvailableItems(product_index: number) {
+    const product = this.listProduct[product_index];
+    const product_id = product.product_id.toString();
+    return this.available_product_parcels.get(product_id) || [];
+  }
+
+  /**
+   * Helper function to get the parcels in the selection list
+   * @param product_index
+   * @param searchText
+   * @private
+   */
+  private _filter(product_index: number, searchText: string) {
+    const filterValue = searchText.toLowerCase();
+    return this.getAvailableItems(product_index)
+     .filter(item =>
+        item['parcel_no'].toLowerCase().includes(filterValue)
+      );
+  }
+
+  /**
+   * Get parcels in the filter list
+   * @param id
+   */
+  getFilterItems(id: number): Observable<object[]> {
+    return this.parcelFilteredItems.get(id) || of([]);
+  }
+
+  /**
+   * Set up fields for typing and filter
+   * @param product_index
+   * @private
+   */
+  private setupFilteredItems(product_index: number) {
+    const control = this.parcelItemControls.get(product_index)!;
+    const filterItems = control.valueChanges.pipe(
+      // startWith(''),
+      map((searchText: string|null) => {
+          if (searchText === null || typeof searchText !== 'string') {
+            return this.getAvailableItems(product_index);
+          }
+          return this._filter(product_index, searchText);
+        }
+      ));
+    this.parcelFilteredItems.set(product_index, filterItems);
+  }
+
+  // TODO: check later
+  public onInputFocus(product_index: number): void {
+    // Show all available items when input gets focus
+    const availableItems = this.getAvailableItems(product_index);
+    this.parcelFilteredItems.set(product_index, of(availableItems));
+  }
+
+  // create input for each row
+  getItemControl(product_index: number) {
+    if (!this.parcelItemControls.has(product_index)) {
+      this.parcelItemControls.set(product_index, new FormControl());
+      this.setupFilteredItems(product_index);
+    }
+    return this.parcelItemControls?.get(product_index);
+  }
+
+
+
+  /**
+   * When click into a option of autocomplete chip
+   * Put it into the product_parcels and remove from available
+   * @param event
+   * @param id
+   */
+  selected(event: MatAutocompleteSelectedEvent, id: number) {
+    if (event.option.value == null) {
+      return;
+    }
+    const parcel = event.option.value;
+    this.getItemControl(id)?.setValue(null);
+    this.listProduct[id].product_parcels.push(parcel);
+
+    const product = this.listProduct[id];
+    const product_id = product.product_id.toString();
+    const availableItems = this.available_product_parcels.get(product_id);
+    availableItems.filter(item => item['parcel_no'] != product.product_parcels[0].parcel_no);
+    const listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        if (element.invoice_id === this.localItemInvoice.invoice_id) {
+          element.listProduct = this.listProduct;
+        }
+      }
+    });
+    this.orderService.setListInvoiceLocalStorage(listInvoice);
+  }
+
+
+  /**
+   * Opposite with the selectd function
+   * @param id
+   * @param item
+   */
+  removeParcel(id: number): void {
+    const product = this.listProduct[id];
+    if (!product) { return; }
+    const parcel = product.product_parcels[0];
+    product.product_parcels = [];
+    const currentFilteredItems = this.parcelFilteredItems.get(id);
+    if (currentFilteredItems) {
+      const updatedFilteredItems = currentFilteredItems.pipe(
+        map(items => [...items, parcel])  // Add the item back to the array
+      );
+      this.parcelFilteredItems.set(id, updatedFilteredItems);
+    }
+    this.handleUpdateStorage();
+  }
+
+
+  /**
+   * Handle open Selection Parcel Dialog, allow user enter number amount in the dialog with parcel
+   * @param product_index
+   */
+  openParcelSelectionDialog(product_index: number) {
+    const product = this.listProduct[product_index];
+    const product_id = product.product_id.toString();
+    if (!product) { return; }
+    const selectedParcel = product.product_parcels[0] || null;
+    const dialogRef = this.dialog.open(SaleProductParcelSelectDialogComponent, {
+      width: '40%',
+      data: {
+        product_id: product.product_id,
+        quantity: product.amount,
+        selectedParcel: selectedParcel,
+        allParcels: this.all_product_parcels.get(product_id),
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) { return; }
+      const product = this.listProduct[product_index];
+      if (!product) { return; }
+      product.product_parcels = [];
+      product.product_parcels.push(result.parcel);
+      const exist = this.parcelFilteredItems.has(product_index);
+      if (exist) {
+        const currentFilteredItems = this.getAvailableItems(product_index);
+        const selectedParcelNos = new Set(product.product_parcels.map(p => p['parcel_no']));
+        const updatedFilteredItems = currentFilteredItems.filter(item => !selectedParcelNos.has(item['parcel_no']));
+        this.available_product_parcels.set(product_id, updatedFilteredItems);
+        this.setupFilteredItems(product_index);
+      }
+
+      product.amount = result.quantity;
+      this.listProduct = [...this.listProduct];
+      const sum_amount = product.amount;
+      let redu = 0;
+      let isLastParcel = false;
+
+      if (product.amount > selectedParcel.quantity_of_stock) {
+        product.amount = selectedParcel.quantity_of_stock;
+        redu += selectedParcel.quantity_of_stock;
+        const availableParcels = this.getAvailableItems(product_index).filter(
+          parcel => parcel['parcel_no'] !== selectedParcel.parcel_no
+        );
+        const sortedParcels = [...availableParcels].sort((a, b) => {
+          const dateA = new Date(a['expiration_date']);
+          const dateB = new Date(b['expiration_date']);
+          return dateA.getTime() - dateB.getTime();
+        });
+        for (let i = 0; i < sortedParcels.length; i++) {
+          const parcel = sortedParcels[i];
+
+          if (redu >= sum_amount) {
+            break;
+          }
+          const remain = sum_amount - redu;
+
+          isLastParcel = (i === sortedParcels.length - 1) || (redu + parcel['quantity_of_stock'] >= sum_amount);
+
+          let quantityToAdd;
+          if (isLastParcel) {
+            quantityToAdd = remain;
+          } else {
+            quantityToAdd = Math.min(parcel['quantity_of_stock'], remain);
+          }
+          this.addNewRow(product_index, parcel, quantityToAdd);
+          redu += quantityToAdd;
+
+          if (redu >= sum_amount) {
+            break;
+          }
+        }
+      }
+    });
+  }
+
+  /**
+   * Automation add one parcel if the current one smaller than amount input
+   * @param product_index
+   * @param new_input_amount
+   */
+  handleAddRowIfNecessary(product_index: number, new_input_amount: number) {
+    const product = this.listProduct[product_index];
+    if (product.product.is_sub_item) {
+      return;
+    }
+    const selectedParcel = product.product_parcels[0];
+    if (!selectedParcel) { return; }
+    const sum_amount = new_input_amount;
+    let redu = 0;
+    let isLastParcel = false;
+    const availableParcels = this.getAvailableItems(product_index).filter(
+      parcel => parcel['parcel_no'] !== selectedParcel.parcel_no
+    );
+    if (availableParcels.length == 0) {
+      return;
+    }
+    const existSubItemProduct = this.listProduct[product_index + 1];
+    if (existSubItemProduct?.product?.is_sub_item) {
+      return;
+    }
+    if (sum_amount > selectedParcel.quantity_of_stock ) {
+      product.amount = selectedParcel.quantity_of_stock;
+      redu += selectedParcel.quantity_of_stock;
+
+
+      const sortedParcels = [...availableParcels].sort((a, b) => {
+        const dateA = new Date(a['expiration_date']);
+        const dateB = new Date(b['expiration_date']);
+        return dateA.getTime() - dateB.getTime();
+      });
+      for (let i = 0; i < sortedParcels.length; i++) {
+        const parcel = sortedParcels[i];
+
+        if (redu >= sum_amount) {
+          break;
+        }
+        const remain = sum_amount - redu;
+
+        isLastParcel = (i === sortedParcels.length - 1) || (redu + parcel['quantity_of_stock'] >= sum_amount);
+
+        let quantityToAdd;
+        if (isLastParcel) {
+          quantityToAdd = remain;
+        } else {
+          quantityToAdd = Math.min(parcel['quantity_of_stock'], remain);
+        }
+
+        this.addNewRow(product_index, parcel, quantityToAdd);
+        redu += quantityToAdd;
+        if (redu >= sum_amount) {
+          break;
+        }
+      }
+    }
+  }
+
+  /**
+   * Main function use to call api and load parcels of each product
+   * @param mItemInvoice
+   * @private
+   */
+  private handleLoadParcel(mItemInvoice: ItemInvoice) {
+    try {
+      const listProduct = mItemInvoice.listProduct;
+      if (listProduct !== undefined) {
+        listProduct.map(async (product) => {
+          const product_id = product.product_id.toString();
+          return new Promise<void>((resolveProduct, rejectProduct) => {
+            this.productSer.getParcelNew(product_id).pipe(
+              map(res => {
+                if (res && Array.isArray(res) && res.length > 0) {
+                  return (res as object[]).map(item => ({
+                    parcel_no: item['parcel_no'],
+                    expiration_date: item['expiration_date'],
+                    quantity_of_stock: item['quantity_of_stock']
+                  }));
+                }
+                return [];
+              })
+            ).subscribe({
+              next: (formattedRes) => {
+                const uniqueParcels = formattedRes.filter((item, index, self) =>
+                  index === self.findIndex(t => t.parcel_no === item.parcel_no)
+                );
+                formattedRes = uniqueParcels;
+                if (formattedRes && formattedRes.length > 0) {
+                  this.all_product_parcels.set(product_id, formattedRes as object[]);
+
+                  const sortedParcels = [...formattedRes].sort((a, b) => {
+                    const dateA = new Date(a.expiration_date);
+                    const dateB = new Date(b.expiration_date);
+                    return dateA.getTime() - dateB.getTime();
+                  });
+
+                  if (!!product.product_parcels) {
+                    this.available_product_parcels.set(product_id, formattedRes);
+                  } else {
+                    product.product_parcels = [];
+                    if (product.parcel_no) {
+                      const choseParcel = sortedParcels.find(parcel => parcel.parcel_no == product.parcel_no);
+                      product.product_parcels.push(choseParcel);
+                    } else {
+                      product.product_parcels.push(sortedParcels[0]);
+                    }
+                    const availableParcels = formattedRes.filter(parcel => {
+                      if (product.product_parcels &&
+                        product.product_parcels.length > 0 &&
+                        product.product_parcels[0].parcel_no) {
+                        return parcel.parcel_no !== product.product_parcels[0].parcel_no;
+                      }
+                      return true;
+                    });
+                    this.available_product_parcels.set(product_id, availableParcels);
+                  }
+                }
+                resolveProduct();
+              },
+              error: (error) => {
+                console.error(`Error loading parcel for product ${product_id}:`, error);
+                rejectProduct(error);
+              },
+              complete: () => {
+                resolveProduct();
+              }
+            });
+          });
+
+        });
+        this.listProduct = [...listProduct];
+        return this.listProduct;
+      } else {
+        this.listProduct = [];
+        return this.listProduct;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Add a sub item of product
+   * @param i
+   * @param parcel
+   * @param amount
+   */
+  addNewRow(i: number, parcel: object = null, amount: number = 0) {
+    const oldItem = {...this.listProduct[i]};
+    const oldProduct = {...oldItem.product};
+    if (oldItem.note != undefined) {
+      delete oldItem.note;
+    }
+    oldProduct.is_sub_item = 1;
+    oldProduct.master_product_id = oldProduct.id;
+    let newItem: object = {};
+    if (parcel) {
+       newItem = {...oldItem, product: oldProduct, product_parcels: [parcel], amount: amount};
+    } else {
+       newItem = {...oldItem, product: oldProduct, product_parcels: [], amount: 1};
+
+    }
+    this.listProduct.splice(i + 1, 0, newItem);
+    this.listProduct = [...this.listProduct];
+    this.handleUpdateStorage();
+  }
+
+  /**
+   * Data after getting from api missing master_product_id and is_sub_item now.
+   * So we need to inital them, maybe no need in the future
+   * @param mItemInvoice
+   * @private
+   */
+  private handleAddMasterTag(mItemInvoice: ItemInvoice) {
+    const listProduct = mItemInvoice.listProduct;
+    if (listProduct !== undefined) {
+      listProduct.map((productInfor) => {
+        // add master_product_id = product_id
+        productInfor.product.master_product_id = productInfor.master_product_id || productInfor.product.master_product_id || productInfor.product.id;
+        // add is_sub_item = 0
+        productInfor.product.is_sub_item = productInfor.is_sub_item || productInfor.product.is_sub_item || 0;
+        return productInfor; // Make sure to return the modified product
+      });
+      this.listProduct = [...listProduct];
+    }
+    // update
+  }
+
+  /**
+   * Get all master products
+   */
+  getMasterProducts() {
+    return this.listProduct.filter(item => item.product.is_sub_item === 0);
+  }
+
+  /**
+   * Get all subitem of a master product
+    * @param masterProduct
+   */
+  getSubItemsForMaster(masterProduct) {
+    return this.listProduct.filter(item =>
+      item.product.is_sub_item === 1 &&
+      item.product.master_product_id === masterProduct.product.id
+    );
+  }
+
+  /**
+   * Get the index of one row in the list
+   * @param product
+   */
+  getProductIndex(product) {
+    return this.listProduct.findIndex(item => item === product);
+  }
+
+  public clickHelp() {
+    window.open('https://rx20.vn/huong-dan-su-dung/', '_black');
+  }
+
+  selectAmount(amount: number): void {
+    this.selectedAmount = amount;
+    this.updateCustomerPay(amount);
+  }
+  updateCustomerPay(amount: number): void {
+    // Update the customerPay form control with the selected amount
+    this.form.get('customerPay')?.setValue(numeral(amount.toString()).format('0,0'));
+
+    // this.tinhLaiTienThua(); Tin 21/05/2025: Xoá cái này để khi mặc định Khánh thanh toán = 0 coi như thanh toán hết
+  }
+  onMethodChange(): void {
+    // console.log(`Selected payment method: ${this.selectedMethod}`);
+  }
+
+  loadBankAccounts() {
+    function write<K extends keyof BankAccountFilter>(arg: BankAccountFilter, key: K, value: BankAccountFilter[K]): void {
+      arg[key] = value;
+    }
+
+    write(this.bankAccountFilter, 'page', 1);
+    write(this.bankAccountFilter, 'pageSize', 1000);
+    write(this.bankAccountFilter, 'status', '10,9');
+    write(this.bankAccountFilter, 'expand', 'province,district,ward');
+
+    this.bankAccountSer.getList(this.bankAccountFilter).subscribe((res) => {
+      this.bankAccounts = res.body
+      if(!this.selectedBankAccount){
+        this.selectedBankAccount = this.bankAccounts[0];
+        this.getQrCode(this.selectedBankAccount).subscribe(qrCode=>{
+          this.selectedBankQr = qrCode;
+        });
+      }
+      this.filterBanks();
+    });
+  }
+
+  toggleDropdown() {
+    this.triggerLoadBankAccounts();
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  filterBanks() {
+    if (!this.searchTerm) {
+      this.filteredBankAccounts = [...this.bankAccounts];
+      return;
+    }
+
+    const term = this.searchTerm.toLowerCase();
+    this.filteredBankAccounts = this.bankAccounts.filter(bank =>
+      bank.bank_code.toLowerCase().includes(term) ||
+      bank.account_number.includes(term) ||
+      bank.account_name.toLowerCase().includes(term));
+  }
+
+  // Function to trigger the debounced loadBankAccounts
+  triggerLoadBankAccounts(): void {
+    this.loadBankAccountsSubject.next(); // Emit an event to the Subject
+  }
+
+  selectBankAccount(bank: BankAccount|null) {
+    this.selectedBankAccount = bank;
+    this.isDropdownOpen = false;
+  }
+
+  getQrCode(bankAccount: BankAccount): Observable<string> {
+    if (!bankAccount) {
+      // fallback image
+      return of(`assets/images/default/qr-code.png`);
+    }
+
+    const template    = 'qr_only'; // or 'compact2' | 'compact' | 'print'
+    const namePart    = bankAccount.account_name
+      ? `&accountName=${encodeURIComponent(bankAccount.account_name)}`
+      : '';
+
+    //A short payment memo or description (up to 25 chars).
+    const info = ""
+
+    const infoPart    = info
+      ? `&addInfo=${encodeURIComponent(info)}`
+      : '';
+
+    const amountPart  = this.total;
+
+    // Use acqId (6‑digit BIN) as BANK_ID; adjust if you have a text code instead
+    const url = [
+      `https://img.vietqr.io/image/`,
+      `${bankAccount.bank_code}-${bankAccount.account_number}-${template}.png`,
+      `?amount=${amountPart}&accountName=${namePart}&addInfo${infoPart}`
+    ].join('');
+
+    return of(url);
+  }
+
+  // Close dropdown when clicking outside
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const element = event.target as HTMLElement;
+    if (!element.closest('.bank-dropdown-container')) {
+      this.isDropdownOpen = false;
+    }
+  }
+
+
+  numberToVietnameseText(number) {
+    // Handle invalid input
+    if (isNaN(number) || number < 0) {
+      return "Invalid input";
+    }
+
+    // Format the number with commas
+    const formattedNumber = number.toLocaleString('vi-VN');
+
+    // Convert number to Vietnamese words
+    const vietnameseWords = this.convertNumberToVietnameseWords(number);
+
+    // Return the formatted string
+    return `${vietnameseWords} đồng chẵn`;
+  }
+
+  /**
+   * Converts a number to Vietnamese words
+   * @param {number} number - The number to convert
+   * @returns {string} Vietnamese words representation of the number
+   */
+  convertNumberToVietnameseWords(number:number) {
+    const units = ["", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
+    const teens = ["", "mười một", "mười hai", "mười ba", "mười bốn", "mười lăm", "mười sáu", "mười bảy", "mười tám", "mười chín"];
+    const tens = ["", "mười", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi"];
+    const scales = ["", "nghìn", "triệu", "tỷ", "nghìn tỷ", "triệu tỷ"];
+
+    // Handle zero
+    if (number === 0) {
+      return "Không";
+    }
+
+    // Convert to string and pad to handle groups of 3 digits
+    let numStr = number.toString();
+    // Ensure string length is multiple of 3 by padding with leading zeros
+    const remainder = numStr.length % 3;
+    if (remainder > 0) {
+      numStr = '0'.repeat(3 - remainder) + numStr;
+    }
+
+    // Split into groups of 3 digits
+    const groups = [];
+    for (let i = 0; i < numStr.length; i += 3) {
+      groups.push(numStr.substring(i, i + 3));
+    }
+
+    // Process each group
+    const results = [];
+    groups.forEach((group, index) => {
+      const groupIndex = groups.length - 1 - index;
+      const groupValue = parseInt(group);
+
+      if (groupValue > 0) {
+        const groupText = this.convertGroupToVietnamese(group);
+        const scaleText = groupIndex > 0 ? " " + scales[groupIndex] : "";
+        results.push(groupText + scaleText);
+      }
+    });
+
+    // Join groups and capitalize first letter
+    let result = results.join(" ");
+    return result.charAt(0).toUpperCase() + result.slice(1);
+  }
+
+  /**
+   * Converts a 3-digit group to Vietnamese words
+   * @param {string} group - 3-digit group as string
+   * @returns {string} Vietnamese words for the group
+   */
+   convertGroupToVietnamese(group) {
+    const units = ["", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
+    const digits = group.split('').map(d => parseInt(d));
+
+    let result = "";
+
+    // Handle hundreds
+    if (digits[0] > 0) {
+      result += units[digits[0]] + " trăm";
+    }
+
+    // Handle tens and units
+    if (digits[1] > 0) {
+      // Add space if we already have hundreds
+      if (result !== "") {
+        result += " ";
+      }
+
+      if (digits[1] === 1) {
+        // Special case for "mười"
+        result += "mười";
+      } else {
+        result += units[digits[1]] + " mươi";
+      }
+
+      // Handle units
+      if (digits[2] > 0) {
+        if (digits[2] === 1 && digits[1] !== 0) {
+          // Special case for "một" after a "mươi"
+          result += " mốt";
+        } else if (digits[2] === 5 && digits[1] !== 0) {
+          // Special case for "năm" after a "mươi"
+          result += " lăm";
+        } else {
+          result += " " + units[digits[2]];
+        }
+      }
+    } else if (digits[2] > 0) {
+      // Only units, no tens
+      // Add space if we already have hundreds
+      if (result !== "") {
+        result += " lẻ ";
+      }
+      result += units[digits[2]];
+    }
+
+    return result;
+  }
 }
+

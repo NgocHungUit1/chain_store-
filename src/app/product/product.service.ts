@@ -236,7 +236,7 @@ export class ProductService {
   }
 
   getParcelNew(id: string) {
-    const url = environment.apiUrl + `/warehouse-product-parcel?WarehouseProductParcelSearch[product_id]=${id}&WarehouseProductParcelSearch[hasStock]=1`;
+    const url = environment.apiUrl + `/warehouse-product-parcel/group-by-product?WarehouseProductParcelSearch[product_id]=${id}&WarehouseProductParcelSearch[hasStock]=1`;
     const res = this.http.get(url);
     return res;
   }

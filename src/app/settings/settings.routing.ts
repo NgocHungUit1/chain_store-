@@ -29,6 +29,10 @@ export const SettingsRoutes: Routes = [
         loadChildren: () => import('../user/user.module').then(m => m.UserModule)
       },
       {
+        path: 'bank-account',
+        loadChildren: () => import('../bank-account/bank-account.module').then(m => m.BankAccountModule)
+      },
+      {
         path: 'branch',
         loadChildren: () => import('../branch/branch.module').then(m => m.BranchModule)
       },
