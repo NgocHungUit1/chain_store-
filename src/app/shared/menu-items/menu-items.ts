@@ -63,12 +63,12 @@ const MENUITEMS = [
     permissions: ['Product.List', 'Group.List', 'Sample-Prescription.List', 'Price-List.List', 'Stock-Take.List'],
     // badge: [{type: 'red', value: '17'}],
     children: [
-      // {state: 'medicine', name: 'Danh mục thuốc', type: 'link', roles: ['ADMIN', 'WAREHOUSE', 'SALE']},
-      { state: 'product', name: 'Sản phẩm', type: 'link', icon: 'local_pharmacy', permissions: ['Product.List'] },
-      { state: 'group', name: 'Nhóm hàng', type: 'link', icon: 'local_pharmacy', permissions: ['Group.List'] },
-      { state: 'sample-prescription', name: 'Đơn thuốc mẫu', type: 'link', icon: 'list_alt', permissions: ['Sample-Prescription.List'] },
-      { state: 'price-book', name: 'Thiết lập giá', type: 'link', icon: 'loyalty', permissions: ['Price-List.List'] },
-      { state: 'stock-take', name: 'Kiểm kho', type: 'link', icon: 'check_circle_outline', permissions: ['Stock-Take.List'] },
+      // {state: 'medicine', name: 'Danh mục thuốc', type: 'link', icon: 'list', roles: ['ADMIN', 'WAREHOUSE', 'SALE']},
+      {state: 'product', name: 'Sản phẩm', type: 'link', icon: 'local_pharmacy', permissions: ['Product.List']},
+      {state: 'group', name: 'Nhóm hàng', type: 'link', icon: 'local_pharmacy', permissions: ['Group.List']},
+      {state: 'sample-prescription', name: 'Đơn thuốc mẫu', type: 'link', icon: 'list_alt', permissions: ['Sample-Prescription.List']},
+      {state: 'price-book', name: 'Thiết lập giá', type: 'link', icon: 'loyalty', permissions: ['Price-List.List']},
+      {state: 'stock-take', name: 'Kiểm kho', type: 'link', icon: 'check_circle_outline', permissions: ['Stock-Take.List']},
     ]
   },
   {
@@ -79,11 +79,11 @@ const MENUITEMS = [
     permissions: ['Invoice.List', 'Warehouse.List', 'Returns.List', 'Move.List'],
     // badge: [{type: 'red', value: '17'}],
     children: [
-      { state: 'invoice', name: 'Hóa đơn bán', type: 'link', icon: 'receipt', permissions: ['Invoice.List'] },
-      { state: 'warehouse', name: 'Hóa đơn nhập', type: 'link', icon: 'local_grocery_store', permissions: ['Warehouse.List'] },
-      { state: 'returns', name: 'Trả hàng', type: 'link', icon: 'keyboard_return', permissions: ['Returns.List'] },
-      { state: 'warehouse-return', name: 'Trả hàng nhập', type: 'link', 'icon': 'assignment_return', permissions: ['Warehouse.List'] },
-      { state: 'move', name: 'Chuyển hàng', type: 'link', icon: 'local_shipping', permissions: ['Move.List'] },
+      {state: 'invoice', name: 'Hóa đơn bán', type: 'link', icon: 'receipt', permissions: ['Invoice.List']},
+      {state: 'warehouse', name: 'Hóa đơn nhập', type: 'link', icon: 'local_grocery_store', permissions: ['Warehouse.List']},
+      {state: 'returns', name: 'Trả hàng', type: 'link', icon: 'keyboard_return', permissions: ['Returns.List']},
+      {state: 'warehouse-return', name: 'Trả hàng nhập', type: 'link', 'icon': 'assignment_return', permissions: ['Warehouse.List']},
+      {state: 'move', name: 'Chuyển hàng', type: 'link', icon: 'local_shipping', permissions: ['Move.List']},
     ]
   },
   {
@@ -94,9 +94,9 @@ const MENUITEMS = [
     permissions: ['Customer.List', 'Supplier.List', 'Doctor.List'],
     // badge: [{type: 'red', value: '17'}],
     children: [
-      { state: 'customer', name: 'Khách hàng', type: 'link', icon: 'person', permissions: ['Customer.List'] },
-      { state: 'supplier', name: 'Nhà cung cấp', type: 'link', icon: 'people', permissions: ['Supplier.List'] },
-      { state: 'doctor', name: 'Bác sĩ', type: 'link', icon: 'local_hospital', permissions: ['Doctor.List'] },
+      {state: 'customer', name: 'Khách hàng', type: 'link', icon: 'person', permissions: ['Customer.List']},
+      {state: 'supplier', name: 'Nhà cung cấp', type: 'link', icon: 'people', permissions: ['Supplier.List']},
+      {state: 'doctor', name: 'Bác sĩ', type: 'link', icon: 'local_hospital', permissions: ['Doctor.List']},
     ]
   },
   {
@@ -129,20 +129,18 @@ const MENUITEMS = [
       { state: 'branch', name: 'Chi nhánh', type: 'link', icon: 'business', permissions: ['Branch.List'] },
       { state: 'timesheet', name: 'Chấm công', type: 'link', icon: 'calendar_today', permissions: ['Timesheet.List'] },
       { state: 'pay-sheet', name: 'Bảng tính lương', type: 'link', icon: 'assessment', permissions: ['Pay-Sheet.List'] },
+      {state: 'bank-account', name: 'Tài khoản ngân hàng', type: 'link', icon: 'account_balance_wallet', permissions: ['Bank-Account.List']},
       {
         state: 'common', name: 'Thiết lập chung', type: 'link', icon: 'settings', permissions: [
           'Option-Store.Update',
           'Store.Upload-Logo', 'Branch.Update-Connect',
-          'Store.Update-Info']
-      },
-      {
-        state: 'expenses-order', name: 'Thu khác Bán hàng', type: 'link',
+          'Store.Update-Info']},
+      {state: 'expenses-order', name: 'Thu khác Bán hàng', type: 'link',
         icon: 'price_change',
         permissions: ['Expenses-Order.List'],
         optionKeys: ['transaction_expenses_order']
       },
-      {
-        state: 'expenses-transaction', name: 'Chi phí Nhập hàng',
+      {state: 'expenses-transaction', name: 'Chi phí Nhập hàng',
         type: 'link', icon: 'paid', permissions: ['Expenses-Transaction.List'],
         optionKeys: ['transaction_expenses_transaction']
       },
@@ -170,23 +168,21 @@ const MENUITEMS = [
       , 'Invoice.End-Day-Report'
     ],
     children: [
-      { state: 'day-report', name: 'Cuối ngày', type: 'link', icon: 'pie_chart', permissions: ['Invoice.End-Day-Report'] },
-      {
-        state: 'product-report', name: 'Hàng hóa', type: 'link', icon: 'inventory', permissions: [
-          'Report.Product-Sale',
-          'Report.Stock',
-          'Warehouse-Product-Parcel.Expiration',
-          'Report.Export-Import-Detail'
+      {state: 'day-report', name: 'Cuối ngày', type: 'link', icon: 'pie_chart', permissions: ['Invoice.End-Day-Report']},
+      {state: 'product-report', name: 'Hàng hóa', type: 'link', icon: 'inventory', permissions: [
+        'Report.Product-Sale',
+        'Report.Stock',
+        'Warehouse-Product-Parcel.Expiration',
+        'Report.Export-Import-Detail'
           , 'Report.Supplier'
-        ]
-      },
+        ]},
       //{state: 'stock-report', name: 'Tồn kho', type: 'link', icon: 'store', roles: ['ADMIN']},
-      { state: 'group-report', name: 'Nhóm hàng', type: 'link', icon: 'category', permissions: ['Group.Report'] },
-      { state: 'employee', name: 'Nhân viên', type: 'extLink', icon: 'account_box', permissions: ['Employee-Report.Revenue', 'Employee-Report.Profit', 'Employee-Report.Commission'] },
+      {state: 'group-report', name: 'Nhóm hàng', type: 'link', icon: 'category', permissions: ['Group.Report']},
+      {state: 'employee', name: 'Nhân viên', type: 'extLink', icon: 'account_box', permissions: ['Employee-Report.Revenue', 'Employee-Report.Profit', 'Employee-Report.Commission']},
       //{state: 'sale-report', name: 'Bán hàng', type: 'link', icon: 'table_chart', roles: ['ADMIN']},
       // {state: 'debt-report', name: 'Công nợ', type: 'link', icon: 'money', roles: ['ADMIN']},
-      { state: 'debt-customers', name: 'Công nợ thu', type: 'link', icon: 'price_check', permissions: ['Report.Customers-Debt'] },
-      { state: 'debt-suppliers', name: 'Công nợ trả', type: 'link', icon: 'money_off', permissions: ['Report.Supplier-Debt'] },
+      {state: 'debt-customers', name: 'Công nợ thu', type: 'link', icon: 'price_check', permissions: ['Report.Customers-Debt']},
+      {state: 'debt-suppliers', name: 'Công nợ trả', type: 'link', icon: 'money_off', permissions: ['Report.Supplier-Debt']},
     ]
   },
   {

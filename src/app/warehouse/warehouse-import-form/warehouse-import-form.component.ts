@@ -49,25 +49,25 @@ import {
 import {WarehouseFormAmountComponent} from '../warehouse-form-amount/warehouse-form-amount.component';
 import {MatSelect} from '@angular/material/select';
 import {MatSelectionList, MatSelectionListChange} from '@angular/material/list';
-import {COMMA, ENTER} from "@angular/cdk/keycodes";
-import {MatAutocomplete, MatAutocompleteSelectedEvent, MatAutocompleteTrigger} from "@angular/material/autocomplete";
+import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import {MatAutocomplete, MatAutocompleteSelectedEvent, MatAutocompleteTrigger} from '@angular/material/autocomplete';
 import {
   ParcelData,
   WarehouseParcelFormDialogNewComponent
-} from "../warehouse-parcel-form-dialog-new/warehouse-parcel-form-dialog-new.component";
+} from '../warehouse-parcel-form-dialog-new/warehouse-parcel-form-dialog-new.component';
 import {
   WarehouseParcelFormDialogAvailableComponent
-} from "../warehouse-parcel-form-dialog-available/warehouse-parcel-form-dialog-available.component";
+} from '../warehouse-parcel-form-dialog-available/warehouse-parcel-form-dialog-available.component';
 import {
   WarehouseParcelFormDialogSelectComponent
-} from "../warehouse-parcel-form-dialog-select/warehouse-parcel-form-dialog-select.component";
-import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from "@angular/material/core";
-import {MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter} from "@angular/material-moment-adapter";
-import {MY_FORMATS} from "../../sale/sale-main/sale-main.component";
-import {DatePipe} from "@angular/common";
+} from '../warehouse-parcel-form-dialog-select/warehouse-parcel-form-dialog-select.component';
+import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
+import {MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter} from '@angular/material-moment-adapter';
+import {MY_FORMATS} from '../../sale/sale-main/sale-main.component';
+import {DatePipe} from '@angular/common';
 
 
-/////////////coding fake data
+///////////// coding fake data
 // Base interface cho Parcel mới
 export interface NewParcel {
   parcel_no: string;
@@ -87,7 +87,7 @@ for (let i = 1; i <= 10; i++) {
   items.push(item);
 }
 
-let parcelsdataFake: object[] = [];
+const parcelsdataFake: object[] = [];
 const randomCount = Math.floor(Math.random() * 10); // Random number of items to select
 
 for (let j = 0; j < randomCount; j++) {
@@ -95,7 +95,7 @@ for (let j = 0; j < randomCount; j++) {
   const baseItem = items[randomIndex];
   parcelsdataFake.push(baseItem);
 }
-//end face data
+// end face data
 
 @Component({
   selector: 'app-warehouse-import-form',
@@ -157,11 +157,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   expensesTransactions: ExpensesTransaction[] = [];
   optionStore_transaction_expenses: OptionStore;
   tempProductId = null;
+  barcode: string;
 
-  searchMode = localStorage.getItem("importForm-searchMode") ? JSON.parse(localStorage.getItem("importForm-searchMode")) : false;
+  searchMode = localStorage.getItem('importForm-searchMode') ? JSON.parse(localStorage.getItem('importForm-searchMode')) : false;
   submitted = false;
-  allow_amount_adjust = localStorage.getItem("importForm-allowAmountAdjust") ? JSON.parse(localStorage.getItem("importForm-allowAmountAdjust")) : false;
-  allow_multiple_select = localStorage.getItem("importForm-allowMultipleSelect") ? JSON.parse(localStorage.getItem("importForm-allowMultipleSelect")) : false;
+  allow_amount_adjust = localStorage.getItem('importForm-allowAmountAdjust') ? JSON.parse(localStorage.getItem('importForm-allowAmountAdjust')) : false;
+  allow_multiple_select = localStorage.getItem('importForm-allowMultipleSelect') ? JSON.parse(localStorage.getItem('importForm-allowMultipleSelect')) : false;
   statuses = [
     {id: '10', name: 'Hoàn thành'},
     {id: '9', name: 'Lưu tạm'},
@@ -183,13 +184,14 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     // 'discount': 'Chiết khấu',//'Giảm giá',
     'amount': 'Thành tiền',
     'actions': 'Hành động',
+    'add_row': 'Thêm dòng'
   };
-  showFilters = localStorage.getItem("importForm-showFilters") ? JSON.parse(localStorage.getItem("importForm-showFilters")) : false;
+  showFilters = localStorage.getItem('importForm-showFilters') ? JSON.parse(localStorage.getItem('importForm-showFilters')) : false;
   tempDataForQuickFilter = [];
 
   filterColumns: string[] = [];
   filterValues: { [key: string]: string } = {};
-  displayedColumns: string[] = localStorage.getItem("importForm-displayedColumns") ? JSON.parse(localStorage.getItem("importForm-displayedColumns")) : [
+  displayedColumns: string[] = localStorage.getItem('importForm-displayedColumns') ? JSON.parse(localStorage.getItem('importForm-displayedColumns')) : [
     // 'image',
     '#',
     'product_no',
@@ -203,6 +205,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     // 'discount',
     'amount',
     'actions',
+    // 'add_row'
   ];
   columnsToDisplay: string[] = [
     'image',
@@ -218,6 +221,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     // 'discount',
     'amount',
     'actions',
+    'add_row'
   ];
   data: WarehouseProduct[] = [];
   productDataSource = new MatTableDataSource<WarehouseProduct>([]);
@@ -253,18 +257,22 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   @ViewChild('quantityInput') quantityInputRef: ElementRef;
   @ViewChild('unitInput') unitInputRef: MatSelect;
 
-  ///////////////// coding danh sach lo adding /////////////////
-
   separatorKeysCodes: number[] = [ENTER, COMMA];
   parcelItemControls: Map<number, FormControl> = new Map();
   parcelFilteredItems: Map<number, Observable<object[]>> = new Map();
   available_product_parcels: Map<string, object[]> = new Map();
   @ViewChild('parcelInput') parcelInput!: ElementRef<HTMLInputElement>;
   @ViewChild('parcelAutocomplete') matAutocompleteParcel!: MatAutocomplete;
+  tmp_new_parcel_data = {
+    parcel_no: '',
+    expiration_date: null,
+    quantity: null,
+  };
+  shownNotes: Set<number> = new Set();  // Will store user IDs or indices of visible notes
 
   // create input for each row
   getItemControl(product_index: number) {
-    if(!this.parcelItemControls.has(product_index)) {
+    if (!this.parcelItemControls.has(product_index)) {
       this.parcelItemControls.set(product_index, new FormControl());
       this.setupFilteredItems(product_index);
     }
@@ -277,7 +285,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       return;
     }
     const parcel = event.option.value;
-    this.openAddAvailableParcelDialog(id, parcel);
+    const product_no = this.data[id].product['product_no'];
+    this.openAddAvailableParcelDialog(id, parcel, product_no);
     this.getItemControl(id)?.setValue(null);
   }
 
@@ -287,7 +296,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     const filterItems = control.valueChanges.pipe(
       startWith(''),
       switchMap((searchText: string|null) => {
-          if(searchText===null || typeof searchText !== 'string'){
+          if (searchText === null || typeof searchText !== 'string') {
             return this.getAvailableItems(product_index);
           }
           return this._filter(product_index, searchText);
@@ -346,7 +355,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     // Find the product in the data source
     const product = this.data[id];
 
-    if (!product) return;
+    if (!product) { return; }
     // Find the index of the item to remove
     const indexItem = product.product_parcels.findIndex(
       parcel => parcel['parcel_no'] === item['parcel_no']
@@ -354,7 +363,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     const parcel = product.product_parcels[indexItem];
     // add it to
     const currentFilteredItems = this.parcelFilteredItems.get(id);
-    let perhapAvailableParcel = this.isAvailableParcel(product.product_parcels[indexItem], id);
+    const perhapAvailableParcel = this.isAvailableParcel(product.product_parcels[indexItem], id);
     if (perhapAvailableParcel) {
       const availableParcel = this.data[id].product_parcels.find(p => p['parcel_no'] === parcel['parcel_no']);
       // const newAvailableParcel  = {...perhapAvailableParcel, ...availableParcel['quantity']};
@@ -363,7 +372,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         ...rest,
         quantity: availableParcel['quantity']
       };
-      item=newAvailableParcel;
+      item = newAvailableParcel;
     }
     if (currentFilteredItems && perhapAvailableParcel) {
       // Create new observable with the removed item added back
@@ -387,16 +396,11 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   // because the chip list have 2 type of parcel (new and old) -> need to distinguish them to display the corresponding dialog
-  isAvailableParcel(parcel: object, product_index: number):object {
+  isAvailableParcel(parcel: object, product_index: number): object {
     const product_id = this.data[product_index].product_id.toString();
     const availableParcels = this.available_product_parcels.get(product_id);
     return availableParcels.find(item => item['parcel_no'] == parcel['parcel_no']);
   }
-  tmp_new_parcel_data ={
-    parcel_no: '',
-    expiration_date: null,
-    quantity: null,
-  };
 
   // handle open when click to "them lo moi" or chip button -> new parcel
   openAddNewParcelDialog(product_index: number, parcel: NewParcel = null) {
@@ -412,32 +416,32 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     const product_id = this.data[product_index].product_id.toString();
     const product_name = this.data[product_index].product['product_name'];
     const product_no = this.data[product_index].product['product_no'];
-    const dialogData: ParcelData = parcel?
+    const dialogData: ParcelData = parcel ?
       {...parcel, product_id: product_id, product_name: product_name, product_no: product_no}
       : {...this.tmp_new_parcel_data , product_id: product_id, product_name: product_name, product_no: product_no};
     const parcelDialogRef  = this.dialog.open(WarehouseParcelFormDialogNewComponent, {
       width: '30%',
       data: dialogData,
-    })
+    });
 
       parcelDialogRef.afterClosed().subscribe(result => {
         console.log('Result: ', result);
-        if(!result){return;}
+        if (!result) {return; }
 
-        const product = this.data.find(u => u.product_id.toString() == product_id);
-        if (!product) return;
+        const product = this.data[product_index];
+        if (!product) { return; }
 
         const itemRow: object = {
           parcel_no: result.parcel_no,
           expiration_date: result.expiration_date,
           quantity: result.quantity
-        }
+        };
         // there are 2 type of case using this dialog:
         //  - create new one (form start with null)
         //  - update new one (form start with value)
 
         // handle update case
-        if (parcel){
+        if (parcel) {
           const index = product.product_parcels.findIndex(p => p['parcel_no'] === parcel.parcel_no);
           if (index >= 0) {
             product.product_parcels[index] = itemRow;
@@ -445,10 +449,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
             console.error('Parcel not found for update');
             return;
           }
-        }
-        // handle add case
-        else{
-
+        } else {
           // handle convert day with momentAdapter to fix the typing date bug
           const new_date = result.expiration_date._d;
           const adjusted_date = new Date(new_date.getTime() + (7 * 60 * 60 * 1000)); // Add 7 hours
@@ -460,7 +461,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           product.product_parcels.push(itemRow);
         }
 
-        //review later -> reviewed (17/1/2025)
+        // review later -> reviewed (17/1/2025)
         const allQuantities = product.product_parcels.map(item => Number(item['quantity']));
         product.quantity = allQuantities.reduce((acc, curr) => acc + curr, 0);
         this.recalculateItem(product_index);
@@ -470,23 +471,26 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   // handle open when click to option -> available (old) parcel
-  openAddAvailableParcelDialog(product_index: number, parcel: object = null) {
+  openAddAvailableParcelDialog(product_index: number, parcel: object = null, product_no: string) {
+    const data ={
+      expiration_date: parcel['expiration_date'],
+      quantity_of_stock: parcel['quantity_of_stock'],
+      parcel_no: parcel['parcel_no'],
+      product_no: product_no
+    };
     const parcelDialogRef  = this.dialog.open(WarehouseParcelFormDialogAvailableComponent, {
       width: '30%',
-      data: parcel,
+      data: data,
     });
     parcelDialogRef.afterClosed().subscribe(result => {
       result = {
         parcel_no: result.parcel_no,
         expiration_date: result.expiration_date,
         quantity: result.quantity
-      }
-      console.log('Result: ', result);
-      // validate if needed
+      };
 
-      // end validate
       const product = this.data[product_index];
-      if (!product) return;
+      if (!product) { return; }
       const existingParcelIndex = product.product_parcels.findIndex(
         p => p['parcel_no'] === result.parcel_no
       );
@@ -501,7 +505,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         // Add new parcel
         product.product_parcels.push(result);
       }
-      //remove it from available
+      // remove it from available
       if (this.parcelFilteredItems.has(product_index)) {
         // Get current filtered items observable
         const currentFilteredItems = this.parcelFilteredItems.get(product_index);
@@ -517,7 +521,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         }
       }
 
-      //review later -> reviewed (17/1/2025)
+      // review later -> reviewed (17/1/2025)
       const allQuantities = product.product_parcels.map(item => Number(item['quantity']));
       product.quantity = allQuantities.reduce((acc, curr) => acc + curr, 0);
       this.recalculateItem(product_index);
@@ -528,7 +532,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   // handle when the chip is selected -> choose the right dialog to display
   handleSelectChip(index: number, parcel: object) {
     // because we have 2 type of chip -> need to check this is new or old parcel (by view the quantity_of_stock)
-    let perhapAvailableParcel = this.isAvailableParcel(parcel, index);
+    const perhapAvailableParcel = this.isAvailableParcel(parcel, index);
     // handle old case
     if (perhapAvailableParcel) {
       const availableParcel = this.data[index].product_parcels.find(p => p['parcel_no'] === parcel['parcel_no']);
@@ -537,11 +541,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         ...rest,
         quantity: availableParcel['quantity']
       };
-      this.openAddAvailableParcelDialog(index, newAvailableParcel);
-    }
-    // handle new case
-    else{
-      console.log("New: ", parcel);
+      const product_no = this.data[index].product['product_no'];
+      this.openAddAvailableParcelDialog(index, newAvailableParcel, product_no);
+    } else {
+      console.log('New: ', parcel);
       this.openAddNewParcelDialog(index, parcel as NewParcel);
     }
   }
@@ -550,9 +553,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   openParcelSelectionDialog(product_index: number) {
     const product = this.data[product_index];
     const product_id = product.product_id.toString();
-    if (!product) return;
-    //const selectedAvailable = [...product.product_parcels, ...this.getAvailableItems(product_index)];
-    let availableItems = this.available_product_parcels.get(product_id);
+    if (!product) { return; }
+    // const selectedAvailable = [...product.product_parcels, ...this.getAvailableItems(product_index)];
+    const availableItems = this.available_product_parcels.get(product_id);
     // get all parcel from product_parcels and available_product_parcels
     // handle missing field
     const selectedAvailable = [
@@ -560,12 +563,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         const existingParcel = product.product_parcels.find(
           p => p['parcel_no'] === availItem['parcel_no']
         );
-        if (existingParcel){
+        if (existingParcel) {
           return {
             ...availItem,
             quantity: existingParcel['quantity']
           };
-        } else{
+        } else {
           return availItem;
         }
       }),
@@ -584,9 +587,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (!result) return;
+      if (!result) { return; }
       const product = this.data[product_index];
-      if (!product) return;
+      if (!product) { return; }
 
       // Update parcels with quantities
       product.product_parcels = result;
@@ -607,14 +610,13 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         }
       }
 
-      //review later -> reviewed (17/1/2025)
+      // review later -> reviewed (17/1/2025)
       const allQuantities = product.product_parcels.map(item => Number(item['quantity']));
       product.quantity = allQuantities.reduce((acc, curr) => acc + curr, 0);
       this.recalculateItem(product_index);
       this.productDataSource.data = [...this.data];
     });
   }
-  //end coding renew parcel dialog
 
   ngOnInit() {
     this.filterColumns = this.displayedColumns.map(col => `filter-${col}`);
@@ -795,20 +797,21 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     this.data = this.tempDataForQuickFilter.filter(item => {
       return Object.keys(this.filterValues).every(key => {
         const value = this.filterValues[key];
-        if (!value) return true; // Skip empty filters
+        if (!value) { return true; } // Skip empty filters
 
-        if(key == "product_unit_id"){
-          return (item.productUnits.some(productUnit=>{
-                return (productUnit.name + "")
+        if (key == 'product_unit_id') {
+          return (item.productUnits.some(productUnit => {
+                return (productUnit.name + '')
                   ?.toLowerCase()
                   ?.includes(value.toLowerCase());
               }
             )
-          )
-        }else
-          return (item.product[key] + "")
+          );
+        } else {
+          return (item.product[key] + '')
             ?.toLowerCase()
             ?.includes(value.toLowerCase());
+        }
       });
     });
 
@@ -829,13 +832,13 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   toggleFilters() {
-    if(this.showFilters){
+    if (this.showFilters) {
       this.clearFilters();
     }
-    setTimeout(()=>{
+    setTimeout(() => {
       this.showFilters = !this.showFilters;
-      localStorage.setItem("importForm-showFilters", JSON.stringify(this.showFilters));
-    })
+      localStorage.setItem('importForm-showFilters', JSON.stringify(this.showFilters));
+    });
 
   }
 
@@ -886,15 +889,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     this.apiFilter = this.buildFilterFromParams();
     this.warehouseProductService.getList(this.apiFilter).subscribe(res => {
       const newData = [];
-
-      let productIdsStr = res.body.map(item=>item.product.id).join(",");
-
-
+      const productIdsStr = res.body.map(item => item.product.id).join(',');
       const productFilter = new ProductFilter();
       productFilter.id = productIdsStr;
       productFilter.expand = 'quantity';
-      this.productSer.getList(productFilter).subscribe(res1=>{
-        let productData = res1.body;
+      this.productSer.getList(productFilter).subscribe(res1 => {
+        const productData = res1.body;
 
         res.body.forEach(item => {
           const warehouseProduct = new WarehouseProduct();
@@ -914,10 +914,11 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           warehouseProduct.product_parcels = item.productParcels !== undefined ? item.productParcels : [];
           warehouseProduct.vat = (item.vat !== null) ? item.vat : 0;
           warehouseProduct.vat_type = (item.vat_type !== null) ? item.vat_type : 'price';
-
-          warehouseProduct.productUnits.forEach(productUnit=>{
-            productUnit['quantity_of_stock'] = (productData.find(prod=>prod.id == item.product_id)?.quantity?.number / productUnit["value"]);
-          })
+          warehouseProduct.is_sub_item = item.is_sub_item ?? 0;
+          warehouseProduct.note = item.note || "";
+          warehouseProduct.productUnits.forEach(productUnit => {
+            productUnit['quantity_of_stock'] = (productData.find(prod => prod.id == item.product_id)?.quantity?.number / productUnit['value']);
+          });
           warehouseProduct.inventory_quantity = warehouseProduct.productUnits.find(productUnit => productUnit['id'] === item.product_unit_id)['quantity_of_stock'];
 
           if (item.productParcels !== undefined && item.productParcels.length > 0) {
@@ -1057,8 +1058,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
             this.notifySer.notify('error', 'Bạn không có quyền thực hiện chức năng này.');
             return;
           }
-          //delete data['date'];
-          //delete data['supplier'];
+          // delete data['date'];
+          // delete data['supplier'];
           this.mainService.update(this.updateModelId, data).subscribe(res => { //
             this.notifySer.notify('success', 'Lưu thành công.');
             this.submitted = false;
@@ -1121,16 +1122,16 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
    */
   onSelectedProduct(product) {
 
-    if(this.searchMode){
+    if (this.searchMode) {
 
-      if(!product["productUnits"]){
-        this.notifyService.notify('warning', "Sản phẩm này không tồn đại đơn vị để thêm nhanh, vui lòng thêm bình thường.");
+      if (!product['productUnits']) {
+        this.notifyService.notify('warning', 'Sản phẩm này không tồn đại đơn vị để thêm nhanh, vui lòng thêm bình thường.');
         return;
       }
 
       this.tempProductId = product.id;
 
-      this.selectUnits = product["productUnits"];
+      this.selectUnits = product['productUnits'];
 
       this.quantityInputRef.nativeElement.focus();
       return;
@@ -1142,6 +1143,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
     if (product.product_type !== undefined) {
       this.handleAddProductToList(product.id);
+      this.selectProduct.patchValue(null);
     } else {
       sessionStorage.setItem('medicine', JSON.stringify(product));
       // this.openProductMedicineDialog('Add', {});
@@ -1177,7 +1179,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       this.notifySer.notify('warning', 'Đơn nhập tối đa 100 sản phẩm!');
       return;
     }
-
     let productExits = 0;
     // tslint:disable-next-line:no-shadowed-variable
     this.data.forEach((element, index) => {
@@ -1207,6 +1208,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         warehouseProduct.product_parcels = [];
         warehouseProduct.vat = 0;
         warehouseProduct.vat_type = 'price';
+        warehouseProduct.is_sub_item = 0;
+        warehouseProduct.note = '';
+        warehouseProduct.master_product_id = product_id;
 
         if (res['productUnits'].length > 0) {
           res['productUnits'].sort((a, b) => (a.value > b.value) ? 1 : -1);
@@ -1226,14 +1230,11 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         this.recalculateWarehouse();
         // this.selectProduct.patchValue(null, { emitEvent : false });
       });
-      // coding handle get parcel
       this.productSer.getParcel(product_id).subscribe(res => {
-        console.log("parcel: ", res);
         if (res) {
           this.available_product_parcels.set(product_id, [res]);
         }
       });
-      // end
     } else {
       this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
       this.recalculateWarehouse();
@@ -1411,11 +1412,38 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   removeProduct(i) {
     const newData = this.data;
-    const removedProduct = newData.splice(i, 1)[0];
+    // const removedProduct = newData.splice(i, 1)[0];
+    //
+    // this.tempDataForQuickFilter = this.tempDataForQuickFilter.filter(item=> item.product_id !== removedProduct.product_id);  // Update copy after removal
+    // this.data = newData;
 
-    this.tempDataForQuickFilter = this.tempDataForQuickFilter.filter(item=> item.product_id !== removedProduct.product_id);  // Update copy after removal
+    // we need to remove the subItem when remove the master Item
+    const selectedProduct = this.data[i];
 
-    this.data = newData;
+    // Filter out the selected product and its sub-items
+    if (selectedProduct.is_sub_item === 1) {
+      // If it's a sub-item, just remove that specific item
+      this.data = this.data.filter((item, index) => index !== i);
+    } else {
+      // If it's a master item, remove it and its sub-items
+      this.data = this.data.filter(item => {
+        return item !== selectedProduct &&
+          (item.is_sub_item === 0  || item.master_product_id !== selectedProduct.product_id);
+      });
+    }
+
+    // Update the tempDataForQuickFilter similarly
+    if (selectedProduct.is_sub_item ===1) {
+      this.tempDataForQuickFilter = this.tempDataForQuickFilter.filter((item, index) =>
+        index !== i
+      );
+    } else {
+      this.tempDataForQuickFilter = this.tempDataForQuickFilter.filter(item => {
+        return item !== selectedProduct &&
+          (item.is_sub_item===0 || item.master_product_id  !== selectedProduct.product_id);
+      });
+    }
+
 
     this.recalculateWarehouse();
     this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
@@ -1759,7 +1787,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     dialogRef.afterClosed().subscribe(result => {
       if (result['event'] === 'Choose') {
         this.form.patchValue({'supplier': result['supplier']});
-        //this.handleAddProductToList(result['product_id']);
+        // this.handleAddProductToList(result['product_id']);
       }
     });
   }
@@ -1969,7 +1997,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   openAmountDialog(index: any) {
-    if(!this.allow_amount_adjust) return;
+    if (!this.allow_amount_adjust) { return; }
 
     const ref = this.dialog.open(WarehouseFormAmountComponent, {
       width: '20%',
@@ -1986,19 +2014,19 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         const a = el.vat;
         const b = el.discount;
 
-        const  type = el.vat_type + "|" + el.discount_type;
-        switch (type){
-          case "percent|percent":
-            this.data[index]['price']= (100*am) / (q * (100 + a - a * (b / 100) - b));
+        const  type = el.vat_type + '|' + el.discount_type;
+        switch (type) {
+          case 'percent|percent':
+            this.data[index]['price'] = (100 * am) / (q * (100 + a - a * (b / 100) - b));
             break;
-          case "price|price":
-            this.data[index]['price']= (am / q) - a + b;
+          case 'price|price':
+            this.data[index]['price'] = (am / q) - a + b;
             break;
-          case "percent|price":
-            this.data[index]['price']= (100*am + a*b + 100*b) / (q*(100 + a));
+          case 'percent|price':
+            this.data[index]['price'] = (100 * am + a * b + 100 * b) / (q * (100 + a));
             break;
-          case "price|percent":
-            this.data[index]['price']= (am - a) / (q * (1 - b / 100));
+          case 'price|percent':
+            this.data[index]['price'] = (am - a) / (q * (1 - b / 100));
             break;
         }
 
@@ -2019,20 +2047,20 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       }
       this.filterColumns = this.displayedColumns.map(col => `filter-${col}`);
 
-      localStorage.setItem("importForm-displayedColumns", JSON.stringify(this.displayedColumns));
+      localStorage.setItem('importForm-displayedColumns', JSON.stringify(this.displayedColumns));
     });
   }
-  toggleAmountAdjustColumn(){
-    setTimeout(()=>{
+  toggleAmountAdjustColumn() {
+    setTimeout(() => {
       this.allow_amount_adjust = !this.allow_amount_adjust;
-      localStorage.setItem("importForm-allowAmountAdjust", JSON.stringify(this.allow_amount_adjust));
-    })
+      localStorage.setItem('importForm-allowAmountAdjust', JSON.stringify(this.allow_amount_adjust));
+    });
   }
-  toggleMultipleSelectColumn(){
-    setTimeout(()=>{
+  toggleMultipleSelectColumn() {
+    setTimeout(() => {
       this.allow_multiple_select = !this.allow_multiple_select;
-      localStorage.setItem("importForm-allowMultipleSelect", JSON.stringify(this.allow_multiple_select));
-    })
+      localStorage.setItem('importForm-allowMultipleSelect', JSON.stringify(this.allow_multiple_select));
+    });
   }
   isIncludes(column) {
     return this.displayedColumns.some(item => item === column);
@@ -2046,12 +2074,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     this.selectedProducts = [];
   }
 
-  onQuantityEnter(){
+  onQuantityEnter() {
     this.unitInputRef.focus();
     this.unitInputRef.open();
   }
 
-  onUnitEnter(){
+  onUnitEnter() {
     this.handleAddProductToListWithQuickAdd(this.tempProductId);
   }
 
@@ -2066,7 +2094,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     this.selectedProducts = selectedProducts;
   }
 
-  onAddProducts(){
+  onAddProducts() {
     for (const product of this.selectedProducts) {
       this.handleAddProductToList(product.id);
     }
@@ -2074,4 +2102,53 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     this.productList.deselectAll();
     this.autocompleteTrigger.closePanel();
   }
+
+  // coding add new row
+  addNewRow(i: number) {
+    const oldItem = this.data[i];
+    const newItem = {...oldItem, note: '', master_product_id: oldItem.product_id, is_sub_item: 1, product_parcels: [], quantity: 0};
+    this.data.splice(i + 1, 0, newItem);
+
+    this.productDataSource.data = [...this.data];
+    this.tempDataForQuickFilter = [...this.data];
+  }
+  // Add this method to check if note is shown
+  isNoteShown(i: number): boolean {
+    return this.shownNotes.has(i);
+  }
+  closeNote(index: number) {
+    this.shownNotes.delete(index);
+  }
+  toggleShowNote(i: number) {
+    if (this.shownNotes.has(i)) {
+      this.shownNotes.delete(i);
+    } else {
+      this.shownNotes.add(i);
+    }
+  }
+
+  enterBarcode($event) {
+    this.barcode = $event.target.value;
+    // console.log(this.barcode);
+    this.productSer.addproductBarcode(this.barcode).subscribe(res => {
+      // console.log(res);
+      if (res['errors']) {
+        this.notifySer.notify('warning', res['errors']);
+      }
+      if (res !== null) {
+        // if (this.amountProduct === null) {
+        //   this.amountProduct = 1;
+        // }
+
+        // if (this.searchMode) {
+        //   this.selectedProductValue = res;
+        //   this.inputQuantity.nativeElement.focus();
+        //   return;
+        // } else {
+        this.onSelectedProduct(res);
+        // }
+      }
+    });
+  }
+  // end coding
 }

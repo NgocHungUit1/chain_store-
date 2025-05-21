@@ -15,7 +15,6 @@ export class WarehouseParcelFormDialogAvailableComponent {
   constructor(
     public dialogRef: MatDialogRef<WarehouseParcelFormDialogAvailableComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: object) {
-
   }
 
   onNoClick(): void {

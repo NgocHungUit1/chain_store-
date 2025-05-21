@@ -105,7 +105,7 @@
   padding-left: 0px !important;
 }
 
-.mat-form-field-wrapper {
+:host ::ng-deep .mat-form-field-wrapper {
   padding-bottom: 2px;
 }
 
@@ -121,13 +121,13 @@ tr.mat-header-row {
   background-color: rgb(0, 150, 136) !important;
 }
 
-.product-item {
+.product-item-import-form {
   background-color: rgba(0, 150, 136, 0.1) !important;
 }
 
-.product-item:hover,
-.product-item.mat-active,
-.product-item.mat-selected{
+.product-item-import-form:hover,
+.product-item-import-form.mat-active,
+.product-item-import-form.mat-selected{
   background-color: rgba(0, 150, 136, 0.3) !important;
 }
 
@@ -230,12 +230,13 @@ tr.mat-header-row {
 /* Container chính */
 .custom-parcel-filter-container {
   display: flex !important;
+  flex-direction: column !important;
   align-items: flex-start !important;
-  gap: 8px !important;
+  /*gap: 8px !important;*/
   width: 100% !important;
   margin-top: 8px !important;
   min-height: 40px !important;
-  padding-right: 10px !important;
+  /*padding-right: 10px !important;*/
   padding-bottom: 10px !important;
 }
 
@@ -250,25 +251,37 @@ tr.mat-header-row {
 }
 
 /* Container cho chips */
+/*.mat-chip-list-wrapper {*/
+/*  display: grid !important;*/
+/*  grid-template-columns: repeat(1, 1fr) !important;*/
+/*  gap: 8px !important;*/
+/*  width: 100% !important;*/
+/*}*/
 .mat-chip-list-wrapper {
-  display: grid !important;
-  grid-template-columns: repeat(3, 1fr) !important;
-  gap: 8px !important;
+  display: flex !important;
+
+  /*gap: 8px !important;*/
   width: 100% !important;
+}
+
+.mat-standard-chip {
+  min-height: 24px !important;
 }
 
 /* Style cho từng chip */
 .chip-item {
-  background-color: #009688 !important;
-  color: white !important;
-  height: 32px !important;
+  /*background-color: rgba(0, 150, 136, 0.5) !important;*/
+  background-color: white !important;
+  color: #3f51b5 !important;
+  height: 12px !important;
   border-radius: 4px !important;
-  padding: 0 12px !important;
-  font-size: 14px !important;
+  padding: 0 6px !important;
+  font-size: 10px !important;
   white-space: nowrap !important;
   margin: 0 !important;
   box-sizing: border-box !important;
-  width: 100% !important; /* Sẽ fit với grid column */
+  /*width: 100% !important; !* Sẽ fit với grid column *!*/
+  width: "160px" !important;
   justify-content: space-between !important;
 }
 
@@ -286,10 +299,10 @@ tr.mat-header-row {
 .parcel-input {
   border: none !important;
   background: transparent !important;
-  height: 24px !important;
+  height: 20px !important;
   border-left: 1px #a8a8a8 solid !important;
-  padding-left: 15px;
-
+  padding-left: 10px;
+  width: 130px !important;
 }
 
 /* Placeholder styling */
@@ -304,8 +317,14 @@ tr.mat-header-row {
 }
 
 .select-parcel-button{
-  height: 32px !important;
+  /*height: 32px !important;*/
+  /*line-height: 32px !important;*/
+  color: #3f51b5 !important;
+  font-size: 16px;
+  width: 20px !important;
   line-height: 32px !important;
+  height: 32px !important;
+  padding-right: 5px;
 }
 
 /*!* Remove browser default focus outline *!*/
@@ -325,3 +344,125 @@ tr.mat-header-row {
 .parcel-option{
   font-size: 1rem !important;
 }
+
+/* style for subItem */
+.sub-item-row td {
+  border-top: 1px dashed #bdbdbd !important;  /* Dashed border for sub-items */
+}
+.note-button{
+  background-color: #ffffff !important;
+  border: none !important;
+  padding: 4px 0px;
+  display: inline-flex;
+  gap: 4px;
+  cursor: pointer;
+  font-size: 14px;  /* Adjust text size */
+  color: #666;
+  align-items: center;  /* Align items to top */
+  max-width: 200px;       /* Set maximum width for button */
+  text-align: left;       /* Align text to left */
+
+}
+
+.note-container {
+  position: relative;
+  display: inline-block; /* Make container only as wide as needed */
+  overflow-y: visible;
+}
+
+.note-area {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 1001;
+  background: white;
+  border-radius: 4px;
+
+}
+
+.note-textarea {
+  width: 300px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: none;
+  outline: none;
+  font-family: inherit;
+  display: block;
+}
+
+.note-textarea:focus {
+  border-color: #00897b;
+}
+
+.product-name-container
+.product-name-text {
+  /*flex: 1;*/
+  white-space: pre-wrap !important;
+}
+
+.note-description{
+  color: #666 !important;
+  font-size: 0.8rem !important;
+
+  max-width: 200px;       /* Slightly less than button to account for icon */
+  white-space: normal !important;    /* Allow normal text wrapping */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  display: -webkit-box;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+
+}
+
+.open-close-container {
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.table-container {
+  position: relative;
+  overflow: visible !important;
+  overflow-x: auto !important;
+}
+
+.table-content {
+  overflow: visible !important;
+
+}
+
+.warehouse-product-table {
+  overflow: visible !important;
+}
+
+.warehouse-product-table td{
+  overflow: visible !important;
+}
+
+
+.note-button mat-icon {
+  font-size: 16px;  /* Reduce from default 24px */
+  width: 16px;      /* Needed to maintain icon proportions */
+  height: 16px;     /* Needed to maintain icon proportions */
+  line-height: 16px;/* Align with text */
+}
+
+.sub-item-row .center-td {
+  align-items: center !important;
+  padding: 0 !important;
+  vertical-align: middle !important;
+}
+/*end style for subItem feature*/

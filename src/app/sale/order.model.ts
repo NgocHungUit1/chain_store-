@@ -34,6 +34,12 @@ export class PaymentSiderBar {
 
 // Cau truc don hang
 
+interface Parcel {
+  parcel_no: string;
+  expiration_date: string;
+  quantity_of_stock: number;
+}
+
 export class ProductInfo {
   product_id: string;
   sample_prescription_id: string;
@@ -44,9 +50,14 @@ export class ProductInfo {
   product_unit_id: number;
   product_unit_value: number;
   base_unit: string;
-
   is_return: boolean;
   max_amount_return: number;
+
+  product_parcels: Parcel[];
+  master_product_id: string; // use for subItem
+  is_sub_item: number;
+  note: string;
+  parcel_no: string;
 }
 
 export class ItemInvoice {

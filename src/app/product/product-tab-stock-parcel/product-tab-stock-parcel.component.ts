@@ -61,7 +61,7 @@ export class ProductTabStockParcelComponent extends ListComponentBase implements
   loadData() {
     this.isLoadingResults = true;
 
-    this.warehouseParcelService.getListByProduct(this.apiFilter).subscribe(res => {
+    this.warehouseParcelService.getList(this.apiFilter).subscribe(res => {
       this.data = res.body;
       // console.log(this.data);
       this.parcelDataSource = new MatTableDataSource<WarehouseProductParcel>(this.data);

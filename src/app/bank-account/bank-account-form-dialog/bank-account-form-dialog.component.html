@@ -1,0 +1,56 @@
+<h1 mat-dialog-title *ngIf="!(this.modelId !== null && this.modelId !== undefined)">Thêm tài khoản ngân hàng</h1>
+<h1 mat-dialog-title *ngIf="this.modelId !== null && this.modelId !== undefined">Cập nhật tài khoản</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <div fxLayout="row wrap">
+
+      <div fxFlex="100">
+        <mat-form-field>
+          <mat-label>Số tài khoản</mat-label>
+          <input matInput tabindex="1" formControlName="account_number" required>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex="100">
+        <mat-form-field>
+          <mat-select tabindex="2" formControlName="bank_code"
+                      placeholder="Ngân hàng">
+            <mat-option *ngFor="let code of bankCodes" [value]="code">
+              {{this.bankCodesObj[code]}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.controls['bank_code'].hasError('required')">Chi nhánh không được bỏ trống
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex="100">
+        <mat-form-field>
+          <mat-label>Tên tài khoản</mat-label>
+          <input matInput tabindex="3" formControlName="account_name" required>
+        </mat-form-field>
+      </div>
+
+
+      <div fxFlex="100">
+        <mat-form-field>
+          <mat-label>Địa chỉ</mat-label>
+          <textarea matInput tabindex="4" formControlName="note" rows="2"></textarea>
+        </mat-form-field>
+      </div>
+
+
+    </div>
+
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="14" (click)="submit()">
+    <mat-icon>save</mat-icon>
+    Lưu
+  </button>
+  <button mat-button (click)="onNoClick()" tabindex="-1">
+    <mat-icon>cancel</mat-icon>
+    Bỏ qua
+  </button>
+</div>

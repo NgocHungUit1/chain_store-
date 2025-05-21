@@ -1,0 +1,196 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-container {
+  background-color: white;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Header Styling */
+.modal-header {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  position: relative;
+  text-align: center;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #000;
+  margin: 0;
+}
+
+.close-button {
+  position: absolute; /* Take it out of the flex flow */
+  right: 0; /* Align to the rightmost edge */
+  top: 50%; /* Vertically center relative to the header */
+  transform: translateY(-50%); /* Adjust for vertical centering */
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+
+  &:hover {
+    color: #000;
+  }
+}
+
+/* Account Information Styling */
+.account-info {
+  text-align: center;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.account-name {
+  color: rgb(10, 63, 127);
+  font-size: 11px;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.account-details {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+}
+
+.account-number {
+  font-weight: bold;
+  color: rgb(10, 63, 127);
+  font-size: 11px;
+}
+
+.separator {
+  color: #ccc;
+}
+
+.bank-name {
+  font-size: 11px;
+  font-weight: bold;
+  color: rgb(10, 63, 127);
+}
+
+/* QR Section Styling */
+.qr-section {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.vietqr-logo {
+  width: 70%;
+  img {
+    height: 40px;
+  }
+}
+
+.qr-code {
+  width: 70%;
+  max-width: 300px;
+  height: auto;
+
+  img {
+    width: 100%;
+    height: auto;
+    background-color: white;
+  }
+}
+
+/* Service Logos Styling */
+.service-logos {
+  margin-top: 5px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+
+  img {
+    height: 20px;
+  }
+}
+
+/* Button Styling */
+.button-container {
+  margin: 20px 0;
+}
+
+.print-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #3e8e41;
+  }
+
+  .print-icon {
+    margin-right: 8px;
+  }
+}
+
+/* Connection Message Styling */
+.connection-message {
+  color: #2258a7;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .modal-container {
+    width: 95%;
+    padding: 15px;
+  }
+
+  .modal-title {
+    font-size: 18px;
+  }
+
+  .qr-code {
+    width: 90%;
+  }
+}
+
+.printable-qr {
+  width: 80%;
+  max-width: 300px;
+  height: auto;
+  background-image: url(assets/images/background/qrframe.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  padding: 15px;
+  border-radius: 10px;
+}

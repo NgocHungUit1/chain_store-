@@ -17,6 +17,8 @@ export class ProductUnit {
   latest_parcel_exp_date: string;
 }
 
+
+
 export class Product {
   id: string;
   product_no: string;
@@ -51,6 +53,8 @@ export class Product {
   product_unit_quantity_of_stock: number; // for unit
   amount: number;
   quantity: Quantity;
+  master_product_id: string; // use for subItem
+  is_sub_item: number;
 }
 
 export class Quantity {

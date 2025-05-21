@@ -51,3 +51,14 @@
   border-radius: 23px;
   border: 2px solid white;
 }
+
+
+/* For the track when toggled on */
+::ng-deep .mymegamenu .mat-slide-toggle.custom-toggle.mat-checked .mat-slide-toggle-bar {
+  background-color:  #a1fff7 !important; /* Light green background */
+}
+
+/* For the thumb/circle when toggled on */
+::ng-deep .mymegamenu .mat-slide-toggle.custom-toggle.mat-checked .mat-slide-toggle-thumb {
+  background-color: #009688 !important; /* Darker green thumb */
+}
