@@ -898,6 +898,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     const value = Number(event.target.value);
     this.orderService.inputAmountProduct(product_index, value);
     this.handleAddRowIfNecessary(product_index, value);
+    this.listProduct = [...this.listProduct];
   }
 
   inputAmountProductReturn(product_index: number, event) {
@@ -1282,8 +1283,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
       this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
         const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
         const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
-
-        debugger
+        
+        // debugger
         let printContent = '<title>' + res?.invoice_no + '</title>';
         printContent += `
           <style>
@@ -3043,6 +3044,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
       if (product.amount > selectedParcel.quantity_of_stock) {
         product.amount = selectedParcel.quantity_of_stock;
+        // this.orderService.inputAmountProduct(product_index, selectedParcel.quantity_of_stock);
+        
         redu += selectedParcel.quantity_of_stock;
         const availableParcels = this.getAvailableItems(product_index).filter(
           parcel => parcel['parcel_no'] !== selectedParcel.parcel_no
@@ -3076,6 +3079,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
           }
         }
       }
+      this.handleExpenseOrder();
+      this.listProduct = [...this.listProduct];
+      this.handleUpdateStorage();
     });
   }
 
@@ -3106,6 +3112,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
     }
     if (sum_amount > selectedParcel.quantity_of_stock ) {
       product.amount = selectedParcel.quantity_of_stock;
+      this.listProduct[product_index] =  {...product};
+      this.listProduct = [...this.listProduct];
       redu += selectedParcel.quantity_of_stock;
 
 
