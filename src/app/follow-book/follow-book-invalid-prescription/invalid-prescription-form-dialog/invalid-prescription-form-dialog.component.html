@@ -1,0 +1,161 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title>
+    {{ isEdit ? 'Cập nhật' : 'Thêm mới' }} đơn thuốc không hợp lệ
+  </h2>
+
+  <div mat-dialog-content>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Ngày</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="date" [max]="maxDate" required>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="form.get('date').hasError('required')">
+            Vui lòng chọn ngày
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Họ tên Bệnh nhân</mat-label>
+          <input matInput formControlName="patient_name" required>
+          <mat-error *ngIf="form.get('patient_name').hasError('required')">
+            Vui lòng nhập họ tên bệnh nhân
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Địa chỉ bệnh nhân</mat-label>
+          <input matInput formControlName="patient_address" required>
+          <mat-error *ngIf="form.get('patient_address').hasError('required')">
+            Vui lòng nhập địa chỉ bệnh nhân
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Họ tên BS kê đơn</mat-label>
+          <input matInput formControlName="doctor_name" required>
+          <mat-error *ngIf="form.get('doctor_name').hasError('required')">
+            Vui lòng nhập họ tên bác sĩ kê đơn
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Thông tin bác sĩ</mat-label>
+          <input matInput formControlName="doctor_info" required>
+          <mat-error *ngIf="form.get('doctor_info').hasError('required')">
+            Vui lòng nhập thông tin bác sĩ
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Chẩn đoán</mat-label>
+          <input matInput formControlName="diagnosis" required>
+          <mat-error *ngIf="form.get('diagnosis').hasError('required')">
+            Vui lòng nhập chẩn đoán
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="section-container">
+        <div class="section-header">Mô tả đơn thuốc</div>
+        <div class="checkbox-container">
+          <div class="form-row">
+            <mat-checkbox formControlName="not_follow_template">
+              Không đúng theo mẫu quy định
+            </mat-checkbox>
+          </div>
+
+          <div class="form-row">
+            <mat-checkbox formControlName="expired">
+              Quá thời hạn mua thuốc (≥ 05 ngày kể từ ngày kê đơn)
+            </mat-checkbox>
+          </div>
+
+          <div class="form-row">
+            <mat-checkbox formControlName="missing_drug_info">
+              Không ghi rõ ràng và chính xác tên thuốc, nồng độ, hàm lượng, số lượng
+            </mat-checkbox>
+          </div>
+
+          <div class="form-row">
+            <mat-checkbox formControlName="unclear_dosage">
+              Cách dùng, liều dùng, các phối hợp không rõ ràng
+            </mat-checkbox>
+          </div>
+
+          <div class="form-row">
+            <mat-checkbox formControlName="missing_doctor_info">
+              Không có đủ tên, chữ ký, địa chỉ, đầu phòng khám, bệnh viện của Bác sĩ
+            </mat-checkbox>
+          </div>
+
+          <div class="form-row">
+            <mat-checkbox>Khác</mat-checkbox>
+            <mat-form-field appearance="outline" class="other-field">
+              <input matInput formControlName="other_prescription_issues" placeholder="Nhập nội dung khác">
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-container">
+        <div class="section-header">Cách xử lý</div>
+        <div class="checkbox-container">
+          <div class="form-row">
+            <mat-checkbox formControlName="contact_doctor">
+              Hỏi lại người kê đơn
+            </mat-checkbox>
+          </div>
+
+          <div class="form-row">
+            <mat-checkbox formControlName="notify_customer">
+              Thông báo cho người mua
+            </mat-checkbox>
+          </div>
+
+          <div class="form-row">
+            <mat-checkbox formControlName="refuse_sale">
+              Từ chối bán
+            </mat-checkbox>
+          </div>
+
+          <div class="form-row">
+            <mat-checkbox>Khác</mat-checkbox>
+            <mat-form-field appearance="outline" class="other-field">
+              <input matInput formControlName="other_resolution_methods" placeholder="Nhập nội dung khác">
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Ghi chú</mat-label>
+          <textarea matInput formControlName="notes" rows="3"></textarea>
+        </mat-form-field>
+      </div>
+    </form>
+  </div>
+
+  <div mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="onCancel()">Hủy</button>
+    <button mat-raised-button color="primary" [disabled]="form.invalid || isLoading" (click)="onSubmit()">
+      {{ isEdit ? 'Cập nhật' : 'Thêm mới' }}
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-shade">
+    <mat-spinner diameter="30"></mat-spinner>
+  </div>
+</div>

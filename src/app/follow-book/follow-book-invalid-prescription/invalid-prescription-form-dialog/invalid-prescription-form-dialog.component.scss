@@ -1,0 +1,79 @@
+.dialog-container {
+  position: relative;
+  padding: 0 16px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.dialog-title {
+  margin-bottom: 16px;
+}
+
+.form-row {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.form-field {
+  display: block;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.section-container {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.section-label {
+  font-weight: 500;
+  margin: 15px 0 10px;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.checkbox-row {
+  margin-left: 10px;
+}
+
+.section-header {
+  font-weight: 500;
+  margin-bottom: 16px;
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 16px;
+}
+
+.checkbox-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.other-field {
+  margin-left: 16px;
+  width: calc(100% - 80px);
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+  padding: 8px 0;
+}
+
+.loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
