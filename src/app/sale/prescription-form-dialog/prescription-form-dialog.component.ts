@@ -13,6 +13,7 @@ import { MedicalFacilityFormDialogComponent } from '../medical-facility-form-dia
 import { MedicalFacilityService } from '../medical-facility.service';
 import { MedicalFacilityFilter } from '../medical-facility.model';
 import { environment } from '../../../environments/environment';
+import { INationalProduct } from './prescription-form-dialog.interface';
 
 // Định nghĩa class ImageSnippet tương tự product-medicine-dialog
 class ImageSnippet {
@@ -46,6 +47,10 @@ export class PrescriptionFormDialogComponent implements OnInit {
 
   doctors = [];
   medicalFacilitys = [];
+
+
+  nationalProductDataSource: INationalProduct[] = [];
+  nationalProductDisplayedColumns: string[] = ['id', 'name', 'main_active_substance', 'unit', 'amount', 'usage'];
 
   // Các biến cho upload ảnh - dùng cách tương tự product-medicine-dialog
   imageButtons = [
@@ -153,6 +158,8 @@ export class PrescriptionFormDialogComponent implements OnInit {
         age: data['age'],
         medical_facility_id: data['medical_facility_id'],
       });
+
+      this.nationalProductDataSource = data['national_products'];
 
       // Lấy thông tin host từ environment
       const apiUrlParts = environment.apiUrl.split('/');

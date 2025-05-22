@@ -40,6 +40,7 @@ export class Product {
   medicine: Medicine;
   group: Group;
   productPlacements: Placement[];
+  productUnit?: ProductUnit;
   productUnits: ProductUnit[];
   images: object[];
   common: object;  // use for sale page
