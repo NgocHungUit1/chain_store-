@@ -1461,6 +1461,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
             function onQrLoaded() {
               window.print();
             }
+            window.onafterprint = function() {
+              window.close();
+            }
           </script>
           </section>
         `;
@@ -2183,6 +2186,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
           <script>
             function onQrLoaded() {
               window.print();
+            }
+            window.onafterprint = function() {
+              window.close();
             }
           </script>
           </section>
