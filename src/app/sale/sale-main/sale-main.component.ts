@@ -1454,16 +1454,21 @@ export class SaleMainComponent implements OnInit, DoCheck {
         // Footer with QR code
         printContent += `
           <br>
-          <p class="center"><img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Cám%20ơn%20và%20hẹn%20gặp%20lại" style="width: 80px; height: 80px;"></p>
+          <p class="center"><img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Cám%20ơn%20và%20hẹn%20gặp%20lại" style="width: 80px; height: 80px;" onload="onQrLoaded()"></p>
           <p class="center" style="font-style: italic;">Cám ơn và hẹn gặp lại!</p>
           <p class="center" style="font-size: 9px;">POWERED BY rx20.vn</p>
-          </section>`;
+          <script>
+            function onQrLoaded() {
+              window.print();
+            }
+          </script>
+          </section>
+        `;
 
         const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
         WindowPrt.document.write(printContent);
         WindowPrt.document.close();
         WindowPrt.focus();
-        WindowPrt.print();
         // WindowPrt.close(); // lỗi tự đôngs
       });
     });
@@ -2171,20 +2176,22 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
       // Footer with QR code
       printContent += `
-        <br>
-        <p class="center"><img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Cám%20ơn%20và%20hẹn%20gặp%20lại" style="width: 80px; height: 80px;"></p>
-        <p class="center" style="font-style: italic;">Cám ơn và hẹn gặp lại!</p>
-        <p class="center" style="font-size: 9px;">POWERED BY rx20.vn</p>
-        </section>
-      `;
+          <br>
+          <p class="center"><img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Cám%20ơn%20và%20hẹn%20gặp%20lại" style="width: 80px; height: 80px;" onload="onQrLoaded()"></p>
+          <p class="center" style="font-style: italic;">Cám ơn và hẹn gặp lại!</p>
+          <p class="center" style="font-size: 9px;">POWERED BY rx20.vn</p>
+          <script>
+            function onQrLoaded() {
+              window.print();
+            }
+          </script>
+          </section>
+        `;
 
-      console.log({printContent})
-
-      const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
-      WindowPrt.document.write(printContent);
-      WindowPrt.document.close();
-      WindowPrt.focus();
-      WindowPrt.print();
+        const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+        WindowPrt.document.write(printContent);
+        WindowPrt.document.close();
+        WindowPrt.focus();
       // WindowPrt.close(); // Uncomment if you want to auto-close after printing
     });
   }
