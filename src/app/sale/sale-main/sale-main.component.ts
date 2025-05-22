@@ -2676,15 +2676,24 @@ export class SaleMainComponent implements OnInit, DoCheck {
   }
 
   tinhLaiTienThua() {
+    const customerPayValue = numeral(this.form.controls['customerPay'].value).value();
+
+    // for case null: delete all in the customerPay input it will be null
+    if(customerPayValue === 0 || customerPayValue === null) {
+      this.tienThuaTraKhach = 0;
+      this.tienKhachNo = 0;
+      return;
+    }
+
     this.tienThuaTraKhach =
-      numeral(this.form.controls['customerPay'].value).value()
+      customerPayValue
       - this.sumPrice
       + this.numberDiscount
       + this.numberPointDiscount;
     this.tienKhachNo = this.sumPrice
       - this.numberDiscount
       - this.numberPointDiscount
-      - numeral(this.form.controls['customerPay'].value).value()
+      - customerPayValue
       + this.expenseOrder;
   }
 
