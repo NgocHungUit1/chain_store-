@@ -232,7 +232,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
     this.getQrCode(this.selectedBankAccount).subscribe(qrCode=>{
       this.selectedBankQr = qrCode
     });    // …do whatever you need here…
-    // this.tinhLaiTienThua(); Tín: khách thanh toán = 0 thì mặc định thanh toán hết => nợ = 0
+    if (this.form.controls['customerPay'].value !== 0) {
+      this.tinhLaiTienThua(); //Tín: khách thanh toán = 0 thì mặc định thanh toán hết => nợ = 0
+    }
   }
   /**
    *  So sanh danh sach cu
@@ -1283,7 +1285,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
         const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
         const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
-        
+
         // debugger
         let printContent = '<title>' + res?.invoice_no + '</title>';
         printContent += `
@@ -3045,7 +3047,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       if (product.amount > selectedParcel.quantity_of_stock) {
         product.amount = selectedParcel.quantity_of_stock;
         // this.orderService.inputAmountProduct(product_index, selectedParcel.quantity_of_stock);
-        
+
         redu += selectedParcel.quantity_of_stock;
         const availableParcels = this.getAvailableItems(product_index).filter(
           parcel => parcel['parcel_no'] !== selectedParcel.parcel_no
@@ -3316,7 +3318,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     // Update the customerPay form control with the selected amount
     this.form.get('customerPay')?.setValue(numeral(amount.toString()).format('0,0'));
 
-    // this.tinhLaiTienThua(); Tin 21/05/2025: Xoá cái này để khi mặc định Khánh thanh toán = 0 coi như thanh toán hết
+    this.tinhLaiTienThua();
   }
   onMethodChange(): void {
     // console.log(`Selected payment method: ${this.selectedMethod}`);
