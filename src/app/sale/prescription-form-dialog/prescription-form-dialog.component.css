@@ -178,5 +178,24 @@
   border: 1px solid #2196F3 !important;
 }
 
+.table-national-product .mat-header-cell,
+.table-national-product .mat-cell {
+  min-width: 80px;
+  padding: 0 10px;
+}
+
+.group-select {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.valid-prescription-data {
+  padding: 10px 0;
+  color: red;
+  text-align: center;
+  font-size: 15px;
+}
 
 

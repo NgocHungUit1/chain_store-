@@ -1,11 +1,10 @@
-import { Component, Inject, OnInit, Optional, ViewChild, ElementRef } from '@angular/core';
+import { Component, Inject, OnInit, Optional } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { LocationService } from '../../location/location.service';
 import * as moment from 'moment';
 import { PrescriptionService } from '../prescription.service';
-import { UsingFilter } from '../../product/using.model';
 import { DoctorService } from '../../doctor/doctor.service';
 import { DoctorFilter } from '../../doctor/doctor.model';
 import { DoctorFormDialogComponent } from '../../doctor/doctor-form-dialog/doctor-form-dialog.component';
@@ -14,6 +13,7 @@ import { MedicalFacilityService } from '../medical-facility.service';
 import { MedicalFacilityFilter } from '../medical-facility.model';
 import { environment } from '../../../environments/environment';
 import { INationalProduct } from './prescription-form-dialog.interface';
+import { Prescription } from '../prescription.model';
 
 // Định nghĩa class ImageSnippet tương tự product-medicine-dialog
 class ImageSnippet {
@@ -33,6 +33,8 @@ export class PrescriptionFormDialogComponent implements OnInit {
 
   local_data: any;
   prescription_id: string;
+
+  prescriptionDetail: Prescription;
 
   sexItems: any[] = [
     {
@@ -107,6 +109,11 @@ export class PrescriptionFormDialogComponent implements OnInit {
       image_2: [null],
       image_3: [null],
       image_4: [null],
+      medical_facility_phone_number: [null],
+      prescription_type: [null],
+      prescription_date: [null],
+      doctor_note: [null],
+      doctor_advice: [null],
     });
   }
 
@@ -137,10 +144,13 @@ export class PrescriptionFormDialogComponent implements OnInit {
         }
       });
     }
+
+    this.onFormControlMedicalFacilityChange();
   }
 
   loadDetail(id) {
-    this.service.getDetail(id, '').subscribe(data => {
+    this.service.getDetail(id, 'medicalFacility').subscribe(data => {
+      this.prescriptionDetail = data;
       this.form.patchValue({
         no: data['no'],
         name: data['name'],
@@ -157,6 +167,11 @@ export class PrescriptionFormDialogComponent implements OnInit {
         weight: data['weight'],
         age: data['age'],
         medical_facility_id: data['medical_facility_id'],
+        medical_facility_phone_number: data['medicalFacility'] ? data['medicalFacility']['phone_number'] : null,
+        prescription_type: data['prescription_type'],
+        prescription_date: data['prescription_date'],
+        doctor_note: data['doctor_note'],
+        doctor_advice: data['doctor_advice'],
       });
 
       this.nationalProductDataSource = data['national_products'];
@@ -209,7 +224,7 @@ export class PrescriptionFormDialogComponent implements OnInit {
 
   processFile(imageInput) {
     const file: File = imageInput.files[0];
-    if (!file) return;
+    if (!file) { return; }
 
     // Kiểm tra kích thước file (5MB)
     if (file.size > 5 * 1024 * 1024) {
@@ -346,5 +361,23 @@ export class PrescriptionFormDialogComponent implements OnInit {
         this.form.controls['medical_facility_id'].setValue(result.id);
       }
     });
+  }
+
+  private onFormControlMedicalFacilityChange(): void {
+    this.form.controls['medical_facility_id'].valueChanges.subscribe(value => {
+      if (value !== null && value !== undefined) {
+        this.form.controls['medical_facility_phone_number'].setValue(
+          this.medicalFacilitys.find(x => x.id === value)?.phone_number
+        );
+      }
+    });
+  }
+
+  public calculateDayByPrescriptionDate(): number {
+    const now = new Date();
+    const prescriptionDate = new Date(this.prescriptionDetail.prescription_date);
+    const diffTime = now.getTime() - prescriptionDate.getTime();
+
+    return Math.floor(diffTime / (1000 * 60 * 60 * 24));
   }
 }
