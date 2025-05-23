@@ -3549,7 +3549,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result['event'] === 'Choose') {
+      if (result && result['event'] === 'Choose') {
         if (result['product_id']) {
           this.handleAddProductToList(result['product_id'], masterProduct);
         }
