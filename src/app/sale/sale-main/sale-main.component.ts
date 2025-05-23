@@ -2691,13 +2691,14 @@ export class SaleMainComponent implements OnInit, DoCheck {
   }
 
   tinhLaiTienThua() {
-    const customerPayValue = numeral(this.form.controls['customerPay'].value).value();
+    let customerPayValue = numeral(this.form.controls['customerPay'].value).value();
 
-    // for case null: delete all in the customerPay input it will be null
+    // for case null: delete all in the customerPay input it will be null => làm cách của Đức thì nợ 100% hoá đơn thì ko được
     if(customerPayValue === 0 || customerPayValue === null) {
-      this.tienThuaTraKhach = 0;
-      this.tienKhachNo = 0;
-      return;
+      customerPayValue = 0;
+      // this.tienThuaTraKhach = 0;
+      // this.tienKhachNo = 0;
+      // return;
     }
 
     this.tienThuaTraKhach =
