@@ -250,7 +250,7 @@ export class CartComponent implements OnInit, OnDestroy {
     if (this.amountProduct === null) {
       this.amountProduct = 1;
     }
-    
+
     if(this.searchMode){
       this.selectedProductValue = product;
       this.inputQuantity.nativeElement.select();
@@ -325,6 +325,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   handlePriceListProduct(product: Product, samplePrescriptionId = null) {
+    product.amount = Number(product.amount);
     let units = product.productUnits;
     // tslint:disable-next-line:no-shadowed-variable
     units.forEach(element => {
@@ -413,7 +414,7 @@ export class CartComponent implements OnInit, OnDestroy {
     return product.product_name; // Show only the product name
   }
 
-  
+
   onkeydown($event) {
     if (isNaN($event.target.value)) {
       return;
@@ -439,7 +440,7 @@ export class CartComponent implements OnInit, OnDestroy {
           this.handlePriceListProduct(res);
         }
       }
-    }); 
+    });
     $event.target.value = '';
   }
 }
