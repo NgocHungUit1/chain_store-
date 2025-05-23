@@ -23,6 +23,7 @@ export class Prescription {
   prescription_date: Date;
   doctor_note: string;
   doctor_advice: string;
+  nationalProducts: any;
 }
 
 

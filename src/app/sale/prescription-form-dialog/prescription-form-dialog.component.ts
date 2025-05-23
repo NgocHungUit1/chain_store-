@@ -149,7 +149,7 @@ export class PrescriptionFormDialogComponent implements OnInit {
   }
 
   loadDetail(id) {
-    this.service.getDetail(id, 'medicalFacility').subscribe(data => {
+    this.service.getDetail(id, 'medicalFacility,nationalProducts').subscribe(data => {
       this.prescriptionDetail = data;
       this.form.patchValue({
         no: data['no'],
@@ -174,7 +174,7 @@ export class PrescriptionFormDialogComponent implements OnInit {
         doctor_advice: data['doctor_advice'],
       });
 
-      this.nationalProductDataSource = data['national_products'];
+      this.nationalProductDataSource = data['nationalProducts'];
 
       // Lấy thông tin host từ environment
       const apiUrlParts = environment.apiUrl.split('/');
