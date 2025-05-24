@@ -399,7 +399,7 @@ export class OrderService {
 
   }
 
-  updateProduct(i: any, product: Product) {
+  updateProduct(i: any, product: Product, samplePrescriptionId = null) {
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
@@ -409,6 +409,11 @@ export class OrderService {
     } else {
       let listProduct = mItemInvoice.listProduct;
       listProduct[i]['product'] = product;
+      listProduct[i]['product_id'] = product.id;
+      listProduct[i]['product_unit_id'] = product.product_unit_id;
+      listProduct[i]['product_unit_value'] = product.product_unit_value;
+      listProduct[i]['base_unit'] = product.base_unit;
+      listProduct[i]['sample_prescription_id'] = samplePrescriptionId;
       mItemInvoice.listProduct = listProduct;
     }
     this.setListInvoiceLocalStorage(ListInvoice);

@@ -248,7 +248,11 @@ html .page-wrapper .page-content {
       font-size: 12px;
       color: black;
       padding-top: 4px;
-      padding-right: 4px;
+      padding-right: 8px;
+
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
 
     .row-total-price{
@@ -259,6 +263,13 @@ html .page-wrapper .page-content {
     }
     .row-product-no {
       font-size: 12px;
+    }
+
+    .row-product-name {
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
 
     /**
@@ -672,12 +683,12 @@ Popup parcel list
     .mat-radio-outer-circle {
       border-color: #009688 !important; // Green border for the outer circle
     }
-    
+
     .mat-radio-inner-circle {
       background-color: #009688 !important; // Green fill for the inner circle
     }
   }
-  
+
   // Optional - style the ripple effect when clicked
   .mat-radio-ripple .mat-ripple-element {
     background-color: rgba(86, 173, 81, 0.26) !important; // Lighter green for the ripple
@@ -978,4 +989,21 @@ Popup parcel list
 .blank-option {
   color: #777;
   font-style: italic;
+}
+
+.row-change-product {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .info {
+    font-size: 12px;
+    color: red;
+  }
+
+  button {
+    font-size: 12px;
+  }
+
+
 }

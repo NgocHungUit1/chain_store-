@@ -42,8 +42,11 @@ export class MedicalFacilityFormDialogComponent implements OnInit {
         null,
         Validators.compose([
           Validators.required,
-          Validators.maxLength(32)
+          Validators.maxLength(64)
         ])
+      ],
+      phone_number: [
+        null, [Validators.maxLength(15)]
       ],
     });
     if (this.medical_facility_id !== null) {
@@ -54,8 +57,18 @@ export class MedicalFacilityFormDialogComponent implements OnInit {
   }
 
   submit() {
-    if (this.form.valid) {
-      const data = this.form.getRawValue();
+    if (!this.form.valid) {
+      this.notifySer.notify('error', 'Form chưa hợp lệ');
+      return;
+    }
+
+    const data = this.form.getRawValue();
+    if (this.medical_facility_id !== null) {
+      this.mainSer.update(this.medical_facility_id, data).subscribe(res => {
+        this.notifySer.notify('success', 'Cập nhật sở y tế thành công!');
+        this.dialogRef.close(res);
+      });
+    } else {
       this.mainSer.create(data).subscribe(res => {
         this.notifySer.notify('success', 'Thêm Cơ sở y tế thành công!');
         this.dialogRef.close(res);

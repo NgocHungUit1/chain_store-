@@ -16,13 +16,22 @@
               </div>
               <div fxFlex="16">
                 <div class="span-product-no">
-                  {{ masterProduct?.product?.product_no }}
+                  <div> {{ masterProduct?.product?.product_no }}</div>
+
+                  <div *ngIf="masterProduct?.product?.medicine?.content && masterProduct?.product?.medicine?.content != 'NULL'">
+                    Cách dùng: {{masterProduct?.product?.medicine?.content}}
+                  </div>
+
                 </div>
               </div>
               <div fxFlex="16">
                 <div class="row-text row-product-name" title="{{ masterProduct?.product?.product_name }}">
                   <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                     {{ masterProduct.product?.product_name }}
+                  </div>
+
+                  <div>
+                    Hoạt chất: {{ masterProduct.product?.medicine?.main_active_substance }}
                   </div>
                 </div>
               </div>
@@ -122,7 +131,8 @@
                   <button mat-icon-button (click)="deleteProduct(getProductIndex(masterProduct))">
                     <mat-icon>delete</mat-icon>
                   </button>
-                  <button mat-icon-button (click)="toggleShowMenu(getProductIndex(masterProduct))">
+                  <button [disabled]="masterProduct?.product?.not_in_store"
+                    mat-icon-button (click)="toggleShowMenu(getProductIndex(masterProduct))">
                     <mat-icon>more_vert</mat-icon>
                     <div class="note-area" *ngIf="isMenuShown(getProductIndex(masterProduct))">
                       <button mat-stroked-button (click)="toggleShowNote(getProductIndex(masterProduct))">
@@ -131,7 +141,8 @@
                       </button>
                     </div>
                   </button>
-                  <button mat-icon-button (click)="addNewRow(getProductIndex(masterProduct))">
+                  <button [disabled]="masterProduct?.product?.not_in_store"
+                    mat-icon-button (click)="addNewRow(getProductIndex(masterProduct))">
                     <mat-icon>add</mat-icon>
                   </button>
                 </div>
@@ -146,7 +157,7 @@
                      *ngIf="isNoteShown(getProductIndex(masterProduct))">
                     <textarea #noteTextArea class="note-textarea note-textarea-{{getProductIndex(masterProduct)}}"
                               cdkTextareaAutosize
-                              placeholder="Ghi chú" [(ngModel)]="masterProduct.note"
+                              placeholder="Ghi chú" [(ngModel)]="masterProduct.product.note"
                               (ngModelChange)="handleUpdateStorage()">
                     </textarea>
                 </div>
@@ -168,7 +179,8 @@
 
 
             <!--            parcel item-->
-            <div fxLayout="row wrap" fxLayoutAlign="center center" class="product-item sub-item-row"
+            <div *ngIf="!masterProduct?.product?.not_in_store"
+              fxLayout="row wrap" fxLayoutAlign="center center" class="product-item sub-item-row"
                  style="margin-top: -8px">
               <div fxFlex="2" class="row-product-no">
                 <span> </span>
@@ -222,6 +234,35 @@
               <div fxFlex="12" class="action-buttons-container">
               </div>
             </div>
+
+            <!--  select change product-->
+            <div *ngIf="masterProduct?.product?.not_in_store"
+                 fxLayout="row wrap" fxLayoutAlign="center center" class="product-item sub-item-row"
+                 style="margin-top: -8px">
+              <div fxFlex="2" class="row-product-no">
+                <span> </span>
+              </div>
+              <div fxFlex="32" class="row-change-product">
+                <div class="info">Thuốc này không có trong hệ thống</div>
+                <button mat-icon-button (click)="openSearchProductDialog(masterProduct)">
+                  <mat-icon>edit</mat-icon>
+                  Chọn thuốc thay thế
+                </button>
+              </div>
+              <div fxFlex="11" class="row-product-base-unit">
+              </div>
+              <div fxFlex="10" class="row-amount">
+              </div>
+              <div fxFlex="1"></div>
+              <div fxFlex="13" class="row-edit-price">
+              </div>
+              <div fxFlex="12" class="row-total-price">
+              </div>
+
+              <div fxFlex="12" class="action-buttons-container">
+              </div>
+            </div>
+
             <!--            subItem         -->
             <div fxLayout="row wrap" fxLayoutAlign="center center"
                  *ngFor="let subItem of getSubItemsForMaster(masterProduct); let subIndex = index"

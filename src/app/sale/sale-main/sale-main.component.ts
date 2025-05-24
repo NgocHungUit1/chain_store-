@@ -12,7 +12,7 @@ import { PriceListService } from '../../price-book/price-list.service';
 import { NoteDetailOrderDialogComponent } from '../note-detail-order-dialog/note-detail-order-dialog.component';
 import { PriceDetailOrderDialogComponent } from '../price-detail-order-dialog/price-detail-order-dialog.component';
 import { PriceListProductService } from '../../price-book/price-list-product.service';
-import { ItemInvoice } from '../order.model';
+import { ItemInvoice, ProductInfo } from '../order.model';
 import { Customer } from '../../customer/customer.model';
 import { SaleCustomerFormDialogComponent } from '../sale-customer-form-dialog/sale-customer-form-dialog.component';
 import { PaymentSiderbarDialogComponent } from '../payment-siderbar-dialog/payment-siderbar-dialog.component';
@@ -42,6 +42,7 @@ import { PaymentQrDialogComponent } from '../payment-qr-dialog/payment-qr-dialog
 import { TransactionNotifyDialogComponent } from '../transaction-notify-dialog/bank-account-dialog.component';
 import { BankAccountService } from '../../bank-account/bank-account.service';
 import { BankAccountFilter } from '../../bank-account/bank-account.model';
+import { SearchProductDialogComponent } from '../../common/search-product-dialog/search-product-dialog.component';
 
 export const MY_FORMATS = {
   parse: {
@@ -523,10 +524,12 @@ export class SaleMainComponent implements OnInit, DoCheck {
                   this.listProduct.forEach(elementData => {
                     // debugger;
                     if (group[elementData.product_unit_id] !== undefined) {
-                      if(groupProductIdCommonPrice[elementData.product_id] && groupProductIdCommonPrice[elementData.product_id].length >= 1)
+                      if(groupProductIdCommonPrice[elementData.product_id] && groupProductIdCommonPrice[elementData.product_id].length >= 1) {
                         elementData.common_price = groupProductIdCommonPrice[elementData.product_id][0].common_price;
-                      else
+                      } else {
                         elementData.common_price = group[elementData.product_unit_id][0]['price'];
+                      }
+                      elementData.common_price =  elementData.common_price ?? 0;
 
                       if (!(elementData.sample_prescription_id !== undefined && elementData.sample_prescription_id !== null)) {
                         if (elementData.product.end_price === undefined) {
@@ -539,10 +542,13 @@ export class SaleMainComponent implements OnInit, DoCheck {
                         }
                       }
                     } else {
-                      if(groupProductIdCommonPrice[elementData.product_id] && groupProductIdCommonPrice[elementData.product_id].length >= 1)
+                      if (groupProductIdCommonPrice[elementData.product_id] && groupProductIdCommonPrice[elementData.product_id].length >= 1) {
                         elementData.common_price = groupProductIdCommonPrice[elementData.product_id][0].common_price;
-                      else
+                      } else {
                         elementData.common_price = elementData.product.sell_price;
+                      }
+                      elementData.common_price =  elementData.common_price ?? 0;
+
                       if (!(elementData.sample_prescription_id !== undefined && elementData.sample_prescription_id !== null)) {
                         if (elementData.product.end_price === undefined) {
                           this.sumPrice +=
@@ -3553,6 +3559,69 @@ export class SaleMainComponent implements OnInit, DoCheck {
     }
 
     return result;
+  }
+
+  public openSearchProductDialog(masterProduct: ProductInfo): void {
+    const dialogRef = this.dialog.open(SearchProductDialogComponent, {
+      width: '80%',
+      minWidth: '750px',
+      minHeight: '85%',
+      data: {
+        is_select_single: true,
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result['event'] === 'Choose') {
+        if (result['product_id']) {
+          this.handleAddProductToList(result['product_id'], masterProduct);
+        }
+      }
+    });
+  }
+
+  private handleAddProductToList(productId: number, masterProduct: ProductInfo): void {
+    const indexProduct = this.listProduct.findIndex(item => item.product.id === productId);
+    if (indexProduct !== -1) {
+      this.notifySer.notify('warning', 'Sản phẩm đã tồn tại trong hóa đơn!');
+      return;
+    }
+
+    this.isLoadingResults = true;
+    this.productSer.getDetail(productId.toString(), 'productUnits,quantity')
+      .pipe(
+        finalize(() => {
+          this.isLoadingResults = false;
+        })
+      )
+      .subscribe((product: Product) => {
+        product.quantity_of_stock = product.quantity ? product.quantity.number : 0;
+
+        if (product.quantity_of_stock === 0) {
+          this.notifySer.notify('warning', 'Sản phẩm không đủ tồn kho.');
+          return;
+        }
+
+        const units = product.productUnits;
+        units.forEach(element => {
+          element.quantity_of_stock = Math.floor(
+            product.quantity_of_stock / element.value
+          );
+        });
+        product.productUnits = units;
+        product.product_unit_id = product.productUnit ? product.productUnit.id : null;
+
+        const indexMasterProduct = this.getProductIndex(masterProduct);
+        if (indexMasterProduct !== -1) {
+          if (product.quantity_of_stock < masterProduct.amount) {
+            this.orderService.inputAmountProduct(indexMasterProduct, 1);
+          }
+
+          this.orderService.updateProduct(indexMasterProduct, product);
+        } else {
+          this.orderService.addProduct(product);
+        }
+      });
   }
 }
 

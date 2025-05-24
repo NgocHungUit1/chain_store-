@@ -118,7 +118,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
 
     if (this.invoice.prescription_id !== null) {
       this.prescriptionService.getDetail(this.invoice.prescription_id,
-        'doctor,medicalFacility').subscribe(res => {
+        'doctor,medicalFacility,nationalProducts').subscribe(res => {
         // console.log(res);
         this.prescription = res;
 

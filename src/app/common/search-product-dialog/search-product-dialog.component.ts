@@ -48,6 +48,10 @@ export class SearchProductDialogComponent extends ListComponentBase implements O
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object
   ) {
     super();
+    if (this.data  && this.data['is_select_single']) {
+      this.displayedColumns = this.displayedColumns.filter(item => item !== 'select');
+      this.selectedColumns = this.selectedColumns.filter(item => item !== 'select');
+    }
   }
 
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
