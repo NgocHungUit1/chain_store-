@@ -2083,15 +2083,27 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   openUnitCreateDialog(element: any) {
     const ref = this.dialog.open(WarehouseUnitCreateDialogComponent, {
-      width: '35%',
+      width: '50vw',
       minHeight: '200px',
-      data: element
+      minWidth: '300px',
+      maxWidth: '800px',
+      data: element,
+
     });
 
     ref.afterClosed().subscribe(res => {
       if (res) {
         /* Handle call api here */
-        console.log(res);
+        this.productSer.update(element.product_id, { units: res }).subscribe(product => {
+          this.productSer.getDetail(element.product_id, 'productUnits').subscribe(resPro => {
+            const currentProductIndex = this.data.findIndex(p => p.product_id === element.product_id);
+            this.data[currentProductIndex].productUnits = resPro['productUnits'];
+            this.notifySer.notify('success', 'Cập nhật đơn vị thành công!');
+            this.productDataSource.data = [...this.data];
+          });
+        }, error => {
+          this.loading = false;
+        });
       }
     });
   }
