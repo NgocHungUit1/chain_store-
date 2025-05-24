@@ -70,6 +70,9 @@ export class InvoiceTabInfoComponent implements OnChanges {
     '0': 'Nữ'
   };
 
+  einvoiceStatusData: any = null;
+  einvoiceLoading = false;
+
   constructor(
     private dialog: MatDialog,
     public notifySer: NotifierService,
@@ -114,6 +117,21 @@ export class InvoiceTabInfoComponent implements OnChanges {
       }
 
       this.loading = false;
+
+      // Kiểm tra nếu là hóa đơn điện tử thì gọi API kiểm tra trạng thái
+      if (invoiceData.use_einvoice === 1) {
+        this.einvoiceLoading = true;
+        this.invoiceService.checkEInvoiceStatus(this.invoice.id).subscribe(
+          einvoiceRes => {
+            this.einvoiceStatusData = einvoiceRes;
+            this.einvoiceLoading = false;
+          },
+          error => {
+            this.einvoiceLoading = false;
+            console.error('Error fetching e-invoice status:', error);
+          }
+        );
+      }
     });
 
     if (this.invoice.prescription_id !== null) {
@@ -327,6 +345,12 @@ export class InvoiceTabInfoComponent implements OnChanges {
 
         if (customer_phone !== '') {
           printContent += '<p style="">SĐT: ' + customer_phone + '</p>';
+        }
+
+        // Thêm thông tin hóa đơn điện tử nếu có
+        if (this.einvoiceStatusData && res.use_einvoice === 1) {
+          printContent += '<p style="">Số HĐĐT: <strong>' + this.einvoiceStatusData.invoice_info.einvoice_no + '</strong></p>';
+          printContent += '<p style="">Mã cơ quan thuế: <strong>' + this.einvoiceStatusData.bkav_status.tax_authority_code + '</strong></p>';
         }
 
         printContent += '<table>' +
@@ -563,6 +587,33 @@ export class InvoiceTabInfoComponent implements OnChanges {
       return false;
     }
     return true;
+  }
+
+  /**
+   * Tạo hóa đơn điện tử
+   * @param invoice
+   */
+  createEInvoice(invoice) {
+    this.loading = true;
+
+    this.invoiceService.createEInvoice(invoice.id).subscribe(
+      res => {
+        this.loading = false;
+        if (res && res.success === true) {
+          this.notifySer.notify('success', 'Tạo hóa đơn điện tử thành công!');
+          invoice.use_einvoice = 1;
+          this.loadData();
+        } else {
+          const errorMessage = res.message || 'Tạo hóa đơn điện tử thất bại!';
+          this.notifySer.notify('error', errorMessage);
+        }
+      },
+      error => {
+        this.loading = false;
+        console.error('Error creating e-invoice:', error);
+        this.notifySer.notify('error', 'Có lỗi xảy ra khi tạo hóa đơn điện tử!');
+      }
+    );
   }
 
 }

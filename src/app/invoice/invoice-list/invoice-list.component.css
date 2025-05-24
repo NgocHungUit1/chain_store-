@@ -90,3 +90,23 @@ tr.mat-header-row:nth-child(1) {
   background-color: #dcf4fc;
 }
 
+.mat-column-einvoice_no {
+  padding-left: 24px;
+  text-align: center;
+  position: relative;
+}
+
+.mat-column-einvoice_no::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 8px; /* Tạo khoảng trống */
+}
+
+th.mat-header-cell.mat-column-einvoice_no {
+  text-align: center;
+  padding-left: 24px;
+}
+

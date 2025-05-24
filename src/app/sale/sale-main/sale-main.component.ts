@@ -192,6 +192,9 @@ export class SaleMainComponent implements OnInit {
   @ViewChild('customerSearch') customerSearch: ElementRef;
   @ViewChild('customerPayment') customerPayment: ElementRef;
   @ViewChild('showListProd') showListProd: ElementRef;
+  @ViewChild('einvoiceCheckbox') einvoiceCheckbox;
+
+  isEinvoiceEnabled = false;
 
   /**
    *  So sanh danh sach cu
@@ -629,6 +632,7 @@ export class SaleMainComponent implements OnInit {
       invoice_id: [null],
       total_amount: [0],
       prescription_id: [null], // ban thuoc theo don
+      use_einvoice: [false],
     });
 
     if (this.form.controls['branch_id'].value == null) {
@@ -773,6 +777,11 @@ export class SaleMainComponent implements OnInit {
         }
       })
     );
+
+    // Kiểm tra cấu hình hóa đơn điện tử
+    this.optionStoreService.getValue('einvoice_enabled').subscribe(res => {
+      this.isEinvoiceEnabled = res.value === 'true';
+    });
   }
 
   /**
@@ -1713,7 +1722,7 @@ export class SaleMainComponent implements OnInit {
       Invoice: {
         invoice_id: mItemInvoice.invoice_id,
         customer_id: customer?.id,
-        total_price: this.sumPrice, // tong tien hang
+        total_price: this.sumPrice,
         discount: this.discount,
         discount_type: this.discount_type,
         note: this.form.controls['noteSiderBar'].value,
@@ -1723,7 +1732,8 @@ export class SaleMainComponent implements OnInit {
         prescription_id: this.prescription.checked
                          ? (mItemInvoice.prescription_id || this.prescription_id)
                          : null,
-        national_pharmacy_no: this.prescription.checked ? mItemInvoice.national_pharmacy_no : null
+        national_pharmacy_no: this.prescription.checked ? mItemInvoice.national_pharmacy_no : null,
+        use_einvoice: this.isEinvoiceEnabled && this.einvoiceCheckbox.checked ? 1 : 0
       },
       UserID: mItemInvoice.user.id,
       InvoiceDetail: invoiceDetail,
@@ -2154,5 +2164,10 @@ export class SaleMainComponent implements OnInit {
     const allPermissions = this.authSer.getPermissionsFromLocalStorage();
 
     return allPermissions.indexOf(permissionName) !== -1;
+  }
+
+  clickEinvoice() {
+    const currentValue = this.form.get('use_einvoice').value;
+    this.form.get('use_einvoice').setValue(!currentValue);
   }
 }

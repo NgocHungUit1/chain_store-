@@ -55,3 +55,28 @@ table {
   background-color: antiquewhite;
   padding: 13px;
 }
+
+/* Thêm class einvoice-info để sử dụng các style đã có */
+.einvoice-info .invoice-info-row {
+  margin: 20px 0px;
+}
+
+.einvoice-info .invoice-info-row .invoice-info-field {
+  border-bottom: 1px solid #eee;
+  padding: 3px 0 10px;
+}
+
+.einvoice-info .invoice-info-row .invoice-field-label {
+  min-width: 100px;
+  display: inline-block;
+}
+
+.label.label-success {
+  display: inline-block;
+  background-color: #4caf50;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 500;
+}

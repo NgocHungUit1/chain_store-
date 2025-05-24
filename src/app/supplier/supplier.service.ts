@@ -134,6 +134,15 @@ export class SupplierService {
     return this.http.post(url, data);
   }
 
+  /**
+   * Tra cứu thông tin doanh nghiệp theo mã số thuế
+   * @param taxCode
+   */
+  lookupBusinessInfo(taxCode: string) {
+    const url = environment.apiUrl + '/supplier/lookup-business-info?taxCode=' + taxCode;
+    return this.http.get<any>(url);
+  }
+
 }
 
 

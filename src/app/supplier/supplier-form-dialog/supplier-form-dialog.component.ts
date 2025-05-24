@@ -7,6 +7,8 @@ import { map, startWith } from 'rxjs/operators';
 import { Observable } from 'rxjs/Observable';
 import { LocationService } from '../../location/location.service';
 import { Location } from '../../location/location.model';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-supplier-form-dialog',
@@ -34,6 +36,7 @@ export class SupplierFormDialogComponent implements OnInit {
     public locationSer: LocationService,
     private fb: FormBuilder,
     private supplierSer: SupplierService,
+    private http: HttpClient,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object
   ) {
     this.local_data = {...data};
@@ -83,6 +86,63 @@ export class SupplierFormDialogComponent implements OnInit {
 
     if (this.supplier_id !== null && this.supplier_id !== undefined) {
       this.loadSupplier(this.supplier_id);
+    }
+  }
+
+  lookupBusinessInfo() {
+    const taxCode = this.form.get('tax_code').value;
+    if (!taxCode) {
+      this.notifySer.notify('warning', 'Vui lòng nhập mã số thuế để tra cứu');
+      return;
+    }
+
+    this.loading = true;
+    this.supplierSer.lookupBusinessInfo(taxCode).subscribe(
+      response => {
+        this.loading = false;
+          if (response.success && response.business_info) {
+            const businessInfo = response.business_info;
+
+            this.form.patchValue({
+              name: businessInfo.name,
+              address: businessInfo.address,
+              company_name: businessInfo.name,
+            });
+
+            this.parseAddress(businessInfo.address);
+
+            this.notifySer.notify('success', 'Đã cập nhật thông tin doanh nghiệp');
+          } else {
+            this.notifySer.notify('error', 'Không tìm thấy thông tin doanh nghiệp với mã số thuế này');
+          }
+        },
+        error => {
+          this.loading = false;
+          this.notifySer.notify('error', 'Lỗi khi tra cứu thông tin doanh nghiệp');
+          console.error('Error looking up business info:', error);
+        }
+        );
+  }
+
+  parseAddress(address: string) {
+    if (!address) return;
+
+    const parts = address.split(',').map(part => part.trim());
+
+    const cityPart = parts.find(part =>
+      part.includes('Thành phố') ||
+      part.includes('Tỉnh') ||
+      part.includes('TP.')
+    );
+
+    if (cityPart) {
+      this.locationSer.autocomplete(cityPart, 'province').subscribe(locations => {
+        if (locations && locations.length > 0) {
+          const province = locations[0];
+          this.form.patchValue({ province: province });
+          this.onProvinceChange(province);
+        }
+      });
     }
   }
 

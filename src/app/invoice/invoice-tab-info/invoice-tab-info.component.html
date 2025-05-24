@@ -39,7 +39,7 @@
           <div fxFlex="4"></div>
           <div fxFlex="48" class="invoice-info-field">
             <span class="invoice-field-label">Người bán :</span>
-            <strong>{{ invoice.user?.username  }}</strong>
+            <strong>{{ invoice.user?.username }}</strong>
           </div>
         </div>
 
@@ -55,16 +55,40 @@
           </div>
         </div>
 
-      </div>
-
-      <div fxFlex="30" class="invoice-info">
         <div fxLayout="row wrap" class="invoice-info-row">
-          <div class="invoice-info-field-note">
+          <div fxFlex="48" class="invoice-info-field">
             <span class="invoice-field-label">Ghi chú :</span> <strong>{{invoice.note}}</strong>
           </div>
         </div>
       </div>
 
+      <!-- Phần thông tin hóa đơn điện tử ở bên phải -->
+      <div fxFlex="30" class="invoice-info" *ngIf="invoice.use_einvoice === 1 && einvoiceStatusData">
+        <div class="invoice-info-row">
+          <div class="invoice-info-field">
+            <span class="invoice-field-label">Số HĐĐT:</span>
+            <strong>{{ einvoiceStatusData.invoice_info.einvoice_no || '' }}</strong>
+          </div>
+        </div>
+        <div class="invoice-info-row">
+          <div class="invoice-info-field">
+            <span class="invoice-field-label">Mã tra cứu:</span>
+            <strong>{{ einvoiceStatusData.invoice_info.einvoice_mtc || '' }}</strong>
+          </div>
+        </div>
+        <div class="invoice-info-row">
+          <div class="invoice-info-field">
+            <span class="invoice-field-label">Trạng thái thuế:</span>
+            <label class="label label-success">{{ einvoiceStatusData.bkav_status.tax_status_text || '' }}</label>
+          </div>
+        </div>
+        <div class="invoice-info-row">
+          <div class="invoice-info-field">
+            <span class="invoice-field-label">Mã cơ quan thuế:</span>
+            <strong>{{ einvoiceStatusData.bkav_status.tax_authority_code || '' }}</strong>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -349,6 +373,13 @@
               *ngIf="invoice.order_status === 'done' && invoice.national_pharmacy_no !== null">
         <mat-icon>close_fullscreen</mat-icon>
         Gỡ liên thông
+      </button>
+
+      <!-- Thêm nút tạo hóa đơn điện tử với điều kiện hiển thị chính xác hơn -->
+      <button class="m-r-10" mat-raised-button color="accent" (click)="createEInvoice(invoice)"
+              *ngIf="invoice.order_status === 'done' && invoice.status == 10 && (invoice.use_einvoice === 0 || invoice.use_einvoice === null || invoice.use_einvoice === undefined)">
+        <mat-icon>receipt</mat-icon>
+        Hóa đơn điện tử
       </button>
 
       <button class="m-r-10" mat-raised-button color="warn"

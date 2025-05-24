@@ -63,6 +63,13 @@
             </button>
           </mat-radio-button>
 
+          <mat-radio-button class="radio-button-report-type" value="einvoice" *ngIf="canDo('Option-Store.Update') || canDo('Option-Store.Create')">
+            Hóa đơn điện tử
+            <button mat-icon-button aria-label="einvoice">
+              <mat-icon>receipt</mat-icon>
+            </button>
+          </mat-radio-button>
+
           <!--          <mat-radio-button class="radio-button-report-type" value="partner">-->
           <!--            Đối tác-->
           <!--            <button mat-icon-button aria-label="add">-->
@@ -425,6 +432,62 @@
                       <mat-icon>save</mat-icon>
                       Lưu
                     </button>
+                  </div>
+                </form>
+              </mat-card-content>
+            </mat-card>
+
+            <!-- Thêm card cho cấu hình hóa đơn điện tử -->
+            <mat-card *ngIf="settingsType === 'einvoice'">
+              <mat-card-content>
+                <form [formGroup]="einvoiceForm" (ngSubmit)="saveEinvoice()">
+                  <div fxLayout="row wrap" class="line-option">
+
+                  </div>
+
+                  <div fxLayout="row wrap">
+                    <!-- col full-->
+                    <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                      <mat-form-field class="full-width">
+                        <input matInput placeholder="Partner GUID"
+                               [formControl]="einvoiceForm.controls['einvoice_partner_guid']">
+                      </mat-form-field>
+                      <small
+                        *ngIf="einvoiceForm.controls['einvoice_partner_guid'].hasError('required') && einvoiceForm.controls['einvoice_partner_guid'].touched"
+                        class="text-danger support-text">Vui lòng điền Partner GUID.
+                      </small>
+                    </div>
+
+                    <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                      <mat-form-field class="full-width">
+                        <input matInput placeholder="Partner Token"
+                               [formControl]="einvoiceForm.controls['einvoice_partner_token']">
+                      </mat-form-field>
+                      <small
+                        *ngIf="einvoiceForm.controls['einvoice_partner_token'].hasError('required') && einvoiceForm.controls['einvoice_partner_token'].touched"
+                        class="text-danger support-text">Vui lòng điền Partner Token.
+                      </small>
+                    </div>
+
+                    <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                      <mat-form-field class="full-width">
+                        <input matInput placeholder="API URL"
+                               [formControl]="einvoiceForm.controls['einvoice_api_url']">
+                      </mat-form-field>
+                      <small
+                        *ngIf="einvoiceForm.controls['einvoice_api_url'].hasError('required') && einvoiceForm.controls['einvoice_api_url'].touched"
+                        class="text-danger support-text">Vui lòng điền URL API.
+                      </small>
+                    </div>
+
+                    <!-- col half-->
+                    <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100" class="m-t-10">
+                      <button mat-raised-button color="primary" type="submit"
+                              [disabled]="!einvoiceForm.valid">
+                        <mat-icon>save</mat-icon>
+                        Lưu
+                      </button>
+                    </div>
                   </div>
                 </form>
               </mat-card-content>

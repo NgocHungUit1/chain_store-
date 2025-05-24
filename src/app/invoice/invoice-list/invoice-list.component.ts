@@ -76,6 +76,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
   orderNationalFilter: FormGroup;
   productFilter: FormGroup;
   customerFilter: FormGroup;
+  einvoiceFilter: FormGroup;
 
   currentDateFilter: DateFilter;
 
@@ -98,19 +99,21 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     'created_at': 'Thời gian',
     'returns': 'Mã trả hàng',
     'customer': 'Khách hàng',
+    'national_pharmacy_no': 'Phiếu DQG',
     'total_price': 'Tổng tiền hàng',
     'discount': 'Giảm giá',
     'payment': 'Khách đã trả',
-    'national_pharmacy_no': 'Phiếu DQG',
+    'einvoice_no': 'Số HĐĐT',
+    'einvoice_status': 'Trạng thái ĐĐT'
   };
 
   displayedColumns: string[] = ['select',
-    '#', 'invoice_no', 'created_at', 'returns', 'customer', 'national_pharmacy_no', 'total_price',
-    'discount', 'payment'
+    '#', 'invoice_no', 'created_at', 'returns', 'customer', 'national_pharmacy_no',
+    'total_price', 'discount', 'payment', 'einvoice_no', 'einvoice_status'
   ];
   columnsToDisplay: string[] = ['select',
-    '#', 'invoice_no', 'created_at', 'returns', 'customer', 'national_pharmacy_no', 'total_price',
-    'discount', 'payment'
+    '#', 'invoice_no', 'created_at', 'returns', 'customer', 'national_pharmacy_no',
+    'total_price', 'discount', 'payment', 'einvoice_no', 'einvoice_status'
   ];
   dataSource: Invoice[] = [];
   selection = new SelectionModel<Invoice>(true, []);
@@ -151,14 +154,20 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
 
   // for second column
   second_columnsToDisplay: string[] = ['select',
-    'second_#', 'second_invoice_no', 'second_created_at', 'second_returns', 'second_customer', 'second_national_no',
-    'second_total_price', 'second_discount', 'second_payment'
+    'second_#', 'second_invoice_no', 'second_created_at', 'second_returns', 'second_customer',
+    'second_national_no', 'second_total_price', 'second_discount', 'second_payment',
+    'second_einvoice_no', 'second_einvoice_status'
   ];
 
   codeSearch = null;
 
   filteredProducts: Observable<Product[]>;
   filteredCustomers: Observable<Customer[]>;
+
+  einvoiceFilterList = [
+    { value: 'yes', name: 'Có' },
+    { value: 'no', name: 'Không' },
+  ];
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
@@ -323,8 +332,9 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     filter.expand = 'customer,payment,store,user,returns,today,time,createdFormat';
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
-    filter.order_status = this.orderStatusFilter.controls['status'].value;
-    filter.order_national = this.orderNationalFilter.controls['status'].value;
+    filter.order_status = this.orderStatusFilter.controls['status'].value.join(',');
+    filter.order_national = this.orderNationalFilter.controls['status'].value.join(',');
+    filter.einvoice = this.einvoiceFilter.controls['status'].value.join(',');
 
     const product = this.productFilter.controls['product']?.value;
     filter.product_id = product?.id;
@@ -356,6 +366,9 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     });
     this.customerFilter = this.fb.group({
       customer: [null],
+    });
+    this.einvoiceFilter = this.fb.group({
+      status: new FormControl(['yes', 'no']),
     });
   }
 
@@ -670,5 +683,19 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     } else {
       this.toggleDropdownSearch = false;
     }
+  }
+
+  resetFilter() {
+    this.orderStatusFilter.patchValue({
+      status: ['pending', 'done'],
+    });
+
+    this.orderNationalFilter.patchValue({
+      status: ['yes', 'no'],
+    });
+
+    this.einvoiceFilter.patchValue({
+      status: ['yes', 'no'],
+    });
   }
 }
