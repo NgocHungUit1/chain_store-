@@ -13,8 +13,7 @@
             </mat-form-field>
           </div>
 
-          <div fxLayout="row wrap">
-
+          <div fxLayout="row wrap" class="group-select">
             <div fxFlex="auto">
               <mat-form-field>
                 <mat-select placeholder="Bác sĩ kê đơn" [formControl]="form.controls['doctor_id']">
@@ -40,9 +39,7 @@
             </div>
           </div>
 
-
-          <div fxLayout="row wrap">
-
+          <div fxLayout="row wrap" class="group-select">
             <div fxFlex="auto">
               <mat-form-field>
                 <mat-select placeholder="Cơ sở khám bệnh" [formControl]="form.controls['medical_facility_id']">
@@ -66,7 +63,6 @@
                 <mat-icon>add</mat-icon>
               </button>
             </div>
-
           </div>
           <!--          <div fxFlex="100">-->
           <!--            <mat-form-field>-->
@@ -74,6 +70,49 @@
           <!--              <input matInput tabindex="2" formControlName="medical_facility_id" >-->
           <!--            </mat-form-field>-->
           <!--          </div>-->
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Số điện thoại cơ sở khám bệnh (Tự động cập nhật)</mat-label>
+              <input matInput tabindex="2" formControlName="medical_facility_phone_number" readonly>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Loại hóa đơn (Tự động cập nhật)</mat-label>
+              <input matInput tabindex="2" formControlName="prescription_type" readonly>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Chuẩn đoán</mat-label>
+              <textarea matInput tabindex="13" formControlName="note" rows="2"></textarea>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Ghi chú của bác sĩ</mat-label>
+              <textarea matInput tabindex="13" formControlName="doctor_note" rows="2"></textarea>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <mat-label>Lời dặn của bác sĩ</mat-label>
+              <textarea matInput tabindex="13" formControlName="doctor_advice" rows="2"></textarea>
+            </mat-form-field>
+          </div>
+
+        </div>
+      </div>
+
+      <div fxFlex="2"></div>
+
+      <div fxFlex="49">
+        <div fxLayout="row wrap">
 
           <div fxFlex="100">
             <mat-form-field>
@@ -104,16 +143,6 @@
               <input matInput tabindex="2" formControlName="weight">
             </mat-form-field>
           </div>
-
-
-        </div>
-      </div>
-
-      <div fxFlex="2"></div>
-
-      <div fxFlex="49">
-        <div fxLayout="row wrap">
-
 
           <div fxFlex="100">
             <mat-form-field>
@@ -150,13 +179,52 @@
             </mat-form-field>
           </div>
 
-          <div fxFlex="100">
-            <mat-form-field>
-              <mat-label>Chuẩn đoán</mat-label>
-              <textarea matInput tabindex="13" formControlName="note" rows="2"></textarea>
-            </mat-form-field>
-          </div>
+
         </div>
+      </div>
+    </div>
+
+    <div *ngIf="prescriptionDetail && calculateDayByPrescriptionDate() > 5" class="valid-prescription-data">
+        Đơn thuốc đã quá hạn quy định 5 ngày
+    </div>
+
+    <div *ngIf="nationalProductDataSource.length > 0">
+      <h3>Thành phần</h3>
+      <div class="table-responsive table-national-product">
+        <table mat-table [dataSource]="nationalProductDataSource" class="mat-elevation-z8" style="width: 100%">
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef> Mã </th>
+            <td mat-cell *matCellDef="let element; let i = index;"> {{ element.id }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef> Tên thuốc</th>
+            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="main_active_substance">
+            <th mat-header-cell *matHeaderCellDef> Hoạt chất chính </th>
+            <td mat-cell *matCellDef="let element"> {{ element.main_active_substance }} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="unit">
+            <th mat-header-cell *matHeaderCellDef> Đơn vị </th>
+            <td mat-cell *matCellDef="let element"> {{element.unit}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef> Số lượng </th>
+            <td mat-cell *matCellDef="let element"> {{element.amount }} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="usage">
+            <th mat-header-cell *matHeaderCellDef> Cách dùng </th>
+            <td mat-cell *matCellDef="let element"> {{element.usage }} </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="nationalProductDisplayedColumns" class="header-element-row"></tr>
+          <tr mat-row *matRowDef="let row; columns: nationalProductDisplayedColumns;"></tr>
+        </table>
       </div>
     </div>
 

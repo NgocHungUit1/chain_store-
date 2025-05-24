@@ -19,6 +19,11 @@ export class Prescription {
   address: string;
   doctor: any;
   medicalFacility: any;
+  prescription_type: string;
+  prescription_date: Date;
+  doctor_note: string;
+  doctor_advice: string;
+  nationalProducts: any;
 }
 
 

@@ -29,6 +29,7 @@ import { SharedModule } from '../shared/shared.module';
 import {WarehouseFormAmountComponent} from './warehouse-form-amount/warehouse-form-amount.component';
 import { WarehouseParcelFormDialogAvailableComponent } from './warehouse-parcel-form-dialog-available/warehouse-parcel-form-dialog-available.component';
 import { WarehouseParcelFormDialogSelectComponent } from './warehouse-parcel-form-dialog-select/warehouse-parcel-form-dialog-select.component';
+import {ClickOutsideDirective} from "./warehouse-import-form/click-outside.directive";
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { WarehouseParcelFormDialogSelectComponent } from './warehouse-parcel-for
     WarehouseFormAmountComponent,
     WarehouseUnitCreateDialogComponent,
     WarehouseParcelFormDialogAvailableComponent,
-    WarehouseParcelFormDialogSelectComponent
+    WarehouseParcelFormDialogSelectComponent,
+    ClickOutsideDirective
   ],
   imports: [
     CommonModule,

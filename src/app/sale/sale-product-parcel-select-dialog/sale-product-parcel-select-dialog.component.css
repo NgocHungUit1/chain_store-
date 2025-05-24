@@ -1,0 +1,122 @@
+
+
+/* Dialog title */
+mat-dialog-title {
+  font-size: 18px !important;
+  margin-bottom: 20px !important;
+}
+
+/* Search field */
+.search-field {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.search-field input {
+  padding-left: 16px;
+}
+
+/* Parcels list */
+.parcels-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.parcel-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 0;
+}
+
+/* Parcel chip */
+.parcel-info mat-chip {
+  color: black;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.parcel-info mat-chip.active {
+  background-color: #009688;
+  color: white;
+}
+
+/* Quantity field */
+.quantity-field {
+  width: 80px;
+}
+
+.quantity-field input {
+  text-align: center;
+}
+
+/* Bottom actions */
+mat-dialog-actions {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+mat-dialog-actions button {
+  min-width: 100px;
+  border-radius: 4px;
+}
+
+
+
+mat-dialog-actions button:last-child {
+  background-color: white;
+  color: black;
+}
+
+/* Quantity adjustment buttons */
+.quantity-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+
+.quantity-controls mat-icon {
+  font-size: 16px;
+}
+
+
+/* Dialog content scrolling */
+mat-dialog-content {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+.quantity-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quantity-button {
+  min-width: 36px !important;
+  width: 36px !important;
+  height: 36px !important;
+  padding: 0 !important;
+  border: 1px solid #ddd !important;
+  line-height: 36px !important;
+}
+
+.quantity-input {
+  width: 60px;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px;
+  -moz-appearance: textfield;
+}
+
+.quantity-input::-webkit-outer-spin-button,
+.quantity-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

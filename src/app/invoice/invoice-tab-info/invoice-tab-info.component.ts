@@ -136,7 +136,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
 
     if (this.invoice.prescription_id !== null) {
       this.prescriptionService.getDetail(this.invoice.prescription_id,
-        'doctor,medicalFacility').subscribe(res => {
+        'doctor,medicalFacility,nationalProducts').subscribe(res => {
         // console.log(res);
         this.prescription = res;
 
@@ -262,6 +262,10 @@ export class InvoiceTabInfoComponent implements OnChanges {
         mProductInfo.product_unit_id = element['product_unit_id'];
         mProductInfo.product_unit_value = element['product_unit_value'];
         mProductInfo.base_unit = element.base_unit;
+        mProductInfo.is_sub_item = element.is_sub_item;
+        mProductInfo.master_product_id = element.master_product_id;
+        mProductInfo.note = element.note;
+        mProductInfo.parcel_no = element.parcel_no;
         aProductInfo.push(mProductInfo);
       });
       mItemInvoice.listProduct = aProductInfo;

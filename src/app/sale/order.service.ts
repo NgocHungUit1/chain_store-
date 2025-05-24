@@ -228,7 +228,6 @@ export class OrderService {
     const listInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
-
     mItemInvoice = listItemInvoice.find(element => element.active === true);
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
       const listProduct: ProductInfo[] = [];
@@ -281,20 +280,31 @@ export class OrderService {
 
   deleteProduct(i: any) {
     const listInvoice = this.getListInvoiceLocalStorage();
-
     listInvoice.itemInvoice.forEach(mItemInvoice => {
       if (mItemInvoice.active === true) {
         if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
         } else {
           const listProduct = mItemInvoice.listProduct;
+          const deletedProduct = listProduct[i].product;
           const resultListProduct = [];
           let deleteSampleId = null;
           listProduct.forEach((eProductInfo, index) => {
-            if (i !== index) {
-              resultListProduct.push(eProductInfo);
-            } else {
-              if (eProductInfo.sample_prescription_id !== undefined && eProductInfo.sample_prescription_id !== null) {
-                deleteSampleId = eProductInfo.sample_prescription_id;
+            // handle delete sub item
+            if (deletedProduct.is_sub_item==1) {
+              if (i !== index ) {
+                resultListProduct.push(eProductInfo);
+              } else {
+                if (eProductInfo.sample_prescription_id !== undefined && eProductInfo.sample_prescription_id !== null) {
+                  deleteSampleId = eProductInfo.sample_prescription_id;
+                }
+              }
+            } else { // handle delete master item (delete it's sub item also)
+              if (i !== index && eProductInfo.product.master_product_id != deletedProduct.id ) {
+                resultListProduct.push(eProductInfo);
+              } else {
+                if (eProductInfo.sample_prescription_id !== undefined && eProductInfo.sample_prescription_id !== null) {
+                  deleteSampleId = eProductInfo.sample_prescription_id;
+                }
               }
             }
           });
@@ -318,7 +328,7 @@ export class OrderService {
   /*
   Thay doi so luong san pham
   */
-  upAmountProduct(product: Product, i: any) {
+  upAmountProduct(i: any) {
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
@@ -334,26 +344,25 @@ export class OrderService {
     this.setListInvoiceLocalStorage(ListInvoice);
   }
 
-  upAmountProductReturn(product: Product, i: any) {
-    let ListInvoice = this.getListInvoiceLocalStorage();
-    const listItemInvoice = ListInvoice.itemInvoice;
+
+  upAmountProductReturn( i: any) {
+    const listInvoiceLocal = this.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoiceLocal.itemInvoice;
     let mItemInvoice = new ItemInvoice();
-
-    mItemInvoice = listItemInvoice.find(element => element.active === true);
-
+    mItemInvoice = listItemInvoice.find(itemInvoiceElement => itemInvoiceElement.active === true);
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
+      return;
     } else {
-      let listProduct = mItemInvoice.listProduct;
-      if (listProduct[i]['amount'] < listProduct[i]['max_amount_return']) {
-        listProduct[i]['amount'] = Number(listProduct[i]['amount']) + 1;
+      const listProductLocal = mItemInvoice.listProduct;
+      if (listProductLocal[i]['amount'] < listProductLocal[i]['max_amount_return']) {
+        listProductLocal[i]['amount'] = Number(listProductLocal[i]['amount']) + 1;
       }
-
-      mItemInvoice.listProduct = listProduct;
+      mItemInvoice.listProduct = listProductLocal;
     }
-    this.setListInvoiceLocalStorage(ListInvoice);
+    this.setListInvoiceLocalStorage(listInvoiceLocal);
   }
 
-  downAmountProduct(product: Product, i: any) {
+  downAmountProduct(i: any) {
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
@@ -390,7 +399,7 @@ export class OrderService {
 
   }
 
-  updateProduct(i: any, product: Product) {
+  updateProduct(i: any, product: Product, samplePrescriptionId = null) {
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
@@ -400,26 +409,31 @@ export class OrderService {
     } else {
       let listProduct = mItemInvoice.listProduct;
       listProduct[i]['product'] = product;
+      listProduct[i]['product_id'] = product.id;
+      listProduct[i]['product_unit_id'] = product.product_unit_id;
+      listProduct[i]['product_unit_value'] = product.product_unit_value;
+      listProduct[i]['base_unit'] = product.base_unit;
+      listProduct[i]['sample_prescription_id'] = samplePrescriptionId;
       mItemInvoice.listProduct = listProduct;
     }
     this.setListInvoiceLocalStorage(ListInvoice);
   }
 
   inputAmountProduct(i: any, value: number) {
-    let ListInvoice = this.getListInvoiceLocalStorage();
-    const listItemInvoice = ListInvoice.itemInvoice;
+    const listInvoiceLocal = this.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoiceLocal.itemInvoice;
     let mItemInvoice = new ItemInvoice();
 
-    mItemInvoice = listItemInvoice.find(element => element.active === true);
+    mItemInvoice = listItemInvoice.find(itemInvoice => itemInvoice.active === true);
     if (mItemInvoice.listProduct === undefined || mItemInvoice.listProduct.length === 0) {
     } else {
-      let listProduct = mItemInvoice.listProduct;
+      const listProduct = mItemInvoice.listProduct;
       if (value >= 0) {
         listProduct[i]['amount'] = Number(value);
       }
       mItemInvoice.listProduct = listProduct;
     }
-    this.setListInvoiceLocalStorage(ListInvoice);
+    this.setListInvoiceLocalStorage(listInvoiceLocal);
   }
 
   inputAmountProductReturn(i: any, value: number) {

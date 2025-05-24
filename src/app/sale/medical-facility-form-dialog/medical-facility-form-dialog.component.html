@@ -1,9 +1,16 @@
-<h1 mat-dialog-title>Thêm cơ sở y tế</h1>
+<h1 mat-dialog-title>
+  {{medical_facility_id ? 'Cập nhật' : 'Thêm' }} cơ sở y tế
+</h1>
 <div mat-dialog-content>
   <form [formGroup]="form">
     <mat-form-field>
       <mat-label>Tên cơ sở</mat-label>
       <input matInput tabindex="1" [formControl]="this.form.controls['name']">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Số diện thoại</mat-label>
+      <input matInput tabindex="1" [formControl]="this.form.controls['phone_number']">
     </mat-form-field>
   </form>
 </div>

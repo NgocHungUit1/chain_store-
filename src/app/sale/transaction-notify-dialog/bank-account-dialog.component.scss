@@ -1,0 +1,84 @@
+.dialog-container {
+  // min-width: 400px;
+  // max-width: 500px;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.dialog-content {
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px;
+  gap: 8px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+.dialog-container
+  .mat-form-field:not(.mat-form-field-can-float)
+  .mat-form-field-underline {
+  bottom: 0;
+}
+
+.input-layout {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .mat-form-field{
+    margin-bottom: 0px !important;
+  }
+  margin-bottom: 34px;
+}
+.agreement-container {
+  margin: 20px 0;
+}
+
+.agreement-checkbox {
+  display: flex;
+  align-items: flex-start;
+}
+
+.agreement-text {
+  display: inline-block;
+  white-space: normal;
+  word-wrap: break-word;
+  line-height: 1.4;
+  margin-left: 8px; /* Adjust if needed */
+}
+
+.terms-link {
+  color: #1976d2;
+  text-decoration: none;
+}
+
+.terms-link:hover {
+  text-decoration: underline;
+}
+
+/* Style for the dialog to ensure proper width */
+::ng-deep .mat-dialog-container {
+  padding: 24px;
+  overflow: visible;
+}
+
+::ng-deep .mat-checkbox-layout {
+  white-space: normal !important;
+}
+
+::ng-deep .mat-checkbox-inner-container {
+  margin-top: 3px !important;
+}
