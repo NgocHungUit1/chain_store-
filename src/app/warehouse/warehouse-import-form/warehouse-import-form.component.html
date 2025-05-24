@@ -249,7 +249,7 @@
                 <th mat-header-cell *matHeaderCellDef style="min-width: 35px;"> #</th>
                 <td mat-cell
                     style="padding-top: 1.5rem; vertical-align: top" *matCellDef="let element; let i = index;">
-                  <span *ngIf="element?.is_sub_item==0">{{i + 1}}</span>
+                  <span *ngIf="element?.is_sub_item==0">{{getMasterIndex(i)}}</span>
                 </td>
               </ng-container>
 
@@ -295,7 +295,9 @@
                       <div class="note-area open-close-container" *ngIf="isNoteShown(i)">
                         <textarea class="note-textarea"
                                   placeholder="Ghi chú..."
-                                  [(ngModel)]="element.note">
+                                  [(ngModel)]="element.note"
+                                  (change) = "storeNoteToLocalStorage(i)"
+                        >
                         </textarea>
                       </div>
                     </div>
@@ -454,7 +456,9 @@
                     <input matInput style="text-align: right" class="quantity-input" [value]="element['quantity']"
                            [(ngModel)]="data[i]['quantity']"
                            [disabled]="data[i]['product_parcels'].length > 1"
-                           autocomplete="off" (keyup)="quantityChange($event,i)">
+                           autocomplete="off" (keyup)="quantityChange($event,i)"
+                           (change)="storeNoteToLocalStorage(i)"
+                           >
 
                   </mat-form-field>
                 </td>
@@ -472,7 +476,7 @@
                   <mat-form-field class="text-right">
 
                     <input matInput
-                    [ngModel]="data[i]['price'] | showValueExpenses: '0,0'" (keyup)="priceChange($event,i)">
+                    [ngModel]="data[i]['price'] | showValueExpenses: '0,0'" (keyup)="priceChange($event,i)" (change)="storeNoteToLocalStorage(i)">
                     <button mat-icon-button matPrefix
                             (click)="openPriceDialog(i)">
                       <mat-icon>add</mat-icon>
@@ -512,7 +516,9 @@
                              matInput
                              class="quantity-input"
                              [value]="element['amount'] | currency : 'VND' : ''"
-                             (click)="openAmountDialog(i)">
+                             (click)="openAmountDialog(i)"
+
+                      >
                     </mat-form-field>
                   </td>
                   <td *ngIf="!allow_amount_adjust"
@@ -583,7 +589,7 @@
             <div fxLayout="row wrap">
               <div fxFlex="100" style='display: flex; justify-content: space-between;margin-bottom: 4px'>
                 <mat-form-field style='width: 150px'>
-                  <mat-select formControlName="branch_id" [disabled]="form?.controls['status'].value === '10'">
+                  <mat-select (selectionChange)="storeBranchToLocalStorage($event)" formControlName="branch_id" [disabled]="form?.controls['status'].value === '10'">
                     <mat-option *ngFor="let branch of branchList" value="{{branch.id}}">{{branch.name}}</mat-option>
                   </mat-select>
                 </mat-form-field>
@@ -712,7 +718,9 @@
                 <mat-form-field>
                   <mat-label>Ghi chú</mat-label>
                   <textarea matInput tabindex="9"
-                            formControlName="note" rows="3"></textarea>
+                            formControlName="note" rows="3"
+                            (change)="storeWholeNoteToLocalStorage()"
+                  ></textarea>
                 </mat-form-field>
               </div>
               <p *ngIf="updateModelId !== null && model !== null && model['status'] === 10">
