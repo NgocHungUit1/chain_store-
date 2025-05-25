@@ -326,7 +326,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
   handlePriceListProduct(product: Product, samplePrescriptionId = null) {
     product.amount = parseInt(String(product.amount), 10);
-    if (isNaN(product.amount)) {
+    if (!Number.isInteger(product.amount)) {
       product.amount = 1;
     }
 
