@@ -325,7 +325,11 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   handlePriceListProduct(product: Product, samplePrescriptionId = null) {
-    product.amount = Number(product.amount);
+    product.amount = parseInt(String(product.amount), 10);
+    if (!Number.isInteger(product.amount)) {
+      product.amount = 1;
+    }
+
     let units = product.productUnits;
     // tslint:disable-next-line:no-shadowed-variable
     units.forEach(element => {
