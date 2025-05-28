@@ -44,6 +44,7 @@ import {TreeViewModule} from '@syncfusion/ej2-angular-navigations';
 // import { InputSelectAllDirective } from './common/input-select-all/input-select-all.directive';
 import { registerLicense } from '@syncfusion/ej2-base';
 import { WarehouseParcelFormDialogNewComponent } from './warehouse/warehouse-parcel-form-dialog-new/warehouse-parcel-form-dialog-new.component';
+import { WarehouseConfirmLoadDataFormComponent } from './warehouse/warehouse-confirm-load-data-form/warehouse-confirm-load-data-form.component';
 
 // Registering Syncfusion license key
 registerLicense('ORg4AjUWIQA/Gnt2V1hhQlJAfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hSn5UdkFjXXxccHNTRmZb');
@@ -71,6 +72,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     PopupConfirmDialogComponent,
     GroupReportComponent,
     WarehouseParcelFormDialogNewComponent,
+    WarehouseConfirmLoadDataFormComponent,
   ],
   imports: [
     BrowserModule,
