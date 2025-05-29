@@ -205,6 +205,18 @@
                 </mat-slide-toggle>
               </div>
             </div>
+
+            <div class='d-flex' style='justify-content: space-between'>
+              <div>Mặc định trả đủ</div>
+              <div>
+                <mat-slide-toggle
+                  (ngModelChange)='onShowPayfullChange()'
+                  color='primary'
+                  [(ngModel)]='showPayfull'>
+                </mat-slide-toggle>
+              </div>
+            </div>
+
           </div>
         </app-popover>
       </div>
@@ -696,11 +708,20 @@
               </div>
               <div fxFlex="60">
                 <mat-form-field>
-                  <input matInput tabindex="7" formControlName="paid_amount" (keyup)="inputformatNumber($event)" required
-                         value="{{ form.get('paid_amount').value }}" (change)="recalculateWarehouse();">
-                  <button mat-raised-button color="primary" matSuffix (click)="paidAmount()">
-                    Trả đủ
-                  </button>
+                  <ng-template #fullTemplate>
+                    <input matInput tabindex="7" formControlName="paid_amount" (keyup)="inputformatNumber($event)" required
+                           value="{{ form.get('paid_amount').value }}" (change)="recalculateWarehouse();"
+                    >
+                    <button mat-raised-button color="primary" matSuffix (click)="paidAmount()">
+                      Trả đủ
+                    </button>
+                  </ng-template>
+
+                  <ng-template #manualPayfull>
+                    <input class="text-right" matInput tabindex="7" formControlName="paid_amount" (keyup)="inputformatNumber($event)" required
+                           [value]="form.get('paid_amount').value" (change)="recalculateWarehouse();">
+                  </ng-template>
+                  <ng-container *ngTemplateOutlet="showPayfull ?fullTemplate:manualPayfull"></ng-container>
                 </mat-form-field>
               </div>
 

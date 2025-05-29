@@ -272,8 +272,11 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     quantity: null,
   };
   shownNotes: Set<number> = new Set();  // Will store user IDs or indices of visible notes
+  showPayfull: boolean = false;
+
   WAREHOUSEPRODUCTKEY = 'warehouseProduct';
   WAREHOUSEFORMKEY = 'warehouseForm';
+
   // create input for each row
   getItemControl(product_index: number) {
     if (!this.parcelItemControls.has(product_index)) {
@@ -804,6 +807,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           }
         });
 
+        this.showPayfull = this.localStorageService.getItem<boolean>("showPayfull") ?? false;
+
         if (this.optionStore_transaction_expenses.value === 'yes') {
           const filter = new ExpensesTransactionFilter();
           filter.status = '10';
@@ -1023,10 +1028,21 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         });
         resolve();
       } else {
-        this.notifySer.notify('warning', 'Danh sách không được để trống !');
+        this.notifySer.notify('warning', 'Danh sách không được để trống!');
         reject();
       }
     });
+
+    // check parcel
+    const products = this.data;
+    for (const product of products) {
+      if(product.product_parcels.length === 0) {
+        this.notifySer.notify('warning', `${product?.product['product_no']}: chưa nhập lô cho sản phẩm!`);
+        this.isLoadingResults = false;
+        return;
+      }
+    }
+
 
     promise.then(() => {
       // console.log(this.form.valid);
@@ -2292,5 +2308,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       }
     }
     return masterItemCount;
+  }
+
+  onShowPayfullChange() {
+    this.showPayfull = !this.showPayfull;
+    this.localStorageService.setItem('showPayfull', this.showPayfull);
   }
 }
