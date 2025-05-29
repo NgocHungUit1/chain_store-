@@ -272,7 +272,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     quantity: null,
   };
   shownNotes: Set<number> = new Set();  // Will store user IDs or indices of visible notes
-  showPayfull: boolean = false;
+  payFullDefault: boolean = false;
 
   WAREHOUSEPRODUCTKEY = 'warehouseProduct';
   WAREHOUSEFORMKEY = 'warehouseForm';
@@ -692,6 +692,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           }
         }, 300);
       });
+      this.payFullDefault = this.localStorageService.getItem<boolean>("payFullDefault") ?? false;
+
       const id = this.route.snapshot.paramMap.get('id');
       if (id !== null && id !== undefined) {
         this.updateModelId = id;
@@ -701,8 +703,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
             dateStr = new Date(res['date']).toISOString();
           }
           this.model = res;
-
-
             this.form.patchValue({
               date: dateStr,
               no: res['no'],
@@ -719,7 +719,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
               note: res['note'],
               branch_id: res['branch_id'].toString(),
             });
-
 
 
           this.expensesTransaction = Number(res['expenses_price']);
@@ -742,7 +741,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
                   this.expensesTransactions.push(expense);
                 }
               });
-
             });
           }
 
@@ -770,33 +768,43 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           const formData = this.localStorageService.getItem<object>(this.WAREHOUSEFORMKEY);
           if(formData) {
             // open confirm dialog
-            this.openConfirmLoadTempDataFormDialog().subscribe(confirm => {
-              if (confirm) {
-                console.log('User agreed');
-                this.form.patchValue({
-                  no: 'PN' + res,
-                  discount_amount: 0,
-                  discount_type: 'price',
-                  ...formData
-                });
-                const tempData = this.localStorageService.getItem<WarehouseProduct[]>(this.WAREHOUSEPRODUCTKEY);
-                if(tempData){
-                  this.data = tempData;
-                  this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+            const tempData = this.localStorageService.getItem<WarehouseProduct[]>(this.WAREHOUSEPRODUCTKEY);
+            if(tempData && tempData.length > 0) {
+              this.data = tempData;
+              this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+              this.openConfirmLoadTempDataFormDialog().subscribe(confirm => {
+                if (confirm) {
+                  console.log('User agreed');
+                  this.form.patchValue({
+                    no: 'PN' + res,
+                    discount_amount: 0,
+                    discount_type: 'price',
+                    ...formData
+                  });
+                } else {
+                  console.log('User disagreed');
+                  this.form.patchValue({
+                    no: 'PN' + res,
+                    total_price: 0,
+                    discount_amount: 0,
+                    discount_type: 'price'
+                  });
+                  this.localStorageService.removeItem(this.WAREHOUSEPRODUCTKEY);
+                  this.localStorageService.removeItem(this.WAREHOUSEFORMKEY);
                 }
-              } else{
-                console.log('User disagreed');
-                this.form.patchValue({
-                  no: 'PN' + res,
-                  total_price: 0,
-                  discount_amount: 0,
-                  discount_type: 'price'
-                });
-                this.localStorageService.removeItem(this.WAREHOUSEPRODUCTKEY);
-                this.localStorageService.removeItem(this.WAREHOUSEFORMKEY);
-              }
-            });
+              });
+            } else {
+              this.form.patchValue({
+                no: 'PN' + res,
+                total_price: 0,
+                discount_amount: 0,
+                discount_type: 'price'
+              });
+              this.localStorageService.removeItem(this.WAREHOUSEPRODUCTKEY);
+              this.localStorageService.removeItem(this.WAREHOUSEFORMKEY);
+            }
           } else{
+            this.localStorageService.removeItem(this.WAREHOUSEPRODUCTKEY);
             console.log('No data');
             this.form.patchValue({
               no: 'PN' + res,
@@ -807,7 +815,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           }
         });
 
-        this.showPayfull = this.localStorageService.getItem<boolean>("showPayfull") ?? false;
 
         if (this.optionStore_transaction_expenses.value === 'yes') {
           const filter = new ExpensesTransactionFilter();
@@ -821,13 +828,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       }
 
       const product_id = localStorage.getItem('product_id');
-
       if (product_id !== null) {
         this.handleAddProductToList(product_id);
         localStorage.removeItem('product_id');
       }
-
-
     });
 
   }
@@ -968,13 +972,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           if (item.productParcels !== undefined && item.productParcels.length > 0) {
             this.parcels = this.parcels.concat(item.productParcels);
           }
-
           newData.push(warehouseProduct);
         });
         this.data = newData;
         this.tempDataForQuickFilter = [...newData]; // Create initial copy
         this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
-        this.recalculateWarehouse();
+        // this.recalculateWarehouse(true); no need recalculate when update data
         this.isLoadingResults = false;
       });
     });
@@ -1008,7 +1011,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     }
     this.submitted = true;
     this.isLoadingResults = true;
-    this.recalculateWarehouse();
+    this.recalculateWarehouse(true);
     const data = this.form.getRawValue();
     if (numeral(data['paid_amount']).value() > (numeral(data['total_price']).value() + numeral(data['expenses_price']).value())) {
       this.form.patchValue({
@@ -1039,6 +1042,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       if(product.product_parcels.length === 0) {
         this.notifySer.notify('warning', `${product?.product['product_no']}: chưa nhập lô cho sản phẩm!`);
         this.isLoadingResults = false;
+        this.submitted = false;
         return;
       }
     }
@@ -1400,9 +1404,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     }
   }
 
-  recalculateWarehouse() {
+  recalculateWarehouse(isSubmit = false) {
     let quantity = 0, price = 0, remainAmount = 0, totalAmount = 0;
-    const paidAmount = numeral(this.form.controls['paid_amount'].value).value();
+    let paidAmount = numeral(this.form.controls['paid_amount'].value).value();
     const discount = this.form.controls['discount_amount'].value;
     const discount_type = this.form.controls['discount_type'].value;
 
@@ -1437,15 +1441,20 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         }
         price = Number(price) + money;
       }
-
     });
 
     // Tinh vao cong no
     if (discount_type === 'price') {
       totalAmount = Number(price) - Number(discount);
+      if(this.payFullDefault && !isSubmit && !this.updateModelId){
+        paidAmount = totalAmount;
+      }
       remainAmount = Number(paidAmount) - totalAmount;
     } else {
       totalAmount = Math.round(Number(price) - Number(price) * Number(discount) / 100);
+      if(this.payFullDefault && !isSubmit && !this.updateModelId){
+        paidAmount = totalAmount;
+      }
       remainAmount = Math.round(Number(paidAmount) - totalAmount);
     }
 
@@ -1469,13 +1478,18 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     // debugger;
     // console.log(remainAmount);
 
-    this.form.patchValue({
+    let formValues = {
       quantity: numeral(quantity).format('0,0'),
       total_price: numeral(price).format('0,0'),
       remain_amount: numeral(remainAmount).format('0,0'),
       total_amount: numeral(totalAmount).format('0,0'),
       expenses_price: numeral(this.expensesTransaction).format('0,0')
-    });
+    };
+    if(this.payFullDefault){
+      formValues['paid_amount'] =  numeral(paidAmount).format('0,0')
+    }
+    this.form.patchValue(formValues);
+
     const temp = this.localStorageService.getItem<object>(this.WAREHOUSEFORMKEY);
     this.localStorageService.setItem(this.WAREHOUSEFORMKEY,{
       ...temp,
@@ -2311,7 +2325,71 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   onShowPayfullChange() {
-    this.showPayfull = !this.showPayfull;
-    this.localStorageService.setItem('showPayfull', this.showPayfull);
+    this.payFullDefault = !this.payFullDefault;
+    this.localStorageService.setItem('payFullDefault', this.payFullDefault);
+  }
+
+  calculatePay() {
+    let quantity = 0;
+    let price = 0;
+    this.data.forEach(item => {
+      const item_quantity = numeral(item['quantity']).value();
+      const item_price = numeral(item['price']).value();
+      const item_discount = Number(item['discount']);
+      const vat = numeral(item['vat']).value();
+      const vat_type = item['vat_type'];
+      let money = 0;
+      quantity = Number(quantity) + item_quantity;
+      if (item['discount_type'] === 'price') {
+        money = ((item_quantity * item_price) - item_discount);
+        // tinh thue suat
+        if (vat !== 0) {
+          if (vat_type === 'price') {
+            money = money + vat;
+          } else {
+            money = money + (money * vat) / 100;
+          }
+        }
+        price = Number(price) + money;
+      } else {
+        money = item_quantity * item_price * (1 - (item_discount / 100));
+        // tinh thue suat
+        if (vat !== 0) {
+          if (vat_type === 'price') {
+            money = money + vat;
+          } else {
+            money = money + (money * vat) / 100;
+          }
+        }
+        price = Number(price) + money;
+      }
+    });
+    return {
+      quantity: quantity,
+      price: price
+    }
+  }
+  onPayProducer() {
+    let paidAmount = numeral(this.form.controls['paid_amount'].value).value();
+    const { quantity, price } = this.calculatePay();
+    const discount = this.form.controls['discount_amount'].value;
+    const discount_type = this.form.controls['discount_type'].value;
+    let totalAmount = 0;
+    let remainAmount = 0;
+    if (discount_type === 'price') {
+      totalAmount = Number(price) - Number(discount);
+      remainAmount = Number(paidAmount) - totalAmount;
+    } else {
+      totalAmount = Math.round(Number(price) - Number(price) * Number(discount) / 100);
+      remainAmount = Math.round(Number(paidAmount) - totalAmount);
+    }
+    let formValues = {
+      quantity: numeral(quantity).format('0,0'),
+      total_price: numeral(price).format('0,0'),
+      remain_amount: numeral(remainAmount).format('0,0'),
+      total_amount: numeral(totalAmount).format('0,0'),
+      paid_amount: numeral(paidAmount).format('0,0'),
+    };
+    this.form.patchValue(formValues);
   }
 }

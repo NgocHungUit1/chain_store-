@@ -212,7 +212,7 @@
                 <mat-slide-toggle
                   (ngModelChange)='onShowPayfullChange()'
                   color='primary'
-                  [(ngModel)]='showPayfull'>
+                  [(ngModel)]='payFullDefault'>
                 </mat-slide-toggle>
               </div>
             </div>
@@ -707,7 +707,7 @@
                 <span>Tiền trả nhà cung cấp</span>
               </div>
               <div fxFlex="60">
-                <mat-form-field>
+                <mat-form-field class="paymentfull-place">
                   <ng-template #fullTemplate>
                     <input matInput tabindex="7" formControlName="paid_amount" (keyup)="inputformatNumber($event)" required
                            value="{{ form.get('paid_amount').value }}" (change)="recalculateWarehouse();"
@@ -716,16 +716,13 @@
                       Trả đủ
                     </button>
                   </ng-template>
-
-                  <ng-template #manualPayfull>
+                  <ng-template #payFullDefaultChose>
                     <input class="text-right" matInput tabindex="7" formControlName="paid_amount" (keyup)="inputformatNumber($event)" required
-                           [value]="form.get('paid_amount').value" (change)="recalculateWarehouse();">
+                           [value]="form.get('paid_amount').value" (change)="onPayProducer();">
                   </ng-template>
-                  <ng-container *ngTemplateOutlet="showPayfull ?fullTemplate:manualPayfull"></ng-container>
+                  <ng-container *ngTemplateOutlet="payFullDefault?payFullDefaultChose:fullTemplate"></ng-container>
                 </mat-form-field>
               </div>
-
-
               <div fxFlex="40" style='margin-bottom: 4px'>
                 <span>Tính vào công nợ &nbsp;</span>
               </div>
