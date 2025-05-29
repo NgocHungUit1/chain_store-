@@ -112,6 +112,7 @@ export class ResInvoicePrint {
   sum_payment: string; // tong thanh tona
   debt: string; // no
   nationalPrescription: NationalPrescription;
+  use_einvoice: number;
 }
 
 export class ResReturnsPrint {
