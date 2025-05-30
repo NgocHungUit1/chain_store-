@@ -18,8 +18,8 @@
                 <div class="span-product-no">
                   <div> {{ masterProduct?.product?.product_no }}</div>
 
-                  <div *ngIf="masterProduct?.product?.medicine?.content && masterProduct?.product?.medicine?.content != 'NULL'">
-                    Cách dùng: {{masterProduct?.product?.medicine?.content}}
+                  <div *ngIf="masterProduct?.product?.note_detail_sale && prescription_id">
+                    Cách dùng: {{masterProduct?.product?.note_detail_sale }}
                   </div>
 
                 </div>
@@ -30,7 +30,7 @@
                     {{ masterProduct.product?.product_name }}
                   </div>
 
-                  <div>
+                  <div *ngIf="masterProduct.product?.medicine?.main_active_substance && prescription_id">
                     Hoạt chất: {{ masterProduct.product?.medicine?.main_active_substance }}
                   </div>
                 </div>
@@ -446,9 +446,9 @@
           <mat-icon *ngIf="!showList">zoom_in</mat-icon>
         </button>
       </div>
-      <!--      <app-sale-list-product-->
-      <!--        class="sale-list-product"-->
-      <!--        [class.opened]="showList"></app-sale-list-product>-->
+            <app-sale-list-product
+              class="sale-list-product"
+              [class.opened]="showList"></app-sale-list-product>
     </div>
   </div>
   <div fxFlex=".5"></div>
