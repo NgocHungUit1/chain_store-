@@ -9,7 +9,7 @@ html .page-wrapper .page-content {
 }
 
 .container-main-sale {
-  height: calc(100% - 12px);
+  height: calc(100% - 50px);
 }
 
 .container-action-sale {
@@ -19,23 +19,35 @@ html .page-wrapper .page-content {
   height: calc(100% - 12px);
 }
 
+.sidebar-order-top{
+  height: 100%; /* Adjust this value */
+  // overflow-y: auto; /* Add a scrollbar if content exceeds max-height */
+  // overflow-x: hidden; /* Hide the horizontal scrollbar */
+}
+.sidebar-order-bottom {
+  margin-top: auto;
+  // min-height: 160px; /* 67px (payment button) + 10px (margin-bottom) + ~60px (support/help content) */
+  z-index: 1;
+}
+
+.sidebar-order-bottom-buttons {
+  display: flex;
+  flex-direction: row; /* Horizontal alignment */
+  justify-content: space-between; /* Distribute space between items */
+  align-items: center; /* Vertically center all items */
+  gap: 5px;
+}
 /*  sale detail order  */
 .product-cart {
   transition: height 200ms ease-out;
   overflow-x: hidden;
   overflow-y: auto;
-  background-color: white;
-  border-bottom: 1px solid #e1e1e1;
+  background-color: transparent;
   padding: 5px;
   -webkit-flex: 1;
   -ms-flex: 1;
   flex: 1;
   height: calc(100%);
-
-  /*&.fixed-list {
-    height: calc(100% - 440px) ;
-    max-height: 480px;
-  }*/
 
   @media only screen and (max-width: 1349px) {
     //max-height: 300px;
@@ -43,8 +55,11 @@ html .page-wrapper .page-content {
 
   .mat-input-element {
     font-size: 12px;
+    margin-left: 0px !important;
   }
-
+  .mat-chip-list-wrapper {
+    margin-left: 0px !important;
+  }
   .mat-icon-button {
     display: inline-block;
     width: 24px;
@@ -57,13 +72,117 @@ html .page-wrapper .page-content {
   }
 
   .product-item {
-    padding: 0 10px;
-    border: 1px solid #ececec;
-    border-radius: 3px;
-    font-size: 12px;
+    position: relative;
+    background-color: #ffffff;
+    border-radius: 8px;
+    font-size: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    //&:hover {
+    //  background-color: #ececec;
+    //}
 
-    &:hover {
-      background-color: #ececec;
+    /**
+    Popup behind the more_vert icon
+     */
+    .note-area {
+      position: absolute;
+      top: calc(100% + 4px);
+      right: 0;
+      z-index: 1002;
+      background: white;
+      border-radius: 4px;
+      height: 50px;
+      box-shadow: 0px 4px 10px 0 rgba(0,0,0,0.2);
+      display: flex;
+    }
+
+    /**
+    Textarea in the row
+     */
+    .note-textarea {
+      border: none;
+      background: transparent;
+      overflow: visible;
+      width: 100%;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      color: #333;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      resize: none;
+      box-sizing: border-box;
+      min-height: 24px;
+      box-shadow: none;
+      font-family: inherit;
+      margin-left: -10px;
+    }
+    .note-textarea:focus {
+      box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.5);
+    }
+    .note-textarea::placeholder {
+      color: #999;
+      opacity: 1;
+    }
+
+    /**
+    Chip list parcel and each elements inside it
+     */
+    .chip-list {
+      padding-left: 0;
+      margin-left: 0;
+      display: flex;
+      align-items: center;
+
+      .chip-item {
+        background-color: transparent !important;
+        color: #3f51b5 !important;
+        height: 12px !important;
+        border-radius: 4px !important;
+        padding: 0 !important;
+        font-size: 10px !important;
+        white-space: nowrap !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+        justify-content: space-between !important;
+      }
+
+      .parcel-seletor{
+        display: flex !important;
+        height: 24px !important;
+      }
+      .parcel-input-border input.mat-chip-input {
+        width: 50px !important;
+        margin-top: 8.5px !important;
+      }
+      .parcel-input{
+        width: 50px !important;
+        height: 20px;
+      }
+      .select-parcel-button{
+        height: 16px !important;
+        line-height: 18px !important;
+        color: #3f51b5 !important;
+        background-color: transparent;
+        border: none;
+      }
+      .parcel-autocomplete-container{
+        padding: 10px !important;
+      }
+    }
+
+    /**
+    Create a line separate between subitem with each others and with master item
+     */
+    .dotted-divider {
+      height: 1px;
+      border-bottom: 1px dashed #e0e0e0;
+      margin-bottom: 15px;
+      margin-left: 5%;
+      width: 100%;
     }
 
     .row {
@@ -73,7 +192,8 @@ html .page-wrapper .page-content {
 
       &-product-no {
         font-size: 12px;
-        padding-right: 5px;
+        //padding-right: 5px;
+        padding-top: 4px;
       }
 
       &-text {
@@ -82,31 +202,24 @@ html .page-wrapper .page-content {
 
       &-product-name {
         font-size: 12px;
+        padding-top: 4px;
       }
 
-      &-product-note {
-        color: #666666;
-
-        .product-note-txt {
-          display: inline-block;
-          max-width: 330px;
-        }
-      }
 
       &-count-number {
         font-size: 12px;
-        min-width: 60px;
+        min-width: 30px;
         text-align: right;
       }
 
-      &-amount {
-        font-size: 20px;
-        min-width: 120px;
-        max-width: 150px;
-      }
+      //&-amount {
+      //  font-size: 20px;
+      //  min-width: 80px;
+      //  max-width: 100px;
+      //}
 
       &-edit-price {
-        min-width: 100px;
+        min-width: 80px;
       }
 
       &-product-base-unit {
@@ -127,6 +240,7 @@ html .page-wrapper .page-content {
         font-size: 12px;
         text-align: right;
         font-weight: 600;
+        height: 13px;
       }
     }
 
@@ -134,10 +248,132 @@ html .page-wrapper .page-content {
       font-size: 12px;
       color: black;
       padding-top: 4px;
-      padding-right: 4px;
+      padding-right: 8px;
+
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
+
+    .row-total-price{
+      font-size: 12px;
+      text-align: right;
+      font-weight: 600;
+      height: 13px;
+    }
+    .row-product-no {
+      font-size: 12px;
+    }
+
+    .row-product-name {
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    /**
+    Master item row (main row)
+     */
+    &.master-item-row {
+      border: 1px solid #eaeaea;
+      box-shadow: 0 0.5rem 0.5rem rgba(0, 128, 128, 0.2);
+      margin-bottom: 0.5px;
+      .row-product-note {
+        position: relative;
+        top: -8px;
+      }
+      &:hover{
+        border: #00897b 1px solid;
+        box-shadow: 0 0.8rem 0.8rem rgba(0, 128, 128, 0.3);
+      }
+    }
+    /**
+    Sub item row (inside the master row)
+     */
+    &.sub-item-row {
+      background-color: transparent;
+      border-radius:  0 !important;
+      box-shadow: none;
+
+      position: relative;
+      width: 100%;
+      padding-bottom: 15px;
+      &:before {
+        content: '';
+        position: absolute;
+        left: -15px;
+        top: 0;
+        height: 100%;
+      }
+      .row-product-note{
+        position: relative;
+        top: 1px;
+      }
+    }
+
+  }
+
+  /**
+  Guaranty all mat-form-field in the line, avoid this __---
+   */
+  .row-item {
+    width: 100%;
+    position: relative;
+    padding: 0;
+    margin: 0;
+  }
+  .row-edit-price mat-form-field,
+  .row-product-base-unit mat-form-field,
+  .row-amount mat-form-field {
+    width: 100%;
+    line-height: 0.8;
+  }
+  .row-product-base-unit .mat-form-field {
+    font-size: 14px;
+    line-height: 1.2;
+  }
+  .row-product-base-unit .mat-form-field-infix {
+    padding: 0.1em 0 !important;
+    border-top-width: 0.5em !important;
+  }
+
+  /**
+  Style for group of 3 action buttons
+   */
+  .action-buttons-container {
+    padding-right: 0px;
+  }
+  .action-buttons-container button {
+    transition: transform 0.2s ease;
+  }
+
+  .action-buttons-container mat-icon:hover {
+    transform: scale(1.1);
+  }
+  .action-buttons-container mat-icon {
+    margin: 0 2px;
+  }
+
+  /**
+  Adjust the color of amount to red when more than stock
+   */
+  .is_morethan_stock{
+    color: red;
+  }
+
+}
+/**
+Popup parcel list
+ */
+.parcel-option-list{
+  padding: 10px;
+  .parcel-option{
+    font-size: 1rem !important;
   }
 }
+
+
 
 .sale-list-product {
   position: fixed;
@@ -169,31 +405,14 @@ html .page-wrapper .page-content {
     padding: 0;
   }
 }
-/*  sale detail order  */
 
-.product-list {
-  &--icon {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    height: 10px;
-    width: 30px;
 
-    &-style {
-      width: 29px;
-      height: 2px;
-      background: #a1a1a1;
-      margin-top: 2px;
-      display: block;
-    }
-  }
-}
 
 /*  sale sidebar order  */
 .main-sale-sidebar-order {
   margin: 12px;
-  height: calc(100% - 44px);
-
+  //height: calc(100% - 44px);
+  height: 100%;
   .ban-thuoc-theo-don {
     span {
       font-size: 12px;
@@ -222,7 +441,7 @@ html .page-wrapper .page-content {
 
   .price-product-number,
   .price-discount-number {
-    font-size: 12px;
+    font-size: 18px;
     text-align: right;
   }
 
@@ -237,7 +456,7 @@ html .page-wrapper .page-content {
   }
 
   .customer-need-number {
-    color: #56ad51;
+    color: #009688;
     font-size: 20px;
     text-align: right;
     font-weight: 600;
@@ -267,8 +486,8 @@ html .page-wrapper .page-content {
 
   .payment-button {
     width: 100%;
-    height: 67px;
-    background-color: #56ad51 !important;
+    height: 60px;
+    background-color: #009688 !important;
     bottom: 0px;
     margin-bottom: 10px;
 
@@ -280,8 +499,8 @@ html .page-wrapper .page-content {
   }
 
   .support-content {
-    font-size: 11px;
-    color: #666666;
+    font-size: 15px;
+    color: #009688;
     margin: 10px;
 
     .mat-icon {
@@ -398,6 +617,12 @@ html .page-wrapper .page-content {
           display: none;
         }
       }
+      &.time-picker {
+        .mat-form-field-wrapper {
+          font-size: 11px;
+          padding: 3.8px !important;
+        }
+      }
     }
 
     .customer-action {
@@ -439,4 +664,346 @@ html .page-wrapper .page-content {
   }
 }
 
+/* src/app/payment/payment.component.css */
 
+/* Container for the entire payment selector */
+.payment-selector {
+  padding: 10px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Styling for the payment method radio buttons */
+.payment-methods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 20px;
+  .mat-radio-button.mat-accent.mat-radio-checked {
+    .mat-radio-outer-circle {
+      border-color: #009688 !important; // Green border for the outer circle
+    }
+
+    .mat-radio-inner-circle {
+      background-color: #009688 !important; // Green fill for the inner circle
+    }
+  }
+
+  // Optional - style the ripple effect when clicked
+  .mat-radio-ripple .mat-ripple-element {
+    background-color: rgba(86, 173, 81, 0.26) !important; // Lighter green for the ripple
+  }
+}
+
+/* Ensure radio buttons are styled consistently */
+.payment-methods mat-radio-button {
+  margin-right: 10px;
+}
+
+/* Container for the amount or method-specific sections */
+.amount-container {
+  margin-top: 20px;
+  // padding: 15px;
+  // border: 1px solid #e0e0e0;
+  // border-radius: 4px;
+  // background-color: #f9f9f9;
+  button.selected {
+    background-color: #009688 !important;
+    color: white !important; /* For better contrast */
+  }
+}
+
+/* Tiền mặt (Cash) Layout: Grid of buttons */
+.cash-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  gap: 10px;
+}
+
+.cash-layout button {
+  padding: 10px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.cash-layout button.selected {
+  background-color: #1976d2; /* Material Design blue */
+  color: white;
+}
+
+
+.qr-code {
+  width: 90px;
+  height: 90px;
+  border: 1px solid #000000;
+}
+
+.bank-details {
+  flex: 1;
+}
+
+.bank-select {
+  width: 100%;
+}
+
+.add-account-btn {
+  border: 1px solid #009688 !important;
+  color: #009688 !important;
+  padding: 8px 16px;
+  font-size: 14px;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.add-account-btn:hover {
+  background-color: #e3f2fd; /* Light blue hover effect */
+}
+
+.action-buttons {
+  font-size: 11px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 10px;
+}
+
+
+.action-buttons-info{
+    color: blue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.action-buttons-qr{
+  color: gray !important;
+  font-size: 12px;
+}
+
+.action-buttons button {
+  color: #1976d2;
+}
+
+.no-bank-message {
+  color: #666;
+  font-style: italic;
+}
+
+/* Thẻ (Card) Layout: Slider */
+.card-layout {
+  padding: 20px 0;
+}
+
+.card-layout mat-slider {
+  width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .payment-methods {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .qr-code {
+    margin-bottom: 10px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+.container-page{
+  flex-flow: nowrap !important;
+}
+/* Add styles for the info container and card */
+.bank-transfer-layout .action-buttons .info-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 5px; /* Space between the icon and text */
+}
+
+.bank-transfer-layout .action-buttons .info-card {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 5px); /* Position above the info container with a 5px gap */
+  left: 50%; /* Position the left edge at 50% of the info-container’s width */
+  transform: translateX(-50%); /* Shift the card left by 50% of its own width to center it */  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 15px;
+  width: 300px;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Adjusted shadow to look better when above */
+  z-index: 10; /* Ensure the card appears above other elements */
+}
+
+/* Show the card on hover with display: flex */
+.bank-transfer-layout .action-buttons .info-container:hover .info-card {
+  display: flex; /* Using flex to avoid layout breaks */
+  flex-direction: column; /* Ensure content inside the card stacks vertically */
+}
+
+/* Style the card's content */
+.bank-transfer-layout .action-buttons .info-card h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  color: #333;
+}
+
+.bank-transfer-layout .action-buttons .info-card p {
+  margin: 0 0 10px;
+  font-size: 14px;
+  color: #555;
+}
+
+.bank-transfer-layout .action-buttons .info-card ol {
+  margin: 0 0 15px;
+  padding-left: 20px;
+  font-size: 14px;
+  color: #555;
+}
+
+.bank-dropdown-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 10px;
+  // max-width: 400px;
+}
+
+.selected-bank {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  min-height: 24px;
+}
+
+.dropdown-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  // max-height: 320px;
+  // overflow-y: auto;
+}
+
+.search-container {
+  position: relative;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.search-container input {
+  width: 100%;
+  padding: 8px 36px 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  outline: none;
+}
+
+.search-container mat-icon {
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+}
+
+.divider {
+  padding: 8px 16px;
+  font-weight: bold;
+  color: #555;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+}
+
+.bank-options {
+  max-height: calc(100vh - 770px);
+  min-height: 120px;
+  overflow-y: auto;
+}
+
+.bank-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.bank-option:hover {
+  background-color: #f5f5f5;
+}
+
+.add-bank-option {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.add-bank-option--text{
+  font-weight: bold;
+}
+
+.add-bank-option:hover {
+  background-color: #f5f5f5;
+}
+
+.bank-option.selected {
+  background-color: #e6f0ff;
+}
+
+.bank-name {
+  font-weight: 500;
+}
+
+.account-holder {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.account-header {
+  padding: 8px 16px;
+  font-weight: bold;
+  color: #555;
+  border-bottom: 1px solid #eee;
+  background-color: #f5f5f5;
+  text-align: center;
+}
+
+.blank-option {
+  color: #777;
+  font-style: italic;
+}
+
+.row-change-product {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .info {
+    font-size: 12px;
+    color: red;
+  }
+
+  button {
+    font-size: 12px;
+  }
+
+
+}
