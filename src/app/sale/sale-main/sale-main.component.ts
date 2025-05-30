@@ -2389,7 +2389,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
                          ? (mItemInvoice.prescription_id || this.prescription_id)
                          : null,
         national_pharmacy_no: this.prescription.checked ? mItemInvoice.national_pharmacy_no : null,
-        use_einvoice: this.isEinvoiceEnabled && this.einvoiceCheckbox.checked ? 1 : 0
+        use_einvoice: this.form.get('use_einvoice').value ? 1 : 0
       },
       UserID: mItemInvoice.user.id,
       InvoiceDetail: invoiceDetail,
@@ -3051,6 +3051,12 @@ export class SaleMainComponent implements OnInit, DoCheck {
     const product = this.listProduct[product_index];
     const product_id = product.product_id.toString();
     if (!product) { return; }
+
+    // Khởi tạo product_parcels nếu chưa có
+    if (!product.product_parcels) {
+      product.product_parcels = [];
+    }
+
     const selectedParcel = product.product_parcels[0] || null;
     const dialogRef = this.dialog.open(SaleProductParcelSelectDialogComponent, {
       width: '40%',
@@ -3066,6 +3072,12 @@ export class SaleMainComponent implements OnInit, DoCheck {
       if (!result) { return; }
       const product = this.listProduct[product_index];
       if (!product) { return; }
+
+      // Đảm bảo product_parcels được khởi tạo
+      if (!product.product_parcels) {
+        product.product_parcels = [];
+      }
+
       product.product_parcels = [];
       product.product_parcels.push(result.parcel);
       const exist = this.parcelFilteredItems.has(product_index);
@@ -3085,8 +3097,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
       if (product.amount > selectedParcel.quantity_of_stock) {
         product.amount = selectedParcel.quantity_of_stock;
-        // this.orderService.inputAmountProduct(product_index, selectedParcel.quantity_of_stock);
-
         redu += selectedParcel.quantity_of_stock;
         const availableParcels = this.getAvailableItems(product_index).filter(
           parcel => parcel['parcel_no'] !== selectedParcel.parcel_no
