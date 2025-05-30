@@ -655,7 +655,7 @@
                 <div fxFlex="49" fxLayoutAlign="end center">
                   <div
                     class="hoa-don-dien-tu"
-                    *ngIf="localItemInvoice?.is_return !== true && isEinvoiceEnabled"
+                    *ngIf="localItemInvoice?.is_return !== true"
                     [ngClass]="
                       einvoiceCheckbox?.checked
                         ? 'einvoice-checked'
