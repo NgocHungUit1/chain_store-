@@ -26,6 +26,7 @@ import { loadConfigurationFromPath } from 'tslint/lib/configuration';
 import { MatRadioChange } from '@angular/material/radio';
 import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 import {OptionStoreService} from '../../common/option-store.service';
+import { ProductNewUnitComponent } from '../product-new-unit/product-new-unit.component';
 
 
 class ImageSnippet {
@@ -458,6 +459,10 @@ export class ProductMedicineDialogComponent implements OnInit {
       data.sell_price = numeral(data.sell_price).value();
       // data.quantity_of_stock = numeral(data.quantity_of_stock).value();
 
+      // check duplicate unit
+      const unitValues = data.units.map(u => u.unit_name);
+      const unitSet = new Set(unitValues);
+
       data.units.forEach(item => {
         item.unit_price = numeral(item.unit_price).value();
       });
@@ -786,5 +791,50 @@ export class ProductMedicineDialogComponent implements OnInit {
    */
   inputformatNumber(event: any) {
     event.target.value = numeral(event.target.value).format('0,0');
+  }
+
+  getExchangeValue(i: number) {
+    const row = this.units?.value[i];
+    return `<p>1 ${row['unit_name']} = ${row['unit_value']}  </p>`
+  }
+  hasValidUnits(): boolean {
+    return this.units.controls.some((unit: FormGroup) => {
+      const unitName = unit.get('unit_name')?.value;
+      const unitValue = unit.get('unit_value')?.value;
+      return unitName || unitValue != null; // Non-null/undefined values
+    });
+  }
+
+  onUnitChange(event: Event, i: number) {
+    const newName = (event.target as HTMLInputElement).value;
+    let isDupplicated = false;
+    this.units.controls.forEach((unit, index) => {
+      debugger;
+      if(unit.value?.unit_name == newName && index != i ){
+        isDupplicated = true;
+        return;
+      }
+    })
+    if (isDupplicated) {
+      this.units.controls[i].patchValue({
+        unit_name: '',
+      });
+      this.notifySer.notify('warning', "Tên đơn vị không được phép trùng nhau!")
+    }
+    debugger;
+
+  }
+
+  handleOpenPopupInputName(event: MouseEvent) {
+    event.stopPropagation();
+    const dialogRef = this.dialog.open(ProductNewUnitComponent, {
+      width: '30%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      debugger;
+      if (result&&result !== undefined) {
+        console.log("NEW UNIT: ", result);
+      }
+    });
   }
 }

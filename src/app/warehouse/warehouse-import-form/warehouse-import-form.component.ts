@@ -280,7 +280,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   // create input for each row
   getItemControl(product_index: number) {
     if (!this.parcelItemControls.has(product_index)) {
-      this.parcelItemControls.set(product_index, new FormControl());
+      this.parcelItemControls.set(product_index, new FormControl('', Validators.required));
       this.setupFilteredItems(product_index);
     }
     return this.parcelItemControls.get(product_index)!;
@@ -400,6 +400,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     product.quantity = allQuantities.reduce((acc, curr) => acc + curr, 0);
     this.recalculateItem(id);
     this.productDataSource.data = [...this.data];
+    this.localStorageService.setItem(this.WAREHOUSEPRODUCTKEY, this.data)
   }
 
   // because the chip list have 2 type of parcel (new and old) -> need to distinguish them to display the corresponding dialog
@@ -1035,7 +1036,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         reject();
       }
     });
-
     // check parcel
     const products = this.data;
     for (const product of products) {
@@ -2391,5 +2391,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       paid_amount: numeral(paidAmount).format('0,0'),
     };
     this.form.patchValue(formValues);
+  }
+
+  getParcelStatus(i) {
+    const product = this.data[i];
+    return product.product_parcels?.length === 0 && this.parcelItemControls.get(i)?.touched;
   }
 }

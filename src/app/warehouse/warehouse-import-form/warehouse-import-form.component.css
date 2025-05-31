@@ -345,6 +345,14 @@ tr.mat-header-row {
   font-size: 1rem !important;
 }
 
+.parcel-input.error-input::placeholder {
+  color: #f44336 !important;
+}
+.parcel-input.error-input {
+  border-left: 1px #f44336 solid !important;
+}
+
+
 /* style for subItem */
 .sub-item-row td {
   border-top: 1px dashed #bdbdbd !important;  /* Dashed border for sub-items */

@@ -74,6 +74,20 @@
           </div>
           <div fxFlex.gt-sm="2%" fxFlex="100"></div>
           <div fxFlex.gt-sm="30%" fxFlex="100">
+            <mat-form-field>
+                <mat-label>Đơn vị cơ bản</mat-label>
+                <mat-select formControlName="base_unit">
+                  <mat-option *ngFor="let unit of filterUnit" [value]="unit.name">
+                    {{unit.name}}
+                  </mat-option>
+                </mat-select>
+              <button
+                class="plus-button"
+                type="button"
+                (click)="handleOpenPopupInputName($event)"
+                title="Add Unit"
+              >+</button>
+            </mat-form-field>
 
             <div fxLayout="row wrap">
               <mat-form-field>
@@ -96,14 +110,7 @@
 
             </div>
 
-            <mat-form-field>
-              <input type="text" placeholder="Đơn vị cơ bản" matInput formControlName="base_unit" [matAutocomplete]="autocomplete">
-              <mat-autocomplete #autocomplete="matAutocomplete">
-                <mat-option *ngFor="let unit of filterUnit" [value]="unit.name">
-                  {{unit.name}}
-                </mat-option>
-              </mat-autocomplete>
-            </mat-form-field>
+
 
 <!--            <mat-form-field>-->
 <!--              <input type="number" class="text-right"  matInput-->
@@ -127,10 +134,11 @@
                         <th>Giá trị quy đổi</th>
                         <th class="text-center">Giá bán</th>
                         <th class="text-center">Mã hàng</th>
+                        <th class="text-center">Quy đổi đơn vị</th>
                         <th></th>
                         </thead>
                         <tbody>
-                        <tr *ngFor="let _ of units.controls; index as i;">
+                        <tr *ngFor="let unit of units.controls; index as i;">
                           <ng-container [formGroupName]="i">
                             <!--                            <td>-->
                             <!--                              <mat-radio-group (change)="_convertIndex = i" name="convert_base_unit">-->
@@ -142,7 +150,9 @@
                                 <!--                                placeholder="Tên đơn vị"-->
                                 <input type="text" formControlName="unit_name"
                                        matInput
-                                       [matAutocomplete]="autoUnit">
+                                       [matAutocomplete]="autoUnit"
+                                        (change) = "onUnitChange($event, i)"
+                                >
                                 <mat-autocomplete #autoUnit="matAutocomplete">
                                   <mat-option *ngFor="let option of filteredOptionsUnit | async" [value]="option">
                                     {{ option }}
@@ -172,6 +182,12 @@
                                 <!--                                placeholder="Mã hàng"-->
                                 <input type="text" formControlName="unit_no" matInput >
                               </mat-form-field>
+                            </td>
+
+                            <td class="d-flex" >
+                              <p *ngIf="hasValidUnits()" style="font-size: 16px; padding: 2px">
+                                1 {{ unit.get('unit_name')?.value || '...' }} = {{ unit.get('unit_value')?.value || '...'}} {{form.get('base_unit')?.value}}
+                              </p>
                             </td>
                             <td class="product-unit-action">
                               <button mat-icon-button (click)="removeUnit(i)" class="btn-remove" color="error">
