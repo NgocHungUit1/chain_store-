@@ -1,70 +1,64 @@
-import {Component, ElementRef, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
-import {MatTable, MatTableDataSource} from '@angular/material/table';
-import {MatSort} from '@angular/material/sort';
-import {MatPaginator} from '@angular/material/paginator';
-import {NotifierService} from 'angular-notifier';
-import {MatDialog} from '@angular/material/dialog';
-import {ListComponentBase} from '../../shared/base';
-import {WarehouseProductService} from '../warehouse-product.service';
-import {Warehouse, WarehouseProduct, WarehouseProductFilter} from '../warehouse.model';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Observable} from 'rxjs/index';
-import {Supplier} from '../../supplier/supplier.model';
-import {catchError, map, startWith, switchMap} from 'rxjs/operators';
-import {of} from 'rxjs/internal/observable/of';
-import {SupplierService} from '../../supplier/supplier.service';
-import {WarehouseService} from '../warehouse.service';
-import {Product, ProductFilter} from '../../product/product.model';
-import {ProductService} from '../../product/product.service';
-import {
-  WarehouseParcelFormDialogComponent
-} from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
-import {WarehouseDiscountDialogComponent} from '../warehouse-discount-dialog/warehouse-discount-dialog.component';
-import {SupplierFormDialogComponent} from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
-import {ProductMedicineDialogComponent} from '../../product/product-medicine-dialog/product-medicine-dialog.component';
+import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
+import { MatPaginator } from '@angular/material/paginator';
+import { NotifierService } from 'angular-notifier';
+import { MatDialog } from '@angular/material/dialog';
+import { ListComponentBase } from '../../shared/base';
+import { WarehouseProductService } from '../warehouse-product.service';
+import { Warehouse, WarehouseProduct, WarehouseProductFilter } from '../warehouse.model';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Observable } from 'rxjs/index';
+import { Supplier } from '../../supplier/supplier.model';
+import { catchError, map, startWith, switchMap } from 'rxjs/operators';
+import { of } from 'rxjs/internal/observable/of';
+import { SupplierService } from '../../supplier/supplier.service';
+import { WarehouseService } from '../warehouse.service';
+import { Product, ProductFilter } from '../../product/product.model';
+import { ProductService } from '../../product/product.service';
+import { WarehouseParcelFormDialogComponent } from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
+import { WarehouseDiscountDialogComponent } from '../warehouse-discount-dialog/warehouse-discount-dialog.component';
+import { SupplierFormDialogComponent } from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
+import { ProductMedicineDialogComponent } from '../../product/product-medicine-dialog/product-medicine-dialog.component';
 // tslint:disable-next-line:max-line-length
 import {
-  ProductMerchandiseFormDialogComponent
+  ProductMerchandiseFormDialogComponent,
 } from '../../product/product-merchandise-form-dialog/product-merchandise-form-dialog.component';
-import {UserService} from '../../user/user.service';
+import { UserService } from '../../user/user.service';
 import * as numeral from 'numeral';
-import {MedicineService} from '../../medicine/medicine.service';
-import {Medicine} from '../../medicine/medicine.model';
-import {ExpensesTransaction, ExpensesTransactionFilter} from '../../expenses-transaction/expenses-transaction.model';
-import {ExpensesTransactionService} from '../../expenses-transaction/expenses-transaction.service';
-import {OptionStoreService} from '../../common/option-store.service';
-import {OptionStore} from '../../common/option-store.model';
-import {WarehouseExpensesComponent} from '../warehouse-expenses/warehouse-expenses.component';
-import {
-  WarehouseParcelListDialogComponent
-} from '../warehouse-parcel-list-dialog/warehouse-parcel-list-dialog.component';
-import {WarehouseFormPriceDialogComponent} from '../warehouse-form-price-dialog/warehouse-form-price-dialog.component';
-import {SearchProductDialogComponent} from '../../common/search-product-dialog/search-product-dialog.component';
+import { MedicineService } from '../../medicine/medicine.service';
+import { Medicine } from '../../medicine/medicine.model';
+import { ExpensesTransaction, ExpensesTransactionFilter } from '../../expenses-transaction/expenses-transaction.model';
+import { ExpensesTransactionService } from '../../expenses-transaction/expenses-transaction.service';
+import { OptionStoreService } from '../../common/option-store.service';
+import { OptionStore } from '../../common/option-store.model';
+import { WarehouseExpensesComponent } from '../warehouse-expenses/warehouse-expenses.component';
+import { WarehouseParcelListDialogComponent } from '../warehouse-parcel-list-dialog/warehouse-parcel-list-dialog.component';
+import { WarehouseFormPriceDialogComponent } from '../warehouse-form-price-dialog/warehouse-form-price-dialog.component';
+import { SearchProductDialogComponent } from '../../common/search-product-dialog/search-product-dialog.component';
 import * as moment from 'moment';
-import {SearchSupplierDialogComponent} from '../../common/search-supplier-dialog/search-supplier-dialog.component';
-import {
-  WarehouseUnitCreateDialogComponent
-} from '../warehouse-unit-create-dialog/warehouse-unit-create-dialog.component';
-import {WarehouseFormAmountComponent} from '../warehouse-form-amount/warehouse-form-amount.component';
+import { SearchSupplierDialogComponent } from '../../common/search-supplier-dialog/search-supplier-dialog.component';
+import { WarehouseUnitCreateDialogComponent } from '../warehouse-unit-create-dialog/warehouse-unit-create-dialog.component';
+import { WarehouseFormAmountComponent } from '../warehouse-form-amount/warehouse-form-amount.component';
 import { MatSelect, MatSelectChange } from '@angular/material/select';
-import {MatSelectionList, MatSelectionListChange} from '@angular/material/list';
-import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {MatAutocomplete, MatAutocompleteSelectedEvent, MatAutocompleteTrigger} from '@angular/material/autocomplete';
+import { MatSelectionList, MatSelectionListChange } from '@angular/material/list';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { MatAutocomplete, MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import {
   ParcelData,
-  WarehouseParcelFormDialogNewComponent
+  WarehouseParcelFormDialogNewComponent,
 } from '../warehouse-parcel-form-dialog-new/warehouse-parcel-form-dialog-new.component';
 import {
-  WarehouseParcelFormDialogAvailableComponent
+  WarehouseParcelFormDialogAvailableComponent,
 } from '../warehouse-parcel-form-dialog-available/warehouse-parcel-form-dialog-available.component';
 import {
-  WarehouseParcelFormDialogSelectComponent
+  WarehouseParcelFormDialogSelectComponent,
 } from '../warehouse-parcel-form-dialog-select/warehouse-parcel-form-dialog-select.component';
-import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
-import {MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter} from '@angular/material-moment-adapter';
-import {MY_FORMATS} from '../../sale/sale-main/sale-main.component';
-import {DatePipe} from '@angular/common';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
+import { MY_FORMATS } from '../../sale/sale-main/sale-main.component';
+import { DatePipe } from '@angular/common';
 import { LocalStorageService } from '../localStorageService';
 import { WarehouseConfirmLoadDataFormComponent } from '../warehouse-confirm-load-data-form/warehouse-confirm-load-data-form.component';
 
@@ -766,10 +760,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         });
 
         this.mainService.getRenderWarehouseNo().subscribe(res => {
+
+          // We should have both Form and List products to load the temp data
           const formData = this.localStorageService.getItem<object>(this.WAREHOUSEFORMKEY);
           if(formData) {
-            // open confirm dialog
             const tempData = this.localStorageService.getItem<WarehouseProduct[]>(this.WAREHOUSEPRODUCTKEY);
+            // if missing 1 of 2, we will remove both
             if(tempData && tempData.length > 0) {
               this.data = tempData;
               this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
@@ -1446,12 +1442,16 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     // Tinh vao cong no
     if (discount_type === 'price') {
       totalAmount = Number(price) - Number(discount);
+
+      // handle the auto payfull case => skip when update
       if(this.payFullDefault && !isSubmit && !this.updateModelId){
         paidAmount = totalAmount;
       }
       remainAmount = Number(paidAmount) - totalAmount;
     } else {
       totalAmount = Math.round(Number(price) - Number(price) * Number(discount) / 100);
+
+      // handle the auto payfull case => skip when update
       if(this.payFullDefault && !isSubmit && !this.updateModelId){
         paidAmount = totalAmount;
       }
@@ -1503,12 +1503,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   removeProduct(i) {
-    const newData = this.data;
-    // const removedProduct = newData.splice(i, 1)[0];
-    //
-    // this.tempDataForQuickFilter = this.tempDataForQuickFilter.filter(item=> item.product_id !== removedProduct.product_id);  // Update copy after removal
-    // this.data = newData;
-
     // we need to remove the subItem when remove the master Item
     const selectedProduct = this.data[i];
 
@@ -1576,6 +1570,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     // }
   }
 
+  /**
+   * Open the popup check user want to load the previous data or not
+   * This is important because maybe user want to remove all data
+   */
   openConfirmLoadTempDataFormDialog():Observable<boolean>  {
     const dialogRef = this.dialog.open(WarehouseConfirmLoadDataFormComponent, {
       width: '35%',
@@ -2232,8 +2230,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   onProductSelectionChange(event: MatSelectionListChange) {
     // Get selected products
-    const selectedProducts = event.source.selectedOptions.selected.map(option => option.value);
-    this.selectedProducts = selectedProducts;
+    this.selectedProducts = event.source.selectedOptions.selected.map(option => option.value);
   }
 
   onAddProducts() {
@@ -2298,6 +2295,11 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     this.localStorageService.setItem(this.WAREHOUSEPRODUCTKEY, this.data);
   }
 
+
+  /**
+   * Store the branch to local storage once user completes selection
+   * @param event
+   */
   storeBranchToLocalStorage(event: MatSelectChange) {
     const value = event.value;
     const temp = this.localStorageService.getItem(this.WAREHOUSEFORMKEY);
@@ -2305,6 +2307,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     this.localStorageService.setItem(this.WAREHOUSEFORMKEY, temp);
   }
 
+  /**
+   * Store the Note into the local storage once user finishes typing
+   */
   storeWholeNoteToLocalStorage() {
     const noteValue = this.form.get('note')?.value;
     const temp = this.localStorageService.getItem<object>(this.WAREHOUSEFORMKEY);
@@ -2314,6 +2319,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     });
   }
 
+  /**
+   * Get the master index to make the order shows correctly
+   * @param currentIndex
+   */
   getMasterIndex(currentIndex: number) {
     let masterItemCount = 0;
     for (let i = 0; i <= currentIndex; i++) {
@@ -2324,11 +2333,18 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     return masterItemCount;
   }
 
+  /**
+   * Store to localstorage user choice when the payfull toggle
+   */
   onShowPayfullChange() {
     this.payFullDefault = !this.payFullDefault;
     this.localStorageService.setItem('payFullDefault', this.payFullDefault);
   }
 
+  /**
+   * Calculate the quantity & price of import form
+   * Support to the pay full automation progress
+   */
   calculatePay() {
     let quantity = 0;
     let price = 0;
@@ -2369,6 +2385,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       price: price
     }
   }
+
+  /**
+   * Recalculate when user want to change the pay (they don't want to use the default one)
+   */
   onPayProducer() {
     let paidAmount = numeral(this.form.controls['paid_amount'].value).value();
     const { quantity, price } = this.calculatePay();
