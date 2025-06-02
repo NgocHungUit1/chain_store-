@@ -1,15 +1,14 @@
 <h1 mat-dialog-title>Thông tin đơn thuốc</h1>
 <div mat-dialog-content>
   <form [formGroup]="form">
-    <div fxLayout="row wrap">
+    <div fxLayout="row wrap" class = "p-t-10">
 
       <div fxFlex="49">
         <div fxLayout="row wrap">
 
           <div fxFlex="100">
             <mat-form-field>
-              <mat-label>Mã đơn thuốc</mat-label>
-              <input matInput tabindex="1" formControlName="no" required>
+              <input matInput tabindex="1" formControlName="no" required placeholder="Mã đơn thuốc">
             </mat-form-field>
           </div>
 
@@ -73,36 +72,31 @@
 
           <div fxFlex="100">
             <mat-form-field>
-              <mat-label>Số điện thoại cơ sở khám bệnh (Tự động cập nhật)</mat-label>
-              <input matInput tabindex="2" formControlName="medical_facility_phone_number" readonly>
+              <input matInput tabindex="2" formControlName="medical_facility_phone_number" readonly placeholder="Số điện thoại cơ sở khám bệnh (Tự động cập nhật)">
             </mat-form-field>
           </div>
 
           <div fxFlex="100">
             <mat-form-field>
-              <mat-label>Loại hóa đơn (Tự động cập nhật)</mat-label>
-              <input matInput tabindex="2" formControlName="prescription_type" readonly>
+              <input matInput tabindex="2" formControlName="prescription_type" readonly placeholder = "Loại hóa đơn (Tự động cập nhật)">
             </mat-form-field>
           </div>
 
           <div fxFlex="100">
             <mat-form-field>
-              <mat-label>Chuẩn đoán</mat-label>
-              <textarea matInput tabindex="13" formControlName="note" rows="2"></textarea>
+              <textarea matInput tabindex="13" formControlName="note" rows="2" placeholder="Chuẩn đoán"></textarea>
             </mat-form-field>
           </div>
 
           <div fxFlex="100">
             <mat-form-field>
-              <mat-label>Ghi chú của bác sĩ</mat-label>
-              <textarea matInput tabindex="13" formControlName="doctor_note" rows="2"></textarea>
+              <textarea matInput tabindex="13" formControlName="doctor_note" rows="2" placeholder="Ghi chú của bác sĩ" ></textarea>
             </mat-form-field>
           </div>
 
           <div fxFlex="100">
             <mat-form-field>
-              <mat-label>Lời dặn của bác sĩ</mat-label>
-              <textarea matInput tabindex="13" formControlName="doctor_advice" rows="2"></textarea>
+              <textarea matInput tabindex="13" formControlName="doctor_advice" rows="2" placeholder="Lời dặn của bác sĩ"></textarea>
             </mat-form-field>
           </div>
 
@@ -116,21 +110,18 @@
 
           <div fxFlex="100">
             <mat-form-field>
-              <mat-label>Tên bệnh nhân</mat-label>
-              <input matInput tabindex="2" formControlName="name">
+              <input matInput tabindex="2" formControlName="name" placeholder = "Tên bệnh nhân">
             </mat-form-field>
           </div>
 
           <div fxFlex="100">
             <mat-form-field>
-              <mat-label>Tuổi</mat-label>
-              <input matInput tabindex="2" formControlName="age">
+              <input matInput tabindex="2" formControlName="age" placeholder = "Tuổi">
             </mat-form-field>
           </div>
 
           <div fxFlex="100" class="form-radio-field">
-            <mat-label>Giới tính</mat-label>
-            <mat-radio-group tabindex="10" formControlName="sex">
+            <mat-radio-group tabindex="10" formControlName="sex" placeholder = "Giới tính">
               <mat-radio-button *ngFor="let sexItem of sexItems" [value]="sexItem.id">
                 {{sexItem.title}}
               </mat-radio-button>
@@ -139,43 +130,37 @@
 
           <div fxFlex="100">
             <mat-form-field>
-              <mat-label>Cân nặng</mat-label>
-              <input matInput tabindex="2" formControlName="weight">
+              <input matInput tabindex="2" formControlName="weight" placeholder = "Cân nặng">
             </mat-form-field>
           </div>
 
           <div fxFlex="100">
             <mat-form-field>
-              <mat-label>CMND/Căn cước</mat-label>
-              <input matInput tabindex="2" formControlName="cmnd">
+              <input matInput tabindex="2" formControlName="cmnd" placeholder = "CMND/Căn cước">
             </mat-form-field>
           </div>
 
           <div fxFlex="100">
             <mat-form-field>
-              <mat-label>Thẻ BHYT</mat-label>
-              <input matInput tabindex="2" formControlName="bhyt">
+              <input matInput tabindex="2" formControlName="bhyt" placeholder = "Thẻ BHYT">
             </mat-form-field>
           </div>
 
           <div fxFlex="100">
             <mat-form-field>
-              <mat-label>Địa chỉ</mat-label>
-              <input matInput tabindex="11" formControlName="address">
+              <input matInput tabindex="11" formControlName="address" placeholder = "Địa chỉ">
             </mat-form-field>
           </div>
 
           <div fxFlex="100">
             <mat-form-field>
-              <mat-label>Người giám hộ</mat-label>
-              <input matInput tabindex="11" formControlName="person">
+              <input matInput tabindex="11" formControlName="person" placeholder = "Người giám hộ">
             </mat-form-field>
           </div>
 
           <div fxFlex="100">
             <mat-form-field>
-              <mat-label>Điện thoại liên hệ</mat-label>
-              <input matInput tabindex="11" formControlName="phone">
+              <input matInput tabindex="11" formControlName="phone" placeholder = "Điện thoại liên hệ">
             </mat-form-field>
           </div>
 
