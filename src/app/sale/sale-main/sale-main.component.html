@@ -652,7 +652,28 @@
                   </div>
                 </div>
                 <div fxFlex="2"></div>
-                <div fxFlex="49" fxLayoutAlign="end center"></div>
+                <div fxFlex="49" fxLayoutAlign="end center">
+                  <div
+                    class="hoa-don-dien-tu"
+                    *ngIf="localItemInvoice?.is_return !== true"
+                    [ngClass]="
+                      einvoiceCheckbox?.checked
+                        ? 'einvoice-checked'
+                        : 'einvoice'
+                    ">
+                    <mat-checkbox
+                      #einvoiceCheckbox
+                      formControlName="use_einvoice">
+                    </mat-checkbox>
+                    <span
+                      [ngClass]="
+                        einvoiceCheckbox?.checked ? 'einvoice-text' : ''
+                      "
+                      (click)="clickEinvoice()">
+                      Xuất hóa đơn điện tử
+                    </span>
+                  </div>
+                </div>
               </div>
 
               <!--<div class="custom-title-invoice">

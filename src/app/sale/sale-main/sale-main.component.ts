@@ -195,7 +195,10 @@ export class SaleMainComponent implements OnInit, DoCheck {
   @ViewChild('customerSearch') customerSearch: ElementRef;
   @ViewChild('customerPayment') customerPayment: ElementRef;
   @ViewChild('showListProd') showListProd: ElementRef;
+  @ViewChild('einvoiceCheckbox') einvoiceCheckbox;
+
   @ViewChildren('noteTextArea') noteTextArea!: QueryList<ElementRef<HTMLTextAreaElement>>;
+  isEinvoiceEnabled = false;
 
   private _prevTotal = this.total;
   private _selectedBankAccount: BankAccount|null = null;
@@ -703,6 +706,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       invoice_id: [null],
       total_amount: [0],
       prescription_id: [null], // ban thuoc theo don
+      use_einvoice: [false],
       selectedMethod: ['Tiền mặt'] // Default value
     });
 
@@ -849,6 +853,11 @@ export class SaleMainComponent implements OnInit, DoCheck {
         // }
       })
     );
+
+    // Kiểm tra cấu hình hóa đơn điện tử
+    this.optionStoreService.getValue('einvoice_enabled').subscribe(res => {
+      this.isEinvoiceEnabled = res.value === 'true';
+    });
     this.loadBankAccountsSubject.pipe(
       debounceTime(300) // Wait for 300ms of inactivity
     ).subscribe(() => {
@@ -2369,7 +2378,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       Invoice: {
         invoice_id: mItemInvoice.invoice_id,
         customer_id: customer?.id,
-        total_price: this.sumPrice, // tong tien hang
+        total_price: this.sumPrice,
         discount: this.discount,
         discount_type: this.discount_type,
         note: this.form.controls['noteSiderBar'].value,
@@ -2379,7 +2388,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
         prescription_id: this.prescription.checked
                          ? (mItemInvoice.prescription_id || this.prescription_id)
                          : null,
-        national_pharmacy_no: this.prescription.checked ? mItemInvoice.national_pharmacy_no : null
+        national_pharmacy_no: this.prescription.checked ? mItemInvoice.national_pharmacy_no : null,
+        use_einvoice: this.form.get('use_einvoice').value ? 1 : 0
       },
       UserID: mItemInvoice.user.id,
       InvoiceDetail: invoiceDetail,
@@ -3041,6 +3051,12 @@ export class SaleMainComponent implements OnInit, DoCheck {
     const product = this.listProduct[product_index];
     const product_id = product.product_id.toString();
     if (!product) { return; }
+
+    // Khởi tạo product_parcels nếu chưa có
+    if (!product.product_parcels) {
+      product.product_parcels = [];
+    }
+
     const selectedParcel = product.product_parcels[0] || null;
     const dialogRef = this.dialog.open(SaleProductParcelSelectDialogComponent, {
       width: '40%',
@@ -3056,6 +3072,12 @@ export class SaleMainComponent implements OnInit, DoCheck {
       if (!result) { return; }
       const product = this.listProduct[product_index];
       if (!product) { return; }
+
+      // Đảm bảo product_parcels được khởi tạo
+      if (!product.product_parcels) {
+        product.product_parcels = [];
+      }
+
       product.product_parcels = [];
       product.product_parcels.push(result.parcel);
       const exist = this.parcelFilteredItems.has(product_index);
@@ -3075,8 +3097,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
       if (product.amount > selectedParcel.quantity_of_stock) {
         product.amount = selectedParcel.quantity_of_stock;
-        // this.orderService.inputAmountProduct(product_index, selectedParcel.quantity_of_stock);
-
         redu += selectedParcel.quantity_of_stock;
         const availableParcels = this.getAvailableItems(product_index).filter(
           parcel => parcel['parcel_no'] !== selectedParcel.parcel_no
@@ -3622,6 +3642,11 @@ export class SaleMainComponent implements OnInit, DoCheck {
           this.orderService.addProduct(product);
         }
       });
+  }
+
+  clickEinvoice() {
+    const currentValue = this.form.get('use_einvoice').value;
+    this.form.get('use_einvoice').setValue(!currentValue);
   }
 }
 

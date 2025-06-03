@@ -52,6 +52,7 @@ export class Invoice {
   expensesOrders: ExpensesOrder[];
   expenses_order_price: number;
   prescription_id: string;
+  use_einvoice: number;
 }
 
 export class InvoiceFilter extends ApiFilterBase {
@@ -72,6 +73,7 @@ export class InvoiceFilter extends ApiFilterBase {
   national_pharmacy_no = '';
   order_status = '';
   order_national = '';
+  einvoice = '';
   product_id = '';
   users = '';
   created_by = '';
@@ -80,14 +82,12 @@ export class InvoiceFilter extends ApiFilterBase {
   getModelSearch() {
     return 'InvoiceSearch';
   }
-
 }
 
 export class DateFilter {
   date_from: string;
   date_to: string;
 }
-
 
 export class InvoiceDetailFilter extends ApiFilterBase {
   id = '';

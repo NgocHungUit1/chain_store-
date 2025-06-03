@@ -73,6 +73,26 @@
             </div>
           </form>
         </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Trạng thái Hóa đơn điện tử
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <form [formGroup]="einvoiceFilter">
+            <div class='custom-filter-container__checkbox-container'>
+              <mat-checkbox *ngFor='let item of einvoiceFilterList'
+                            color='primary'
+                            [checked]="einvoiceFilter.value['status'].includes(item.value)"
+                            (change)='checkBoxFilterChange($event, item.value, "status", einvoiceFilter)'
+              >
+                {{ item.name }}
+              </mat-checkbox>
+            </div>
+          </form>
+        </mat-expansion-panel>
       </mat-accordion>
     </div>
 
@@ -302,6 +322,22 @@
                 <td mat-cell class="column-number" *matCellDef="let element"> {{ element.total_payment | number }}</td>
               </ng-container>
 
+              <ng-container matColumnDef="einvoice_no">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['einvoice_no'] }}</th>
+                <td mat-cell *matCellDef="let element" class="mat-column-einvoice_no">
+                  {{ element.einvoice_no || '' }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="einvoice_status">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['einvoice_status'] }}</th>
+                <td mat-cell *matCellDef="let element">
+                  <span *ngIf="element.einvoice_status === 1">Đã phát hành</span>
+                  <span *ngIf="element.einvoice_status === 2">Đã hủy</span>
+                  <span *ngIf="element.einvoice_status === 0">Chờ phát hành</span>
+                  <span *ngIf="element.einvoice_status === undefined || element.einvoice_status === null"></span>
+                </td>
+              </ng-container>
 
               <ng-container matColumnDef="expandedDetail">
                 <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
@@ -372,6 +408,14 @@
 
               <ng-container matColumnDef="second_payment">
                 <th mat-header-cell class="column-number-sumary" *matHeaderCellDef> {{ KhachHangTra | number }} </th>
+              </ng-container>
+
+              <ng-container matColumnDef="second_einvoice_no">
+                <th mat-header-cell *matHeaderCellDef></th>
+              </ng-container>
+
+              <ng-container matColumnDef="second_einvoice_status">
+                <th mat-header-cell *matHeaderCellDef></th>
               </ng-container>
               <!--End Item second-header -->
 

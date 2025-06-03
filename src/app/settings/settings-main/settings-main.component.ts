@@ -48,7 +48,8 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     'print': 'Cài đặt khổ mẫu giấy in',
     'logo': 'Logo cửa hàng',
     'branch-connect': 'Liên thông theo chi nhánh',
-    'score': 'Tích điểm'
+    'score': 'Tích điểm',
+    'einvoice': 'Hóa đơn điện tử'
   };
 
   isLoadingResults = true;
@@ -57,6 +58,7 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
   public storeForm: FormGroup;
   public commForm: FormGroup;
   public pointSettingsForm: FormGroup;
+  public einvoiceForm: FormGroup;
 
   optionStore_transaction_expenses_order: OptionStore;
   optionStore_transaction_expenses_transaction: OptionStore;
@@ -113,6 +115,13 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
       point_can_pay_by_point_after_invoices: [{value: null}, Validators.compose([Validators.min(0)])],
       point_dont_add_point_for_discount_invoice: [false],
       point_dont_add_point_for_invoice_paid_by_point: [false],
+    });
+
+    this.einvoiceForm = this.fb.group({
+      einvoice_enabled: [false],
+      einvoice_partner_guid: ['', Validators.required],
+      einvoice_partner_token: ['', Validators.required],
+      einvoice_api_url: ['', Validators.required]
     });
 
     if (this.canDo('Branch.Get-Connect')) {
@@ -191,6 +200,8 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
       this.optionStore_comm_percent_invoice = res;
       this.commForm.patchValue({ comm_percent_invoice: res.value });
     });
+
+    this.loadEinvoiceSettings();
   }
 
   onConnectChange() {
@@ -414,6 +425,64 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
       this.notifySer.notify('error', 'Lưu không thành công!');
     } else {
       this.notifySer.notify('success', 'Lưu thành công!');
+    }
+  }
+
+  loadEinvoiceSettings() {
+    this.optionStoreService.getValue('einvoice_enabled').subscribe(res => {
+      this.einvoiceForm.patchValue({
+        einvoice_enabled: res.value === 'true'
+      });
+    });
+
+    this.optionStoreService.getValue('einvoice_partner_guid').subscribe(res => {
+      this.einvoiceForm.patchValue({
+        einvoice_partner_guid: res.value || ''
+      });
+    });
+
+    this.optionStoreService.getValue('einvoice_partner_token').subscribe(res => {
+      this.einvoiceForm.patchValue({
+        einvoice_partner_token: res.value || ''
+      });
+    });
+
+    this.optionStoreService.getValue('einvoice_api_url').subscribe(res => {
+      this.einvoiceForm.patchValue({
+        einvoice_api_url: res.value || ''
+      });
+    });
+  }
+
+  async saveEinvoice() {
+    this.einvoiceForm.markAllAsTouched();
+    if (!this.einvoiceForm.valid) {
+      return;
+    }
+
+    const formData = this.einvoiceForm.value;
+    let success = true;
+
+    try {
+      const enabledOption = await this.optionStoreService.getValue('einvoice_enabled').toPromise();
+      const guidOption = await this.optionStoreService.getValue('einvoice_partner_guid').toPromise();
+      const tokenOption = await this.optionStoreService.getValue('einvoice_partner_token').toPromise();
+      const urlOption = await this.optionStoreService.getValue('einvoice_api_url').toPromise();
+
+      enabledOption.value = formData.einvoice_enabled ? 'true' : 'false';
+      guidOption.value = formData.einvoice_partner_guid;
+      tokenOption.value = formData.einvoice_partner_token;
+      urlOption.value = formData.einvoice_api_url;
+
+      await this.optionStoreService.update(enabledOption.id, enabledOption).toPromise();
+      await this.optionStoreService.update(guidOption.id, guidOption).toPromise();
+      await this.optionStoreService.update(tokenOption.id, tokenOption).toPromise();
+      await this.optionStoreService.update(urlOption.id, urlOption).toPromise();
+
+      this.notifySer.notify('success', 'Đã lưu cấu hình hóa đơn điện tử thành công!');
+    } catch (error) {
+      console.error('Error saving einvoice settings:', error);
+      this.notifySer.notify('error', 'Lưu cấu hình thất bại, vui lòng thử lại!');
     }
   }
 }
