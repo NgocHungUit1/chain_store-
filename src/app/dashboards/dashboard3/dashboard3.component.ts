@@ -372,7 +372,7 @@ export class Dashboard3Component implements OnInit {
     return 0;
   }
 
-  private openEInvoiceModal(): void {
+  public openEInvoiceModal(): void {
     const dialogRef = this.dialog.open(EInvoiceModalComponent, {
       width: '600px',
       panelClass: 'e-invoice-modal-dialog',
