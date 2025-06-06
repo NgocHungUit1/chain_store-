@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../authentication/auth.service';
@@ -17,6 +17,7 @@ import { SharedDataService } from '../../../shared/shared-data.service';
   styleUrls: ['./header-cart.component.css']
 })
 export class AppHeaderCartComponent implements OnInit {
+  @Output() toggleRequested = new EventEmitter<void>();
 
   constructor(
     private route: Router,
@@ -181,5 +182,9 @@ export class AppHeaderCartComponent implements OnInit {
 
   onToggleClick(event: MouseEvent) {
     event.stopPropagation();
+  }
+
+  onVisibilityOptionToggle(event: MouseEvent) {
+    this.toggleRequested.emit();
   }
 }

@@ -5,12 +5,62 @@
 
       <div fxFlex="49">
         <div fxLayout="row wrap">
-
-          <div fxFlex="100">
+          <div fxFlex="auto">
+              
+                <!-- 
+                (focus)="focusInputSearch($event)"
+                (keydown.enter)="onkeydown($event)"
+                [placeholder]="placeholderSearch" 
+                -->
+                <mat-form-field>
+                  <input
+                    class="input-search-product"
+                    style="outline: 0"
+                    type="text"
+                    [formControl]="selectProduct"
+                    matInput
+                    #inputSearch
+                    [matAutocomplete]="chooseProduct"
+                  />
+                  <mat-autocomplete
+                    [displayWith]="displayProductFn"
+                    #chooseProduct="matAutocomplete"
+                    (optionSelected)="onSelectedProduct($event.option.value)"
+                    >
+                    <mat-option class="option-search"
+                      fxLayout="row"
+                      *ngFor="let product of filteredProducts | async"
+                      [value]="product"
+                      style="min-height: 70px; line-height: 25px !important; height: auto !important;"
+                      title="{{ product.product_name }}">
+                      <span
+                        fxFlex="100"
+                        style="margin-left: 5px; font-size: 12px;"
+                        class="m-l-10">
+                        <b style="font-size: 12px">Bệnh nhân: {{ product.patientName }}</b>
+                        <br />
+                        - Ngày sinh: {{ product.patientDOB }}
+                        <br />
+                        - SĐT: {{ product.patientPhoneNumber }}
+                        <br />
+                        - Địa chỉ: {{ product.patientAddress }}
+                        <br />
+                        - Khám tại: {{ product.medicalFacilityName }}
+                        <br />
+                        - Mã đơn thuốc: {{ product.nationalPrescriptionId }}
+                        <br />
+                        - Ngày kê đơn: {{ product.prescriptionDate }}
+                      </span>
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+          </div>
+          
+          <!-- <div fxFlex="100">
             <mat-form-field>
               <input matInput tabindex="1" formControlName="no" required placeholder="Mã đơn thuốc">
             </mat-form-field>
-          </div>
+          </div> -->
 
           <div fxLayout="row wrap" class="group-select">
             <div fxFlex="auto">
