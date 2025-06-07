@@ -815,19 +815,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
     // 1) Subscribe so that *any* change to the visibility map causes us to recompute displayedColumns
     this.saleColumnVisibilityService.visibility$.subscribe((map: ColumnVisibilityMap) => {
 
-      // get old status of note
-      const oldNoteStatus = this.displayedColumns.includes('note');
 
       this.displayedColumns = this.allColumns.filter(colId => map[colId]);
-
-      const newNoteStatus = this.displayedColumns.includes('note');
-      if(oldNoteStatus !== newNoteStatus) {
-        this.listProduct.forEach((_, index) => {
-
-       if(!this.isNoteShown(index))
-        this.toggleShowNote(index)
-        })
-      }
     });
 
     // 2) Immediately seed displayedColumns with whatever the service currently says
