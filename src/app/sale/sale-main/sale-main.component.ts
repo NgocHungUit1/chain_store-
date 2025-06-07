@@ -823,6 +823,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
       const newNoteStatus = this.displayedColumns.includes('note');
       if(oldNoteStatus !== newNoteStatus) {
         this.listProduct.forEach((_, index) => {
+
+       if(!this.isNoteShown(index))
         this.toggleShowNote(index)
         })
       }

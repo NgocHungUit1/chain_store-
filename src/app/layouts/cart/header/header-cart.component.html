@@ -135,27 +135,11 @@
   </div>
 </mat-menu>
 
-<button [matMenuTriggerFor]="profile" mat-icon-button class="m-r-5">
-  <img src="assets/images/users/doctor.jpg" alt="user" class="profile-pic">
+<button 
+  class="ml-xs overflow-visible" 
+  mat-icon-button
+  (click)="this.toggleRequested.emit()"
+  style="margin-right: 10px"
+  matTooltip="Tùy chọn hiển thị">
+  <mat-icon>visibility</mat-icon>
 </button>
-
-<mat-menu #profile="matMenu" class="mymegamenu">
-<!--  <button mat-menu-item>-->
-<!--    <mat-icon>settings</mat-icon>-->
-<!--    Settings-->
-<!--  </button>-->
-<!--  <button mat-menu-item>-->
-<!--    <mat-icon>account_box</mat-icon>-->
-<!--    Profile-->
-<!--  </button>-->
-<!--  <button mat-menu-item>-->
-<!--    <mat-icon>notifications_off</mat-icon>-->
-<!--    Disable notifications-->
-<!--  </button>-->
-  <button mat-menu-item
-   (click)="onVisibilityOptionToggle($event)"
-  >
-    <mat-icon>visibility</mat-icon>
-    Tùy chọn hiển thị
-  </button>
-</mat-menu>

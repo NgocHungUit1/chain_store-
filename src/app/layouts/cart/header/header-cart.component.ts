@@ -183,8 +183,4 @@ export class AppHeaderCartComponent implements OnInit {
   onToggleClick(event: MouseEvent) {
     event.stopPropagation();
   }
-
-  onVisibilityOptionToggle(event: MouseEvent) {
-    this.toggleRequested.emit();
-  }
 }

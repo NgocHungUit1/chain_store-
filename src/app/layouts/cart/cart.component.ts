@@ -187,6 +187,7 @@ export class CartComponent implements OnInit, OnDestroy {
       }
     });
 
+    debugger;
     // Seed each local boolean from the service’s current map:
     this.showProductImage    = this.saleColumnVisibilityService.isColumnVisibleNow('image');
     this.showProductCode     = this.saleColumnVisibilityService.isColumnVisibleNow('product_no');
@@ -195,6 +196,8 @@ export class CartComponent implements OnInit, OnDestroy {
     this.allowEditAsMoney    = this.saleColumnVisibilityService.isColumnVisibleNow('edit_as_money');
     this.showLastSalePrice   = this.saleColumnVisibilityService.isColumnVisibleNow('last_sale_price');
     this.allowAddRow         = this.saleColumnVisibilityService.isColumnVisibleNow('add_row');
+    this.allowQuantityOfStock         = this.saleColumnVisibilityService.isColumnVisibleNow('quantity_of_stock');
+    this.enableNote         = this.saleColumnVisibilityService.isColumnVisibleNow('note');
   }
 
   /**
@@ -283,6 +286,7 @@ export class CartComponent implements OnInit, OnDestroy {
       this.inputQuantity.nativeElement.select();
       return;
     }
+    debugger;
 
     this.addProduct(product);
 

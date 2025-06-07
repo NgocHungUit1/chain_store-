@@ -21,6 +21,7 @@
                     matInput
                     #inputSearch
                     [matAutocomplete]="chooseProduct"
+                    placeholder="Mã đơn thuốc"
                   />
                   <mat-autocomplete
                     [displayWith]="displayProductFn"
@@ -134,19 +135,19 @@
 
           <div fxFlex="100">
             <mat-form-field>
-              <textarea matInput tabindex="13" formControlName="note" rows="2" placeholder="Chuẩn đoán"></textarea>
+              <textarea matInput tabindex="13" formControlName="note" rows="4" placeholder="Chuẩn đoán"></textarea>
             </mat-form-field>
           </div>
 
           <div fxFlex="100">
             <mat-form-field>
-              <textarea matInput tabindex="13" formControlName="doctor_note" rows="2" placeholder="Ghi chú của bác sĩ" ></textarea>
+              <textarea matInput tabindex="13" formControlName="doctor_note" rows="4" placeholder="Ghi chú của bác sĩ" ></textarea>
             </mat-form-field>
           </div>
 
           <div fxFlex="100">
             <mat-form-field>
-              <textarea matInput tabindex="13" formControlName="doctor_advice" rows="2" placeholder="Lời dặn của bác sĩ"></textarea>
+              <textarea matInput tabindex="13" formControlName="doctor_advice" rows="4" placeholder="Lời dặn của bác sĩ"></textarea>
             </mat-form-field>
           </div>
 
