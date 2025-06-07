@@ -470,9 +470,10 @@
               (ngModelChange)="saleColumnVisibilityService.setColumn('discount', $event)"
               appearance="outline"
               multiple="false"
+              style="display: flex; margin-left: 10px;"
             >
-              <mat-button-toggle [value]="'price'">VND</mat-button-toggle>
-              <mat-button-toggle [value]="'percent'">%</mat-button-toggle>
+              <mat-button-toggle [value]="'price'" class="small-toggle-button">VND</mat-button-toggle>
+              <mat-button-toggle [value]="'percent'" class="small-toggle-button">%</mat-button-toggle>
             </mat-button-toggle-group>
           </div>
           <mat-divider></mat-divider>
