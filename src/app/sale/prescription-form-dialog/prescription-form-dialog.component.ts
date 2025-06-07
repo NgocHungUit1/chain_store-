@@ -35,7 +35,7 @@ export class PrescriptionFormDialogComponent implements OnInit {
   form: FormGroup;
 
   selectProduct = new FormControl();
-  
+
   filteredProducts: Observable<any[]>;
 
   loading = false;
@@ -74,7 +74,7 @@ export class PrescriptionFormDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<PrescriptionFormDialogComponent>,
-    
+
     public notifySer: NotifierService,
     public locationSer: LocationService,
     public doctorService: DoctorService,
@@ -82,7 +82,7 @@ export class PrescriptionFormDialogComponent implements OnInit {
     private fb: FormBuilder,
     private service: PrescriptionService,
     private nationalPrescriptionService: NationalPrescriptionService,
-    
+
     private dialog: MatDialog,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object
   ) {
@@ -149,7 +149,6 @@ export class PrescriptionFormDialogComponent implements OnInit {
       debounceTime(300),
       // use switch map so as to cancel previous subscribed events, before creating new once
       switchMap(value => {
-        debugger;
         value = (value || '').trim();
         if (value !== '') {
             return this.lookupNationalPrescription(value);

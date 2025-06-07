@@ -187,7 +187,6 @@ export class CartComponent implements OnInit, OnDestroy {
       }
     });
 
-    debugger;
     // Seed each local boolean from the service’s current map:
     this.showProductImage    = this.saleColumnVisibilityService.isColumnVisibleNow('image');
     this.showProductCode     = this.saleColumnVisibilityService.isColumnVisibleNow('product_no');
@@ -286,7 +285,6 @@ export class CartComponent implements OnInit, OnDestroy {
       this.inputQuantity.nativeElement.select();
       return;
     }
-    debugger;
 
     this.addProduct(product);
 

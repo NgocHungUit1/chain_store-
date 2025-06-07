@@ -43,7 +43,6 @@ export class DiscountSiderbarDialogComponent implements OnInit {
     this.saleColumnVisibilityService.visibility$.subscribe((map: ColumnVisibilityMap) => {
       typeValue = map.discount + "";
     });
-    debugger;
     let listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
@@ -112,7 +111,7 @@ export class DiscountSiderbarDialogComponent implements OnInit {
 
   /**
     * Format input number
-    * @Nghia 
+    * @Nghia
     */
   inputformatNumber(event: any) {
     event.target.value = numeral(event.target.value).format('0,0');

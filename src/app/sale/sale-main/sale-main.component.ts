@@ -819,20 +819,20 @@ export class SaleMainComponent implements OnInit, DoCheck {
       if (!map['product_no']) {
         this.flexibleWithProductName = 32; // 'no' column takes 2 flex
       }
-      
+
       // get old status of note
-      const oldNoteStatus = this.displayedColumns.includes('note');
+      //const oldNoteStatus = this.displayedColumns.includes('note');
 
       this.displayedColumns = this.allColumns.filter(colId => map[colId]);
 
-      const newNoteStatus = this.displayedColumns.includes('note');
-      if(oldNoteStatus !== newNoteStatus) {
-        this.listProduct.forEach((_, index) => {
-
-       if(!this.isNoteShown(index))
-        this.toggleShowNote(index)
-        })
-      }
+      // const newNoteStatus = this.displayedColumns.includes('note');
+      // if(oldNoteStatus !== newNoteStatus) {
+      //   this.listProduct.forEach((_, index) => {
+      //
+      //  if(!this.isNoteShown(index))
+      //   this.toggleShowNote(index)
+      //   })
+      // }
     });
 
     // 2) Immediately seed displayedColumns with whatever the service currently says
@@ -2938,6 +2938,10 @@ export class SaleMainComponent implements OnInit, DoCheck {
    */
   isNoteShown(i: number) {
     const note = this.listProduct[i].note;
+    console.log(`${i} - ${note}`)
+    if (this.saleColumnVisibilityService.isColumnVisibleNow('note')){
+      return true;
+    }
     return note !== undefined;
   }
 
