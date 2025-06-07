@@ -404,7 +404,7 @@
                     <button mat-icon-button (click)="deleteProduct(getProductIndex(subItem))">
                       <mat-icon>delete</mat-icon>
                     </button>
-                    <button mat-icon-button (click)="toggleShowMenu(getProductIndex(subItem))" *ngIf="displayedColumns.includes('note')">
+                    <button mat-icon-button (click)="toggleShowMenu(getProductIndex(subItem))" *ngIf="!displayedColumns.includes('note')">
                       <mat-icon>more_vert</mat-icon>
                       <div class="note-area" *ngIf="isMenuShown(getProductIndex(subItem))">
                         <button mat-stroked-button (click)="toggleShowNote(getProductIndex(subItem))">
@@ -421,7 +421,7 @@
               </div>
 
               <!--              note in subitem-->
-              <div fxLayout="row wrap" fxLayoutAlign="center center" class="row-item" *ngIf="displayedColumns.includes('note')">
+              <div fxLayout="row wrap" fxLayoutAlign="center center" class="row-item" *ngIf="!displayedColumns.includes('note')">
                 <div style='width: 52px;' *ngIf="displayedColumns.includes('image')"></div>
                 <div fxFlex="2"></div>
                 <div fxFlex="32">
