@@ -250,6 +250,7 @@
       [ngStyle]="{ 'opacity': searchMode ? '1' : '0.5' }"
       (click)="$event.stopImmediatePropagation();focusInput();"
       style = "margin-left: 20px;"
+      matTooltip="Tìm kiếm nhanh"
     >
       <mat-icon>barcode_reader</mat-icon>
     </button>
@@ -279,7 +280,8 @@
       mat-button
       mat-icon-button
       (click)="addInvoice()"
-      class="btn-add-invoice-tab">
+      class="btn-add-invoice-tab"
+      matTooltip="Thêm hóa đơn">
       <mat-icon>add</mat-icon>
     </button>
 
@@ -287,19 +289,24 @@
     <!-- ============================================================== -->
     <!-- app header component - style you can find in header.scss / header.component.ts-->
     <!-- ============================================================== -->
-    <app-header-cart></app-header-cart>
+    <app-header-cart (toggleRequested)="onVisibilityClick()"></app-header-cart>
     <!-- ============================================================== -->
     <!-- Right sidebar toggle - style you can find in rightsidebar.component.scss -->
     <!-- ============================================================== -->
     <button
-      (click)="end.toggle()"
+      (click)="onSettingsClick()"
       mat-icon-button
-      class="ml-xs overflow-visible">
+      class="ml-xs overflow-visible"
+      matTooltip="In hóa đơn">
       <mat-icon>settings</mat-icon>
     </button>
   </mat-toolbar>
   <!-- ============================================================== -->
   <!-- End Topbar - style you can find in pages.scss -->
+  <!-- ============================================================== -->
+
+  <!-- ============================================================== -->
+  <!-- SINGLE mat-sidenav-container (no nested containers)         -->
   <!-- ============================================================== -->
   <mat-sidenav-container
     class="example-sidenav-container"
@@ -320,6 +327,7 @@
       (close)="sidebarOpened = false">
       <!-- <app-sidebar></app-sidebar> -->
     </mat-sidenav>
+
     <!-- ============================================================== -->
     <!-- Sidebar - style you can find in sidebar.scss -->
     <!-- ============================================================== -->
@@ -331,7 +339,11 @@
       position="end"
       class="chat-panel"
       mode="over"
-      opened="false">
+      opened="false"
+      (openedStart)="isAnimating = true; closeOther('settings')"
+      (closedStart)="isAnimating = true"
+      (openedChange)="isAnimating = false"
+    >
       <div class="scroll">
         <mat-nav-list>
           <h3 mat-subheader class="text-uppercase font-weight-bold">
@@ -386,12 +398,120 @@
               >Dark
             </mat-checkbox>
           </mat-list-item>
+          <h3 mat-subheader class="text-uppercase font-weight-bold">
+            Profile
+          </h3>
+          <mat-list-item  (click)="logout()">
+            <mat-icon class="m-r-3">exit_to_app</mat-icon>
+            Đăng xuất
+          </mat-list-item>
         </mat-nav-list>
       </div>
     </mat-sidenav>
 
     <!-- ============================================================== -->
-    <!-- Page container - style you can find in pages.scss -->
+    <!-- Visibility drawer (#visibilitySidenav)                       -->
+    <!-- ============================================================== -->
+    <!-- ─── Visibility drawer (#visibilitySidenav) ─── -->
+    <mat-sidenav
+      #visibilitySidenav
+      position="end"
+      class="chat-panel"
+      mode="over"
+      opened="false"
+      (openedStart)="isAnimating = true; closeOther('visibility')"
+      (closedStart)="isAnimating = true"
+      (openedChange)="isAnimating = false"
+    >
+      <div style="font-weight: bold;" matSubheader>
+        <span>Tùy chọn hiển thị</span>
+      </div>
+      <div class="scroll" style="padding: 1rem;">
+        <mat-nav-list style="padding: 0 16px;">
+          <!-- 1) Ảnh hàng hóa -->
+          <div fxLayout="row" fxLayoutAlign="space-between center" style="padding: 8px 0;">
+            <span>Ảnh hàng hóa</span>
+            <mat-slide-toggle
+              color="primary"
+              [(ngModel)]="showProductImage"
+              (ngModelChange)="saleColumnVisibilityService.setColumn('image', $event)">
+            </mat-slide-toggle>
+          </div>
+          <mat-divider></mat-divider>
+
+          <!-- 2) Mã hàng -->
+          <div fxLayout="row" fxLayoutAlign="space-between center" style="padding: 8px 0;">
+            <span>Mã hàng</span>
+            <mat-slide-toggle
+              color="primary"
+              [(ngModel)]="showProductCode"
+              (ngModelChange)="saleColumnVisibilityService.setColumn('product_no', $event)">
+            </mat-slide-toggle>
+          </div>
+          <mat-divider></mat-divider>
+
+          <!-- 3) Giá bán -->
+          <div fxLayout="row" fxLayoutAlign="space-between center" style="padding: 8px 0;">
+            <span>Giá bán</span>
+            <mat-slide-toggle
+              color="primary"
+              [(ngModel)]="showSalePrice"
+              (ngModelChange)="saleColumnVisibilityService.setColumn('price', $event)">
+            </mat-slide-toggle>
+          </div>
+          <mat-divider></mat-divider>
+
+          <!-- 4) Giảm giá(mặc định) -->
+          <div fxLayout="row" fxLayoutAlign="space-between center" style="padding: 8px 0;">
+            <span>Giảm giá(mặc định)</span>
+            <mat-button-toggle-group
+              #discountMode="matButtonToggleGroup"
+              [(ngModel)]="showDiscount"
+              (ngModelChange)="saleColumnVisibilityService.setColumn('discount', $event)"
+              appearance="outline"
+              multiple="false"
+            >
+              <mat-button-toggle [value]="'price'">VND</mat-button-toggle>
+              <mat-button-toggle [value]="'percent'">%</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+          <mat-divider></mat-divider>
+
+          <!-- 7) Thêm dòng -->
+          <div fxLayout="row" fxLayoutAlign="space-between center" style="padding: 8px 0;">
+            <span>Thêm dòng</span>
+            <mat-slide-toggle
+              color="primary"
+              [(ngModel)]="allowAddRow"
+              (ngModelChange)="saleColumnVisibilityService.setColumn('add_row', $event)">
+            </mat-slide-toggle>
+          </div>
+          <mat-divider></mat-divider>
+
+          <!-- 8) Tồn kho -->
+          <div fxLayout="row" fxLayoutAlign="space-between center" style="padding: 8px 0;">
+            <span>Tồn kho</span>
+            <mat-slide-toggle
+              color="primary"
+              [(ngModel)]="allowQuantityOfStock"
+              (ngModelChange)="saleColumnVisibilityService.setColumn('quantity_of_stock', $event)">
+            </mat-slide-toggle>
+          </div>
+          <mat-divider></mat-divider>
+
+          <!-- 9) Ghi chú -->
+          <div fxLayout="row" fxLayoutAlign="space-between center" style="padding: 8px 0;">
+            <span>Ghi chú</span>
+            <mat-slide-toggle
+              color="primary"
+              [(ngModel)]="enableNote"
+              (ngModelChange)="saleColumnVisibilityService.setColumn('note', $event)">
+            </mat-slide-toggle>
+          </div>
+          <mat-divider></mat-divider>
+        </mat-nav-list>
+      </div>
+    </mat-sidenav>
     <!-- ============================================================== -->
     <mat-sidenav-content class="page-wrapper-cart">
       <!-- <app-breadcrumb></app-breadcrumb> -->

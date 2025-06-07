@@ -41,6 +41,9 @@ import { element } from 'protractor';
 import { CustomerService } from '../../customer/customer.service';
 import {StoreService} from '../../store/store.service';
 import {OptionStoreService} from '../../common/option-store.service';
+import { AuthService } from '../../authentication/auth.service';
+import { MatSidenav } from '@angular/material/sidenav';
+import { SaleColumnVisibilityService } from '../../shared/sale-column-visibility.service';
 
 /** @title Responsive sidenav */
 @Component({
@@ -62,6 +65,7 @@ export class CartComponent implements OnInit, OnDestroy {
   placeholderSearch = 'Tìm sản phẩm (F3)';
   iconChangeType = 'cached';
   barcode: string;
+  isAnimating = false;
   public showSearch = false;
 
   public config: PerfectScrollbarConfigInterface = {};
@@ -86,9 +90,20 @@ export class CartComponent implements OnInit, OnDestroy {
   public storeDetail: object = null;
   logo = 'assets/images/Rx20_16x16_op1-1207.png';
 
+  public showProductImage:    boolean = true;  // maps to key 'image'
+  public showProductCode:     boolean = true;  // maps to key 'product_no'
+  public showSalePrice:       boolean = true;  // maps to key 'price'
+  public showDiscount:        boolean = true;  // maps to key 'discount'
+  public allowEditAsMoney:    boolean = true;  // maps to key 'edit_as_money'
+  public showLastSalePrice:   boolean = true;  // maps to key 'last_sale_price'
+  public allowAddRow:         boolean = true;  // maps to key 'add_row'
+  public allowQuantityOfStock:         boolean = false;  // maps to key 'quantity_of_stock'
+  public enableNote:          boolean = false;  // maps to key 'note'
+
   @ViewChild('inputSearch') inputSearch: ElementRef;
   @ViewChild('inputQuantity') inputQuantity: ElementRef;
-
+  @ViewChild('end') settingsSidenav: MatSidenav;
+  @ViewChild('visibilitySidenav') visibilitySidenav: MatSidenav;
   canNegativeStock: boolean = false;
 
   constructor(
@@ -104,6 +119,9 @@ export class CartComponent implements OnInit, OnDestroy {
     private notifySer: NotifierService,
     private optionStoreService: OptionStoreService,
     private storeSer: StoreService,
+    private authSer: AuthService,
+    private route: Router,
+    public saleColumnVisibilityService: SaleColumnVisibilityService,
     protected customerService: CustomerService,
   ) {
     this.mobileQuery = media.matchMedia('(min-width: 768px)');
@@ -168,6 +186,18 @@ export class CartComponent implements OnInit, OnDestroy {
         this.logo = this.storeDetail['logo'];
       }
     });
+
+    debugger;
+    // Seed each local boolean from the service’s current map:
+    this.showProductImage    = this.saleColumnVisibilityService.isColumnVisibleNow('image');
+    this.showProductCode     = this.saleColumnVisibilityService.isColumnVisibleNow('product_no');
+    this.showSalePrice       = this.saleColumnVisibilityService.isColumnVisibleNow('price');
+    this.showDiscount        = this.saleColumnVisibilityService.isColumnVisibleNow('discount');
+    this.allowEditAsMoney    = this.saleColumnVisibilityService.isColumnVisibleNow('edit_as_money');
+    this.showLastSalePrice   = this.saleColumnVisibilityService.isColumnVisibleNow('last_sale_price');
+    this.allowAddRow         = this.saleColumnVisibilityService.isColumnVisibleNow('add_row');
+    this.allowQuantityOfStock         = this.saleColumnVisibilityService.isColumnVisibleNow('quantity_of_stock');
+    this.enableNote         = this.saleColumnVisibilityService.isColumnVisibleNow('note');
   }
 
   /**
@@ -256,6 +286,7 @@ export class CartComponent implements OnInit, OnDestroy {
       this.inputQuantity.nativeElement.select();
       return;
     }
+    debugger;
 
     this.addProduct(product);
 
@@ -276,7 +307,8 @@ export class CartComponent implements OnInit, OnDestroy {
     return mItemInvoice.listProduct;
   }
 
-  addProduct(product){
+  addProduct(product, amountProduct = 1){
+
     const listProducts = this.getListProducts();
     const existingQuantity = listProducts?.find(item=>item.product_id == product.id)?.amount ?? 0;
 
@@ -288,8 +320,9 @@ export class CartComponent implements OnInit, OnDestroy {
         console.log(this.canNegativeStock);
         if (
           this.canNegativeStock || (product['quantity_of_stock'] > 0 &&
-          product['quantity_of_stock'] >= this.amountProduct + existingQuantity
+          product['quantity_of_stock'] >= amountProduct + existingQuantity
         )) {
+          product.amount = amountProduct;
           this.handlePriceListProduct(product);
         } else {
           this.notifySer.notify('warning', 'Không đủ tồn kho.');
@@ -306,6 +339,8 @@ export class CartComponent implements OnInit, OnDestroy {
           // tslint:disable-next-line:no-shadowed-variable
           res['items'].forEach(element => {
             // console.log(element);
+            console.log('amountProduct', amountProduct);
+            element.amount*= amountProduct
             this.handlePriceListProduct(element, product.id);
           });
         });
@@ -405,13 +440,27 @@ export class CartComponent implements OnInit, OnDestroy {
     this.searchMode = !this.searchMode;
     // this.selectedProducts = [];
   }
-  onQuantityEnter(){
-    this.addProduct(this.selectedProductValue);
+  onQuantityEnter() {
+    // Read input value directly from native element and parse to int
+    const val = this.inputQuantity.nativeElement.value;
+    const parsedAmount = parseInt(val, 10);
+
+    if (!parsedAmount || parsedAmount < 1) {
+      this.amountProduct = 1;
+    } else {
+      this.amountProduct = parsedAmount;
+    }
+
+    console.log('onQuantityEnter - final amountProduct:', this.amountProduct);
+
+    this.addProduct(this.selectedProductValue, this.amountProduct);
+
     this.selectedProductValue = null;
     this.selectProduct.patchValue(null);
     this.amountProduct = 1;
     this.inputSearch.nativeElement.focus();
   }
+
 
   displayProductFn(product: any): string {
     if (!product) return ''; // Handle null/undefined
@@ -446,5 +495,102 @@ export class CartComponent implements OnInit, OnDestroy {
       }
     });
     $event.target.value = '';
+  }
+
+  logout() {
+    this.authSer.logout().subscribe((res) => {
+      if (res) {
+        this.route.navigate(['/', 'authentication', 'login']);
+      }
+    });
+  }
+
+  /**
+   * When one panel opens, close the other one immediately.
+   * We rely on the (openedStart) event so that by the time it fully slides
+   * in, the other panel has already been asked to close.
+   */
+  closeOther(openedPanel: 'settings' | 'visibility') {
+    if (openedPanel === 'settings' && this.visibilitySidenav.opened) {
+      this.visibilitySidenav.close();
+    }
+    if (openedPanel === 'visibility' && this.settingsSidenav.opened) {
+      this.settingsSidenav.close();
+    }
+  }
+
+  /**
+   * Dummy no‐op for (closedStart) binding, since we only need to wire (openedStart).
+   */
+  noop() {}
+
+  /**
+   * Called when the user clicks the “Settings” (gear) button.
+   * • If an animation is in progress, do nothing.
+   * • If “Settings” is already open, close it.
+   * • Else if “Visibility” is open, wait for it to finish closing before opening “Settings.”
+   * • Otherwise open “Settings” immediately.
+   */
+  onSettingsClick(): void {
+    // 1) If an open/close animation is still running, ignore this click
+    if (this.isAnimating) {
+      return;
+    }
+
+    // 2) If “Settings” is already open, just close it
+    if (this.settingsSidenav.opened) {
+      this.settingsSidenav.close();
+      return;
+    }
+
+    // 3) If “Visibility” is open, wait until it finishes closing (openedChange → false)
+    if (this.visibilitySidenav.opened) {
+      const sub = this.visibilitySidenav.openedChange.subscribe((opened) => {
+        if (!opened) {
+          sub.unsubscribe();
+          this.settingsSidenav.open();
+        }
+      });
+      this.visibilitySidenav.close();
+      return;
+    }
+
+    // 4) Otherwise, open “Settings” immediately
+    this.settingsSidenav.open();
+  }
+
+  /**
+   * Called when the user clicks the “Visibility” toggle (app-header-cart).
+   * • If an animation is in progress, do nothing.
+   * • If “Visibility” is already open, close it.
+   * • Else if “Settings” is open, wait for it to finish closing before opening “Visibility.”
+   * • Otherwise open “Visibility” immediately.
+   */
+  onVisibilityClick(): void {
+    // 1) If an open/close animation is still running, ignore this click
+    if (this.isAnimating) {
+      return;
+    }
+
+    // 2) If “Visibility” is already open, just close it
+    if (this.visibilitySidenav.opened) {
+      this.visibilitySidenav.close();
+      return;
+    }
+
+    // 3) If “Settings” is open, wait until it finishes closing (openedChange → false)
+    if (this.settingsSidenav.opened) {
+      const sub = this.settingsSidenav.openedChange.subscribe((opened) => {
+        if (!opened) {
+          sub.unsubscribe();
+          this.visibilitySidenav.open();
+        }
+      });
+      this.settingsSidenav.close();
+      return;
+    }
+
+    // 4) Otherwise, open “Visibility” immediately
+    this.visibilitySidenav.open();
   }
 }

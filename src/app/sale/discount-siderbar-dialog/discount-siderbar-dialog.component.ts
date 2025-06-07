@@ -4,6 +4,7 @@ import { OrderService } from '../order.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ItemInvoice } from '../order.model';
 import * as numeral from 'numeral';
+import { ColumnVisibilityMap, SaleColumnVisibilityService } from '../../shared/sale-column-visibility.service';
 
 @Component({
   selector: 'app-discount-siderbar-dialog',
@@ -16,6 +17,7 @@ export class DiscountSiderbarDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<DiscountSiderbarDialogComponent>,
     private orderService: OrderService,
     private fb: FormBuilder,
+    private saleColumnVisibilityService: SaleColumnVisibilityService
   ) { }
 
   typeItems: any[] = [
@@ -36,7 +38,12 @@ export class DiscountSiderbarDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
+    let typeValue = 'price';
+    let numberValue = 0;
+    this.saleColumnVisibilityService.visibility$.subscribe((map: ColumnVisibilityMap) => {
+      typeValue = map.discount + "";
+    });
+    debugger;
     let listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
@@ -48,9 +55,7 @@ export class DiscountSiderbarDialogComponent implements OnInit {
     });
 
     const discountSiderBar = mItemInvoice.discountSiderBar;
-    let numberValue = 0;
-    let typeValue = 'price';
-    if (discountSiderBar !== null && discountSiderBar !== undefined) {
+    if (discountSiderBar !== null && discountSiderBar !== undefined && discountSiderBar.number > 0) {
       numberValue = discountSiderBar?.number;
       typeValue = discountSiderBar?.type;
     }

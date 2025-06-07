@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { OrderService } from '../order.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Product } from '../../product/product.model';
+import { ColumnVisibilityMap, SaleColumnVisibilityService } from '../../shared/sale-column-visibility.service';
 
 @Component({
   selector: 'app-price-detail-order-dialog',
@@ -20,6 +21,7 @@ export class PriceDetailOrderDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<PriceDetailOrderDialogComponent>,
     private orderService: OrderService,
     private fb: FormBuilder,
+    private saleColumnVisibilityService: SaleColumnVisibilityService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
     this.local_data = { ...data };
     this.i = this.local_data.i;
@@ -46,9 +48,14 @@ export class PriceDetailOrderDialogComponent implements OnInit {
 
 
   ngOnInit(): void {
-    
     var discountType = 'price';
     var discountPrice = '0';
+    this.saleColumnVisibilityService.visibility$.subscribe((map: ColumnVisibilityMap) => {
+      if (map.discount) {
+        discountType = map.discount + "";
+      }
+    });
+
     var endPrice = this.common_price;
     if (this.product.discount_type) {
       discountType = this.product.discount_type;

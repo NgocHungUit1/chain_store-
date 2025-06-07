@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, Optional } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { LocationService } from '../../location/location.service';
@@ -14,6 +14,10 @@ import { MedicalFacilityFilter } from '../medical-facility.model';
 import { environment } from '../../../environments/environment';
 import { INationalProduct } from './prescription-form-dialog.interface';
 import { Prescription } from '../prescription.model';
+import { Observable, of } from 'rxjs';
+import { NationalPrescription } from '../order.model';
+import { NationalPrescriptionService } from '../../national-prescription/national-prescription.service';
+import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 
 // Định nghĩa class ImageSnippet tương tự product-medicine-dialog
 class ImageSnippet {
@@ -29,6 +33,11 @@ class ImageSnippet {
 export class PrescriptionFormDialogComponent implements OnInit {
 
   form: FormGroup;
+
+  selectProduct = new FormControl();
+  
+  filteredProducts: Observable<any[]>;
+
   loading = false;
 
   local_data: any;
@@ -65,12 +74,15 @@ export class PrescriptionFormDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<PrescriptionFormDialogComponent>,
+    
     public notifySer: NotifierService,
     public locationSer: LocationService,
     public doctorService: DoctorService,
     public medicalFacilityService: MedicalFacilityService,
     private fb: FormBuilder,
     private service: PrescriptionService,
+    private nationalPrescriptionService: NationalPrescriptionService,
+    
     private dialog: MatDialog,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object
   ) {
@@ -131,7 +143,22 @@ export class PrescriptionFormDialogComponent implements OnInit {
     });
 
     this.initForm();
-
+    this.filteredProducts = this.selectProduct.valueChanges.pipe(
+      startWith(''),
+      // delay emits
+      debounceTime(300),
+      // use switch map so as to cancel previous subscribed events, before creating new once
+      switchMap(value => {
+        debugger;
+        value = (value || '').trim();
+        if (value !== '') {
+            return this.lookupNationalPrescription(value);
+        } else {
+          // if no value is present, return null
+          return of(null);
+        }
+      })
+    );
     if (this.prescription_id !== null && this.prescription_id !== undefined) {
       console.log('Load: ' + this.prescription_id);
       this.loadDetail(this.prescription_id);
@@ -151,6 +178,9 @@ export class PrescriptionFormDialogComponent implements OnInit {
   loadDetail(id) {
     this.service.getDetail(id, 'medicalFacility,nationalProducts').subscribe(data => {
       this.prescriptionDetail = data;
+
+      this.selectProduct.setValue({nationalPrescriptionId: data.no});
+
       this.form.patchValue({
         no: data['no'],
         name: data['name'],
@@ -379,5 +409,28 @@ export class PrescriptionFormDialogComponent implements OnInit {
     const diffTime = now.getTime() - prescriptionDate.getTime();
 
     return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  lookupNationalPrescription(value: string): Observable<NationalPrescription[]> {
+    return this.nationalPrescriptionService.autocomplete(value).pipe(
+      debounceTime(300),
+      // map the item property of the github results as our return object
+      map(results => {
+        return results;
+      }),
+      // catch errors
+      catchError(_ => {
+        return of(null);
+      })
+    );
+  }
+
+  displayProductFn(product: any): string {
+    if (!product) return ''; // Handle null/undefined
+    return product.nationalPrescriptionId; // Show only the product name
+  }
+
+  onSelectedProduct(product) {
+    this.loadDetail(product.prescriptionId);
   }
 }
