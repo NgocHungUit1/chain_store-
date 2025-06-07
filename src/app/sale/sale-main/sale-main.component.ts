@@ -192,7 +192,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
   isDropdownOpen: boolean = false;
   wallets: any[] = [];
   bankAccountFilter: BankAccountFilter = new BankAccountFilter();
-
+  flexibleWithProductName = 16;
   /**
    * allColumns is a fixed list of every “column ID” that might appear
    * in the sale‐detail row. In your HTML template, each fxFlex/div block
@@ -815,6 +815,11 @@ export class SaleMainComponent implements OnInit, DoCheck {
     // 1) Subscribe so that *any* change to the visibility map causes us to recompute displayedColumns
     this.saleColumnVisibilityService.visibility$.subscribe((map: ColumnVisibilityMap) => {
 
+      this.flexibleWithProductName = 16;
+      if (!map['product_no']) {
+        this.flexibleWithProductName = 32; // 'no' column takes 2 flex
+      }
+      
       // get old status of note
       const oldNoteStatus = this.displayedColumns.includes('note');
 

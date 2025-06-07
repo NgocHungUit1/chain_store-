@@ -25,7 +25,7 @@
                 <span>{{ masterIndex + 1 }}</span>
               </div>
 
-              <div fxFlex="16" *ngIf="displayedColumns.includes('product_no')">
+              <div [fxFlex]="32 - flexibleWithProductName" *ngIf="displayedColumns.includes('product_no')">
                 <div class="span-product-no">
                   <div> {{ masterProduct?.product?.product_no }}</div>
 
@@ -34,7 +34,7 @@
                   </div>
                 </div>
               </div>
-              <div fxFlex="16">
+              <div [fxFlex]="flexibleWithProductName">
                 <div class="row-text row-product-name" title="{{ masterProduct?.product?.product_name }}">
                   <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                     {{ masterProduct.product?.product_name }}
@@ -145,7 +145,7 @@
                   <button mat-icon-button (click)="deleteProduct(getProductIndex(masterProduct))">
                     <mat-icon>delete</mat-icon>
                   </button>
-                  <button [disabled]="masterProduct?.product?.not_in_store"
+                  <button [disabled]="masterProduct?.product?.not_in_store" *ngIf="displayedColumns.includes('note')"
                     mat-icon-button (click)="toggleShowMenu(getProductIndex(masterProduct))">
                     <mat-icon>more_vert</mat-icon>
                     <div class="note-area" *ngIf="isMenuShown(getProductIndex(masterProduct))">
