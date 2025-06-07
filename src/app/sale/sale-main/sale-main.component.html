@@ -10,7 +10,7 @@
         <ng-container *ngFor="let masterProduct of getMasterProducts(); let masterIndex = index">
           <!-- Master item -->
           <div class="product-item master-item-row">
-            <div fxLayout="row wrap" fxLayoutAlign="space-around center" class="row-item">
+            <div fxLayout="row wrap" fxLayoutAlign="center center" class="row-item">
               
               <div style='width: 50px; height: 50px; object-fit: contain; border: 1px solid #c0c0c0; margin-right: 1px auto' *ngIf="displayedColumns.includes('image')">
                   <ng-container *ngIf='!masterProduct.product?.default_image'>
@@ -32,11 +32,6 @@
                   <div *ngIf="masterProduct?.product?.medicine?.content && masterProduct?.product?.medicine?.content != 'NULL'">
                     Cách dùng: {{masterProduct?.product?.medicine?.content}}
                   </div>
-
-                  <div style="font-size: 12px; color:gray;" *ngIf="displayedColumns.includes('quantity_of_stock')">
-                    Tồn kho: {{masterProduct?.product?.quantity_of_stock}}
-                  </div>
-
                 </div>
               </div>
               <div fxFlex="16">
@@ -47,6 +42,10 @@
 
                   <div>
                     Hoạt chất: {{ masterProduct.product?.medicine?.main_active_substance }}
+                  </div>
+
+                  <div style="font-size: 12px; color:gray;" *ngIf="displayedColumns.includes('quantity_of_stock')">
+                    Tồn kho: {{masterProduct?.product?.quantity_of_stock}}
                   </div>
                 </div>
               </div>
@@ -166,7 +165,7 @@
             </div>
 
             <!--            note item in master -->
-            <div fxLayout="row wrap" fxLayoutAlign="space-around center" class="row-item" *ngIf="displayedColumns.includes('note')">
+            <div fxLayout="row wrap" fxLayoutAlign="center center" class="row-item" *ngIf="displayedColumns.includes('note')">
               <div style='width: 50px;' *ngIf="displayedColumns.includes('image')">
               </div>
               <div fxFlex="2"></div>
@@ -198,7 +197,7 @@
 
             <!--            parcel item-->
             <div *ngIf="!masterProduct?.product?.not_in_store"
-              fxLayout="row wrap" fxLayoutAlign="space-around center" class="product-item sub-item-row"
+              fxLayout="row wrap" fxLayoutAlign="center center" class="product-item sub-item-row"
                  style="margin-top: -8px">
               <div style='width: 52px;' *ngIf="displayedColumns.includes('image')"></div>
               <div fxFlex="2" class="row-product-no">
@@ -256,7 +255,7 @@
 
             <!--  select change product-->
             <div *ngIf="masterProduct?.product?.not_in_store"
-                 fxLayout="row wrap" fxLayoutAlign="space-around center" class="product-item sub-item-row"
+                 fxLayout="row wrap" fxLayoutAlign="center center" class="product-item sub-item-row"
                  style="margin-top: -8px">
               <div style='width: 52px;' *ngIf="displayedColumns.includes('image')"></div>
               <div fxFlex="2" class="row-product-no">
@@ -422,7 +421,8 @@
               </div>
 
               <!--              note in subitem-->
-              <div fxLayout="row wrap" fxLayoutAlign="center center" class="row-item">
+              <div fxLayout="row wrap" fxLayoutAlign="center center" class="row-item" *ngIf="displayedColumns.includes('note')">
+                <div style='width: 52px;' *ngIf="displayedColumns.includes('image')"></div>
                 <div fxFlex="2"></div>
                 <div fxFlex="32">
                   <div class="row-product-note d-flex align-items-center" *ngIf="isNoteShown(getProductIndex(subItem))">
