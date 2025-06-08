@@ -1,0 +1,31 @@
+<div class="register-modal">
+  <div class="modal-header">
+    <img src="assets/images/Rx20_16x16_op1-1207.png"  >
+    <button type="button" class="close" (click)="dialogRef.close()">
+      <span>×</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label>Tên cửa hàng</label>
+        <input type="text" class="form-control" formControlName="store_name">
+      </div>
+
+      <div class="form-group">
+        <label>Mã số thuế</label>
+        <input type="text" class="form-control" formControlName="tax_code">
+      </div>
+
+      <div class="form-group">
+        <label>Số điện thoại Zalo</label>
+        <input type="text" class="form-control" formControlName="phone">
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100" [disabled]="registerForm.invalid || isSubmitting">
+        Đăng ký ngay
+      </button>
+    </form>
+  </div>
+</div>

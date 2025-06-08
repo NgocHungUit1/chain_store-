@@ -7,6 +7,8 @@ import { WarehouseProductParcelFilter } from '../../warehouse-product-parcel/war
 import { WarehouseProductParcelService } from '../../warehouse-product-parcel/warehouse-product-parcel.service';
 import { Router } from '@angular/router';
 import moment from 'moment';
+import { MatDialog } from '@angular/material/dialog';
+import { EInvoiceModalComponent } from '../components/e-invoice-modal/e-invoice-modal.component';
 @Component({
   selector: 'app-dashboard3',
   templateUrl: './dashboard3.component.html',
@@ -120,6 +122,7 @@ export class Dashboard3Component implements OnInit {
               private fb: FormBuilder,
               private parcelSer: WarehouseProductParcelService,
               private router: Router,
+              private dialog: MatDialog,
               ) {
   }
 
@@ -188,6 +191,10 @@ export class Dashboard3Component implements OnInit {
       });
       console.log(this.recentlyHistories);
     });
+
+    setTimeout(() => {
+      this.openEInvoiceModal();
+    }, 500);
   }
 
   getRevenueData(payload) {
@@ -363,5 +370,14 @@ export class Dashboard3Component implements OnInit {
     }
 
     return 0;
+  }
+
+  public openEInvoiceModal(): void {
+    const dialogRef = this.dialog.open(EInvoiceModalComponent, {
+      width: '600px',
+      panelClass: 'e-invoice-modal-dialog',
+      disableClose: false,
+      autoFocus: false
+    });
   }
 }
