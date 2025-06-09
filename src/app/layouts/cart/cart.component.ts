@@ -160,6 +160,7 @@ export class CartComponent implements OnInit, OnDestroy {
       debounceTime(300),
       // use switch map so as to cancel previous subscribed events, before creating new once
       switchMap(value => {
+        if(typeof value == 'object') value = '';
         value = (value || '').trim();
         if (value !== '') {
           // lookup from github
@@ -325,6 +326,7 @@ export class CartComponent implements OnInit, OnDestroy {
         } else {
           this.notifySer.notify('warning', 'Không đủ tồn kho.');
         }
+        this.resetUserInput();
         break;
       case 'assignment':
         /**
@@ -337,10 +339,10 @@ export class CartComponent implements OnInit, OnDestroy {
           // tslint:disable-next-line:no-shadowed-variable
           res['items'].forEach(element => {
             // console.log(element);
-            console.log('amountProduct', amountProduct);
             element.amount*= amountProduct
             this.handlePriceListProduct(element, product.id);
           });
+          this.resetUserInput();
         });
         break;
       case 'nation':
@@ -351,6 +353,7 @@ export class CartComponent implements OnInit, OnDestroy {
           res.forEach(element => {
             this.handlePriceListProduct(element);
           });
+          this.resetUserInput();
         });
         break;
       default:
@@ -371,7 +374,7 @@ export class CartComponent implements OnInit, OnDestroy {
       );
     });
     product.productUnits = units;
-    this.orderService.addProduct(product, this.amountProduct, samplePrescriptionId);
+    this.orderService.addProduct(product, product.amount, samplePrescriptionId);
   }
 
   addInvoice() {
@@ -438,6 +441,7 @@ export class CartComponent implements OnInit, OnDestroy {
     this.searchMode = !this.searchMode;
     // this.selectedProducts = [];
   }
+
   onQuantityEnter() {
     // Read input value directly from native element and parse to int
     const val = this.inputQuantity.nativeElement.value;
@@ -452,13 +456,14 @@ export class CartComponent implements OnInit, OnDestroy {
     console.log('onQuantityEnter - final amountProduct:', this.amountProduct);
 
     this.addProduct(this.selectedProductValue, this.amountProduct);
+  }
 
+  resetUserInput(){
     this.selectedProductValue = null;
     this.selectProduct.patchValue(null);
     this.amountProduct = 1;
     this.inputSearch.nativeElement.focus();
   }
-
 
   displayProductFn(product: any): string {
     if (!product) return ''; // Handle null/undefined
@@ -516,11 +521,6 @@ export class CartComponent implements OnInit, OnDestroy {
       this.settingsSidenav.close();
     }
   }
-
-  /**
-   * Dummy no‐op for (closedStart) binding, since we only need to wire (openedStart).
-   */
-  noop() {}
 
   /**
    * Called when the user clicks the “Settings” (gear) button.

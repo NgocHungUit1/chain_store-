@@ -149,6 +149,7 @@ export class PrescriptionFormDialogComponent implements OnInit {
       debounceTime(300),
       // use switch map so as to cancel previous subscribed events, before creating new once
       switchMap(value => {
+        if(typeof value == 'object') value = '';
         value = (value || '').trim();
         if (value !== '') {
             return this.lookupNationalPrescription(value);

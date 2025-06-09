@@ -115,7 +115,7 @@
               fxFlex="80"
               style="margin-left: 5px; font-size: 12px;"
               class="m-l-10"
-              *ngIf="product.base_unit == null && iconChangeType === 'cached'">
+              *ngIf="product.base_unit === null && iconChangeType === 'cached'">
               <b style="font-size: 12px">{{ product.product_name }}</b>
               <br />
               {{ product.product_no }} &nbsp;Giá:
