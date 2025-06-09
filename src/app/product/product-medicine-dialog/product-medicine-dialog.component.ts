@@ -26,6 +26,7 @@ import { loadConfigurationFromPath } from 'tslint/lib/configuration';
 import { MatRadioChange } from '@angular/material/radio';
 import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 import {OptionStoreService} from '../../common/option-store.service';
+import { ProductNewUnitComponent } from '../product-new-unit/product-new-unit.component';
 
 
 class ImageSnippet {
@@ -457,7 +458,6 @@ export class ProductMedicineDialogComponent implements OnInit {
       data.original_price = numeral(data.original_price).value();
       data.sell_price = numeral(data.sell_price).value();
       // data.quantity_of_stock = numeral(data.quantity_of_stock).value();
-
       data.units.forEach(item => {
         item.unit_price = numeral(item.unit_price).value();
       });
@@ -786,5 +786,47 @@ export class ProductMedicineDialogComponent implements OnInit {
    */
   inputformatNumber(event: any) {
     event.target.value = numeral(event.target.value).format('0,0');
+  }
+
+  /**
+   * Check the valid units table
+   */
+  hasValidUnits(i): boolean {
+    return this.units.controls[i].get('unit_name')?.value || this.units.controls[i].get('unit_value')?.value;
+  }
+
+  /**
+   * Handle checking the duplicated unit
+   * @param event
+   * @param i
+   */
+  onUnitChange(event: Event, i: number) {
+    const newName = (event.target as HTMLInputElement).value;
+    let isDuplicated = false;
+    this.units.controls.forEach((unit, index) => {
+      if(unit.value?.unit_name == newName && index != i ){
+        isDuplicated = true;
+        return;
+      }
+    })
+    if (isDuplicated) {
+      this.units.controls[i].patchValue({
+        unit_name: '',
+      });
+      this.notifySer.notify('warning', "Tên đơn vị không được phép trùng nhau!")
+    }
+  }
+
+  // todo: handle the add new product unit
+  handleOpenPopupInputName(event: MouseEvent) {
+    event.stopPropagation();
+    const dialogRef = this.dialog.open(ProductNewUnitComponent, {
+      width: '30%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log("NEW UNIT: ", result);
+      }
+    });
   }
 }

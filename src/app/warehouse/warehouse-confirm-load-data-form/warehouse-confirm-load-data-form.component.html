@@ -1,0 +1,23 @@
+<h2 mat-dialog-title>Mở bản nháp</h2>
+
+<form (ngSubmit)="onSave()">
+  <mat-dialog-content style="overflow: visible">
+    <div fxLayout="column" fxLayoutGap="20px" style="line-height: 20px">
+      Hệ thống tìm được 1 bản nháp chưa được lưu lên máy chủ. Bạn có muốn tiếp tục làm việc với bản nháp này?
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" fxLayoutGap="8px">
+    <button mat-raised-button
+            color="primary"
+            type="submit"
+    >
+      <mat-icon>save</mat-icon> Đồng ý
+    </button>
+    <button mat-raised-button
+            type="button"
+            (click)="onNoClick()">
+      <mat-icon>cancel</mat-icon> Bỏ qua
+    </button>
+  </mat-dialog-actions>
+</form>

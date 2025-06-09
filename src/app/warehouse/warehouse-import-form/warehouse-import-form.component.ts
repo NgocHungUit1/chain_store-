@@ -1,70 +1,66 @@
-import {Component, ElementRef, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
-import {MatTable, MatTableDataSource} from '@angular/material/table';
-import {MatSort} from '@angular/material/sort';
-import {MatPaginator} from '@angular/material/paginator';
-import {NotifierService} from 'angular-notifier';
-import {MatDialog} from '@angular/material/dialog';
-import {ListComponentBase} from '../../shared/base';
-import {WarehouseProductService} from '../warehouse-product.service';
-import {Warehouse, WarehouseProduct, WarehouseProductFilter} from '../warehouse.model';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Observable} from 'rxjs/index';
-import {Supplier} from '../../supplier/supplier.model';
-import {catchError, map, startWith, switchMap} from 'rxjs/operators';
-import {of} from 'rxjs/internal/observable/of';
-import {SupplierService} from '../../supplier/supplier.service';
-import {WarehouseService} from '../warehouse.service';
-import {Product, ProductFilter} from '../../product/product.model';
-import {ProductService} from '../../product/product.service';
-import {
-  WarehouseParcelFormDialogComponent
-} from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
-import {WarehouseDiscountDialogComponent} from '../warehouse-discount-dialog/warehouse-discount-dialog.component';
-import {SupplierFormDialogComponent} from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
-import {ProductMedicineDialogComponent} from '../../product/product-medicine-dialog/product-medicine-dialog.component';
+import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
+import { MatPaginator } from '@angular/material/paginator';
+import { NotifierService } from 'angular-notifier';
+import { MatDialog } from '@angular/material/dialog';
+import { ListComponentBase } from '../../shared/base';
+import { WarehouseProductService } from '../warehouse-product.service';
+import { Warehouse, WarehouseProduct, WarehouseProductFilter } from '../warehouse.model';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Observable } from 'rxjs/index';
+import { Supplier } from '../../supplier/supplier.model';
+import { catchError, map, startWith, switchMap } from 'rxjs/operators';
+import { of } from 'rxjs/internal/observable/of';
+import { SupplierService } from '../../supplier/supplier.service';
+import { WarehouseService } from '../warehouse.service';
+import { Product, ProductFilter } from '../../product/product.model';
+import { ProductService } from '../../product/product.service';
+import { WarehouseParcelFormDialogComponent } from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
+import { WarehouseDiscountDialogComponent } from '../warehouse-discount-dialog/warehouse-discount-dialog.component';
+import { SupplierFormDialogComponent } from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
+import { ProductMedicineDialogComponent } from '../../product/product-medicine-dialog/product-medicine-dialog.component';
 // tslint:disable-next-line:max-line-length
 import {
-  ProductMerchandiseFormDialogComponent
+  ProductMerchandiseFormDialogComponent,
 } from '../../product/product-merchandise-form-dialog/product-merchandise-form-dialog.component';
-import {UserService} from '../../user/user.service';
+import { UserService } from '../../user/user.service';
 import * as numeral from 'numeral';
-import {MedicineService} from '../../medicine/medicine.service';
-import {Medicine} from '../../medicine/medicine.model';
-import {ExpensesTransaction, ExpensesTransactionFilter} from '../../expenses-transaction/expenses-transaction.model';
-import {ExpensesTransactionService} from '../../expenses-transaction/expenses-transaction.service';
-import {OptionStoreService} from '../../common/option-store.service';
-import {OptionStore} from '../../common/option-store.model';
-import {WarehouseExpensesComponent} from '../warehouse-expenses/warehouse-expenses.component';
-import {
-  WarehouseParcelListDialogComponent
-} from '../warehouse-parcel-list-dialog/warehouse-parcel-list-dialog.component';
-import {WarehouseFormPriceDialogComponent} from '../warehouse-form-price-dialog/warehouse-form-price-dialog.component';
-import {SearchProductDialogComponent} from '../../common/search-product-dialog/search-product-dialog.component';
+import { MedicineService } from '../../medicine/medicine.service';
+import { Medicine } from '../../medicine/medicine.model';
+import { ExpensesTransaction, ExpensesTransactionFilter } from '../../expenses-transaction/expenses-transaction.model';
+import { ExpensesTransactionService } from '../../expenses-transaction/expenses-transaction.service';
+import { OptionStoreService } from '../../common/option-store.service';
+import { OptionStore } from '../../common/option-store.model';
+import { WarehouseExpensesComponent } from '../warehouse-expenses/warehouse-expenses.component';
+import { WarehouseParcelListDialogComponent } from '../warehouse-parcel-list-dialog/warehouse-parcel-list-dialog.component';
+import { WarehouseFormPriceDialogComponent } from '../warehouse-form-price-dialog/warehouse-form-price-dialog.component';
+import { SearchProductDialogComponent } from '../../common/search-product-dialog/search-product-dialog.component';
 import * as moment from 'moment';
-import {SearchSupplierDialogComponent} from '../../common/search-supplier-dialog/search-supplier-dialog.component';
-import {
-  WarehouseUnitCreateDialogComponent
-} from '../warehouse-unit-create-dialog/warehouse-unit-create-dialog.component';
-import {WarehouseFormAmountComponent} from '../warehouse-form-amount/warehouse-form-amount.component';
-import {MatSelect} from '@angular/material/select';
-import {MatSelectionList, MatSelectionListChange} from '@angular/material/list';
-import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {MatAutocomplete, MatAutocompleteSelectedEvent, MatAutocompleteTrigger} from '@angular/material/autocomplete';
+import { SearchSupplierDialogComponent } from '../../common/search-supplier-dialog/search-supplier-dialog.component';
+import { WarehouseUnitCreateDialogComponent } from '../warehouse-unit-create-dialog/warehouse-unit-create-dialog.component';
+import { WarehouseFormAmountComponent } from '../warehouse-form-amount/warehouse-form-amount.component';
+import { MatSelect, MatSelectChange } from '@angular/material/select';
+import { MatSelectionList, MatSelectionListChange } from '@angular/material/list';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { MatAutocomplete, MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import {
   ParcelData,
-  WarehouseParcelFormDialogNewComponent
+  WarehouseParcelFormDialogNewComponent,
 } from '../warehouse-parcel-form-dialog-new/warehouse-parcel-form-dialog-new.component';
 import {
-  WarehouseParcelFormDialogAvailableComponent
+  WarehouseParcelFormDialogAvailableComponent,
 } from '../warehouse-parcel-form-dialog-available/warehouse-parcel-form-dialog-available.component';
 import {
-  WarehouseParcelFormDialogSelectComponent
+  WarehouseParcelFormDialogSelectComponent,
 } from '../warehouse-parcel-form-dialog-select/warehouse-parcel-form-dialog-select.component';
-import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
-import {MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter} from '@angular/material-moment-adapter';
-import {MY_FORMATS} from '../../sale/sale-main/sale-main.component';
-import {DatePipe} from '@angular/common';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
+import { MY_FORMATS } from '../../sale/sale-main/sale-main.component';
+import { DatePipe } from '@angular/common';
+import { LocalStorageService } from '../localStorageService';
+import { WarehouseConfirmLoadDataFormComponent } from '../warehouse-confirm-load-data-form/warehouse-confirm-load-data-form.component';
 
 
 ///////////// coding fake data
@@ -132,6 +128,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     private expensesTransactionService: ExpensesTransactionService,
     private optionStoreService: OptionStoreService,
     private notifyService: NotifierService,
+    private localStorageService: LocalStorageService
   ) {
     super();
   }
@@ -269,11 +266,15 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     quantity: null,
   };
   shownNotes: Set<number> = new Set();  // Will store user IDs or indices of visible notes
+  payFullDefault: boolean = false;
+
+  WAREHOUSEPRODUCTKEY = 'warehouseProduct';
+  WAREHOUSEFORMKEY = 'warehouseForm';
 
   // create input for each row
   getItemControl(product_index: number) {
     if (!this.parcelItemControls.has(product_index)) {
-      this.parcelItemControls.set(product_index, new FormControl());
+      this.parcelItemControls.set(product_index, new FormControl('', Validators.required));
       this.setupFilteredItems(product_index);
     }
     return this.parcelItemControls.get(product_index)!;
@@ -393,6 +394,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     product.quantity = allQuantities.reduce((acc, curr) => acc + curr, 0);
     this.recalculateItem(id);
     this.productDataSource.data = [...this.data];
+    this.localStorageService.setItem(this.WAREHOUSEPRODUCTKEY, this.data)
   }
 
   // because the chip list have 2 type of parcel (new and old) -> need to distinguish them to display the corresponding dialog
@@ -425,7 +427,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     });
 
       parcelDialogRef.afterClosed().subscribe(result => {
-        console.log('Result: ', result);
         if (!result) {return; }
 
         const product = this.data[product_index];
@@ -466,8 +467,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         product.quantity = allQuantities.reduce((acc, curr) => acc + curr, 0);
         this.recalculateItem(product_index);
         this.productDataSource.data = [...this.data];
+        this.localStorageService.setItem(this.WAREHOUSEPRODUCTKEY, this.data);
       });
-
   }
 
   // handle open when click to option -> available (old) parcel
@@ -526,6 +527,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       product.quantity = allQuantities.reduce((acc, curr) => acc + curr, 0);
       this.recalculateItem(product_index);
       this.productDataSource.data = [...this.data];
+      this.localStorageService.setItem(this.WAREHOUSEPRODUCTKEY, this.data);
     });
   }
 
@@ -544,7 +546,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       const product_no = this.data[index].product['product_no'];
       this.openAddAvailableParcelDialog(index, newAvailableParcel, product_no);
     } else {
-      console.log('New: ', parcel);
       this.openAddNewParcelDialog(index, parcel as NewParcel);
     }
   }
@@ -649,7 +650,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     });
 
     optionStorePromise.then(() => {
-
       this.allPermission = sessionStorage.getItem('allPermission').split(',');
       this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
 
@@ -687,6 +687,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           }
         }, 300);
       });
+      this.payFullDefault = this.localStorageService.getItem<boolean>("payFullDefault") ?? false;
 
       const id = this.route.snapshot.paramMap.get('id');
       if (id !== null && id !== undefined) {
@@ -697,22 +698,23 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
             dateStr = new Date(res['date']).toISOString();
           }
           this.model = res;
-          this.form.patchValue({
-            date: dateStr,
-            no: res['no'],
-            supplier: res['supplier'],
-            status: res['status'] + '',
-            quantity: Number(res['total_quantity']),
-            total_price: (res['total_price'] !== undefined) ? Number(res['total_price']) : 0,
-            total_amount: Number(res['total_amount']),
-            discount_amount: (res['discount_amount'] !== undefined && res['discount_amount'] !== null) ? Number(res['discount_amount']) : 0,
-            discount_type: (res['discount_type'] !== undefined && res['discount_type'] !== null) ? res['discount_type'] : 'price',
-            paid_amount: Number(res['paid_amount']),
-            remain_amount: Number(res['remain_amount']),
-            expenses_price: Number(res['expenses_price']),
-            note: res['note'],
-            branch_id: res['branch_id'].toString(),
-          });
+            this.form.patchValue({
+              date: dateStr,
+              no: res['no'],
+              supplier: res['supplier'],
+              status: res['status'] + '',
+              quantity: Number(res['total_quantity']),
+              total_price: (res['total_price'] !== undefined) ? Number(res['total_price']) : 0,
+              total_amount: Number(res['total_amount']),
+              discount_amount: (res['discount_amount'] !== undefined && res['discount_amount'] !== null) ? Number(res['discount_amount']) : 0,
+              discount_type: (res['discount_type'] !== undefined && res['discount_type'] !== null) ? res['discount_type'] : 'price',
+              paid_amount: Number(res['paid_amount']),
+              remain_amount: Number(res['remain_amount']),
+              expenses_price: Number(res['expenses_price']),
+              note: res['note'],
+              branch_id: res['branch_id'].toString(),
+            });
+
 
           this.expensesTransaction = Number(res['expenses_price']);
 
@@ -734,7 +736,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
                   this.expensesTransactions.push(expense);
                 }
               });
-
             });
           }
 
@@ -757,14 +758,60 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         this.userService.getBranchLogin().subscribe(branchLogin => {
           this.form.controls['branch_id'].setValue(branchLogin.toString());
         });
+
         this.mainService.getRenderWarehouseNo().subscribe(res => {
-          this.form.patchValue({
-            no: 'PN' + res,
-            total_price: 0,
-            discount_amount: 0,
-            discount_type: 'price'
-          });
+
+          // We should have both Form and List products to load the temp data
+          const formData = this.localStorageService.getItem<object>(this.WAREHOUSEFORMKEY);
+          if(formData) {
+            const tempData = this.localStorageService.getItem<WarehouseProduct[]>(this.WAREHOUSEPRODUCTKEY);
+            // if missing 1 of 2, we will remove both
+            if(tempData && tempData.length > 0) {
+              this.data = tempData;
+              this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+              this.openConfirmLoadTempDataFormDialog().subscribe(confirm => {
+                if (confirm) {
+                  console.log('User agreed');
+                  this.form.patchValue({
+                    no: 'PN' + res,
+                    discount_amount: 0,
+                    discount_type: 'price',
+                    ...formData
+                  });
+                } else {
+                  console.log('User disagreed');
+                  this.form.patchValue({
+                    no: 'PN' + res,
+                    total_price: 0,
+                    discount_amount: 0,
+                    discount_type: 'price'
+                  });
+                  this.localStorageService.removeItem(this.WAREHOUSEPRODUCTKEY);
+                  this.localStorageService.removeItem(this.WAREHOUSEFORMKEY);
+                }
+              });
+            } else {
+              this.form.patchValue({
+                no: 'PN' + res,
+                total_price: 0,
+                discount_amount: 0,
+                discount_type: 'price'
+              });
+              this.localStorageService.removeItem(this.WAREHOUSEPRODUCTKEY);
+              this.localStorageService.removeItem(this.WAREHOUSEFORMKEY);
+            }
+          } else{
+            this.localStorageService.removeItem(this.WAREHOUSEPRODUCTKEY);
+            console.log('No data');
+            this.form.patchValue({
+              no: 'PN' + res,
+              total_price: 0,
+              discount_amount: 0,
+              discount_type: 'price'
+            });
+          }
         });
+
 
         if (this.optionStore_transaction_expenses.value === 'yes') {
           const filter = new ExpensesTransactionFilter();
@@ -782,7 +829,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         this.handleAddProductToList(product_id);
         localStorage.removeItem('product_id');
       }
-
     });
 
   }
@@ -839,7 +885,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       this.showFilters = !this.showFilters;
       localStorage.setItem('importForm-showFilters', JSON.stringify(this.showFilters));
     });
-
   }
 
   displaySupplier(supplier?: Supplier): string | undefined {
@@ -924,13 +969,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           if (item.productParcels !== undefined && item.productParcels.length > 0) {
             this.parcels = this.parcels.concat(item.productParcels);
           }
-
           newData.push(warehouseProduct);
         });
         this.data = newData;
         this.tempDataForQuickFilter = [...newData]; // Create initial copy
         this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
-        this.recalculateWarehouse();
+        // this.recalculateWarehouse(true); no need recalculate when update data
         this.isLoadingResults = false;
       });
     });
@@ -964,7 +1008,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     }
     this.submitted = true;
     this.isLoadingResults = true;
-    this.recalculateWarehouse();
+    this.recalculateWarehouse(true);
     const data = this.form.getRawValue();
     if (numeral(data['paid_amount']).value() > (numeral(data['total_price']).value() + numeral(data['expenses_price']).value())) {
       this.form.patchValue({
@@ -984,10 +1028,21 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         });
         resolve();
       } else {
-        this.notifySer.notify('warning', 'Danh sách không được để trống !');
+        this.notifySer.notify('warning', 'Danh sách không được để trống!');
         reject();
       }
     });
+    // check parcel
+    const products = this.data;
+    for (const product of products) {
+      if(product.product_parcels.length === 0) {
+        this.notifySer.notify('warning', `${product?.product['product_no']}: chưa nhập lô cho sản phẩm!`);
+        this.isLoadingResults = false;
+        this.submitted = false;
+        return;
+      }
+    }
+
 
     promise.then(() => {
       // console.log(this.form.valid);
@@ -1092,7 +1147,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         this.submitted = false;
         this.isLoadingResults = false;
       }
-
+      this.localStorageService.removeItem(this.WAREHOUSEPRODUCTKEY);
+      this.localStorageService.removeItem(this.WAREHOUSEFORMKEY);
     }).catch(() => {
       console.log('rejected');
       this.submitted = false;
@@ -1121,7 +1177,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
    * @param product
    */
   onSelectedProduct(product) {
-
     if (this.searchMode) {
 
       if (!product['productUnits']) {
@@ -1174,15 +1229,14 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
    * Handle add product to list
    * @param product_id
    */
-  handleAddProductToList(product_id) {
+  handleAddProductToList(product_id, inLocal=-1) {
     if (this.productDataSource.data.length >= 200) {
       this.notifySer.notify('warning', 'Đơn nhập tối đa 100 sản phẩm!');
       return;
     }
     let productExits = 0;
-    // tslint:disable-next-line:no-shadowed-variable
     this.data.forEach((element, index) => {
-      if (element.product_id === product_id) {
+      if (element.product_id === product_id && element.is_sub_item===0) {
         productExits = 1;
         if (element['product_parcels'].length > 0) {
           element['product_parcels'][0]['quantity'] = element['product_parcels'][0]['quantity'] + 1;
@@ -1192,44 +1246,58 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
       }
     });
     if (productExits === 0) {
-      this.productSer.getDetail(product_id, 'productUnits,quantity').subscribe(res => {
-        const warehouseProduct = new WarehouseProduct();
-        warehouseProduct.product_id = res['id'];
-        warehouseProduct.product = res;
-        warehouseProduct.quantity = 1; // de nhap so lo
-        warehouseProduct.price = (res['original_price'] !== null) ? numeral(res['original_price']).format('0,0') : 0;
-        warehouseProduct.sell_price = (res['sell_price'] !== null) ? numeral(res['sell_price']).format('0,0') : 0;
-        warehouseProduct.inventory_quantity = res['quantity']['number'];
-        warehouseProduct.discount = 0;
-        warehouseProduct.discount_type = 'price';
-        warehouseProduct.amount = (res['original_price'] !== null) ? res['original_price'] : 0;
-        // warehouseProduct.amount = 0; // (res['original_price'] !== null) ? res['original_price'] : 0;
-        warehouseProduct.productUnits = res['productUnits'];
-        warehouseProduct.product_parcels = [];
-        warehouseProduct.vat = 0;
-        warehouseProduct.vat_type = 'price';
-        warehouseProduct.is_sub_item = 0;
-        warehouseProduct.note = '';
-        warehouseProduct.master_product_id = product_id;
+      if(inLocal>-1) {
+        let tempData = this.localStorageService.getItem<WarehouseProduct[]>(this.WAREHOUSEPRODUCTKEY)[inLocal];
+        if(tempData) {
 
-        if (res['productUnits'].length > 0) {
-          res['productUnits'].sort((a, b) => (a.value > b.value) ? 1 : -1);
-          warehouseProduct.product_unit_id = res['productUnits'][0]['id'];
-          warehouseProduct.price = res['productUnits'][0]['original_price'];
-          warehouseProduct.sell_price = (res['productUnits'][0]['sell_price'] !== null) ? numeral(res['productUnits'][0]['sell_price']).format('0,0') : 0;
+
+          this.data.push(tempData);
+          this.tempDataForQuickFilter = [...this.data]; // Update copy with new item
+
+          this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+          this.recalculateWarehouse();
         }
-        this.data.unshift(warehouseProduct);
-        this.tempDataForQuickFilter = [...this.data]; // Update copy with new item
+      }else{
+        this.productSer.getDetail(product_id, 'productUnits,quantity').subscribe(res => {
+          const warehouseProduct = new WarehouseProduct();
+          warehouseProduct.product_id = res['id'];
+          warehouseProduct.product = res;
+          warehouseProduct.quantity = 1; // de nhap so lo
+          warehouseProduct.price = (res['original_price'] !== null) ? numeral(res['original_price']).format('0,0') : 0;
+          warehouseProduct.sell_price = (res['sell_price'] !== null) ? numeral(res['sell_price']).format('0,0') : 0;
+          warehouseProduct.inventory_quantity = res['quantity']['number'];
+          warehouseProduct.discount = 0;
+          warehouseProduct.discount_type = 'price';
+          warehouseProduct.amount = (res['original_price'] !== null) ? res['original_price'] : 0;
+          // warehouseProduct.amount = 0; // (res['original_price'] !== null) ? res['original_price'] : 0;
+          warehouseProduct.productUnits = res['productUnits'];
+          warehouseProduct.product_parcels = [];
+          warehouseProduct.vat = 0;
+          warehouseProduct.vat_type = 'price';
+          warehouseProduct.is_sub_item = 0;
+          warehouseProduct.note = '';
+          warehouseProduct.master_product_id = product_id;
+          if (res['productUnits'].length > 0) {
+            res['productUnits'].sort((a, b) => (a.value > b.value) ? 1 : -1);
+            warehouseProduct.product_unit_id = res['productUnits'][0]['id'];
+            warehouseProduct.price = res['productUnits'][0]['original_price'];
+            warehouseProduct.sell_price = (res['productUnits'][0]['sell_price'] !== null) ? numeral(res['productUnits'][0]['sell_price']).format('0,0') : 0;
+          }
+          this.data.unshift(warehouseProduct);
+          this.tempDataForQuickFilter = [...this.data]; // Update copy with new item
 
-        // const newData = this.data.concat([warehouseProduct]);
-        // this.data = newData;
-        this.data.forEach(element => {
-          element.price = numeral(element.price).format('0,0');
+          // const newData = this.data.concat([warehouseProduct]);
+          // this.data = newData;
+          this.data.forEach(element => {
+            element.price = numeral(element.price).format('0,0');
+          });
+          this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+          this.recalculateWarehouse();
+          this.localStorageService.setItem(this.WAREHOUSEPRODUCTKEY, this.data);
+          // this.selectProduct.patchValue(null, { emitEvent : false });
         });
-        this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
-        this.recalculateWarehouse();
-        // this.selectProduct.patchValue(null, { emitEvent : false });
-      });
+      }
+
       this.productSer.getParcel(product_id).subscribe(res => {
         if (res) {
           this.available_product_parcels.set(product_id, [res]);
@@ -1332,9 +1400,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     }
   }
 
-  recalculateWarehouse() {
+  recalculateWarehouse(isSubmit = false) {
     let quantity = 0, price = 0, remainAmount = 0, totalAmount = 0;
-    const paidAmount = numeral(this.form.controls['paid_amount'].value).value();
+    let paidAmount = numeral(this.form.controls['paid_amount'].value).value();
     const discount = this.form.controls['discount_amount'].value;
     const discount_type = this.form.controls['discount_type'].value;
 
@@ -1369,15 +1437,24 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         }
         price = Number(price) + money;
       }
-
     });
 
     // Tinh vao cong no
     if (discount_type === 'price') {
       totalAmount = Number(price) - Number(discount);
+
+      // handle the auto payfull case => skip when update
+      if(this.payFullDefault && !isSubmit && !this.updateModelId){
+        paidAmount = totalAmount;
+      }
       remainAmount = Number(paidAmount) - totalAmount;
     } else {
       totalAmount = Math.round(Number(price) - Number(price) * Number(discount) / 100);
+
+      // handle the auto payfull case => skip when update
+      if(this.payFullDefault && !isSubmit && !this.updateModelId){
+        paidAmount = totalAmount;
+      }
       remainAmount = Math.round(Number(paidAmount) - totalAmount);
     }
 
@@ -1401,22 +1478,31 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     // debugger;
     // console.log(remainAmount);
 
-    this.form.patchValue({
+    let formValues = {
       quantity: numeral(quantity).format('0,0'),
       total_price: numeral(price).format('0,0'),
       remain_amount: numeral(remainAmount).format('0,0'),
       total_amount: numeral(totalAmount).format('0,0'),
       expenses_price: numeral(this.expensesTransaction).format('0,0')
-    });
+    };
+    if(this.payFullDefault){
+      formValues['paid_amount'] =  numeral(paidAmount).format('0,0')
+    }
+    this.form.patchValue(formValues);
+
+    const temp = this.localStorageService.getItem<object>(this.WAREHOUSEFORMKEY);
+    this.localStorageService.setItem(this.WAREHOUSEFORMKEY,{
+      ...temp,
+      quantity: numeral(quantity).format('0,0'),
+      total_price: numeral(price).format('0,0'),
+      remain_amount: numeral(remainAmount).format('0,0'),
+      total_amount: numeral(totalAmount).format('0,0'),
+      expenses_price: numeral(this.expensesTransaction).format('0,0'),
+      paid_amount: numeral(paidAmount).format('0,0')
+    })
   }
 
   removeProduct(i) {
-    const newData = this.data;
-    // const removedProduct = newData.splice(i, 1)[0];
-    //
-    // this.tempDataForQuickFilter = this.tempDataForQuickFilter.filter(item=> item.product_id !== removedProduct.product_id);  // Update copy after removal
-    // this.data = newData;
-
     // we need to remove the subItem when remove the master Item
     const selectedProduct = this.data[i];
 
@@ -1447,6 +1533,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
     this.recalculateWarehouse();
     this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
+    this.localStorageService.setItem(this.WAREHOUSEPRODUCTKEY, this.data);
   }
 
   /**
@@ -1455,16 +1542,44 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
    * @param select
    */
   onUnitChange(index, select) {
-    if (this.data[index] !== undefined) {
-      const unit = this.data[index]['productUnits'].find(element => element['id'] === select.value);
-      const unitBase = this.data[index]['productUnits'].find(element => element['is_base'] === 1);
-      this.data[index]['price'] = unitBase['original_price'] * unit['value'];
-      this.data[index]['sell_price'] = unit['sell_price'];
-      this.data[index]['inventory_quantity'] = unit['quantity_of_stock'];
-      // this.data[index]['price'] = (unit['original_price'] !== 0) ? unit['original_price'] : unit['sell_price']; //unit['original_price'];
-      this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
-      this.recalculateWarehouse();
-    }
+    const product_id = this.data[index].product_id
+    this.data.forEach((product, index) => {
+      if(product.product_id == product_id || product.master_product_id == product_id) {
+        const unit = product['productUnits'].find(element => element['id'] === select.value);
+        const unitBase = product['productUnits'].find(element => element['is_base'] === 1);
+        product['price'] = unitBase['original_price'] * unit['value'];
+        product['sell_price'] = unit['sell_price'];
+        product['inventory_quantity'] = unit['quantity_of_stock'];
+        // this.data[index]['price'] = (unit['original_price'] !== 0) ? unit['original_price'] : unit['sell_price']; //unit['original_price'];
+        product['amount'] = (product['price'] - product['discount']) * product['quantity'];
+        this.recalculateWarehouse();
+      }
+    });
+    this.localStorageService.setItem(this.WAREHOUSEPRODUCTKEY, this.data);
+
+    // if (this.data[index] !== undefined) {
+    //   const unit = this.data[index]['productUnits'].find(element => element['id'] === select.value);
+    //   const unitBase = this.data[index]['productUnits'].find(element => element['is_base'] === 1);
+    //   this.data[index]['price'] = unitBase['original_price'] * unit['value'];
+    //   this.data[index]['sell_price'] = unit['sell_price'];
+    //   this.data[index]['inventory_quantity'] = unit['quantity_of_stock'];
+    //   // this.data[index]['price'] = (unit['original_price'] !== 0) ? unit['original_price'] : unit['sell_price']; //unit['original_price'];
+    //   this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
+    //   this.localStorageService.setItem(this.WAREHOUSEPRODUCTKEY, this.data);
+    //   this.recalculateWarehouse();
+    // }
+  }
+
+  /**
+   * Open the popup check user want to load the previous data or not
+   * This is important because maybe user want to remove all data
+   */
+  openConfirmLoadTempDataFormDialog():Observable<boolean>  {
+    const dialogRef = this.dialog.open(WarehouseConfirmLoadDataFormComponent, {
+      width: '35%',
+      minHeight: '80%',
+    });
+    return dialogRef.afterClosed().pipe(map(result => result === true));
   }
 
   openParcelFormDialog(index) {
@@ -1488,6 +1603,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
         this.recalculateItem(index);
         this.recalculateWarehouse();
+        this.localStorageService.setItem("warehouseProduct", this.data);
       }
     });
   }
@@ -1559,6 +1675,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           discount_amount: result.number,
           discount_type: result.type,
         });
+        const temp = this.localStorageService.getItem<object>(this.WAREHOUSEFORMKEY);
+        this.localStorageService.setItem(this.WAREHOUSEFORMKEY, {
+          ...temp,
+          discount_amount: result.number,
+          discount_type: result.type,
+        })
         this.recalculateWarehouse();
       }
     });
@@ -1611,6 +1733,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           this.data[i]['vat'] = numeral(result.vat).value();
           this.data[i]['vat_type'] = result.vat_type;
           this.recalculateItem(i);
+          this.localStorageService.setItem(this.WAREHOUSEPRODUCTKEY, this.data);
         }
       });
     }
@@ -1787,6 +1910,11 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     dialogRef.afterClosed().subscribe(result => {
       if (result['event'] === 'Choose') {
         this.form.patchValue({'supplier': result['supplier']});
+        const temp = this.localStorageService.getItem<object>(this.WAREHOUSEFORMKEY);
+        this.localStorageService.setItem(this.WAREHOUSEFORMKEY, {
+            ...temp,
+            supplier: result['supplier'],
+        })
         // this.handleAddProductToList(result['product_id']);
       }
     });
@@ -1983,15 +2111,27 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   openUnitCreateDialog(element: any) {
     const ref = this.dialog.open(WarehouseUnitCreateDialogComponent, {
-      width: '35%',
+      width: '50vw',
       minHeight: '200px',
-      data: element
+      minWidth: '300px',
+      maxWidth: '800px',
+      data: element,
+
     });
 
     ref.afterClosed().subscribe(res => {
       if (res) {
         /* Handle call api here */
-        console.log(res);
+        this.productSer.update(element.product_id, { units: res }).subscribe(product => {
+          this.productSer.getDetail(element.product_id, 'productUnits').subscribe(resPro => {
+            const currentProductIndex = this.data.findIndex(p => p.product_id === element.product_id);
+            this.data[currentProductIndex].productUnits = resPro['productUnits'];
+            this.notifySer.notify('success', 'Cập nhật đơn vị thành công!');
+            this.productDataSource.data = [...this.data];
+          });
+        }, error => {
+          this.loading = false;
+        });
       }
     });
   }
@@ -2007,7 +2147,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
     ref.afterClosed().subscribe(result => {
       if (result) {
-
         const el = this.data[index];
         const am = numeral(result.final_amount).value();
         const q = el.quantity;
@@ -2032,6 +2171,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
         this.recalculateItem(index);
         this.recalculateWarehouse();
+        this.localStorageService.setItem(this.WAREHOUSEPRODUCTKEY, this.data)
       }
     });
   }
@@ -2090,8 +2230,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   onProductSelectionChange(event: MatSelectionListChange) {
     // Get selected products
-    const selectedProducts = event.source.selectedOptions.selected.map(option => option.value);
-    this.selectedProducts = selectedProducts;
+    this.selectedProducts = event.source.selectedOptions.selected.map(option => option.value);
   }
 
   onAddProducts() {
@@ -2111,6 +2250,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
     this.productDataSource.data = [...this.data];
     this.tempDataForQuickFilter = [...this.data];
+    this.localStorageService.setItem(this.WAREHOUSEPRODUCTKEY, this.data)
   }
   // Add this method to check if note is shown
   isNoteShown(i: number): boolean {
@@ -2151,4 +2291,130 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     });
   }
   // end coding
+  storeNoteToLocalStorage(i) {
+    this.localStorageService.setItem(this.WAREHOUSEPRODUCTKEY, this.data);
+  }
+
+
+  /**
+   * Store the branch to local storage once user completes selection
+   * @param event
+   */
+  storeBranchToLocalStorage(event: MatSelectChange) {
+    const value = event.value;
+    const temp = this.localStorageService.getItem(this.WAREHOUSEFORMKEY);
+    temp['branch_id'] = value;
+    this.localStorageService.setItem(this.WAREHOUSEFORMKEY, temp);
+  }
+
+  /**
+   * Store the Note into the local storage once user finishes typing
+   */
+  storeWholeNoteToLocalStorage() {
+    const noteValue = this.form.get('note')?.value;
+    const temp = this.localStorageService.getItem<object>(this.WAREHOUSEFORMKEY);
+    this.localStorageService.setItem(this.WAREHOUSEFORMKEY, {
+      ...temp,
+      note: noteValue,
+    });
+  }
+
+  /**
+   * Get the master index to make the order shows correctly
+   * @param currentIndex
+   */
+  getMasterIndex(currentIndex: number) {
+    let masterItemCount = 0;
+    for (let i = 0; i <= currentIndex; i++) {
+      if (this.data[i]?.is_sub_item === 0) {
+        masterItemCount++;
+      }
+    }
+    return masterItemCount;
+  }
+
+  /**
+   * Store to localstorage user choice when the payfull toggle
+   */
+  onShowPayfullChange() {
+    this.payFullDefault = !this.payFullDefault;
+    this.localStorageService.setItem('payFullDefault', this.payFullDefault);
+  }
+
+  /**
+   * Calculate the quantity & price of import form
+   * Support to the pay full automation progress
+   */
+  calculatePay() {
+    let quantity = 0;
+    let price = 0;
+    this.data.forEach(item => {
+      const item_quantity = numeral(item['quantity']).value();
+      const item_price = numeral(item['price']).value();
+      const item_discount = Number(item['discount']);
+      const vat = numeral(item['vat']).value();
+      const vat_type = item['vat_type'];
+      let money = 0;
+      quantity = Number(quantity) + item_quantity;
+      if (item['discount_type'] === 'price') {
+        money = ((item_quantity * item_price) - item_discount);
+        // tinh thue suat
+        if (vat !== 0) {
+          if (vat_type === 'price') {
+            money = money + vat;
+          } else {
+            money = money + (money * vat) / 100;
+          }
+        }
+        price = Number(price) + money;
+      } else {
+        money = item_quantity * item_price * (1 - (item_discount / 100));
+        // tinh thue suat
+        if (vat !== 0) {
+          if (vat_type === 'price') {
+            money = money + vat;
+          } else {
+            money = money + (money * vat) / 100;
+          }
+        }
+        price = Number(price) + money;
+      }
+    });
+    return {
+      quantity: quantity,
+      price: price
+    }
+  }
+
+  /**
+   * Recalculate when user want to change the pay (they don't want to use the default one)
+   */
+  onPayProducer() {
+    let paidAmount = numeral(this.form.controls['paid_amount'].value).value();
+    const { quantity, price } = this.calculatePay();
+    const discount = this.form.controls['discount_amount'].value;
+    const discount_type = this.form.controls['discount_type'].value;
+    let totalAmount = 0;
+    let remainAmount = 0;
+    if (discount_type === 'price') {
+      totalAmount = Number(price) - Number(discount);
+      remainAmount = Number(paidAmount) - totalAmount;
+    } else {
+      totalAmount = Math.round(Number(price) - Number(price) * Number(discount) / 100);
+      remainAmount = Math.round(Number(paidAmount) - totalAmount);
+    }
+    let formValues = {
+      quantity: numeral(quantity).format('0,0'),
+      total_price: numeral(price).format('0,0'),
+      remain_amount: numeral(remainAmount).format('0,0'),
+      total_amount: numeral(totalAmount).format('0,0'),
+      paid_amount: numeral(paidAmount).format('0,0'),
+    };
+    this.form.patchValue(formValues);
+  }
+
+  getParcelStatus(i) {
+    const product = this.data[i];
+    return product.product_parcels?.length === 0 && this.parcelItemControls.get(i)?.touched;
+  }
 }

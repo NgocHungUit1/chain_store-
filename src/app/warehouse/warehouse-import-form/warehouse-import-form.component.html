@@ -44,7 +44,6 @@
                     <ng-container *ngIf='!product?.default_image'>
                       <img src='/assets/images/default-product.png' style="object-fit: contain; width:70px; height:70px;">
                     </ng-container>
-
                   </div>
                   <div fxFlex="75" style="margin-left: 5px; font-size: 13px;" class = 'no-wrap'>
                     <p style="font-size: 12px; margin: 0 0 3px 0;"><b>{{ product.product_name }}</b></p>
@@ -205,6 +204,18 @@
                 </mat-slide-toggle>
               </div>
             </div>
+
+            <div class='d-flex' style='justify-content: space-between'>
+              <div>Mặc định trả đủ</div>
+              <div>
+                <mat-slide-toggle
+                  (ngModelChange)='onShowPayfullChange()'
+                  color='primary'
+                  [(ngModel)]='payFullDefault'>
+                </mat-slide-toggle>
+              </div>
+            </div>
+
           </div>
         </app-popover>
       </div>
@@ -249,7 +260,7 @@
                 <th mat-header-cell *matHeaderCellDef style="min-width: 35px;"> #</th>
                 <td mat-cell
                     style="padding-top: 1.5rem; vertical-align: top" *matCellDef="let element; let i = index;">
-                  <span *ngIf="element?.is_sub_item==0">{{i + 1}}</span>
+                  <span *ngIf="element?.is_sub_item==0">{{getMasterIndex(i)}}</span>
                 </td>
               </ng-container>
 
@@ -295,7 +306,9 @@
                       <div class="note-area open-close-container" *ngIf="isNoteShown(i)">
                         <textarea class="note-textarea"
                                   placeholder="Ghi chú..."
-                                  [(ngModel)]="element.note">
+                                  [(ngModel)]="element.note"
+                                  (change) = "storeNoteToLocalStorage(i)"
+                        >
                         </textarea>
                       </div>
                     </div>
@@ -343,6 +356,7 @@
                               [matAutocomplete]="parcelAutocomplete"
                               [matChipInputFor]="chiplist"
                               [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                              [class.error-input]="getParcelStatus(i)"
                             >
                             </div>
 
@@ -454,7 +468,9 @@
                     <input matInput style="text-align: right" class="quantity-input" [value]="element['quantity']"
                            [(ngModel)]="data[i]['quantity']"
                            [disabled]="data[i]['product_parcels'].length > 1"
-                           autocomplete="off" (keyup)="quantityChange($event,i)">
+                           autocomplete="off" (keyup)="quantityChange($event,i)"
+                           (change)="storeNoteToLocalStorage(i)"
+                           >
 
                   </mat-form-field>
                 </td>
@@ -472,7 +488,7 @@
                   <mat-form-field class="text-right">
 
                     <input matInput
-                    [ngModel]="data[i]['price'] | showValueExpenses: '0,0'" (keyup)="priceChange($event,i)">
+                    [ngModel]="data[i]['price'] | showValueExpenses: '0,0'" (keyup)="priceChange($event,i)" (change)="storeNoteToLocalStorage(i)">
                     <button mat-icon-button matPrefix
                             (click)="openPriceDialog(i)">
                       <mat-icon>add</mat-icon>
@@ -512,7 +528,9 @@
                              matInput
                              class="quantity-input"
                              [value]="element['amount'] | currency : 'VND' : ''"
-                             (click)="openAmountDialog(i)">
+                             (click)="openAmountDialog(i)"
+
+                      >
                     </mat-form-field>
                   </td>
                   <td *ngIf="!allow_amount_adjust"
@@ -583,7 +601,7 @@
             <div fxLayout="row wrap">
               <div fxFlex="100" style='display: flex; justify-content: space-between;margin-bottom: 4px'>
                 <mat-form-field style='width: 150px'>
-                  <mat-select formControlName="branch_id" [disabled]="form?.controls['status'].value === '10'">
+                  <mat-select (selectionChange)="storeBranchToLocalStorage($event)" formControlName="branch_id" [disabled]="form?.controls['status'].value === '10'">
                     <mat-option *ngFor="let branch of branchList" value="{{branch.id}}">{{branch.name}}</mat-option>
                   </mat-select>
                 </mat-form-field>
@@ -689,16 +707,22 @@
                 <span>Tiền trả nhà cung cấp</span>
               </div>
               <div fxFlex="60">
-                <mat-form-field>
-                  <input matInput tabindex="7" formControlName="paid_amount" (keyup)="inputformatNumber($event)" required
-                         value="{{ form.get('paid_amount').value }}" (change)="recalculateWarehouse();">
-                  <button mat-raised-button color="primary" matSuffix (click)="paidAmount()">
-                    Trả đủ
-                  </button>
+                <mat-form-field class="paymentfull-place">
+                  <ng-template #fullTemplate>
+                    <input matInput tabindex="7" formControlName="paid_amount" (keyup)="inputformatNumber($event)" required
+                           value="{{ form.get('paid_amount').value }}" (change)="recalculateWarehouse();"
+                    >
+                    <button mat-raised-button color="primary" matSuffix (click)="paidAmount()">
+                      Trả đủ
+                    </button>
+                  </ng-template>
+                  <ng-template #payFullDefaultChose>
+                    <input class="text-right" matInput tabindex="7" formControlName="paid_amount" (keyup)="inputformatNumber($event)" required
+                           [value]="form.get('paid_amount').value" (change)="onPayProducer();">
+                  </ng-template>
+                  <ng-container *ngTemplateOutlet="payFullDefault?payFullDefaultChose:fullTemplate"></ng-container>
                 </mat-form-field>
               </div>
-
-
               <div fxFlex="40" style='margin-bottom: 4px'>
                 <span>Tính vào công nợ &nbsp;</span>
               </div>
@@ -712,7 +736,9 @@
                 <mat-form-field>
                   <mat-label>Ghi chú</mat-label>
                   <textarea matInput tabindex="9"
-                            formControlName="note" rows="3"></textarea>
+                            formControlName="note" rows="3"
+                            (change)="storeWholeNoteToLocalStorage()"
+                  ></textarea>
                 </mat-form-field>
               </div>
               <p *ngIf="updateModelId !== null && model !== null && model['status'] === 10">
