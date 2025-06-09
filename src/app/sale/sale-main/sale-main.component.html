@@ -29,8 +29,8 @@
                 <div class="span-product-no">
                   <div> {{ masterProduct?.product?.product_no }}</div>
 
-                  <div *ngIf="masterProduct?.product?.medicine?.content && masterProduct?.product?.medicine?.content != 'NULL'">
-                    Cách dùng: {{masterProduct?.product?.medicine?.content}}
+                  <div *ngIf="masterProduct?.product?.note_detail_sale && prescription_id">
+                    Cách dùng: {{masterProduct?.product?.note_detail_sale }}
                   </div>
                 </div>
               </div>
@@ -40,7 +40,7 @@
                     {{ masterProduct.product?.product_name }}
                   </div>
 
-                  <div>
+                  <div *ngIf="masterProduct.product?.medicine?.main_active_substance && prescription_id">
                     Hoạt chất: {{ masterProduct.product?.medicine?.main_active_substance }}
                   </div>
 
@@ -673,7 +673,28 @@
                   </div>
                 </div>
                 <div fxFlex="2"></div>
-                <div fxFlex="49" fxLayoutAlign="end center"></div>
+                <div fxFlex="49" fxLayoutAlign="end center">
+                  <div
+                    class="hoa-don-dien-tu"
+                    *ngIf="localItemInvoice?.is_return !== true"
+                    [ngClass]="
+                      einvoiceCheckbox?.checked
+                        ? 'einvoice-checked'
+                        : 'einvoice'
+                    ">
+                    <mat-checkbox
+                      #einvoiceCheckbox
+                      formControlName="use_einvoice">
+                    </mat-checkbox>
+                    <span
+                      [ngClass]="
+                        einvoiceCheckbox?.checked ? 'einvoice-text' : ''
+                      "
+                      (click)="clickEinvoice()">
+                      Xuất hóa đơn điện tử
+                    </span>
+                  </div>
+                </div>
               </div>
 
               <!--<div class="custom-title-invoice">

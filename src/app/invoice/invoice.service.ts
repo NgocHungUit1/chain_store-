@@ -239,6 +239,23 @@ export class InvoiceService {
 
     return environment.apiUrl + '/invoice/export-raw?' + filter.toFilterString() + '&token=' + _token;
   }
+
+  /**
+   * Kiểm tra trạng thái hóa đơn điện tử
+   * @param invoiceId
+   */
+  checkEInvoiceStatus(invoiceId: string) {
+    const url = environment.apiUrl + '/invoice/check-e-invoice-status?id=' + invoiceId;
+    return this.http.get<any>(url);
+  }
+
+  /**
+   * Tạo hóa đơn điện tử
+   * @param invoiceId
+   */
+  createEInvoice(invoiceId: number) {
+    return this.http.get<any>(`${environment.apiUrl}/invoice/create-e-invoice?id=${invoiceId}`);
+  }
 }
 
 

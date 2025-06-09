@@ -49,97 +49,97 @@
       </div>
     </mat-card>
 
-    <mat-card class='dash-panel' style='padding: 16px !important;'
-              [formGroup]='revenueFilter'>
-      <div class='d-flex'
-           style='justify-content: space-between'>
-        <span class='dash-banner-title'>DOANH THU THUẦN {{timePeriodOptionsMap[revenueFilter.value['period']]}}&nbsp;<i class='fa fa-arrow-circle-right text-inverse'></i> &nbsp;<span style='font-size: 1.1rem'
-                                                                                                                                          class='text-info'>{{totalRevenue | number}}</span></span>
+    <form [formGroup]="revenueFilter">
+      <mat-card class="dash-panel" style="padding: 16px !important;">
+        <div class='d-flex'
+             style='justify-content: space-between'>
+          <span class='dash-banner-title'>DOANH THU THUẦN {{timePeriodOptionsMap[revenueFilter.value['period']]}}&nbsp;<i class='fa fa-arrow-circle-right text-inverse'></i> &nbsp;<span style='font-size: 1.1rem'
+                                                                                                                                            class='text-info'>{{totalRevenue | number}}</span></span>
 
-        <mat-form-field appearance='outline'
-                        class='dash-panel-form-field'
-                        style='width: 200px'>
-          <mat-select formControlName='period' class='dash-panel-select'>
-            <mat-option *ngFor='let timePeriodOption of timePeriodOptions'
-                        [value]='timePeriodOption.value'>
-              {{timePeriodOption.label}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
+          <mat-form-field appearance='outline'
+                          class='dash-panel-form-field'
+                          style='width: 200px'>
+            <mat-select formControlName='period' class='dash-panel-select'>
+              <mat-option *ngFor='let timePeriodOption of timePeriodOptions'
+                          [value]='timePeriodOption.value'>
+                {{timePeriodOption.label}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
 
-      <div class='d-flex'
-           style='gap: 1rem'>
-        <span class='dash-group-btn'
-              [class.active]='revenueFilter.value["groupBy"] == "day"'
-              (click)='revenueFilter.patchValue({groupBy: "day"})'>Theo ngày</span>
-        <span class='dash-group-btn'
-              [class.active]='revenueFilter.value["groupBy"] == "hour"'
-              (click)='revenueFilter.patchValue({groupBy: "hour"})'>Theo giờ</span>
-        <span class='dash-group-btn'
-              [class.active]='revenueFilter.value["groupBy"] == "weekDay"'
-              (click)='revenueFilter.patchValue({groupBy: "weekDay"})'>Theo thứ</span>
-      </div>
+        <div class='d-flex'
+             style='gap: 1rem'>
+          <span class='dash-group-btn'
+                [class.active]='revenueFilter.value["groupBy"] == "day"'
+                (click)='revenueFilter.patchValue({groupBy: "day"})'>Theo ngày</span>
+          <span class='dash-group-btn'
+                [class.active]='revenueFilter.value["groupBy"] == "hour"'
+                (click)='revenueFilter.patchValue({groupBy: "hour"})'>Theo giờ</span>
+          <span class='dash-group-btn'
+                [class.active]='revenueFilter.value["groupBy"] == "weekDay"'
+                (click)='revenueFilter.patchValue({groupBy: "weekDay"})'>Theo thứ</span>
+        </div>
 
-      <div *ngIf="revenueChartOption !== null">
-        <apx-chart [series]='revenueChartOption.series'
-                   [chart]='revenueChartOption.chart'
-                   [dataLabels]='revenueChartOption.dataLabels'
-                   [plotOptions]='revenueChartOption.plotOptions'
-                   [yaxis]='revenueChartOption.yaxis'
-                   [legend]='revenueChartOption.legend'
-                   [fill]='revenueChartOption.fill'
-                   [stroke]='revenueChartOption.stroke'
-                   [tooltip]='revenueChartOption.tooltip'
-                   [xaxis]='revenueChartOption.xaxis'
-                   [grid]='revenueChartOption.grid'></apx-chart>
-      </div>
-    </mat-card>
+        <div *ngIf="revenueChartOption !== null">
+          <apx-chart [series]='revenueChartOption.series'
+                     [chart]='revenueChartOption.chart'
+                     [dataLabels]='revenueChartOption.dataLabels'
+                     [plotOptions]='revenueChartOption.plotOptions'
+                     [yaxis]='revenueChartOption.yaxis'
+                     [legend]='revenueChartOption.legend'
+                     [fill]='revenueChartOption.fill'
+                     [stroke]='revenueChartOption.stroke'
+                     [tooltip]='revenueChartOption.tooltip'
+                     [xaxis]='revenueChartOption.xaxis'
+                     [grid]='revenueChartOption.grid'></apx-chart>
+        </div>
+      </mat-card>
+    </form>
 
+    <form [formGroup]="topSalingProductFilter">
+      <mat-card class="dash-panel" style="padding: 16px !important;">
+        <div class='d-flex'
+             style='justify-content: space-between'>
+          <span class='dash-banner-title'>Top 10 hàng hóa bán chạy {{timePeriodOptionsMap[topSalingProductFilter.value['period']]}}</span>
 
-    <mat-card class='dash-panel' style='padding: 16px !important;'
-              [formGroup]='topSalingProductFilter'>
-      <div class='d-flex'
-           style='justify-content: space-between'>
-        <span class='dash-banner-title'>Top 10 hàng hóa bán chạy {{timePeriodOptionsMap[topSalingProductFilter.value['period']]}}</span>
+          <mat-form-field appearance='outline'
+                          class='dash-panel-form-field'
+                          style='width: 200px'>
+            <mat-select formControlName='period' class='dash-panel-select'>
+              <mat-option *ngFor='let timePeriodOption of timePeriodOptions'
+                          [value]='timePeriodOption.value'>
+                {{timePeriodOption.label}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
 
-        <mat-form-field appearance='outline'
-                        class='dash-panel-form-field'
-                        style='width: 200px'>
-          <mat-select formControlName='period' class='dash-panel-select'>
-            <mat-option *ngFor='let timePeriodOption of timePeriodOptions'
-                        [value]='timePeriodOption.value'>
-              {{timePeriodOption.label}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
+        <div class='d-flex'
+             style='gap: 1rem'>
+          <span class='dash-group-btn'
+                [class.active]='topSalingProductFilter.value["groupBy"] == "amount"'
+                (click)='topSalingProductFilter.patchValue({groupBy: "amount"})'>Theo doanh thu</span>
+          <span class='dash-group-btn'
+                [class.active]='topSalingProductFilter.value["groupBy"] == "quantity"'
+                (click)='topSalingProductFilter.patchValue({groupBy: "quantity"})'>Theo số lượng</span>
+        </div>
 
-
-      <div class='d-flex'
-           style='gap: 1rem'>
-        <span class='dash-group-btn'
-              [class.active]='topSalingProductFilter.value["groupBy"] == "amount"'
-              (click)='topSalingProductFilter.patchValue({groupBy: "amount"})'>Theo doanh thu</span>
-        <span class='dash-group-btn'
-              [class.active]='topSalingProductFilter.value["groupBy"] == "quantity"'
-              (click)='topSalingProductFilter.patchValue({groupBy: "quantity"})'>Theo số lượng</span>
-      </div>
-
-      <div style='height: 400px;' *ngIf="topSalingProductOption">
-        <apx-chart [series]='topSalingProductOption.series'
-                   [chart]='topSalingProductOption.chart'
-                   [dataLabels]='topSalingProductOption.dataLabels'
-                   [plotOptions]='topSalingProductOption.plotOptions'
-                   [yaxis]='topSalingProductOption.yaxis'
-                   [legend]='topSalingProductOption.legend'
-                   [fill]='topSalingProductOption.fill'
-                   [stroke]='topSalingProductOption.stroke'
-                   [tooltip]='topSalingProductOption.tooltip'
-                   [xaxis]='topSalingProductOption.xaxis'
-                   [grid]='topSalingProductOption.grid'></apx-chart>
-      </div>
-    </mat-card>
+        <div style='height: 400px;' *ngIf="topSalingProductOption">
+          <apx-chart [series]='topSalingProductOption.series'
+                     [chart]='topSalingProductOption.chart'
+                     [dataLabels]='topSalingProductOption.dataLabels'
+                     [plotOptions]='topSalingProductOption.plotOptions'
+                     [yaxis]='topSalingProductOption.yaxis'
+                     [legend]='topSalingProductOption.legend'
+                     [fill]='topSalingProductOption.fill'
+                     [stroke]='topSalingProductOption.stroke'
+                     [tooltip]='topSalingProductOption.tooltip'
+                     [xaxis]='topSalingProductOption.xaxis'
+                     [grid]='topSalingProductOption.grid'></apx-chart>
+        </div>
+      </mat-card>
+    </form>
 
   </div>
   <div class='dash-col-right'
@@ -157,10 +157,20 @@
     <mat-card>
       <div>
         <p class='dash-banner-title dash-border-bottom'
-           style='padding: 16px !important; margin-bottom: 0'>THÔNG BÁO</p>
+           style='padding: 16px !important; margin-bottom: 0'>THÔNG BÁOO</p>
 
         <div style=' padding: 0 10px'>
           <ol class='timeline timeline-notify' style='padding-bottom: 0'>
+            <li class='timeline-item'>
+              <span class='timeline-item-icon bg-info text-white'>
+                <i class='fa fa-bell'></i>
+              </span>
+              <div class='timeline-item-description'>
+                <p class='sub-notification' style='cursor: pointer' (click)="openEInvoiceModal()">
+                  <strong>Chức năng mới:</strong> Hóa đơn điện tử & Chữ ký số
+                </p>
+              </div>
+            </li>
 
             <li class='timeline-item'>
               <span class='timeline-item-icon bg-danger text-white'>
@@ -232,7 +242,7 @@
               </span>
               <div class='timeline-item-description'>
                 <span style='line-height: 21px'>
-                  <a href='#' (click)='$event.preventDefault()'>{{history?.createdUser?.username || 'anonymous'}} - {{history?.createdUser.storeRole?.name || 'n/a'}}</a>
+                  <a href='#' (click)='$event.preventDefault()'>{{history?.createdUser?.username || 'anonymous'}} - {{history?.createdUser?.storeRole?.name || 'n/a'}}</a>
                   vừa {{fieldUserMapActionToLabel[history?.action_name||''] || 'n/a'}}
                   <a [routerLink]='mapModelToLink[history.model_name].url' [queryParams]='getQueryParam(history)' (click)='$event.preventDefault()'>{{mapModelToLabel[history.model_name]||'n/a'}}</a>&nbsp;<span *ngIf="getPrice(history) > 0">với giá trị <strong>{{(getPrice(history)) | number  }}đ</strong> </span><br>
                   <i style='font-size: 1rem'>{{history.createToNow}}</i>

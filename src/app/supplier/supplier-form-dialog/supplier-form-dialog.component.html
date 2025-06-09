@@ -5,26 +5,37 @@
       <div fxFlex="49">
         <div fxLayout="row wrap">
           <div fxFlex="100">
+            <div fxLayout="row" fxLayoutAlign="start center">
+              <mat-form-field fxFlex="75">
+                <mat-label>Mã số thuế</mat-label>
+                <input matInput tabindex="1" formControlName="tax_code">
+              </mat-form-field>
+              <button mat-raised-button color="primary" type="button" fxFlex="25" class="m-l-10" (click)="lookupBusinessInfo()">
+                <mat-icon>search</mat-icon> Tra cứu
+              </button>
+            </div>
+          </div>
+          <div fxFlex="100">
             <mat-form-field>
               <mat-label>Tên nhà cung cấp</mat-label>
-              <input matInput tabindex="1" formControlName="name" required>
+              <input matInput tabindex="2" formControlName="name" required>
             </mat-form-field>
           </div>
           <div fxFlex="100">
             <mat-form-field>
               <mat-label>Điện thoại</mat-label>
-              <input matInput tabindex="2" formControlName="phone_number" required>
+              <input matInput tabindex="3" formControlName="phone_number" required>
             </mat-form-field>
           </div>
           <div fxFlex="100">
             <mat-form-field>
               <mat-label>Địa chỉ</mat-label>
-              <textarea matInput tabindex="3" formControlName="address" rows="2"></textarea>
+              <textarea matInput tabindex="4" formControlName="address" rows="2"></textarea>
             </mat-form-field>
           </div>
           <div fxFlex="100">
             <mat-form-field>
-              <input matInput placeholder="Tỉnh/Thành phố" tabindex="4" aria-label="Tỉnh/Thành phố"
+              <input matInput placeholder="Tỉnh/Thành phố" tabindex="5" aria-label="Tỉnh/Thành phố"
                      [matAutocomplete]="province" formControlName="province">
               <mat-autocomplete #province="matAutocomplete" [displayWith]="displayLocation"
                                 (optionSelected)='onProvinceChange($event.option.value)'>
@@ -36,7 +47,7 @@
           </div>
           <div fxFlex="100">
             <mat-form-field>
-              <input matInput placeholder="Quận/Huyện" tabindex="4" aria-label="Quận/Huyện" [matAutocomplete]="district"
+              <input matInput placeholder="Quận/Huyện" tabindex="6" aria-label="Quận/Huyện" [matAutocomplete]="district"
                      formControlName="district">
               <mat-autocomplete #district="matAutocomplete" [displayWith]="displayLocation"
                                 (optionSelected)='onDistrictChange($event.option.value)'>
@@ -48,7 +59,7 @@
           </div>
           <div fxFlex="100">
             <mat-form-field>
-              <input matInput placeholder="Phường/Xã" tabindex="4" aria-label="Phường/Xã" [matAutocomplete]="ward"
+              <input matInput placeholder="Phường/Xã" tabindex="7" aria-label="Phường/Xã" [matAutocomplete]="ward"
                      formControlName="ward">
               <mat-autocomplete #ward="matAutocomplete" [displayWith]="displayLocation">
                 <mat-option *ngFor="let ward of filteredWards | async" [value]="ward">
@@ -65,25 +76,19 @@
           <div fxFlex="100">
             <mat-form-field>
               <mat-label>Email</mat-label>
-              <input matInput tabindex="7" formControlName="email">
+              <input matInput tabindex="8" formControlName="email">
             </mat-form-field>
           </div>
           <div fxFlex="100">
             <mat-form-field>
               <mat-label>Công ty</mat-label>
-              <input matInput tabindex="8" formControlName="company_name">
+              <input matInput tabindex="9" formControlName="company_name">
             </mat-form-field>
           </div>
           <div fxFlex="100">
             <mat-form-field>
               <mat-label>Ghi chú</mat-label>
-              <textarea matInput tabindex="9" formControlName="note" rows="2"></textarea>
-            </mat-form-field>
-          </div>
-          <div fxFlex="100">
-            <mat-form-field>
-              <mat-label>Mã số thuế</mat-label>
-              <input matInput tabindex="10" formControlName="tax_code">
+              <textarea matInput tabindex="10" formControlName="note" rows="2"></textarea>
             </mat-form-field>
           </div>
         </div>
@@ -93,7 +98,7 @@
   </form>
 </div>
 <div mat-dialog-actions align="end">
-  <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="3" (click)="submit()">
+  <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="11" (click)="submit()">
     <mat-icon>save</mat-icon>
     Lưu
   </button>
