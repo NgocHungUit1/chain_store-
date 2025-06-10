@@ -2,7 +2,6 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import * as numeral from 'numeral';
-import { WarehouseProduct } from '../warehouse.model';
 import { ProductService } from '../../product/product.service';
 import { Product } from '../../product/product.model';
 import { NotifierService } from 'angular-notifier';
@@ -22,7 +21,7 @@ export class WarehouseUnitCreateDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<WarehouseUnitCreateDialogComponent>,
     private productService: ProductService,
     private notifySer: NotifierService,
-    @Inject(MAT_DIALOG_DATA) public data: WarehouseProduct) {
+    @Inject(MAT_DIALOG_DATA) public data: any) {
     this.product = data.product;
   }
 
@@ -78,8 +77,23 @@ export class WarehouseUnitCreateDialogComponent implements OnInit {
   save() {
     if (!this.form.valid) { return; }
 
-    this.product['units'] = this.form.value['units'];
-    const unitFormActive = this.form.value['units'][0];
+    const units = this.form.value['units'];
+
+    let isValidUnitNo = true;
+    units.forEach((unit) => {
+      if (this.data.productUnits.find(productUnit => productUnit.no === unit.unit_no)) {
+        isValidUnitNo = false;
+        this.notifySer.notify('error', 'Đã tồn tại mã đơn vị ' + unit.unit_no);
+        return;
+      }
+    });
+
+    if (!isValidUnitNo) {
+      return;
+    }
+
+    this.product['units'] = units;
+    const unitFormActive = units[0];
 
     this.productService.update(this.product.id, this.product, 'productUnits').subscribe(
       (product: Product) => {
