@@ -416,7 +416,7 @@
                                   (selectionChange)="onUnitChange(i, $event)">
                         <mat-option *ngFor="let unit of element.productUnits" [value]="unit.id">{{unit.name}}</mat-option>
                       </mat-select>
-                      <button mat-icon-button matSuffix aria-label="add" (click)="$event.stopImmediatePropagation();openUnitCreateDialog(element);">
+                      <button mat-icon-button matSuffix aria-label="add" (click)="$event.stopImmediatePropagation();openUnitCreateDialog(i, element);">
                         <mat-icon style="margin-bottom: -10px; font-size: 1.5rem;">add</mat-icon>
                       </button>
                     </mat-form-field>
