@@ -472,7 +472,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   // handle open when click to option -> available (old) parcel
   openAddAvailableParcelDialog(product_index: number, parcel: object = null, product_no: string) {
-    const data ={
+    const data = {
       expiration_date: parcel['expiration_date'],
       quantity_of_stock: parcel['quantity_of_stock'],
       parcel_no: parcel['parcel_no'],
@@ -915,7 +915,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           warehouseProduct.vat = (item.vat !== null) ? item.vat : 0;
           warehouseProduct.vat_type = (item.vat_type !== null) ? item.vat_type : 'price';
           warehouseProduct.is_sub_item = item.is_sub_item ?? 0;
-          warehouseProduct.note = item.note || "";
+          warehouseProduct.note = item.note || '';
           warehouseProduct.productUnits.forEach(productUnit => {
             productUnit['quantity_of_stock'] = (productData.find(prod => prod.id == item.product_id)?.quantity?.number / productUnit['value']);
           });
@@ -1004,7 +1004,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         data['expensesTransactions'] = this.expensesTransactions;
         if (this.form.controls['date'].value !== null) {
           if (typeof this.form.controls['date'].value === 'object') {
-            let expDate = new Date(this.form.controls['date'].value.valueOf() + (420 * 60 * 1000));
+            const expDate = new Date(this.form.controls['date'].value.valueOf() + (420 * 60 * 1000));
 
             data['date'] = expDate.toISOString().split('T')[0];
           } else {
@@ -1433,14 +1433,14 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     }
 
     // Update the tempDataForQuickFilter similarly
-    if (selectedProduct.is_sub_item ===1) {
+    if (selectedProduct.is_sub_item === 1) {
       this.tempDataForQuickFilter = this.tempDataForQuickFilter.filter((item, index) =>
         index !== i
       );
     } else {
       this.tempDataForQuickFilter = this.tempDataForQuickFilter.filter(item => {
         return item !== selectedProduct &&
-          (item.is_sub_item===0 || item.master_product_id  !== selectedProduct.product_id);
+          (item.is_sub_item === 0 || item.master_product_id  !== selectedProduct.product_id);
       });
     }
 
@@ -1981,17 +1981,22 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     }
   }
 
-  openUnitCreateDialog(element: any) {
+  openUnitCreateDialog(index: number, element: any) {
     const ref = this.dialog.open(WarehouseUnitCreateDialogComponent, {
-      width: '35%',
+      width: '80%',
       minHeight: '200px',
+      maxWidth: '750px',
       data: element
     });
 
     ref.afterClosed().subscribe(res => {
-      if (res) {
-        /* Handle call api here */
-        console.log(res);
+      if (res && res.success) {
+        element['productUnits'] = res.data;
+
+        if (res.unit_id_active) {
+          this.data[index]['product_unit_id'] = res.unit_id_active;
+          this.onUnitChange(index, {value: res.unit_id_active});
+        }
       }
     });
   }
