@@ -128,4 +128,29 @@ export class ProductService {
       responseType: 'blob'
     });
   }
+
+  getQualityControlProducts(filter: any): Observable<any> {
+    let params = new HttpParams()
+      .set('per-page', filter.pageSize)
+      .set('page', filter.page)
+      .set('pageSize', filter.pageSize)
+      .set('expand', 'product')
+      .set('WarehouseProductParcelSearch[hasStock]', '1');
+
+    if (filter.search_string) {
+      params = params.set('WarehouseProductParcelSearch[keyword]', filter.search_string);
+    }
+
+    return this.http.get(`${this.baseUrl}/warehouse-product-parcel`, {
+      params,
+      observe: 'response'
+    });
+  }
+
+  getAllQualityControlProducts(): Observable<any[]> {
+    let params = new HttpParams()
+      .set('expand', 'product')
+      .set('WarehouseProductParcelSearch[hasStock]', '1');
+    return this.http.get<any[]>(`${this.baseUrl}/warehouse-product-parcel/quality-control`, { params });
+  }
 }
