@@ -1360,7 +1360,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
         const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
         const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
 
-        // debugger
+        debugger;
         let printContent = '<title>' + res?.invoice_no + '</title>';
         printContent += `
           <style>
@@ -1528,10 +1528,40 @@ export class SaleMainComponent implements OnInit, DoCheck {
         printContent += `<p>${this.numberToVietnameseText(numeral(res?.sum_payment).value() || 0)}</p>`;
 
         // Footer with QR code
-        printContent += `
+        if(this.form.get('selectedMethod').value == 'Chuyển khoản'){
+          debugger
+          this.getQrCode(this.selectedBankAccount).subscribe(qrCode=>{
+            printContent += `<br>
+              <p class="center"><img src="${qrCode}" style="width: 80px; height: 80px;" onload="onQrLoaded()"></p>`
+            
+            printContent += `${this.description && this.description.length > 0
+          ? `<p style="text-align:center; font-style: italic;">${this.description}</p>`
+          : `<p style="text-align:center; font-style: italic;">Cám ơn và hẹn gặp lại.</p>`}
+              <p class="center" style="font-size: 9px;">POWERED BY rx20.vn</p>
+              <script>
+                function onQrLoaded() {
+                  window.print();
+                }
+                window.onafterprint = function() {
+                  window.close();
+                }
+              </script>
+              </section>
+            `;
+
+            const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+            WindowPrt.document.write(printContent);
+            WindowPrt.document.close();
+            WindowPrt.focus();
+            // WindowPrt.close(); // lỗi tự đôngs
+          })
+        }
+        else{
+          printContent += `
           <br>
-          <p class="center"><img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Cám%20ơn%20và%20hẹn%20gặp%20lại" style="width: 80px; height: 80px;" onload="onQrLoaded()"></p>
-          <p class="center" style="font-style: italic;">Cám ơn và hẹn gặp lại!</p>
+          ${this.description && this.description.length > 0
+          ? `<p style="text-align:center; font-style: italic;">${this.description}</p>`
+          : `<p style="text-align:center; font-style: italic;">Cám ơn và hẹn gặp lại.</p>`}
           <p class="center" style="font-size: 9px;">POWERED BY rx20.vn</p>
           <script>
             function onQrLoaded() {
@@ -1549,6 +1579,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
         WindowPrt.document.close();
         WindowPrt.focus();
         // WindowPrt.close(); // lỗi tự đôngs
+        }
       });
     });
   }
@@ -2254,10 +2285,40 @@ export class SaleMainComponent implements OnInit, DoCheck {
       printContent += `<p>${this.numberToVietnameseText(+preInvoiceData?.sum_payment || 0)}</p>`
 
       // Footer with QR code
-      printContent += `
+      if(this.form.get('selectedMethod').value == 'Chuyển khoản'){
+          debugger
+          this.getQrCode(this.selectedBankAccount).subscribe(qrCode=>{
+            printContent += `<br>
+              <p class="center"><img src="${qrCode}" style="width: 80px; height: 80px;" onload="onQrLoaded()"></p>`
+            
+            printContent += `${this.description && this.description.length > 0
+          ? `<p style="text-align:center; font-style: italic;">${this.description}</p>`
+          : `<p style="text-align:center; font-style: italic;">Cám ơn và hẹn gặp lại.</p>`}
+              <p class="center" style="font-size: 9px;">POWERED BY rx20.vn</p>
+              <script>
+                function onQrLoaded() {
+                  window.print();
+                }
+                window.onafterprint = function() {
+                  window.close();
+                }
+              </script>
+              </section>
+            `;
+
+            const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+            WindowPrt.document.write(printContent);
+            WindowPrt.document.close();
+            WindowPrt.focus();
+            // WindowPrt.close(); // lỗi tự đôngs
+          })
+        }
+        else{
+          printContent += `
           <br>
-          <p class="center"><img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=Cám%20ơn%20và%20hẹn%20gặp%20lại" style="width: 80px; height: 80px;" onload="onQrLoaded()"></p>
-          <p class="center" style="font-style: italic;">Cám ơn và hẹn gặp lại!</p>
+          ${this.description && this.description.length > 0
+          ? `<p style="text-align:center; font-style: italic;">${this.description}</p>`
+          : `<p style="text-align:center; font-style: italic;">Cám ơn và hẹn gặp lại.</p>`}
           <p class="center" style="font-size: 9px;">POWERED BY rx20.vn</p>
           <script>
             function onQrLoaded() {
@@ -2274,7 +2335,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
         WindowPrt.document.write(printContent);
         WindowPrt.document.close();
         WindowPrt.focus();
-      // WindowPrt.close(); // Uncomment if you want to auto-close after printing
+        // WindowPrt.close(); // Uncomment if you want to auto-close after printing
+      }
     });
   }
 
