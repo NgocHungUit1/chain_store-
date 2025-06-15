@@ -8,6 +8,8 @@ import { EInvoiceRegisterModalComponent } from '../e-invoice-register-modal/e-in
   styleUrls: ['./e-invoice-modal.component.scss']
 })
 export class EInvoiceModalComponent {
+  dontShowAgain = false;
+
   constructor(
     public dialogRef: MatDialogRef<EInvoiceModalComponent>,
     private dialog: MatDialog
@@ -29,6 +31,9 @@ export class EInvoiceModalComponent {
 
   onCloseClick(event: Event): void {
     event.stopPropagation(); // Ngăn không cho sự kiện click lan ra ngoài
+    if (this.dontShowAgain) {
+      localStorage.setItem('hideEInvoiceModal', '1');
+    }
     this.dialogRef.close();
   }
 }
