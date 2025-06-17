@@ -459,7 +459,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
   }
 
   /**
-   * - Nhập hàng đơn vị giá đơn vị  = giá vôn đơn vị cơ bản * số lượng quy đổi
+   * - Trả hàng đơn vị giá đơn vị  = giá vôn đơn vị cơ bản * số lượng quy đổi
    * @param index
    * @param select
    */
