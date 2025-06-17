@@ -458,4 +458,23 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
     return  true;
   }
 
+  /**
+   * - Nhập hàng đơn vị giá đơn vị  = giá vôn đơn vị cơ bản * số lượng quy đổi
+   * @param index
+   * @param select
+   */
+  onUnitChange(index, select) {
+    if (this.data[index] !== undefined) {
+      const unit = this.data[index]['productUnits'].find(element => element['id'] === select.value);
+      const unitBase = this.data[index]['productUnits'].find(element => element['is_base'] === 1);
+      this.data[index]['price'] = unitBase['original_price'] * unit['value'];
+      this.data[index]['sell_price'] = unit['sell_price'];
+      this.data[index]['inventory_quantity'] = unit['quantity_of_stock'];
+      // this.data[index]['price'] = (unit['original_price'] !== 0) ? unit['original_price'] : unit['sell_price']; //unit['original_price'];
+      this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
+      this.recalculateWarehouse();
+    }
+  }
+
+
 }
