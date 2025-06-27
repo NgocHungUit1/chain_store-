@@ -11,9 +11,8 @@
 }
 
 .dialog-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  min-width: 400px;
+  padding: 20px;
 }
 
 .dialog-actions {
@@ -25,8 +24,8 @@
 
 .full-width {
   width: 100%;
-  margin-bottom: 16px;
 }
+
 .dialog-container
   .mat-form-field:not(.mat-form-field-can-float)
   .mat-form-field-underline {
@@ -34,10 +33,41 @@
 }
 
 .input-layout {
+  margin-bottom: 15px;
+}
+
+.bank-option {
   display: flex;
-  justify-content: center;
   align-items: center;
-  .mat-form-field{
-    margin-bottom: 0px !important;
-  }
+  gap: 10px;
+}
+
+.bank-logo {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.loading-spinner {
+  position: absolute;
+  right: 25px;
+  top: 10px;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.bank-form--label {
+  line-height: 35px;
+  font-weight: 500;
+}
+
+::ng-deep .mat-form-field-wrapper {
+  margin-bottom: -1.25em;
+}
+
+h5 {
+  margin: 0 0 20px;
+  font-weight: 500;
 }

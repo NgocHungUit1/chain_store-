@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { BankAccount, BankAccountFilter } from './bank-account.model';
+import { BankAccount, BankAccountFilter, VietQRBankResponse } from './bank-account.model';
 import { DateFilter } from '../supplier/supplier.model';
 
 @Injectable({
@@ -10,7 +10,13 @@ import { DateFilter } from '../supplier/supplier.model';
 })
 export class BankAccountService {
   public dateFilter: BehaviorSubject<DateFilter> = new BehaviorSubject<DateFilter>(null);
+  private vietQRApiUrl = 'https://api.vietqr.io/v2/banks';
+
   constructor(private http: HttpClient) { }
+
+  getVietQRBanks(): Observable<VietQRBankResponse> {
+    return this.http.get<VietQRBankResponse>(this.vietQRApiUrl);
+  }
 
   getApiUrl(filter?: BankAccountFilter) {
     if (!filter.page) {
