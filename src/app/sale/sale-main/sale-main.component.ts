@@ -1475,7 +1475,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
           this.getQrCode(this.selectedBankAccount).subscribe(qrCode=>{
             printContent += `<br>
               <p class="center"><img src="${qrCode}" style="width: 80px; height: 80px;" onload="onQrLoaded()"></p>`
-            
+
             printContent += `${this.description && this.description.length > 0
             ? `<p style="text-align:center; font-style: italic;">${this.description}</p>`
             : `<p style="text-align:center; font-style: italic;">Cám ơn và hẹn gặp lại.</p>`}
@@ -2221,7 +2221,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       }
       printContent += `</table>`;
       printContent += `<p>${this.numberToVietnameseText(+preInvoiceData?.sum_payment || 0)}</p>`
-      
+
       const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
 
       // Footer with QR code
@@ -2229,7 +2229,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
           this.getQrCode(this.selectedBankAccount).subscribe(qrCode=>{
             printContent += `<br>
               <p class="center"><img src="${qrCode}" style="width: 80px; height: 80px;" onload="onQrLoaded()"></p>`
-            
+
             printContent += `${this.description && this.description.length > 0
           ? `<p style="text-align:center; font-style: italic;">${this.description}</p>`
           : `<p style="text-align:center; font-style: italic;">Cám ơn và hẹn gặp lại.</p>`}
@@ -3436,7 +3436,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
     write(this.bankAccountFilter, 'page', 1);
     write(this.bankAccountFilter, 'pageSize', 1000);
-    write(this.bankAccountFilter, 'status', '10,9');
+    write(this.bankAccountFilter, 'status', '10');
     write(this.bankAccountFilter, 'expand', 'province,district,ward');
 
     this.bankAccountSer.getList(this.bankAccountFilter).subscribe((res) => {
