@@ -33,13 +33,15 @@
                    (input)="onSearchChange($event)">
           </mat-form-field>
           <mat-form-field class="full-width">
-            <mat-select formControlName="bank_code" placeholder="Chọn ngân hàng">
+            <mat-select formControlName="bank_code" [compareWith]="compareBank">
               <mat-option *ngFor="let bank of filteredBanks" [value]="bank.code">
                 <div class="bank-option">
-                  <img [src]="bank.logo" [alt]="bank.shortName" class="bank-logo">
-                  <span>{{bank.name}}</span>
+                  <span>{{bank.shortName}} - {{bank.name}}</span>
                 </div>
               </mat-option>
+              <mat-select-trigger>
+                {{getSelectedBankShortName()}}
+              </mat-select-trigger>
             </mat-select>
             <mat-spinner *ngIf="loading" diameter="20" class="loading-spinner"></mat-spinner>
           </mat-form-field>

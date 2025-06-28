@@ -32,6 +32,16 @@ export class BankAccountDialogComponent implements OnInit {
     });
   }
 
+  compareBank(bank1: string, bank2: string): boolean {
+    return bank1 === bank2;
+  }
+
+  getSelectedBankShortName(): string {
+    const selectedCode = this.bankAccountForm.get('bank_code')?.value;
+    const selectedBank = this.banks.find(bank => bank.code === selectedCode);
+    return selectedBank ? selectedBank.shortName : '';
+  }
+
   ngOnInit(): void {
     this.loadBanks();
   }
@@ -78,7 +88,14 @@ export class BankAccountDialogComponent implements OnInit {
       bank.shortName.toLowerCase().includes(searchTerm) ||
       bank.code.toLowerCase().includes(searchTerm)
     );
-    console.log('Filtered Banks:', this.filteredBanks); // Debug log
+
+    // Automatically select the first bank in filtered results
+    if (this.filteredBanks.length > 0) {
+      const firstBank = this.filteredBanks[0];
+      this.bankAccountForm.patchValue({
+        bank_code: firstBank.code
+      });
+    }
   }
 
   onCancel(): void {
