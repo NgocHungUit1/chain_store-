@@ -115,6 +115,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
       remain_amount: [null],
       note: [null],
       branch_id: [null, Validators.required],
+      action_change: [0]
     });
     this.userService.getStoreBranchList().subscribe(res => {
       this.branchList = res.body;
@@ -186,6 +187,12 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
         this.form.controls['quantity'].disable();
         this.form.controls['total_price'].disable();
         this.form.controls['remain_amount'].disable();
+
+        if (res && res['status'] === 10) {
+          this.form.patchValue({
+            action_change: 1
+          });
+        }
 
         this.loadData();
       });
