@@ -442,15 +442,12 @@ export class QualityControlCreateModalComponent implements OnInit {
   // Thêm phương thức mới để load tất cả sản phẩm
   loadAllProducts(): void {
     this.isLoading = true;
-    this.productService.getAllParcels().subscribe({
-      next: (response) => {
-        console.log('API Response:', response);
-        this.processAllProductsData(response);
-        console.log('ProductRows after processing:', this.productRows);
+    this.productService.getAllQualityControlProducts().subscribe({
+      next: (data) => {
+        this.processAllProductsData(data);
         this.isLoading = false;
       },
       error: (error) => {
-        console.error('Error loading products:', error);
         this.isLoading = false;
         this.notifyService.notify('error', 'Có lỗi xảy ra khi tải dữ liệu sản phẩm');
       }

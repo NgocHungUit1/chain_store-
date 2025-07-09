@@ -473,7 +473,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   // handle open when click to option -> available (old) parcel
   openAddAvailableParcelDialog(product_index: number, parcel: object = null, product_no: string) {
-    const data ={
+    const data = {
       expiration_date: parcel['expiration_date'],
       quantity_of_stock: parcel['quantity_of_stock'],
       parcel_no: parcel['parcel_no'],
@@ -946,6 +946,19 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           if (this.updateModelId !== null) {
             warehouseProduct.id = item.id;
           }
+
+          const productParcels = item.productParcels || [];
+          let productUnit = null;
+          if (item.productUnits && item.productUnits.length > 0) {
+              productUnit = item.productUnits.find(obj => obj.id === item.product_unit_id);
+          }
+
+          if (productUnit) {
+            productParcels.forEach(parcel => {
+              parcel['quantity'] =  parcel['quantity'] / productUnit['value'];
+            });
+          }
+
           warehouseProduct.product_id = item.product_id;
           warehouseProduct.product = item.product;
           warehouseProduct.quantity = item.quantity;
@@ -956,18 +969,18 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           warehouseProduct.amount = (item.amount !== null) ? item.amount : 0;
           warehouseProduct.product_unit_id = item.product_unit_id;
           warehouseProduct.productUnits = item.productUnits !== undefined ? item.productUnits : [];
-          warehouseProduct.product_parcels = item.productParcels !== undefined ? item.productParcels : [];
+          warehouseProduct.product_parcels = productParcels;
           warehouseProduct.vat = (item.vat !== null) ? item.vat : 0;
           warehouseProduct.vat_type = (item.vat_type !== null) ? item.vat_type : 'price';
           warehouseProduct.is_sub_item = item.is_sub_item ?? 0;
-          warehouseProduct.note = item.note || "";
+          warehouseProduct.note = item.note || '';
           warehouseProduct.productUnits.forEach(productUnit => {
             productUnit['quantity_of_stock'] = (productData.find(prod => prod.id == item.product_id)?.quantity?.number / productUnit['value']);
           });
           warehouseProduct.inventory_quantity = warehouseProduct.productUnits.find(productUnit => productUnit['id'] === item.product_unit_id)['quantity_of_stock'];
 
-          if (item.productParcels !== undefined && item.productParcels.length > 0) {
-            this.parcels = this.parcels.concat(item.productParcels);
+          if (productParcels.length > 0) {
+            this.parcels = this.parcels.concat(productParcels);
           }
           newData.push(warehouseProduct);
         });
@@ -1059,7 +1072,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         data['expensesTransactions'] = this.expensesTransactions;
         if (this.form.controls['date'].value !== null) {
           if (typeof this.form.controls['date'].value === 'object') {
-            let expDate = new Date(this.form.controls['date'].value.valueOf() + (420 * 60 * 1000));
+            const expDate = new Date(this.form.controls['date'].value.valueOf() + (420 * 60 * 1000));
 
             data['date'] = expDate.toISOString().split('T')[0];
           } else {
@@ -1519,14 +1532,14 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     }
 
     // Update the tempDataForQuickFilter similarly
-    if (selectedProduct.is_sub_item ===1) {
+    if (selectedProduct.is_sub_item === 1) {
       this.tempDataForQuickFilter = this.tempDataForQuickFilter.filter((item, index) =>
         index !== i
       );
     } else {
       this.tempDataForQuickFilter = this.tempDataForQuickFilter.filter(item => {
         return item !== selectedProduct &&
-          (item.is_sub_item===0 || item.master_product_id  !== selectedProduct.product_id);
+          (item.is_sub_item === 0 || item.master_product_id  !== selectedProduct.product_id);
       });
     }
 
@@ -1552,6 +1565,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         product['inventory_quantity'] = unit['quantity_of_stock'];
         // this.data[index]['price'] = (unit['original_price'] !== 0) ? unit['original_price'] : unit['sell_price']; //unit['original_price'];
         product['amount'] = (product['price'] - product['discount']) * product['quantity'];
+        if (this.data[index]['product_parcels'].length === 1) {
+          this.data[index]['product_parcels'][0]['quantity'] = this.data[index]['quantity'];
+        }
         this.recalculateWarehouse();
       }
     });
@@ -2109,29 +2125,22 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     }
   }
 
-  openUnitCreateDialog(element: any) {
+  openUnitCreateDialog(index: number, element: any) {
     const ref = this.dialog.open(WarehouseUnitCreateDialogComponent, {
-      width: '50vw',
+      width: '80%',
       minHeight: '200px',
-      minWidth: '300px',
-      maxWidth: '800px',
-      data: element,
-
+      maxWidth: '750px',
+      data: element
     });
 
     ref.afterClosed().subscribe(res => {
-      if (res) {
-        /* Handle call api here */
-        this.productSer.update(element.product_id, { units: res }).subscribe(product => {
-          this.productSer.getDetail(element.product_id, 'productUnits').subscribe(resPro => {
-            const currentProductIndex = this.data.findIndex(p => p.product_id === element.product_id);
-            this.data[currentProductIndex].productUnits = resPro['productUnits'];
-            this.notifySer.notify('success', 'Cập nhật đơn vị thành công!');
-            this.productDataSource.data = [...this.data];
-          });
-        }, error => {
-          this.loading = false;
-        });
+      if (res && res.success) {
+        element['productUnits'] = res.data;
+
+        if (res.unit_id_active) {
+          this.data[index]['product_unit_id'] = res.unit_id_active;
+          this.onUnitChange(index, {value: res.unit_id_active});
+        }
       }
     });
   }

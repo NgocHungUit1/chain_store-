@@ -10,4 +10,12 @@
       <img src="assets/images/einvoice/einvoice.png" alt="E-Invoice" class="main-image">
     </div>
   </div>
+
+  <div class="modal-footer">
+    <label>
+      <input type="checkbox" [(ngModel)]="dontShowAgain" />
+      Không hiển thị thông báo này nữa
+    </label>
+    <button (click)="onCloseClick($event)">Đóng</button>
+  </div>
 </div>

@@ -1,7 +1,9 @@
 .e-invoice-modal {
-  background: transparent;
+  background: #fff;
   cursor: pointer;
   position: relative;
+  border-radius: 8px;
+  overflow: hidden;
 
   .modal-header {
     position: absolute;
@@ -80,5 +82,46 @@
     &:disabled {
       background: #cccccc;
     }
+  }
+}
+
+.modal-footer {
+  width: 100%;
+  background: #fff;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 12px 24px 16px 24px;
+  position: relative;
+  z-index: 2;
+  min-height: 48px;
+  gap: 12px;
+
+  label {
+    font-size: 0.98rem;
+    color: #444;
+    margin-right: 16px;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  button {
+    background: #009688;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 18px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-left: auto;
+  }
+  button:hover {
+    background: #00796b;
   }
 }

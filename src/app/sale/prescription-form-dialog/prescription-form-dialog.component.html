@@ -220,7 +220,7 @@
       </div>
     </div>
 
-    <div *ngIf="prescriptionDetail && calculateDayByPrescriptionDate() > 5" class="valid-prescription-data">
+    <div *ngIf="prescriptionDetail && prescriptionDetail.prescription_date && calculateDayByPrescriptionDate() > 5" class="valid-prescription-data">
         Đơn thuốc đã quá hạn quy định 5 ngày
     </div>
 

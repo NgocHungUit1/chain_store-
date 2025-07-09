@@ -70,8 +70,12 @@ export class ProductService {
     return this.http.get<Product>(url);
   }
 
-  update(id: string, pos: any) {
-    const url = environment.apiUrl + '/product/' + id;
+  update(id: string, pos: any, expand: string = '') {
+    let url = environment.apiUrl + '/product/' + id ;
+    if (expand) {
+      url += '?expand=' + expand;
+    }
+
     return this.http.put(url, pos);
   }
 

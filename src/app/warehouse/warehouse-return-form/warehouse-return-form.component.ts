@@ -115,6 +115,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
       remain_amount: [null],
       note: [null],
       branch_id: [null, Validators.required],
+      action_change: [0]
     });
     this.userService.getStoreBranchList().subscribe(res => {
       this.branchList = res.body;
@@ -187,6 +188,12 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
         this.form.controls['total_price'].disable();
         this.form.controls['remain_amount'].disable();
 
+        if (res && res['status'] === 10) {
+          this.form.patchValue({
+            action_change: 1
+          });
+        }
+
         this.loadData();
       });
     } else {
@@ -241,6 +248,19 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
         if (this.updateModelId !== null) {
           warehouseProduct.id = item.id;
         }
+
+        const productParcels = item.productParcels || [];
+        let productUnit = null;
+        if (item.productUnits && item.productUnits.length > 0) {
+          productUnit = item.productUnits.find(obj => obj.id === item.product_unit_id);
+        }
+
+        if (productUnit) {
+          productParcels.forEach(parcel => {
+            parcel['quantity'] =  parcel['quantity'] / productUnit['value'];
+          });
+        }
+
         warehouseProduct.product_id = item.product_id;
         warehouseProduct.product = item.product;
         warehouseProduct.quantity = item.quantity;
@@ -250,10 +270,10 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
 
         warehouseProduct.product_unit_id = item.product_unit_id;
         warehouseProduct.productUnits = item.productUnits !== undefined ? item.productUnits : [];
-        warehouseProduct.product_parcels = item.productParcels !== undefined ? item.productParcels : [];
+        warehouseProduct.product_parcels = productParcels;
 
-        if (item.productParcels !== undefined && item.productParcels.length > 0) {
-          this.parcels = this.parcels.concat(item.productParcels);
+        if (productParcels.length > 0) {
+          this.parcels = this.parcels.concat(productParcels);
         }
 
         newData.push(warehouseProduct);
@@ -457,5 +477,28 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
     }
     return  true;
   }
+
+  /**
+   * - Trả hàng đơn vị giá đơn vị  = giá vôn đơn vị cơ bản * số lượng quy đổi
+   * @param index
+   * @param select
+   */
+  onUnitChange(index, select) {
+    if (this.data[index] !== undefined) {
+      const unit = this.data[index]['productUnits'].find(element => element['id'] === select.value);
+      const unitBase = this.data[index]['productUnits'].find(element => element['is_base'] === 1);
+      this.data[index]['price'] = unitBase['original_price'] * unit['value'];
+      this.data[index]['sell_price'] = unit['sell_price'];
+      this.data[index]['inventory_quantity'] = unit['quantity_of_stock'];
+      // this.data[index]['price'] = (unit['original_price'] !== 0) ? unit['original_price'] : unit['sell_price']; //unit['original_price'];
+      this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
+
+      if (this.data[index]['product_parcels'].length === 1) {
+        this.data[index]['product_parcels'][0]['quantity'] = this.data[index]['quantity'];
+      }
+      this.recalculateItem(index);
+    }
+  }
+
 
 }

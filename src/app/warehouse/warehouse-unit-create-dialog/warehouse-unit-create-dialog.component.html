@@ -23,7 +23,7 @@
                 <!--                              </mat-radio-group>-->
                 <!--                            </td>-->
                 <td style="padding-right: 10px;">
-                  <mat-form-field style="width: 100px">
+                  <mat-form-field style="max-width: 150px">
                     <!--                                placeholder="Tên đơn vị"-->
                     <input type="text" formControlName="unit_name"
                            matInput
@@ -46,7 +46,7 @@
                   </mat-form-field>
                 </td>
                 <td class="p-r-10">
-                  <mat-form-field style="width: 110px">
+                  <mat-form-field style="max-width: 150px">
                     <!--                                placeholder="Giá bán"-->
                     <input matInput  type="number" class="text-right" formControlName="unit_price"
                            (change)="changeBaseUnitValue($event, i)"
@@ -54,7 +54,7 @@
                   </mat-form-field>
                 </td>
                 <td class="p-r-10">
-                  <mat-form-field style="width: 120px">
+                  <mat-form-field style="max-width: 150px">
                     <!--                                placeholder="Mã hàng"-->
                     <input type="text" formControlName="unit_no" matInput >
                   </mat-form-field>
@@ -74,7 +74,7 @@
 
     <div fxLayout="row wrap">
       <div fxFlex="100">
-        <button mat-raised-button (click)="addUnit();">
+        <button mat-raised-button (click)="addUnit()">
           <mat-icon>add</mat-icon>
           Thêm đơn vị
         </button>

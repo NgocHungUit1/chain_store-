@@ -11,7 +11,7 @@
   <div class="dialog-content">
     <form [formGroup]="bankAccountForm" style="width: 100%">
       <h5>Thông tin tài khoản</h5>
-      <div fxLayout="row wrap" class="input-layout" class="input-layout">
+      <div fxLayout="row wrap" class="input-layout">
         <div fxFlex="30">
           <div class="bank-form--label">Số tài khoản</div>
         </div>
@@ -21,20 +21,33 @@
           </mat-form-field>
         </div>
       </div>
+
       <div fxLayout="row wrap" class="input-layout">
         <div fxFlex="30">
           <div class="bank-form--label">Ngân hàng</div>
         </div>
         <div fxFlex="70">
           <mat-form-field class="full-width">
-            <mat-select formControlName="bank_code">
-              <mat-option *ngFor="let code of bankCodes" [value]="code">
-                {{this.bankCodesObj[code]}}
+            <input matInput type="text" placeholder="Tìm kiếm ngân hàng..."
+                   [formControl]="bankSearchControl"
+                   (input)="onSearchChange($event)">
+          </mat-form-field>
+          <mat-form-field class="full-width">
+            <mat-select formControlName="bank_code" [compareWith]="compareBank">
+              <mat-option *ngFor="let bank of filteredBanks" [value]="bank.code">
+                <div class="bank-option">
+                  <span>{{bank.shortName}} - {{bank.name}}</span>
+                </div>
               </mat-option>
+              <mat-select-trigger>
+                {{getSelectedBankShortName()}}
+              </mat-select-trigger>
             </mat-select>
+            <mat-spinner *ngIf="loading" diameter="20" class="loading-spinner"></mat-spinner>
           </mat-form-field>
         </div>
       </div>
+
       <div fxLayout="row wrap" class="input-layout">
         <div fxFlex="30">
           <div class="bank-form--label">Chủ tài khoản</div>
@@ -45,6 +58,7 @@
           </mat-form-field>
         </div>
       </div>
+
       <div fxLayout="row wrap" class="input-layout">
         <div fxFlex="30">
           <div class="bank-form--label">Ghi chú</div>
@@ -57,13 +71,13 @@
       </div>
     </form>
   </div>
-  
+
   <div mat-dialog-actions align="end" class="dialog-actions">
     <button
       mat-raised-button
       color="primary"
       (click)="onSave()"
-      [disabled]="bankAccountForm.invalid">
+      [disabled]="bankAccountForm.invalid || loading">
       <mat-icon class="m-r-5">save</mat-icon>Lưu
     </button>
     <button mat-raised-button (click)="onCancel()" class="cancel-button">

@@ -1,6 +1,27 @@
 import { ApiFilterBase } from '../shared/base';
 import { Location } from '../location/location.model';
 
+export interface VietQRBank {
+  id: number;
+  name: string;
+  code: string;
+  bin: string;
+  shortName: string;
+  logo: string;
+  transferSupported: number;
+  lookupSupported: number;
+  short_name: string;
+  support: number;
+  isTransfer: number;
+  swift_code: string;
+}
+
+export interface VietQRBankResponse {
+  code: string;
+  desc: string;
+  data: VietQRBank[];
+}
+
 export class BankAccount {
   id: string;
   bank_code: string;
@@ -9,6 +30,8 @@ export class BankAccount {
   account_number: number;
   note: string;
   status: string;
+  bank_name?: string;
+  bank_logo?: string;
 
   static getBankCodes() {
     return {
