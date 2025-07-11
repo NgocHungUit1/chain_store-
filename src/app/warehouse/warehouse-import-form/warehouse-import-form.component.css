@@ -281,7 +281,7 @@ tr.mat-header-row {
   margin: 0 !important;
   box-sizing: border-box !important;
   /*width: 100% !important; !* Sẽ fit với grid column *!*/
-  width: "160px" !important;
+  width: 160px !important;
   justify-content: space-between !important;
 }
 
@@ -344,6 +344,14 @@ tr.mat-header-row {
 .parcel-option{
   font-size: 1rem !important;
 }
+
+.parcel-input.error-input::placeholder {
+  color: #f44336 !important;
+}
+.parcel-input.error-input {
+  border-left: 1px #f44336 solid !important;
+}
+
 
 /* style for subItem */
 .sub-item-row td {
@@ -466,3 +474,15 @@ tr.mat-header-row {
   vertical-align: middle !important;
 }
 /*end style for subItem feature*/
+
+
+/*payment default full*/
+
+.paymentfull-place .mat-form-field-infix{
+  display: flex;
+  flex-direction: row;
+}
+
+.paymentfull-place .mat-input-element {
+
+}

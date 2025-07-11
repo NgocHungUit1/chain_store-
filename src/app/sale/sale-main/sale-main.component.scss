@@ -191,7 +191,7 @@ html .page-wrapper .page-content {
       }
 
       &-product-no {
-        font-size: 12px;
+        font-size: 14px;
         //padding-right: 5px;
         padding-top: 4px;
       }
@@ -201,13 +201,13 @@ html .page-wrapper .page-content {
       }
 
       &-product-name {
-        font-size: 12px;
+        font-size: 14px;
         padding-top: 4px;
       }
 
 
       &-count-number {
-        font-size: 12px;
+        font-size: 14px;
         min-width: 30px;
         text-align: right;
       }
@@ -223,13 +223,13 @@ html .page-wrapper .page-content {
       }
 
       &-product-base-unit {
-        padding-top: 12px;
+        padding-top: 14px;
         padding-right: 5px;
         min-width: 80px;
       }
 
       &-icon-edit {
-        font-size: 12px;
+        font-size: 14px;
       }
 
       &-icon-edit-price {
@@ -237,7 +237,7 @@ html .page-wrapper .page-content {
       }
 
       &-total-price {
-        font-size: 12px;
+        font-size: 14px;
         text-align: right;
         font-weight: 600;
         height: 13px;
@@ -245,7 +245,7 @@ html .page-wrapper .page-content {
     }
 
     .span-product-no {
-      font-size: 12px;
+      font-size: 14px;
       color: black;
       padding-top: 4px;
       padding-right: 8px;
@@ -256,17 +256,17 @@ html .page-wrapper .page-content {
     }
 
     .row-total-price{
-      font-size: 12px;
+      font-size: 14px;
       text-align: right;
       font-weight: 600;
       height: 13px;
     }
     .row-product-no {
-      font-size: 12px;
+      font-size: 14px;
     }
 
     .row-product-name {
-      font-size: 12px;
+      font-size: 14px;
       display: flex;
       flex-direction: column;
       gap: 6px;
@@ -816,6 +816,7 @@ Popup parcel list
 }
 .container-page{
   flex-flow: nowrap !important;
+  font-size: 20px;
 }
 /* Add styles for the info container and card */
 .bank-transfer-layout .action-buttons .info-container {
@@ -930,7 +931,7 @@ Popup parcel list
 
 .bank-options {
   max-height: calc(100vh - 770px);
-  min-height: 120px;
+  min-height: 65px;
   overflow-y: auto;
 }
 

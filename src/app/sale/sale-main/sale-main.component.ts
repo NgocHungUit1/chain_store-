@@ -43,6 +43,7 @@ import { TransactionNotifyDialogComponent } from '../transaction-notify-dialog/b
 import { BankAccountService } from '../../bank-account/bank-account.service';
 import { BankAccountFilter } from '../../bank-account/bank-account.model';
 import { SearchProductDialogComponent } from '../../common/search-product-dialog/search-product-dialog.component';
+import { ColumnVisibilityMap, SaleColumnVisibilityService } from '../../shared/sale-column-visibility.service';
 
 export const MY_FORMATS = {
   parse: {
@@ -94,7 +95,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     public storeSer: StoreService,
     private productSer: ProductService,
     private bankAccountSer: BankAccountService,
-
+    private saleColumnVisibilityService: SaleColumnVisibilityService,
   ) {
     this.optionStoreService.getValue('point_enabled').subscribe(res => {
       this.isPointEnabled = res.value === 'true';
@@ -191,6 +192,44 @@ export class SaleMainComponent implements OnInit, DoCheck {
   isDropdownOpen: boolean = false;
   wallets: any[] = [];
   bankAccountFilter: BankAccountFilter = new BankAccountFilter();
+  flexibleWithProductName = 16;
+  /**
+   * allColumns is a fixed list of every “column ID” that might appear
+   * in the sale‐detail row. In your HTML template, each fxFlex/div block
+   * (e.g. “no”, “product_no”, “product_name”, “unit”, “amount”, “price”, “total”)
+   * will correspond to one of these IDs.
+   */
+  allColumns: string[] = [
+    // 1) Ảnh hàng hóa
+    "image",
+    // 2) Mã hàng
+    "product_no",
+    // 3) Giá bán
+    "price",
+    // 4) Giảm giá
+    "discount",
+    // 5) Chỉnh sửa thành tiền
+    "edit_as_money",
+    // 6) Xem giá bán gần nhất
+    "last_sale_price",
+    // 7) Thêm dòng
+    "add_row",
+    // 8) Tồn kho
+    "quantity_of_stock",
+    // 8) Ghi chú
+    "note",
+  ];
+
+  /**
+   * displayedColumns is the subset of allColumns that is currently visible.
+   * You can save/load this from localStorage if you want persistence.
+   *
+   * By default, we’ll show every column.
+   */
+  displayedColumns: string[] = [
+    'no','product_no','product_name','unit','amount','price','total'
+  ];
+
   @ViewChild('prescription') prescription;
   @ViewChild('customerSearch') customerSearch: ElementRef;
   @ViewChild('customerPayment') customerPayment: ElementRef;
@@ -776,6 +815,22 @@ export class SaleMainComponent implements OnInit, DoCheck {
    * Init Component
    */
   ngOnInit(): void {
+
+    // 1) Subscribe so that *any* change to the visibility map causes us to recompute displayedColumns
+    this.saleColumnVisibilityService.visibility$.subscribe((map: ColumnVisibilityMap) => {
+
+      this.flexibleWithProductName = 16;
+      if (!map['product_no']) {
+        this.flexibleWithProductName = 32; // 'no' column takes 2 flex
+      }
+
+      this.displayedColumns = this.allColumns.filter(colId => map[colId]);
+    });
+
+    // 2) Immediately seed displayedColumns with whatever the service currently says
+    const initialMap = (this.saleColumnVisibilityService as any).visibilitySubject.value;
+    this.displayedColumns = this.allColumns.filter(colId => initialMap[colId]);
+
     // this.optionStore_transaction_expenses_order.value = 'no';
     this.isLoadingResults = true;
     this.allPermission = sessionStorage.getItem('allPermission')?.split(',');
@@ -884,6 +939,10 @@ export class SaleMainComponent implements OnInit, DoCheck {
     //   this.sumPrice = 0;
     // }
     this.handleExpenseOrder();
+    if (this.listProduct.length === 0) {
+      this.prescription_id = null;
+      // this.handleUpdateStorage();
+    }
   }
 
   adjustAmountProduct(i: any, event) {
@@ -1301,7 +1360,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
         const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
         const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
 
-        // debugger
+        debugger;
         let printContent = '<title>' + res?.invoice_no + '</title>';
         printContent += `
           <style>
@@ -2937,6 +2996,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
    */
   isNoteShown(i: number) {
     const note = this.listProduct[i].note;
+    if (this.saleColumnVisibilityService.isColumnVisibleNow('note')){
+      return true;
+    }
     return note !== undefined;
   }
 
@@ -3703,6 +3765,35 @@ export class SaleMainComponent implements OnInit, DoCheck {
   clickEinvoice() {
     const currentValue = this.form.get('use_einvoice').value;
     this.form.get('use_einvoice').setValue(!currentValue);
+  }
+
+  /**
+   * Return true if <col> is currently in displayedColumns.
+   */
+  isVisible(col: string): boolean {
+    return this.displayedColumns.includes(col);
+  }
+
+  /**
+   * Toggle a column on/off. If the column is currently shown, remove it.
+   * Otherwise, re‐insert it in the same order as in allColumns.
+   * (You can also save into localStorage here, if desired.)
+   */
+  onToggleChange(col: string) {
+    if (this.displayedColumns.includes(col)) {
+      // Hide it
+      this.displayedColumns = this.displayedColumns.filter(x => x !== col);
+    } else {
+      // Show it, but keep the original allColumns order
+      this.displayedColumns = this.allColumns.filter(
+        x => x === col || this.displayedColumns.includes(x)
+      );
+    }
+    // (Optional) persist to localStorage:
+    localStorage.setItem(
+      'saleDisplayedColumns',
+      JSON.stringify(this.displayedColumns)
+    );
   }
 }
 

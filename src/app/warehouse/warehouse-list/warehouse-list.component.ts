@@ -339,7 +339,6 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
               this.refreshData();
             }
           });
-
         });
       }
     });

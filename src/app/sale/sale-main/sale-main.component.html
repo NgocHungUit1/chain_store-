@@ -11,20 +11,31 @@
           <!-- Master item -->
           <div class="product-item master-item-row">
             <div fxLayout="row wrap" fxLayoutAlign="center center" class="row-item">
+
+              <div style='width: 50px; height: 50px; object-fit: contain; border: 1px solid #c0c0c0; margin-right: 1px auto' *ngIf="displayedColumns.includes('image')">
+                  <ng-container *ngIf='!masterProduct.product?.default_image'>
+                    <img src='/assets/images/default-product.png' style='width: 100%;height: 100%;'>
+                  </ng-container>
+                  <ng-container *ngIf='masterProduct.product?.default_image'>
+                    <img src='{{masterProduct.product?.default_image}}' style='width: 100%;height: 100%;'>
+                  </ng-container>
+              </div>
+              <div fxFlex="1"></div>
+
               <div fxFlex="2" class="row-product-no">
                 <span>{{ masterIndex + 1 }}</span>
               </div>
-              <div fxFlex="16">
+
+              <div [fxFlex]="32 - flexibleWithProductName" *ngIf="displayedColumns.includes('product_no')">
                 <div class="span-product-no">
                   <div> {{ masterProduct?.product?.product_no }}</div>
 
                   <div *ngIf="masterProduct?.product?.note_detail_sale && prescription_id">
                     Cách dùng: {{masterProduct?.product?.note_detail_sale }}
                   </div>
-
                 </div>
               </div>
-              <div fxFlex="16">
+              <div [fxFlex]="flexibleWithProductName">
                 <div class="row-text row-product-name" title="{{ masterProduct?.product?.product_name }}">
                   <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                     {{ masterProduct.product?.product_name }}
@@ -32,6 +43,10 @@
 
                   <div *ngIf="masterProduct.product?.medicine?.main_active_substance && prescription_id">
                     Hoạt chất: {{ masterProduct.product?.medicine?.main_active_substance }}
+                  </div>
+
+                  <div style="font-size: 12px; color:gray;" *ngIf="displayedColumns.includes('quantity_of_stock')">
+                    Tồn kho: {{masterProduct?.product?.quantity_of_stock}}
                   </div>
                 </div>
               </div>
@@ -62,7 +77,7 @@
                         <mat-icon>keyboard_arrow_up</mat-icon>
                       </button>
                       <input
-                        matInput tabindex="3" min="0" class="row-amount-number" style="caret-color: red"
+                        matInput tabindex="3" min="0" class="row-amount-number" style="caret-color: red; font-size:14px;"
                         (change)="inputAmountProduct(getProductIndex(masterProduct), $event)"
                         [value]="masterProduct?.amount" autocomplete="off"
                         [ngClass]="{'is_morethan_stock': masterProduct && masterProduct?.product_parcels && masterProduct?.product_parcels[0] && (masterProduct?.product_parcels[0]?.quantity_of_stock<masterProduct.amount ) }"
@@ -98,14 +113,14 @@
                 </ng-template>
               </div>
               <div fxFlex="1"></div>
-              <div fxFlex="13" class="row-edit-price">
+              <div fxFlex="13" class="row-edit-price" *ngIf="displayedColumns.includes('price')">
                 <div fxLayout="row wrap">
                   <div fxFlex="100">
                     <mat-form-field floatLabel="never" style="font-size: 20px; text-align: right">
                       <input matInput type="text" value="{{ masterProduct | showPrice | number }}" disabled="true"
-                             style="color: black" />
+                             style="color: black; font-size: 14px;" />
                       <button mat-icon-button matPrefix
-                              *ngIf="canDo('Sale-Main.Change-Price') && !(masterProduct.sample_prescription_id !== undefined && masterProduct.sample_prescription_id !== null)">
+                              *ngIf="canDo('Sale-Main.Change-Price')">
                         <mat-icon class="row-icon-edit-price" (click)="
                         openPriceDetailOrderDialog(
                           getProductIndex(masterProduct),
@@ -131,7 +146,7 @@
                   <button mat-icon-button (click)="deleteProduct(getProductIndex(masterProduct))">
                     <mat-icon>delete</mat-icon>
                   </button>
-                  <button [disabled]="masterProduct?.product?.not_in_store"
+                  <button [disabled]="masterProduct?.product?.not_in_store" *ngIf="!displayedColumns.includes('note')"
                     mat-icon-button (click)="toggleShowMenu(getProductIndex(masterProduct))">
                     <mat-icon>more_vert</mat-icon>
                     <div class="note-area" *ngIf="isMenuShown(getProductIndex(masterProduct))">
@@ -142,6 +157,7 @@
                     </div>
                   </button>
                   <button [disabled]="masterProduct?.product?.not_in_store"
+                    *ngIf="displayedColumns.includes('add_row')"
                     mat-icon-button (click)="addNewRow(getProductIndex(masterProduct))">
                     <mat-icon>add</mat-icon>
                   </button>
@@ -150,7 +166,10 @@
             </div>
 
             <!--            note item in master -->
-            <div fxLayout="row wrap" fxLayoutAlign="center center" class="row-item">
+            <div fxLayout="row wrap" fxLayoutAlign="center center" class="row-item" >
+              <div style='width: 50px;' *ngIf="displayedColumns.includes('image')">
+              </div>
+              <div fxFlex="1"></div>
               <div fxFlex="2"></div>
               <div fxFlex="32">
                 <div class="row-product-note d-flex align-items-center"
@@ -182,6 +201,8 @@
             <div *ngIf="!masterProduct?.product?.not_in_store"
               fxLayout="row wrap" fxLayoutAlign="center center" class="product-item sub-item-row"
                  style="margin-top: -8px">
+              <div style='width: 52px;' *ngIf="displayedColumns.includes('image')"></div>
+              <div fxFlex="1"></div>
               <div fxFlex="2" class="row-product-no">
                 <span> </span>
               </div>
@@ -239,6 +260,7 @@
             <div *ngIf="masterProduct?.product?.not_in_store"
                  fxLayout="row wrap" fxLayoutAlign="center center" class="product-item sub-item-row"
                  style="margin-top: -8px">
+              <div style='width: 52px;' *ngIf="displayedColumns.includes('image')"></div>
               <div fxFlex="2" class="row-product-no">
                 <span> </span>
               </div>
@@ -269,6 +291,8 @@
                  class="product-item sub-item-row">
               <div class="dotted-divider"></div>
               <div fxLayout="row wrap" fxLayoutAlign="center center" class="row-item">
+                <div style='width: 52px;' *ngIf="displayedColumns.includes('image')"></div>
+                <div fxFlex="1"></div>
                 <div fxFlex="2"></div>
                 <div fxFlex="32">
                   <div class="chip-list">
@@ -317,7 +341,7 @@
                                 (click)="adjustAmountProduct(getProductIndex(subItem), 'up')">
                           <mat-icon>keyboard_arrow_up</mat-icon>
                         </button>
-                        <input matInput tabindex="3" min="0" class="row-amount-number" style="caret-color: red"
+                        <input matInput tabindex="3" min="0" class="row-amount-number" style="caret-color: red; font-size:14px;"
                                (change)="inputAmountProduct(getProductIndex(subItem), $event)" [value]="subItem?.amount"
                                autocomplete="off"
                                [ngClass]="{'is_morethan_stock': subItem.product_parcels[0] &&( subItem?.product_parcels[0]?.quantity_of_stock<subItem.amount ) }"
@@ -352,12 +376,12 @@
                   </ng-template>
                 </div>
                 <div fxFlex="1"></div>
-                <div fxFlex="13" class="row-edit-price">
+                <div fxFlex="13" class="row-edit-price" *ngIf="displayedColumns.includes('price')">
                   <div fxLayout="row wrap">
                     <div fxFlex="100">
                       <mat-form-field floatLabel="never" style="font-size: 20px; text-align: right">
                         <input matInput type="text" value="{{ subItem | showPrice | number }}" disabled="true"
-                               style="color: black" />
+                               style="color: black; font-size: 14px;" />
                         <button mat-icon-button matPrefix
                                 *ngIf="canDo('Sale-Main.Change-Price') && !(subItem.sample_prescription_id !== undefined && subItem.sample_prescription_id !== null)">
                           <mat-icon class="row-icon-edit-price" (click)="
@@ -384,7 +408,7 @@
                     <button mat-icon-button (click)="deleteProduct(getProductIndex(subItem))">
                       <mat-icon>delete</mat-icon>
                     </button>
-                    <button mat-icon-button (click)="toggleShowMenu(getProductIndex(subItem))">
+                    <button mat-icon-button (click)="toggleShowMenu(getProductIndex(subItem))" *ngIf="!displayedColumns.includes('note')">
                       <mat-icon>more_vert</mat-icon>
                       <div class="note-area" *ngIf="isMenuShown(getProductIndex(subItem))">
                         <button mat-stroked-button (click)="toggleShowNote(getProductIndex(subItem))">
@@ -393,7 +417,7 @@
                         </button>
                       </div>
                     </button>
-                    <button mat-icon-button (click)="addNewRow(getProductIndex(subItem))">
+                    <button mat-icon-button (click)="addNewRow(getProductIndex(subItem))" *ngIf="displayedColumns.includes('add_row')">
                       <mat-icon>add</mat-icon>
                     </button>
                   </div>
@@ -401,7 +425,9 @@
               </div>
 
               <!--              note in subitem-->
-              <div fxLayout="row wrap" fxLayoutAlign="center center" class="row-item">
+              <div fxLayout="row wrap" fxLayoutAlign="center center" class="row-item" >
+                <div style='width: 52px;' *ngIf="displayedColumns.includes('image')"></div>
+                <div fxFlex="1"></div>
                 <div fxFlex="2"></div>
                 <div fxFlex="32">
                   <div class="row-product-note d-flex align-items-center" *ngIf="isNoteShown(getProductIndex(subItem))">

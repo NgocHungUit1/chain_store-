@@ -127,3 +127,20 @@ input {
   padding-top : 10px;
   margin-left: 16px;
 }
+
+.plus-button {
+  position: absolute;
+  right: 20px;
+  font-size: 16px;
+  top: 50%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(-50%);
+  transition: opacity 0.3s ease;
+}
+
+mat-form-field:hover .plus-button {
+  opacity: 1;
+}

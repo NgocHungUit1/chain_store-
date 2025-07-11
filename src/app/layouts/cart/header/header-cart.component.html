@@ -21,10 +21,12 @@
 <!--  <input type="hidden" name="codes" id="codes" />-->
 <!--</form>-->
 
-
-<button mat-raised-button (click)="goToInvoices()" style="margin-right: 10px">
-  <mat-icon>receipt</mat-icon>
-  Hóa đơn
+<button 
+  class="ml-xs overflow-visible" 
+  mat-icon-button
+  style="margin-right: 10px"
+  matTooltip="Hóa đơn">
+    <mat-icon (click)="goToInvoices()">receipt</mat-icon>
 </button>
 
 <!--<button [matMenuTriggerFor]="notification" mat-icon-button class="m-r-10">-->
@@ -108,7 +110,8 @@
   mat-icon-button 
   [matMenuTriggerFor]="printSetting" 
   [ngStyle]="{ 'opacity': autoPrint ? '1' : '0.5' }"
-  style="margin-right: 10px">
+  style="margin-right: 10px"
+  matTooltip="In hóa đơn">
   <mat-icon>print</mat-icon>
 </button>
 
@@ -132,25 +135,11 @@
   </div>
 </mat-menu>
 
-<button [matMenuTriggerFor]="profile" mat-icon-button class="m-r-5">
-  <img src="assets/images/users/doctor.jpg" alt="user" class="profile-pic">
+<button 
+  class="ml-xs overflow-visible" 
+  mat-icon-button
+  (click)="this.toggleRequested.emit()"
+  style="margin-right: 10px"
+  matTooltip="Tùy chọn hiển thị">
+  <mat-icon>visibility</mat-icon>
 </button>
-
-<mat-menu #profile="matMenu" class="mymegamenu">
-<!--  <button mat-menu-item>-->
-<!--    <mat-icon>settings</mat-icon>-->
-<!--    Settings-->
-<!--  </button>-->
-<!--  <button mat-menu-item>-->
-<!--    <mat-icon>account_box</mat-icon>-->
-<!--    Profile-->
-<!--  </button>-->
-<!--  <button mat-menu-item>-->
-<!--    <mat-icon>notifications_off</mat-icon>-->
-<!--    Disable notifications-->
-<!--  </button>-->
-  <button mat-menu-item (click)="logout()">
-    <mat-icon>exit_to_app</mat-icon>
-    Đăng xuất
-  </button>
-</mat-menu>
