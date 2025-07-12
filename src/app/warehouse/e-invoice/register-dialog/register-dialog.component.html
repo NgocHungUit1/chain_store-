@@ -1,0 +1,40 @@
+<div class="dialog-wrapper">
+  <div class="dialog-title">
+    <h2 mat-dialog-title>Đăng ký Partner BKAV</h2>
+  </div>
+
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <div mat-dialog-content>
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="Username" placeholder="Nhập username" required>
+          <mat-error *ngIf="registerForm.get('Username').hasError('required')">
+            Username là bắt buộc
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" formControlName="Password" placeholder="Nhập password" required>
+          <mat-error *ngIf="registerForm.get('Password').hasError('required')">
+            Password là bắt buộc
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div mat-dialog-actions align="end">
+      <button mat-button type="button" [disabled]="loading" (click)="onCancel()">
+        Hủy
+      </button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="loading || registerForm.invalid">
+        <mat-icon>save</mat-icon>
+        <span *ngIf="!loading">Lưu</span>
+        <span *ngIf="loading">Đang xử lý...</span>
+      </button>
+    </div>
+  </form>
+</div> 
