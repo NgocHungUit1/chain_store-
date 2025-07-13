@@ -70,7 +70,12 @@ import {
     DemoMaterialModule,
     AngularImageViewerModule,
     InputSelectAllModule,
-    NgxMaskModule,
+    NgxMaskModule.forRoot({
+      validation: true,
+      thousandSeparator: ',',
+      decimalMarker: '.',
+      dropSpecialCharacters: false
+    }),
     NgxExtendedPdfViewerModule,
     DComonModule
   ],

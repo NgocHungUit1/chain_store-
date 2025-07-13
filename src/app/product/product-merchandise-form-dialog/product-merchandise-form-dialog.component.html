@@ -34,8 +34,9 @@
             <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field>
-                  <input type="number" matInput  [formControl]="form.controls['original_price']"
+                  <input type="text" matInput  [formControl]="form.controls['original_price']"
                          class="text-right"
+                         mask="separator.0" thousandSeparator=","
                           placeholder="Giá vốn" autocomplete="off">
                 </mat-form-field>
               </div>
@@ -44,8 +45,9 @@
             <div fxLayout="row wrap">
               <div fxFlex="100">
                 <mat-form-field>
-                  <input type="number" matInput  [formControl]="form.controls['sell_price']"
+                  <input type="text" matInput  [formControl]="form.controls['sell_price']"
                          class="text-right"
+                         mask="separator.0" thousandSeparator=","
                          required placeholder="Giá bán cơ bản" autocomplete="off">
                 </mat-form-field>
               </div>
@@ -199,7 +201,8 @@
                                 <td style="padding-right: 10px;">
                                   <mat-form-field style="width: 110px">
 <!--                                    placeholder="Giá bán"-->
-                                    <input type="number" formControlName="unit_price"
+                                    <input type="text" formControlName="unit_price"
+                                           mask="separator.0" thousandSeparator=","
                                            (change)="changeBaseUnitValue($event, i)"
                                            (keyup)="changeBaseUnitValue($event, i)"
                                            class="text-right"

@@ -1,4 +1,4 @@
-<h3 mat-dialog-title class="m-0"><strong>{{title}}</strong></h3>
+<h3 mat-dialog-title class="m-0"><strong>{{ title }}</strong></h3>
 <form #userForm="ngForm" [formGroup]="form">
   <mat-dialog-content class="mat-typography product-dialog">
     <mat-tab-group>
@@ -81,30 +81,33 @@
                     {{ unit }}
                   </mat-option>
                 </mat-select>
-              <button
-                class="plus-button"
-                type="button"
-                (click)="handleOpenAddNewProductBaseUnitDialog($event)"
-                title="Add Base Unit"
-              >+</button>
+                <button
+                  class="plus-button"
+                  type="button"
+                  (click)="handleOpenAddNewProductBaseUnitDialog($event)"
+                  title="Add Base Unit">+</button>
             </mat-form-field>
 
             <div fxLayout="row wrap">
               <mat-form-field>
-                <input matInput type="number" class="text-right"
-                      [formControl]="form.controls['original_price']"
-                      placeholder="Giá vốn"
-                      autocomplete="off">
+                <input matInput type="text" class="text-right"
+                       [formControl]="form.controls['original_price']"
+                       mask="separator.0" thousandSeparator=","
+                       placeholder="Giá vốn"
+                       autocomplete="off">
               </mat-form-field>
             </div>
             <div fxLayout="row wrap">
 
               <div fxFlex="100">
                 <mat-form-field>
-                  <input matInput type="number" class="text-right"
-                      [formControl]="form.controls['sell_price']"
-                      required placeholder="Giá bán cơ bản"
-                      autocomplete="off">
+                  <input
+                    matInput type="text" class="text-right"
+                    [formControl]="form.controls['sell_price']"
+                    mask="separator.0" thousandSeparator=","
+                    placeholder="Giá bán cơ bản"
+                    autocomplete="off"
+                    required />
                 </mat-form-field>
               </div>
 
@@ -151,7 +154,7 @@
                                 <input type="text" formControlName="unit_name"
                                        matInput
                                        [matAutocomplete]="autoUnit"
-                                        (change) = "onUnitChange($event, i)"
+                                       (change)="onUnitChange($event, i)"
                                 >
                                 <mat-autocomplete #autoUnit="matAutocomplete">
                                   <mat-option *ngFor="let option of filteredOptionsUnit | async" [value]="option">
@@ -163,7 +166,7 @@
                             <td class="p-r-10">
                               <mat-form-field style="width: 110px">
                                 <!--                                placeholder="Giá trị quy đổi"-->
-                                <input matInput  type="number" formControlName="unit_value"
+                                <input matInput type="number" formControlName="unit_value"
                                        class="text-right"
                                        (change)="changeUnitValue($event,i)"
                                        (keyup)="changeUnitValue($event,i)">
@@ -172,7 +175,8 @@
                             <td class="p-r-10">
                               <mat-form-field style="width: 110px">
                                 <!--                                placeholder="Giá bán"-->
-                                <input matInput  type="number" class="text-right" formControlName="unit_price"
+                                <input matInput type="text" class="text-right" formControlName="unit_price"
+                                       mask="separator.0" thousandSeparator=","
                                        (change)="changeBaseUnitValue($event, i)"
                                        (keyup)="changeBaseUnitValue($event, i)">
                               </mat-form-field>
@@ -180,13 +184,14 @@
                             <td class="p-r-10">
                               <mat-form-field style="width: 120px">
                                 <!--                                placeholder="Mã hàng"-->
-                                <input type="text" formControlName="unit_no" matInput >
+                                <input type="text" formControlName="unit_no" matInput>
                               </mat-form-field>
                             </td>
 
-                            <td class="d-flex" >
+                            <td class="d-flex">
                               <p *ngIf="hasValidUnits(i)" style="font-size: 16px; padding: 2px">
-                                1 {{ unit.get('unit_name')?.value || '...' }} = {{ unit.get('unit_value')?.value || '...'}} {{form.get('base_unit')?.value}}
+                                1 {{ unit.get('unit_name')?.value || '...' }}
+                                = {{ unit.get('unit_value')?.value || '...' }} {{ form.get('base_unit')?.value }}
                               </p>
                             </td>
                             <td class="product-unit-action">
@@ -260,7 +265,7 @@
                       <mat-select placeholder="Hãng sản xuất" formControlName="manufacturer">
                         <mat-option>&#45;&#45;</mat-option>
                         <mat-option *ngFor="let manufacturer of manufacturers" [value]="manufacturer.id">
-                          {{manufacturer.name}}
+                          {{ manufacturer.name }}
                         </mat-option>
                       </mat-select>
                     </mat-form-field>
@@ -314,7 +319,7 @@
                   <mat-select placeholder="Nhóm" [formControl]="form.controls['group_id']">
                     <mat-option>--</mat-option>
                     <mat-option *ngFor="let group of groups" [value]="group.id">
-                      {{group.name}}
+                      {{ group.name }}
                     </mat-option>
                   </mat-select>
                   <mat-error *ngIf="form.controls['group_id'].hasError('required')">Vui lòng chọn nhóm</mat-error>
@@ -354,7 +359,7 @@
                   <mat-select placeholder="Đường dùng" [formControl]="form.controls['using_id']">
                     <mat-option>--</mat-option>
                     <mat-option *ngFor="let using of usings" [value]="using.id">
-                      {{using.name}}
+                      {{ using.name }}
                     </mat-option>
                   </mat-select>
 
@@ -373,7 +378,7 @@
                   <mat-select placeholder="Vị trí" multiple [formControl]="form.controls['placements']">
                     <mat-option>--</mat-option>
                     <mat-option *ngFor="let placement of placements" [value]="placement.id">
-                      {{placement.name}}
+                      {{ placement.name }}
                     </mat-option>
                   </mat-select>
 
@@ -438,7 +443,7 @@
             <mat-form-field>
               <input type="text" matInput [formControl]="form.controls['comm_percent']" required
                      placeholder="Mức hoa hồng(%)" autocomplete="off">
-              <label mat-hint>(Hoa hồng mặc định: {{this.defaultCommPercent}}%)</label>
+              <label mat-hint>(Hoa hồng mặc định: {{ this.defaultCommPercent }}%)</label>
             </mat-form-field>
           </div>
         </div>
@@ -451,10 +456,10 @@
       <mat-icon>save</mat-icon>
       Lưu
     </button>
-<!--    <button mat-raised-button [disabled]="loading" (click)="submit('Save',true);" mat-flat-button color="accent">-->
-<!--      <mat-icon>open_in_full</mat-icon>-->
-<!--      Lưu và liên thông-->
-<!--    </button>-->
+    <!--    <button mat-raised-button [disabled]="loading" (click)="submit('Save',true);" mat-flat-button color="accent">-->
+    <!--      <mat-icon>open_in_full</mat-icon>-->
+    <!--      Lưu và liên thông-->
+    <!--    </button>-->
     <!--    <button mat-raised-button [disabled]="loading" (click)="submit('SaveAndMore');" mat-flat-button color="primary">-->
     <!--      <mat-icon>save</mat-icon>-->
     <!--      Lưu và Thêm mới-->

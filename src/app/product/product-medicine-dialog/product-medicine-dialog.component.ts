@@ -290,10 +290,14 @@ export class ProductMedicineDialogComponent implements OnInit {
     this.form.controls.sell_price.valueChanges.subscribe(value => {
       const val = numeral(value).value();
       this.units.controls.forEach(item => {
-        // @ts-ignore
-        item.controls.unit_price.patchValue(numeral(val * item.value.unit_value).format('0,0'), {
-          emitEvent: false
-        });
+
+        const group = item as FormGroup;
+        const unitValue = numeral(group.get('unit_value')?.value ?? 0).value();
+
+        const newPrice = val * unitValue;
+
+        group.get('unit_price')?.patchValue(newPrice, { emitEvent: false });
+
       });
     });
 
