@@ -54,12 +54,18 @@
             <div fxLayout="row wrap">
               <div fxFlex="50">
                 <mat-form-field>
-                  <input type="text" placeholder="Đơn vị cơ bản" matInput [formControl]="form.controls['base_unit']" [matAutocomplete]="auto">
-                  <mat-autocomplete #auto="matAutocomplete">
-                    <mat-option *ngFor="let unit of filterUnit" [value]="unit.name">
-                      {{unit.name}}
+                  <mat-label>Đơn vị cơ bản</mat-label>
+                  <mat-select formControlName="base_unit">
+                    <mat-option *ngFor="let unit of filterUnits" [value]="unit">
+                      {{ unit }}
                     </mat-option>
-                  </mat-autocomplete>
+                  </mat-select>
+                  <button
+                    class="plus-button"
+                    type="button"
+                    (click)="handleOpenAddNewProductBaseUnitDialog($event)"
+                    title="Add Base Unit"
+                  >+</button>
                 </mat-form-field>
               </div>
 

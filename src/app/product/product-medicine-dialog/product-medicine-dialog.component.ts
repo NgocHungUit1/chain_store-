@@ -34,6 +34,8 @@ class ImageSnippet {
   }
 }
 
+const PRODUCT_UNITS_STORAGE_KEY = 'rx20_product_units';
+
 @Component({
   selector: 'app-product-medicine-dialog',
   templateUrl: './product-medicine-dialog.component.html',
@@ -61,6 +63,17 @@ export class ProductMedicineDialogComponent implements OnInit {
     this.title = this.local_data.title;
     this.copy_product_id = this.local_data.copy_product_id;
     this.product_id = this.local_data.product_id;
+
+    // Lấy product units từ local storage
+    if (localStorage.getItem(PRODUCT_UNITS_STORAGE_KEY) !== null) {
+      let productUnits: string[] = null;
+      try {
+        productUnits = JSON.parse(localStorage.getItem(PRODUCT_UNITS_STORAGE_KEY));
+      } catch (e) {
+        console.log(e);
+      }
+      this.filterUnits = productUnits ? productUnits : this.filterUnits;
+    }
   }
 
   get units() {
@@ -147,14 +160,8 @@ export class ProductMedicineDialogComponent implements OnInit {
   optionsManufacturer: string[] = [];
   filteredOptionsManufacturer: Observable<string>[];
 
-  optionsUnit: string[] = ['viên', 'vỉ', 'chai', 'cái'];
-  filteredOptionsUnit: Observable<string[]>;
-  filterUnit = [
-    {name: 'viên', selelected: true},
-    {name: 'vỉ', selelected: false},
-    {name: 'chai', selelected: false},
-    {name: 'cái', selelected: false},
-  ];
+  public filterUnits = ['viên', 'vỉ', 'chai', 'cái'];
+  private defaultUnit = this.filterUnits[0];
 
   public _convertIndex = null;
 
@@ -180,7 +187,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       sell_price: [0, Validators.required],
       original_price: [0],
       weight: [null],
-      base_unit: ['viên', Validators.required],
+      base_unit: [this.defaultUnit, Validators.required],
       medicine_id: [null],
       typeSellPrice: ['price'], // update for customer
       // Medicine
@@ -303,28 +310,10 @@ export class ProductMedicineDialogComponent implements OnInit {
     return [];
   }
 
-  public _filterUnit(value: any): string[] {
-    return this.optionsUnit.filter(option => option.toLowerCase().includes(value.unit_name));
-  }
-
-  /*changeUnitName(i) {
-    this.filteredOptionsUnit = this.units.controls[i].valueChanges.pipe(
-      startWith(''),
-      map(value => this._filterUnit(value))
-    );
-  }*/
-
   changeUnitValue(event: any, i) {
     const value = event.target.value;
     this.units.controls[i].patchValue({
       unit_price: numeral(value * numeral(this.form.controls['sell_price'].value).value()).value(),
-    });
-  }
-
-  selectBaseUnit(unit: any, i) {
-    this.form.controls['base_unit'].patchValue(unit);
-    this.filterUnit.forEach(item => {
-      unit !== item.name ? item.selelected = false : item.selelected = true;
     });
   }
 
@@ -346,6 +335,15 @@ export class ProductMedicineDialogComponent implements OnInit {
       if (medicine !== null) {
         medicine.made_in = product['made_in'];
         medicine.manufacturer = product['manufacturer'];
+      }
+
+      // Kiểm tra unit sản phẩm có trên filter chưa, chưa có thì set thêm vào
+      const productBaseUnit = product['base_unit'];
+      if (this.filterUnits.indexOf(productBaseUnit) === -1) {
+        this.filterUnits.push(productBaseUnit);
+
+        // Set lại product units storage
+        localStorage.setItem(PRODUCT_UNITS_STORAGE_KEY, JSON.stringify(this.filterUnits));
       }
 
       // console.log(product['quantity']);
@@ -804,28 +802,37 @@ export class ProductMedicineDialogComponent implements OnInit {
     const newName = (event.target as HTMLInputElement).value;
     let isDuplicated = false;
     this.units.controls.forEach((unit, index) => {
-      if(unit.value?.unit_name == newName && index != i ){
+      if (unit.value?.unit_name === newName && index !== i ) {
         isDuplicated = true;
         return;
       }
-    })
+    });
     if (isDuplicated) {
       this.units.controls[i].patchValue({
         unit_name: '',
       });
-      this.notifySer.notify('warning', "Tên đơn vị không được phép trùng nhau!")
+      this.notifySer.notify('warning', 'Tên đơn vị không được phép trùng nhau!');
     }
   }
 
-  // todo: handle the add new product unit
-  handleOpenPopupInputName(event: MouseEvent) {
+  handleOpenAddNewProductBaseUnitDialog(event: MouseEvent) {
     event.stopPropagation();
     const dialogRef = this.dialog.open(ProductNewUnitComponent, {
       width: '30%',
     });
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result?: string) => {
       if (result) {
-        console.log("NEW UNIT: ", result);
+        const unitExist = this.filterUnits.find(unit => unit.toLowerCase() === result.toLowerCase());
+
+        if (unitExist) {
+          this.form.controls['base_unit'].setValue(unitExist);
+        } else {
+          this.filterUnits.push(result.toLowerCase());
+          this.form.controls['base_unit'].setValue(result.toLowerCase());
+
+          // Set local storage product units
+          localStorage.setItem(PRODUCT_UNITS_STORAGE_KEY, JSON.stringify(this.filterUnits));
+        }
       }
     });
   }
