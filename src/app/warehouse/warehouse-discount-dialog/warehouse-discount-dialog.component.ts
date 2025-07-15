@@ -60,7 +60,8 @@ export class WarehouseDiscountDialogComponent implements OnInit {
     });
 
     this.form.valueChanges.subscribe(res => {
-      if (res.type === 'percent' && res.number > 100) {
+      const resNumber = res.number ? Number(res.number.toString().replace(/,/g, '')) : 0;
+      if (res.type === 'percent' && resNumber > 100) {
         this.form.patchValue({number: 100});
       }
 

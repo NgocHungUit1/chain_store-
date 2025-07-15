@@ -4,7 +4,11 @@
         <div fxLayout="row wrap">
             <div fxFlex="50">
                 <mat-form-field style="text-align: right; font-size: 16px">
-                    <input matInput  type="number" tabindex="1" formControlName="number" min="0" step="1">
+                    <input
+                           matInput type="text" tabindex="1"
+                           formControlName="number"
+                           mask="separator.0" thousandSeparator=","
+                    >
                 </mat-form-field>
             </div>
             <div fxFlex="50" class="form-radio-field">

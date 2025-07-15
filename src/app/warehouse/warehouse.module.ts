@@ -30,6 +30,7 @@ import {WarehouseFormAmountComponent} from './warehouse-form-amount/warehouse-fo
 import { WarehouseParcelFormDialogAvailableComponent } from './warehouse-parcel-form-dialog-available/warehouse-parcel-form-dialog-available.component';
 import { WarehouseParcelFormDialogSelectComponent } from './warehouse-parcel-form-dialog-select/warehouse-parcel-form-dialog-select.component';
 import {ClickOutsideDirective} from "./warehouse-import-form/click-outside.directive";
+import { NgxMaskModule } from 'ngx-mask';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,12 @@ import {ClickOutsideDirective} from "./warehouse-import-form/click-outside.direc
     InputSelectAllModule,
     DComonModule,
     SharedModule,
+    NgxMaskModule.forRoot({
+      validation: true,
+      thousandSeparator: ',',
+      decimalMarker: '.',
+      dropSpecialCharacters: false
+    }),
   ],
   entryComponents: [
     WarehouseParcelFormDialogComponent
