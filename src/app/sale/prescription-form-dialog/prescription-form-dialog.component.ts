@@ -168,6 +168,9 @@ export class PrescriptionFormDialogComponent implements OnInit {
           this.form.patchValue({
             no: 'DT' + no
           });
+          
+          // this is duplicated set value for autocomplete input
+          this.selectProduct.setValue({nationalPrescriptionId: no});   
         }
       });
     }
@@ -179,7 +182,8 @@ export class PrescriptionFormDialogComponent implements OnInit {
     this.service.getDetail(id, 'medicalFacility,nationalProducts').subscribe(data => {
       this.prescriptionDetail = data;
 
-      this.selectProduct.setValue({nationalPrescriptionId: data.no});
+      // this is duplicated set value for autocomplete input
+      this.selectProduct.setValue({nationalPrescriptionId: data['no']});
 
       this.form.patchValue({
         no: data['no'],
