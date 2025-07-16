@@ -62,6 +62,7 @@ export class ProductTabStockChangeComponent extends ListComponentBase implements
     'return-sale': 'Trả hàng bán',
     'move-from': 'Chuyển hàng đi',
     'move-to': 'Chuyển hàng đến',
+    'delete-product': 'Xoá sản phẩm',
   };
 
   methodLinks = {
@@ -72,6 +73,7 @@ export class ProductTabStockChangeComponent extends ListComponentBase implements
     'return-sale': '#',
     'move-from': '/transaction/move/code/',
     'move-to': '/transaction/move/code/',
+    'delete-product': '#',
   };
 
   downloadLink = null;

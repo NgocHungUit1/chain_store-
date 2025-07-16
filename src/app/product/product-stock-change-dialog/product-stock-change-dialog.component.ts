@@ -58,6 +58,7 @@ export class ProductStockChangeDialogComponent extends ListComponentBase impleme
     'return-sale': 'Trả hàng bán',
     'move-from': 'Chuyển hàng đi',
     'move-to': 'Chuyển hàng đến',
+    'delete-product': 'Xoá sản phẩm',
   };
 
   apiFilter: StockCardFilter;
