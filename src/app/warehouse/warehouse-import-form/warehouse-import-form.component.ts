@@ -1358,6 +1358,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         warehouseProduct.product_parcels = [];
         warehouseProduct.vat = 0;
         warehouseProduct.vat_type = 'price';
+        warehouseProduct.is_sub_item = 0;
 
         warehouseProduct.product_unit_id = this.selectUnit.value['id'];
         warehouseProduct.price = this.selectUnit.value['original_price'];
@@ -2297,6 +2298,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         this.onSelectedProduct(res);
         // }
       }
+      this.autocompleteTrigger.closePanel();
     });
   }
   // end coding
