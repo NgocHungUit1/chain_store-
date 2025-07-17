@@ -363,7 +363,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
       this.dataSource = res.body;
       let stt = 0;
       if (this.dataSource.length === 1) {
-        const arr = this.dataSource;``
+        const arr = this.dataSource;
         this.expandedElement = arr[0];
       }
       this.dataSource.forEach(elementData => {
