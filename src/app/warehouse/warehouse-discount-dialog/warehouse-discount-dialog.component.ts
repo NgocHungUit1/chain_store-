@@ -73,6 +73,8 @@ export class WarehouseDiscountDialogComponent implements OnInit {
 
   submit() {
     const data = this.form.getRawValue();
+    //standardize number value to make it to be actual number
+    data.number = data.number ? Number(data.number.toString().replace(/,/g, '')) : 0;
     this.dialogRef.close(data);
   }
 

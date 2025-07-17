@@ -418,9 +418,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     const product_id = this.data[product_index].product_id.toString();
     const product_name = this.data[product_index].product['product_name'];
     const product_no = this.data[product_index].product['product_no'];
+    const product_quantity = this.data[product_index].quantity;
     const dialogData: ParcelData = parcel ?
       {...parcel, product_id: product_id, product_name: product_name, product_no: product_no}
-      : {...this.tmp_new_parcel_data , product_id: product_id, product_name: product_name, product_no: product_no};
+      : {...this.tmp_new_parcel_data , quantity: product_quantity, product_id: product_id, product_name: product_name, product_no: product_no};
     const parcelDialogRef  = this.dialog.open(WarehouseParcelFormDialogNewComponent, {
       width: '30%',
       data: dialogData,
@@ -1358,6 +1359,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         warehouseProduct.product_parcels = [];
         warehouseProduct.vat = 0;
         warehouseProduct.vat_type = 'price';
+        warehouseProduct.is_sub_item = 0;
 
         warehouseProduct.product_unit_id = this.selectUnit.value['id'];
         warehouseProduct.price = this.selectUnit.value['original_price'];
@@ -2297,6 +2299,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         this.onSelectedProduct(res);
         // }
       }
+      this.autocompleteTrigger.closePanel();
     });
   }
   // end coding
@@ -2424,6 +2427,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   getParcelStatus(i) {
     const product = this.data[i];
+    debugger;
     return product.product_parcels?.length === 0 && this.parcelItemControls.get(i)?.touched;
   }
 }

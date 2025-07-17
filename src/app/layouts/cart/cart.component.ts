@@ -44,6 +44,7 @@ import {OptionStoreService} from '../../common/option-store.service';
 import { AuthService } from '../../authentication/auth.service';
 import { MatSidenav } from '@angular/material/sidenav';
 import { SaleColumnVisibilityService } from '../../shared/sale-column-visibility.service';
+import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 
 /** @title Responsive sidenav */
 @Component({
@@ -104,6 +105,8 @@ export class CartComponent implements OnInit, OnDestroy {
   @ViewChild('inputQuantity') inputQuantity: ElementRef;
   @ViewChild('end') settingsSidenav: MatSidenav;
   @ViewChild('visibilitySidenav') visibilitySidenav: MatSidenav;
+  @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
+
   canNegativeStock: boolean = false;
 
   constructor(
@@ -497,6 +500,7 @@ export class CartComponent implements OnInit, OnDestroy {
           this.handlePriceListProduct(res);
         }
       }
+      this.autocompleteTrigger.closePanel();
     });
     $event.target.value = '';
   }
