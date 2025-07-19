@@ -24,6 +24,7 @@ export class UserTabAuthorizationComponent implements OnInit {
   selectedPermissions = [];
   savedUserPermission = [];
   savedUserRoleId = null;
+  isLoadPermission = false;
 
   sexHeader = {
     '1': 'Nam',
@@ -55,6 +56,7 @@ export class UserTabAuthorizationComponent implements OnInit {
       this.savedUserRoleId = res.body['role_id'];
       this.selectedPermissions = res.body['permission_list'];
       this.savedUserPermission = res.body['permission_list'];
+      this.isLoadPermission = true;
     });
   }
 
@@ -63,9 +65,14 @@ export class UserTabAuthorizationComponent implements OnInit {
       role_id: this.selectedRoleId,
       permission_list: this.selectedPermissions
     };
+    console.log('Save user permission data:');
+    console.log(data);
+    console.log(this.selectedPermissions);
+    console.log(this.savedUserPermission);
+
     this.storeUserPermissionService.updatePermission(this.user.id, data).subscribe(x => {
       this.savedUserRoleId = this.selectedRoleId;
-      this.savedUserPermission = this.selectedPermissions;
+      this.savedUserPermission = [...this.selectedPermissions];
 
       this.notifyService.notify('success', 'Cập nhật thành công!');
     });
@@ -86,26 +93,105 @@ export class UserTabAuthorizationComponent implements OnInit {
       if (this.selectedRoleId == this.savedUserRoleId) {
         this.selectedPermissions = [...new Set([...res.body , ...this.savedUserPermission])];
       } else {
-        this.selectedPermissions = res.body;
+        this.selectedPermissions = [...res.body];
       }
     });
   }
 
   public nodeChecked(args: any): void {
-   args.data.forEach(item => {
-     const index = this.selectedPermissions.indexOf(item.id);
-     if (item['isChecked'] === 'true') {
-       // Item checked then check not exist
-       if (index === -1) {
-         this.selectedPermissions.push(item.id);
-       }
-     } else {
-       if (index !== -1) {
-         this.selectedPermissions.splice(index, 1);
-       }
-     }
-   });
+    console.log(this.selectedPermissions);
 
+    args.data.forEach(item => {
+      console.log(item);
+      const index = this.selectedPermissions.indexOf(item.id.toString());
+
+      if (item.isChecked === 'true') {
+        // Item checked then check not exist
+        if (index === -1) {
+          this.selectedPermissions.push(item.id.toString());
+
+          // Kiểm tra có mục con không
+          // Nếu có thì thêm tất cả các mục con vào selectedPermissions
+          if (!item.checked && item.hasChildren) {
+            const childrenIds = this.findChildrenIdsById(item.id.toString());
+            for (const childId of childrenIds) {
+
+              if (!this.selectedPermissions.find(id => Number(id) === Number(childId))) {
+                this.selectedPermissions.push(childId);
+              }
+
+            }
+          }
+        }
+      } else {
+        if (index !== -1) {
+          this.selectedPermissions.splice(index, 1);
+        }
+
+        // Kiểm tra có mục con không
+        // Đếm số mục con được chọn hiện tại
+        // Nếu tất cả các con đều được chọn thì bỏ chọn tất cả các con
+        if (!item.checked && item.hasChildren) {
+          const childrenIds = this.findChildrenIdsById(item.id.toString());
+
+          let countChildChecker = 0;
+          for (const childId of childrenIds) {
+            if (this.selectedPermissions.find(id => Number(id) === Number(childId))) {
+              countChildChecker++;
+            }
+          }
+
+          if (countChildChecker === childrenIds.length) {
+            for (const childId of childrenIds) {
+              const childIndex = this.selectedPermissions.indexOf(childId);
+
+              if (childIndex !== -1) {
+                this.selectedPermissions.splice(childIndex, 1);
+              }
+            }
+          }
+
+        }
+      }
+    });
+  }
+
+  /**
+   * Tìm kiếm tất cả các ID con của một ID mục nhất định trong cấu trúc phân quyền
+   * @param targetId ID mục cần tìm kiếm
+   * @returns Mảng chứa tất cả các ID con
+   */
+  private findChildrenIdsById(targetId: string): string[] {
+    const result: string[] = [];
+
+    const recursiveSearch = (nodes: any[]) => {
+      for (const node of nodes) {
+        if (node.id.toString() === targetId) {
+          collectChildIds(node);
+          break;
+        }
+        if (node.children) {
+          recursiveSearch(node.children);
+        }
+      }
+    };
+
+    const collectChildIds = (node: any) => {
+      if (node.children) {
+        for (const child of node.children) {
+          result.push(child.id.toString());
+          collectChildIds(child);
+        }
+      }
+    };
+
+    // iterate each group in storePerData
+    for (const group of Object.keys(this.permissionData.permission_data)) {
+      const nodes = this.permissionData.permission_data[group].children;
+      recursiveSearch(nodes);
+    }
+
+    return result;
   }
 
   openStoreRoleDialog(role_id = null, copy_role_id = null) {
@@ -129,6 +215,10 @@ export class UserTabAuthorizationComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.getStoreRoleList();
+
+        if (this.selectedRoleId) {
+          this.loadRolePermission();
+        }
       }
     });
   }
