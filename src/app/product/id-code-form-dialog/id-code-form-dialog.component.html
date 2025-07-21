@@ -132,7 +132,7 @@
         <mat-card-content>
           <img mat-card-md-image src="assets/images/id-code-form/65_nhan.jpg">
           <span class="text-card">Mẫu giấy 65 nhãn (Khổ giấy in nhãn A4 - Tomy 145)</span>
-          <button mat-raised-button class="button-card" color="primary" disabled="disabled">
+          <button mat-raised-button class="button-card" (click)="openViewIdCodeFormDialog('tomy_145')" color="primary">
             <mat-icon>format_align_justify</mat-icon>
             Xem mã in
           </button>
