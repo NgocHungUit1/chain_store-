@@ -1,0 +1,70 @@
+<h2 mat-dialog-title>{{ header }}</h2>
+<div mat-dialog-content>
+
+  <!-- Sử dụng SharedEditorComponent với Angular Flex Layout -->
+  <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxGap="16px" class="editor-container">
+    <!-- Editor section sử dụng shared component -->
+    <div fxFlex="50" fxFlex.xs="100" fxFlex.sm="100" class="editor-section">
+      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="16px" class="template-name-section">
+        <div fxFlex="50" fxLayout>
+          <div class="template-name-text" fxFlex="50">
+            <span>Tên mẫu in</span>
+          </div>
+          <div fxFlex="50">
+            <mat-form-field
+              floatLabel="never"
+              style="text-align: right">
+              <input
+                matInput
+                type="text"
+                [(ngModel)]="template.name"
+                autocomplete="off"
+                style="color: black" />
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxFlex="50" fxLayout>
+          <div fxFlex="50" >
+            <span>Mẫu in gợi ý</span>
+          </div>
+          <div fxFlex="50" >
+            <mat-form-field appearance="fill" >
+              <mat-select [(value)]="selectedTemplateId" (selectionChange)="onChangeInvoiceTemplate($event)" placeholder="-- Chọn mẫu gợi ý --">
+                <mat-option *ngFor="let suggestTemplate of suggestInvoiceTemplates" [value]="suggestTemplate.id">
+                  {{ suggestTemplate.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+      <app-shared-editor
+        [config]="editorConfig"
+        [templateData]="templateData"
+        (contentChanged)="onContentChanged($event)"
+        (dataChanged)="onDataChanged($event)">
+      </app-shared-editor>
+    </div>
+
+    <!-- Preview section -->
+    <div fxFlex="50" fxFlex.xs="100" fxFlex.sm="100" class="preview-section">
+      <p fxLayoutAlign="end center">Xem trước mẫu in</p>
+      <div id="preview-container" class="desktop-view">
+        <div id="preview-content-popup"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-actions align="end">
+
+  <!-- Standard action buttons -->
+  <button mat-button (click)="onClose()">Hủy</button>
+  <button *ngIf="isEditMode" mat-button (click)="onDelete()">Xóa</button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onSave()">
+    {{ isEditMode ? 'Cập nhật' : 'Tạo mới' }}
+  </button>
+</div>

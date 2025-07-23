@@ -1,0 +1,68 @@
+.editor-container {
+  margin: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.output {
+  margin: 20px;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.editor-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+.template-select {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-gap {
+  gap: 16px;
+}
+
+.header-gap > * {
+  margin-right: 16px;
+}
+
+.header-gap > *:last-child {
+  margin-right: 0;
+}
+
+.main-content-gap {
+  gap: 16px;
+}
+
+.main-content-gap > * {
+  margin-right: 16px;
+}
+
+.main-content-gap > *:last-child {
+  margin-right: 0;
+}
+
+/* Responsive spacing */
+@media (max-width: 959px) {
+  .header-gap,
+  .main-content-gap {
+    gap: 12px;
+  }
+
+  .header-gap > *,
+  .main-content-gap > * {
+    margin-right: 0;
+    margin-bottom: 12px;
+  }
+
+  .header-gap > *:last-child,
+  .main-content-gap > *:last-child {
+    margin-bottom: 0;
+  }
+}
