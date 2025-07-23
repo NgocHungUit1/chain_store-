@@ -21,8 +21,8 @@
 <!--  <input type="hidden" name="codes" id="codes" />-->
 <!--</form>-->
 
-<button 
-  class="ml-xs overflow-visible" 
+<button
+  class="ml-xs overflow-visible"
   mat-icon-button
   style="margin-right: 10px"
   matTooltip="Hóa đơn">
@@ -105,10 +105,10 @@
 <!-- ============================================================== -->
 <!-- Profile - style you can find in header.scss -->
 <!-- ============================================================== -->
-<button 
-  class="ml-xs overflow-visible" 
-  mat-icon-button 
-  [matMenuTriggerFor]="printSetting" 
+<button
+  class="ml-xs overflow-visible"
+  mat-icon-button
+  [matMenuTriggerFor]="printSetting"
   [ngStyle]="{ 'opacity': autoPrint ? '1' : '0.5' }"
   style="margin-right: 10px"
   matTooltip="In hóa đơn">
@@ -133,13 +133,59 @@
       In số lô
     </mat-slide-toggle>
   </div>
+  <div>
+    <div class="template-selection-section">
+      <div class="template-header">
+        <mat-icon>description</mat-icon>
+        <span>Tùy chọn mẫu in</span>
+      </div>
+
+      <div class="template-list">
+        <button
+          *ngFor="let template of invoiceTemplates"
+          mat-button
+          class="template-button"
+          [class.selected]="selectedTemplateId === template.id"
+          (click)="onSelectInvoiceTemplate(template.id, $event)">
+
+          <div class="template-content">
+            <div class="template-main">
+              <span class="template-name">{{template.name}}</span>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      <mat-divider></mat-divider>
+      <div class="template-actions">
+        <button
+          mat-button
+          color="accent"
+          (click)="onClosePrintButton()"
+          class="action-button">
+          <mat-icon>close</mat-icon>
+          Bỏ qua
+        </button>
+        <button
+          mat-button
+          color="primary"
+          (click)="onSaveAndClosePrintButton()"
+          class="action-button">
+          <mat-icon>check</mat-icon>
+          Xong
+        </button>
+      </div>
+
+    </div>
+  </div>
 </mat-menu>
 
-<button 
-  class="ml-xs overflow-visible" 
+<button
+  class="ml-xs overflow-visible"
   mat-icon-button
   (click)="this.toggleRequested.emit()"
   style="margin-right: 10px"
   matTooltip="Tùy chọn hiển thị">
   <mat-icon>visibility</mat-icon>
 </button>
+

@@ -46,6 +46,7 @@ import { registerLicense } from '@syncfusion/ej2-base';
 import { WarehouseParcelFormDialogNewComponent } from './warehouse/warehouse-parcel-form-dialog-new/warehouse-parcel-form-dialog-new.component';
 import { WarehouseConfirmLoadDataFormComponent } from './warehouse/warehouse-confirm-load-data-form/warehouse-confirm-load-data-form.component';
 import { ProductNewUnitComponent } from './product/product-new-unit/product-new-unit.component';
+import { EditInvoiceDialogComponent } from './settings/edit-invoice-dialog/edit-invoice-dialog.component';
 
 // Registering Syncfusion license key
 registerLicense('ORg4AjUWIQA/Gnt2V1hhQlJAfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hSn5UdkFjXXxccHNTRmZb');
@@ -75,6 +76,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     WarehouseParcelFormDialogNewComponent,
     WarehouseConfirmLoadDataFormComponent,
     ProductNewUnitComponent,
+    EditInvoiceDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -91,33 +93,34 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
       position: {
         horizontal: {
           position: 'right',
-          distance: 12
+          distance: 12,
         },
         vertical: {
           position: 'top',
           distance: 12,
-          gap: 10
-        }
+          gap: 10,
+        },
       },
       theme: 'material',
     }),
     AngularImageViewerModule,
     ReactiveFormsModule,
-    TreeViewModule
+    TreeViewModule,
   ],
   providers: [
     {
       provide: PERFECT_SCROLLBAR_CONFIG,
-      useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
+      useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG,
     },
     authTokenInterceptorProvider,
     authInterceptorProvider,
-    {provide: MAT_DATE_LOCALE, useValue: 'vi'}
+    { provide: MAT_DATE_LOCALE, useValue: 'vi' },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {
   constructor(overlayContainer: OverlayContainer) {
     overlayContainer.getContainerElement().classList.add('green');
   }
 }
+

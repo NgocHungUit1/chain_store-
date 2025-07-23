@@ -26,6 +26,13 @@
             </button>
           </mat-radio-button>
 
+          <mat-radio-button class="radio-button-report-type" value="edit-print" *ngIf="canDo('Option-Store.Update') || canDo('Option-Store.Create')">
+            Edit mẫu in
+            <button mat-icon-button aria-label="add">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </mat-radio-button>
+
           <mat-radio-button class="radio-button-report-type" value="logo"
                             *ngIf="this.storeFeatures.indexOf('logo') >= 0 && canDo('Store.Upload-Logo')">
             Logo
@@ -180,7 +187,13 @@
                   </mat-radio-button>
                 </mat-radio-group>
               </mat-card-content>
+            </mat-card>
 
+            <!--            edit print -->
+            <mat-card *ngIf=" settingsType === 'edit-print' ">
+              <mat-card-content>
+                <app-setting-print-editor></app-setting-print-editor>
+              </mat-card-content>
             </mat-card>
 
             <mat-card *ngIf=" settingsType === 'branch-connect' ">

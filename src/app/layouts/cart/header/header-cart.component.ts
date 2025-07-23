@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../authentication/auth.service';
@@ -10,6 +10,8 @@ import { NotifierService } from 'angular-notifier';
 import { OptionStore } from '../../../common/option-store.model';
 import { OptionStoreService } from '../../../common/option-store.service';
 import { SharedDataService } from '../../../shared/shared-data.service';
+import { MatMenuTrigger } from '@angular/material/menu';
+import { InvoiceTemplateService, InvoiceTemplate } from '../../../shared/invoice-template.service';
 
 @Component({
   selector: 'app-header-cart',
@@ -18,6 +20,7 @@ import { SharedDataService } from '../../../shared/shared-data.service';
 })
 export class AppHeaderCartComponent implements OnInit {
   @Output() toggleRequested = new EventEmitter<void>();
+  @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
 
   constructor(
     private route: Router,
@@ -26,6 +29,7 @@ export class AppHeaderCartComponent implements OnInit {
     private productSer: ProductService,
     private optionStoreService: OptionStoreService,
     private shareDataSer: SharedDataService,
+    private invoiceTemplateService: InvoiceTemplateService,
     public notifierSer: NotifierService,
   ) {
 
@@ -105,8 +109,14 @@ export class AppHeaderCartComponent implements OnInit {
 
   optionStore_auto_print: OptionStore = null;
 
+  // Replace fake data with service data
+  invoiceTemplates: InvoiceTemplate[] = [];
+  selectedTemplateId: number = 1;
+
   ngOnInit(): void {
     this.getAutoPrintValue();
+    this.loadTemplates();
+    this.subscribeToTemplateChanges();
   }
 
   logout() {
@@ -182,5 +192,70 @@ export class AppHeaderCartComponent implements OnInit {
 
   onToggleClick(event: MouseEvent) {
     event.stopPropagation();
+  }
+
+  // Load templates from API
+  private loadTemplates(): void {
+    this.invoiceTemplateService.loadTemplates();
+  }
+
+  // Subscribe to template changes
+  private subscribeToTemplateChanges(): void {
+    // Subscribe to templates data
+    this.invoiceTemplateService.templates$.subscribe(templates => {
+      this.invoiceTemplates = templates;
+    });
+
+    // Subscribe to selected template
+    this.invoiceTemplateService.selectedTemplate$.subscribe(selectedId => {
+      this.selectedTemplateId = selectedId;
+    });
+  }
+
+  // Invoice select template
+  // Phương thức xử lý chọn mẫu in
+  onSelectInvoiceTemplate(templateId: number, event?: MouseEvent) {
+    // Prevent menu from closing
+    if (event) {
+      event.stopPropagation();
+    }
+
+    this.invoiceTemplateService.setSelectedTemplate(templateId);
+    console.log('Selected template:', this.invoiceTemplateService.getSelectedTemplateData());
+  }
+
+  // Phương thức lấy template đã chọn từ localStorage
+  getSelectedTemplate() {
+    const savedTemplateId = localStorage.getItem('selectedInvoiceTemplate');
+    if (savedTemplateId) {
+      this.selectedTemplateId = parseInt(savedTemplateId);
+    }
+  }
+
+  onSaveTemplateSelection() {
+    // Service already handles saving to localStorage
+    this.notifierSer.notify('success', 'Đã lưu mẫu in đã chọn!');
+  }
+
+  onClosePrintButton() {
+    // Đóng menu print selection bằng MatMenuTrigger
+    if (this.menuTrigger) {
+      this.menuTrigger.closeMenu();
+    }
+
+    console.log('Print menu closed');
+
+    // Không save selection khi user click "Bỏ qua"
+    // this.onSaveTemplateSelection();
+  }
+
+  onSaveAndClosePrintButton() {
+    // Lưu selection và đóng menu
+    this.onSaveTemplateSelection();
+
+    // Đóng menu sau khi save
+    if (this.menuTrigger) {
+      this.menuTrigger.closeMenu();
+    }
   }
 }

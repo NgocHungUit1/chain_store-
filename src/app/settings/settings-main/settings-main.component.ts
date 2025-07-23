@@ -46,6 +46,7 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     'store': 'Hàng hóa',
     'partner': 'Đối tác',
     'print': 'Cài đặt khổ mẫu giấy in',
+    'edit-print': 'Chỉnh sửa mẫu in',
     'logo': 'Logo cửa hàng',
     'branch-connect': 'Liên thông theo chi nhánh',
     'score': 'Tích điểm',
@@ -82,7 +83,8 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
   storeFeatures = [];
 
   ngOnInit(): void {
-    this.settingsType = 'transaction';
+    //this.settingsType = 'transaction';
+    this.settingsType='edit-print'; // for dev
     this.printType = 'K58';
     this.isLoadingResults = false;
 

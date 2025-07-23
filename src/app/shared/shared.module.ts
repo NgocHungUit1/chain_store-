@@ -12,6 +12,7 @@ import { PopoverComponent } from './popover/popover.component';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { SlicePipe } from './slice.pipe';
+import { SharedEditorComponent } from './shared-editor/shared-editor.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,8 @@ import { SlicePipe } from './slice.pipe';
     FilterPipe,
     PopoverComponent,
     SlicePipe,
+    // shareeditor
+    SharedEditorComponent,
   ],
   exports: [
     AccordionAnchorDirective,
@@ -30,6 +33,8 @@ import { SlicePipe } from './slice.pipe';
     IncludesPipe,
     PopoverComponent,
     PopoverComponent,
+    // share
+    SharedEditorComponent,
   ],
   imports: [
     MatCardModule,

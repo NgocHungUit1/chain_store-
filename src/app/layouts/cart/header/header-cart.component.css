@@ -62,3 +62,75 @@
 ::ng-deep .mymegamenu .mat-slide-toggle.custom-toggle.mat-checked .mat-slide-toggle-thumb {
   background-color: #009688 !important; /* Darker green thumb */
 }
+
+::ng-deep .mymegamenu{
+  width: 300px;
+}
+/* Template Selection Styles */
+.template-selection-section {
+  padding: 8px 0;
+}
+
+.template-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-weight: 500;
+  color: #666;
+  font-size: 14px;
+}
+
+.template-list {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-left: 20px;
+}
+
+.template-button {
+  width: 250px;
+  transition: all 0.3s ease;
+  border: 1px solid #e0e0e0;
+  border-radius: 50px;
+  margin-bottom: 8px;
+}
+
+.template-button:hover {
+  background-color: #f5f5f5;
+}
+
+.template-button.selected {
+  background-color: #e3f2fd;
+}
+
+.template-content {
+  width: 100%;
+  text-align: left;
+}
+
+.template-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+
+
+
+.template-name {
+  font-weight: 500;
+  flex: 1;
+  color: #333;
+}
+
+
+.manage-templates-btn {
+  margin-top: 8px;
+  color: #2196F3 !important;
+  font-weight: 500;
+}
+
+.manage-templates-btn mat-icon {
+  margin-right: 8px;
+}

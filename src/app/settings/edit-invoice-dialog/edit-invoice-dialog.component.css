@@ -1,0 +1,37 @@
+.responsive-grid {
+  width: 100%;
+}
+
+.editor-container {
+  width: 100%;
+  min-height: 500px;
+}
+
+.editor-section {
+  min-height: 400px;
+}
+
+.preview-section {
+  min-height: 400px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 16px;
+  background-color: #fafafa;
+}
+
+#preview-container {
+  height: 100%;
+  overflow-y: auto;
+}
+
+#preview-content-popup {
+  padding: 16px;
+  background: white;
+  border-radius: 4px;
+  min-height: 300px;
+}
+
+/* Hide CKEditor toolbar */
+#cke_1_top {
+  display: none;
+}

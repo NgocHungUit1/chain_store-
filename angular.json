@@ -47,7 +47,9 @@
               "src/assets/styles/style.scss",
               "src/assets/styles/rx20.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "src/assets/ckeditor4/ckeditor.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -110,7 +112,10 @@
             "dev": {
               "browserTarget": "material:build:dev"
             }
-          }
+          },
+          "scripts": [
+            "src/assets/ckeditor4/ckeditor.js"
+          ]
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",

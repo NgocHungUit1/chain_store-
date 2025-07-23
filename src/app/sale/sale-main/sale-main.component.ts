@@ -1360,7 +1360,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
         const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
         const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
 
-        debugger;
         let printContent = '<title>' + res?.invoice_no + '</title>';
         printContent += `
           <style>
