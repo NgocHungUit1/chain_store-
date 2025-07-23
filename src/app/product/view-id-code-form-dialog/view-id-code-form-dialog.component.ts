@@ -31,6 +31,8 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
   type: string;
   base64 = null;
 
+  pdfUrl: string = null;
+
   constructor(
     public dialogRef: MatDialogRef<ViewIdCodeFormDialogComponent>,
     public notifySer: NotifierService,
@@ -43,6 +45,8 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
     this.option = this.local_data.option;
     this.type = this.local_data.type;
     this.base64 = this.local_data.base64;
+
+    this.pdfUrl = this.base64ToBlobUrl(this.base64, 'application/pdf');
   }
 
   onNoClick(): void {
@@ -272,5 +276,16 @@ export class ViewIdCodeFormDialogComponent implements OnInit {
   //
   // }
 
+
+  public base64ToBlobUrl(base64: string, mimeType = 'application/pdf'): string {
+
+    const base64Data = base64.includes(',') ? base64.split(',')[1] : base64;
+    const byteCharacters = atob(base64Data);
+    const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: mimeType });
+
+    return URL.createObjectURL(blob);
+  }
 
 }

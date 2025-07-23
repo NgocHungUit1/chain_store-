@@ -76,22 +76,25 @@ export class IdCodeFormDialogComponent implements OnInit {
     data['type'] = type;
     data['productData'] = this.printProductData;
 
-    this.productSer.getPdfBarcode(data).subscribe(res => {
+    this.productSer.getPdfBarcode(data).subscribe((res: any) => {
+      if (res && res.success === true) {
+        const obj = {
+          base64: res.data,
+        };
 
-      const obj = {
-        base64: res
-      };
+        const dialogRef = this.dialog.open(ViewIdCodeFormDialogComponent, {
+          data: obj,
+          width: '80%',
+          height: '80%',
+          maxWidth: '800px',
+          maxHeight: '500px',
+          panelClass: 'rx20',
+        });
 
-      const dialogRef = this.dialog.open(ViewIdCodeFormDialogComponent, {
-        data: obj,
-        width: '500px',
-        height: '300px',
-        panelClass: 'rx20',
-      });
-
-      dialogRef.afterClosed().subscribe(result => {
-
-      });
+        dialogRef.afterClosed().subscribe(result => {});
+      } else {
+        this.notifySer.notify('error', res.message || 'Lỗi không thể tạo mã vạch');
+      }
     });
     // 130/83
 
