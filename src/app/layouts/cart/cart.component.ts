@@ -476,7 +476,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
   onkeydown($event) {
     // Check if not bar code, return
-    if (isNaN($event.target.value) || $event.target.value.length < 8) {
+    if ($event.target.value.length < 8 || $event.code !== 'Enter') {
       return;
     }
     this.barcode = $event.target.value;
