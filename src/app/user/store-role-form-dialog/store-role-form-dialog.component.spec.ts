@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { StoreRoleFormDialogComponent } from './store-role-form-dialog.component';
 
-import { StoreRoleFormDialogComponent } from './user-form-dialog.component';
 
-describe('UserFormDialogComponent', () => {
+describe('StoreRoleFormDialogComponent', () => {
   let component: StoreRoleFormDialogComponent;
   let fixture: ComponentFixture<StoreRoleFormDialogComponent>;
 
