@@ -1408,7 +1408,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
               border-top: 1px dashed black;
             }
           </style>
-          <section style="padding: 5px; font-size: ${_font_size}; width: 100%;">
+          <section style="font-size: ${_font_size}; width: 100%;">
             ${this.logo ? `<p class="center"><img src="${this.logo}" style="max-width: 120px;"></p>` :
                           `<p class="center"><img src="assets/images/Rx20_16x16_op1-1207.png" style="max-width: 120px;"></p>`}
             <p class="center bold" style="font-size: ${_font_size_store}">${res?.store?.name || 'Store Name'}</p>
@@ -1577,6 +1577,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
           WindowPrt.focus();
           // WindowPrt.close(); // lỗi tự đôngs
         }
+
+
+        console.log(printContent);
       });
     });
   }
@@ -2166,7 +2169,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
             border-top: 1px dashed black;
           }
         </style>
-        <section style="padding: 5px; font-size: ${_font_size}; width: 100%;">
+        <section style="font-size: ${_font_size}; width: 100%;">
           ${`<p class="center"><img src="${this.logo??'assets/images/Rx20_16x16_op1-1207.png'}" style="max-width: 120px;"></p>`}
           <p class="center bold" style="font-size: ${_font_size_store}">${preInvoiceData?.store?.name || 'Store Name'}</p>
           <p class="center">${preInvoiceData?.store?.address || 'Store Address'}</p>
@@ -2330,6 +2333,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
           WindowPrt.document.close();
           WindowPrt.focus();
         }
+
+      console.log(printContent);
       // WindowPrt.close(); // Uncomment if you want to auto-close after printing
     });
   }
@@ -2341,6 +2346,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
   async printPreInvoiceHandler() {
     const preInvoiceData = await this.getPreInvoiceData();
+    debugger;
     this.printPreInvoiceV2(preInvoiceData);
   }
 
