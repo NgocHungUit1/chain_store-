@@ -44,7 +44,8 @@ import { BankAccountService } from '../../bank-account/bank-account.service';
 import { BankAccountFilter } from '../../bank-account/bank-account.model';
 import { SearchProductDialogComponent } from '../../common/search-product-dialog/search-product-dialog.component';
 import { ColumnVisibilityMap, SaleColumnVisibilityService } from '../../shared/sale-column-visibility.service';
-
+import { InvoiceData, PreviewService } from '../../shared/preview.service';
+import { InvoiceTemplate, InvoiceTemplateService } from '../../shared/invoice-template.service';
 export const MY_FORMATS = {
   parse: {
     dateInput: 'DD/MM/YYYY',
@@ -96,6 +97,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
     private productSer: ProductService,
     private bankAccountSer: BankAccountService,
     private saleColumnVisibilityService: SaleColumnVisibilityService,
+    private previewService: PreviewService,
+    private invoiceTemplateService: InvoiceTemplateService
   ) {
     this.optionStoreService.getValue('point_enabled').subscribe(res => {
       this.isPointEnabled = res.value === 'true';
@@ -193,6 +196,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
   wallets: any[] = [];
   bankAccountFilter: BankAccountFilter = new BankAccountFilter();
   flexibleWithProductName = 16;
+
   /**
    * allColumns is a fixed list of every “column ID” that might appear
    * in the sale‐detail row. In your HTML template, each fxFlex/div block
@@ -229,6 +233,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
   displayedColumns: string[] = [
     'no','product_no','product_name','unit','amount','price','total'
   ];
+
+  // selected invoice template
+  selectedTemplate: InvoiceTemplate = null;
 
   @ViewChild('prescription') prescription;
   @ViewChild('customerSearch') customerSearch: ElementRef;
@@ -918,6 +925,10 @@ export class SaleMainComponent implements OnInit, DoCheck {
     ).subscribe(() => {
       this.loadBankAccounts(); // Call the actual function after debounce
     });
+
+    // get info invoice template
+    this.loadInvoiceTemplates();
+
   }
 
   ngDoCheck() {
@@ -2097,7 +2108,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     let _margin = '4px';
     let _padding = '3px';
     let _solo = 'text-align:left;';
-
+    debugger;
     // Determine print type (K58 or A4)
     this.optionStoreService.getValue('print_type').subscribe(res => {
       if (res.value === 'K58') {
@@ -2341,6 +2352,110 @@ export class SaleMainComponent implements OnInit, DoCheck {
   async printPreInvoiceHandler() {
     const preInvoiceData = await this.getPreInvoiceData();
     this.printPreInvoiceV2(preInvoiceData);
+
+    // print with template
+    //this.printInvoiceTemplate(preInvoiceData);
+  }
+  printInvoiceTemplate(preInvoiceData: any) {
+    // This function can be used to print the invoice using a specific template
+    // You can implement the logic here based on your requirements
+
+    console.log('Printing invoice with template:', preInvoiceData);
+    const dataToPrint: Partial<InvoiceData> = {
+      Tieu_De_In: 'HÓA ĐƠN BÁN HÀNG',
+      Ma_Don_Hang: preInvoiceData.invoice_no || 'Chưa lưu',
+      Ngay: new Date(preInvoiceData.created_at).getDate().toString().padStart(2, '0'),
+      Thang: (new Date(preInvoiceData.created_at).getMonth() + 1).toString().padStart(2, '0'),
+      Nam: new Date(preInvoiceData.created_at).getFullYear().toString(),
+
+      Khach_Hang: preInvoiceData.customer?.name || 'Khách lẻ',
+      So_Dien_Thoai: preInvoiceData.customer?.phone || '',
+      Dia_Chi_Khach_Hang: '', // Not available in sample data
+      Phuong_Xa_Khach_Hang: '', // Not available in sample data
+      Khu_Vuc_Khach_Hang_QH_TP: '', // Not available in sample data
+
+      items: preInvoiceData.detail?.map(item => ({
+        Ten_Hang_Hoa: item.product?.product_name || '',
+        Don_Gia_Chiet_Khau: numeral(item.price || 0).format('0,0'),
+        So_Luong: (item.amount || 0).toString(),
+        Thanh_Tien: numeral(item.total || 0).format('0,0')
+      })) || [],
+
+      Tong_Tien_Hang: numeral(preInvoiceData.total_price || 0).format('0,0'),
+      Chiet_Khau_Hoa_Don_Phan_Tram: '', // Percentage not available in sample data
+      Chiet_Khau_Hoa_Don: numeral(preInvoiceData.discount || 0).format('0,0'),
+      Tong_Cong: numeral(preInvoiceData.sum_payment || 0).format('0,0'),
+      Tong_Cong_Bang_Chu: this.numberToVietnameseText(preInvoiceData.sum_payment || 0)
+    }
+    let printContent = this.previewService.fillTemplate(this.selectedTemplate.content, dataToPrint)
+    console.log('Completed template:', printContent)
+    this.optionStoreService.getValue('print_type').subscribe(res => {
+      let _font_size = '11px';
+      let _font_size_store = '13px';
+      let _margin = '4px';
+      let _padding = '3px';
+      let _solo = 'text-align:left;';
+      if (res.value === 'K58') {
+        _font_size = '11px';
+        _margin = '4px';
+        _padding = '3px';
+        _solo = 'text-align:left;';
+      } else { // A4
+        _font_size = '14px';
+        _font_size_store = '16px';
+        _margin = '6px';
+        _padding = '6px';
+        _solo = 'text-align:left; min-width: 100px;';
+      }
+      const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+
+      // Footer with QR code
+      if (this.form.get('selectedMethod').value == 'Chuyển khoản') {
+        this.getQrCode(this.selectedBankAccount).subscribe(qrCode => {
+          printContent += `<br>
+              <p class="center"><img src="${qrCode}" style="width: 80px; height: 80px;" onload="onQrLoaded()"></p>`
+
+          printContent += `${this.description && this.description.length > 0
+            ? `<p style="text-align:center; font-style: italic;">${this.description}</p>`
+            : `<p style="text-align:center; font-style: italic;">Cám ơn và hẹn gặp lại.</p>`}
+              <p class="center" style="font-size: 9px;">POWERED BY rx20.vn</p>
+              <script>
+                function onQrLoaded() {
+                  window.print();
+                }
+                window.onafterprint = function() {
+                  window.close();
+                }
+              </script>
+              </section>
+            `;
+
+          WindowPrt.document.write(printContent);
+          WindowPrt.document.close();
+          WindowPrt.focus();
+          // WindowPrt.close(); // lỗi tự đôngs
+        })
+      } else {
+        printContent += `
+          <br>
+          ${this.description && this.description.length > 0
+          ? `<p style="text-align:center; font-style: italic;">${this.description}</p>`
+          : `<p style="text-align:center; font-style: italic;">Cám ơn và hẹn gặp lại.</p>`}
+          <p class="center" style="font-size: 9px;">POWERED BY rx20.vn</p>
+          <script>
+            window.print();
+            window.onafterprint = function() {
+              window.close();
+            }
+          </script>
+          </section>
+          `;
+
+        WindowPrt.document.write(printContent);
+        WindowPrt.document.close();
+        WindowPrt.focus();
+      }
+    });
   }
 
   payment() {
@@ -2525,6 +2640,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       this.orderService.saleOrder(dataInvoice).subscribe(res => {
         this.isLoadingResults = false;
         this.submitted = false;
+        debugger;
         if (res !== false) {
           if (typeof res === 'number' && this.autoPrint === true) {
             this.printInvoice(res);
@@ -2555,6 +2671,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       this.orderService.updateOrder(dataInvoice).subscribe(res => {
         this.isLoadingResults = false;
         this.submitted = false;
+        debugger;
         if (res !== false) {
           if (typeof res === 'number' && this.autoPrint === true) {
             this.resetDataSiderBar();
@@ -3793,6 +3910,12 @@ export class SaleMainComponent implements OnInit, DoCheck {
       'saleDisplayedColumns',
       JSON.stringify(this.displayedColumns)
     );
+  }
+
+  // invoice templates
+  private loadInvoiceTemplates() {
+    // get from localStorage
+    this.selectedTemplate = this.invoiceTemplateService.getSelectedTemplate();
   }
 }
 

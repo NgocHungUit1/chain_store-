@@ -11,7 +11,7 @@ import { OptionStore } from '../../../common/option-store.model';
 import { OptionStoreService } from '../../../common/option-store.service';
 import { SharedDataService } from '../../../shared/shared-data.service';
 import { MatMenuTrigger } from '@angular/material/menu';
-import { InvoiceTemplateService, InvoiceTemplate } from '../../../shared/invoice-template.service';
+import { InvoiceTemplateService, InvoiceTemplate, TemplateResponse } from '../../../shared/invoice-template.service';
 
 @Component({
   selector: 'app-header-cart',
@@ -111,12 +111,11 @@ export class AppHeaderCartComponent implements OnInit {
 
   // Replace fake data with service data
   invoiceTemplates: InvoiceTemplate[] = [];
-  selectedTemplateId: number = 1;
-
+  selectedTemplateId: string = '';
+  initialTemplateId: string = '';
   ngOnInit(): void {
     this.getAutoPrintValue();
     this.loadTemplates();
-    this.subscribeToTemplateChanges();
   }
 
   logout() {
@@ -196,63 +195,67 @@ export class AppHeaderCartComponent implements OnInit {
 
   // Load templates from API
   private loadTemplates(): void {
-    this.invoiceTemplateService.loadTemplates();
+    this.invoiceTemplateService.getAllTemplates().subscribe(
+      (templates: TemplateResponse) => {
+        this.invoiceTemplates = templates.data;
+        // Set the selected template from localStorage if available
+        this.initialTemplateId = this.invoiceTemplates.find((template)=> template.isDefault)?.id || this.invoiceTemplates[0]?.id || '';
+        this.selectedTemplateId = this.initialTemplateId;
+        debugger;
+      },
+      error => {
+        console.error('Error loading invoice templates:', error);
+        this.notifierSer.notify('error', 'Không thể tải mẫu in. Vui lòng thử lại sau.');
+      }
+    );
   }
 
-  // Subscribe to template changes
-  private subscribeToTemplateChanges(): void {
-    // Subscribe to templates data
-    this.invoiceTemplateService.templates$.subscribe(templates => {
-      this.invoiceTemplates = templates;
-    });
-
-    // Subscribe to selected template
-    this.invoiceTemplateService.selectedTemplate$.subscribe(selectedId => {
-      this.selectedTemplateId = selectedId;
-    });
-  }
 
   // Invoice select template
   // Phương thức xử lý chọn mẫu in
-  onSelectInvoiceTemplate(templateId: number, event?: MouseEvent) {
+  onSelectInvoiceTemplate(templateId: string, event?: MouseEvent) {
     // Prevent menu from closing
     if (event) {
       event.stopPropagation();
     }
+    this.selectedTemplateId = templateId.toString();
 
-    this.invoiceTemplateService.setSelectedTemplate(templateId);
-    console.log('Selected template:', this.invoiceTemplateService.getSelectedTemplateData());
   }
 
-  // Phương thức lấy template đã chọn từ localStorage
-  getSelectedTemplate() {
-    const savedTemplateId = localStorage.getItem('selectedInvoiceTemplate');
-    if (savedTemplateId) {
-      this.selectedTemplateId = parseInt(savedTemplateId);
-    }
-  }
 
-  onSaveTemplateSelection() {
-    // Service already handles saving to localStorage
-    this.notifierSer.notify('success', 'Đã lưu mẫu in đã chọn!');
-  }
 
   onClosePrintButton() {
     // Đóng menu print selection bằng MatMenuTrigger
+    this.selectedTemplateId = this.initialTemplateId;
     if (this.menuTrigger) {
       this.menuTrigger.closeMenu();
     }
+  }
 
-    console.log('Print menu closed');
-
-    // Không save selection khi user click "Bỏ qua"
-    // this.onSaveTemplateSelection();
+  onMenuClosed() {
+    // Reset selectedTemplateId khi menu đóng mà không lưu (click ra ngoài)
+    this.selectedTemplateId = this.initialTemplateId;
   }
 
   onSaveAndClosePrintButton() {
     // Lưu selection và đóng menu
-    this.onSaveTemplateSelection();
-
+    this.invoiceTemplateService.updateTemplate(this.selectedTemplateId, {
+      id: this.selectedTemplateId,
+      isDefault: true // Đặt mẫu này là mặc định
+    }).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.notifierSer.notify('success', 'Đã lưu mẫu in đã chọn!');
+          this.initialTemplateId = this.selectedTemplateId;
+        } else {
+          this.notifierSer.notify('error', 'Không thể lưu mẫu in. Vui lòng thử lại.');
+        }
+      },
+      error: (error) => {
+        console.error('Error saving template selection:', error);
+        this.notifierSer.notify('error', 'Không thể lưu mẫu in. Vui lòng thử lại.');
+      }
+    })
     // Đóng menu sau khi save
     if (this.menuTrigger) {
       this.menuTrigger.closeMenu();

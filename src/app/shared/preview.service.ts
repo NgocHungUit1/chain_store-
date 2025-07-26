@@ -19,6 +19,9 @@ export interface InvoiceData {
     Don_Gia_Chiet_Khau: string;
     So_Luong: string;
     Thanh_Tien: string;
+    Don_Vi?: string; // Optional field for unit
+    Don_Gia?: string; // Optional field for unit price
+
   }>;
 
   Tong_Tien_Hang: string;
@@ -105,9 +108,6 @@ export class PreviewService {
   fillTemplate(template: string, data: Partial<InvoiceData>): string {
     let filledTemplate = template;
 
-    // Handle {{#each items}} loops first
-
-
     // Handle the specific table pattern for items auto-generation
     const tableMatch = filledTemplate.match(/<table[^>]*>.*?\{Ten_Hang_Hoa\}.*?<\/table>/s);
 
@@ -150,16 +150,32 @@ export class PreviewService {
         })
       }
       debugger;
+      const possiblePlaceHolders = [
+        'Ten_Hang_Hoa',
+        'Don_Gia_Chiet_Khau',
+        'So_Luong',
+        'Thanh_Tien',
+        'Don_Vi',
+        'So_Luong',
+        'Don_Gia',
+        'Thanh_Tien',
+      ]
       // Generate rows for each item
       if (resultRows.length > 0 && data.items && Array.isArray(data.items)) {
         const generatedRows = data.items.map(item => {
           return resultRows.map(row => {
             let newRow = row;
+            possiblePlaceHolders.forEach(placeholder => {
+              const regex = new RegExp(`\\{${placeholder}\\}`, 'g');
+              newRow = newRow.replace(regex, item[placeholder] || '');
+            })
+
             // Replace placeholders with actual item data
-            newRow = newRow.replace(/\{Ten_Hang_Hoa\}/g, item.Ten_Hang_Hoa || '');
-            newRow = newRow.replace(/\{Don_Gia_Chiet_Khau\}/g, item.Don_Gia_Chiet_Khau || '');
-            newRow = newRow.replace(/\{So_Luong\}/g, item.So_Luong || '');
-            newRow = newRow.replace(/\{Thanh_Tien\}/g, item.Thanh_Tien || '');
+            // newRow = newRow.replace(/\{Ten_Hang_Hoa\}/g, item.Ten_Hang_Hoa || '');
+            // newRow = newRow.replace(/\{Don_Gia_Chiet_Khau\}/g, item.Don_Gia_Chiet_Khau || '');
+            // newRow = newRow.replace(/\{So_Luong\}/g, item.So_Luong || '');
+            // newRow = newRow.replace(/\{Thanh_Tien\}/g, item.Thanh_Tien || '');
+
             return newRow;
           }).join('\n');
         }).join('\n');

@@ -4,7 +4,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface InvoiceTemplate {
-  id: number;
+  id: string;
   name: string;
   content: string;
   isDefault: boolean;
@@ -22,87 +22,43 @@ export interface TemplateResponse {
 export class InvoiceTemplateService {
   private apiUrl = `${environment.apiUrl}/invoice-templates`;
 
-  // Cache templates in memory
-  private templatesSubject = new BehaviorSubject<InvoiceTemplate[]>([]);
-  public templates$ = this.templatesSubject.asObservable();
-
-  // Track selected template
-  private selectedTemplateSubject = new BehaviorSubject<number>(1);
-  public selectedTemplate$ = this.selectedTemplateSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    this.loadTemplatesFromStorage();
   }
 
   // API Methods
   getAllTemplates(): Observable<TemplateResponse> {
-    return this.http.get<TemplateResponse>(`${this.apiUrl}`);
+    //return this.http.get<TemplateResponse>(`${this.apiUrl}`);
+
+    // Return fake data instead of API call since API is not working
+    return new Observable(observer => {
+      setTimeout(() => {
+        observer.next({ data: this.getFallbackTemplates(), success: true });
+        observer.complete();
+      }, 500); // Simulate network delay
+    });
   }
 
   getTemplate(id: number): Observable<{data: InvoiceTemplate, success: boolean}> {
     return this.http.get<{data: InvoiceTemplate, success: boolean}>(`${this.apiUrl}/${id}`);
   }
 
-  // State Management Methods
-  loadTemplates(): void {
-    // Return fake data instead of API call since API is not working
-    const fakeTemplates = this.getFallbackTemplates();
-    this.templatesSubject.next(fakeTemplates);
-    this.saveTemplatesToStorage(fakeTemplates);
-
-    // Comment out API call for now
-    /*
-    this.getAllTemplates().subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.templatesSubject.next(response.data);
-          this.saveTemplatesToStorage(response.data);
-        }
-      },
-      error: (error) => {
-        console.error('Failed to load templates:', error);
-        // Fallback to cached data
-        this.loadTemplatesFromStorage();
-      }
-    });
-    */
-  }
-
-  getTemplatesFromCache(): InvoiceTemplate[] {
-    return this.templatesSubject.value;
-  }
 
   // Selection Management
-  setSelectedTemplate(templateId: number): void {
-    this.selectedTemplateSubject.next(templateId);
+  setSelectedTemplate(templateId: string): void {
     localStorage.setItem('selectedInvoiceTemplate', templateId.toString());
   }
 
-  getSelectedTemplate(): number {
-    return this.selectedTemplateSubject.value;
-  }
-
-  getSelectedTemplateData(): InvoiceTemplate | null {
-    const selectedId = this.getSelectedTemplate();
-    const templates = this.getTemplatesFromCache();
-    return templates.find(t => t.id === selectedId) || null;
-  }
 
   // Mock API methods to return fake responses
   createTemplate(template: Partial<InvoiceTemplate>): Observable<{data: InvoiceTemplate, success: boolean}> {
     // Return fake success response
     const newTemplate: InvoiceTemplate = {
-      id: Date.now(), // Generate fake ID
+      id: Date.now().toString(), // Generate fake ID
       name: template.name || 'New Template',
       content: template.content || this.getDefaultTemplateContent(1),
       isDefault: template.isDefault || false,
     };
-
-    // Add to local cache
-    const currentTemplates = this.getTemplatesFromCache();
-    const updatedTemplates = [...currentTemplates, newTemplate];
-    this.templatesSubject.next(updatedTemplates);
-    this.saveTemplatesToStorage(updatedTemplates);
 
     // Return observable with fake response
     return new Observable(observer => {
@@ -112,115 +68,59 @@ export class InvoiceTemplateService {
       }, 500); // Simulate network delay
     });
   }
-  getAllTemplate(): Observable<InvoiceTemplate[]> {
-    // get 3 fake templates
+  updateTemplate(id: string, template: Partial<InvoiceTemplate>): Observable<{data: InvoiceTemplate, success: boolean}> {
+    // Return fake success response
+    const updatedTemplate: InvoiceTemplate = {
+      id,
+      name: template.name || 'Updated Template',
+      content: template.content || this.getDefaultTemplateContent(1),
+      isDefault: template.isDefault || false,
+    };
+
+    // Return observable with fake response
     return new Observable(observer => {
       setTimeout(() => {
-        observer.next(this.getFallbackTemplates());
+        observer.next({ data: updatedTemplate, success: true });
         observer.complete();
       }, 500); // Simulate network delay
     });
   }
 
-  updateTemplate(id: number, template: Partial<InvoiceTemplate>): Observable<{data: InvoiceTemplate, success: boolean}> {
-    // Update template in local cache
-    const currentTemplates = this.getTemplatesFromCache();
-    const templateIndex = currentTemplates.findIndex(t => t.id === id);
-    if (templateIndex !== -1) {
-      const updatedTemplate = { ...currentTemplates[templateIndex], ...template };
-      currentTemplates[templateIndex] = updatedTemplate;
-      this.templatesSubject.next([...currentTemplates]);
-      this.saveTemplatesToStorage(currentTemplates);
-
-      return new Observable(observer => {
-        setTimeout(() => {
-          observer.next({ data: updatedTemplate, success: true });
-          observer.complete();
-        }, 500);
-      });
-    }
-
-    // Return error if template not found
+  deleteTemplate(id: string): Observable<{success: boolean}> {
+    // Return fake success response
     return new Observable(observer => {
       setTimeout(() => {
-        observer.error({ success: false, message: 'Template not found' });
-      }, 500);
-    });
-  }
-
-  deleteTemplate(id: number): Observable<{success: boolean, message: string}> {
-    // Remove from local cache
-    const currentTemplates = this.getTemplatesFromCache();
-    const updatedTemplates = currentTemplates.filter(t => t.id !== id);
-    this.templatesSubject.next(updatedTemplates);
-    this.saveTemplatesToStorage(updatedTemplates);
-
-    return new Observable(observer => {
-      setTimeout(() => {
-        observer.next({ success: true, message: 'Template deleted successfully' });
+        observer.next({ success: true });
         observer.complete();
-      }, 500);
+      }, 500); // Simulate network delay
     });
   }
-
-
-
-  setDefaultTemplate(id: number): Observable<{success: boolean, message: string}> {
-    // Update default status in local cache
-    const currentTemplates = this.getTemplatesFromCache();
-    const updatedTemplates = currentTemplates.map(t => ({
-      ...t,
-      isDefault: t.id === id
-    }));
-    this.templatesSubject.next(updatedTemplates);
-    this.saveTemplatesToStorage(updatedTemplates);
-
-    return new Observable(observer => {
-      setTimeout(() => {
-        observer.next({ success: true, message: 'Default template updated' });
-        observer.complete();
-      }, 500);
-    });
-  }
-
-  // Storage Methods (for offline support)
-  private saveTemplatesToStorage(templates: InvoiceTemplate[]): void {
-    localStorage.setItem('invoiceTemplates', JSON.stringify(templates));
-  }
-
-  private loadTemplatesFromStorage(): void {
-    const savedTemplates = localStorage.getItem('invoiceTemplates');
-    if (savedTemplates) {
-      const templates = JSON.parse(savedTemplates);
-      this.templatesSubject.next(templates);
-    } else {
-      // Fallback to hardcoded templates
-      this.templatesSubject.next(this.getFallbackTemplates());
+  getSelectedTemplate(): InvoiceTemplate | null {
+    const templateId = localStorage.getItem('selectedInvoiceTemplate');
+    if (templateId) {
+      const templates = this.getFallbackTemplates();
+      return templates.find(template => template.id === templateId) || null;
     }
-
-    // Load selected template
-    const savedTemplateId = localStorage.getItem('selectedInvoiceTemplate');
-    if (savedTemplateId) {
-      this.selectedTemplateSubject.next(parseInt(savedTemplateId));
-    }
+    return null;
   }
+
 
   private getFallbackTemplates(): InvoiceTemplate[] {
     return [
       {
-        id: 1,
+        id: '1',
         name: 'Mẫu in số 1',
         content: this.getDefaultTemplateContent(1),
         isDefault: true,
       },
       {
-        id: 2,
+        id: '2',
         name: 'Mẫu in số 2',
         content: this.getDefaultTemplateContent(2),
         isDefault: false,
       },
       {
-        id: 3,
+        id: '',
         name: 'Mẫu in số 3',
         content: this.getDefaultTemplateContent(3),
         isDefault: false,
@@ -229,6 +129,156 @@ export class InvoiceTemplateService {
   }
 
   private getDefaultTemplateContent(id: any): string {
+    if(id ===2){
+      return `
+      <div id="kv-cke-temp">
+<style type="text/css">.printBox {
+        font-family: Arial, sans-serif;
+        font-size: 11px;
+    }
+
+    table {
+        page-break-inside: auto;
+        border-collapse: collapse;
+    }
+
+        table td {
+            word-wrap: break-word;
+            word-break: break-all;
+        }
+
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto
+    }
+
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+</style>
+<div class="printBox">
+<table style="width:100%">
+<tbody>
+<tr>
+<td style="text-align:center">
+<table style="width:100%">
+<tbody>
+<tr>
+<td style="font-size: 11px; text-align: left;"><strong>PH&Acirc;N PHỐI THUỐC &amp; VTY TẾ</strong></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+
+<div style="padding:10px 0 0; text-align:center"><strong style="font-size:12px">{Tieu_De_In}</strong></div>
+
+<table style="margin:10px 0 15px; width:100%">
+<tbody>
+<tr>
+<td style="font-size: 11px; width: 60%;">Kh&aacute;ch h&agrave;ng: {Khach_Hang}</td>
+<td colspan="2" style="font-size: 11px;">Số HĐ: {So_Hoa_Don}</td>
+</tr>
+<tr>
+<td rowspan="2" style="font-size: 11px;">SĐT: {So_Dien_Thoai}</td>
+<td colspan="1" rowspan="2" style="font-size: 11px;">Ng&agrave;y giờ b&aacute;n:</td>
+<td style="font-size: 11px;">{Ngay_Ban}</td>
+</tr>
+<tr>
+<td style="font-size: 11px;">{Gio_Ban}</td>
+</tr>
+<tr>
+<td style="font-size: 11px;">Địa chỉ: {Dia_Chi_Khach_Hang} - {Phuong_Xa_Khach_Hang} - {Khu_Vuc_Khach_Hang_QH_TP}</td>
+<td colspan="2" style="font-size: 11px;">Nh&acirc;n vi&ecirc;n: {Nhan_Vien}</td>
+</tr>
+</tbody>
+</table>
+
+<table border="1" cellpadding="3" style="width:98%;">
+<thead>
+<tr>
+<th scope="col" style="border-bottom: 1px solid black; border-top: 1px solid black; width: 10%;">STT</th>
+<th scope="col" style="border-bottom: 1px solid black; border-top: 1px solid black; width: 35%;"><b>T&ecirc;n h&agrave;ng</b></th>
+<th scope="col" style="border-bottom: 1px solid black; border-top: 1px solid black; width: 15%;">Đơn vị</th>
+<th scope="col" style="border-bottom: 1px solid black; border-top: 1px solid black; text-align: right; width: 7%;"><strong><span style="font-size:11px">SL</span></strong></th>
+<th scope="col" style="border-bottom: 1px solid black; border-top: 1px solid black; text-align: right; width: 15%;">Đơn Gi&aacute;</th>
+<th scope="col" style="border-bottom: 1px solid black; border-top: 1px solid black; text-align: right;"><strong><span style="font-size:11px">Th&agrave;nh tiền</span></strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="border-bottom:1px solid black">{STT}</td>
+<td style="border-bottom:1px solid black"><span style="font-size:12px">{Ten_Hang_Hoa}</span></td>
+<td style="border-bottom:1px solid black">{Don_Vi}</td>
+<td style="border-bottom:1px solid black; text-align:right"><span style="font-size:11px">{So_Luong}</span></td>
+<td style="border-bottom:1px solid black; text-align:right">{Don_Gia}</td>
+<td style="border-bottom:1px solid black; text-align:right"><span style="font-size:11px">{Thanh_Tien}</span></td>
+</tr>
+</tbody>
+</table>
+
+<table border="1" cellpadding="1" cellspacing="1" style="width:98%; margin-bottom:0;">
+<tbody>
+<tr>
+<td style="width: 60%; text-align: right;"><strong>Tổng tiền h&agrave;ng:</strong></td>
+<td style="width: 7%;"><strong>{Tong_So_Luong}</strong></td>
+<td><strong>{Tong_Tien_Hang}</strong></td>
+</tr>
+<tr>
+<td style="text-align: right;">Chiết khấu</td>
+<td>&nbsp;</td>
+<td>{Chiet_Khau}</td>
+</tr>
+<tr>
+<td style="text-align: right;"><strong>Tổng cộng:</strong></td>
+<td>&nbsp;</td>
+<td><strong>{Tong_Cong}</strong></td>
+</tr>
+<tr>
+<td style="text-align: right;"><strong>Kh&aacute;ch thanh to&aacute;n:</strong></td>
+<td>&nbsp;</td>
+<td>{Khach_Thanh_Toan}</td>
+</tr>
+<tr>
+<td style="text-align: right;"><strong>C&ograve;n lại:</strong></td>
+<td>&nbsp;</td>
+<td>{Con_Lai}</td>
+</tr>
+</tbody>
+</table>
+
+<table cellpadding="1" cellspacing="1" style="width:98%;">
+<tbody>
+<tr>
+<td><strong>Bằng chữ: {Tong_Tien_Hang_Bang_Chu}&nbsp;</strong></td>
+</tr>
+</tbody>
+</table>
+
+<p>&nbsp;</p>
+
+<table style="margin-top:20px; width:100%">
+<tbody>
+<tr>
+<td style="font-size:11px; font-style:italic; text-align:center">
+<p><strong><em><u>Lưu &yacute;:&nbsp; Giải quyết đổi trả trong v&ograve;ng 3 ng&agrave;y</u></em></strong></p>
+
+<p>Cảm ơn Q&uacute;y kh&aacute;ch!</p>
+</td>
+</tr>
+<tr>
+<td style="font-size:9px; font-style:italic; text-align:center">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+      `
+    }
     return `<div id="kv-cke-temp">
 <style type="text/css">.printBox {
         font-family: Arial, sans-serif;

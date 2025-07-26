@@ -116,7 +116,7 @@
 </button>
 
 
-<mat-menu #printSetting="matMenu" class="mymegamenu">
+<mat-menu #printSetting="matMenu" class="mymegamenu" (closed)="onMenuClosed()">
   <div style="display: flex; flex-direction: column; gap: 10px; padding: 10px;">
     <mat-slide-toggle
       class="custom-toggle"
@@ -188,4 +188,3 @@
   matTooltip="Tùy chọn hiển thị">
   <mat-icon>visibility</mat-icon>
 </button>
-
