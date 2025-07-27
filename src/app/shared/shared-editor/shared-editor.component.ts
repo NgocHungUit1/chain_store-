@@ -1,7 +1,6 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { CKEditor4Service, EditorInstance } from '../editor.service';
 import { PreviewService } from '../invoice-handle/preview.service';
-import { Subject } from 'rxjs';
 import { InvoiceData } from '../invoice-handle/preview.service';
 export interface EditorConfig {
   elementId: string;
@@ -16,7 +15,7 @@ export interface EditorConfig {
   templateUrl: './shared-editor.component.html',
   styleUrls: ['./shared-editor.component.css']
 })
-export class SharedEditorComponent implements OnInit, OnDestroy, AfterViewInit {
+export class SharedEditorComponent implements AfterViewInit {
   @Input() config: EditorConfig = { elementId: 'default' };
   @Input() templateData: Partial<InvoiceData> = {};
   @Output() editorReady = new EventEmitter<EditorInstance>();
@@ -25,7 +24,6 @@ export class SharedEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild('editorContainer', { static: true }) editorContainer!: ElementRef;
 
-  private destroy$ = new Subject<void>();
 
   editorInstance: EditorInstance | null = null;
   editorLoaded = false;
@@ -34,31 +32,22 @@ export class SharedEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     private ckeditor4Service: CKEditor4Service,
     private previewService: PreviewService
   ) {
-    console.log('config', this.config);
   }
 
-  ngOnInit(): void {
-
-    console.log('config init', this.config);
-
-  }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.initializeEditor();
     }, 100);
+    // // listen for contentChanged
+    this.contentChanged.subscribe((content: string) => {
+      // Emit the content to the parent component
+      this.previewService.updateTemplateContent(this.config.elementId, content);
+    });
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
 
-    if (this.editorInstance) {
-      this.editorInstance.destroy();
-    }
-  }
-
-  private async initializeEditor(): Promise<void> {
+  private initializeEditor() {
     try {
       const editorConfig = {
         height: this.config.height || 400,
@@ -67,16 +56,14 @@ export class SharedEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         extraPlugins: ['quicktable']
       };
 
-      // Chỉ override toolbar config khi cần hide toolbar hoàn toàn
+      // remove the unnecessary plugins when showToolbar is false
       if (this.config.showToolbar === false ) {
         editorConfig['toolbar'] = [];
         editorConfig['toolbarGroups'] = [];
-
       }
 
-      // Nếu showToolbar = true hoặc undefined, để CKEditor sử dụng config từ config.js
-
-      this.editorInstance = await this.ckeditor4Service.initEditor(
+      // Initialize the CKEditor instance
+      this.editorInstance = this.ckeditor4Service.initEditor(
         this.config.elementId,
         editorConfig
       );
@@ -86,14 +73,13 @@ export class SharedEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.editorInstance.setData(this.config.initialContent);
       }
 
+      // Confirm editor is loaded
       this.editorLoaded = true;
 
-      // Hide toolbar if needed (chỉ khi showToolbar = false)
+      // Hide toolbar if needed (showToolbar = false)
       if (this.config.readOnly) {
-        debugger;
-        setTimeout(() => this.hideToolbar(), 200);
+         this.hideToolbar();
       }
-
       // Setup preview integration
       this.setupPreviewIntegration(this.config.elementId);
 
@@ -114,10 +100,11 @@ export class SharedEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  // Public methods để control từ parent component
+
   public setContent(content: string): void {
     if (this.editorInstance) {
       this.editorInstance.setData(content);
+      this.contentChanged.emit(content);
     }
   }
 
@@ -125,24 +112,29 @@ export class SharedEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.editorInstance ? this.editorInstance.getData() : '';
   }
 
+  /**
+   * Hides the CKEditor toolbar if it exists.
+   * This is useful when the editor is in read-only mode or when you want to hide
+   * @private
+   */
   private hideToolbar(): void {
-    // Use setTimeout to ensure the DOM has been updated with CKEditor elements
-    setTimeout(() => {
       if (this.editorInstance) {
-        try {
-          const editorContainer = document.querySelector('.cke_top');
-          if (editorContainer) {
-            (editorContainer as HTMLElement).style.display = 'none';
-          } else {
-            // If element isn't found, add a style tag to hide it when it appears
-            const styleTag = document.createElement('style');
-            styleTag.innerHTML = '.cke_top { display: none !important; }';
-            document.head.appendChild(styleTag);
+        this.editorInstance.on('instanceReady', () => {
+          try {
+            const editorContainer = document.querySelector('.cke_top');
+            if (editorContainer) {
+              (editorContainer as HTMLElement).style.display = 'none';
+            } else {
+              // If element isn't found, add a style tag to hide it when it appears
+              const styleTag = document.createElement('style');
+              styleTag.innerHTML = '.cke_top { display: none !important; }';
+              document.head.appendChild(styleTag);
+            }
+          } catch (error) {
+            console.error('Error hiding toolbar:', error);
           }
-        } catch (error) {
-          console.error('Error hiding toolbar:', error);
-        }
+        });
       }
-    }, 100); // Short delay to ensure CKEditor has initialized in the DOM
   }
 }
+

@@ -12,26 +12,9 @@ export interface EditorInstance {
   providedIn: 'root'
 })
 export class CKEditor4Service {
-  private scriptLoaded = false;
-
-  loadScript(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      // If CKEDITOR is already available globally, resolve immediately
-      if (this.scriptLoaded || (window as any).CKEDITOR) {
-        console.log('CKEditor already loaded, using existing instance');
-        this.scriptLoaded = true;
-        resolve();
-        return;
-      }
-    });
-  }
-
-  async initEditor(elementId: string, config: any = {}): Promise<EditorInstance> {
+  initEditor(elementId: string, config: any = {}) {
     try {
-      await this.loadScript();
       if ((window as any).CKEDITOR) {
-        console.log('Initializing CKEditor 4 on element:', elementId);
-
         const editorConfig = {
           ...config,
           versionCheck: false  // This disables the security version check
@@ -39,9 +22,7 @@ export class CKEditor4Service {
 
         (window as any).CKEDITOR.replace('ckeditor4-textarea-' + elementId, editorConfig);
         const editorInstance = (window as any).CKEDITOR.instances['ckeditor4-textarea-' + elementId];
-
         if (editorInstance) {
-          // Return a wrapper object with common methods
           return {
             instance: editorInstance,
             getData: () => editorInstance.getData(),

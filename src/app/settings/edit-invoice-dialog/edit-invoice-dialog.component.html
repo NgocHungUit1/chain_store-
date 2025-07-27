@@ -17,10 +17,8 @@
     </table>
   </div>
   <div *ngIf="!showVariablesInfo" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxGap="16px" class="editor-container">
-    <!-- Editor section sử dụng shared component -->
     <div fxFlex="50" fxFlex.xs="100" fxFlex.sm="100" class="editor-section">
       <div fxLayout="row" fxLayoutAlign="space-between center" class="template-name-section">
-        <!-- Template name section -->
         <div fxFlex="48">
           <div fxLayout="row" fxLayoutAlign="space-between center">
             <div fxFlex="30">
@@ -39,7 +37,6 @@
           </div>
         </div>
 
-        <!-- Template suggestion section -->
         <div fxFlex="48">
           <div fxLayout="row" fxLayoutAlign="space-between center">
             <div fxFlex="30">
@@ -48,7 +45,7 @@
             <div fxFlex="65" class="template-name-input">
               <mat-form-field appearance="outline" class="full-width">
                 <mat-select [(value)]="selectedTemplateId"
-                            (selectionChange)="onChangeInvoiceTemplate($event)"
+                            (selectionChange)="onChangeInvoiceTemplate($event?.value)"
                             placeholder="-- Chọn mẫu gợi ý --">
                   <mat-option *ngFor="let suggestTemplate of suggestInvoiceTemplates"
                               [value]="suggestTemplate.id">
@@ -79,10 +76,7 @@
 </div>
 
 <div *ngIf="!showVariablesInfo"  mat-dialog-actions align="end">
-  <!-- Standard action buttons -->
-  <button mat-raised-button (click)="onClose()"><mat-icon>cancel</mat-icon>
-    Hủy</button>
-
+  <button mat-raised-button (click)="onClose()"><mat-icon>cancel</mat-icon>Hủy</button>
   <button mat-raised-button color="warn" *ngIf="isEditMode" (click)="onDelete()"><mat-icon>delete</mat-icon> Xóa</button>
   <button
     mat-raised-button

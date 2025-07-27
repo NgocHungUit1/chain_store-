@@ -51,7 +51,12 @@ export class PreviewService {
 
   constructor() {}
 
-  // Update template content (from editor)
+  /**
+   * Update the template content in the preview area
+   * This method fills the template with sample data and updates the preview element.
+   * @param id
+   * @param content
+   */
   updateTemplateContent(id:string, content: string): void {
     const contentWithData = this.fillTemplate(content, this.getSampleData());
     const previewElement = document.getElementById('preview-content-'+id);
@@ -60,7 +65,12 @@ export class PreviewService {
     }
   }
 
-  // Setup editor change listener
+  /**
+   * Sets up synchronization between the editor and the template preview.
+   * This method listens for changes in the editor and updates the preview content accordingly.
+   * @param id
+   * @param editor
+   */
   setupEditorSync(id:string, editor: EditorInstance): void {
     // Update template content when editor changes
     editor.on('change', () => {
@@ -70,7 +80,6 @@ export class PreviewService {
     // Set initial content
     this.updateTemplateContent(id, editor.getData());
   }
-
 
 
   getSampleData(): InvoiceData {
@@ -90,6 +99,12 @@ export class PreviewService {
     return data as InvoiceData;
   }
 
+  /**
+   * Fills the template with provided data.
+   * This method replaces placeholders in the template with actual data values.
+   * @param template
+   * @param data
+   */
   fillTemplate(template: string, data: Partial<InvoiceData>): string {
     let filledTemplate = template;
 
@@ -124,7 +139,6 @@ export class PreviewService {
           resultRows.push(tr);
         }
       }
-      // Fix: Assign the result of replace back to filledTemplate
       filledTemplate = filledTemplate.replace(resultRows[0], '{productRows}');
       console.log('F1: ', filledTemplate);
       if(resultRows.length >1) {
@@ -134,7 +148,7 @@ export class PreviewService {
 
         })
       }
-      debugger;
+
       const possiblePlaceHolders = [
         'Ten_Hang_Hoa',
         'Don_Gia_Chiet_Khau',
@@ -146,6 +160,7 @@ export class PreviewService {
         'Thanh_Tien',
         'STT',
       ]
+
       // Generate rows for each item
       if (resultRows.length > 0 && data.items && Array.isArray(data.items)) {
         const generatedRows = data.items.map(item => {
@@ -155,13 +170,6 @@ export class PreviewService {
               const regex = new RegExp(`\\{${placeholder}\\}`, 'g');
               newRow = newRow.replace(regex, item[placeholder] || '');
             })
-
-            // Replace placeholders with actual item data
-            // newRow = newRow.replace(/\{Ten_Hang_Hoa\}/g, item.Ten_Hang_Hoa || '');
-            // newRow = newRow.replace(/\{Don_Gia_Chiet_Khau\}/g, item.Don_Gia_Chiet_Khau || '');
-            // newRow = newRow.replace(/\{So_Luong\}/g, item.So_Luong || '');
-            // newRow = newRow.replace(/\{Thanh_Tien\}/g, item.Thanh_Tien || '');
-
             return newRow;
           }).join('\n');
         }).join('\n');

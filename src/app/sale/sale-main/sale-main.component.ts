@@ -2108,7 +2108,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
     let _margin = '4px';
     let _padding = '3px';
     let _solo = 'text-align:left;';
-    debugger;
     // Determine print type (K58 or A4)
     this.optionStoreService.getValue('print_type').subscribe(res => {
       if (res.value === 'K58') {
@@ -2356,11 +2355,13 @@ export class SaleMainComponent implements OnInit, DoCheck {
     // print with template
     this.printInvoiceTemplate(preInvoiceData);
   }
+
+
+  /**
+   * Print invoice using a specific template
+   * @param preInvoiceData Data to be printed in the invoice
+   */
   printInvoiceTemplate(preInvoiceData: any) {
-    // This function can be used to print the invoice using a specific template
-    // You can implement the logic here based on your requirements
-    console.log('Printing invoice with template:', preInvoiceData);
-    debugger;
     const dataToPrint: Partial<InvoiceData> = {
       Logo: this.logo? `<img src="${this.logo}" style="max-width: 120px;">` :
     `<img src="assets/images/Rx20_16x16_op1-1207.png" style="max-width: 120px;">`,
@@ -2404,14 +2405,13 @@ export class SaleMainComponent implements OnInit, DoCheck {
     }
 
     this.optionStoreService.getValue('print_type').subscribe(res => {
-      debugger;
       const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
       const content = this.previewService.fillTemplate(this.selectedTemplate.body, dataToPrint);
 
       const styleMatch = content.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
-      const extractedStyle = styleMatch?.[1] || ''; // Lấy phần CSS bên trong <style>
-      const contentWithoutStyle = content.replace(styleMatch?.[0] || '', ''); // Xóa thẻ <style> khỏi body
-      debugger;
+      const extractedStyle = styleMatch?.[1] || '';
+      const contentWithoutStyle = content.replace(styleMatch?.[0] || '', '');
+      // Replace all <style> tags with the extracted style
       const printHtml = `
         <!DOCTYPE html>
         <html>
@@ -2445,12 +2445,10 @@ export class SaleMainComponent implements OnInit, DoCheck {
           </body>
         </html>
       `;
-      debugger;
       WindowPrt.document.open();
       WindowPrt.document.write(printHtml);
       WindowPrt.document.close();
       WindowPrt.focus();
-
     });
   }
 
@@ -2636,7 +2634,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
       this.orderService.saleOrder(dataInvoice).subscribe(res => {
         this.isLoadingResults = false;
         this.submitted = false;
-        debugger;
         if (res !== false) {
           if (typeof res === 'number' && this.autoPrint === true) {
             this.printInvoice(res);
@@ -2667,7 +2664,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
       this.orderService.updateOrder(dataInvoice).subscribe(res => {
         this.isLoadingResults = false;
         this.submitted = false;
-        debugger;
         if (res !== false) {
           if (typeof res === 'number' && this.autoPrint === true) {
             this.resetDataSiderBar();
@@ -3911,7 +3907,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
   // invoice templates
   private loadInvoiceTemplates() {
     // get from localStorage
-    this.selectedTemplate = this.invoiceTemplateService.getSelectedTemplate();
+    this.selectedTemplate = this.invoiceTemplateService.getActiveTemplate();
   }
 }
 

@@ -1,10 +1,9 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { EditInvoiceDialogComponent } from '../edit-invoice-dialog/edit-invoice-dialog.component';
 import { PreviewService, InvoiceData } from '../../shared/invoice-handle/preview.service';
 import { SharedEditorComponent, EditorConfig } from '../../shared/shared-editor/shared-editor.component';
 import { InvoiceTemplateService, InvoiceTemplate } from '../../shared/invoice-handle/invoice-template.service';
-import { Subject } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
 
@@ -13,22 +12,21 @@ import { finalize } from 'rxjs/operators';
   templateUrl: './setting-print-editor.component.html',
   styleUrls: ['./setting-print-editor.component.css']
 })
-export class SettingPrintEditorComponent implements OnInit, OnDestroy {
+export class SettingPrintEditorComponent implements OnInit {
   @ViewChild(SharedEditorComponent) sharedEditor!: SharedEditorComponent;
 
-  private destroy$ = new Subject<void>();
   editorConfig: EditorConfig;
   templateData: Partial<InvoiceData> = {};
   invoiceTemplates: InvoiceTemplate[] = [];
   selectedTemplateId = '1';
   currentTemplate: InvoiceTemplate | null = null;
-  isLoading = true; // Trạng thái loading mặc định là true
+  isLoading = true;
 
 
   constructor(
     private dialog: MatDialog,
-    private invoiceTemplateService: InvoiceTemplateService, // api call
-    private previewService: PreviewService // for previewing templates
+    private invoiceTemplateService: InvoiceTemplateService,
+    private previewService: PreviewService
   ) {
     // Configure editor for main view (no toolbar)
     this.editorConfig = {
@@ -42,19 +40,24 @@ export class SettingPrintEditorComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Load templates from API first
-    debugger;
     this.invoiceTemplateService.getAllTemplates().pipe(
-      finalize(() => this.isLoading = false) // Đặt isLoading là false khi hoàn thành
+      finalize(() => this.isLoading = false) // Set loading to false after fetching templates
     ).subscribe({
       next: (response) => {
-        debugger;
         if (response.success) {
           this.invoiceTemplates = response.data;
-          debugger;
-          // Set default selected template if available
+          // Set default selected template if available or first template
           if (this.invoiceTemplates.length > 0) {
-            this.currentTemplate = this.invoiceTemplates[0];
-            this.selectedTemplateId = this.currentTemplate.id ?? this.currentTemplate.name; // Set initial selected template ID
+            // Check if there's a default template
+            const defaultTemplate = this.invoiceTemplates.find(template => template.status === 'active');
+            if (defaultTemplate) {
+              this.currentTemplate = defaultTemplate;
+              this.selectedTemplateId = defaultTemplate.id ?? defaultTemplate.name; // Set initial selected template ID
+            } else {
+              // If no default, select the first template
+              this.currentTemplate = this.invoiceTemplates[0];
+              this.selectedTemplateId = this.currentTemplate.id ?? this.currentTemplate.name; // Set initial selected template ID
+            }
             this.updateEditorContent(this.currentTemplate.body);
             this.previewService.updateTemplateContent('main', this.currentTemplate.body);
           }
@@ -66,6 +69,12 @@ export class SettingPrintEditorComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Updates the editor content with the provided string.
+   * This method updates the editor configuration and sets the content in the editor if it is already loaded.
+   * @param content
+   * @private
+   */
   private updateEditorContent(content: string): void {
     // Update editor config with new content
     this.editorConfig = {
@@ -81,24 +90,26 @@ export class SettingPrintEditorComponent implements OnInit, OnDestroy {
   }
 
 
-
+  /**
+   * Handles the change event for the invoice template selection.
+   * This method updates the selected template ID, retrieves the corresponding template,
+   * @param event
+   */
   onChangeInvoiceTemplate(event: any): void {
     const templateId = event.value;
-    console.log('Template changed to:', templateId);
-
-    // Update selected template ID
     this.selectedTemplateId = templateId;
+    //todo: check id is valid or not
     this.currentTemplate = this.invoiceTemplates.find(template => template.id === templateId);
     this.updateEditorContent(this.currentTemplate?.body || '');
   }
 
-
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
+  /**
+   * Handles the edit action for the selected invoice template.
+   * This method opens a dialog to edit the template and handles the result.
+   * If the user saves changes, it updates the template via API.
+   * If the user deletes the template, it removes it via API.
+   * @returns void
+   */
   onEdit(): void {
     const editInvoiceRef = this.dialog.open(EditInvoiceDialogComponent, {
       width: '90%',
@@ -120,7 +131,7 @@ export class SettingPrintEditorComponent implements OnInit, OnDestroy {
               id: this.selectedTemplateId,
               name: result.template.name || 'Mẫu in mới',
               body: result.editorContent,
-              status: this.currentTemplate?.status || 'active',
+              status: this.currentTemplate?.status || 'deactive',
             });
             break;
           case 'delete':
@@ -132,13 +143,19 @@ export class SettingPrintEditorComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Handles the add action to create a new invoice template.
+   * This method opens a dialog to create a new template with default content.
+   * The new template is initialized with a default body and status.
+   * After the dialog is closed, it creates the new template via API if the user saves it.
+   * @returns void
+   */
   onAdd(): void {
     const newTemplate: Partial<InvoiceTemplate> = {
       name: 'Mẫu in mới',
-      body: this.currentTemplate.body || this.getDefaultTemplateContent(),
+      body: this.currentTemplate?.body,
       status: 'active',
     };
-
     // Open dialog to edit new template
     const editInvoiceRef = this.dialog.open(EditInvoiceDialogComponent, {
       width: '90%',
@@ -151,27 +168,30 @@ export class SettingPrintEditorComponent implements OnInit, OnDestroy {
     });
 
     editInvoiceRef.afterClosed().subscribe(result => {
-      debugger;
       if (result && result.action === 'save') {
-        // Create new template via API
         this.createTemplate({
           name: result.template.name,
           body: result.editorContent,
-          status: 'active',
+          status: 'deactive',
         });
       }
     });
   }
 
+  /**
+   * Creates a new invoice template using the provided template data.
+   * This method calls the invoice template service to create the template and updates the list of templates upon success.
+   * If the creation is successful, it sets the newly created template as the current template and updates the editor content.
+   * @param template
+   * @private
+   */
   private createTemplate(template: Partial<InvoiceTemplate>): void {
     this.invoiceTemplateService.createTemplate(template).subscribe({
       next: (response) => {
-        debugger;
         if (response.success) {
           console.log('Template created successfully');
           this.invoiceTemplateService.getAllTemplates().subscribe(
             (templates) => {
-              debugger;
               this.invoiceTemplates = templates.data;
               // Set newly created template as selected
               this.selectedTemplateId = response.data.id;
@@ -190,6 +210,13 @@ export class SettingPrintEditorComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Saves the updated invoice template.
+   * This method calls the invoice template service to update the template and refreshes the list of templates upon success.
+   * If the update is successful, it updates the current template and editor content.
+   * @param template
+   * @private
+   */
   private saveTemplate(template: InvoiceTemplate): void {
     this.invoiceTemplateService.updateTemplate(template.id, template).subscribe({
       next: (response) => {
@@ -216,12 +243,17 @@ export class SettingPrintEditorComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Deletes the selected invoice template.
+   * This method calls the invoice template service to delete the template and refreshes the list of templates upon success.
+   * If the deletion is successful, it resets the selected template ID if necessary.
+   * @param templateId
+   * @private
+   */
   private deleteTemplate(templateId: string): void {
     this.invoiceTemplateService.deleteTemplate(templateId).subscribe({
       next: (response) => {
         if (response.success) {
-          console.log('Template deleted successfully');
-
           // Refresh templates list
           this.invoiceTemplateService.getAllTemplates().subscribe(
             (templates) => {
@@ -243,17 +275,6 @@ export class SettingPrintEditorComponent implements OnInit, OnDestroy {
         alert('Không thể xóa mẫu in. Vui lòng thử lại.');
       }
     });
-  }
-
-  private getDefaultTemplateContent(): string {
-    return `<div class="printBox">
-      <h2>{Tieu_De_In}</h2>
-      <p>Số HĐ: {Ma_Don_Hang}</p>
-      <p>Ngày {Ngay} tháng {Thang} năm {Nam}</p>
-      <p>Khách hàng: {Khach_Hang}</p>
-      <p>SĐT: {So_Dien_Thoai}</p>
-      <p>Tổng cộng: {Tong_Cong}</p>
-    </div>`;
   }
 
 }

@@ -193,12 +193,21 @@ export class AppHeaderCartComponent implements OnInit {
     event.stopPropagation();
   }
 
-  // Convert numeric index to letter prefix (0 -> A, 1 -> B, etc.)
+  //---- HANDLE INVOICE TEMPLATES ----//
+  /**
+   * Get the letter prefix for a given index (0-based)
+   * This function returns the letter corresponding to the index, e.g., 0 -> 'A', 1 -> 'B', etc.
+   * @param index
+   */
   getLetterPrefix(index: number): string {
     return String.fromCharCode(65 + index); // 65 is ASCII for 'A'
   }
 
-  // Get the badge letter for the currently selected template
+  /**
+   * Get the badge letter for the currently selected template
+   * This function checks if a template is selected and returns the corresponding letter prefix.
+   * If no template is selected or the list is empty, it returns an empty string.
+   */
   getBadgeLetterForSelectedTemplate(): string {
     if (!this.selectedTemplateId || this.invoiceTemplates.length === 0) {
       return '';
@@ -212,17 +221,22 @@ export class AppHeaderCartComponent implements OnInit {
     return this.getLetterPrefix(selectedIndex);
   }
 
-  // Load templates from API
+  /**
+   * Load invoice templates from the service
+   * This function fetches the list of invoice templates and sets the initial template.
+   * If no default template is found, it sets the first template as selected.
+   * It also stores the selected template in localStorage for persistence.
+   * @private
+   */
   private loadTemplates(): void {
     this.invoiceTemplateService.getAllTemplates().subscribe(
       (templates: TemplateResponse) => {
         this.invoiceTemplates = templates.data;
         // Set the selected template from localStorage if available
-        const template = this.invoiceTemplates.find((template)=> template.status==='default') || this.invoiceTemplates[0]
+        const template = this.invoiceTemplates.find((template)=> template.status==='active') || this.invoiceTemplates[0]
         this.initialTemplateId = template.id;
         this.selectedTemplateId = this.initialTemplateId;
-        localStorage.setItem('selectedTemplate', JSON.stringify(template));
-
+        this.invoiceTemplateService.setActiveTemplate(template)
       },
       error => {
         console.error('Error loading invoice templates:', error);
@@ -232,8 +246,13 @@ export class AppHeaderCartComponent implements OnInit {
   }
 
 
-  // Invoice select template
-  // Phương thức xử lý chọn mẫu in
+  /**
+   * Handles the selection of an invoice template.
+   * This function updates the selected template ID and prevents the menu from closing if an event is provided.
+   * It also updates the initial template ID to the newly selected one.
+   * @param templateId
+   * @param event
+   */
   onSelectInvoiceTemplate(templateId: string, event?: MouseEvent) {
     // Prevent menu from closing
     if (event) {
@@ -244,25 +263,39 @@ export class AppHeaderCartComponent implements OnInit {
   }
 
 
-
+  /**
+   * Handles the close action of the print button.
+   * This function resets the selected template ID to the initial template ID and closes the menu if it is open.
+   * It is called when the user clicks the close button on the print menu.
+   * @private
+   */
   onClosePrintButton() {
-    // Đóng menu print selection bằng MatMenuTrigger
     this.selectedTemplateId = this.initialTemplateId;
     if (this.menuTrigger) {
       this.menuTrigger.closeMenu();
     }
   }
 
+  /**
+   * Handles the menu closed event.
+   * This function resets the selected template ID to the initial template ID when the menu is closed.
+   * It is called when the user clicks outside the menu or selects an option.
+   */
   onMenuClosed() {
-    // Reset selectedTemplateId khi menu đóng mà không lưu (click ra ngoài)
     this.selectedTemplateId = this.initialTemplateId;
   }
 
+  /**
+   * Handles the save and close action of the print button.
+   * This function updates the selected template in the service and closes the menu.
+   * It also shows a notification to inform the user about the successful save.
+   * todo: Switch to using active api
+   * @private
+   */
   onSaveAndClosePrintButton() {
-    // Lưu selection và đóng menu
     this.invoiceTemplateService.updateTemplate(this.selectedTemplateId, {
       id: this.selectedTemplateId,
-      status: 'active' // Đặt mẫu này là mặc định
+      status: 'active'
     }).subscribe({
       next: (response) => {
         if (response.success) {
@@ -277,7 +310,7 @@ export class AppHeaderCartComponent implements OnInit {
         this.notifierSer.notify('error', 'Không thể lưu mẫu in. Vui lòng thử lại.');
       }
     })
-    // Đóng menu sau khi save
+
     if (this.menuTrigger) {
       this.menuTrigger.closeMenu();
     }

@@ -1,13 +1,9 @@
 <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" class="main-content-gap">
-    <!-- Editor section sử dụng SharedEditorComponent -->
   <div class="editor-section" fxFlex="50" fxFlex.xs="100" fxFlex.sm="100">
-      <div class="editor-header" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxLayoutAlign="space-between center" fxLayoutAlign.xs="center center">
-        <div class="template-select" fxFlex.xs="100">
-
-          <!-- Chỉ hiển thị khi đã tải xong và có templates -->
+      <div class="editor-header" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutAlign.xs="center center">
+        <div class="template-select" >
           <ng-container *ngIf="!isLoading">
             <span *ngIf="invoiceTemplates.length > 0">Mẫu in</span>
-            <!-- Show select dropdown only if templates exist -->
             <mat-form-field *ngIf="invoiceTemplates.length > 0" appearance="fill" style="width: 200px; display: inline-block;">
               <mat-select [(value)]="selectedTemplateId" (selectionChange)="onChangeInvoiceTemplate($event)">
                 <mat-option *ngFor="let template of invoiceTemplates" [value]="template.id">
@@ -15,13 +11,12 @@
                 </mat-option>
               </mat-select>
             </mat-form-field>
-            <!-- Show message if no templates and đã tải xong -->
             <span *ngIf="invoiceTemplates.length === 0" class="no-templates-text">
               Không tìm thấy mẫu in nào
             </span>
           </ng-container>
         </div>
-        <div fxFlex.xs="100" fxLayoutAlign.xs="center center">
+        <div  fxLayoutAlign.xs="center center">
           <button *ngIf="currentTemplate" mat-icon-button (click)="onEdit()" matTooltip="Chỉnh sửa mẫu in">
             <mat-icon>edit</mat-icon>
           </button>
@@ -31,13 +26,11 @@
         </div>
       </div>
 
-      <!-- Hiển thị loader trong phần nội dung -->
       <div *ngIf="isLoading" class="loading-container">
         <mat-spinner diameter="40"></mat-spinner>
         <p>Đang tải dữ liệu...</p>
       </div>
 
-      <!-- Empty state UI when no templates và đã tải xong -->
       <div *ngIf="!isLoading && invoiceTemplates.length === 0" class="empty-state-container">
         <div class="empty-state-content">
           <mat-icon class="empty-state-icon">description</mat-icon>
@@ -48,16 +41,13 @@
           </button>
         </div>
       </div>
-
-      <!-- Show editor only if templates exist -->
-      <app-shared-editor *ngIf="currentTemplate" [config]="editorConfig" [templateData]="templateData">
+     <app-shared-editor *ngIf="currentTemplate" [config]="editorConfig" [templateData]="templateData">
       </app-shared-editor>
     </div>
 
     <div class="preview-section" fxFlex="50" fxFlex.xs="100" fxFlex.sm="100">
-      <p fxLayoutAlign="end center">Xem trước mẫu in</p>
+      <p fxLayoutAlign="end center" style="height: 20px;">Xem trước mẫu in</p>
       <div id="preview-container" class="desktop-view">
-        <!-- Show message if no templates -->
         <div *ngIf="invoiceTemplates.length === 0" class="empty-state-preview">
           <p>Chưa có mẫu in nào để xem trước</p>
         </div>

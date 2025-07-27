@@ -34,12 +34,6 @@
   background: white;
   border-radius: 4px;
   min-height: 300px;
-  /* Simulate K80 thermal printer width */
-  /*width: 80mm;*/
-  /*max-width: 100%;*/
-  /*margin: 20px auto;*/
-  /*border: 1px solid #ccc;*/
-  /*box-shadow: 0 0 5px rgba(0,0,0,0.1);*/
 }
 
 /* Hide CKEditor toolbar */
@@ -103,9 +97,4 @@
   margin-top: 0;
   margin-bottom: 8px;
   font-weight: 500;
-}
-
-.desktop-view {
-  width: 100%;
-  height: 100%;
 }
