@@ -64,7 +64,6 @@ export class EditInvoiceDialogComponent implements OnInit, AfterViewInit {
   }
   ngAfterViewInit(): void {
     // Monitor when editor becomes ready
-    debugger;
     if (this.sharedEditor) {
       // Check if editor is already loaded
       if (this.sharedEditor.editorLoaded && this.sharedEditor.editorInstance) {
@@ -115,7 +114,6 @@ export class EditInvoiceDialogComponent implements OnInit, AfterViewInit {
     this.getSuggestTemplates().subscribe(
 
       (templates: SuggestTemplate[]) => {
-        debugger;
         this.suggestInvoiceTemplates = templates;
         // Set default empty value after loading
         if(!this.template.body){
@@ -212,7 +210,6 @@ export class EditInvoiceDialogComponent implements OnInit, AfterViewInit {
    * @param id
    */
   onChangeInvoiceTemplate(id: string): void {
-    debugger;
     const selectedTemplate = this.suggestInvoiceTemplates.find(
       template => template.id === id
     );
@@ -231,8 +228,6 @@ export class EditInvoiceDialogComponent implements OnInit, AfterViewInit {
         // Only take the first emission of ready=true
         take(1)
       ).subscribe(() => {
-        debugger;
-        console.log('Editor ready, now setting content');
         this.sharedEditor.setContent(content);
       });
     };

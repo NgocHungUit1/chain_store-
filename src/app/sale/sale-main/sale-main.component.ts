@@ -2407,7 +2407,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
     this.optionStoreService.getValue('print_type').subscribe(res => {
       const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
       const content = this.previewService.fillTemplate(this.selectedTemplate.body, dataToPrint);
-
       const styleMatch = content.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
       const extractedStyle = styleMatch?.[1] || '';
       const contentWithoutStyle = content.replace(styleMatch?.[0] || '', '');
@@ -2445,7 +2444,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
           </body>
         </html>
       `;
-      WindowPrt.document.open();
       WindowPrt.document.write(printHtml);
       WindowPrt.document.close();
       WindowPrt.focus();
