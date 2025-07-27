@@ -1,11 +1,11 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { EditInvoiceDialogComponent } from '../edit-invoice-dialog/edit-invoice-dialog.component';
-import { PreviewService, InvoiceData } from '../../shared/preview.service';
+import { PreviewService, InvoiceData } from '../../shared/invoice-handle/preview.service';
 import { SharedEditorComponent, EditorConfig } from '../../shared/shared-editor/shared-editor.component';
-import { InvoiceTemplateService, InvoiceTemplate } from '../../shared/invoice-template.service';
+import { InvoiceTemplateService, InvoiceTemplate } from '../../shared/invoice-handle/invoice-template.service';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 
 
 @Component({
@@ -22,16 +22,18 @@ export class SettingPrintEditorComponent implements OnInit, OnDestroy {
   invoiceTemplates: InvoiceTemplate[] = [];
   selectedTemplateId = '1';
   currentTemplate: InvoiceTemplate | null = null;
+  isLoading = true; // Trạng thái loading mặc định là true
 
 
   constructor(
     private dialog: MatDialog,
-    private invoiceTemplateService: InvoiceTemplateService // api call
+    private invoiceTemplateService: InvoiceTemplateService, // api call
+    private previewService: PreviewService // for previewing templates
   ) {
     // Configure editor for main view (no toolbar)
     this.editorConfig = {
       elementId: 'main',
-      height: 400,
+      height: 700,
       readOnly: true, // Read-only in main view
       showToolbar: false,
       initialContent: '' // Will be loaded from service
@@ -40,16 +42,21 @@ export class SettingPrintEditorComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Load templates from API first
-    this.invoiceTemplateService.getAllTemplates().subscribe({
+    debugger;
+    this.invoiceTemplateService.getAllTemplates().pipe(
+      finalize(() => this.isLoading = false) // Đặt isLoading là false khi hoàn thành
+    ).subscribe({
       next: (response) => {
+        debugger;
         if (response.success) {
           this.invoiceTemplates = response.data;
+          debugger;
           // Set default selected template if available
           if (this.invoiceTemplates.length > 0) {
-            this.selectedTemplateId = this.invoiceTemplates[0].id;
-            this.invoiceTemplateService.setSelectedTemplate(this.selectedTemplateId);
             this.currentTemplate = this.invoiceTemplates[0];
-            this.updateEditorContent(this.currentTemplate.content);
+            this.selectedTemplateId = this.currentTemplate.id ?? this.currentTemplate.name; // Set initial selected template ID
+            this.updateEditorContent(this.currentTemplate.body);
+            this.previewService.updateTemplateContent('main', this.currentTemplate.body);
           }
         }
       },
@@ -59,10 +66,6 @@ export class SettingPrintEditorComponent implements OnInit, OnDestroy {
     });
   }
 
-
-
-
-  //  fixing
   private updateEditorContent(content: string): void {
     // Update editor config with new content
     this.editorConfig = {
@@ -86,7 +89,7 @@ export class SettingPrintEditorComponent implements OnInit, OnDestroy {
     // Update selected template ID
     this.selectedTemplateId = templateId;
     this.currentTemplate = this.invoiceTemplates.find(template => template.id === templateId);
-    this.updateEditorContent(this.currentTemplate?.content || '');
+    this.updateEditorContent(this.currentTemplate?.body || '');
   }
 
 
@@ -99,9 +102,10 @@ export class SettingPrintEditorComponent implements OnInit, OnDestroy {
   onEdit(): void {
     const editInvoiceRef = this.dialog.open(EditInvoiceDialogComponent, {
       width: '90%',
+      height: '85%',
       data: {
         templateId: this.selectedTemplateId,
-        editorContent: this.currentTemplate?.content || '',
+        editorContent: this.currentTemplate?.body || '',
         templateData: this.templateData,
         template: this.currentTemplate
       }
@@ -115,8 +119,8 @@ export class SettingPrintEditorComponent implements OnInit, OnDestroy {
             this.saveTemplate({
               id: this.selectedTemplateId,
               name: result.template.name || 'Mẫu in mới',
-              content: result.editorContent,
-              isDefault: this.currentTemplate?.isDefault || false,
+              body: result.editorContent,
+              status: this.currentTemplate?.status || 'active',
             });
             break;
           case 'delete':
@@ -131,8 +135,8 @@ export class SettingPrintEditorComponent implements OnInit, OnDestroy {
   onAdd(): void {
     const newTemplate: Partial<InvoiceTemplate> = {
       name: 'Mẫu in mới',
-      content: this.getDefaultTemplateContent(),
-      isDefault: false,
+      body: this.currentTemplate.body || this.getDefaultTemplateContent(),
+      status: 'active',
     };
 
     // Open dialog to edit new template
@@ -140,19 +144,20 @@ export class SettingPrintEditorComponent implements OnInit, OnDestroy {
       width: '90%',
       data: {
         templateId: null, // null indicates create mode
-        editorContent: newTemplate.content,
+        editorContent: newTemplate.body,
         templateData: this.templateData,
         template: newTemplate
       }
     });
 
     editInvoiceRef.afterClosed().subscribe(result => {
+      debugger;
       if (result && result.action === 'save') {
         // Create new template via API
         this.createTemplate({
           name: result.template.name,
-          content: result.editorContent,
-          isDefault: false,
+          body: result.editorContent,
+          status: 'active',
         });
       }
     });
@@ -161,16 +166,17 @@ export class SettingPrintEditorComponent implements OnInit, OnDestroy {
   private createTemplate(template: Partial<InvoiceTemplate>): void {
     this.invoiceTemplateService.createTemplate(template).subscribe({
       next: (response) => {
+        debugger;
         if (response.success) {
           console.log('Template created successfully');
           this.invoiceTemplateService.getAllTemplates().subscribe(
             (templates) => {
+              debugger;
               this.invoiceTemplates = templates.data;
               // Set newly created template as selected
               this.selectedTemplateId = response.data.id;
-              this.invoiceTemplateService.setSelectedTemplate(this.selectedTemplateId);
               this.currentTemplate = response.data; // Update current template
-              this.updateEditorContent(response.data.content); // Update editor content
+              this.updateEditorContent(response.data.body); // Update editor content
             },
             error => {
               console.error('Error loading templates after creation:', error);
@@ -195,7 +201,7 @@ export class SettingPrintEditorComponent implements OnInit, OnDestroy {
               // If updated template was selected, update current template
               if (this.selectedTemplateId === template.id) {
                 this.currentTemplate = { ...template };
-                this.updateEditorContent(template.content);
+                this.updateEditorContent(template.body);
               }
             },
             error => {
@@ -223,7 +229,6 @@ export class SettingPrintEditorComponent implements OnInit, OnDestroy {
               // If deleted template was selected, reset selection
               if (this.selectedTemplateId === templateId) {
                 this.selectedTemplateId = this.invoiceTemplates.length > 0 ? this.invoiceTemplates[0].id : '';
-                this.invoiceTemplateService.setSelectedTemplate(this.selectedTemplateId);
               }
             },
             error => {

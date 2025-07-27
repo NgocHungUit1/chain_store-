@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { CKEditor4Service, EditorInstance } from '../editor.service';
-import { PreviewService } from '../preview.service';
+import { PreviewService } from '../invoice-handle/preview.service';
 import { Subject } from 'rxjs';
-import { InvoiceData } from '../preview.service';
+import { InvoiceData } from '../invoice-handle/preview.service';
 export interface EditorConfig {
   elementId: string;
   height?: number;
@@ -68,10 +68,12 @@ export class SharedEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       };
 
       // Chỉ override toolbar config khi cần hide toolbar hoàn toàn
-      if (this.config.showToolbar === false) {
+      if (this.config.showToolbar === false ) {
         editorConfig['toolbar'] = [];
         editorConfig['toolbarGroups'] = [];
+
       }
+
       // Nếu showToolbar = true hoặc undefined, để CKEditor sử dụng config từ config.js
 
       this.editorInstance = await this.ckeditor4Service.initEditor(
@@ -87,8 +89,9 @@ export class SharedEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.editorLoaded = true;
 
       // Hide toolbar if needed (chỉ khi showToolbar = false)
-      if (this.config.showToolbar === false) {
-        setTimeout(() => this.hideToolbar(), 100);
+      if (this.config.readOnly) {
+        debugger;
+        setTimeout(() => this.hideToolbar(), 200);
       }
 
       // Setup preview integration
@@ -122,37 +125,24 @@ export class SharedEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.editorInstance ? this.editorInstance.getData() : '';
   }
 
-
-
-
   private hideToolbar(): void {
-    if (this.editorInstance) {
-      try {
-        const editorContainer = this.editorInstance.instance.container.$;
-        if (editorContainer) {
-          const toolbar = editorContainer.querySelector('.cke_top');
-          if (toolbar) {
-            toolbar.style.display = 'none';
-            toolbar.style.height = '0px';
-            toolbar.style.padding = '0px';
-            toolbar.style.margin = '0px';
-            toolbar.style.border = 'none';
-            toolbar.style.background = 'none';
+    // Use setTimeout to ensure the DOM has been updated with CKEditor elements
+    setTimeout(() => {
+      if (this.editorInstance) {
+        try {
+          const editorContainer = document.querySelector('.cke_top');
+          if (editorContainer) {
+            (editorContainer as HTMLElement).style.display = 'none';
+          } else {
+            // If element isn't found, add a style tag to hide it when it appears
+            const styleTag = document.createElement('style');
+            styleTag.innerHTML = '.cke_top { display: none !important; }';
+            document.head.appendChild(styleTag);
           }
-
-          const toolbarElements = editorContainer.querySelectorAll('.cke_toolbar, .cke_toolgroup');
-          toolbarElements.forEach((element: any) => {
-            element.style.display = 'none';
-          });
-
-          const contents = editorContainer.querySelector('.cke_contents');
-          if (contents) {
-            contents.style.borderTop = 'none';
-          }
+        } catch (error) {
+          console.error('Error hiding toolbar:', error);
         }
-      } catch (error) {
-        console.error('Error hiding toolbar:', error);
       }
-    }
+    }, 100); // Short delay to ensure CKEditor has initialized in the DOM
   }
 }

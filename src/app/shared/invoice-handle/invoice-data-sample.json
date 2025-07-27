@@ -1,0 +1,166 @@
+[
+  {
+    "name": "Logo",
+    "sampleValue": "<img src=\"assets/images/Rx20_16x16_op1-1207.png\" alt=\"Logo\" style=\"max-width: 100px; height: auto;\">",
+    "meaning": "Logo cửa hàng"
+  },
+  {
+    "name": "Ten_Cua_Hang",
+    "sampleValue": "Cửa Hàng Thuốc #AAA",
+    "meaning": "Tên của cửa hàng"
+  },
+  {
+    "name": "Dia_Chi_Cua_Hang",
+    "sampleValue": "123 Đường ABC, Phường XYZ, Quận 1, TP.HCM",
+    "meaning": "Địa chỉ cửa hàng"
+  },
+  {
+    "name": "So_Dien_Thoai_Cua_Hang",
+    "sampleValue": "0123456789",
+    "meaning": "Số điện thoại cửa hàng"
+  },
+  {
+    "name": "Tieu_De_In",
+    "sampleValue": "HÓA ĐƠN BÁN HÀNG",
+    "meaning": "Tiêu đề hóa đơn"
+  },
+  {
+    "name": "Ma_Don_Hang",
+    "sampleValue": "HD001234",
+    "meaning": "Mã đơn hàng"
+  },
+  {
+    "name": "Nhan_Vien",
+    "sampleValue": "Nguyễn Văn B",
+    "meaning": "Tên nhân viên"
+  },
+  {
+    "name": "So_Hoa_Don",
+    "sampleValue": "HD-2023-0001",
+    "meaning": "Số hóa đơn"
+  },
+  {
+    "name": "Khach_Hang",
+    "sampleValue": "Nguyễn Văn A",
+    "meaning": "Tên khách hàng"
+  },
+  {
+    "name": "So_Dien_Thoai",
+    "sampleValue": "0123456789",
+    "meaning": "Số điện thoại khách hàng"
+  },
+  {
+    "name": "Dia_Chi_Khach_Hang",
+    "sampleValue": "123 Đường ABC",
+    "meaning": "Địa chỉ khách hàng"
+  },
+  {
+    "name": "Phuong_Xa_Khach_Hang",
+    "sampleValue": "Phường XYZ",
+    "meaning": "Phường/xã khách hàng"
+  },
+  {
+    "name": "Khu_Vuc_Khach_Hang_QH_TP",
+    "sampleValue": "Quận 1, TP.HCM",
+    "meaning": "Quận/Huyện, Tỉnh/TP khách hàng"
+  },
+  {
+    "name": "items",
+    "sampleValue": [
+      {
+        "STT": 1,
+        "Ten_Hang_Hoa": "Paracetamol 500mg",
+        "Don_Gia_Chiet_Khau": "15,000",
+        "So_Luong": "10",
+        "Thanh_Tien": "150,000",
+        "Don_Vi": "Viên",
+        "Don_Gia": "15,000"
+      },
+      {
+        "STT": 2,
+        "Ten_Hang_Hoa": "Vitamin C 1000mg",
+        "Don_Gia_Chiet_Khau": "25,000",
+        "So_Luong": "5",
+        "Thanh_Tien": "125,000",
+        "Don_Vi": "Viên",
+        "Don_Gia": "25,000"
+      },
+      {
+        "STT": 3,
+        "Ten_Hang_Hoa": "Aspirin 100mg",
+        "Don_Gia_Chiet_Khau": "12,000",
+        "So_Luong": "8",
+        "Thanh_Tien": "96,000",
+        "Don_Vi": "Viên",
+        "Don_Gia": "12,000"
+      }
+    ],
+    "meaning": "Danh sách mặt hàng"
+  },
+  {
+    "name": "Tong_Tien_Hang",
+    "sampleValue": "371,000",
+    "meaning": "Tổng tiền hàng"
+  },
+  {
+    "name": "Tong_So_Luong",
+    "sampleValue": "23",
+    "meaning": "Tổng số lượng"
+  },
+  {
+    "name": "Chiet_Khau",
+    "sampleValue": "18,550",
+    "meaning": "Tổng giá trị chiết khấu"
+  },
+  {
+    "name": "Chiet_Khau_Hoa_Don_Phan_Tram",
+    "sampleValue": "5%",
+    "meaning": "Phần trăm chiết khấu"
+  },
+  {
+    "name": "Chiet_Khau_Hoa_Don",
+    "sampleValue": "18,550",
+    "meaning": "Giá trị chiết khấu"
+  },
+  {
+    "name": "Tong_Cong",
+    "sampleValue": "352,450",
+    "meaning": "Tổng cộng cần thanh toán"
+  },
+  {
+    "name": "Khach_Thanh_Toan",
+    "sampleValue": "352,450",
+    "meaning": "Khách thanh toán"
+  },
+  {
+    "name": "Con_Lai",
+    "sampleValue": "0",
+    "meaning": "Số tiền còn lại"
+  },
+  {
+    "name": "Tong_Tien_Hang_Bang_Chu",
+    "sampleValue": "Ba trăm năm mươi hai nghìn bốn trăm năm mươi đồng",
+    "meaning": "Tổng tiền bằng chữ"
+  },
+  {
+    "name": "Ten_San_Pham",
+    "sampleValue": "Paracetamol 500mg",
+    "meaning": "Tên sản phẩm"
+  },
+  {
+    "name": "So_Luong",
+    "sampleValue": "10",
+    "meaning": "Số lượng sản phẩm"
+  },
+  {
+    "name": "Don_Gia",
+    "sampleValue": "15,000",
+    "meaning": "Đơn giá sản phẩm"
+  },
+  {
+    "name": "Thanh_Tien",
+    "sampleValue": "150,000",
+    "meaning": "Thành tiền sản phẩm"
+  }
+]
+

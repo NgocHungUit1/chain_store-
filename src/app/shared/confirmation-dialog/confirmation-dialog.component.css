@@ -1,0 +1,8 @@
+.mat-dialog-content {
+  min-height: 60px;
+  padding-top: 10px;
+}
+
+mat-dialog-actions {
+  padding-bottom: 16px;
+}

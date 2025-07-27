@@ -13,6 +13,11 @@ import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { SlicePipe } from './slice.pipe';
 import { SharedEditorComponent } from './shared-editor/shared-editor.component';
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [
@@ -25,6 +30,7 @@ import { SharedEditorComponent } from './shared-editor/shared-editor.component';
     SlicePipe,
     // shareeditor
     SharedEditorComponent,
+    ConfirmationDialogComponent
   ],
   exports: [
     AccordionAnchorDirective,
@@ -35,11 +41,19 @@ import { SharedEditorComponent } from './shared-editor/shared-editor.component';
     PopoverComponent,
     // share
     SharedEditorComponent,
+    ConfirmationDialogComponent
   ],
   imports: [
     MatCardModule,
     CommonModule,
+    MatDialogModule,
+    MatIconModule,
+    FlexLayoutModule,
+    MatButtonModule,
   ],
   providers: [MenuItems],
+  entryComponents: [
+    ConfirmationDialogComponent
+  ]
 })
 export class SharedModule {}

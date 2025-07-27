@@ -11,7 +11,7 @@ import { OptionStore } from '../../../common/option-store.model';
 import { OptionStoreService } from '../../../common/option-store.service';
 import { SharedDataService } from '../../../shared/shared-data.service';
 import { MatMenuTrigger } from '@angular/material/menu';
-import { InvoiceTemplateService, InvoiceTemplate, TemplateResponse } from '../../../shared/invoice-template.service';
+import { InvoiceTemplateService, InvoiceTemplate, TemplateResponse } from '../../../shared/invoice-handle/invoice-template.service';
 
 @Component({
   selector: 'app-header-cart',
@@ -193,15 +193,36 @@ export class AppHeaderCartComponent implements OnInit {
     event.stopPropagation();
   }
 
+  // Convert numeric index to letter prefix (0 -> A, 1 -> B, etc.)
+  getLetterPrefix(index: number): string {
+    return String.fromCharCode(65 + index); // 65 is ASCII for 'A'
+  }
+
+  // Get the badge letter for the currently selected template
+  getBadgeLetterForSelectedTemplate(): string {
+    if (!this.selectedTemplateId || this.invoiceTemplates.length === 0) {
+      return '';
+    }
+
+    const selectedIndex = this.invoiceTemplates.findIndex(template => template.id === this.selectedTemplateId);
+    if (selectedIndex === -1) {
+      return '';
+    }
+
+    return this.getLetterPrefix(selectedIndex);
+  }
+
   // Load templates from API
   private loadTemplates(): void {
     this.invoiceTemplateService.getAllTemplates().subscribe(
       (templates: TemplateResponse) => {
         this.invoiceTemplates = templates.data;
         // Set the selected template from localStorage if available
-        this.initialTemplateId = this.invoiceTemplates.find((template)=> template.isDefault)?.id || this.invoiceTemplates[0]?.id || '';
+        const template = this.invoiceTemplates.find((template)=> template.status==='default') || this.invoiceTemplates[0]
+        this.initialTemplateId = template.id;
         this.selectedTemplateId = this.initialTemplateId;
-        debugger;
+        localStorage.setItem('selectedTemplate', JSON.stringify(template));
+
       },
       error => {
         console.error('Error loading invoice templates:', error);
@@ -241,7 +262,7 @@ export class AppHeaderCartComponent implements OnInit {
     // Lưu selection và đóng menu
     this.invoiceTemplateService.updateTemplate(this.selectedTemplateId, {
       id: this.selectedTemplateId,
-      isDefault: true // Đặt mẫu này là mặc định
+      status: 'active' // Đặt mẫu này là mặc định
     }).subscribe({
       next: (response) => {
         if (response.success) {

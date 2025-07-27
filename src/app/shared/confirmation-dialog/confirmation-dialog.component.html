@@ -1,0 +1,19 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+
+<mat-dialog-content style="overflow: visible">
+  <div fxLayout="column" fxLayoutGap="20px" style="line-height: 20px">
+    {{ data.message }}
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" fxLayoutGap="8px">
+  <button mat-raised-button
+          (click)="onCancel()">
+    <mat-icon>cancel</mat-icon> {{ data.cancelButtonText }}
+  </button>
+  <button mat-raised-button
+          color="primary"
+          (click)="onConfirm()">
+    <mat-icon>check</mat-icon> {{ data.confirmButtonText }}
+  </button>
+</mat-dialog-actions>

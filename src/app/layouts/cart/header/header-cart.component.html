@@ -106,9 +106,11 @@
 <!-- Profile - style you can find in header.scss -->
 <!-- ============================================================== -->
 <button
-  class="ml-xs overflow-visible"
+  class="ml-xs overflow-visible print-button"
   mat-icon-button
   [matMenuTriggerFor]="printSetting"
+  [matBadge]="getBadgeLetterForSelectedTemplate()"
+  matBadgePosition="after"
   [ngStyle]="{ 'opacity': autoPrint ? '1' : '0.5' }"
   style="margin-right: 10px"
   matTooltip="In hóa đơn">
@@ -132,17 +134,13 @@
       (click)="onToggleClick($event)">
       In số lô
     </mat-slide-toggle>
-  </div>
-  <div>
-    <div class="template-selection-section">
+    <div>
       <div class="template-header">
-        <mat-icon>description</mat-icon>
-        <span>Tùy chọn mẫu in</span>
+        <span>Chọn mẫu in</span>
       </div>
-
       <div class="template-list">
         <button
-          *ngFor="let template of invoiceTemplates"
+          *ngFor="let template of invoiceTemplates; let i = index"
           mat-button
           class="template-button"
           [class.selected]="selectedTemplateId === template.id"
@@ -150,32 +148,31 @@
 
           <div class="template-content">
             <div class="template-main">
-              <span class="template-name">{{template.name}}</span>
+              <span class="template-name">{{ getLetterPrefix(i) }}. {{template.name}}</span>
             </div>
           </div>
         </button>
       </div>
-
-      <mat-divider></mat-divider>
-      <div class="template-actions">
-        <button
-          mat-button
-          color="accent"
-          (click)="onClosePrintButton()"
-          class="action-button">
-          <mat-icon>close</mat-icon>
-          Bỏ qua
-        </button>
-        <button
-          mat-button
-          color="primary"
-          (click)="onSaveAndClosePrintButton()"
-          class="action-button">
-          <mat-icon>check</mat-icon>
-          Xong
-        </button>
-      </div>
-
+    </div>
+  </div>
+  <div class="template-selection-section">
+    <div class="template-divider" style="border-top: 1px dashed #ccc; margin-bottom: 16px;"></div>
+    <div class="template-actions">
+      <button
+        mat-stroked-button
+        (click)="onClosePrintButton()"
+        tabindex="-1">
+<!--          <mat-icon>cancel</mat-icon>-->
+        Bỏ qua
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="onSaveAndClosePrintButton()"
+        tabindex="4">
+<!--          <mat-icon>save</mat-icon>-->
+        Xong
+      </button>
     </div>
   </div>
 </mat-menu>

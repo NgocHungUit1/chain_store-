@@ -1,19 +1,27 @@
 import { Injectable } from '@angular/core';
-import { EditorInstance } from './editor.service';
+import { EditorInstance } from '../editor.service';
+const sampleFields = require('./invoice-data-sample.json');
 
 export interface InvoiceData {
+  Ten_Cua_Hang: string;
+  Dia_Chi_Cua_Hang: string;
+  So_Dien_Thoai_Cua_Hang: string;
+  Logo: string;
   Tieu_De_In: string;
   Ma_Don_Hang: string;
+  So_Hoa_Don?: string; // Optional field for invoice number
+
   Ngay: string;
   Thang: string;
   Nam: string;
-
+  Ngay_Ban: string; // Optional field for sale date
+  Gio_Ban?: string; // Optional field for sale time
   Khach_Hang: string;
+  Nhan_Vien: string;
   So_Dien_Thoai: string;
   Dia_Chi_Khach_Hang: string;
   Phuong_Xa_Khach_Hang: string;
   Khu_Vuc_Khach_Hang_QH_TP: string;
-
   items: Array<{
     Ten_Hang_Hoa: string;
     Don_Gia_Chiet_Khau: string;
@@ -28,7 +36,12 @@ export interface InvoiceData {
   Chiet_Khau_Hoa_Don_Phan_Tram: string;
   Chiet_Khau_Hoa_Don: string;
   Tong_Cong: string;
-  Tong_Cong_Bang_Chu: string;
+  Khach_Thanh_Toan: string;
+  Con_Lai: string;
+  Tong_Tien_Hang_Bang_Chu: string;
+  Tong_So_Luong: string;
+  Chiet_Khau: string;
+
 }
 
 @Injectable({
@@ -62,47 +75,19 @@ export class PreviewService {
 
   getSampleData(): InvoiceData {
     const today = new Date();
-    return {
-      Tieu_De_In: 'HÓA ĐƠN BÁN HÀNG',
-      Ma_Don_Hang: 'HD001234',
-      Ngay: today.getDate().toString().padStart(2, '0'),
-      Thang: (today.getMonth() + 1).toString().padStart(2, '0'),
-      Nam: today.getFullYear().toString(),
+    // Build data object from JSON fields
+    const data: any = {};
+    (sampleFields as Array<{name: string, sampleValue: any}>).forEach(field => {
+      data[field.name] = field.sampleValue;
+    });
+    // Override date fields dynamically
+    data.Ngay = today.getDate().toString().padStart(2, '0');
+    data.Thang = (today.getMonth() + 1).toString().padStart(2, '0');
+    data.Nam = today.getFullYear().toString();
+    data.Ngay_Ban = today.toLocaleDateString('vi-VN', { year: 'numeric', month: '2-digit', day: '2-digit' });
+    data.Gio_Ban = today.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
 
-      Khach_Hang: 'Nguyễn Văn A',
-      So_Dien_Thoai: '0123456789',
-      Dia_Chi_Khach_Hang: '123 Đường ABC',
-      Phuong_Xa_Khach_Hang: 'Phường XYZ',
-      Khu_Vuc_Khach_Hang_QH_TP: 'Quận 1, TP.HCM',
-
-      // Array of 3 items for table rows using Vietnamese field names
-      items: [
-        {
-          Ten_Hang_Hoa: 'Paracetamol 500mg',
-          Don_Gia_Chiet_Khau: '15,000',
-          So_Luong: '10',
-          Thanh_Tien: '150,000',
-        },
-        {
-          Ten_Hang_Hoa: 'Vitamin C 1000mg',
-          Don_Gia_Chiet_Khau: '25,000',
-          So_Luong: '5',
-          Thanh_Tien: '125,000',
-        },
-        {
-          Ten_Hang_Hoa: 'Aspirin 100mg',
-          Don_Gia_Chiet_Khau: '12,000',
-          So_Luong: '8',
-          Thanh_Tien: '96,000',
-        }
-      ],
-
-      Tong_Tien_Hang: '371,000',
-      Chiet_Khau_Hoa_Don_Phan_Tram: '5%',
-      Chiet_Khau_Hoa_Don: '18,550',
-      Tong_Cong: '352,450',
-      Tong_Cong_Bang_Chu: 'Ba trăm năm mươi hai nghìn bốn trăm năm mươi đồng'
-    };
+    return data as InvoiceData;
   }
 
   fillTemplate(template: string, data: Partial<InvoiceData>): string {
@@ -159,6 +144,7 @@ export class PreviewService {
         'So_Luong',
         'Don_Gia',
         'Thanh_Tien',
+        'STT',
       ]
       // Generate rows for each item
       if (resultRows.length > 0 && data.items && Array.isArray(data.items)) {

@@ -44,8 +44,8 @@ import { BankAccountService } from '../../bank-account/bank-account.service';
 import { BankAccountFilter } from '../../bank-account/bank-account.model';
 import { SearchProductDialogComponent } from '../../common/search-product-dialog/search-product-dialog.component';
 import { ColumnVisibilityMap, SaleColumnVisibilityService } from '../../shared/sale-column-visibility.service';
-import { InvoiceData, PreviewService } from '../../shared/preview.service';
-import { InvoiceTemplate, InvoiceTemplateService } from '../../shared/invoice-template.service';
+import { InvoiceData, PreviewService } from '../../shared/invoice-handle/preview.service';
+import { InvoiceTemplate, InvoiceTemplateService } from '../../shared/invoice-handle/invoice-template.service';
 export const MY_FORMATS = {
   parse: {
     dateInput: 'DD/MM/YYYY',
@@ -2351,110 +2351,106 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
   async printPreInvoiceHandler() {
     const preInvoiceData = await this.getPreInvoiceData();
-    this.printPreInvoiceV2(preInvoiceData);
+    //this.printPreInvoiceV2(preInvoiceData);
 
     // print with template
-    //this.printInvoiceTemplate(preInvoiceData);
+    this.printInvoiceTemplate(preInvoiceData);
   }
   printInvoiceTemplate(preInvoiceData: any) {
     // This function can be used to print the invoice using a specific template
     // You can implement the logic here based on your requirements
-
     console.log('Printing invoice with template:', preInvoiceData);
+    debugger;
     const dataToPrint: Partial<InvoiceData> = {
+      Logo: this.logo? `<img src="${this.logo}" style="max-width: 120px;">` :
+    `<img src="assets/images/Rx20_16x16_op1-1207.png" style="max-width: 120px;">`,
+      Ten_Cua_Hang: preInvoiceData.store?.name || 'Chi nhánh trung tâm',
+      Dia_Chi_Cua_Hang: preInvoiceData.store?.address || 'Địa chỉ cửa hàng',
+      So_Dien_Thoai_Cua_Hang: preInvoiceData.store?.phone || 'Số điện thoại cửa hàng',
       Tieu_De_In: 'HÓA ĐƠN BÁN HÀNG',
+      So_Hoa_Don: preInvoiceData.invoice_no || 'Chưa lưu',
       Ma_Don_Hang: preInvoiceData.invoice_no || 'Chưa lưu',
       Ngay: new Date(preInvoiceData.created_at).getDate().toString().padStart(2, '0'),
       Thang: (new Date(preInvoiceData.created_at).getMonth() + 1).toString().padStart(2, '0'),
       Nam: new Date(preInvoiceData.created_at).getFullYear().toString(),
-
+      Ngay_Ban: new Date(preInvoiceData.created_at).toLocaleDateString('vi-VN'),
+      Gio_Ban: new Date(preInvoiceData.created_at).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+      Nhan_Vien: this.user?.username || 'Admin',
       Khach_Hang: preInvoiceData.customer?.name || 'Khách lẻ',
       So_Dien_Thoai: preInvoiceData.customer?.phone || '',
-      Dia_Chi_Khach_Hang: '', // Not available in sample data
+      Dia_Chi_Khach_Hang: preInvoiceData.customer.address || '',
       Phuong_Xa_Khach_Hang: '', // Not available in sample data
       Khu_Vuc_Khach_Hang_QH_TP: '', // Not available in sample data
 
-      items: preInvoiceData.detail?.map(item => ({
+      items: preInvoiceData.detail?.map((item, index) => ({
+        STT: index+1,
         Ten_Hang_Hoa: item.product?.product_name || '',
         Don_Gia_Chiet_Khau: numeral(item.price || 0).format('0,0'),
         So_Luong: (item.amount || 0).toString(),
-        Thanh_Tien: numeral(item.total || 0).format('0,0')
+        Thanh_Tien: numeral(item.total || 0).format('0,0'),
+        Don_Vi: item.base_unit ,
+        Don_Gia: numeral(item.price || 0).format('0,0'),
       })) || [],
 
       Tong_Tien_Hang: numeral(preInvoiceData.total_price || 0).format('0,0'),
       Chiet_Khau_Hoa_Don_Phan_Tram: '', // Percentage not available in sample data
       Chiet_Khau_Hoa_Don: numeral(preInvoiceData.discount || 0).format('0,0'),
       Tong_Cong: numeral(preInvoiceData.sum_payment || 0).format('0,0'),
-      Tong_Cong_Bang_Chu: this.numberToVietnameseText(preInvoiceData.sum_payment || 0)
+      Tong_Tien_Hang_Bang_Chu: this.numberToVietnameseText(preInvoiceData.sum_payment || 0),
+      Tong_So_Luong: preInvoiceData.detail?.reduce((acc, item) => acc + (item.amount || 0), 0).toString(),
+      Chiet_Khau: numeral(preInvoiceData.discount || 0).format('0,0'),
+      Khach_Thanh_Toan: numeral(preInvoiceData.sum_payment || 0).format('0,0'),
+      Con_Lai: numeral(preInvoiceData.debt || 0).format('0,0'),
     }
-    let printContent = this.previewService.fillTemplate(this.selectedTemplate.content, dataToPrint)
-    console.log('Completed template:', printContent)
+
     this.optionStoreService.getValue('print_type').subscribe(res => {
-      let _font_size = '11px';
-      let _font_size_store = '13px';
-      let _margin = '4px';
-      let _padding = '3px';
-      let _solo = 'text-align:left;';
-      if (res.value === 'K58') {
-        _font_size = '11px';
-        _margin = '4px';
-        _padding = '3px';
-        _solo = 'text-align:left;';
-      } else { // A4
-        _font_size = '14px';
-        _font_size_store = '16px';
-        _margin = '6px';
-        _padding = '6px';
-        _solo = 'text-align:left; min-width: 100px;';
-      }
+      debugger;
       const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+      const content = this.previewService.fillTemplate(this.selectedTemplate.body, dataToPrint);
 
-      // Footer with QR code
-      if (this.form.get('selectedMethod').value == 'Chuyển khoản') {
-        this.getQrCode(this.selectedBankAccount).subscribe(qrCode => {
-          printContent += `<br>
-              <p class="center"><img src="${qrCode}" style="width: 80px; height: 80px;" onload="onQrLoaded()"></p>`
-
-          printContent += `${this.description && this.description.length > 0
-            ? `<p style="text-align:center; font-style: italic;">${this.description}</p>`
-            : `<p style="text-align:center; font-style: italic;">Cám ơn và hẹn gặp lại.</p>`}
-              <p class="center" style="font-size: 9px;">POWERED BY rx20.vn</p>
-              <script>
-                function onQrLoaded() {
-                  window.print();
+      const styleMatch = content.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+      const extractedStyle = styleMatch?.[1] || ''; // Lấy phần CSS bên trong <style>
+      const contentWithoutStyle = content.replace(styleMatch?.[0] || '', ''); // Xóa thẻ <style> khỏi body
+      debugger;
+      const printHtml = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>In hóa đơn</title>
+            <style>
+              @media print {
+               @page {
+                  margin: 0;
+                  size: auto;
                 }
-                window.onafterprint = function() {
+                ${extractedStyle}
+                table td {
+                  word-break: normal;
+                  overflow-wrap: break-word;
+                  white-space: normal;
+                }
+              }
+            </style>
+          </head>
+          <body>
+            ${contentWithoutStyle}
+            <script>
+              window.onload = function () {
+                window.print();
+                window.onafterprint = function () {
                   window.close();
-                }
-              </script>
-              </section>
-            `;
+                };
+              };
+            </script>
+          </body>
+        </html>
+      `;
+      debugger;
+      WindowPrt.document.open();
+      WindowPrt.document.write(printHtml);
+      WindowPrt.document.close();
+      WindowPrt.focus();
 
-          WindowPrt.document.write(printContent);
-          WindowPrt.document.close();
-          WindowPrt.focus();
-          // WindowPrt.close(); // lỗi tự đôngs
-        })
-      } else {
-        printContent += `
-          <br>
-          ${this.description && this.description.length > 0
-          ? `<p style="text-align:center; font-style: italic;">${this.description}</p>`
-          : `<p style="text-align:center; font-style: italic;">Cám ơn và hẹn gặp lại.</p>`}
-          <p class="center" style="font-size: 9px;">POWERED BY rx20.vn</p>
-          <script>
-            window.print();
-            window.onafterprint = function() {
-              window.close();
-            }
-          </script>
-          </section>
-          `;
-
-        WindowPrt.document.write(printContent);
-        WindowPrt.document.close();
-        WindowPrt.focus();
-      }
     });
   }
 

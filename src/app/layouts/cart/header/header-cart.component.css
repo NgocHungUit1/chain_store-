@@ -64,11 +64,11 @@
 }
 
 ::ng-deep .mymegamenu{
-  width: 300px;
+  width: 250px;
 }
 /* Template Selection Styles */
 .template-selection-section {
-  padding: 8px 0;
+  padding-bottom: 8px;
 }
 
 .template-header {
@@ -84,11 +84,15 @@
 .template-list {
   max-height: 300px;
   overflow-y: auto;
-  margin-left: 20px;
+  margin-left: 10px;
 }
-
+.template-actions{
+  display: flex;
+  margin-left: 20px;
+  gap: 12px;
+}
 .template-button {
-  width: 250px;
+  width: 200px;
   transition: all 0.3s ease;
   border: 1px solid #e0e0e0;
   border-radius: 50px;
@@ -112,10 +116,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 4px;
 }
-
-
 
 
 .template-name {
@@ -134,3 +135,32 @@
 .manage-templates-btn mat-icon {
   margin-right: 8px;
 }
+
+::ng-deep .print-button > .mat-badge-content {
+  right: 0px !important;
+  top: 3px !important;
+  width: 15px !important;
+  height: 15px !important;
+  line-height: 10px !important;
+
+  background-color: whitesmoke;
+  color: #009688 ; /* Sử dụng CSS variable với fallback */
+  border: 2px solid white;
+  box-shadow: 0 0 0 2px #009688;
+  z-index: 1;
+}
+
+/*::ng-deep .print-button > .mat-badge-content::before {*/
+/*  content: '';*/
+/*  position: absolute;*/
+/*  top: -4px;*/
+/*  left: -4px;*/
+/*  right: -4px;*/
+/*  bottom: -4px;*/
+/*  background-color: transparent;*/
+/*  border-radius: 50%;*/
+/*  border: 1px solid rgba(12, 155, 97, 0.2);*/
+/*  z-index: -1;*/
+/*}*/
+
+

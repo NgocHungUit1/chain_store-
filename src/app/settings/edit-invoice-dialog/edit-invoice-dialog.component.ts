@@ -1,9 +1,12 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SharedEditorComponent, EditorConfig } from '../../shared/shared-editor/shared-editor.component';
 import { Observable, of, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import {InvoiceData} from '../../shared/preview.service';
+import {InvoiceData} from '../../shared/invoice-handle/preview.service';
+import { ConfirmationDialogComponent } from '../../shared/confirmation-dialog/confirmation-dialog.component';
+const sampleFields = require( '../../shared/invoice-handle/invoice-data-sample.json');
+const invoiceTemplates = require('../../shared/invoice-handle/invoice-templates.json');
 
 interface SuggestTemplate {
   id: string;
@@ -31,9 +34,14 @@ export class EditInvoiceDialogComponent implements OnInit {
   isEditMode: boolean = false; // Flag to check if in edit mode
   header: string = 'Chỉnh sửa mẫu in hóa đơn';
   templateId: string = ''; // Template ID for edit mode
+  showVariablesInfo: boolean = false;
+  variableFields: { name: string; meaning: string; }[] = [];
+  variableRows: Array<{ first: {name: string; meaning: string}, second?: {name: string; meaning: string} }> = [];
+
   constructor(
     public dialogRef: MatDialogRef<EditInvoiceDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialog: MatDialog // Inject MatDialog
   ) {
     this.templateData = data['templateData'] || {};
     this.templateName = data['template']?.name || 'New Template'; // Initialize templateName
@@ -55,7 +63,18 @@ export class EditInvoiceDialogComponent implements OnInit {
   ngOnInit(): void {
     // Load suggest templates
     this.loadSuggestTemplates();
+    // Load variable info from JSON
+    this.variableFields = (sampleFields as Array<{name:string, meaning:string}>)
+      .filter(f => f.name !== 'items')
+      .map(f => ({ name: f.name, meaning: f.meaning }));
 
+    // Build rows of two columns per row for template
+    this.variableRows = [];
+    for (let i = 0; i < this.variableFields.length; i += 2) {
+      const first = this.variableFields[i];
+      const second = this.variableFields[i+1];
+      this.variableRows.push({ first, second });
+    }
   }
 
   // Load suggest templates from API (with fake data for now)
@@ -86,220 +105,7 @@ export class EditInvoiceDialogComponent implements OnInit {
 
   // Fake data for suggest templates (removed empty option)
   getFakeSuggestTemplates(): SuggestTemplate[] {
-    return [
-      {
-        id: 'template-1',
-        name: 'Mẫu hóa đơn cơ bản',
-        content: `
-          <div id="kv-cke-temp>
-<div id="kv-cke-temp">
-<style type="text/css">.printBox {
-            font-family: Arial, sans-serif;
-            font-size: 11px;
-        }
-
-        table {
-            page-break-inside: auto;
-            border-collapse: collapse;
-        }
-
-            table td {
-                word-wrap: break-word;
-            }
-
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto
-        }
-
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-</style>
-<div class="printBox">
-<table style="width:100%">
-<tbody>
-<tr>
-<td style="text-align:center">
-<table style="width:100%">
-<tbody>
-<tr>
-<td style="text-align:center"><span style="font-size:10px"><span style="font-family:Arial,Helvetica,sans-serif">{Logo_Cua_Hang}</span></span></td>
-</tr>
-<tr>
-<td style="text-align:center"><span style="font-size:16px"><span style="font-family:Arial,Helvetica,sans-serif"><strong>{Ten_Cua_Hang}</strong></span></span></td>
-</tr>
-<tr>
-<td style="text-align:center"><span style="font-size:10px"><span style="font-family:Arial,Helvetica,sans-serif">Địa chỉ: {Dia_Chi_Chi_Nhanh} - {Phuong_Xa_Chi_Nhanh} - {Khu_Vuc_Chi_Nhanh_QH_TP}</span></span></td>
-</tr>
-<tr>
-<td style="text-align:center"><span style="font-size:10px"><span style="font-family:Arial,Helvetica,sans-serif">Điện thoại: {Dien_Thoai_Chi_Nhanh}</span></span></td>
-</tr>
-</tbody>
-</table>
-</td>
-</tr>
-</tbody>
-</table>
-
-<div style="padding:10px 0 0; text-align:center"><span style="font-size:16px"><span style="font-family:Arial,Helvetica,sans-serif"><strong>{Tieu_De_In HÓA ĐƠN BÁN LẺ|HÓA ĐƠN TẠM TÍNH}</strong></span></span></div>
-
-<table style="width:100%">
-<tbody>
-<tr>
-<td style="text-align:center"><span style="font-size:10px"><span style="font-family:Arial,Helvetica,sans-serif">Số HĐ: {Ma_Don_Hang}</span></span></td>
-</tr>
-<tr>
-<td style="text-align:center"><span style="font-size:10px"><span style="font-family:Arial,Helvetica,sans-serif">Ngày {Ngay} tháng {Thang} năm {Nam}</span></span></td>
-</tr>
-</tbody>
-</table>
-
-<table cellpadding="3" style="width:98%">
-<tbody>
-<tr>
-<td style="border-bottom:1px solid black; border-top:1px solid black; width:35%"><span style="font-size:10px"><span style="font-family:Arial,Helvetica,sans-serif"><strong>Tên hàng</strong></span></span></td>
-<td style="border-bottom:1px solid black; border-top:1px solid black; text-align:center; width:20%"><span style="font-size:10px"><span style="font-family:Arial,Helvetica,sans-serif"><strong>Đ. giá</strong></span></span></td>
-<td style="border-bottom:1px solid black; border-top:1px solid black; text-align:center; width:10%"><span style="font-size:10px"><span style="font-family:Arial,Helvetica,sans-serif"><strong>SL</strong></span></span></td>
-<td style="border-bottom:1px solid black; border-top:1px solid black; text-align:right; width:22%"><span style="font-size:10px"><span style="font-family:Arial,Helvetica,sans-serif"><strong>T.tiền</strong></span></span></td>
-</tr>
-<tr>
-<td style="border-bottom:1px dashed black"><span style="font-size:10px"><span style="font-family:Arial,Helvetica,sans-serif">{Ten_Hang_Hoa}</span></span></td>
-<td style="border-bottom:1px dashed black; text-align:right"><span style="font-size:10px"><span style="font-family:Arial,Helvetica,sans-serif">{Don_Gia_Sau_Chiet_Khau}</span></span></td>
-<td style="border-bottom:1px dashed black; text-align:center"><span style="font-size:10px"><span style="font-family:Arial,Helvetica,sans-serif">{So_Luong}</span></span></td>
-<td style="border-bottom:1px dashed black; text-align:right"><span style="font-size:10px"><span style="font-family:Arial,Helvetica,sans-serif">{Thanh_Tien}</span></span></td>
-</tr>
-</tbody>
-</table>
-
-<table border="0" cellpadding="3" cellspacing="0" style="border-collapse:collapse; margin-top:20px; width:98%">
-<tfoot>
-<tr>
-<td style="font-weight:bold; text-align:right; white-space:nowrap"><span style="font-size:10px"><span style="font-family:Arial,Helvetica,sans-serif">Tổng tiền hàng:</span></span></td>
-<td style="font-weight:bold; text-align:right"><span style="font-size:10px"><span style="font-family:Arial,Helvetica,sans-serif">{Tong_Tien_Hang}</span></span></td>
-</tr>
-<tr>
-<td style="font-weight:bold; text-align:right; white-space:nowrap"><span style="font-size:10px"><span style="font-family:Arial,Helvetica,sans-serif">Chiết khấu {Chiet_Khau_Hoa_Don_Phan_Tram}:</span></span></td>
-<td style="font-weight:bold; text-align:right"><span style="font-size:10px"><span style="font-family:Arial,Helvetica,sans-serif">{Chiet_Khau_Hoa_Don}</span></span></td>
-</tr>
-<tr>
-<td style="font-weight:bold; text-align:right; white-space:nowrap"><span style="font-size:10px"><span style="font-family:Arial,Helvetica,sans-serif">Tổng thanh toán:</span></span></td>
-<td style="font-weight:bold; text-align:right"><span style="font-size:10px"><span style="font-family:Arial,Helvetica,sans-serif">{Tong_Cong}</span></span></td>
-</tr>
-<tr>
-<td colspan="2" style="font-style:italic; text-align:left"><span style="font-size:10px"><span style="font-family:Arial,Helvetica,sans-serif">({Tong_Cong_Bang_Chu})</span></span></td>
-</tr>
-<tr>
-<td colspan="2" style="font-weight:bold; text-align:center"><span style="font-size:10px"><span style="font-family:Arial,Helvetica,sans-serif">{Ma_QR}</span></span></td>
-</tr>
-</tfoot>
-</table>
-
-<table style="margin-top:20px; width:100%">
-<tbody>
-<tr>
-<td style="font-style:italic; text-align:center"><span style="font-size:10px"><span style="font-family:Arial,Helvetica,sans-serif">Xin Cảm ơn Quý khách và Hẹn gặp lại!</span></span></td>
-</tr>
-<tr>
-<td style="font-size:9px; font-style:italic; text-align:center">&nbsp;</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-        `
-      },
-      {
-        id: 'template-2',
-        name: 'Mẫu hóa đơn chi tiết',
-        content: `
-          <div style="text-align: center; margin-bottom: 30px;">
-            <h1>CÔNG TY TNHH ABC</h1>
-            <p>Địa chỉ: 123 Đường ABC, Quận 1, TP.HCM</p>
-            <p>Điện thoại: 0123-456-789</p>
-            <hr>
-            <h2>HÓA ĐƠN BÁN HÀNG</h2>
-            <p>Số: {{invoiceNumber}} - Ngày: {{invoiceDate}}</p>
-          </div>
-          <div style="margin-bottom: 20px;">
-            <div style="float: left; width: 50%;">
-              <strong>Thông tin khách hàng:</strong><br>
-              Tên: {{customerName}}<br>
-              Địa chỉ: {{customerAddress}}<br>
-              Điện thoại: {{customerPhone}}<br>
-              Email: {{customerEmail}}
-            </div>
-            <div style="float: right; width: 50%;">
-              <strong>Thông tin giao hàng:</strong><br>
-              Ngày giao: {{deliveryDate}}<br>
-              Địa chỉ giao: {{deliveryAddress}}<br>
-              Ghi chú: {{notes}}
-            </div>
-            <div style="clear: both;"></div>
-          </div>
-          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-            <thead>
-              <tr style="background-color: #4CAF50; color: white;">
-                <th style="border: 1px solid #ddd; padding: 12px;">STT</th>
-                <th style="border: 1px solid #ddd; padding: 12px;">Mã hàng</th>
-                <th style="border: 1px solid #ddd; padding: 12px;">Tên hàng</th>
-                <th style="border: 1px solid #ddd; padding: 12px;">ĐVT</th>
-                <th style="border: 1px solid #ddd; padding: 12px;">Số lượng</th>
-                <th style="border: 1px solid #ddd; padding: 12px;">Đơn giá</th>
-                <th style="border: 1px solid #ddd; padding: 12px;">Thành tiền</th>
-              </tr>
-            </thead>
-            <tbody>
-              {{#each items}}
-              <tr>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">{{@index}}</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">{{code}}</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">{{name}}</td>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">{{unit}}</td>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">{{quantity}}</td>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">{{price}}</td>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">{{total}}</td>
-              </tr>
-              {{/each}}
-            </tbody>
-          </table>
-          <div style="text-align: right;">
-            <p>Tạm tính: {{subtotal}} VNĐ</p>
-            <p>VAT ({{vatRate}}%): {{vatAmount}} VNĐ</p>
-            <p>Giảm giá: {{discount}} VNĐ</p>
-            <h3>Tổng cộng: {{totalAmount}} VNĐ</h3>
-          </div>
-        `
-      },
-      {
-        id: 'template-3',
-        name: 'Mẫu hóa đơn đơn giản',
-        content: `
-          <div style="text-align: center;">
-            <h3>HÓA ĐƠN</h3>
-            <p>{{invoiceDate}}</p>
-          </div>
-          <p><strong>Khách hàng:</strong> {{customerName}}</p>
-          <table style="width: 100%; border-collapse: collapse;">
-            <tr>
-              <th style="border: 1px solid #000; padding: 5px;">Sản phẩm</th>
-              <th style="border: 1px solid #000; padding: 5px;">SL</th>
-              <th style="border: 1px solid #000; padding: 5px;">Giá</th>
-            </tr>
-            {{#each items}}
-            <tr>
-              <td style="border: 1px solid #000; padding: 5px;">{{name}}</td>
-              <td style="border: 1px solid #000; padding: 5px;">{{quantity}}</td>
-              <td style="border: 1px solid #000; padding: 5px;">{{total}}</td>
-            </tr>
-            {{/each}}
-          </table>
-          <p style="text-align: right;"><strong>Tổng: {{totalAmount}} VNĐ</strong></p>
-        `
-      }
-    ];
+    return invoiceTemplates as SuggestTemplate[];
   }
 
 
@@ -331,14 +137,26 @@ export class EditInvoiceDialogComponent implements OnInit {
 
   onDelete(): void {
     if (this.isEditMode && this.templateId) {
-      // Show confirmation dialog
-      if (confirm(`Bạn có chắc chắn muốn xóa mẫu in "${this.template.name || this.templateName}"?`)) {
-        const result = {
-          templateId: this.templateId,
-          action: 'delete'
-        };
-        this.dialogRef.close(result);
-      }
+      // Open the custom confirmation dialog
+      const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+        width: '400px',
+        data: {
+          title: 'Xác nhận xóa',
+          message: `Bạn có chắc chắn muốn xóa mẫu in "${this.template.name || this.templateName}"?`,
+          confirmButtonText: 'Đồng ý',
+          cancelButtonText: 'Bỏ qua'
+        }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result === true) {
+          const deleteResult = {
+            templateId: this.templateId,
+            action: 'delete'
+          };
+          this.dialogRef.close(deleteResult);
+        }
+      });
     }
   }
 
@@ -349,10 +167,38 @@ export class EditInvoiceDialogComponent implements OnInit {
     );
 
     if (selectedTemplate && this.sharedEditor) {
-      // Update editor content with selected template
+      // Check if there's existing content that might be lost
+      const currentContent = this.sharedEditor.getContent();
 
+      if (currentContent && currentContent.trim().length > 0) {
+        // Show confirmation dialog before changing template
+        const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+          width: '400px',
+          data: {
+            title: 'Thay đổi mẫu in',
+            message: 'Nếu bạn chọn mẫu in khác, nội dung hiện tại sẽ bị thay thế. Bạn có muốn tiếp tục?',
+            confirmButtonText: 'Đồng ý',
+            cancelButtonText: 'Bỏ qua'
+          }
+        });
 
-      this.sharedEditor.setContent(selectedTemplate.content);
+        dialogRef.afterClosed().subscribe(result => {
+          if (result === true) {
+            // User confirmed, update the editor content
+            this.sharedEditor.setContent(selectedTemplate.content);
+          } else {
+            // User cancelled, revert the selection
+            this.selectedTemplateId = '';
+          }
+        });
+      } else {
+        // No existing content or empty content, safe to update directly
+        this.sharedEditor.setContent(selectedTemplate.content);
+      }
     }
+  }
+
+  toggleVariablesInfo(): void {
+    this.showVariablesInfo = !this.showVariablesInfo;
   }
 }
