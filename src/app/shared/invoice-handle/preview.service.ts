@@ -41,7 +41,7 @@ export interface InvoiceData {
   Tong_Tien_Hang_Bang_Chu: string;
   Tong_So_Luong: string;
   Chiet_Khau: string;
-
+  Ma_QR: string;
 }
 
 @Injectable({

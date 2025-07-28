@@ -9,7 +9,7 @@ export interface InvoiceTemplate {
   id?: string;
   name: string;
   body: string;
-  status?: string;
+  status?: number;
 }
 
 export interface TemplateResponse {
@@ -34,24 +34,24 @@ export class InvoiceTemplateService {
   }
 
   // API Methods
-  getAllTemplates(): Observable<TemplateResponse> {
-    //return this.http.get<TemplateResponse>(`${this.apiUrl}`);
+  getAllTemplates(): Observable<InvoiceTemplate[]> {
+    return this.http.get<InvoiceTemplate[]>(`${this.apiUrl}`);
 
     // Return fake data instead of API call since API is not working
-    return new Observable(observer => {
-      setTimeout(() => {
-        observer.next({ data: this.getFallbackTemplates(), success: true });
-        observer.complete();
-      }, 500); // Simulate network delay
-    });
+    // return new Observable(observer => {
+    //   setTimeout(() => {
+    //     observer.next({ data: this.getFallbackTemplates(), success: true });
+    //     observer.complete();
+    //   }, 500); // Simulate network delay
+    // });
   }
 
   getTemplate(id: string): Observable<TemplateDetailResponse> {
     return this.http.get<TemplateDetailResponse>(`${this.apiUrl}/${id}`);
   }
 
-  createTemplate(template: Partial<InvoiceTemplate>): Observable<TemplateDetailResponse> {
-    return this.http.post<TemplateDetailResponse>(`${this.apiUrl}/`, template);
+  createTemplate(template: Partial<InvoiceTemplate>): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}`, template);
   }
 
   updateTemplate(id: string, template: Partial<InvoiceTemplate>): Observable<TemplateDetailResponse> {

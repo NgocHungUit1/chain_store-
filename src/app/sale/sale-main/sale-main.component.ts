@@ -2356,6 +2356,51 @@ export class SaleMainComponent implements OnInit, DoCheck {
     this.printInvoiceTemplate(preInvoiceData);
   }
 
+  executePrint(dataToPrint: any) {
+    debugger;
+    const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+    const content = this.previewService.fillTemplate(this.selectedTemplate.body, dataToPrint);
+    const styleMatch = content.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+    const extractedStyle = styleMatch?.[1] || '';
+    const contentWithoutStyle = content.replace(styleMatch?.[0] || '', '');
+    // Replace all <style> tags with the extracted style
+    const printHtml = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>In hóa đơn</title>
+            <style>
+              @media print {
+               @page {
+                  margin: 0;
+                  size: auto;
+                }
+                ${extractedStyle}
+                table td {
+                  word-break: normal;
+                  overflow-wrap: break-word;
+                  white-space: normal;
+                }
+              }
+            </style>
+          </head>
+          <body>
+            ${contentWithoutStyle}
+            <script>
+              window.onload = function () {
+                window.print();
+                window.onafterprint = function () {
+                  window.close();
+                };
+              };
+            </script>
+          </body>
+        </html>
+      `;
+    WindowPrt.document.write(printHtml);
+    WindowPrt.document.close();
+    WindowPrt.focus();
+  }
 
   /**
    * Print invoice using a specific template
@@ -2404,49 +2449,15 @@ export class SaleMainComponent implements OnInit, DoCheck {
       Con_Lai: numeral(preInvoiceData.debt || 0).format('0,0'),
     }
 
-    this.optionStoreService.getValue('print_type').subscribe(res => {
-      const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
-      const content = this.previewService.fillTemplate(this.selectedTemplate.body, dataToPrint);
-      const styleMatch = content.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
-      const extractedStyle = styleMatch?.[1] || '';
-      const contentWithoutStyle = content.replace(styleMatch?.[0] || '', '');
-      // Replace all <style> tags with the extracted style
-      const printHtml = `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <title>In hóa đơn</title>
-            <style>
-              @media print {
-               @page {
-                  margin: 0;
-                  size: auto;
-                }
-                ${extractedStyle}
-                table td {
-                  word-break: normal;
-                  overflow-wrap: break-word;
-                  white-space: normal;
-                }
-              }
-            </style>
-          </head>
-          <body>
-            ${contentWithoutStyle}
-            <script>
-              window.onload = function () {
-                window.print();
-                window.onafterprint = function () {
-                  window.close();
-                };
-              };
-            </script>
-          </body>
-        </html>
-      `;
-      WindowPrt.document.write(printHtml);
-      WindowPrt.document.close();
-      WindowPrt.focus();
+    const QrCode = this.form.get('selectedMethod').value === 'Chuyển khoản' ? this.getQrCode(this.selectedBankAccount) : of(null);
+    QrCode.subscribe((qrCode) => {
+      debugger;
+      if (qrCode) {
+        dataToPrint['Ma_QR'] = `<img src="${qrCode}" style="width: 80px; height: 80px;" onload="onQrLoaded()">`;
+      } else {
+        dataToPrint['Ma_QR'] = '';
+      }
+      this.executePrint(dataToPrint);
     });
   }
 

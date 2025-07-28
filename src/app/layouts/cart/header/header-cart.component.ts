@@ -230,10 +230,10 @@ export class AppHeaderCartComponent implements OnInit {
    */
   private loadTemplates(): void {
     this.invoiceTemplateService.getAllTemplates().subscribe(
-      (templates: TemplateResponse) => {
-        this.invoiceTemplates = templates.data;
+      (templates: InvoiceTemplate[]) => {
+        this.invoiceTemplates = templates;
         // Set the selected template from localStorage if available
-        const template = this.invoiceTemplates.find((template)=> template.status==='active') || this.invoiceTemplates[0]
+        const template = this.invoiceTemplates.find((template)=> template.status===1) || this.invoiceTemplates[0]
         this.initialTemplateId = template.id;
         this.selectedTemplateId = this.initialTemplateId;
         this.invoiceTemplateService.setActiveTemplate(template)
@@ -295,7 +295,7 @@ export class AppHeaderCartComponent implements OnInit {
   onSaveAndClosePrintButton() {
     this.invoiceTemplateService.updateTemplate(this.selectedTemplateId, {
       id: this.selectedTemplateId,
-      status: 'active'
+      status: 1
     }).subscribe({
       next: (response) => {
         if (response.success) {

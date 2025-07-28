@@ -44,12 +44,13 @@ export class SettingPrintEditorComponent implements OnInit {
       finalize(() => this.isLoading = false) // Set loading to false after fetching templates
     ).subscribe({
       next: (response) => {
-        if (response.success) {
-          this.invoiceTemplates = response.data;
+        debugger;
+        if (response) {
+          this.invoiceTemplates = response;
           // Set default selected template if available or first template
           if (this.invoiceTemplates.length > 0) {
             // Check if there's a default template
-            const defaultTemplate = this.invoiceTemplates.find(template => template.status === 'active');
+            const defaultTemplate = this.invoiceTemplates.find(template => template.status === 1);
             if (defaultTemplate) {
               this.currentTemplate = defaultTemplate;
               this.selectedTemplateId = defaultTemplate.id ?? defaultTemplate.name; // Set initial selected template ID
@@ -131,7 +132,7 @@ export class SettingPrintEditorComponent implements OnInit {
               id: this.selectedTemplateId,
               name: result.template.name || 'Mẫu in mới',
               body: result.editorContent,
-              status: this.currentTemplate?.status || 'deactive',
+              status: this.currentTemplate?.status || 0,
             });
             break;
           case 'delete':
@@ -154,7 +155,7 @@ export class SettingPrintEditorComponent implements OnInit {
     const newTemplate: Partial<InvoiceTemplate> = {
       name: 'Mẫu in mới',
       body: this.currentTemplate?.body,
-      status: 'active',
+      status: 1,
     };
     // Open dialog to edit new template
     const editInvoiceRef = this.dialog.open(EditInvoiceDialogComponent, {
@@ -172,7 +173,7 @@ export class SettingPrintEditorComponent implements OnInit {
         this.createTemplate({
           name: result.template.name,
           body: result.editorContent,
-          status: 'deactive',
+          status: 0 // Default status for new templates,
         });
       }
     });
@@ -188,15 +189,16 @@ export class SettingPrintEditorComponent implements OnInit {
   private createTemplate(template: Partial<InvoiceTemplate>): void {
     this.invoiceTemplateService.createTemplate(template).subscribe({
       next: (response) => {
-        if (response.success) {
+        debugger;
+        if (response) {
           console.log('Template created successfully');
           this.invoiceTemplateService.getAllTemplates().subscribe(
             (templates) => {
-              this.invoiceTemplates = templates.data;
+              this.invoiceTemplates = templates;
               // Set newly created template as selected
-              this.selectedTemplateId = response.data.id;
-              this.currentTemplate = response.data; // Update current template
-              this.updateEditorContent(response.data.body); // Update editor content
+              this.selectedTemplateId = response.id;
+              this.currentTemplate = response; // Update current template
+              this.updateEditorContent(response.body); // Update editor content
             },
             error => {
               console.error('Error loading templates after creation:', error);
@@ -224,7 +226,7 @@ export class SettingPrintEditorComponent implements OnInit {
           console.log('Template updated successfully');
           this.invoiceTemplateService.getAllTemplates().subscribe(
             (templates) => {
-              this.invoiceTemplates = templates.data;
+              this.invoiceTemplates = templates;
               // If updated template was selected, update current template
               if (this.selectedTemplateId === template.id) {
                 this.currentTemplate = { ...template };
@@ -257,7 +259,7 @@ export class SettingPrintEditorComponent implements OnInit {
           // Refresh templates list
           this.invoiceTemplateService.getAllTemplates().subscribe(
             (templates) => {
-              this.invoiceTemplates = templates.data;
+              this.invoiceTemplates = templates;
               // If deleted template was selected, reset selection
               if (this.selectedTemplateId === templateId) {
                 this.selectedTemplateId = this.invoiceTemplates.length > 0 ? this.invoiceTemplates[0].id : '';
