@@ -111,8 +111,8 @@ export class AppHeaderCartComponent implements OnInit {
 
   // Replace fake data with service data
   invoiceTemplates: InvoiceTemplate[] = [];
-  selectedTemplateId: string = '';
-  initialTemplateId: string = '';
+  selectedTemplateId: number = 0;
+  initialTemplateId: number = 0;
   ngOnInit(): void {
     this.getAutoPrintValue();
     this.loadTemplates();
@@ -233,7 +233,7 @@ export class AppHeaderCartComponent implements OnInit {
       (templates: InvoiceTemplate[]) => {
         this.invoiceTemplates = templates;
         // Set the selected template from localStorage if available
-        const template = this.invoiceTemplates.find((template)=> template.status===1) || this.invoiceTemplates[0]
+        const template = this.invoiceTemplates.find((template)=> template.status===10) || this.invoiceTemplates[0]
         this.initialTemplateId = template.id;
         this.selectedTemplateId = this.initialTemplateId;
         this.invoiceTemplateService.setActiveTemplate(template)
@@ -253,13 +253,12 @@ export class AppHeaderCartComponent implements OnInit {
    * @param templateId
    * @param event
    */
-  onSelectInvoiceTemplate(templateId: string, event?: MouseEvent) {
+  onSelectInvoiceTemplate(templateId: number, event?: MouseEvent) {
     // Prevent menu from closing
     if (event) {
       event.stopPropagation();
     }
-    this.selectedTemplateId = templateId.toString();
-
+    this.selectedTemplateId = templateId;
   }
 
 
@@ -293,11 +292,9 @@ export class AppHeaderCartComponent implements OnInit {
    * @private
    */
   onSaveAndClosePrintButton() {
-    this.invoiceTemplateService.updateTemplate(this.selectedTemplateId, {
-      id: this.selectedTemplateId,
-      status: 1
-    }).subscribe({
+    this.invoiceTemplateService.activateTemplate(this.selectedTemplateId).subscribe({
       next: (response) => {
+        debugger;
         if (response.success) {
           this.notifierSer.notify('success', 'Đã lưu mẫu in đã chọn!');
           this.initialTemplateId = this.selectedTemplateId;

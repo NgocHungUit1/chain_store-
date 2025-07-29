@@ -6,11 +6,12 @@ const invoiceTemplates = require('./fake-invoices.json'); // fake data for invoi
 //const invoiceTemplates = [];
 
 export interface InvoiceTemplate {
-  id?: string;
+  id?: number;
   name: string;
   body: string;
   status?: number;
 }
+
 
 export interface TemplateResponse {
   data: InvoiceTemplate[];
@@ -35,35 +36,38 @@ export class InvoiceTemplateService {
 
   // API Methods
   getAllTemplates(): Observable<InvoiceTemplate[]> {
-    return this.http.get<InvoiceTemplate[]>(`${this.apiUrl}`);
+    //return this.http.get<InvoiceTemplate[]>(`${this.apiUrl}`);
 
     // Return fake data instead of API call since API is not working
-    // return new Observable(observer => {
-    //   setTimeout(() => {
-    //     observer.next({ data: this.getFallbackTemplates(), success: true });
-    //     observer.complete();
-    //   }, 500); // Simulate network delay
-    // });
+    return new Observable(observer => {
+      setTimeout(() => {
+        observer.next(this.getFallbackTemplates());
+        observer.complete();
+      }, 500); // Simulate network delay
+    });
   }
 
   getTemplate(id: string): Observable<TemplateDetailResponse> {
     return this.http.get<TemplateDetailResponse>(`${this.apiUrl}/${id}`);
   }
 
-  createTemplate(template: Partial<InvoiceTemplate>): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}`, template);
+  createTemplate(template: Partial<InvoiceTemplate>): Observable<Partial<InvoiceTemplate>> {
+    return this.http.post<Partial<InvoiceTemplate>>(`${this.apiUrl}`, template);
   }
 
-  updateTemplate(id: string, template: Partial<InvoiceTemplate>): Observable<TemplateDetailResponse> {
-    return this.http.put<TemplateDetailResponse>(`${this.apiUrl}/${id}`, template);
+  updateTemplate(id: number, template: Partial<InvoiceTemplate>): Observable<Partial<InvoiceTemplate>> {
+    return this.http.put<Partial<InvoiceTemplate>>(`${this.apiUrl}/${id}`, template);
   }
 
-  deleteTemplate(id: string): Observable<{ success: boolean, message?: string }> {
+  deleteTemplate(id: number): Observable<{ success: boolean, message?: string }> {
     return this.http.delete<{ success: boolean, message?: string }>(`${this.apiUrl}/${id}`);
   }
 
+  activateTemplate(id: number): Observable<{ success: boolean, message?: string }> {
+    return this.http.post<{ success: boolean, message?: string }>(`${this.apiUrl}/activate?id=${id}`, {});
+  }
 
-  deactivateTemplate(id: string): Observable<{ success: boolean, message?: string }> {
+  deactivateTemplate(id: number): Observable<{ success: boolean, message?: string }> {
     return this.http.post<{ success: boolean, message?: string }>(`${this.apiUrl}/deactivate?id=${id}`, {});
   }
 
