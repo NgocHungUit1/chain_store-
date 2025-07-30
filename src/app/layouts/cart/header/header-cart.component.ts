@@ -11,8 +11,8 @@ import { OptionStore } from '../../../common/option-store.model';
 import { OptionStoreService } from '../../../common/option-store.service';
 import { SharedDataService } from '../../../shared/shared-data.service';
 import { MatMenuTrigger } from '@angular/material/menu';
-import { InvoiceTemplateService, InvoiceTemplate, TemplateResponse } from '../../../shared/invoice-handle/invoice-template.service';
-
+import { InvoiceTemplateService, InvoiceTemplate } from '../../../shared/invoice-handle/invoice-template.service';
+import {environment} from '../../../../environments/environment';
 @Component({
   selector: 'app-header-cart',
   templateUrl: './header-cart.component.html',
@@ -34,6 +34,7 @@ export class AppHeaderCartComponent implements OnInit {
   ) {
 
   }
+
 
   public config: PerfectScrollbarConfigInterface = {};
 
@@ -111,10 +112,20 @@ export class AppHeaderCartComponent implements OnInit {
 
   // Replace fake data with service data
   invoiceTemplates: InvoiceTemplate[] = [];
-  selectedTemplateId: number = 0;
-  initialTemplateId: number = 0;
+  selectedTemplateId: number = environment.defaultInvoiceTemplate;
+  initialTemplateId: number = environment.defaultInvoiceTemplate;
   ngOnInit(): void {
     this.getAutoPrintValue();
+
+    // load the initial template
+    const template = this.invoiceTemplateService.getActiveTemplate();
+    if (template) {
+      this.selectedTemplateId = template.id;
+      this.initialTemplateId = template.id;
+    } else {
+      this.selectedTemplateId = environment.defaultInvoiceTemplate;
+      this.initialTemplateId = environment.defaultInvoiceTemplate;
+    }
     this.loadTemplates();
   }
 
@@ -233,9 +244,7 @@ export class AppHeaderCartComponent implements OnInit {
       (templates: InvoiceTemplate[]) => {
         this.invoiceTemplates = templates;
         // Set the selected template from localStorage if available
-        const template = this.invoiceTemplates.find((template)=> template.status===10) || this.invoiceTemplates[0]
-        this.initialTemplateId = template.id;
-        this.selectedTemplateId = this.initialTemplateId;
+        const template = this.invoiceTemplates.find((template)=> template.id===this.initialTemplateId) || this.invoiceTemplates[0]
         this.invoiceTemplateService.setActiveTemplate(template)
       },
       error => {
@@ -288,25 +297,18 @@ export class AppHeaderCartComponent implements OnInit {
    * Handles the save and close action of the print button.
    * This function updates the selected template in the service and closes the menu.
    * It also shows a notification to inform the user about the successful save.
-   * todo: Switch to using active api
-   * @private
    */
   onSaveAndClosePrintButton() {
-    this.invoiceTemplateService.activateTemplate(this.selectedTemplateId).subscribe({
-      next: (response) => {
-        debugger;
-        if (response.success) {
-          this.notifierSer.notify('success', 'Đã lưu mẫu in đã chọn!');
-          this.initialTemplateId = this.selectedTemplateId;
-        } else {
-          this.notifierSer.notify('error', 'Không thể lưu mẫu in. Vui lòng thử lại.');
-        }
-      },
-      error: (error) => {
-        console.error('Error saving template selection:', error);
-        this.notifierSer.notify('error', 'Không thể lưu mẫu in. Vui lòng thử lại.');
-      }
-    })
+    try {
+      const newSelectedTemplate = this.invoiceTemplates.find(template => template.id === this.selectedTemplateId);
+      this.invoiceTemplateService.setActiveTemplate(newSelectedTemplate);
+      this.initialTemplateId = this.selectedTemplateId;
+      this.notifierSer.notify('success', 'Đã lưu mẫu in đã chọn!');
+    }
+    catch (error) {
+      console.error('Error saving template selection:', error);
+      this.notifierSer.notify('error', 'Không thể lưu mẫu in. Vui lòng thử lại.');
+    }
 
     if (this.menuTrigger) {
       this.menuTrigger.closeMenu();

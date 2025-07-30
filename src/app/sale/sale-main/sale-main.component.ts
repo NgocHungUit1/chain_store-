@@ -928,6 +928,10 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
     // get info invoice template
     this.loadInvoiceTemplates();
+    // listen when user change invoice template
+    this.invoiceTemplateService.templateChanged$.subscribe(template => {
+      this.selectedTemplate = template;
+    });
 
   }
 
@@ -2357,7 +2361,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
   }
 
   executePrint(dataToPrint: any) {
-    debugger;
     const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
     const content = this.previewService.fillTemplate(this.selectedTemplate.body, dataToPrint);
     const styleMatch = content.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
@@ -2431,13 +2434,12 @@ export class SaleMainComponent implements OnInit, DoCheck {
       items: preInvoiceData.detail?.map((item, index) => ({
         STT: index+1,
         Ten_Hang_Hoa: item.product?.product_name || '',
-        Don_Gia_Chiet_Khau: numeral(item.price || 0).format('0,0'),
+        Don_Gia_Chiet_Khau: numeral(item.price || 0).format('0,0'), // handle later if needed
         So_Luong: (item.amount || 0).toString(),
         Thanh_Tien: numeral(item.total || 0).format('0,0'),
         Don_Vi: item.base_unit ,
         Don_Gia: numeral(item.price || 0).format('0,0'),
       })) || [],
-
       Tong_Tien_Hang: numeral(preInvoiceData.total_price || 0).format('0,0'),
       Chiet_Khau_Hoa_Don_Phan_Tram: '', // Percentage not available in sample data
       Chiet_Khau_Hoa_Don: numeral(preInvoiceData.discount || 0).format('0,0'),
@@ -2451,7 +2453,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
     const QrCode = this.form.get('selectedMethod').value === 'Chuyển khoản' ? this.getQrCode(this.selectedBankAccount) : of(null);
     QrCode.subscribe((qrCode) => {
-      debugger;
       if (qrCode) {
         dataToPrint['Ma_QR'] = `<img src="${qrCode}" style="width: 80px; height: 80px;" onload="onQrLoaded()">`;
       } else {
@@ -2645,7 +2646,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
         this.submitted = false;
         if (res !== false) {
           if (typeof res === 'number' && this.autoPrint === true) {
-            this.printInvoice(res);
+            //this.printInvoice(res);
+            this.printInvoiceTemplate(res);
           }
           this.resetDataSiderBar();
           this.notifySer.notify('success', 'Lưu thành công !');
@@ -2676,7 +2678,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
         if (res !== false) {
           if (typeof res === 'number' && this.autoPrint === true) {
             this.resetDataSiderBar();
-            this.printInvoice(res);
+            //this.printInvoice(res);
+            this.printInvoiceTemplate(res);
           }
           this.resetDataSiderBar();
           this.notifySer.notify('success', 'Cập nhật đơn thành công !');

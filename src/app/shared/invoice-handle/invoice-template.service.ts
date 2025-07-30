@@ -2,27 +2,17 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-const invoiceTemplates = require('./fake-invoices.json'); // fake data for invoice templates
+import { map } from 'rxjs/operators';
+import { EventEmitter } from '@angular/core';
+
+//const invoiceTemplates = require('./fake-invoices.json'); // fake data for invoice templates
 //const invoiceTemplates = [];
 
 export interface InvoiceTemplate {
-  id?: number;
+  id: number;
   name: string;
   body: string;
-  status?: number;
-}
-
-
-export interface TemplateResponse {
-  data: InvoiceTemplate[];
-  message?: string;
-  success: boolean;
-}
-
-export interface TemplateDetailResponse {
-  data: InvoiceTemplate;
-  message?: string;
-  success: boolean;
+  status: number;
 }
 
 @Injectable({
@@ -30,25 +20,26 @@ export interface TemplateDetailResponse {
 })
 export class InvoiceTemplateService {
   private apiUrl = `${environment.apiUrl}/invoice-template`;
+  templateChanged$ = new EventEmitter<InvoiceTemplate>();
 
   constructor(private http: HttpClient) {
   }
 
-  // API Methods
   getAllTemplates(): Observable<InvoiceTemplate[]> {
-    //return this.http.get<InvoiceTemplate[]>(`${this.apiUrl}`);
-
-    // Return fake data instead of API call since API is not working
-    return new Observable(observer => {
-      setTimeout(() => {
-        observer.next(this.getFallbackTemplates());
-        observer.complete();
-      }, 500); // Simulate network delay
-    });
+    return this.http.get<InvoiceTemplate[]>(`${this.apiUrl}`).pipe(
+      map(template => template.filter(t => t.status === 10)) // Filter out inactive templates
+    );
+    // // Return fake data instead of API call since API is not working
+    // return new Observable(observer => {
+    //   setTimeout(() => {
+    //     observer.next(this.getFallbackTemplates());
+    //     observer.complete();
+    //   }, 500); // Simulate network delay
+    // });
   }
 
-  getTemplate(id: string): Observable<TemplateDetailResponse> {
-    return this.http.get<TemplateDetailResponse>(`${this.apiUrl}/${id}`);
+  getTemplate(id: string): Observable<InvoiceTemplate> {
+    return this.http.get<InvoiceTemplate>(`${this.apiUrl}/${id}`);
   }
 
   createTemplate(template: Partial<InvoiceTemplate>): Observable<Partial<InvoiceTemplate>> {
@@ -59,8 +50,8 @@ export class InvoiceTemplateService {
     return this.http.put<Partial<InvoiceTemplate>>(`${this.apiUrl}/${id}`, template);
   }
 
-  deleteTemplate(id: number): Observable<{ success: boolean, message?: string }> {
-    return this.http.delete<{ success: boolean, message?: string }>(`${this.apiUrl}/${id}`);
+  deleteTemplate(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
   activateTemplate(id: number): Observable<{ success: boolean, message?: string }> {
@@ -76,16 +67,32 @@ export class InvoiceTemplateService {
     const template = localStorage.getItem('selectedTemplate');
     if (template) {
       return JSON.parse(template);
+    } else{
+      // call api to get the default template
+      const selectedTemplateId = localStorage.getItem('selectedTemplateId');
+      if (selectedTemplateId) {
+        this.getTemplate(selectedTemplateId).subscribe(res => {
+          if (res) {
+            this.setActiveTemplate(res);
+            return res;
+          } else {
+            console.error('Failed to fetch template from API:', res);
+          }
+        })
+      }
     }
     return null;
   }
 
   setActiveTemplate(template: InvoiceTemplate | null) {
     if (template) {
+      localStorage.setItem('selectedTemplateId', template.id?.toString() || '');
       localStorage.setItem('selectedTemplate', JSON.stringify(template));
     } else {
+      localStorage.removeItem('selectedTemplateId');
       localStorage.removeItem('selectedTemplate');
     }
+    this.templateChanged$.emit(template);
   }
 
   private getFallbackTemplates(): InvoiceTemplate[] {

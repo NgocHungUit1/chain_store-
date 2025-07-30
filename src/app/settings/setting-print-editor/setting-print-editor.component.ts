@@ -22,7 +22,6 @@ export class SettingPrintEditorComponent implements OnInit {
   currentTemplate: Partial<InvoiceTemplate> | null = null;
   isLoading = true;
 
-
   constructor(
     private dialog: MatDialog,
     private invoiceTemplateService: InvoiceTemplateService,
@@ -44,7 +43,6 @@ export class SettingPrintEditorComponent implements OnInit {
       finalize(() => this.isLoading = false) // Set loading to false after fetching templates
     ).subscribe({
       next: (response) => {
-        debugger;
         if (response) {
           this.invoiceTemplates = response;
           // Set default selected template if available or first template
@@ -99,7 +97,6 @@ export class SettingPrintEditorComponent implements OnInit {
   onChangeInvoiceTemplate(event: any): void {
     const templateId = event.value;
     this.selectedTemplateId = Number(templateId);
-    //todo: check id is valid or not
     this.currentTemplate = this.invoiceTemplates.find(template => template.id === this.selectedTemplateId);
     this.updateEditorContent(this.currentTemplate?.body || '');
   }
@@ -173,7 +170,7 @@ export class SettingPrintEditorComponent implements OnInit {
         this.createTemplate({
           name: result.template.name,
           body: result.editorContent,
-          status: 0 // Default status for new templates,
+          status: 10 // Default status for new templates,
         });
       }
     });
@@ -189,16 +186,16 @@ export class SettingPrintEditorComponent implements OnInit {
   private createTemplate(template: Partial<InvoiceTemplate>): void {
     this.invoiceTemplateService.createTemplate(template).subscribe({
       next: (response) => {
-        debugger;
         if (response) {
           console.log('Template created successfully');
           this.invoiceTemplateService.getAllTemplates().subscribe(
             (templates) => {
               this.invoiceTemplates = templates;
               // Set newly created template as selected
-              this.selectedTemplateId = response.id;
-              this.currentTemplate = response; // Update current template
-              this.updateEditorContent(response.body); // Update editor content
+              const newTemplate = templates.find(t => t.id === response.id) ?? template[0];
+              this.selectedTemplateId = newTemplate.id;
+              this.currentTemplate = newTemplate; // Update current template
+              this.updateEditorContent(newTemplate.body); // Update editor content
             },
             error => {
               console.error('Error loading templates after creation:', error);
@@ -223,7 +220,6 @@ export class SettingPrintEditorComponent implements OnInit {
     this.invoiceTemplateService.updateTemplate(template.id, template).subscribe({
       next: (response) => {
         if (response) {
-          debugger;
           console.log('Template updated successfully: ', response);
           this.invoiceTemplateService.getAllTemplates().subscribe(
             (templates) => {
@@ -256,26 +252,23 @@ export class SettingPrintEditorComponent implements OnInit {
   private deleteTemplate(templateId: number): void {
     this.invoiceTemplateService.deleteTemplate(templateId).subscribe({
       next: (response) => {
-        if (response.success) {
           // Refresh templates list
           this.invoiceTemplateService.getAllTemplates().subscribe(
             (templates) => {
               this.invoiceTemplates = templates;
-              // If deleted template was selected, reset selection
-              if (this.selectedTemplateId === templateId) {
-                this.selectedTemplateId = this.invoiceTemplates.length > 0 ? this.invoiceTemplates[0].id : 1; // Reset to first template or default ID
-              }
+              this.currentTemplate = templates[0];
+              this.selectedTemplateId = this.currentTemplate?.id || 1;
+              this.updateEditorContent(this.currentTemplate.body); // Update editor content
+
             },
             error => {
               console.error('Error loading templates after deletion:', error);
             }
           );
-        }
       },
       error: (error) => {
         console.error('Failed to delete template:', error);
         // Show error message to user
-        alert('Không thể xóa mẫu in. Vui lòng thử lại.');
       }
     });
   }
