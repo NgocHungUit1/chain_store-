@@ -95,9 +95,5 @@ export class InvoiceTemplateService {
     this.templateChanged$.emit(template);
   }
 
-  private getFallbackTemplates(): InvoiceTemplate[] {
-    // Return templates from the JSON file
-    return invoiceTemplates as InvoiceTemplate[];
-  }
 }
 
