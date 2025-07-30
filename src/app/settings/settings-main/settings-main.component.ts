@@ -83,8 +83,7 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
   storeFeatures = [];
 
   ngOnInit(): void {
-    //this.settingsType = 'transaction';
-    this.settingsType='edit-print'; // for dev
+    this.settingsType = 'transaction';
     this.printType = 'K58';
     this.isLoadingResults = false;
 
