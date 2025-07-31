@@ -2204,6 +2204,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
         `;
       } else {
         printContent += `<p>Khách hàng: ${customer_name}</p>`;
+        const customer_phone = preInvoiceData?.customer?.phone || '';
         if (customer_phone) {
           printContent += `<p>SĐT: ${customer_phone}</p>`;
         }
@@ -2410,6 +2411,30 @@ export class SaleMainComponent implements OnInit, DoCheck {
    * @param preInvoiceData Data to be printed in the invoice
    */
   printInvoiceTemplate(preInvoiceData: any) {
+
+    const { nationalPrescription } = preInvoiceData || {};
+    let customer_info='';
+    if (nationalPrescription) {
+      customer_info = `
+      <p>Mã đơn thuốc: <b>${nationalPrescription?.nationalPrescriptionId || ''}</b></p>
+      <p>Tên đơn vị: <b>${nationalPrescription?.medicalFacilityName || ''}</b></p>
+      <p>Họ tên: <b>${nationalPrescription?.patientName || ''}</b></p>
+      <p>SĐT: <b>${nationalPrescription?.patientPhoneNumber || ''}</b></p>
+      <p>Ngày sinh: <b>${nationalPrescription?.patientDOB || ''}</b>
+        Cân nặng: <b>${nationalPrescription?.patientWeight || ''}</b>
+        Giới tính: <b>${nationalPrescription?.patientSex || ''}</b></p>
+      <br>
+      <p><b>Chẩn đoán:</b> ${nationalPrescription?.diagnostics?.[0]?.conclusion || ''}</p>
+        `;
+    } else {
+      const customer_name = preInvoiceData?.customer?.name || 'Khách lẻ';
+      customer_info += `<p>Khách hàng: ${customer_name}</p>`;
+      const customer_phone = preInvoiceData?.customer?.phone || '';
+      if (customer_phone) {
+        customer_info += `<p>SĐT: ${customer_phone}</p>`;
+      }
+    }
+
     const dataToPrint: Partial<InvoiceData> = {
       Logo: this.logo? `<img src="${this.logo}" style="max-width: 120px;">` :
     `<img src="assets/images/Rx20_16x16_op1-1207.png" style="max-width: 120px;">`,
@@ -2439,6 +2464,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
         Thanh_Tien: numeral(item.total || 0).format('0,0'),
         Don_Vi: item.base_unit ,
         Don_Gia: numeral(item.price || 0).format('0,0'),
+        So_Lo: item.so_lo || '',
       })) || [],
       Tong_Tien_Hang: numeral(preInvoiceData.total_price || 0).format('0,0'),
       Chiet_Khau_Hoa_Don_Phan_Tram: '', // Percentage not available in sample data
@@ -2449,6 +2475,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       Chiet_Khau: numeral(preInvoiceData.discount || 0).format('0,0'),
       Khach_Thanh_Toan: numeral(preInvoiceData.sum_payment || 0).format('0,0'),
       Con_Lai: numeral(preInvoiceData.debt || 0).format('0,0'),
+      Thong_Tin_Khach_Hang: customer_info
     }
 
     const QrCode = this.form.get('selectedMethod').value === 'Chuyển khoản' ? this.getQrCode(this.selectedBankAccount) : of(null);
@@ -2460,6 +2487,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       }
       this.executePrint(dataToPrint);
     });
+
   }
 
   payment() {

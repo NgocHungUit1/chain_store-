@@ -74,7 +74,8 @@
         "So_Luong": "10",
         "Thanh_Tien": "150,000",
         "Don_Vi": "Viên",
-        "Don_Gia": "15,000"
+        "Don_Gia": "15,000",
+        "So_Lo": "123456"
       },
       {
         "STT": 2,
@@ -83,7 +84,8 @@
         "So_Luong": "5",
         "Thanh_Tien": "125,000",
         "Don_Vi": "Viên",
-        "Don_Gia": "25,000"
+        "Don_Gia": "25,000",
+        "So_Lo": "654321"
       },
       {
         "STT": 3,
@@ -92,7 +94,8 @@
         "So_Luong": "8",
         "Thanh_Tien": "96,000",
         "Don_Vi": "Viên",
-        "Don_Gia": "12,000"
+        "Don_Gia": "12,000",
+        "So_Lo": "789012"
       }
     ],
     "meaning": "Danh sách mặt hàng"
@@ -161,6 +164,11 @@
     "name": "Thanh_Tien",
     "sampleValue": "150,000",
     "meaning": "Thành tiền sản phẩm"
+  },
+  {
+    "name": "Thong_Tin_Khach_Hang",
+    "sampleValue": "<p>Mã đơn thuốc: <b>20250731-001</b></p>\n<p>Tên đơn vị: <b>Phòng khám Đa khoa Hoàn Mỹ Sài Gòn</b></p>\n<p>Họ tên: <b>Trần Văn Nam</b></p>\n<p>SĐT: <b>0901234567</b></p>\n<p>Ngày sinh: <b>1985-02-20</b>\n  Cân nặng: <b>78kg</b>\n  Giới tính: <b>Nam</b></p>\n<br>\n<p><b>Chẩn đoán:</b> Viêm phế quản cấp</p>",
+    "meaning": "Thông tin khách hàng "
   }
 ]
 

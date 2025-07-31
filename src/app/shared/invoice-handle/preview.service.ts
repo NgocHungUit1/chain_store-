@@ -29,7 +29,7 @@ export interface InvoiceData {
     Thanh_Tien: string;
     Don_Vi?: string; // Optional field for unit
     Don_Gia?: string; // Optional field for unit price
-
+    So_Lo?: string;
   }>;
 
   Tong_Tien_Hang: string;
@@ -42,6 +42,7 @@ export interface InvoiceData {
   Tong_So_Luong: string;
   Chiet_Khau: string;
   Ma_QR: string;
+  Thong_Tin_Khach_Hang: string;
 }
 
 @Injectable({
@@ -159,6 +160,7 @@ export class PreviewService {
         'Don_Gia',
         'Thanh_Tien',
         'STT',
+        'So_Lo'
       ]
 
       // Generate rows for each item

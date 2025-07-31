@@ -5,7 +5,7 @@ import { PreviewService, InvoiceData } from '../../shared/invoice-handle/preview
 import { SharedEditorComponent, EditorConfig } from '../../shared/shared-editor/shared-editor.component';
 import { InvoiceTemplateService, InvoiceTemplate } from '../../shared/invoice-handle/invoice-template.service';
 import { finalize } from 'rxjs/operators';
-
+import { NotifierService } from 'angular-notifier';
 
 @Component({
   selector: 'app-setting-print-editor',
@@ -25,7 +25,9 @@ export class SettingPrintEditorComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private invoiceTemplateService: InvoiceTemplateService,
-    private previewService: PreviewService
+    private previewService: PreviewService,
+    private notifierSer: NotifierService,
+
   ) {
     // Configure editor for main view (no toolbar)
     this.editorConfig = {
@@ -223,6 +225,7 @@ export class SettingPrintEditorComponent implements OnInit {
           console.log('Template updated successfully: ', response);
           this.invoiceTemplateService.getAllTemplates().subscribe(
             (templates) => {
+              this.notifierSer.notify('success', 'Cập nhật mẫu in thành công!');
               this.invoiceTemplates = templates;
               // If updated template was selected, update current template
               if (this.selectedTemplateId === template.id) {
@@ -255,6 +258,7 @@ export class SettingPrintEditorComponent implements OnInit {
           // Refresh templates list
           this.invoiceTemplateService.getAllTemplates().subscribe(
             (templates) => {
+              this.notifierSer.notify('success', 'Xóa mẫu in thành công!');
               this.invoiceTemplates = templates;
               this.currentTemplate = templates[0];
               this.selectedTemplateId = this.currentTemplate?.id || 1;

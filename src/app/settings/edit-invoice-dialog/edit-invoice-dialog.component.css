@@ -63,13 +63,13 @@
 
 .variables-table td:first-child,
 .variables-table td:nth-child(3) {
-  padding-right: 0px; /* Less space between name and meaning */
-  width: 20%;
+  padding-right: 4px; /* Less space between name and meaning */
+  width: 22%;
 }
 
 .variables-table td:nth-child(2),
 .variables-table td:nth-child(4) {
-  padding-left: 0px; /* Less space between name and meaning */
+  padding-left: 2px; /* Less space between name and meaning */
 }
 
 .template-name-section {
