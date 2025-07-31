@@ -16,8 +16,9 @@
   margin-right: 8px;
 }
 
-.mat-elevation-z8 {
+.table-container {
   position: relative;
+  overflow-x: auto;
 }
 
 .loading-shade {
@@ -31,6 +32,28 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.no-data {
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+  color: #666;
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-left: 12px;
+}
+
+.toolbar-buttons-group {
+  display: flex;
+  gap: 8px;
+}
+
+.spacer {
+  flex: 1 1 auto;
 }
 
 .mat-table {
@@ -91,4 +114,16 @@
 .mat-column-total_amount {
   flex: 0 0 120px;
   justify-content: flex-end;
+}
+
+th.mat-header-cell {
+  background-color: #dcf4fc !important;
+  color: #222 !important;
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 0.1px;
+}
+
+.dv-header button[mat-raised-button]:not(:first-of-type) {
+  margin-left: 8px;
 } 

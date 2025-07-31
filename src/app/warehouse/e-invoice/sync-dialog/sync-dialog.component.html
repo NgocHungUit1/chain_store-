@@ -26,7 +26,7 @@
     <div class="row mt-3">
       <div class="col-md-6">
         <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Từ ngày</mat-label>
+          <mat-label>Ngày bắt đầu</mat-label>
           <input matInput [matDatepicker]="fromPicker" formControlName="FromInvoiceDate" required>
           <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
           <mat-datepicker #fromPicker></mat-datepicker>
@@ -37,18 +37,24 @@
       </div>
       <div class="col-md-6">
         <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Đến ngày</mat-label>
-          <input matInput [matDatepicker]="toPicker" formControlName="ToInvoiceDate" required>
-          <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+          <mat-label>Ngày kết thúc</mat-label>
+          <input matInput [value]="endDateDisplay" disabled>
+          <mat-datepicker-toggle matSuffix [for]="toPicker" disabled></mat-datepicker-toggle>
           <mat-datepicker #toPicker></mat-datepicker>
-          <mat-error *ngIf="syncForm.get('ToInvoiceDate').errors?.required">
-            Vui lòng chọn ngày kết thúc
-          </mat-error>
         </mat-form-field>
       </div>
     </div>
 
-    <div class="d-flex justify-content-end mt-3">
+    <div class="info-notice mt-4">
+      <mat-icon class="info-icon">info</mat-icon>
+      <span class="info-text">
+        <strong>Lưu ý:</strong> Hệ thống chỉ cho phép đồng bộ tối đa 1 tháng mỗi lần. 
+        Ngày kết thúc sẽ tự động được tính là 1 tháng sau ngày bắt đầu. 
+        Để đồng bộ thời gian tùy ý, vui lòng liên hệ admin để được hỗ trợ (có thể phát sinh phí).
+      </span>
+    </div>
+
+    <div class="d-flex justify-content-end mt-4">
       <button mat-button type="button" (click)="onCancel()" [disabled]="loading">Hủy</button>
       <button mat-raised-button color="primary" type="submit" [disabled]="loading || syncForm.invalid">
         <mat-icon>sync</mat-icon>

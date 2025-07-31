@@ -30,6 +30,24 @@ import {WarehouseFormAmountComponent} from './warehouse-form-amount/warehouse-fo
 import { WarehouseParcelFormDialogAvailableComponent } from './warehouse-parcel-form-dialog-available/warehouse-parcel-form-dialog-available.component';
 import { WarehouseParcelFormDialogSelectComponent } from './warehouse-parcel-form-dialog-select/warehouse-parcel-form-dialog-select.component';
 import {ClickOutsideDirective} from "./warehouse-import-form/click-outside.directive";
+import { EInvoiceComponent } from './e-invoice/e-invoice.component';
+import { EInvoiceService } from './e-invoice/e-invoice.service';
+import { HttpClientModule } from '@angular/common/http';
+import { RegisterDialogComponent } from './e-invoice/register-dialog/register-dialog.component';
+import { SyncDialogComponent } from './e-invoice/sync-dialog/sync-dialog.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { LoadDialogComponent } from './e-invoice/load-dialog/load-dialog.component';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { InvoiceDetailDialogComponent } from './e-invoice/invoice-detail-dialog.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +68,12 @@ import {ClickOutsideDirective} from "./warehouse-import-form/click-outside.direc
     WarehouseUnitCreateDialogComponent,
     WarehouseParcelFormDialogAvailableComponent,
     WarehouseParcelFormDialogSelectComponent,
-    ClickOutsideDirective
+    ClickOutsideDirective,
+    EInvoiceComponent,
+    RegisterDialogComponent,
+    SyncDialogComponent,
+    LoadDialogComponent,
+    InvoiceDetailDialogComponent
   ],
   imports: [
     CommonModule,
@@ -66,10 +89,28 @@ import {ClickOutsideDirective} from "./warehouse-import-form/click-outside.direc
     InputSelectAllModule,
     DComonModule,
     SharedModule,
+    HttpClientModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatDialogModule,
+    MatIconModule,
+    MatButtonModule,
+    MatToolbarModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatProgressSpinnerModule
+  ],
+  providers: [
+    EInvoiceService
   ],
   entryComponents: [
-    WarehouseParcelFormDialogComponent
+    WarehouseParcelFormDialogComponent,
+    RegisterDialogComponent,
+    SyncDialogComponent,
+    LoadDialogComponent,
+    InvoiceDetailDialogComponent
   ]
 })
-export class WarehouseModule {
-}
+export class WarehouseModule {}

@@ -4,4 +4,29 @@
 
 mat-form-field {
   margin-bottom: 1rem;
+}
+
+.info-notice {
+  display: flex;
+  align-items: flex-start;
+  padding: 16px;
+  background-color: #e3f2fd;
+  border: 1px solid #2196f3;
+  border-radius: 4px;
+  color: #1565c0;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.info-icon {
+  margin-right: 12px;
+  margin-top: 2px;
+  color: #2196f3;
+  flex-shrink: 0;
+}
+
+.info-text {
+  font-size: 14px;
+  line-height: 1.5;
+  flex: 1;
 } 

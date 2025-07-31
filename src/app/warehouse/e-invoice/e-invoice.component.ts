@@ -21,10 +21,12 @@ export class EInvoiceComponent extends ListComponentBase implements OnInit {
   columnsHeader = {
     '#': '#',
     'InvoiceNo': 'Số hóa đơn',
-    'InvoiceDate': 'Ngày hóa đơn',
-    'BuyerUnitName': 'Đơn vị mua',
-    'SumPaymentAmount': 'Tổng tiền',
-    'actions': 'Thao tác'
+    'InvoiceDate': 'Ngày lập',
+    'SellerInfo': 'Thông tin người bán',
+    'SumItemAmount': 'Tổng tiền chưa thuế',
+    'SumTaxAmount': 'Tổng tiền thuế',
+    'SumPaymentAmount': 'Tổng tiền thanh toán',
+    'actions': 'Thao tác',
   };
 
   displayedColumns: string[] = [
@@ -34,13 +36,16 @@ export class EInvoiceComponent extends ListComponentBase implements OnInit {
     'SellerInfo',
     'SumItemAmount',
     'SumTaxAmount',
-    'SumPaymentAmount'
+    'SumPaymentAmount',
+    'actions'
   ];
   columnsToDisplay: string[] = [
     '#',
     'InvoiceNo',
     'InvoiceDate',
-    'BuyerUnitName',
+    'SellerInfo',
+    'SumItemAmount',
+    'SumTaxAmount',
     'SumPaymentAmount',
     'actions'
   ];
@@ -73,7 +78,7 @@ export class EInvoiceComponent extends ListComponentBase implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.notifyService.notify('success', 'Đăng ký partner thành công');
+        this.notifyService.notify('success', 'Đăng nhập thành công');
       }
     });
   }

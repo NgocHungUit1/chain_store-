@@ -84,6 +84,7 @@ const MENUITEMS = [
       {state: 'returns', name: 'Trả hàng', type: 'link', icon: 'keyboard_return', permissions: ['Returns.List']},
       {state: 'warehouse-return', name: 'Trả hàng nhập', type: 'link', 'icon': 'assignment_return', permissions: ['Warehouse.List']},
       {state: 'move', name: 'Chuyển hàng', type: 'link', icon: 'local_shipping', permissions: ['Move.List']},
+      {state: 'e-invoice', name: 'Hóa đơn đầu vào', type: 'link', icon: 'description', permissions: ['Warehouse.List']},
     ]
   },
   {

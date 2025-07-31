@@ -13,6 +13,7 @@ import { formatDate } from '@angular/common';
 export class SyncDialogComponent implements OnInit {
   syncForm: FormGroup;
   loading = false;
+  endDateDisplay: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -25,9 +26,21 @@ export class SyncDialogComponent implements OnInit {
     this.syncForm = this.fb.group({
       Username: [null, [Validators.required]],
       Password: [null, [Validators.required]],
-      FromInvoiceDate: [null, [Validators.required]],
-      ToInvoiceDate: [null, [Validators.required]]
+      FromInvoiceDate: [null, [Validators.required]]
     });
+
+    // Lắng nghe sự thay đổi của ngày bắt đầu để tự động tính ngày kết thúc
+    this.syncForm.get('FromInvoiceDate').valueChanges.subscribe(startDate => {
+      if (startDate) {
+        this.calculateEndDate(startDate);
+      }
+    });
+  }
+
+  calculateEndDate(startDate: Date) {
+    const endDate = new Date(startDate);
+    endDate.setMonth(endDate.getMonth() + 1);
+    this.endDateDisplay = formatDate(endDate, 'dd/MM/yyyy', 'en-US');
   }
 
   onSubmit() {
@@ -35,11 +48,22 @@ export class SyncDialogComponent implements OnInit {
       return;
     }
 
+    const startDate = this.syncForm.value.FromInvoiceDate;
+    if (!startDate) {
+      this.notifyService.notify('error', 'Vui lòng chọn ngày bắt đầu');
+      return;
+    }
+
+    // Tính ngày kết thúc (1 tháng sau)
+    const endDate = new Date(startDate);
+    endDate.setMonth(endDate.getMonth() + 1);
+
     this.loading = true;
     const formData = {
-      ...this.syncForm.value,
-      FromInvoiceDate: formatDate(this.syncForm.value.FromInvoiceDate, 'yyyy-MM-ddTHH:mm:ss', 'en-US'),
-      ToInvoiceDate: formatDate(this.syncForm.value.ToInvoiceDate, 'yyyy-MM-ddTHH:mm:ss', 'en-US')
+      Username: this.syncForm.value.Username,
+      Password: this.syncForm.value.Password,
+      FromInvoiceDate: formatDate(startDate, 'yyyy-MM-ddTHH:mm:ss', 'en-US'),
+      ToInvoiceDate: formatDate(endDate, 'yyyy-MM-ddTHH:mm:ss', 'en-US')
     };
 
     this.eInvoiceService.syncInvoices(formData).subscribe({
