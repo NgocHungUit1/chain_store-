@@ -26,8 +26,7 @@ export class SettingPrintEditorComponent implements OnInit {
     private dialog: MatDialog,
     private invoiceTemplateService: InvoiceTemplateService,
     private previewService: PreviewService,
-    private notifierSer: NotifierService,
-
+    private notifierSer: NotifierService
   ) {
     // Configure editor for main view (no toolbar)
     this.editorConfig = {
@@ -272,7 +271,6 @@ export class SettingPrintEditorComponent implements OnInit {
       },
       error: (error) => {
         console.error('Failed to delete template:', error);
-        // Show error message to user
       }
     });
   }

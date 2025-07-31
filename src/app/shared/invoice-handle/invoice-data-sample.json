@@ -169,6 +169,11 @@
     "name": "Thong_Tin_Khach_Hang",
     "sampleValue": "<p>Mã đơn thuốc: <b>20250731-001</b></p>\n<p>Tên đơn vị: <b>Phòng khám Đa khoa Hoàn Mỹ Sài Gòn</b></p>\n<p>Họ tên: <b>Trần Văn Nam</b></p>\n<p>SĐT: <b>0901234567</b></p>\n<p>Ngày sinh: <b>1985-02-20</b>\n  Cân nặng: <b>78kg</b>\n  Giới tính: <b>Nam</b></p>\n<br>\n<p><b>Chẩn đoán:</b> Viêm phế quản cấp</p>",
     "meaning": "Thông tin khách hàng "
+  },
+  {
+    "name": "So_Lo",
+    "sampleValue": "123456",
+    "meaning": "Số lô sản phẩm"
   }
 ]
 
