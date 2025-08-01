@@ -55,12 +55,14 @@ export class ProductTabStockChangeComponent extends ListComponentBase implements
     'import': 'Nhập hàng',
     'delete-import': 'Xóa đơn nhập hàng',
     'return': 'Trả hàng nhập',
+    'delete-return': 'Xoá đơn trả hàng nhập',
     'stock-take': 'Kiểm kho',
     'sale': 'Bán hàng',
     'delete-sale': 'Hủy bỏ phiếu bán hàng',
     'return-sale': 'Trả hàng bán',
     'move-from': 'Chuyển hàng đi',
     'move-to': 'Chuyển hàng đến',
+    'delete-product': 'Xoá sản phẩm',
   };
 
   methodLinks = {
@@ -71,6 +73,7 @@ export class ProductTabStockChangeComponent extends ListComponentBase implements
     'return-sale': '#',
     'move-from': '/transaction/move/code/',
     'move-to': '/transaction/move/code/',
+    'delete-product': '#',
   };
 
   downloadLink = null;

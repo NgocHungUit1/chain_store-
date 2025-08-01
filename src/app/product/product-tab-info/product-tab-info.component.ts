@@ -209,7 +209,9 @@ export class ProductTabInfoComponent extends BaseComponent implements OnChanges 
     const obj = {
       action: 'Delete',
       title: 'Xác nhận xóa sản phẩm "' + this.product.product_name + '"  đã chọn .',
-      content: '',
+      content: 'Bạn có xác nhận xoá sản phẩm khỏi cửa hàng.' +
+        ' Sau khi xoá SP sẽ đặt lại số lượng SP tất cả chi nhánh bằng 0.' +
+        ' Nếu chỉ muốn cập nhật lại số lượng SP cho 1 chi nhánh vui lòng tạo phiếu kiểm kho.',
     };
     const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
       data: obj,

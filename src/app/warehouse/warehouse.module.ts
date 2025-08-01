@@ -48,6 +48,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { InvoiceDetailDialogComponent } from './e-invoice/invoice-detail-dialog.component';
+import { NgxMaskModule } from 'ngx-mask';
 
 @NgModule({
   declarations: [
@@ -100,10 +101,13 @@ import { InvoiceDetailDialogComponent } from './e-invoice/invoice-detail-dialog.
     MatToolbarModule,
     MatTableModule,
     MatPaginatorModule,
-    MatProgressSpinnerModule
-  ],
-  providers: [
-    EInvoiceService
+    MatProgressSpinnerModule,
+    NgxMaskModule.forRoot({
+      validation: true,
+      thousandSeparator: ',',
+      decimalMarker: '.',
+      dropSpecialCharacters: false
+    }),
   ],
   entryComponents: [
     WarehouseParcelFormDialogComponent,

@@ -214,6 +214,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     'next_6_month',
     'next_year',
     'expired',
+    'all_time'
   ];
   public timeLabels = {
     'today': 'Hôm nay',
@@ -225,6 +226,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     'next_6_month': 'Trong 6 tháng',
     'next_year': 'Trong 1 năm',
     'expired': 'Đã hết hạn',
+    'all_time': 'Toàn thời gian',
   };
 
   buildFilterFromParams(): ProductFilter {
@@ -292,6 +294,8 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
 
     if (filter.timeSelect !== undefined && filter.timeSelect.length > 0) {
       this.timeExpireFilter.patchValue({'typeTime': filter.timeSelect});
+    } else {
+      filter.timeSelect = this.timeExpireFilter.controls['typeTime'].value;
     }
 
     // filter.expand = 'returnsDetailsBranch';

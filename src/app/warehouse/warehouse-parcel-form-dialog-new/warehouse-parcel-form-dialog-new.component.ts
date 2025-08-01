@@ -50,7 +50,7 @@ export class WarehouseParcelFormDialogNewComponent implements OnInit {
     this.parcelForm = new FormGroup({
       parcel_no: new FormControl('', [Validators.required]),
       expiration_date: new FormControl('', [Validators.required]),
-      quantity: new FormControl('', [
+      quantity: new FormControl(data.quantity??'', [
         Validators.required,
         Validators.min(1),
       ])

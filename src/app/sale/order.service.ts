@@ -318,6 +318,10 @@ export class OrderService {
             mItemInvoice.total_amount = 0;
           }
           mItemInvoice.listProduct = resultListProduct;
+
+          if(mItemInvoice.listProduct.length === 0) {
+            mItemInvoice.prescription_id = null;
+          }
         }
       }
     });

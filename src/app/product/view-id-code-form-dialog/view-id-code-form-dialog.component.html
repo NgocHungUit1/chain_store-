@@ -1,14 +1,16 @@
 <div id="contentToConvert">
-<!--  <div id="image-print" #container>-->
-<!--    <img id="barcode" alt="" style="visibility: hidden; height: 0px"/>-->
-<!--  </div>-->
-  <ngx-extended-pdf-viewer [base64Src]="this.base64"
-                           [useBrowserLocale]="true"
-                           [customToolbar]="additionalButtons"
-                           [textLayer]="true"
-                           [handTool]="true"
-                           [showPrintButton]="true"
-                           [height]="'90vh'"></ngx-extended-pdf-viewer>
+  <!--  <div id="image-print" #container>-->
+  <!--    <img id="barcode" alt="" style="visibility: hidden; height: 0px"/>-->
+  <!--  </div>-->
+  <ngx-extended-pdf-viewer
+    [src]="pdfUrl"
+    [printResolution]="600"
+    [useBrowserLocale]="true"
+    [customToolbar]="additionalButtons"
+    [textLayer]="true"
+    [handTool]="true"
+    [showPrintButton]="true"
+    [height]="'90vh'"></ngx-extended-pdf-viewer>
   <ng-template #additionalButtons>
     <div id="toolbarViewer">
       <div id="toolbarViewerLeft">
