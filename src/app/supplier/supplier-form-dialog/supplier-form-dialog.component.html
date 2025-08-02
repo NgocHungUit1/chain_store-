@@ -47,18 +47,6 @@
           </div>
           <div fxFlex="100">
             <mat-form-field>
-              <input matInput placeholder="Quận/Huyện" tabindex="6" aria-label="Quận/Huyện" [matAutocomplete]="district"
-                     formControlName="district">
-              <mat-autocomplete #district="matAutocomplete" [displayWith]="displayLocation"
-                                (optionSelected)='onDistrictChange($event.option.value)'>
-                <mat-option *ngFor="let district of filteredDistricts | async" [value]="district">
-                  <span>{{district.name}}</span>
-                </mat-option>
-              </mat-autocomplete>
-            </mat-form-field>
-          </div>
-          <div fxFlex="100">
-            <mat-form-field>
               <input matInput placeholder="Phường/Xã" tabindex="7" aria-label="Phường/Xã" [matAutocomplete]="ward"
                      formControlName="ward">
               <mat-autocomplete #ward="matAutocomplete" [displayWith]="displayLocation">

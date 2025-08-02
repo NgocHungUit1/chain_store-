@@ -125,7 +125,7 @@ export class SupplierListComponent extends ListComponentBase implements OnInit {
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'province,district,ward,total_amount,paid_amount,remain_amount';
+    filter.expand = 'province,ward,total_amount,paid_amount,remain_amount';
     filter.status = this.statusFilter.controls['status'].value;
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;

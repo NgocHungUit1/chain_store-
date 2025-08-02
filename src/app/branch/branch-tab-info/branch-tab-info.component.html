@@ -57,8 +57,8 @@
         </div>
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Quận/Huyện: </span><span
-            *ngIf="branch.district">{{branch.district.name}}</span>
+            <span class="product-field-label">Phường/Xã: </span><span
+            *ngIf="branch.ward">{{branch.ward.name}}</span>
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
@@ -68,8 +68,7 @@
 
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Phường/Xã: </span><span
-            *ngIf="branch.ward">{{branch.ward.name}}</span>
+            <span class="product-field-label">Số đăng ký nhà thuốc: </span> {{branch.pharmacy_registration_number}}
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
@@ -79,7 +78,7 @@
 
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Số đăng ký nhà thuốc: </span> {{branch.pharmacy_registration_number}}
+            <span class="product-field-label">Giấy phép kinh doanh: </span> {{branch.business_registration_certificate}}
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
@@ -89,7 +88,7 @@
 
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Giấy phép kinh doanh: </span> {{branch.business_registration_certificate}}
+            <span class="product-field-label">Loại hinhg nhà thuốc:{{branch.pharmacy_type }}</span>
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
@@ -97,13 +96,6 @@
             <label *ngIf="branch.status == '9'" class="label label-warning">Ngưng hoạt động</label>
             <label *ngIf="branch.status == '10'" class="label label-success">Hoạt động</label>
           </div>
-        </div>
-
-        <div fxLayout="row wrap" class="product-info-row product-info-row-last">
-          <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Loại hinhg nhà thuốc:{{branch.pharmacy_type }}</span>
-          </div>
-          <div fxFlex="52"></div>
         </div>
       </div>
 

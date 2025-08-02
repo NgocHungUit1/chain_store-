@@ -15,7 +15,6 @@ export class Customer {
   status: string;
   address: string;
   province: Location;
-  district: Location;
   ward: Location;
   stt: number; // for view
   total_point: number;

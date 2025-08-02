@@ -26,8 +26,7 @@
         </div>
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Quận/Huyện:</span> <span
-            *ngIf="customer.district">{{customer.district.name}}</span>
+            <span class="product-field-label">Điện thoại:</span> {{customer.phone}}
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
@@ -37,11 +36,11 @@
         </div>
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Điện thoại:</span> {{customer.phone}}
+            <span class="product-field-label">Email:</span> {{customer.email}}
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Email:</span> {{customer.email}}
+            <span class="product-field-label">Mã số thuế:</span> {{customer.tax_code}}
           </div>
         </div>
         <div fxLayout="row wrap" class="product-info-row product-info-row-last">
@@ -49,9 +48,6 @@
             <span class="product-field-label">Công ty:</span> {{customer.company_name}}
           </div>
           <div fxFlex="4"></div>
-          <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Mã số thuế:</span> {{customer.tax_code}}
-          </div>
         </div>
       </div>
 

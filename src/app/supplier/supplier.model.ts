@@ -13,7 +13,6 @@ export class Supplier {
   status: string;
   address: string;
   province: Location;
-  district: Location;
   ward: Location;
   stt: number; // for view
 }

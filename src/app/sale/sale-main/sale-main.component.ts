@@ -3437,7 +3437,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     write(this.bankAccountFilter, 'page', 1);
     write(this.bankAccountFilter, 'pageSize', 1000);
     write(this.bankAccountFilter, 'status', '10');
-    write(this.bankAccountFilter, 'expand', 'province,district,ward');
+    write(this.bankAccountFilter, 'expand', 'province,ward');
 
     this.bankAccountSer.getList(this.bankAccountFilter).subscribe((res) => {
       this.bankAccounts = res.body

@@ -92,7 +92,7 @@ export class ExpensesOrderListComponent extends ListComponentBase implements OnI
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    // filter.expand = 'province,district,ward,user';
+    // filter.expand = 'province,ward,user';
     return filter;
   }
 

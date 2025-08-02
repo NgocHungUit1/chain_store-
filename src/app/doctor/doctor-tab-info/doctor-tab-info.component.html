@@ -26,8 +26,7 @@
         </div>
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Quận/Huyện:</span> <span
-            *ngIf="doctor.district">{{doctor.district.name}}</span>
+            <span class="product-field-label">Điện thoại:</span> {{doctor.phone}}
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
@@ -37,12 +36,9 @@
         </div>
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Điện thoại:</span> {{doctor.phone}}
-          </div>
-          <div fxFlex="4"></div>
-          <div fxFlex="48" class="product-info-field">
             <span class="product-field-label">Email:</span> {{doctor.email}}
           </div>
+          <div fxFlex="4"></div>
         </div>
 
       </div>
