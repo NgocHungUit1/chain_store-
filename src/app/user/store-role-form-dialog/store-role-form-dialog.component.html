@@ -13,15 +13,22 @@
               <mat-error *ngIf="form.controls['name'].hasError('required')">Tên tài khoản không được bỏ trống
               </mat-error>
               <mat-error *ngIf="form.controls['name'].hasError('ajaxValidator')
-                    && form.controls['name'].touched">{{ form.controls['name'].getError('ajaxValidator')?.value}}</mat-error>
+                    && form.controls['name'].touched">{{ form.controls['name'].getError('ajaxValidator')?.value }}
+              </mat-error>
             </mat-form-field>
           </div>
 
           <div fxFlex="100">
             <div fxLayout="row wrap" *ngIf="this.storePerData">
               <div fxFlex="30" *ngFor="let group of this.storePerData.group">
-                <h3 class='group-title'>{{group}}</h3>
-                <ejs-treeview class='custom-tree' [fields]="{ dataSource: this.storePerData.permission_data[group]['children'], id: 'id', text: 'name', child: 'children'}" [checkedNodes]="this.selectedPermissions" [showCheckBox]="true" (nodeChecked)="nodeChecked($event)"></ejs-treeview>
+                <h3 class='group-title'>{{ group }}</h3>
+                <ejs-treeview
+                  class='custom-tree'
+                  [fields]="{ dataSource: this.storePerData.permission_data[group]['children'], id: 'id', text: 'name', child: 'children'}"
+                  [checkedNodes]="this.selectedPermissions"
+                  [showCheckBox]="true"
+                  (nodeChecked)="nodeChecked($event)">
+                </ejs-treeview>
               </div>
 
 

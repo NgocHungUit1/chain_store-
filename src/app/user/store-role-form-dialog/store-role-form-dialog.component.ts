@@ -6,6 +6,7 @@ import { NotifierService } from 'angular-notifier';
 import { UserService } from '../user.service';
 import {StoreRoleService} from '../store-role.service';
 import {StorePermissionService} from '../store-permission.service';
+import { TreeViewComponent } from '@syncfusion/ej2-angular-navigations';
 
 @Component({
   selector: 'app-store-role-form-dialog',
@@ -130,18 +131,95 @@ export class StoreRoleFormDialogComponent implements OnInit {
 
   public nodeChecked(args: any): void {
     args.data.forEach(item => {
-      const index = this.selectedPermissions.indexOf(item.id);
-      if (item['isChecked'] === 'true') {
+      const index = this.selectedPermissions.indexOf(item.id.toString());
+
+      if (item.isChecked === 'true') {
         // Item checked then check not exist
         if (index === -1) {
-          this.selectedPermissions.push(item.id);
+          this.selectedPermissions.push(item.id.toString());
+
+          // Kiểm tra có mục con không
+          // Nếu có thì thêm tất cả các mục con vào selectedPermissions
+          if (!item.checked && item.hasChildren) {
+            const childrenIds = this.findChildrenIdsById(item.id.toString());
+            for (const childId of childrenIds) {
+
+              if (!this.selectedPermissions.find(id => Number(id) === Number(childId))) {
+                this.selectedPermissions.push(childId);
+              }
+
+            }
+          }
         }
       } else {
         if (index !== -1) {
           this.selectedPermissions.splice(index, 1);
         }
+
+        // Kiểm tra có mục con không
+        // Đếm số mục con được chọn hiện tại
+        // Nếu tất cả các con đều được chọn thì bỏ chọn tất cả các con
+        if (!item.checked && item.hasChildren) {
+          const childrenIds = this.findChildrenIdsById(item.id.toString());
+
+          let countChildChecker = 0;
+          for (const childId of childrenIds) {
+            if (this.selectedPermissions.find(id => Number(id) === Number(childId))) {
+              countChildChecker++;
+            }
+          }
+
+          if (countChildChecker === childrenIds.length) {
+            for (const childId of childrenIds) {
+              const childIndex = this.selectedPermissions.indexOf(childId);
+
+              if (childIndex !== -1) {
+                this.selectedPermissions.splice(childIndex, 1);
+              }
+            }
+          }
+
+        }
       }
     });
-
   }
+
+  /**
+   * Tìm kiếm tất cả các ID con của một ID mục nhất định trong cấu trúc phân quyền
+   * @param targetId ID mục cần tìm kiếm
+   * @returns Mảng chứa tất cả các ID con
+   */
+  private findChildrenIdsById(targetId: string): string[] {
+    const result: string[] = [];
+
+    const recursiveSearch = (nodes: any[]) => {
+      for (const node of nodes) {
+        if (node.id.toString() === targetId) {
+          collectChildIds(node);
+          break;
+        }
+        if (node.children) {
+          recursiveSearch(node.children);
+        }
+      }
+    };
+
+    const collectChildIds = (node: any) => {
+      if (node.children) {
+        for (const child of node.children) {
+          result.push(child.id.toString());
+          collectChildIds(child);
+        }
+      }
+    };
+
+    // iterate each group in storePerData
+    for (const group of Object.keys(this.storePerData.permission_data)) {
+      const nodes = this.storePerData.permission_data[group].children;
+      recursiveSearch(nodes);
+    }
+
+    return result;
+  }
+
 }
