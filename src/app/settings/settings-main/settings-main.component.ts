@@ -121,7 +121,8 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
       einvoice_enabled: [false],
       einvoice_partner_guid: ['', Validators.required],
       einvoice_partner_token: ['', Validators.required],
-      einvoice_api_url: ['', Validators.required]
+      einvoice_api_url: ['', Validators.required],
+      einvoice_invoice_serial: ['', Validators.required]
     });
 
     if (this.canDo('Branch.Get-Connect')) {
@@ -452,6 +453,12 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
         einvoice_api_url: res.value || ''
       });
     });
+
+    this.optionStoreService.getValue('einvoice_invoice_serial').subscribe(res => {
+      this.einvoiceForm.patchValue({
+        einvoice_invoice_serial: res.value || ''
+      });
+    });
   }
 
   async saveEinvoice() {
@@ -468,16 +475,19 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
       const guidOption = await this.optionStoreService.getValue('einvoice_partner_guid').toPromise();
       const tokenOption = await this.optionStoreService.getValue('einvoice_partner_token').toPromise();
       const urlOption = await this.optionStoreService.getValue('einvoice_api_url').toPromise();
+      const serialOption = await this.optionStoreService.getValue('einvoice_invoice_serial').toPromise();
 
       enabledOption.value = formData.einvoice_enabled ? 'true' : 'false';
       guidOption.value = formData.einvoice_partner_guid;
       tokenOption.value = formData.einvoice_partner_token;
       urlOption.value = formData.einvoice_api_url;
+      serialOption.value = formData.einvoice_invoice_serial;
 
       await this.optionStoreService.update(enabledOption.id, enabledOption).toPromise();
       await this.optionStoreService.update(guidOption.id, guidOption).toPromise();
       await this.optionStoreService.update(tokenOption.id, tokenOption).toPromise();
       await this.optionStoreService.update(urlOption.id, urlOption).toPromise();
+      await this.optionStoreService.update(serialOption.id, serialOption).toPromise();
 
       this.notifySer.notify('success', 'Đã lưu cấu hình hóa đơn điện tử thành công!');
     } catch (error) {

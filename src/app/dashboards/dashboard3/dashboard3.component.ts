@@ -389,4 +389,9 @@ export class Dashboard3Component implements OnInit {
       autoFocus: false
     });
   }
+
+  // Hàm điều hướng đến trang e-invoice
+  public navigateToEInvoice(): void {
+    this.router.navigate(['/transaction/e-invoice']);
+  }
 }

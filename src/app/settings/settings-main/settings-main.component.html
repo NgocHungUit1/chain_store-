@@ -480,6 +480,17 @@
                       </small>
                     </div>
 
+                    <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                      <mat-form-field class="full-width">
+                        <input matInput placeholder="Ký hiệu hóa đơn"
+                               [formControl]="einvoiceForm.controls['einvoice_invoice_serial']">
+                      </mat-form-field>
+                      <small
+                        *ngIf="einvoiceForm.controls['einvoice_invoice_serial'].hasError('required') && einvoiceForm.controls['einvoice_invoice_serial'].touched"
+                        class="text-danger support-text">Vui lòng điền ký hiệu hóa đơn.
+                      </small>
+                    </div>
+
                     <!-- col half-->
                     <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100" class="m-t-10">
                       <button mat-raised-button color="primary" type="submit"

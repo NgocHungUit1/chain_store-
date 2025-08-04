@@ -5,7 +5,7 @@ import { WarehouseReturnFormComponent } from './warehouse-return-form/warehouse-
 import { WarehouseImportFormComponent } from './warehouse-import-form/warehouse-import-form.component';
 import { InvoiceListComponent } from '../invoice/invoice-list/invoice-list.component';
 import { ReturnsListComponent } from '../returns/returns-list/returns-list.component';
-
+import { EInvoiceComponent } from './e-invoice/e-invoice.component';
 
 export const WarehouseRoutes: Routes = [
   {
@@ -54,6 +54,10 @@ export const WarehouseRoutes: Routes = [
       {
         path: 'returns/code/:code',
         component: ReturnsListComponent
+      },
+      {
+        path: 'e-invoice',
+        component: EInvoiceComponent
       },
       {
         path: 'move',

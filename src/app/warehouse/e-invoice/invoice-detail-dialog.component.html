@@ -1,0 +1,73 @@
+<h2 mat-dialog-title class="invoice-header">THÔNG TIN HÓA ĐƠN</h2>
+<mat-dialog-content>
+  <div class="invoice-info-block">
+    <div class="info-row">
+      <div class="info-label">Người bán:</div>
+      <div class="info-value">{{data.SellerUnitName}}</div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">Mã số thuế người bán:</div>
+      <div class="info-value">{{data.SellerTaxCode}}</div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">Người mua:</div>
+      <div class="info-value">{{data.BuyerUnitName}}</div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">Mã số thuế người mua:</div>
+      <div class="info-value">{{data.BuyerTaxCode}}</div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">Số hóa đơn:</div>
+      <div class="info-value">{{data.InvoiceNo}}</div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">Ngày lập:</div>
+      <div class="info-value">{{data.InvoiceDate | date:'dd/MM/yyyy'}}</div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">Tổng tiền chưa thuế:</div>
+      <div class="info-value">{{data.SumItemAmount | number}}</div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">Tổng tiền thuế:</div>
+      <div class="info-value">{{data.SumTaxAmount | number}}</div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">Tổng tiền thanh toán:</div>
+      <div class="info-value">{{data.SumPaymentAmount | number}}</div>
+    </div>
+  </div>
+  <h3 class="invoice-detail-subtitle">Danh sách hàng hóa</h3>
+  <table mat-table [dataSource]="data.InvoiceDetails" class="mat-elevation-z1 invoice-detail-table">
+    <ng-container matColumnDef="Ten">
+      <th mat-header-cell *matHeaderCellDef>Tên hàng hóa</th>
+      <td mat-cell *matCellDef="let d">{{d.Ten}}</td>
+    </ng-container>
+    <ng-container matColumnDef="SLuong">
+      <th mat-header-cell *matHeaderCellDef>Số lượng</th>
+      <td mat-cell *matCellDef="let d">{{d.SLuong}}</td>
+    </ng-container>
+    <ng-container matColumnDef="DVTinh">
+      <th mat-header-cell *matHeaderCellDef>Đơn vị tính</th>
+      <td mat-cell *matCellDef="let d">{{d.DVTinh}}</td>
+    </ng-container>
+    <ng-container matColumnDef="DGia">
+      <th mat-header-cell *matHeaderCellDef>Đơn giá</th>
+      <td mat-cell *matCellDef="let d">{{d.DGia | number}}</td>
+    </ng-container>
+    <ng-container matColumnDef="ThTien">
+      <th mat-header-cell *matHeaderCellDef>Thành tiền</th>
+      <td mat-cell *matCellDef="let d">{{d.ThTien | number}}</td>
+    </ng-container>
+    <ng-container matColumnDef="TSuat">
+      <th mat-header-cell *matHeaderCellDef>Thuế suất</th>
+      <td mat-cell *matCellDef="let d">{{d.LTSuat}}</td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="['Ten','SLuong','DVTinh','DGia','ThTien','TSuat']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['Ten','SLuong','DVTinh','DGia','ThTien','TSuat'];"></tr>
+  </table>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close color="primary">Đóng</button>
+</mat-dialog-actions> 
