@@ -194,9 +194,9 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
   isLoadingResults = true;
   isRateLimitReached = false;
 
-  sum_expiration: number;
-  sum_quantity: number;
-  sum_parcel_stock: number;
+  sumExpirationOrQuantityOfStock: number;
+  sumImportQuantity: number;
+  sumExportQuantity: number;
 
   searchProductForm = new FormControl();
   tab: string = '';
@@ -323,6 +323,8 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.hasStock = 1;
     filter.expand = 'product';
+
+    filter.parcel_no = this.searchProductForm.value;
 
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
@@ -531,7 +533,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
 
       if (summary) {
         this.parcelSer.getSummaryExpiration(this.parcelFilter).subscribe(res => {
-          this.sum_expiration = res.body;
+          this.sumExpirationOrQuantityOfStock = res.body;
         });
       }
 
@@ -553,8 +555,9 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
 
       if (summary) {
         this.parcelSer.getSummary(this.parcelStockFilter).subscribe(res => {
-          this.sum_expiration = res.body.quantity_of_stock;
-          this.sum_quantity = res.body.quantity;
+          this.sumExpirationOrQuantityOfStock = res.body.total_quantity_of_stock;
+          this.sumImportQuantity = res.body.total_import_quantity;
+          this.sumExportQuantity = res.body.total_export_quantity;
         });
       }
 
