@@ -15,10 +15,27 @@
       </div>
 
       <div class="search-filter-container" *ngIf="!isLoading && productRows.length > 0">
-        <div class="local-search">
-          <mat-icon class="search-icon">search</mat-icon>
-          <input type="text" placeholder="Tìm kiếm theo mã hoặc tên sản phẩm"
-                 (input)="onSearch($event)" [value]="searchText">
+        <div class="search-row" style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px;">
+          <div class="local-search" style="flex: 1; position: relative; display: flex; align-items: center; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 0 12px; height: 40px;">
+            <mat-icon class="search-icon" style="color: #666; margin-right: 8px;">search</mat-icon>
+            <input type="text" placeholder="Tìm kiếm theo mã hoặc tên sản phẩm"
+                   (input)="onSearch($event)" [value]="searchText" style="border: none; outline: none; flex: 1; background: transparent;">
+          </div>
+          <mat-form-field appearance="outline" class="date-input" style="min-width: 110px; margin: 0;">
+            <mat-label>Từ ngày</mat-label>
+            <input matInput [matDatepicker]="startPicker" [(ngModel)]="dateFrom">
+            <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="date-input" style="min-width: 110px; margin: 0;">
+            <mat-label>Đến ngày</mat-label>
+            <input matInput [matDatepicker]="endPicker" [(ngModel)]="dateTo">
+            <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
+          </mat-form-field>
+          <button mat-raised-button color="primary" (click)="searchByDate()" style="height: 40px; min-width: 80px; border-radius: 4px;">
+            <mat-icon style="font-size: 18px; margin-right: 4px;">search</mat-icon>
+          </button>
         </div>
         <div class="results-info">
           Hiển thị {{filteredRows.length > 0 ? (currentPage-1)*pageSize + 1 : 0}} -
@@ -26,6 +43,8 @@
           của {{filteredRows.length}} kết quả
         </div>
       </div>
+
+
 
       <div class="table-container scrollable-table-container" *ngIf="!isLoading">
         <table class="quality-control-table">

@@ -45,6 +45,8 @@ export class QualityControlCreateModalComponent implements OnInit {
   pageSize = 10;
   currentPage = 1;
   totalPages = 1;
+  dateFrom: Date | null = null;
+  dateTo: Date | null = null;
 
   // Thêm các tùy chọn cứng
   reasonOptions = [
@@ -497,6 +499,23 @@ export class QualityControlCreateModalComponent implements OnInit {
     this.filteredRows = [...this.productRows];
     this.totalPages = Math.ceil(this.filteredRows.length / this.pageSize);
     this.currentPage = 1;
+  }
+
+  searchByDate() {
+    const filter: any = {};
+    if (this.dateFrom) filter.date_from = this.formatDate(this.dateFrom);
+    if (this.dateTo) filter.date_to = this.formatDate(this.dateTo);
+    this.isLoading = true;
+    this.productService.getAllQualityControlProducts(filter).subscribe({
+      next: (data) => {
+        this.processAllProductsData(data);
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+        this.notifyService.notify('error', 'Có lỗi xảy ra khi tải dữ liệu sản phẩm');
+      }
+    });
   }
 
   // Thêm phương thức lọc dữ liệu

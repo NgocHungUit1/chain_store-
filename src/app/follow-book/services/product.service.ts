@@ -147,10 +147,12 @@ export class ProductService {
     });
   }
 
-  getAllQualityControlProducts(): Observable<any[]> {
+  getAllQualityControlProducts(filter: any = {}): Observable<any[]> {
     let params = new HttpParams()
       .set('expand', 'product')
       .set('WarehouseProductParcelSearch[hasStock]', '1');
+    if (filter.date_from) params = params.set('WarehouseProductParcelSearch[date_from]', filter.date_from);
+    if (filter.date_to) params = params.set('WarehouseProductParcelSearch[date_to]', filter.date_to);
     return this.http.get<any[]>(`${this.baseUrl}/warehouse-product-parcel/quality-control`, { params });
   }
 }
