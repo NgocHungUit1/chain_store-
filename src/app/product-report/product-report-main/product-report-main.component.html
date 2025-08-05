@@ -453,7 +453,7 @@
                   <span>
                     {{ element?.gia_tri_dau_ky | number }}
                   </span>
-                </td>F
+                </td>
               </ng-container>
               <ng-container matColumnDef="second_gia_tri_dau_ky">
                 <th mat-header-cell class="column-number-sumary"
@@ -719,7 +719,7 @@
                     *matHeaderCellDef> {{columnsHeader['product_no']}}</th>
                 <td mat-cell *matCellDef="let element">
                   <span>
-                    {{element?.product?.product_no || element?.product_no }}
+                    {{element?.product?.product_no }}
                   </span>
                 </td>
               </ng-container>
@@ -729,7 +729,7 @@
                     *matHeaderCellDef> {{columnsHeader['product_name']}}</th>
                 <td mat-cell *matCellDef="let element">
                   <span>
-                    {{element?.product?.product_name || element?.product_name }}
+                    {{element?.product?.product_name }}
                   </span>
                 </td>
               </ng-container>
