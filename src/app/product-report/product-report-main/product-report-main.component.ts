@@ -194,9 +194,9 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
   isLoadingResults = true;
   isRateLimitReached = false;
 
-  sum_expiration: number;
-  sum_quantity: number;
-  sum_parcel_stock: number;
+  sumExpirationOrQuantityOfStock: number;
+  sumImportQuantity: number;
+  sumExportQuantity: number;
 
   searchProductForm = new FormControl();
   tab: string = '';
@@ -323,6 +323,11 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.hasStock = 1;
     filter.expand = 'product';
+
+    filter.parcel_no = this.searchProductForm.value;
+
+    filter.date_from = objDateFilter.date_from;
+    filter.date_to = objDateFilter.date_to;
 
     return filter;
   }
@@ -528,7 +533,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
 
       if (summary) {
         this.parcelSer.getSummaryExpiration(this.parcelFilter).subscribe(res => {
-          this.sum_expiration = res.body;
+          this.sumExpirationOrQuantityOfStock = res.body;
         });
       }
 
@@ -550,8 +555,9 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
 
       if (summary) {
         this.parcelSer.getSummary(this.parcelStockFilter).subscribe(res => {
-          this.sum_expiration = res.body.quantity_of_stock;
-          this.sum_quantity = res.body.quantity;
+          this.sumExpirationOrQuantityOfStock = res.body.total_quantity_of_stock;
+          this.sumImportQuantity = res.body.total_import_quantity;
+          this.sumExportQuantity = res.body.total_export_quantity;
         });
       }
 
@@ -614,8 +620,8 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       const date_from = new Date(date.date_from);
       const date_to = new Date(date.date_to);
       if (!date.date_from && !date.date_to) {
-        this.titleTimeChoose = this.convertDate(new Date()) + ' - ' + this.convertDate(new Date());
-
+        // this.titleTimeChoose = this.convertDate(new Date()) + ' - ' + this.convertDate(new Date());
+        this.titleTimeChoose = 'Lựa chọn khác';
       } else {
         this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
       }
@@ -624,6 +630,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       });
 
       this.apiFilter = this.buildFilterFromParams();
+      this.parcelStockFilter = this.buildFilterParcelStock();
       this.loadData();
     });
   }
@@ -647,6 +654,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
 
       this.apiFilter = this.buildFilterFromParams();
+      this.parcelStockFilter = this.buildFilterParcelStock();
       this.loadData();
     });
   }
@@ -665,6 +673,8 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     const date_from = new Date(obj.date_from);
     const date_to = new Date(obj.date_to);
     this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+
+    this.titleTimeDefault = 'Tháng này';
 
     this.currentDateFilter = obj;
     this.serviceInvoice.setDateFilter(obj);
@@ -734,6 +744,18 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     this.loadColumns(this.tab);
 
     this.reportType.valueChanges.subscribe(res => {
+      if (res.type === 'parcel-stock') {
+        const obj = new DateFilter();
+        obj.date_from = null;
+        obj.date_to = null;
+        this.serviceInvoice.setDateFilter(obj);
+
+        this.titleTimeDefault = 'Toàn thời gian';
+        this.titleTimeChoose = 'Lựa chọn khác';
+      } else {
+        this.initDateFilter();
+      }
+
       this.loadColumns(res.type);
     });
 
@@ -746,8 +768,8 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
         this.loadData();
       } else {
         this.apiFilter = this.buildFilterFromParams();
-        this.parcelStockFilter = this.buildFilterParcelStock();
         this.parcelFilter = this.buildFilterExpiration();
+        this.parcelStockFilter = this.buildFilterParcelStock();
         this.loadData();
       }
     });
@@ -833,7 +855,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
         'second_warehouse_product_parcel_export', 'second_warehouse_product_parcel_quantity_of_stock'
       ];
 
-      this.parcelFilter = this.buildFilterParcelStock();
+      this.parcelStockFilter = this.buildFilterParcelStock();
     }
 
     if (type === 'sale-staff') {
@@ -871,11 +893,15 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     this.pageTotalCount = Number(res.headers.get('X-Pagination-Total-Count'));
     this.pageSize = Number(res.headers.get('X-Pagination-Per-Page'));
     this.page = Number(res.headers.get('X-Pagination-Current-Page'));
+
     this.apiFilter.pageSize = this.pageSize;
     this.apiFilter.page = this.page;
+
     this.parcelFilter.pageSize = this.pageSize;
     this.parcelFilter.page = this.page;
 
+    this.parcelStockFilter.pageSize = this.pageSize;
+    this.parcelStockFilter.page = this.page;
   }
 
   openProductMedicineDialog(action, obj) {
