@@ -19,17 +19,17 @@
             </button>
           </mat-radio-button>
 
-          <mat-radio-button class="radio-button-report-type" value="print" *ngIf="canDo('Option-Store.Update') || canDo('Option-Store.Create')">
-            Khổ giấy in
-            <button mat-icon-button aria-label="add">
-              <mat-icon>print</mat-icon>
-            </button>
-          </mat-radio-button>
+<!--          <mat-radio-button class="radio-button-report-type" value="print" *ngIf="canDo('Option-Store.Update') || canDo('Option-Store.Create')">-->
+<!--            Khổ giấy in-->
+<!--            <button mat-icon-button aria-label="add">-->
+<!--              <mat-icon>print</mat-icon>-->
+<!--            </button>-->
+<!--          </mat-radio-button>-->
 
           <mat-radio-button class="radio-button-report-type" value="edit-print" *ngIf="canDo('Option-Store.Update') || canDo('Option-Store.Create')">
             Edit mẫu in
             <button mat-icon-button aria-label="add">
-              <mat-icon>edit</mat-icon>
+              <mat-icon>print</mat-icon>
             </button>
           </mat-radio-button>
 
@@ -174,20 +174,20 @@
             </mat-card>
 
             <!--            chon kho giay in-->
-            <mat-card *ngIf=" settingsType === 'print' ">
-              <mat-card-content>
-                <mat-radio-group [(ngModel)]="printType"
-                                 class="type-radio-group" (change)="changePrintType()">
-                  <mat-radio-button class="radio-button-report-type" value="K58">
-                    Giấy K58 <i>(mặc định)</i>
-                  </mat-radio-button>
+<!--            <mat-card *ngIf=" settingsType === 'print' ">-->
+<!--              <mat-card-content>-->
+<!--                <mat-radio-group [(ngModel)]="printType"-->
+<!--                                 class="type-radio-group" (change)="changePrintType()">-->
+<!--                  <mat-radio-button class="radio-button-report-type" value="K58">-->
+<!--                    Giấy K58 <i>(mặc định)</i>-->
+<!--                  </mat-radio-button>-->
 
-                  <mat-radio-button class="radio-button-report-type" value="A4">
-                    Giấy A4
-                  </mat-radio-button>
-                </mat-radio-group>
-              </mat-card-content>
-            </mat-card>
+<!--                  <mat-radio-button class="radio-button-report-type" value="A4">-->
+<!--                    Giấy A4-->
+<!--                  </mat-radio-button>-->
+<!--                </mat-radio-group>-->
+<!--              </mat-card-content>-->
+<!--            </mat-card>-->
 
             <!--            edit print -->
             <mat-card *ngIf=" settingsType === 'edit-print' ">
