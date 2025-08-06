@@ -141,12 +141,9 @@ export class PreviewService {
         }
       }
       filledTemplate = filledTemplate.replace(resultRows[0], '{productRows}');
-      console.log('F1: ', filledTemplate);
       if(resultRows.length >1) {
         resultRows.slice(1).forEach(element => {
           filledTemplate = filledTemplate.replace(element, '');
-          console.log('F2: ', filledTemplate);
-
         })
       }
 
@@ -177,7 +174,6 @@ export class PreviewService {
         }).join('\n');
 
         filledTemplate = filledTemplate.replace('{productRows}', generatedRows);
-        console.log('F3: ', filledTemplate);
       }
     }
 
