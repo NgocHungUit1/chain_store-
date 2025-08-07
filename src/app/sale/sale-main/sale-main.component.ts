@@ -1347,6 +1347,15 @@ export class SaleMainComponent implements OnInit, DoCheck {
     });
   }
 
+  printInvoiceTemplateAuto(invoice_id: number) {
+    this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
+      if (res) {
+        this.printInvoiceTemplate(res);
+      }
+    });
+  }
+
+
   /**
    * Print Invoice
    */
@@ -2062,19 +2071,16 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
 
   async getPreInvoiceData(): Promise<any> {
-    // debugger;
     const activeInvoice = this.localItemInvoice || new ItemInvoice();
     const formData = this.form.getRawValue();
-
     const detail = this.listProduct.map(item => ({
       product: { product_name: item.product.product_name },
       base_unit: item.base_unit || null,
       price: item.common_price || item.product.sell_price || item.product.end_price || 0,
       amount: item.amount || 0,
       total: (item.common_price || item.product.sell_price || item.product.end_price || 0) * (item.amount || 0),
-      so_lo: item.so_lo || ''
+      so_lo: item?.product_parcels&&item?.product_parcels.length>0? `SL: ${item.product_parcels[0].parcel_no}-HD: ${item.product_parcels[0].expiration_date}` : ''
     }));
-
     const totalPrice = this.sumPrice;
     const discount = this.discount_type === 'price' ? this.discount : Math.round((this.sumPrice * this.discount) / 100);
     const sumPayment = totalPrice - this.numberDiscount - this.numberPointDiscount + this.expenseOrder;
@@ -2086,7 +2092,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
       name: storeRes['name'] || 'Store Name',    // Adjust if property names differ
       address: storeRes['address'] || 'Store Address'
     };
-
     const today = formData.today instanceof Date ? formData.today : new Date();
     const createdAt = formData.today && formData.time
       ? `${this.dp.transform(today, 'yyyy-MM-dd')} ${formData.time}`
@@ -2356,7 +2361,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
   async printPreInvoiceHandler() {
     const preInvoiceData = await this.getPreInvoiceData();
     //this.printPreInvoiceV2(preInvoiceData);
-
+    console.log('preInvoiceData', preInvoiceData);
     // print with template
     this.printInvoiceTemplate(preInvoiceData);
   }
@@ -2383,7 +2388,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
                 table td {
                   word-break: normal;
                   overflow-wrap: break-word;
-                  white-space: normal;
+                  white-space: pre-line;
                 }
               }
             </style>
@@ -2675,7 +2680,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
         if (res !== false) {
           if (typeof res === 'number' && this.autoPrint === true) {
             //this.printInvoice(res);
-            this.printInvoiceTemplate(res);
+            this.printInvoiceTemplateAuto(res);
           }
           this.resetDataSiderBar();
           this.notifySer.notify('success', 'Lưu thành công !');
@@ -2707,7 +2712,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
           if (typeof res === 'number' && this.autoPrint === true) {
             this.resetDataSiderBar();
             //this.printInvoice(res);
-            this.printInvoiceTemplate(res);
+            this.printInvoiceTemplateAuto(res);
           }
           this.resetDataSiderBar();
           this.notifySer.notify('success', 'Cập nhật đơn thành công !');
