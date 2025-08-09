@@ -2096,7 +2096,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
     const createdAt = formData.today && formData.time
       ? `${this.dp.transform(today, 'yyyy-MM-dd')} ${formData.time}`
       : new Date().toLocaleString();
-
     return {
       store: storeData,
       customer: this.customer || activeInvoice.customer || { name: 'Khách lẻ', phone: '' },
@@ -2107,7 +2106,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       debt: debt,
       nationalPrescription: activeInvoice.prescription_id ? this.getNationalPrescriptionData(activeInvoice.prescription_id) : null,
       invoice_no: activeInvoice.invoice_name || 'Chưa lưu',
-      created_at: createdAt
+      created_at_iso: createdAt
     };
   }
 
@@ -2449,11 +2448,11 @@ export class SaleMainComponent implements OnInit, DoCheck {
       Tieu_De_In: 'HÓA ĐƠN BÁN HÀNG',
       So_Hoa_Don: preInvoiceData?.invoice_no || 'Chưa lưu',
       Ma_Don_Hang: preInvoiceData?.invoice_no || 'Chưa lưu',
-      Ngay: new Date(preInvoiceData?.created_at).getDate().toString().padStart(2, '0'),
-      Thang: (new Date(preInvoiceData?.created_at).getMonth() + 1).toString().padStart(2, '0'),
-      Nam: new Date(preInvoiceData?.created_at).getFullYear().toString(),
-      Ngay_Ban: new Date(preInvoiceData?.created_at).toLocaleDateString('vi-VN'),
-      Gio_Ban: new Date(preInvoiceData?.created_at).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+      Ngay: new Date(preInvoiceData?.created_at_iso).getDate().toString().padStart(2, '0'),
+      Thang: (new Date(preInvoiceData?.created_at_iso).getMonth() + 1).toString().padStart(2, '0'),
+      Nam: new Date(preInvoiceData?.created_at_iso).getFullYear().toString(),
+      Ngay_Ban: new Date(preInvoiceData?.created_at_iso).toLocaleDateString('vi-VN'),
+      Gio_Ban: new Date(preInvoiceData?.created_at_iso).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
       Nhan_Vien: this.user?.username || 'Admin',
       Khach_Hang: preInvoiceData?.customer?.name || 'Khách lẻ',
       So_Dien_Thoai: preInvoiceData?.customer?.phone || '',
@@ -2475,14 +2474,13 @@ export class SaleMainComponent implements OnInit, DoCheck {
       Chiet_Khau_Hoa_Don_Phan_Tram: '', // Percentage not available in sample data
       Chiet_Khau_Hoa_Don: numeral(preInvoiceData?.discount || 0).format('0,0'),
       Tong_Cong: numeral(preInvoiceData?.sum_payment || 0).format('0,0'),
-      Tong_Tien_Hang_Bang_Chu: this.numberToVietnameseText(preInvoiceData?.sum_payment || 0),
+      Tong_Tien_Hang_Bang_Chu: this.numberToVietnameseText(numeral(preInvoiceData?.sum_payment).value()),
       Tong_So_Luong: preInvoiceData?.detail?.reduce((acc, item) => acc + (item?.amount || 0), 0).toString(),
       Chiet_Khau: numeral(preInvoiceData?.discount || 0).format('0,0'),
       Khach_Thanh_Toan: numeral(preInvoiceData?.sum_payment || 0).format('0,0'),
       Con_Lai: numeral(preInvoiceData?.debt || 0).format('0,0'),
       Thong_Tin_Khach_Hang: customer_info
     }
-
     const QrCode = this.form.get('selectedMethod').value === 'Chuyển khoản' ? this.getQrCode(this.selectedBankAccount) : of(null);
     QrCode.subscribe((qrCode) => {
       if (qrCode) {
