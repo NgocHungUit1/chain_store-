@@ -46,6 +46,7 @@ import { SearchProductDialogComponent } from '../../common/search-product-dialog
 import { ColumnVisibilityMap, SaleColumnVisibilityService } from '../../shared/sale-column-visibility.service';
 import { InvoiceData, PreviewService } from '../../shared/invoice-handle/preview.service';
 import { InvoiceTemplate, InvoiceTemplateService } from '../../shared/invoice-handle/invoice-template.service';
+import { PrintService } from '../../shared/invoice-handle/print.service';
 export const MY_FORMATS = {
   parse: {
     dateInput: 'DD/MM/YYYY',
@@ -98,7 +99,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
     private bankAccountSer: BankAccountService,
     private saleColumnVisibilityService: SaleColumnVisibilityService,
     private previewService: PreviewService,
-    private invoiceTemplateService: InvoiceTemplateService
+    private invoiceTemplateService: InvoiceTemplateService,
+    private printService: PrintService
   ) {
     this.optionStoreService.getValue('point_enabled').subscribe(res => {
       this.isPointEnabled = res.value === 'true';
@@ -2366,7 +2368,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
   }
 
   executePrint(dataToPrint: any) {
-    const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+    //const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
     const content = this.previewService.fillTemplate(this.selectedTemplate.body, dataToPrint);
     const styleMatch = content.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
     const extractedStyle = styleMatch?.[1] || '';
@@ -2374,7 +2376,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     // Replace all <style> tags with the extracted style
     const printHtml = `
         <!DOCTYPE html>
-        <html>
+        <html lang="vi">
           <head>
             <title>In hóa đơn</title>
             <style>
@@ -2395,19 +2397,26 @@ export class SaleMainComponent implements OnInit, DoCheck {
           <body>
             ${contentWithoutStyle}
             <script>
+               var qrLoaded = false;
+
+              function onQrLoaded() {
+                qrLoaded = true;
+                window.parent.postMessage({ action: 'PRINT_READY' }, '*');
+              }
+
               window.onload = function () {
-                window.print();
-                window.onafterprint = function () {
-                  window.close();
-                };
+                if (!qrLoaded) {
+                  window.parent.postMessage({ action: 'PRINT_READY' }, '*');
+                }
               };
             </script>
           </body>
         </html>
       `;
-    WindowPrt.document.write(printHtml);
-    WindowPrt.document.close();
-    WindowPrt.focus();
+    this.printService.print(printHtml);
+    // WindowPrt.document.write(printHtml);
+    // WindowPrt.document.close();
+    // WindowPrt.focus();
   }
 
   /**
@@ -2484,7 +2493,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     const QrCode = this.form.get('selectedMethod').value === 'Chuyển khoản' ? this.getQrCode(this.selectedBankAccount) : of(null);
     QrCode.subscribe((qrCode) => {
       if (qrCode) {
-        dataToPrint['Ma_QR'] = `<img src="${qrCode}" style="width: 80px; height: 80px;" onload="onQrLoaded()">`;
+        dataToPrint['Ma_QR'] = `<img src="${qrCode}" style="width: 80px; height: 80px;" onload="onQrLoaded()" alt="">`;
       } else {
         dataToPrint['Ma_QR'] = '';
       }
