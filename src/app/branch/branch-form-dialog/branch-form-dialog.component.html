@@ -61,7 +61,7 @@
                 <button mat-icon-button matPrefix>
                   <mat-icon>search</mat-icon>
                 </button>
-                <button mat-icon-button matSuffix (click)="this.form.patchValue({province: null});"
+                <button mat-icon-button matSuffix (click)="onProvinceChange(null);"
                         *ngIf="this.form.controls['province'].value">
                   <mat-icon>delete</mat-icon>
                 </button>
@@ -78,31 +78,7 @@
                   {{ form.controls['province'].getError('ajaxValidator')?.value}}</mat-error>
               </mat-form-field>
             </div>
-            <div fxFlex="100">
-              <mat-form-field>
-                <input matInput placeholder="Quận/Huyện" tabindex="6" aria-label="Quận/Huyện"
-                       [matAutocomplete]="district"
-                       formControlName="district" required>
-                <button mat-icon-button matPrefix>
-                  <mat-icon>search</mat-icon>
-                </button>
-                <button mat-icon-button matSuffix (click)="this.form.patchValue({district: null});"
-                        *ngIf="this.form.controls['district'].value">
-                  <mat-icon>delete</mat-icon>
-                </button>
-                <mat-autocomplete #district="matAutocomplete" [displayWith]="displayLocation"
-                                  (optionSelected)='onDistrictChange($event.option.value)'>
-                  <mat-option *ngFor="let district of filteredDistricts | async" [value]="district">
-                    <span>{{district.name}}</span>
-                  </mat-option>
-                </mat-autocomplete>
-                <mat-error *ngIf="form.controls['district'].hasError('required')">Quận/Huyện không được bỏ trống
-                </mat-error>
-                <mat-error
-                  *ngIf="form.controls['district'].hasError('ajaxValidator')">
-                  {{ form.controls['district'].getError('ajaxValidator')?.value}}</mat-error>
-              </mat-form-field>
-            </div>
+
             <div fxFlex="100">
               <mat-form-field>
                 <input matInput placeholder="Phường/Xã" tabindex="7" aria-label="Phường/Xã" [matAutocomplete]="ward"
@@ -122,8 +98,8 @@
                 <mat-error *ngIf="form.controls['ward'].hasError('required')">Phường/Xã không được bỏ trống
                 </mat-error>
                 <mat-error
-                  *ngIf="form.controls['district'].hasError('ajaxValidator')">
-                  {{ form.controls['district'].getError('ajaxValidator')?.value}}</mat-error>
+                  *ngIf="form.controls['ward'].hasError('ajaxValidator')">
+                  {{ form.controls['ward'].getError('ajaxValidator')?.value}}</mat-error>
               </mat-form-field>
             </div>
 

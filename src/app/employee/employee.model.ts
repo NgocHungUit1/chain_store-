@@ -15,7 +15,6 @@ export class Employee {
   note: string;
   address: string;
   province: Location;
-  district: Location;
   ward: Location;
   user: User;
   branchList: any;

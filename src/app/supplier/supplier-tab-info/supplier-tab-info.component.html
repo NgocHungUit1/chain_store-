@@ -25,30 +25,28 @@
         </div>
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Quận/Huyện:</span> <span *ngIf="supplier.district">{{supplier.district.name}}</span>
+            <span class="product-field-label">Điện thoại:</span> {{supplier.phone_number}}
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
             <span class="product-field-label">Phường/Xã:</span> <span *ngIf="supplier.ward">{{supplier.ward.name}}</span>
           </div>
         </div>
+
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Điện thoại:</span> {{supplier.phone_number}}
-          </div>
-          <div fxFlex="4"></div>
-          <div fxFlex="48" class="product-info-field">
             <span class="product-field-label">Email:</span> {{supplier.email}}
-          </div>
-        </div>
-        <div fxLayout="row wrap" class="product-info-row product-info-row-last">
-          <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Công ty:</span> {{supplier.company_name}}
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
             <span class="product-field-label">Mã số thuế:</span> {{supplier.tax_code}}
           </div>
+        </div>
+        <div fxLayout="row wrap" class="product-info-row  product-info-row-last">
+          <div fxFlex="48" class="product-info-field">
+            <span class="product-field-label">Công ty:</span> {{supplier.company_name}}
+          </div>
+          <div fxFlex="4"></div>
         </div>
       </div>
       <div fxFlex="40" class="product-info">

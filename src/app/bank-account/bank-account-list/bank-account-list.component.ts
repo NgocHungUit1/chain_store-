@@ -113,7 +113,7 @@ export class BankAccountListComponent extends ListComponentBase implements OnIni
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'province,district,ward';
+    filter.expand = 'province,ward';
     filter.status = this.statusFilter.controls['status'].value;
     return filter;
   }

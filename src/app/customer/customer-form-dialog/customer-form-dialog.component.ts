@@ -19,10 +19,8 @@ export class CustomerFormDialogComponent implements OnInit {
   form: FormGroup;
   loading = false;
   provinces: Location[] = [];
-  districts: Location[] = [];
   wards: Location[] = [];
   filteredProvinces: Observable<any[]>;
-  filteredDistricts: Observable<any[]>;
   filteredWards: Observable<any[]>;
   local_data: any;
   customer_id: string;
@@ -82,7 +80,6 @@ export class CustomerFormDialogComponent implements OnInit {
       tax_code: [null, Validators.compose([
         Validators.maxLength(20)
       ])],
-      district: [null],
       ward: [null],
       province: [null],
       note: [null],
@@ -106,10 +103,7 @@ export class CustomerFormDialogComponent implements OnInit {
       startWith(''),
       map(province => (province ? this.filterProvince(province) : this.provinces.slice()))
     );
-    this.filteredDistricts = this.form.controls['district'].valueChanges.pipe(
-      startWith(''),
-      map(district => (district ? this.filterDistrict(district) : this.districts.slice()))
-    );
+
     this.filteredWards = this.form.controls['ward'].valueChanges.pipe(
       startWith(''),
       map(ward => (ward ? this.filterWard(ward) : this.wards.slice()))
@@ -122,7 +116,7 @@ export class CustomerFormDialogComponent implements OnInit {
   }
 
   loadCustomer(id) {
-    this.customerSer.getDetail(id, 'province,district,ward').subscribe(customer => {
+    this.customerSer.getDetail(id, 'province,ward').subscribe(customer => {
       let dobStr = null;
       if (customer['dob'] !== null) {
         dobStr = new Date(customer['dob']).toISOString();
@@ -134,7 +128,6 @@ export class CustomerFormDialogComponent implements OnInit {
         address: customer['address'],
         company_name: customer['company_name'],
         tax_code: customer['tax_code'],
-        district: customer['district'],
         ward: customer['ward'],
         province: customer['province'],
         note: customer['note'],
@@ -144,13 +137,7 @@ export class CustomerFormDialogComponent implements OnInit {
       });
 
       if (customer['province_id'] !== null) {
-        this.locationSer.autocomplete('', 'district', customer['province_id']).subscribe(locations => {
-          this.districts = locations;
-        });
-      }
-
-      if (customer['district_id'] !== null) {
-        this.locationSer.autocomplete('', 'ward', customer['district_id']).subscribe(locations => {
+        this.locationSer.autocomplete('', 'ward', customer['province_id']).subscribe(locations => {
           this.wards = locations;
         });
       }
@@ -162,14 +149,6 @@ export class CustomerFormDialogComponent implements OnInit {
     if (typeof name === 'string') {
       return this.provinces.filter(
         province => province.name.toLowerCase().indexOf(name.toLowerCase()) >= 0
-      );
-    }
-  }
-
-  filterDistrict(name: string) {
-    if (typeof name === 'string') {
-      return this.districts.filter(
-        district => district.name.toLowerCase().indexOf(name.toLowerCase()) >= 0
       );
     }
   }
@@ -199,9 +178,6 @@ export class CustomerFormDialogComponent implements OnInit {
       if (data['province'] !== null) {
         data['province_id'] = data['province'].id;
       }
-      if (data['district'] !== null) {
-        data['district_id'] = data['district'].id;
-      }
       if (data['ward'] !== null) {
         data['ward_id'] = data['ward'].id;
       }
@@ -220,27 +196,15 @@ export class CustomerFormDialogComponent implements OnInit {
   }
 
   onProvinceChange(province) {
-    this.form.patchValue({
-      district: null
-    });
-    this.districts = [];
-    if (province !== null) {
-      this.locationSer.autocomplete('', 'district', province.id).subscribe(locations => {
-        this.districts = locations;
-      });
-    }
-  }
-
-  onDistrictChange(district) {
+    this.form.controls['province'].setValue(province);
     this.form.patchValue({
       ward: null
     });
     this.wards = [];
-    if (district !== null) {
-      this.locationSer.autocomplete('', 'ward', district.id).subscribe(locations => {
+    if (province !== null) {
+      this.locationSer.autocomplete('', 'ward', province.id).subscribe(locations => {
         this.wards = locations;
       });
     }
   }
-
 }

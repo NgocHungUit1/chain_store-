@@ -39,7 +39,7 @@ export class CustomerTabInfoComponent extends BaseComponent implements OnInit {
   }
 
   loadCustomer(id) {
-    this.customerSer.getDetail(id, 'province,district,ward').subscribe(res => {
+    this.customerSer.getDetail(id, 'province,ward').subscribe(res => {
       this.customer = res;
     });
   }

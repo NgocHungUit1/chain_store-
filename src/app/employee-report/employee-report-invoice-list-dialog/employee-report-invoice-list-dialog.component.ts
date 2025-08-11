@@ -110,7 +110,7 @@ export class EmployeeReportInvoiceListDialogComponent extends ListComponentBase 
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'province,district,ward,employee';
+    filter.expand = 'province,ward,employee';
     if (this.created_by) {
       filter.created_by = this.created_by;
     }

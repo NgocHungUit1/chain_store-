@@ -47,10 +47,8 @@ export class EmployeeFormDialogComponent implements OnInit {
   form: FormGroup;
   loading = false;
   provinces: Location[] = [];
-  districts: Location[] = [];
   wards: Location[] = [];
   filteredProvinces: Observable<any[]>;
-  filteredDistricts: Observable<any[]>;
   filteredWards: Observable<any[]>;
   local_data: any;
   employee_id: string;
@@ -198,7 +196,6 @@ export class EmployeeFormDialogComponent implements OnInit {
       address: [null, Validators.compose([
         Validators.maxLength(100)
       ])],
-      district: [null],
       ward: [null],
       province: [null],
       note: [null],
@@ -225,10 +222,7 @@ export class EmployeeFormDialogComponent implements OnInit {
       startWith(''),
       map(province => (province ? this.filterProvince(province) : this.provinces.slice()))
     );
-    this.filteredDistricts = this.form.controls['district'].valueChanges.pipe(
-      startWith(''),
-      map(district => (district ? this.filterDistrict(district) : this.districts.slice()))
-    );
+
     this.filteredWards = this.form.controls['ward'].valueChanges.pipe(
       startWith(''),
       map(ward => (ward ? this.filterWard(ward) : this.wards.slice()))
@@ -281,7 +275,6 @@ export class EmployeeFormDialogComponent implements OnInit {
         id_card: employee['id_card'],
         image_url: employee['image_url'],
         address: employee['address'],
-        district: employee['district'],
         ward: employee['ward'],
         province: employee['province'],
         note: employee['note'],
@@ -311,13 +304,7 @@ export class EmployeeFormDialogComponent implements OnInit {
       }
 
       if (employee['province_id'] !== null) {
-        this.locationSer.autocomplete('', 'district', employee['province_id']).subscribe(locations => {
-          this.districts = locations;
-        });
-      }
-
-      if (employee['district_id'] !== null) {
-        this.locationSer.autocomplete('', 'ward', employee['district_id']).subscribe(locations => {
+        this.locationSer.autocomplete('', 'ward', employee['province_id']).subscribe(locations => {
           this.wards = locations;
         });
       }
@@ -329,14 +316,6 @@ export class EmployeeFormDialogComponent implements OnInit {
     if (typeof name === 'string') {
       return this.provinces.filter(
         province => province.name.toLowerCase().indexOf(name.toLowerCase()) >= 0
-      );
-    }
-  }
-
-  filterDistrict(name: string) {
-    if (typeof name === 'string') {
-      return this.districts.filter(
-        district => district.name.toLowerCase().indexOf(name.toLowerCase()) >= 0
       );
     }
   }
@@ -364,9 +343,6 @@ export class EmployeeFormDialogComponent implements OnInit {
 
       if (data['province'] !== null) {
         data['province_id'] = data['province'].id;
-      }
-      if (data['district'] !== null) {
-        data['district_id'] = data['district'].id;
       }
       if (data['ward'] !== null) {
         data['ward_id'] = data['ward'].id;
@@ -410,24 +386,13 @@ export class EmployeeFormDialogComponent implements OnInit {
   }
 
   onProvinceChange(province) {
-    this.form.patchValue({
-      district: null
-    });
-    this.districts = [];
-    if (province !== null) {
-      this.locationSer.autocomplete('', 'district', province.id).subscribe(locations => {
-        this.districts = locations;
-      });
-    }
-  }
-
-  onDistrictChange(district) {
+    this.form.controls['province'].setValue(province);
     this.form.patchValue({
       ward: null
     });
     this.wards = [];
-    if (district !== null) {
-      this.locationSer.autocomplete('', 'ward', district.id).subscribe(locations => {
+    if (province !== null) {
+      this.locationSer.autocomplete('', 'ward', province.id).subscribe(locations => {
         this.wards = locations;
       });
     }

@@ -12,7 +12,6 @@ export class Doctor {
   status: string;
   address: string;
   province: Location;
-  district: Location;
   ward: Location;
 }
 

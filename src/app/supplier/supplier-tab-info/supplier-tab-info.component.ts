@@ -33,7 +33,7 @@ export class SupplierTabInfoComponent extends BaseComponent implements OnInit {
   }
 
   loadSupplier(id) {
-    this.supplierSer.getDetail(id, 'province,district,ward').subscribe(res => {
+    this.supplierSer.getDetail(id, 'province,ward').subscribe(res => {
       this.supplier = res;
     });
   }

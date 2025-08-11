@@ -34,7 +34,6 @@ export class EmployeeReportCommissionTabComponent extends ListComponentBase impl
 
   columnsToDisplay = [
     'name',
-    // 'district_name',
     // 'province_name',
     // 'address',
     'total_sale',
