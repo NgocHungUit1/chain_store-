@@ -2106,7 +2106,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
       debt: debt,
       nationalPrescription: activeInvoice.prescription_id ? this.getNationalPrescriptionData(activeInvoice.prescription_id) : null,
       invoice_no: activeInvoice.invoice_name || 'Chưa lưu',
-      created_at_iso: createdAt
+      created_at_iso: createdAt,
+      header: 'HÓA ĐƠN TẠM TÍNH'
     };
   }
 
@@ -2360,7 +2361,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
   async printPreInvoiceHandler() {
     const preInvoiceData = await this.getPreInvoiceData();
     //this.printPreInvoiceV2(preInvoiceData);
-    console.log('preInvoiceData', preInvoiceData);
     // print with template
     this.printInvoiceTemplate(preInvoiceData);
   }
@@ -2445,7 +2445,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       Ten_Cua_Hang: preInvoiceData?.store?.name || 'Chi nhánh trung tâm',
       Dia_Chi_Cua_Hang: preInvoiceData?.store?.address || 'Địa chỉ cửa hàng',
       So_Dien_Thoai_Cua_Hang: preInvoiceData?.store?.phone || 'Số điện thoại cửa hàng',
-      Tieu_De_In: 'HÓA ĐƠN BÁN HÀNG',
+      Tieu_De_In: preInvoiceData?.header|| 'HÓA ĐƠN BÁN HÀNG',
       So_Hoa_Don: preInvoiceData?.invoice_no || 'Chưa lưu',
       Ma_Don_Hang: preInvoiceData?.invoice_no || 'Chưa lưu',
       Ngay: new Date(preInvoiceData?.created_at_iso).getDate().toString().padStart(2, '0'),
