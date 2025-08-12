@@ -18,9 +18,9 @@ export interface EditorConfig {
 export class SharedEditorComponent implements AfterViewInit {
   @Input() config: EditorConfig = { elementId: 'default' };
   @Input() templateData: Partial<InvoiceData> = {};
+  @Input() initContent: string = '';
   @Output() editorReady = new EventEmitter<EditorInstance>();
   @Output() contentChanged = new EventEmitter<string>();
-  @Output() dataChanged = new EventEmitter<Partial<InvoiceData>>();
 
   @ViewChild('editorContainer', { static: true }) editorContainer!: ElementRef;
 
@@ -39,13 +39,14 @@ export class SharedEditorComponent implements AfterViewInit {
     setTimeout(() => {
       this.initializeEditor();
     }, 100);
-    // // listen for contentChanged
-    this.contentChanged.subscribe((content: string) => {
-      // Emit the content to the parent component
-      this.previewService.updateTemplateContent(this.config.elementId, content);
-    });
   }
 
+  onContentChanged(event: any): void {
+    if (this.editorInstance) {
+      const content = this.editorInstance.getData();
+      this.contentChanged.emit(content);
+    }
+  }
 
   private initializeEditor() {
     try {
@@ -69,8 +70,8 @@ export class SharedEditorComponent implements AfterViewInit {
       );
 
       // Set initial content
-      if (this.config.initialContent) {
-        this.editorInstance.setData(this.config.initialContent);
+      if (this.initContent) {
+        this.editorInstance.setData(this.initContent);
       }
 
       // Confirm editor is loaded
@@ -85,7 +86,9 @@ export class SharedEditorComponent implements AfterViewInit {
 
       // Emit editor ready event
       this.editorReady.emit(this.editorInstance);
-
+      this.editorInstance.on('change', () => {
+        this.onContentChanged(null);
+      });
     } catch (error) {
       console.error('Failed to initialize CKEditor:', error);
     }

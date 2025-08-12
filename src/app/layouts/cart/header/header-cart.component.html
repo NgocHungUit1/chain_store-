@@ -124,7 +124,10 @@
       class="custom-toggle"
       [checked]="autoPrint"
       (change)="onChangeSlideToggleTuDongInHoaDon()"
-      (click)="onToggleClick($event)">
+      (click)="onToggleClick($event)"
+      labelPosition="before"
+      style="display: flex; align-items: center; justify-content: space-between;"
+    >
       Tự động in hóa đơn
     </mat-slide-toggle>
 <!--    <mat-slide-toggle-->
@@ -144,7 +147,9 @@
           mat-button
           class="template-button"
           [class.selected]="selectedTemplateId === template.id"
-          (click)="onSelectInvoiceTemplate(template.id, $event)">
+          (click)="onSelectInvoiceTemplate(template.id, $event)"
+          [matTooltip]="isTextTruncated(template?.name) ? template.name : ''"
+        >
 
           <div class="template-content">
             <div class="template-main">

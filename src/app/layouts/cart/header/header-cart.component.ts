@@ -314,4 +314,8 @@ export class AppHeaderCartComponent implements OnInit {
       this.menuTrigger.closeMenu();
     }
   }
+
+  isTextTruncated(text: string): boolean {
+    return text.length > 28; // Adjust the length as needed
+  }
 }

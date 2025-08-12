@@ -60,8 +60,10 @@
       <app-shared-editor
         [config]="editorConfig"
         [templateData]="templateData"
+        [initContent]="editorContent"
         (contentChanged)="onContentChanged($event)"
-        (dataChanged)="onDataChanged($event)">
+        #shareEditor
+      >
       </app-shared-editor>
     </div>
 

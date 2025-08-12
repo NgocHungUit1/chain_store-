@@ -41,7 +41,7 @@
           </button>
         </div>
       </div>
-     <app-shared-editor *ngIf="currentTemplate" [config]="editorConfig" [templateData]="templateData">
+     <app-shared-editor [initContent]="editorConfig?.initialContent" *ngIf="currentTemplate" [config]="editorConfig" [templateData]="templateData">
       </app-shared-editor>
     </div>
 

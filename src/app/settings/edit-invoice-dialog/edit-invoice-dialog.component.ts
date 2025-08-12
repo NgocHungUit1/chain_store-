@@ -59,7 +59,7 @@ export class EditInvoiceDialogComponent implements OnInit, AfterViewInit {
       height: 400,
       readOnly: false,
       showToolbar: true,
-      initialContent: data['editorContent'] || ''
+      initialContent: this.editorContent || '', // Use editorContent from data
     };
   }
   ngAfterViewInit(): void {
@@ -139,12 +139,9 @@ export class EditInvoiceDialogComponent implements OnInit, AfterViewInit {
 
 
   onContentChanged(content: string): void {
-    console.log('Content changed in dialog:', content.length);
+    this.editorContent = content;
   }
 
-  onDataChanged(data: Partial<InvoiceData>): void {
-    this.templateData = data;
-  }
 
   onClose(): void {
     this.dialogRef.close();
@@ -264,5 +261,6 @@ export class EditInvoiceDialogComponent implements OnInit, AfterViewInit {
 
   toggleVariablesInfo(): void {
     this.showVariablesInfo = !this.showVariablesInfo;
+
   }
 }
