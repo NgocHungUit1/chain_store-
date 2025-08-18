@@ -236,6 +236,8 @@ export class InvoiceTabInfoComponent implements OnChanges {
       number: invoice.discount,
       type: invoice.discount_type
     };
+    mItemInvoice.use_einvoice = invoice.use_einvoice;
+    mItemInvoice.total_vat = invoice.total_vat;
     const aProductInfo: ProductInfo[] = [];
     const invoiceDetailFilter = new InvoiceDetailFilter();
     invoiceDetailFilter.invoice_id = invoice.id;
@@ -249,6 +251,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
           item.quantity_of_stock = Math.floor(element.quantity.number / item.value);
         });
         element.product.productUnits = units;
+        console.log(element);
 
         const item = units.find(ele => ele.is_base === 1);
 
@@ -258,6 +261,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
         mProductInfo.product_id = element.product?.id;
         mProductInfo.product = element.product;
         mProductInfo.product.end_price = element.price;
+        mProductInfo.product.vat_percent = element.vat_percent;
         mProductInfo.common_price = element.price;
         mProductInfo.product_unit_id = element['product_unit_id'];
         mProductInfo.product_unit_value = element['product_unit_value'];

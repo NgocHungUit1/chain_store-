@@ -309,7 +309,7 @@
 
               <ng-container matColumnDef="total_price">
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{ columnsHeader['total_price'] }}</th>
-                <td mat-cell class="column-number" *matCellDef="let element"> {{ element.total_price | number }}</td>
+                <td mat-cell class="column-number" *matCellDef="let element"> {{ element.total_price + element.total_vat | number }}</td>
               </ng-container>
 
               <ng-container matColumnDef="discount">

@@ -58,6 +58,7 @@ export class ProductInfo {
   is_sub_item: number;
   note: string;
   parcel_no: string;
+  vat_percent: number;
 }
 
 export class ItemInvoice {
@@ -79,7 +80,10 @@ export class ItemInvoice {
   prescription_id: string;
   new: boolean;
   total_amount: number;
+  total_vat: number;
+  total_amount_with_vat: number;
   national_pharmacy_no: string;
+  use_einvoice: boolean;
 }
 
 export class ListInvoice {
