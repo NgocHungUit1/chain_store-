@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { EditorInstance } from '../editor.service';
+import { StoreService } from '../../store/store.service';
 const sampleFields = require('./invoice-data-sample.json');
 
 export interface InvoiceData {
@@ -49,8 +50,15 @@ export interface InvoiceData {
   providedIn: 'root'
 })
 export class PreviewService {
-
-  constructor() {}
+  logo: string = '';
+  constructor(    public storeSer: StoreService,
+  ) {
+    this.storeSer.getDetail().subscribe(res => {
+      if (res['logo'] !== null && res['logo'].length > 0) {
+        this.logo = res['logo'];
+      }
+    });
+  }
 
   /**
    * Update the template content in the preview area
@@ -96,7 +104,8 @@ export class PreviewService {
     data.Nam = today.getFullYear().toString();
     data.Ngay_Ban = today.toLocaleDateString('vi-VN', { year: 'numeric', month: '2-digit', day: '2-digit' });
     data.Gio_Ban = today.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-
+    data.Logo = this.logo? `<img src="${this.logo}" style="max-width: 120px;">` :
+      `<img src="assets/images/Rx20_16x16_op1-1207.png" style="max-width: 120px;">`;
     return data as InvoiceData;
   }
 
