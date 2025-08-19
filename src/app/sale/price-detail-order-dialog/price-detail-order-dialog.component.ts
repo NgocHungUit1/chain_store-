@@ -51,14 +51,16 @@ export class PriceDetailOrderDialogComponent implements OnInit {
         console.log(e);
       }
       this.vatPercentOptions = storageData ? storageData : this.vatPercentOptions;
+      this.vatPercentOptions = this.vatPercentOptions.filter(x => x.value !== null && x.value !== undefined);
     }
 
     if (this.product.vat_percent !== null) {
-      const vatPercentExist = this.vatPercentOptions.find(x => x.value === this.product.vat_percent);
+      const productVatPercent = this.product.vat_percent || 0;
+      const vatPercentExist = this.vatPercentOptions.find(x => x.value === productVatPercent);
       if (!vatPercentExist) {
         this.vatPercentOptions.push({
           name: `VAT ${this.product.vat_percent}%`,
-          value: this.product.vat_percent
+          value: productVatPercent
         });
         this.vatPercentOptions.sort((a, b) => a.value - b.value);
         localStorage.setItem(SALE_VAT_PERCENT_STORAGE_KEY, JSON.stringify(this.vatPercentOptions));

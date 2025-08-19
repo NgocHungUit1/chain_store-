@@ -314,7 +314,7 @@
 
               <ng-container matColumnDef="discount">
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{ columnsHeader['discount'] }}</th>
-                <td mat-cell class="column-number" *matCellDef="let element"> {{ element.discount_price | number }}</td>
+                <td mat-cell class="column-number" *matCellDef="let element"> {{ (element.discount_price || 0) | number }}</td>
               </ng-container>
 
               <ng-container matColumnDef="payment">
