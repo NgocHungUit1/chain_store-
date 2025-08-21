@@ -2081,7 +2081,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
       price: item.common_price || item.product.sell_price || item.product.end_price || 0,
       amount: item.amount || 0,
       total: (item.common_price || item.product.sell_price || item.product.end_price || 0) * (item.amount || 0),
-      so_lo: item?.product_parcels&&item?.product_parcels.length>0? `SL: ${item.product_parcels[0].parcel_no}-HD: ${item.product_parcels[0].expiration_date}` : ''
+      so_lo: item?.product_parcels&&item?.product_parcels.length>0? `SL: ${item.product_parcels[0].parcel_no}-HD: ${item.product_parcels[0].expiration_date}` : '',
+      note: item?.product?.note || ''
     }));
     const totalPrice = this.sumPrice;
     const discount = this.discount_type === 'price' ? this.discount : Math.round((this.sumPrice * this.discount) / 100);
@@ -2098,6 +2099,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     const createdAt = formData.today && formData.time
       ? `${this.dp.transform(today, 'yyyy-MM-dd')} ${formData.time}`
       : new Date().toLocaleString();
+
     return {
       store: storeData,
       customer: this.customer || activeInvoice.customer || { name: 'Khách lẻ', phone: '' },
@@ -2109,7 +2111,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
       nationalPrescription: activeInvoice.prescription_id ? this.getNationalPrescriptionData(activeInvoice.prescription_id) : null,
       invoice_no: activeInvoice.invoice_name || 'Chưa lưu',
       created_at_iso: createdAt,
-      header: 'HÓA ĐƠN TẠM TÍNH'
+      header: 'HÓA ĐƠN TẠM TÍNH',
+      note: activeInvoice?.noteSiderBar ?? ""
     };
   }
 
@@ -2478,6 +2481,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
         Don_Vi: item?.base_unit ,
         Don_Gia: numeral(item?.price || 0).format('0,0'),
         So_Lo: item?.so_lo || '',
+        Ghi_Chu: item?.note || ''
       })) || [],
       Tong_Tien_Hang: numeral(preInvoiceData?.total_price || 0).format('0,0'),
       Chiet_Khau_Hoa_Don_Phan_Tram: '', // Percentage not available in sample data
@@ -2488,7 +2492,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
       Chiet_Khau: numeral(preInvoiceData?.discount || 0).format('0,0'),
       Khach_Thanh_Toan: numeral(preInvoiceData?.sum_payment || 0).format('0,0'),
       Con_Lai: numeral(preInvoiceData?.debt || 0).format('0,0'),
-      Thong_Tin_Khach_Hang: customer_info
+      Thong_Tin_Khach_Hang: customer_info,
+      Ghi_Chu_Don_Hang: preInvoiceData?.note
     }
     const QrCode = this.form.get('selectedMethod').value === 'Chuyển khoản' ? this.getQrCode(this.selectedBankAccount) : of(null);
     QrCode.subscribe((qrCode) => {

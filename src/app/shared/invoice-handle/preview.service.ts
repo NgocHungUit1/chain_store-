@@ -31,6 +31,7 @@ export interface InvoiceData {
     Don_Vi?: string; // Optional field for unit
     Don_Gia?: string; // Optional field for unit price
     So_Lo?: string;
+    Ghi_Chu?: string;
   }>;
 
   Tong_Tien_Hang: string;
@@ -44,6 +45,7 @@ export interface InvoiceData {
   Chiet_Khau: string;
   Thong_Tin_Khach_Hang: string;
   Ma_QR: string;
+  Ghi_Chu_Don_Hang: string;
 }
 
 @Injectable({
@@ -117,7 +119,6 @@ export class PreviewService {
    */
   fillTemplate(template: string, data: Partial<InvoiceData>): string {
     let filledTemplate = template;
-
     // Handle the specific table pattern for items auto-generation
     const tableMatch = filledTemplate.match(/<table[^>]*>.*?\{Ten_Hang_Hoa\}.*?<\/table>/s);
 
@@ -166,7 +167,8 @@ export class PreviewService {
         'Don_Gia',
         'Thanh_Tien',
         'STT',
-        'So_Lo'
+        'So_Lo',
+        'Ghi_Chu',
       ]
 
       // Generate rows for each item

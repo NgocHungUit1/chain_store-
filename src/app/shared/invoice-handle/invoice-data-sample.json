@@ -75,7 +75,8 @@
         "Thanh_Tien": "150,000",
         "Don_Vi": "Viên",
         "Don_Gia": "15,000",
-        "So_Lo": "123456"
+        "So_Lo": "123456",
+        "Ghi_Chu": "Sản phẩm giảm giá 10%"
       },
       {
         "STT": 2,
@@ -85,7 +86,8 @@
         "Thanh_Tien": "125,000",
         "Don_Vi": "Viên",
         "Don_Gia": "25,000",
-        "So_Lo": "654321"
+        "So_Lo": "654321",
+        "Ghi_Chu": "Sản phẩm khuyến mãi 20%"
       },
       {
         "STT": 3,
@@ -95,8 +97,10 @@
         "Thanh_Tien": "96,000",
         "Don_Vi": "Viên",
         "Don_Gia": "12,000",
-        "So_Lo": "789012"
+        "So_Lo": "789012",
+        "Ghi_Chu": "Sản phẩm mới"
       }
+
     ],
     "meaning": "Danh sách mặt hàng"
   },
@@ -199,5 +203,15 @@
     "name": "Nam",
     "sampleValue": "2025",
     "meaning": "Năm in hóa đơn"
+  },
+  {
+    "name": "Ghi_Chu",
+    "sampleValue": "Ghi chu sảm phẩm",
+    "meaning": "Ghi chú sản phẩm"
+  },
+  {
+    "name": "Ghi_Chu_Don_Hang",
+    "sampleValue": "Hoá đơn này chỉ có giá trị tham khảo",
+    "meaning": "Ghi chú đơn hàng"
   }
 ]
