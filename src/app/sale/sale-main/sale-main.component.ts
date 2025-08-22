@@ -2615,7 +2615,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
         product_id: element.product.id,
         amount: element.amount,
         price: price,
-        note: element.note,
+        note: element?.product?.note,
         discount: discount,
         discount_type: discount_type,
         product_unit_id: element.product_unit_id,
