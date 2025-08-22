@@ -418,6 +418,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
         }
       });
     });
+
     return mItemInvoice;
   }
 
@@ -835,7 +836,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
       this.displayedColumns = this.allColumns.filter(colId => map[colId]);
     });
-
     // 2) Immediately seed displayedColumns with whatever the service currently says
     const initialMap = (this.saleColumnVisibilityService as any).visibilitySubject.value;
     this.displayedColumns = this.allColumns.filter(colId => initialMap[colId]);
@@ -2082,7 +2082,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       amount: item.amount || 0,
       total: (item.common_price || item.product.sell_price || item.product.end_price || 0) * (item.amount || 0),
       so_lo: item?.product_parcels&&item?.product_parcels.length>0? `SL: ${item.product_parcels[0].parcel_no}-HD: ${item.product_parcels[0].expiration_date}` : '',
-      note: item?.product?.note || ''
+      note: item?.note || ''
     }));
     const totalPrice = this.sumPrice;
     const discount = this.discount_type === 'price' ? this.discount : Math.round((this.sumPrice * this.discount) / 100);
@@ -2099,7 +2099,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
     const createdAt = formData.today && formData.time
       ? `${this.dp.transform(today, 'yyyy-MM-dd')} ${formData.time}`
       : new Date().toLocaleString();
-
     return {
       store: storeData,
       customer: this.customer || activeInvoice.customer || { name: 'Khách lẻ', phone: '' },
@@ -2615,7 +2614,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
         product_id: element.product.id,
         amount: element.amount,
         price: price,
-        note: element?.product?.note,
+        note: element?.note,
         discount: discount,
         discount_type: discount_type,
         product_unit_id: element.product_unit_id,
@@ -2884,6 +2883,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     this.numberDiscount = 0;
     this.isUsePoint = false;
     this.numberPointDiscount = 0;
+
     setTimeout(() => {
       this.listProduct = [];
       this.discount = 0;
@@ -2896,7 +2896,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
         ('0' + today.getMinutes()).slice(-2);
       this.form.patchValue({
         time: time,
-        total_amount: 0
+        total_amount: 0,
+        noteSiderBar: '',
       });
     }, 500);
   }

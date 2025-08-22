@@ -27,7 +27,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
   @Input() store: Store;
   @Output() reload: EventEmitter<any> = new EventEmitter();
 
-  displayedColumns: string[] = ['product_no', 'product_name', 'amount', 'common_price', 'discount', 'price', 'total_price'];
+  displayedColumns: string[] = ['product_no', 'product_name','note', 'amount', 'common_price', 'discount', 'price', 'total_price'];
 
   columnsHeader = {
     'product_no': 'Mã hàng',
@@ -36,7 +36,8 @@ export class InvoiceTabInfoComponent implements OnChanges {
     'common_price': 'Đơn giá',
     'discount': 'Giảm giá',
     'price': 'Giá bán',
-    'total_price': 'Thành tiền'
+    'total_price': 'Thành tiền',
+    'note': 'Ghi chú'
   };
 
   tongSoLuong = 0;
@@ -236,6 +237,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
       number: invoice.discount,
       type: invoice.discount_type
     };
+    mItemInvoice.noteSiderBar = invoice?.note??"";
     const aProductInfo: ProductInfo[] = [];
     const invoiceDetailFilter = new InvoiceDetailFilter();
     invoiceDetailFilter.invoice_id = invoice.id;
@@ -251,7 +253,6 @@ export class InvoiceTabInfoComponent implements OnChanges {
         element.product.productUnits = units;
 
         const item = units.find(ele => ele.is_base === 1);
-
         const mProductInfo = new ProductInfo();
         mProductInfo.amount = element.amount;
         mProductInfo.invoice_detail_amount = element.amount;
@@ -272,7 +273,6 @@ export class InvoiceTabInfoComponent implements OnChanges {
       this.orderService.addItemInvoiceUpdate(mItemInvoice);
       this.router.navigate(['/sale']);
     });
-
   }
 
   /**
