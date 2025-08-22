@@ -27,6 +27,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
   @Input() store: Store;
   @Output() reload: EventEmitter<any> = new EventEmitter();
 
+  defaultDisplayedColumns: string[] = ['product_no', 'product_name', 'amount', 'common_price', 'discount', 'price', 'total_price'];
   displayedColumns: string[] = ['product_no', 'product_name', 'amount', 'common_price', 'discount', 'price', 'total_price'];
 
   columnsHeader = {
@@ -36,11 +37,15 @@ export class InvoiceTabInfoComponent implements OnChanges {
     'common_price': 'Đơn giá',
     'discount': 'Giảm giá',
     'price': 'Giá bán',
+    'vat': 'VAT (%)',
+    'price_with_vat': 'Giá bán có VAT',
     'total_price': 'Thành tiền'
   };
 
+  isInvoiceVat = false;
   tongSoLuong = 0;
   tongTienHang = 0;
+  tongVat = 0;
   giamGiaHoaDon = 0;
   KhachCanTra: number;
   KhachDaTra = 0;
@@ -102,7 +107,20 @@ export class InvoiceTabInfoComponent implements OnChanges {
       const invoiceData = res;
       this.invoice = res;
       const detail = res['detail'];
+      this.isInvoiceVat = !!invoiceData.use_einvoice;
+      if (this.isInvoiceVat) {
+        const priceIndex = this.defaultDisplayedColumns.indexOf('price');
+        if (priceIndex !== -1) {
+          this.displayedColumns = [
+            ...this.defaultDisplayedColumns.slice(0, priceIndex + 1),
+            'vat',
+            'price_with_vat',
+            ...this.defaultDisplayedColumns.slice(priceIndex + 1)
+          ];
+        }
+      }
       this.tongTienHang = invoiceData.total_price;
+      this.tongVat = invoiceData.total_vat;
       this.KhachDaTra = invoiceData.total_payment;
       // tslint:disable-next-line:no-shadowed-variable
       detail.forEach(element => {
@@ -110,7 +128,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
       });
 
       if (invoiceData.discount_type === 'price') {
-        this.giamGiaHoaDon = invoiceData.discount;
+        this.giamGiaHoaDon = invoiceData.discount || 0;
       } else {
         this.giamGiaHoaDon = this.tongTienHang * invoiceData.discount / 100;
         this.giamGiaHoaDonText = '(' + invoiceData.discount + '%)';
@@ -236,6 +254,8 @@ export class InvoiceTabInfoComponent implements OnChanges {
       number: invoice.discount,
       type: invoice.discount_type
     };
+    mItemInvoice.use_einvoice = invoice.use_einvoice;
+    mItemInvoice.total_vat = invoice.total_vat;
     const aProductInfo: ProductInfo[] = [];
     const invoiceDetailFilter = new InvoiceDetailFilter();
     invoiceDetailFilter.invoice_id = invoice.id;
@@ -249,6 +269,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
           item.quantity_of_stock = Math.floor(element.quantity.number / item.value);
         });
         element.product.productUnits = units;
+        console.log(element);
 
         const item = units.find(ele => ele.is_base === 1);
 
@@ -258,6 +279,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
         mProductInfo.product_id = element.product?.id;
         mProductInfo.product = element.product;
         mProductInfo.product.end_price = element.price;
+        mProductInfo.product.vat_percent = element.vat_percent;
         mProductInfo.common_price = element.price;
         mProductInfo.product_unit_id = element['product_unit_id'];
         mProductInfo.product_unit_value = element['product_unit_value'];

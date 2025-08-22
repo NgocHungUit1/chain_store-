@@ -309,12 +309,12 @@
 
               <ng-container matColumnDef="total_price">
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{ columnsHeader['total_price'] }}</th>
-                <td mat-cell class="column-number" *matCellDef="let element"> {{ element.total_price | number }}</td>
+                <td mat-cell class="column-number" *matCellDef="let element"> {{ element.total_price + element.total_vat | number }}</td>
               </ng-container>
 
               <ng-container matColumnDef="discount">
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{ columnsHeader['discount'] }}</th>
-                <td mat-cell class="column-number" *matCellDef="let element"> {{ element.discount_price | number }}</td>
+                <td mat-cell class="column-number" *matCellDef="let element"> {{ (element.discount_price || 0) | number }}</td>
               </ng-container>
 
               <ng-container matColumnDef="payment">

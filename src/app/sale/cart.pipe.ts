@@ -29,3 +29,32 @@ export class TotalPricePipe implements PipeTransform {
     }
   }
 }
+
+
+@Pipe({
+  name: 'showPriceVat',
+  pure: false,
+})
+export class ShowPricePipeVat implements PipeTransform {
+  transform(item: any): any {
+    if (item.product?.end_price === undefined) {
+      return Math.round(item?.common_price  * (1 + ((item?.product?.vat_percent || 0) / 100)));
+    } else {
+      return Math.round(item.product?.end_price * (1 + ((item?.product?.vat_percent || 0) / 100)));
+    }
+  }
+}
+
+@Pipe({
+  name: 'totalPriceVat',
+  pure: false,
+})
+export class TotalPricePipeVat implements PipeTransform {
+  transform(item: any): any {
+    if (item.product?.end_price === undefined) {
+      return Math.round((item?.common_price * item.amount) * (1 + ((item?.product?.vat_percent || 0) / 100)));
+    } else {
+      return Math.round((item.product?.end_price * item.amount) * (1 + ((item?.product?.vat_percent || 0) / 100)));
+    }
+  }
+}

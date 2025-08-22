@@ -19,7 +19,7 @@ import { PaymentSiderbarDialogComponent } from './payment-siderbar-dialog/paymen
 import { NoteDetailOrderDialogComponent } from './note-detail-order-dialog/note-detail-order-dialog.component';
 import { PriceDetailOrderDialogComponent } from './price-detail-order-dialog/price-detail-order-dialog.component';
 import { SaleCustomerFormDialogComponent } from './sale-customer-form-dialog/sale-customer-form-dialog.component';
-import { ShowPricePipe, TotalPricePipe } from './cart.pipe';
+import { ShowPricePipe, ShowPricePipeVat, TotalPricePipe, TotalPricePipeVat } from './cart.pipe';
 import { SaleExpensesDialogComponent } from './sale-expenses-dialog/sale-expenses-dialog.component';
 import { PrescriptionFormDialogComponent } from './prescription-form-dialog/prescription-form-dialog.component';
 import { MedicalFacilityFormDialogComponent } from './medical-facility-form-dialog/medical-facility-form-dialog.component';
@@ -30,6 +30,8 @@ import { PaymentModule } from '../payment/payment.module';
 import { BankAccountDialogComponent } from './bank-account-dialog/bank-account-dialog.component';
 import { PaymentQrDialogComponent } from './payment-qr-dialog/payment-qr-dialog.component';
 import { TransactionNotifyDialogComponent } from './transaction-notify-dialog/bank-account-dialog.component';
+import { SaleNewVatPercentDialogComponent } from './sale-new-vat-percent-dialog/sale-new-vat-percent-dialog.component';
+import { NgxMaskModule } from 'ngx-mask';
 
 @NgModule({
   declarations: [
@@ -43,6 +45,8 @@ import { TransactionNotifyDialogComponent } from './transaction-notify-dialog/ba
     SaleCustomerFormDialogComponent,
     ShowPricePipe,
     TotalPricePipe,
+    ShowPricePipeVat,
+    TotalPricePipeVat,
     SaleExpensesDialogComponent,
     PrescriptionFormDialogComponent,
     MedicalFacilityFormDialogComponent,
@@ -50,22 +54,29 @@ import { TransactionNotifyDialogComponent } from './transaction-notify-dialog/ba
     BankAccountDialogComponent,
     PaymentQrDialogComponent,
     TransactionNotifyDialogComponent,
+    SaleNewVatPercentDialogComponent
   ],
-    imports: [
-        CommonModule,
-        RouterModule.forChild(SaleRoutes),
-        FormsModule,
-        ReactiveFormsModule,
-        FlexLayoutModule,
-        QuillModule.forRoot(),
-        DragulaModule.forRoot(),
-        PerfectScrollbarModule,
-        Ng2SearchPipeModule,
-        DemoMaterialModule,
-        AngularImageViewerModule,
-        InputSelectAllModule,
-        MatDatepickerModule,
-    ],
+  imports: [
+    CommonModule,
+    RouterModule.forChild(SaleRoutes),
+    FormsModule,
+    ReactiveFormsModule,
+    FlexLayoutModule,
+    QuillModule.forRoot(),
+    DragulaModule.forRoot(),
+    PerfectScrollbarModule,
+    Ng2SearchPipeModule,
+    DemoMaterialModule,
+    AngularImageViewerModule,
+    InputSelectAllModule,
+    MatDatepickerModule,
+    NgxMaskModule.forRoot({
+      validation: true,
+      thousandSeparator: ',',
+      decimalMarker: '.',
+      dropSpecialCharacters: false
+    }),
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SaleModule {
