@@ -616,13 +616,13 @@ export class SaleMainComponent implements OnInit, DoCheck {
                           const productPrice = elementData.common_price * elementData.amount; // gia chung * so luong
                           this.sumPrice += productPrice;
                           if (this.useEinvoice) {
-                            this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                            this.sumVat += Math.round(productPrice * ((elementData.product?.vat_percent || 0) / 100));
                           }
                         } else {
                           const productPrice = elementData.product.end_price * elementData.amount;  // gia ban * so luong
                           this.sumPrice += productPrice;
                           if (this.useEinvoice) {
-                            this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                            this.sumVat += Math.round(productPrice * ((elementData.product?.vat_percent || 0) / 100));
                           }
                         }
                       }
@@ -639,13 +639,13 @@ export class SaleMainComponent implements OnInit, DoCheck {
                           const productPrice = elementData.common_price * elementData.amount; // gia chung * so luong
                           this.sumPrice += productPrice;
                           if (this.useEinvoice) {
-                            this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                            this.sumVat += Math.round(productPrice * ((elementData.product?.vat_percent || 0) / 100));
                           }
                         } else {
                           const productPrice = elementData.product.end_price * elementData.amount;  // gia ban * so luong
                           this.sumPrice += productPrice;
                           if (this.useEinvoice) {
-                            this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                            this.sumVat += Math.round(productPrice * ((elementData.product?.vat_percent || 0) / 100));
                           }
                         }
                       }
@@ -709,7 +709,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
                   const productPrice = elementData.product.end_price * elementData.amount;
                   this.sumPrice += productPrice;
                   if (this.useEinvoice) {
-                    this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                    this.sumVat += Math.round(productPrice * ((elementData.product?.vat_percent || 0) / 100));
                   }
                 }
               } else {
@@ -725,7 +725,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
                       const productPrice = elementData.common_price * elementData.amount;
                       this.sumPrice += productPrice;
                       if (this.useEinvoice) {
-                        this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                        this.sumVat += Math.round(productPrice * ((elementData.product?.vat_percent || 0) / 100));
                       }
                     }
                   } else {
@@ -738,7 +738,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
                       const productPrice = elementData.product.end_price * elementData.amount;
                       this.sumPrice += productPrice;
                       if (this.useEinvoice) {
-                        this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                        this.sumVat += Math.round(productPrice * ((elementData.product?.vat_percent || 0) / 100));
                       }
                     }
                   } else {
@@ -747,7 +747,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
                       const productPrice = elementData.product.sell_price * elementData.amount;
                       this.sumPrice += productPrice;
                       if (this.useEinvoice) {
-                        this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                        this.sumVat += Math.round(productPrice * ((elementData.product?.vat_percent || 0) / 100));
                       }
                     }
                   }
