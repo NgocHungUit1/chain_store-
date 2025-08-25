@@ -1,0 +1,18 @@
+<h1 mat-dialog-title>Thêm VAT</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form" style="font-size: 14px;">
+    <mat-form-field>
+      <input matInput type="number" min="0" max="100" [formControl]="form.controls['vat']">
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" [disabled]="form.invalid" tabindex="4" (click)="submit()">
+    <mat-icon>save</mat-icon>
+    Ok
+  </button>
+  <button mat-raised-button (click)="onNoClick()" tabindex="-1">
+    <mat-icon>cancel</mat-icon>
+    Bỏ qua
+  </button>
+</div>

@@ -40,10 +40,36 @@
 
     <div fxLayout="row wrap">
       <mat-form-field>
-        <mat-label>Giá bán</mat-label>
-        <input matInput type="number" tabindex="1" formControlName="endPriceDetailOrder" (change)="onEndPriceChange()">
+        <mat-label>Giá bán {{isVat ? '(Chưa VAT)' : ''}}</mat-label>
+        <input matInput type="text" mask="separator" thousandSeparator=","  tabindex="1" formControlName="endPriceDetailOrder" (change)="onEndPriceChange()">
       </mat-form-field>
     </div>
+
+    <div fxLayout="column" *ngIf="isVat" class="mat-h3">
+      <mat-chip-list #chipList>
+        <mat-chip *ngFor="let item of vatPercentOptions; index as i;"
+                  [color]="form.controls['vatPercentSelect'].value == item.value ? 'primary' : ''"
+                  [selected]="form.controls['vatPercentSelect'].value  == item.value"
+                  [value]="item.value"
+                  (click)="onChangeVatPercent(item.value)"
+        >
+          {{ item.name }}
+        </mat-chip>
+
+        <mat-chip (click)="onOpenAddNewVatPercentDialog()">
+          <mat-icon>add</mat-icon>
+        </mat-chip>
+      </mat-chip-list>
+
+      <div fxLayout="row wrap" style="margin-top: 16px;">
+        <mat-form-field>
+          <mat-label>Giá bán bao gồm VAT</mat-label>
+          <input matInput  type="text" mask="separator" thousandSeparator="," formControlName="priceWithVat" (change)="onChangePriceWithVat()">
+        </mat-form-field>
+      </div>
+
+    </div>
+
 
   </form>
 </div>

@@ -20,10 +20,8 @@ export class SupplierFormDialogComponent implements OnInit {
   form: FormGroup;
   loading = false;
   provinces: Location[] = [];
-  districts: Location[] = [];
   wards: Location[] = [];
   filteredProvinces: Observable<any[]>;
-  filteredDistricts: Observable<any[]>;
   filteredWards: Observable<any[]>;
   local_data: any;
   supplier_id: string;
@@ -61,7 +59,6 @@ export class SupplierFormDialogComponent implements OnInit {
       address: [null],
       company_name: [null],
       tax_code: [null],
-      district: [null],
       ward: [null],
       province: [null],
       note: [null],
@@ -75,10 +72,7 @@ export class SupplierFormDialogComponent implements OnInit {
       startWith(''),
       map(province => (province ? this.filterProvince(province) : this.provinces.slice()))
     );
-    this.filteredDistricts = this.form.controls['district'].valueChanges.pipe(
-      startWith(''),
-      map(district => (district ? this.filterDistrict(district) : this.districts.slice()))
-    );
+
     this.filteredWards = this.form.controls['ward'].valueChanges.pipe(
       startWith(''),
       map(ward => (ward ? this.filterWard(ward) : this.wards.slice()))
@@ -147,7 +141,7 @@ export class SupplierFormDialogComponent implements OnInit {
   }
 
   loadSupplier(id) {
-    this.supplierSer.getDetail(id, 'province,district,ward').subscribe(supplier => {
+    this.supplierSer.getDetail(id, 'province,ward').subscribe(supplier => {
       this.form.patchValue({
         name: supplier['name'],
         phone_number: supplier['phone_number'],
@@ -155,18 +149,12 @@ export class SupplierFormDialogComponent implements OnInit {
         address: supplier['address'],
         company_name: supplier['company_name'],
         tax_code: supplier['tax_code'],
-        district: supplier['district'],
         ward: supplier['ward'],
         province: supplier['province'],
         note: supplier['note'],
       });
       if (supplier['province_id'] !== null) {
-        this.locationSer.autocomplete('', 'district', supplier['province_id']).subscribe(locations => {
-          this.districts = locations;
-        });
-      }
-      if (supplier['district_id'] !== null) {
-        this.locationSer.autocomplete('', 'ward', supplier['district_id']).subscribe(locations => {
+        this.locationSer.autocomplete('', 'ward', supplier['province_id']).subscribe(locations => {
           this.wards = locations;
         });
       }
@@ -177,14 +165,6 @@ export class SupplierFormDialogComponent implements OnInit {
     if (typeof name === 'string') {
       return this.provinces.filter(
         province => province.name.toLowerCase().indexOf(name.toLowerCase()) >= 0
-      );
-    }
-  }
-
-  filterDistrict(name: string) {
-    if (typeof name === 'string') {
-      return this.districts.filter(
-        district => district.name.toLowerCase().indexOf(name.toLowerCase()) >= 0
       );
     }
   }
@@ -207,9 +187,7 @@ export class SupplierFormDialogComponent implements OnInit {
       if (data['province'] !== null) {
         data['province_id'] = data['province'].id;
       }
-      if (data['district'] !== null) {
-        data['district_id'] = data['district'].id;
-      }
+
       if (data['ward'] !== null) {
         data['ward_id'] = data['ward'].id;
       }
@@ -228,24 +206,13 @@ export class SupplierFormDialogComponent implements OnInit {
   }
 
   onProvinceChange(province) {
-    this.form.patchValue({
-      district: null
-    });
-    this.districts = [];
-    if (province !== null) {
-      this.locationSer.autocomplete('', 'district', province.id).subscribe(locations => {
-        this.districts = locations;
-      });
-    }
-  }
-
-  onDistrictChange(district) {
+    this.form.controls['province'].setValue(province);
     this.form.patchValue({
       ward: null
     });
     this.wards = [];
-    if (district !== null) {
-      this.locationSer.autocomplete('', 'ward', district.id).subscribe(locations => {
+    if (province !== null) {
+      this.locationSer.autocomplete('', 'ward', province.id).subscribe(locations => {
         this.wards = locations;
       });
     }

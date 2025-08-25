@@ -5,7 +5,7 @@ import { NotifierService } from 'angular-notifier';
 import { Observable, Subject } from 'rxjs';
 import { Product } from '../../product/product.model';
 import { OrderService } from '../order.service';
-import { catchError, debounceTime, finalize, map, startWith, switchMap } from 'rxjs/operators';
+import { catchError, debounceTime, distinctUntilChanged, finalize, map, startWith, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/internal/observable/of';
 import { PriceList, PriceListFilter } from '../../price-book/price-list.model';
 import { PriceListService } from '../../price-book/price-list.service';
@@ -35,7 +35,7 @@ import { ProductService } from '../../product/product.service';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { SaleProductParcelSelectDialogComponent } from '../sale-product-parcel-select-dialog/sale-product-parcel-select-dialog.component';
-import {AuthService} from '../../authentication/auth.service';
+import { AuthService } from '../../authentication/auth.service';
 import { SharedDataService } from '../../shared/shared-data.service';
 import { BankAccountDialogComponent } from '../bank-account-dialog/bank-account-dialog.component';
 import { PaymentQrDialogComponent } from '../payment-qr-dialog/payment-qr-dialog.component';
@@ -118,6 +118,48 @@ export class SaleMainComponent implements OnInit, DoCheck {
       this.canNegativeStock = res.value === 'yes';
     });
   }
+
+  get total(): number {
+    const vat = this.useEinvoice ? this.sumVat : 0;
+
+    return (this.sumPrice + vat)
+      - this.numberDiscount
+      - this.numberPointDiscount
+      + this.expenseOrder;
+  }
+
+  get selectedBankAccount(): BankAccount | null {
+    return this._selectedBankAccount;
+  }
+
+  set selectedBankAccount(acct: BankAccount | null) {
+    this._selectedBankAccount = acct;
+
+    if (!acct) {
+      // no bank → clear QR
+      this.selectedBankQr = '';
+      return;
+    }
+
+    // show spinner
+    this.isLoadingResults = true;
+
+    // fetch the new QR, hide spinner when done
+    this.getQrCode(acct)
+      .pipe(finalize(() => this.isLoadingResults = false))
+      .subscribe(qr => {
+        // debugger;
+        this.selectedBankQr = qr;
+      });
+  }
+
+  get useEinvoice(): boolean {
+    if (this.form) {
+      return this.form.get('use_einvoice')?.value ?? false;
+    }
+    return false;
+  }
+
   private loadBankAccountsSubject = new Subject<void>(); // Subject to trigger debouncing
 
   optionStore_auto_print: OptionStore = null;
@@ -143,6 +185,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
   countProduct = 0;
 
   sumPrice = 0;
+  sumVat = 0;
   numberDiscount = 0; // use for view
   discount = 0; // use for payment
   discount_type = 'price'; // use for payment
@@ -177,13 +220,13 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
   prescription_id: null; // ban theo don thuoc
 
-  canNegativeStock: boolean = false;
-  isPointEnabled: boolean = false;
-  pointToCashRate: number = 0;
-  canPayByPointAfterInvoices: number = 0;
-  isUsePoint: boolean = false;
-  pointCanUse: number = 0;
-  numberPointDiscount: number = 0;
+  canNegativeStock = false;
+  isPointEnabled = false;
+  pointToCashRate = 0;
+  canPayByPointAfterInvoices = 0;
+  isUsePoint = false;
+  pointCanUse = 0;
+  numberPointDiscount = 0;
   paymentForm: FormGroup;
   paymentMethods: string[] = ['Tiền mặt', 'Chuyển khoản'];
   amounts: number[] = [20000, 50000, 100000, 200000, 500000];
@@ -193,12 +236,11 @@ export class SaleMainComponent implements OnInit, DoCheck {
   selectedWallet: any;
   bankAccounts: any[] = [];
   filteredBankAccounts: any[] = [];
-  searchTerm: string = '';
-  isDropdownOpen: boolean = false;
+  searchTerm = '';
+  isDropdownOpen = false;
   wallets: any[] = [];
   bankAccountFilter: BankAccountFilter = new BankAccountFilter();
   flexibleWithProductName = 16;
-
   /**
    * allColumns is a fixed list of every “column ID” that might appear
    * in the sale‐detail row. In your HTML template, each fxFlex/div block
@@ -207,23 +249,23 @@ export class SaleMainComponent implements OnInit, DoCheck {
    */
   allColumns: string[] = [
     // 1) Ảnh hàng hóa
-    "image",
+    'image',
     // 2) Mã hàng
-    "product_no",
+    'product_no',
     // 3) Giá bán
-    "price",
+    'price',
     // 4) Giảm giá
-    "discount",
+    'discount',
     // 5) Chỉnh sửa thành tiền
-    "edit_as_money",
+    'edit_as_money',
     // 6) Xem giá bán gần nhất
-    "last_sale_price",
+    'last_sale_price',
     // 7) Thêm dòng
-    "add_row",
+    'add_row',
     // 8) Tồn kho
-    "quantity_of_stock",
+    'quantity_of_stock',
     // 8) Ghi chú
-    "note",
+    'note',
   ];
 
   /**
@@ -233,7 +275,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
    * By default, we’ll show every column.
    */
   displayedColumns: string[] = [
-    'no','product_no','product_name','unit','amount','price','total'
+    'no', 'product_no', 'product_name', 'unit', 'amount', 'price', 'total',
   ];
 
   // selected invoice template
@@ -249,43 +291,22 @@ export class SaleMainComponent implements OnInit, DoCheck {
   isEinvoiceEnabled = false;
 
   private _prevTotal = this.total;
-  private _selectedBankAccount: BankAccount|null = null;
+  private _selectedBankAccount: BankAccount | null = null;
 
-  get total(): number {
-    return this.sumPrice
-         - this.numberDiscount
-         - this.numberPointDiscount
-         + this.expenseOrder;
-  }
-  get selectedBankAccount(): BankAccount|null {
-    return this._selectedBankAccount;
-  }
-  set selectedBankAccount(acct: BankAccount|null) {
-    this._selectedBankAccount = acct;
+  // Coding parcel + add row function
+  shownMenus: Set<number> = new Set();
+  all_product_parcels: Map<string, object[]> = new Map();
+  available_product_parcels: Map<string, object[]> = new Map();
+  parcelItemControls: Map<number, FormControl> = new Map();
+  parcelFilteredItems: Map<number, Observable<object[]>> = new Map();
+  separatorKeysCodes: number[] = [ENTER, COMMA];
 
-    if (!acct) {
-      // no bank → clear QR
-      this.selectedBankQr = '';
-      return;
-    }
-
-    // show spinner
-    this.isLoadingResults = true;
-
-    // fetch the new QR, hide spinner when done
-    this.getQrCode(acct)
-      .pipe(finalize(() => this.isLoadingResults = false))
-      .subscribe(qr => {
-        // debugger;
-        this.selectedBankQr = qr;
-      });
-  }
   onTotalChange() {
-    this.getQrCode(this.selectedBankAccount).subscribe(qrCode=>{
-      this.selectedBankQr = qrCode
+    this.getQrCode(this.selectedBankAccount).subscribe(qrCode => {
+      this.selectedBankQr = qrCode;
     });    // …do whatever you need here…
     if (this.form.controls['customerPay'].value !== 0) {
-      this.tinhLaiTienThua(); //Tín: khách thanh toán = 0 thì mặc định thanh toán hết => nợ = 0
+      this.tinhLaiTienThua(); // Tín: khách thanh toán = 0 thì mặc định thanh toán hết => nợ = 0
     }
   }
   /**
@@ -332,6 +353,11 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
     this.localItemInvoice = mItemInvoice;
 
+    this.form.patchValue({
+      use_einvoice: mItemInvoice.use_einvoice,
+    });
+
+
     this.handleLoadParcel(mItemInvoice);
     this.handleAddMasterTag(mItemInvoice);
   }
@@ -346,9 +372,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
       }
     });
 
-    this.sharedDataSer.isInSoLo$.subscribe(res=>{
+    this.sharedDataSer.isInSoLo$.subscribe(res => {
       this.autoPrintInSoLo = res;
-    })
+    });
   }
 
   handleExpenseOrder() {
@@ -418,7 +444,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
         }
       });
     });
-
     return mItemInvoice;
   }
 
@@ -473,6 +498,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
    * Xu ly cho detail order
    */
   handleDetailOrder(mItemInvoice) {
+    console.log('handleDetailOrder');
+    console.log(mItemInvoice);
     this.countProduct = 0;
     if (
       mItemInvoice.listProduct === undefined ||
@@ -482,8 +509,13 @@ export class SaleMainComponent implements OnInit, DoCheck {
       this.prescription.checked = false;
       this.prescription_id = null;
       this.sumPrice = 0;
+      this.sumVat = 0;
       this.listProductUnitIdChooseOld = [];
-      this.form.patchValue({ total_amount: 0 });
+      this.form.patchValue({
+        total_amount: 0,
+        total_vat: 0,
+        total_amount_with_vat: 0,
+      });
     } else {
       if (
         mItemInvoice.prescription_id !== undefined &&
@@ -535,12 +567,12 @@ export class SaleMainComponent implements OnInit, DoCheck {
           const common_id = priceBookID;
 
           const groupProductIdCommonPrice =
-          listProductOLD !== null
-            ? listProductOLD.reduce((r, a) => {
-              r[a.product_id] = [...(r[a.product_id] || []), a];
-              return r;
-            }, {})
-            : [];
+            listProductOLD !== null
+              ? listProductOLD.reduce((r, a) => {
+                r[a.product_id] = [...(r[a.product_id] || []), a];
+                return r;
+              }, {})
+              : [];
           /**
            * tien hanh xu ly add common_price vao list
            */
@@ -566,31 +598,37 @@ export class SaleMainComponent implements OnInit, DoCheck {
                  * Tien hanh sumPrice , cap nhat common_price, neu khong co common_price se cho sell_price
                  */
                 this.sumPrice = 0;
-                if (
-                  mItemInvoice.total_amount !== undefined &&
-                  mItemInvoice.total_amount !== null
-                ) {
-                  this.sumPrice = mItemInvoice.total_amount;
-                }
+                this.sumVat = 0;
+                // if (
+                //   mItemInvoice.total_amount !== undefined &&
+                //   mItemInvoice.total_amount !== null
+                // ) {
+                //   this.sumPrice = mItemInvoice.total_amount;
+                // }
                 if (this.listProduct !== null) {
                   this.listProduct.forEach(elementData => {
                     // debugger;
                     if (group[elementData.product_unit_id] !== undefined) {
-                      if(groupProductIdCommonPrice[elementData.product_id] && groupProductIdCommonPrice[elementData.product_id].length >= 1) {
+                      if (groupProductIdCommonPrice[elementData.product_id] && groupProductIdCommonPrice[elementData.product_id].length >= 1) {
                         elementData.common_price = groupProductIdCommonPrice[elementData.product_id][0].common_price;
                       } else {
                         elementData.common_price = group[elementData.product_unit_id][0]['price'];
                       }
-                      elementData.common_price =  elementData.common_price ?? 0;
+                      elementData.common_price = elementData.common_price ?? 0;
 
                       if (!(elementData.sample_prescription_id !== undefined && elementData.sample_prescription_id !== null)) {
                         if (elementData.product.end_price === undefined) {
-                          this.sumPrice +=
-                            elementData.common_price *
-                            elementData.amount; // gia chung * so luong
+                          const productPrice = elementData.common_price * elementData.amount; // gia chung * so luong
+                          this.sumPrice += productPrice;
+                          if (this.useEinvoice) {
+                            this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                          }
                         } else {
-                          this.sumPrice +=
-                            elementData.product.end_price * elementData.amount; // gia chung * so luong
+                          const productPrice = elementData.product.end_price * elementData.amount;  // gia ban * so luong
+                          this.sumPrice += productPrice;
+                          if (this.useEinvoice) {
+                            this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                          }
                         }
                       }
                     } else {
@@ -599,15 +637,21 @@ export class SaleMainComponent implements OnInit, DoCheck {
                       } else {
                         elementData.common_price = elementData.product.sell_price;
                       }
-                      elementData.common_price =  elementData.common_price ?? 0;
+                      elementData.common_price = elementData.common_price ?? 0;
 
                       if (!(elementData.sample_prescription_id !== undefined && elementData.sample_prescription_id !== null)) {
                         if (elementData.product.end_price === undefined) {
-                          this.sumPrice +=
-                            elementData.common_price * elementData.amount; // gia ban * so luong
+                          const productPrice = elementData.common_price * elementData.amount; // gia chung * so luong
+                          this.sumPrice += productPrice;
+                          if (this.useEinvoice) {
+                            this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                          }
                         } else {
-                          this.sumPrice +=
-                            elementData.product.end_price * elementData.amount; // gia ban * so luong
+                          const productPrice = elementData.product.end_price * elementData.amount;  // gia ban * so luong
+                          this.sumPrice += productPrice;
+                          if (this.useEinvoice) {
+                            this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                          }
                         }
                       }
                     }
@@ -619,8 +663,14 @@ export class SaleMainComponent implements OnInit, DoCheck {
                   this.listProduct = list;
                 } else {
                   this.sumPrice = 0;
+                  this.sumVat = 0;
                 }
-                this.form.patchValue({ total_amount: numeral(this.sumPrice).format('0,0') });
+                this.form.patchValue({
+                  total_amount: numeral(this.sumPrice).format('0,0'),
+                  total_vat: numeral(this.sumVat).format('0,0'),
+                  total_amount_with_vat: numeral(this.sumPrice + this.sumVat).format('0,0'),
+                });
+
                 this.checkToAdjustItemPriceByTotalDiff();
                 this.handleDiscountSiderBar(mItemInvoice);
               } else {
@@ -649,19 +699,23 @@ export class SaleMainComponent implements OnInit, DoCheck {
            */
 
           this.sumPrice = 0;
-          if (
-            mItemInvoice.total_amount !== undefined &&
-            mItemInvoice.total_amount !== null
-          ) {
-            this.sumPrice = mItemInvoice.total_amount;
-          }
+          this.sumVat = 0;
+          // if (
+          //   mItemInvoice.total_amount !== undefined &&
+          //   mItemInvoice.total_amount !== null
+          // ) {
+          //   this.sumPrice = mItemInvoice.total_amount;
+          // }
           if (this.listProduct !== null) {
             this.listProduct.forEach(elementData => {
               if (elementData.product.end_price !== undefined) {
                 elementData.common_price = elementData.product.end_price;
                 if (!(elementData.sample_prescription_id !== undefined && elementData.sample_prescription_id !== null)) {
-                  this.sumPrice +=
-                    elementData.product.end_price * elementData.amount;
+                  const productPrice = elementData.product.end_price * elementData.amount;
+                  this.sumPrice += productPrice;
+                  if (this.useEinvoice) {
+                    this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                  }
                 }
               } else {
                 if (
@@ -673,7 +727,11 @@ export class SaleMainComponent implements OnInit, DoCheck {
                   if (unitPrice) {
                     elementData.common_price = unitPrice['common_price'];
                     if (!(elementData.sample_prescription_id !== undefined && elementData.sample_prescription_id !== null)) {
-                      this.sumPrice += unitPrice['common_price'] * elementData.amount;
+                      const productPrice = elementData.common_price * elementData.amount;
+                      this.sumPrice += productPrice;
+                      if (this.useEinvoice) {
+                        this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                      }
                     }
                   } else {
                     // lost here
@@ -682,14 +740,20 @@ export class SaleMainComponent implements OnInit, DoCheck {
                   if (elementData.product.end_price !== undefined) {
                     elementData.common_price = elementData.product.end_price;
                     if (!(elementData.sample_prescription_id !== undefined && elementData.sample_prescription_id !== null)) {
-                      this.sumPrice +=
-                        elementData.product.end_price * elementData.amount;
+                      const productPrice = elementData.product.end_price * elementData.amount;
+                      this.sumPrice += productPrice;
+                      if (this.useEinvoice) {
+                        this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                      }
                     }
                   } else {
                     elementData.common_price = elementData.product.sell_price;
                     if (!(elementData.sample_prescription_id !== undefined && elementData.sample_prescription_id !== null)) {
-                      this.sumPrice +=
-                        elementData.product.sell_price * elementData.amount;
+                      const productPrice = elementData.product.sell_price * elementData.amount;
+                      this.sumPrice += productPrice;
+                      if (this.useEinvoice) {
+                        this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                      }
                     }
                   }
                 }
@@ -697,8 +761,13 @@ export class SaleMainComponent implements OnInit, DoCheck {
             });
           } else {
             this.sumPrice = 0;
+            this.sumVat = 0;
           }
-          this.form.patchValue({ total_amount: numeral(this.sumPrice).format('0,0') });
+          this.form.patchValue({
+            total_amount: numeral(this.sumPrice).format('0,0'),
+            total_vat: numeral(this.sumVat).format('0,0'),
+            total_amount_with_vat: numeral(this.sumPrice + this.sumVat).format('0,0'),
+          });
           this.checkToAdjustItemPriceByTotalDiff();
           this.handleDiscountSiderBar(mItemInvoice);
         }
@@ -754,9 +823,11 @@ export class SaleMainComponent implements OnInit, DoCheck {
       today: [today],
       invoice_id: [null],
       total_amount: [0],
+      total_vat: [0],
+      total_amount_with_vat: [0],
       prescription_id: [null], // ban thuoc theo don
       use_einvoice: [false],
-      selectedMethod: ['Tiền mặt'] // Default value
+      selectedMethod: ['Tiền mặt'], // Default value
     });
 
     if (this.form.controls['branch_id'].value == null) {
@@ -806,18 +877,18 @@ export class SaleMainComponent implements OnInit, DoCheck {
           this.notifySer.notify('success', 'Chuyển chi nhánh thành công.');
           this.resetDataSiderBar();
           this.orderService.initListInvoice();
-          setTimeout(function () {
+          setTimeout(function() {
             location.reload();
           }, 500);
         } else {
           this.notifySer.notify(
             'error',
-            'Đã có lỗi xảy ra, vui lòng kiểm tra lại.'
+            'Đã có lỗi xảy ra, vui lòng kiểm tra lại.',
           );
         }
       },
       error => {
-      }
+      },
     );
   }
 
@@ -836,6 +907,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
       this.displayedColumns = this.allColumns.filter(colId => map[colId]);
     });
+
     // 2) Immediately seed displayedColumns with whatever the service currently says
     const initialMap = (this.saleColumnVisibilityService as any).visibilitySubject.value;
     this.displayedColumns = this.allColumns.filter(colId => initialMap[colId]);
@@ -869,7 +941,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
       }
     });
     this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
-      this.loadData().then(r => { });
+      this.loadData().then(r => {
+      });
     });
     this.isLoadingResults = false;
 
@@ -909,8 +982,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
       // use switch map so as to cancel previous subscribed events, before creating new once
       switchMap(value => {
         // if (value !== '') {
-          // lookup from github
-          return this.lookupUser(value);
+        // lookup from github
+        return this.lookupUser(value);
         // } else {
         //   // if no value is present, return null
         //   return of(null);
@@ -923,10 +996,27 @@ export class SaleMainComponent implements OnInit, DoCheck {
       this.isEinvoiceEnabled = res.value === 'true';
     });
     this.loadBankAccountsSubject.pipe(
-      debounceTime(300) // Wait for 300ms of inactivity
+      debounceTime(300), // Wait for 300ms of inactivity
     ).subscribe(() => {
       this.loadBankAccounts(); // Call the actual function after debounce
     });
+
+    this.form.controls['use_einvoice'].valueChanges.pipe(distinctUntilChanged()).subscribe(value => {
+
+        const listInvoice = this.orderService.getListInvoiceLocalStorage();
+        const listItemInvoice = listInvoice.itemInvoice;
+        let hasChanged = false;
+        listItemInvoice.forEach(ele => {
+          if (ele.active === true) {
+            ele.use_einvoice = value;
+            hasChanged = true;
+          }
+        });
+        if (hasChanged) {
+          this.orderService.setListInvoiceLocalStorage(listInvoice);
+        }
+        this.handleDetailOrder(this.localItemInvoice);
+      });
 
     // get info invoice template
     this.loadInvoiceTemplates();
@@ -978,7 +1068,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
   }
 
-  upAmountProductReturn( i: any) {
+  upAmountProductReturn(i: any) {
     this.orderService.upAmountProductReturn(i);
   }
 
@@ -1003,7 +1093,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
   openNoteDetailOrderDialog(
     i: any,
     product_unit_id: string,
-    note_detail_sale: string
+    note_detail_sale: string,
   ) {
     const obj = {
       i: i,
@@ -1022,15 +1112,18 @@ export class SaleMainComponent implements OnInit, DoCheck {
   }
 
   openPriceDetailOrderDialog(i: any, product: Product, common_price: string) {
+    console.log(common_price);
     const obj = {
       i: i,
       product: product,
       common_price: common_price,
+      is_vat: this.form.controls['use_einvoice'].value || false,
     };
 
     const dialogRef = this.dialog.open(PriceDetailOrderDialogComponent, {
       data: obj,
-      width: '30%',
+      width: '50%',
+      maxWidth: '600px',
       minHeight: '80%',
     });
 
@@ -1166,7 +1259,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
         this.discount_type = 'price';
       } else {
         this.numberDiscount = Math.round(
-          (this.sumPrice * discountSiderBar?.number) / 100
+          (this.sumPrice * discountSiderBar?.number) / 100,
         );
         this.discount_type = 'percent';
       }
@@ -1177,7 +1270,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
   }
 
   handlePointDiscountSiderBar(mItemInvoice) {
-    const {pointDiscountSiderBar, customer} = mItemInvoice;
+    const { pointDiscountSiderBar, customer } = mItemInvoice;
     this.isUsePoint = pointDiscountSiderBar?.isUsePoint || false;
     let pointCanUse = Math.floor((this.sumPrice - this.numberDiscount + this.expenseOrder) / this.pointToCashRate) || 0;
     if (customer && pointCanUse > customer.total_point) {
@@ -1205,12 +1298,12 @@ export class SaleMainComponent implements OnInit, DoCheck {
     const dialogRef = this.dialog.open(BankAccountDialogComponent, {
       width: '500px',
       minHeight: '300px',
-      panelClass: 'rounded-dialog'
+      panelClass: 'rounded-dialog',
     });
 
     dialogRef.afterClosed().subscribe(bankAccount => {
       if (bankAccount !== undefined) {
-        this.selectedBankAccount = bankAccount
+        this.selectedBankAccount = bankAccount;
         this.triggerLoadBankAccounts();
       }
     });
@@ -1271,12 +1364,12 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
   openPaymentQrDialog() {
     const dialogRef = this.dialog.open(PaymentQrDialogComponent, {
-      data:{
-          accountName: this.selectedBankAccount.account_name,
-          accountNumber: this.selectedBankAccount.account_number,
-          bankCode: this.selectedBankAccount.bank_code,
-          qrImageUrl: this.selectedBankQr,
-      }
+      data: {
+        accountName: this.selectedBankAccount.account_name,
+        accountNumber: this.selectedBankAccount.account_number,
+        bankCode: this.selectedBankAccount.bank_code,
+        qrImageUrl: this.selectedBankQr,
+      },
 
     });
 
@@ -1289,7 +1382,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
   openTransactionNotifyDialog() {
     const dialogRef = this.dialog.open(TransactionNotifyDialogComponent, {
       width: '800px',
-      data: this.selectedBankAccount
+      data: this.selectedBankAccount,
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -1435,7 +1528,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
           </style>
           <section style="font-size: ${_font_size}; width: 100%;">
             ${this.logo ? `<p class="center"><img src="${this.logo}" style="max-width: 120px;"></p>` :
-                          `<p class="center"><img src="assets/images/Rx20_16x16_op1-1207.png" style="max-width: 120px;"></p>`}
+          `<p class="center"><img src="assets/images/Rx20_16x16_op1-1207.png" style="max-width: 120px;"></p>`}
             <p class="center bold" style="font-size: ${_font_size_store}">${res?.store?.name || 'Store Name'}</p>
             <p class="center">${res?.store?.address || 'Store Address'}</p>
             <p class="center bold">HÓA ĐƠN BÁN HÀNG</p>
@@ -1555,14 +1648,14 @@ export class SaleMainComponent implements OnInit, DoCheck {
         // Footer with QR code
         const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
 
-        if(this.form.get('selectedMethod').value == 'Chuyển khoản'){
-          this.getQrCode(this.selectedBankAccount).subscribe(qrCode=>{
+        if (this.form.get('selectedMethod').value == 'Chuyển khoản') {
+          this.getQrCode(this.selectedBankAccount).subscribe(qrCode => {
             printContent += `<br>
-              <p class="center"><img src="${qrCode}" style="width: 80px; height: 80px;" onload="onQrLoaded()"></p>`
+              <p class="center"><img src="${qrCode}" style="width: 80px; height: 80px;" onload="onQrLoaded()"></p>`;
 
             printContent += `${this.description && this.description.length > 0
-            ? `<p style="text-align:center; font-style: italic;">${this.description}</p>`
-            : `<p style="text-align:center; font-style: italic;">Cám ơn và hẹn gặp lại.</p>`}
+              ? `<p style="text-align:center; font-style: italic;">${this.description}</p>`
+              : `<p style="text-align:center; font-style: italic;">Cám ơn và hẹn gặp lại.</p>`}
               <p class="center" style="font-size: 9px;">POWERED BY rx20.vn</p>
               <script>
                 function onQrLoaded() {
@@ -1579,14 +1672,13 @@ export class SaleMainComponent implements OnInit, DoCheck {
             WindowPrt.document.close();
             WindowPrt.focus();
             // WindowPrt.close(); // lỗi tự đôngs
-          })
-        }
-        else{
+          });
+        } else {
           printContent += `
           <br>
           ${this.description && this.description.length > 0
-          ? `<p style="text-align:center; font-style: italic;">${this.description}</p>`
-          : `<p style="text-align:center; font-style: italic;">Cám ơn và hẹn gặp lại.</p>`}
+            ? `<p style="text-align:center; font-style: italic;">${this.description}</p>`
+            : `<p style="text-align:center; font-style: italic;">Cám ơn và hẹn gặp lại.</p>`}
           <p class="center" style="font-size: 9px;">POWERED BY rx20.vn</p>
           <script>
             window.print();
@@ -1769,7 +1861,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       const WindowPrt = window.open(
         '',
         '',
-        'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0'
+        'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0',
       );
       WindowPrt.document.write(printContent);
       WindowPrt.document.close();
@@ -1903,7 +1995,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       const WindowPrt = window.open(
         '',
         '',
-        'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0'
+        'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0',
       );
       WindowPrt.document.write(printContent);
       WindowPrt.document.close();
@@ -2056,8 +2148,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
       printContent += `
         <br>
         ${this.description && this.description.length > 0
-          ? `<p style="text-align:center; font-style: italic;">${this.description}</p>`
-          : `<p style="text-align:center; font-style: italic;">Cám ơn và hẹn gặp lại.</p>`}
+        ? `<p style="text-align:center; font-style: italic;">${this.description}</p>`
+        : `<p style="text-align:center; font-style: italic;">Cám ơn và hẹn gặp lại.</p>`}
         </section>
       `;
 
@@ -2069,7 +2161,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
       // WindowPrt.close(); // Uncomment if you want to auto-close after printing
     });
   }
-
 
 
   async getPreInvoiceData(): Promise<any> {
@@ -2084,7 +2175,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
       so_lo: item?.product_parcels&&item?.product_parcels.length>0? `SL: ${item.product_parcels[0].parcel_no}-HD: ${item.product_parcels[0].expiration_date}` : '',
       note: item?.note || ''
     }));
-    const totalPrice = this.sumPrice;
+
+    const totalPrice = this.useEinvoice ? this.sumPrice + this.sumVat : this.sumPrice;
     const discount = this.discount_type === 'price' ? this.discount : Math.round((this.sumPrice * this.discount) / 100);
     const sumPayment = totalPrice - this.numberDiscount - this.numberPointDiscount + this.expenseOrder;
     const debt = this.tienKhachNo > 0 ? this.tienKhachNo : null;
@@ -2093,12 +2185,14 @@ export class SaleMainComponent implements OnInit, DoCheck {
     const storeRes = await this.storeSer.getDetail().toPromise();
     const storeData = {
       name: storeRes['name'] || 'Store Name',    // Adjust if property names differ
-      address: storeRes['address'] || 'Store Address'
+      address: storeRes['address'] || 'Store Address',
     };
+
     const today = formData.today instanceof Date ? formData.today : new Date();
     const createdAt = formData.today && formData.time
       ? `${this.dp.transform(today, 'yyyy-MM-dd')} ${formData.time}`
       : new Date().toLocaleString();
+
     return {
       store: storeData,
       customer: this.customer || activeInvoice.customer || { name: 'Khách lẻ', phone: '' },
@@ -2121,6 +2215,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     let _margin = '4px';
     let _padding = '3px';
     let _solo = 'text-align:left;';
+
     // Determine print type (K58 or A4)
     this.optionStoreService.getValue('print_type').subscribe(res => {
       if (res.value === 'K58') {
@@ -2189,7 +2284,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
           }
         </style>
         <section style="font-size: ${_font_size}; width: 100%;">
-          ${`<p class="center"><img src="${this.logo??'assets/images/Rx20_16x16_op1-1207.png'}" style="max-width: 120px;"></p>`}
+          ${`<p class="center"><img src="${this.logo ?? 'assets/images/Rx20_16x16_op1-1207.png'}" style="max-width: 120px;"></p>`}
           <p class="center bold" style="font-size: ${_font_size_store}">${preInvoiceData?.store?.name || 'Store Name'}</p>
           <p class="center">${preInvoiceData?.store?.address || 'Store Address'}</p>
           <p class="center bold">HÓA ĐƠN TẠM TÍNH</p>
@@ -2302,19 +2397,19 @@ export class SaleMainComponent implements OnInit, DoCheck {
         `;
       }
       printContent += `</table>`;
-      printContent += `<p>${this.numberToVietnameseText(+preInvoiceData?.sum_payment || 0)}</p>`
+      printContent += `<p>${this.numberToVietnameseText(+preInvoiceData?.sum_payment || 0)}</p>`;
 
       const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
 
       // Footer with QR code
-      if(this.form.get('selectedMethod').value == 'Chuyển khoản'){
-          this.getQrCode(this.selectedBankAccount).subscribe(qrCode=>{
-            printContent += `<br>
-              <p class="center"><img src="${qrCode}" style="width: 80px; height: 80px;" onload="onQrLoaded()"></p>`
+      if (this.form.get('selectedMethod').value == 'Chuyển khoản') {
+        this.getQrCode(this.selectedBankAccount).subscribe(qrCode => {
+          printContent += `<br>
+              <p class="center"><img src="${qrCode}" style="width: 80px; height: 80px;" onload="onQrLoaded()"></p>`;
 
-            printContent += `${this.description && this.description.length > 0
-          ? `<p style="text-align:center; font-style: italic;">${this.description}</p>`
-          : `<p style="text-align:center; font-style: italic;">Cám ơn và hẹn gặp lại.</p>`}
+          printContent += `${this.description && this.description.length > 0
+            ? `<p style="text-align:center; font-style: italic;">${this.description}</p>`
+            : `<p style="text-align:center; font-style: italic;">Cám ơn và hẹn gặp lại.</p>`}
               <p class="center" style="font-size: 9px;">POWERED BY rx20.vn</p>
               <script>
                 function onQrLoaded() {
@@ -2327,14 +2422,13 @@ export class SaleMainComponent implements OnInit, DoCheck {
               </section>
             `;
 
-            WindowPrt.document.write(printContent);
-            WindowPrt.document.close();
-            WindowPrt.focus();
-            // WindowPrt.close(); // lỗi tự đôngs
-          })
-        }
-        else{
-          printContent += `
+          WindowPrt.document.write(printContent);
+          WindowPrt.document.close();
+          WindowPrt.focus();
+          // WindowPrt.close(); // lỗi tự đôngs
+        });
+      } else {
+        printContent += `
           <br>
           ${this.description && this.description.length > 0
           ? `<p style="text-align:center; font-style: italic;">${this.description}</p>`
@@ -2532,16 +2626,16 @@ export class SaleMainComponent implements OnInit, DoCheck {
     const selectedPaymentMethod = this.form.get('selectedMethod').value;
 
     if (selectedPaymentMethod === 'Chuyển khoản') {
-        paymentMethodValue = 'bank_transfer';
-        if (this.selectedBankAccount) { // Check if a bank is selected
-            bankAccountId = this.selectedBankAccount.id
-        } else {
-            this.notifySer.notify('warning', 'Vui lòng chọn tài khoản ngân hàng thanh toán!');
-            this.submitted = false;
-        }
+      paymentMethodValue = 'bank_transfer';
+      if (this.selectedBankAccount) { // Check if a bank is selected
+        bankAccountId = this.selectedBankAccount.id;
+      } else {
+        this.notifySer.notify('warning', 'Vui lòng chọn tài khoản ngân hàng thanh toán!');
+        this.submitted = false;
+      }
     } else if (selectedPaymentMethod === 'Tiền mặt') {
-        paymentMethodValue = 'cash';
-        bankAccountId = null;
+      paymentMethodValue = 'cash';
+      bankAccountId = null;
     }
 
     if (this.selectUser.value === '') {
@@ -2578,7 +2672,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
         if (element.amount > currentStock) {
           this.notifySer.notify(
             'warning',
-            `Không đủ số lượng tồn kho sản phẩm ${element.product.product_name} (Tồn kho: ${currentStock})`
+            `Không đủ số lượng tồn kho sản phẩm ${element.product.product_name} (Tồn kho: ${currentStock})`,
           );
           needReturn = 1;
         }
@@ -2625,6 +2719,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
         parcel_no: element?.product_parcels?.[0]?.parcel_no,
         is_sub_item: element?.product?.is_sub_item,
         master_product_id: element?.product?.master_product_id,
+        vat_percent: this.useEinvoice ? element?.product?.vat_percent || 0 : 0,
       });
     });
 
@@ -2655,7 +2750,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
       Invoice: {
         invoice_id: mItemInvoice.invoice_id,
         customer_id: customer?.id,
-        total_price: this.sumPrice,
+        total_price:  this.sumPrice,
+        total_vat: this.useEinvoice ? this.sumVat : 0,
         discount: this.discount,
         discount_type: this.discount_type,
         note: this.form.controls['noteSiderBar'].value,
@@ -2663,16 +2759,17 @@ export class SaleMainComponent implements OnInit, DoCheck {
         branch_id: this.form.controls['branch_id'].value,
         expenses_order_price: this.expenseOrder,
         prescription_id: this.prescription.checked
-                         ? (mItemInvoice.prescription_id || this.prescription_id)
-                         : null,
+          ? (mItemInvoice.prescription_id || this.prescription_id)
+          : null,
         national_pharmacy_no: this.prescription.checked ? mItemInvoice.national_pharmacy_no : null,
-        use_einvoice: this.form.get('use_einvoice').value ? 1 : 0
+        use_einvoice: this.form.get('use_einvoice').value ? 1 : 0,
       },
       UserID: mItemInvoice.user.id,
       InvoiceDetail: invoiceDetail,
       PaymentMethod: paymentMethodValue,
       BankAccountId: bankAccountId,
-      PaymentPrice: this.sumPrice - this.numberDiscount - this.numberPointDiscount + this.expenseOrder, // tien thanh toan
+      PaymentPrice: this.sumPrice + (this.useEinvoice ? this.sumVat : 0) -
+        this.numberDiscount - this.numberPointDiscount + this.expenseOrder, // tien thanh toan
       usedPoint: this.isUsePoint ? this.pointCanUse : 0,
       KhachNo: this.tienKhachNo,
       ExpenseOrders: this.expenseOrders,
@@ -2875,6 +2972,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     // });
     this.customer = null;
     this.sumPrice = 0;
+    this.sumVat = 0;
     this.countProduct = 0;
     this.listProduct = [];
     this.prescription.checked = false;
@@ -2991,19 +3089,19 @@ export class SaleMainComponent implements OnInit, DoCheck {
     let customerPayValue = numeral(this.form.controls['customerPay'].value).value();
 
     // for case null: delete all in the customerPay input it will be null => làm cách của Đức thì nợ 100% hoá đơn thì ko được
-    if(customerPayValue === 0 || customerPayValue === null) {
+    if (customerPayValue === 0 || customerPayValue === null) {
       customerPayValue = 0;
       // this.tienThuaTraKhach = 0;
       // this.tienKhachNo = 0;
       // return;
     }
-
+    const vat = this.useEinvoice ? this.sumVat : 0;
     this.tienThuaTraKhach =
       customerPayValue
-      - this.sumPrice
+      - (this.sumPrice + vat)
       + this.numberDiscount
       + this.numberPointDiscount;
-    this.tienKhachNo = this.sumPrice
+    this.tienKhachNo = (this.sumPrice + vat)
       - this.numberDiscount
       - this.numberPointDiscount
       - customerPayValue
@@ -3115,12 +3213,12 @@ export class SaleMainComponent implements OnInit, DoCheck {
   }
 
   // Coding parcel + add row function
-  shownMenus: Set<number> = new Set();
-  all_product_parcels: Map<string, object[]> = new Map();
-  available_product_parcels: Map<string, object[]> = new Map();
-  parcelItemControls: Map<number, FormControl> = new Map();
-  parcelFilteredItems: Map<number, Observable<object[]>> = new Map();
-  separatorKeysCodes: number[] = [ENTER, COMMA];
+  // shownMenus: Set<number> = new Set();
+  // all_product_parcels: Map<string, object[]> = new Map();
+  // available_product_parcels: Map<string, object[]> = new Map();
+  // parcelItemControls: Map<number, FormControl> = new Map();
+  // parcelFilteredItems: Map<number, Observable<object[]>> = new Map();
+  // separatorKeysCodes: number[] = [ENTER, COMMA];
 
   /**
    * Receive index and active 1 of 3 actions
@@ -3148,11 +3246,11 @@ export class SaleMainComponent implements OnInit, DoCheck {
    * @private
    */
   private focusTextArea(i: number) {
-     setTimeout(() => {
+    setTimeout(() => {
       const textAreaArray = this.noteTextArea.toArray();
-        if (textAreaArray[i]) {
-          textAreaArray[i].nativeElement.focus();
-        }
+      if (textAreaArray[i]) {
+        textAreaArray[i].nativeElement.focus();
+      }
     }, 0);
   }
 
@@ -3162,7 +3260,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
    */
   isNoteShown(i: number) {
     const note = this.listProduct[i].note;
-    if (this.saleColumnVisibilityService.isColumnVisibleNow('note')){
+    if (this.saleColumnVisibilityService.isColumnVisibleNow('note')) {
       return true;
     }
     return note !== undefined;
@@ -3225,7 +3323,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
   private _filter(product_index: number, searchText: string) {
     const filterValue = searchText.toLowerCase();
     return this.getAvailableItems(product_index)
-     .filter(item =>
+      .filter(item =>
         item['parcel_no'].toLowerCase().includes(filterValue)
       );
   }
@@ -3247,7 +3345,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     const control = this.parcelItemControls.get(product_index)!;
     const filterItems = control.valueChanges.pipe(
       // startWith(''),
-      map((searchText: string|null) => {
+      map((searchText: string | null) => {
           if (searchText === null || typeof searchText !== 'string') {
             return this.getAvailableItems(product_index);
           }
@@ -3313,7 +3411,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
    */
   removeParcel(id: number): void {
     const product = this.listProduct[id];
-    if (!product) { return; }
+    if (!product) {
+      return;
+    }
     const parcel = product.product_parcels[0];
     product.product_parcels = [];
     const currentFilteredItems = this.parcelFilteredItems.get(id);
@@ -3334,7 +3434,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
   openParcelSelectionDialog(product_index: number) {
     const product = this.listProduct[product_index];
     const product_id = product.product_id.toString();
-    if (!product) { return; }
+    if (!product) {
+      return;
+    }
 
     // Khởi tạo product_parcels nếu chưa có
     if (!product.product_parcels) {
@@ -3353,9 +3455,13 @@ export class SaleMainComponent implements OnInit, DoCheck {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (!result) { return; }
+      if (!result) {
+        return;
+      }
       const product = this.listProduct[product_index];
-      if (!product) { return; }
+      if (!product) {
+        return;
+      }
 
       // Đảm bảo product_parcels được khởi tạo
       if (!product.product_parcels) {
@@ -3431,7 +3537,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
       return;
     }
     const selectedParcel = product.product_parcels[0];
-    if (!selectedParcel) { return; }
+    if (!selectedParcel) {
+      return;
+    }
     const sum_amount = new_input_amount;
     let redu = 0;
     let isLastParcel = false;
@@ -3445,9 +3553,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
     if (existSubItemProduct?.product?.is_sub_item) {
       return;
     }
-    if (sum_amount > selectedParcel.quantity_of_stock ) {
+    if (sum_amount > selectedParcel.quantity_of_stock) {
       product.amount = selectedParcel.quantity_of_stock;
-      this.listProduct[product_index] =  {...product};
+      this.listProduct[product_index] = { ...product };
       this.listProduct = [...this.listProduct];
       redu += selectedParcel.quantity_of_stock;
 
@@ -3573,8 +3681,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
    * @param amount
    */
   addNewRow(i: number, parcel: object = null, amount: number = 0) {
-    const oldItem = {...this.listProduct[i]};
-    const oldProduct = {...oldItem.product};
+    const oldItem = { ...this.listProduct[i] };
+    const oldProduct = { ...oldItem.product };
     if (oldItem.note != undefined) {
       delete oldItem.note;
     }
@@ -3582,9 +3690,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
     oldProduct.master_product_id = oldProduct.id;
     let newItem: object = {};
     if (parcel) {
-       newItem = {...oldItem, product: oldProduct, product_parcels: [parcel], amount: amount};
+      newItem = { ...oldItem, product: oldProduct, product_parcels: [parcel], amount: amount };
     } else {
-       newItem = {...oldItem, product: oldProduct, product_parcels: [], amount: 1};
+      newItem = { ...oldItem, product: oldProduct, product_parcels: [], amount: 1 };
 
     }
     this.listProduct.splice(i + 1, 0, newItem);
@@ -3622,7 +3730,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
   /**
    * Get all subitem of a master product
-    * @param masterProduct
+   * @param masterProduct
    */
   getSubItemsForMaster(masterProduct) {
     return this.listProduct.filter(item =>
@@ -3647,12 +3755,14 @@ export class SaleMainComponent implements OnInit, DoCheck {
     this.selectedAmount = amount;
     this.updateCustomerPay(amount);
   }
+
   updateCustomerPay(amount: number): void {
     // Update the customerPay form control with the selected amount
     this.form.get('customerPay')?.setValue(numeral(amount.toString()).format('0,0'));
 
     this.tinhLaiTienThua();
   }
+
   onMethodChange(): void {
     // console.log(`Selected payment method: ${this.selectedMethod}`);
   }
@@ -3665,13 +3775,13 @@ export class SaleMainComponent implements OnInit, DoCheck {
     write(this.bankAccountFilter, 'page', 1);
     write(this.bankAccountFilter, 'pageSize', 1000);
     write(this.bankAccountFilter, 'status', '10');
-    write(this.bankAccountFilter, 'expand', 'province,district,ward');
+    write(this.bankAccountFilter, 'expand', 'province,ward');
 
     this.bankAccountSer.getList(this.bankAccountFilter).subscribe((res) => {
-      this.bankAccounts = res.body
-      if(!this.selectedBankAccount){
+      this.bankAccounts = res.body;
+      if (!this.selectedBankAccount) {
         this.selectedBankAccount = this.bankAccounts[0];
-        this.getQrCode(this.selectedBankAccount).subscribe(qrCode=>{
+        this.getQrCode(this.selectedBankAccount).subscribe(qrCode => {
           this.selectedBankQr = qrCode;
         });
       }
@@ -3702,7 +3812,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     this.loadBankAccountsSubject.next(); // Emit an event to the Subject
   }
 
-  selectBankAccount(bank: BankAccount|null) {
+  selectBankAccount(bank: BankAccount | null) {
     this.selectedBankAccount = bank;
     this.isDropdownOpen = false;
   }
@@ -3713,25 +3823,25 @@ export class SaleMainComponent implements OnInit, DoCheck {
       return of(`assets/images/default/qr-code.png`);
     }
 
-    const template    = 'qr_only'; // or 'compact2' | 'compact' | 'print'
-    const namePart    = bankAccount.account_name
+    const template = 'qr_only'; // or 'compact2' | 'compact' | 'print'
+    const namePart = bankAccount.account_name
       ? `&accountName=${encodeURIComponent(bankAccount.account_name)}`
       : '';
 
-    //A short payment memo or description (up to 25 chars).
-    const info = ""
+    // A short payment memo or description (up to 25 chars).
+    const info = '';
 
-    const infoPart    = info
+    const infoPart = info
       ? `&addInfo=${encodeURIComponent(info)}`
       : '';
 
-    const amountPart  = this.total;
+    const amountPart = this.total;
 
     // Use acqId (6‑digit BIN) as BANK_ID; adjust if you have a text code instead
     const url = [
       `https://img.vietqr.io/image/`,
       `${bankAccount.bank_code}-${bankAccount.account_number}-${template}.png`,
-      `?amount=${amountPart}&accountName=${namePart}&addInfo${infoPart}`
+      `?amount=${amountPart}&accountName=${namePart}&addInfo${infoPart}`,
     ].join('');
 
     return of(url);
@@ -3750,7 +3860,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
   numberToVietnameseText(number) {
     // Handle invalid input
     if (isNaN(number) || number < 0) {
-      return "Invalid input";
+      return 'Invalid input';
     }
 
     // Format the number with commas
@@ -3768,15 +3878,15 @@ export class SaleMainComponent implements OnInit, DoCheck {
    * @param {number} number - The number to convert
    * @returns {string} Vietnamese words representation of the number
    */
-  convertNumberToVietnameseWords(number:number) {
-    const units = ["", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
-    const teens = ["", "mười một", "mười hai", "mười ba", "mười bốn", "mười lăm", "mười sáu", "mười bảy", "mười tám", "mười chín"];
-    const tens = ["", "mười", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi"];
-    const scales = ["", "nghìn", "triệu", "tỷ", "nghìn tỷ", "triệu tỷ"];
+  convertNumberToVietnameseWords(number: number) {
+    const units = ['', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
+    const teens = ['', 'mười một', 'mười hai', 'mười ba', 'mười bốn', 'mười lăm', 'mười sáu', 'mười bảy', 'mười tám', 'mười chín'];
+    const tens = ['', 'mười', 'hai mươi', 'ba mươi', 'bốn mươi', 'năm mươi', 'sáu mươi', 'bảy mươi', 'tám mươi', 'chín mươi'];
+    const scales = ['', 'nghìn', 'triệu', 'tỷ', 'nghìn tỷ', 'triệu tỷ'];
 
     // Handle zero
     if (number === 0) {
-      return "Không";
+      return 'Không';
     }
 
     // Convert to string and pad to handle groups of 3 digits
@@ -3801,13 +3911,13 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
       if (groupValue > 0) {
         const groupText = this.convertGroupToVietnamese(group);
-        const scaleText = groupIndex > 0 ? " " + scales[groupIndex] : "";
+        const scaleText = groupIndex > 0 ? ' ' + scales[groupIndex] : '';
         results.push(groupText + scaleText);
       }
     });
 
     // Join groups and capitalize first letter
-    let result = results.join(" ");
+    const result = results.join(' ');
     return result.charAt(0).toUpperCase() + result.slice(1);
   }
 
@@ -3816,48 +3926,48 @@ export class SaleMainComponent implements OnInit, DoCheck {
    * @param {string} group - 3-digit group as string
    * @returns {string} Vietnamese words for the group
    */
-   convertGroupToVietnamese(group) {
-    const units = ["", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
+  convertGroupToVietnamese(group) {
+    const units = ['', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
     const digits = group.split('').map(d => parseInt(d));
 
-    let result = "";
+    let result = '';
 
     // Handle hundreds
     if (digits[0] > 0) {
-      result += units[digits[0]] + " trăm";
+      result += units[digits[0]] + ' trăm';
     }
 
     // Handle tens and units
     if (digits[1] > 0) {
       // Add space if we already have hundreds
-      if (result !== "") {
-        result += " ";
+      if (result !== '') {
+        result += ' ';
       }
 
       if (digits[1] === 1) {
         // Special case for "mười"
-        result += "mười";
+        result += 'mười';
       } else {
-        result += units[digits[1]] + " mươi";
+        result += units[digits[1]] + ' mươi';
       }
 
       // Handle units
       if (digits[2] > 0) {
         if (digits[2] === 1 && digits[1] !== 0) {
           // Special case for "một" after a "mươi"
-          result += " mốt";
+          result += ' mốt';
         } else if (digits[2] === 5 && digits[1] !== 0) {
           // Special case for "năm" after a "mươi"
-          result += " lăm";
+          result += ' lăm';
         } else {
-          result += " " + units[digits[2]];
+          result += ' ' + units[digits[2]];
         }
       }
     } else if (digits[2] > 0) {
       // Only units, no tens
       // Add space if we already have hundreds
-      if (result !== "") {
-        result += " lẻ ";
+      if (result !== '') {
+        result += ' lẻ ';
       }
       result += units[digits[2]];
     }

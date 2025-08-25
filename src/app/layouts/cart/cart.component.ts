@@ -369,6 +369,9 @@ export class CartComponent implements OnInit, OnDestroy {
       product.amount = 1;
     }
 
+    // Default vat
+    product.vat_percent = 0;
+
     let units = product.productUnits;
     // tslint:disable-next-line:no-shadowed-variable
     units.forEach(element => {

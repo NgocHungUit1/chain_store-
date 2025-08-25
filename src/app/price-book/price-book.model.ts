@@ -14,7 +14,6 @@ export class PriceBook {
   status: string;
   address: string;
   province: Location;
-  district: Location;
   ward: Location;
 }
 

@@ -39,8 +39,8 @@
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Quận/Huyện:</span> <span
-            *ngIf="employee.district">{{employee.district.name}}</span>
+            <span class="product-field-label">Phường/Xã:</span> <span
+            *ngIf="employee.ward">{{employee.ward.name}}</span>
           </div>
         </div>
         <div fxLayout="row wrap" class="product-info-row">
@@ -49,8 +49,7 @@
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Phường/Xã:</span> <span
-            *ngIf="employee.ward">{{employee.ward.name}}</span>
+            <span class="product-field-label">Giới tính:{{ sexHeader[employee.sex] }}</span>
           </div>
         </div>
         <div fxLayout="row wrap" class="product-info-row">
@@ -64,12 +63,9 @@
         </div>
         <div fxLayout="row wrap" class="product-info-row product-info-row-last">
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Giới tính:{{ sexHeader[employee.sex] }}</span>
-          </div>
-          <div fxFlex="4"></div>
-          <div fxFlex="48" class="product-info-field">
             <span class="product-field-label">Chi nhánh:</span> {{employee?.branchList?.string}}
           </div>
+          <div fxFlex="4"></div>
         </div>
       </div>
 

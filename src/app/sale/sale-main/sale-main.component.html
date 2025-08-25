@@ -117,7 +117,9 @@
                 <div fxLayout="row wrap">
                   <div fxFlex="100">
                     <mat-form-field floatLabel="never" style="font-size: 20px; text-align: right">
-                      <input matInput type="text" value="{{ masterProduct | showPrice | number }}" disabled="true"
+                      <input *ngIf="!useEinvoice" matInput type="text" value="{{ masterProduct | showPrice | number }}" disabled="true"
+                             style="color: black; font-size: 14px;" />
+                      <input *ngIf="useEinvoice" matInput type="text" value="{{ masterProduct | showPriceVat | number }}" disabled="true"
                              style="color: black; font-size: 14px;" />
                       <button mat-icon-button matPrefix
                               *ngIf="canDo('Sale-Main.Change-Price')">
@@ -136,8 +138,12 @@
                 </div>
               </div>
               <div fxFlex="12" class="row-total-price">
-                <span>
+                <span *ngIf="!useEinvoice">
                   {{ masterProduct | totalPrice | number }}
+                </span>
+
+                <span *ngIf="useEinvoice">
+                  {{ masterProduct | totalPriceVat | number }}
                 </span>
               </div>
 
@@ -399,8 +405,12 @@
                   </div>
                 </div>
                 <div fxFlex="12" class="row-total-price">
-                  <span>
+                  <span *ngIf="!useEinvoice">
                     {{ subItem | totalPrice | number }}
+                  </span>
+
+                  <span *ngIf="useEinvoice">
+                    {{ subItem | totalPriceVat | number }}
                   </span>
                 </div>
                 <div fxFlex="12" class="action-buttons-container">
@@ -724,7 +734,7 @@
                       <span
                         matBadge="{{ countProduct }}"
                         matBadgeOverlap="false"
-                      >Tổng tiền hàng
+                      >Tiền hàng <span *ngIf="useEinvoice">(chưa VAT)</span>
                       </span>
                     </div>
                     <ng-template #tongTienHang>
@@ -752,6 +762,49 @@
                   </div>
                 </div>
               </div>
+
+              <div class="order-vat" *ngIf="useEinvoice">
+                <div fxLayout="row wrap" class="price-vat-product">
+                  <div fxFlex="50" class="price-vat-text">
+                    <span>Thuế VAT</span>
+                  </div>
+                  <div fxFlex="50" class="customer-pay-number">
+                    <mat-form-field
+                      floatLabel="never"
+                      style="text-align: right">
+                      <input
+                        matInput
+                        type="text"
+                        [readonly]="true"
+                        style="color: black"
+                        formControlName="total_vat"
+                      />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+
+              <div class="order-vat" *ngIf="useEinvoice">
+                <div fxLayout="row wrap" class="price-vat-product">
+                  <div fxFlex="50" class="price-vat-text">
+                    <span>Tổng thanh toán</span>
+                  </div>
+                  <div fxFlex="50" class="customer-pay-number">
+                    <mat-form-field
+                      floatLabel="never"
+                      style="text-align: right">
+                      <input
+                        matInput
+                        type="text"
+                        [readonly]="true"
+                        style="color: black"
+                        formControlName="total_amount_with_vat"
+                      />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+
 
               <div class="order-discount">
                 <div

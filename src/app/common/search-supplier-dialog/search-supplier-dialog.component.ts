@@ -150,7 +150,7 @@ export class SearchSupplierDialogComponent extends ListComponentBase implements 
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = 10//this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'province,district,ward';
+    filter.expand = 'province,ward';
     return filter;
   }
 

@@ -72,13 +72,31 @@ export class EInvoiceComponent extends ListComponentBase implements OnInit {
   ngOnInit(): void {}
 
   openRegisterDialog(): void {
+    // Vừa mở modal VỪA gọi API login
     const dialogRef = this.dialog.open(RegisterDialogComponent, {
       width: '500px',
       disableClose: true
     });
+    
+    // Gọi API login song song với việc mở modal
+    this.eInvoiceService.login().subscribe({
+      next: (response) => {
+        if (response && response.success && response.data && response.data.access_token) {
+          localStorage.setItem('e-invoice-token', response.data.access_token);
+          this.isLoggedIn = true;
+        } else {
+          this.notifyService.notify('error', 'Đăng nhập BKAV thất bại');
+        }
+      },
+      error: (error) => {
+        this.notifyService.notify('error', 'Đăng nhập BKAV thất bại');
+        console.error('Login error:', error);
+      }
+    });
+    
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.notifyService.notify('success', 'Đăng nhập thành công');
+        this.notifyService.notify('success', 'Đăng nhập cơ quan thuế thành công');
       }
     });
   }
@@ -104,24 +122,6 @@ export class EInvoiceComponent extends ListComponentBase implements OnInit {
       if (result) {
         this.invoiceFilter = result;
         this.loadData();
-      }
-    });
-  }
-
-  login(): void {
-    this.loading = true;
-    this.eInvoiceService.login().subscribe({
-      next: (response) => {
-        if (response && response.access_token) {
-          localStorage.setItem('e-invoice-token', response.access_token);
-          this.notifyService.notify('success', 'Đăng nhập thành công');
-          this.isLoggedIn = true;
-        }
-        this.loading = false;
-      },
-      error: (error) => {
-        this.notifyService.notify('error', 'Đăng nhập thất bại');
-        this.loading = false;
       }
     });
   }
@@ -162,5 +162,8 @@ export class EInvoiceComponent extends ListComponentBase implements OnInit {
     });
   }
 
- 
+  openHelpGuide(): void {
+    window.open('https://rx20.vn/huong-dan-cai-dat-hoa-don-dien-tu/', '_blank');
+  }
+
 }

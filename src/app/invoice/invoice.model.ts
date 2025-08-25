@@ -31,6 +31,7 @@ export class Invoice {
   invoice_no: string;
   customer: Customer;
   total_price: number;
+  total_vat: number;
   total_payment: number;
   discount_price: number;
   need_to_pay_amount: number;

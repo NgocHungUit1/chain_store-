@@ -123,7 +123,8 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
       einvoice_partner_guid: ['', Validators.required],
       einvoice_partner_token: ['', Validators.required],
       einvoice_api_url: ['', Validators.required],
-      einvoice_invoice_serial: ['', Validators.required]
+      einvoice_invoice_serial: ['', Validators.required],
+      einvoice_invoice_type: ['', Validators.required]
     });
 
     if (this.canDo('Branch.Get-Connect')) {
@@ -460,6 +461,12 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
         einvoice_invoice_serial: res.value || ''
       });
     });
+
+    this.optionStoreService.getValue('einvoice_invoice_type').subscribe(res => {
+      this.einvoiceForm.patchValue({
+        einvoice_invoice_type: res.value || ''
+      });
+    });
   }
 
   async saveEinvoice() {
@@ -472,23 +479,70 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     let success = true;
 
     try {
-      const enabledOption = await this.optionStoreService.getValue('einvoice_enabled').toPromise();
-      const guidOption = await this.optionStoreService.getValue('einvoice_partner_guid').toPromise();
-      const tokenOption = await this.optionStoreService.getValue('einvoice_partner_token').toPromise();
-      const urlOption = await this.optionStoreService.getValue('einvoice_api_url').toPromise();
-      const serialOption = await this.optionStoreService.getValue('einvoice_invoice_serial').toPromise();
+      let enabledOption = await this.optionStoreService.getValue('einvoice_enabled').toPromise();
+      let guidOption = await this.optionStoreService.getValue('einvoice_partner_guid').toPromise();
+      let tokenOption = await this.optionStoreService.getValue('einvoice_partner_token').toPromise();
+      let urlOption = await this.optionStoreService.getValue('einvoice_api_url').toPromise();
+      let serialOption = await this.optionStoreService.getValue('einvoice_invoice_serial').toPromise();
+      let typeOption = await this.optionStoreService.getValue('einvoice_invoice_type').toPromise();
+
+      if (!enabledOption) {
+        enabledOption = { id: null, name: 'einvoice_enabled', value: 'false', no: '', auto: '', return_auto: '', type: '', sort: '', status: 1 };
+      }
+      if (!guidOption) {
+        guidOption = { id: null, name: 'einvoice_partner_guid', value: '', no: '', auto: '', return_auto: '', type: '', sort: '', status: 1 };
+      }
+      if (!tokenOption) {
+        tokenOption = { id: null, name: 'einvoice_partner_token', value: '', no: '', auto: '', return_auto: '', type: '', sort: '', status: 1 };
+      }
+      if (!urlOption) {
+        urlOption = { id: null, name: 'einvoice_api_url', value: '', no: '', auto: '', return_auto: '', type: '', sort: '', status: 1 };
+      }
+      if (!serialOption) {
+        serialOption = { id: null, name: 'einvoice_invoice_serial', value: '', no: '', auto: '', return_auto: '', type: '', sort: '', status: 1 };
+      }
+      if (!typeOption) {
+        typeOption = { id: null, name: 'einvoice_invoice_type', value: '1', no: '', auto: '', return_auto: '', type: '', sort: '', status: 1 };
+      }
 
       enabledOption.value = formData.einvoice_enabled ? 'true' : 'false';
       guidOption.value = formData.einvoice_partner_guid;
       tokenOption.value = formData.einvoice_partner_token;
       urlOption.value = formData.einvoice_api_url;
       serialOption.value = formData.einvoice_invoice_serial;
+      typeOption.value = formData.einvoice_invoice_type;
 
-      await this.optionStoreService.update(enabledOption.id, enabledOption).toPromise();
-      await this.optionStoreService.update(guidOption.id, guidOption).toPromise();
-      await this.optionStoreService.update(tokenOption.id, tokenOption).toPromise();
-      await this.optionStoreService.update(urlOption.id, urlOption).toPromise();
-      await this.optionStoreService.update(serialOption.id, serialOption).toPromise();
+      // Lưu hoặc cập nhật
+      if (enabledOption.id) {
+        await this.optionStoreService.update(enabledOption.id, enabledOption).toPromise();
+      } else {
+        await this.optionStoreService.create(enabledOption).toPromise();
+      }
+      if (guidOption.id) {
+        await this.optionStoreService.update(guidOption.id, guidOption).toPromise();
+      } else {
+        await this.optionStoreService.create(guidOption).toPromise();
+      }
+      if (tokenOption.id) {
+        await this.optionStoreService.update(tokenOption.id, tokenOption).toPromise();
+      } else {
+        await this.optionStoreService.create(tokenOption).toPromise();
+      }
+      if (urlOption.id) {
+        await this.optionStoreService.update(urlOption.id, urlOption).toPromise();
+      } else {
+        await this.optionStoreService.create(urlOption).toPromise();
+      }
+      if (serialOption.id) {
+        await this.optionStoreService.update(serialOption.id, serialOption).toPromise();
+      } else {
+        await this.optionStoreService.create(serialOption).toPromise();
+      }
+      if (typeOption.id) {
+        await this.optionStoreService.update(typeOption.id, typeOption).toPromise();
+      } else {
+        await this.optionStoreService.create(typeOption).toPromise();
+      }
 
       this.notifySer.notify('success', 'Đã lưu cấu hình hóa đơn điện tử thành công!');
     } catch (error) {

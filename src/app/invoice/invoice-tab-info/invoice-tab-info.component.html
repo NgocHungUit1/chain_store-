@@ -246,15 +246,29 @@
       <ng-container matColumnDef="discount">
         <th mat-header-cell class="column-number-end" *matHeaderCellDef> {{ columnsHeader['discount'] }} </th>
         <td mat-cell class="column-number-end" *matCellDef="let element">
-          <span>{{element.discount}}</span><span *ngIf="element.discount > 0 && element.discount_type == 'percent'">(%)</span>
+          <span>{{ (element.discount || 0) | number }}</span><span *ngIf="element.discount > 0 && element.discount_type == 'percent'">(%)</span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="price">
-        <th mat-header-cell class="column-number-end" *matHeaderCellDef> {{ columnsHeader['price'] }} </th>
+        <th mat-header-cell class="column-number-end" *matHeaderCellDef> {{ columnsHeader['price'] }} <span *ngIf="isInvoiceVat">(chưa VAT)</span> </th>
         <td mat-cell class="column-number-end" *matCellDef="let element">
           <span *ngIf="element.discount == 0">{{ element.price | number }}</span>
           <span *ngIf="element.discount > 0" style="color: red">{{ element.price | number }}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="vat">
+        <th mat-header-cell class="column-number-end" *matHeaderCellDef> {{ columnsHeader['vat'] }} </th>
+        <td mat-cell class="column-number-end" *matCellDef="let element">
+          <label class="label label-info">VAT {{ element.vat_percent }}%</label>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="price_with_vat">
+        <th mat-header-cell class="column-number-end" *matHeaderCellDef> {{ columnsHeader['price_with_vat'] }} </th>
+        <td mat-cell class="column-number-end" *matCellDef="let element">
+          <span>{{ element.price * (1 + ((element.vat_percent || 0) / 100)) | number }}</span>
         </td>
       </ng-container>
 
@@ -262,7 +276,7 @@
         <th mat-header-cell class="column-number-end" *matHeaderCellDef> {{ columnsHeader['total_price'] }}
         </th>
         <td mat-cell class="column-number-end" *matCellDef="let element">
-          {{ element.price * element.amount | number }} </td>
+          {{ element.price * (1 + ((element.vat_percent || 0) / 100)) * element.amount | number }} </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns" class="header-element-row"></tr>
@@ -290,13 +304,31 @@
             <strong>{{ tongSoLuong }}</strong>
           </div>
         </div>
-        <div fxLayout="row wrap" class="invoice-detail-info-row">
+        <div fxLayout="row wrap" class="invoice-detail-info-row" *ngIf="isInvoiceVat">
           <div fxFlex="48" class="invoice-detail-info-field">
-            <span class="invoice-detail-field-label">Tổng tiền hàng :</span>
+            <span class="invoice-detail-field-label">Tổng tiền hàng (chưa VAT):</span>
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="invoice-detail-info-field">
-            <strong>{{ tongTienHang |number }}</strong>
+            <strong>{{ tongTienHang | number }}</strong>
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="invoice-detail-info-row" *ngIf="isInvoiceVat">
+          <div fxFlex="48" class="invoice-detail-info-field">
+            <span class="invoice-detail-field-label">VAT :</span>
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="invoice-detail-info-field">
+            <strong>{{ tongVat | number }}</strong>
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="invoice-detail-info-row">
+          <div fxFlex="48" class="invoice-detail-info-field">
+            <span class="invoice-detail-field-label">Tổng tiền hàng:</span>
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="invoice-detail-info-field">
+            <strong>{{ tongTienHang + (isInvoiceVat ? tongVat : 0)  |number }}</strong>
           </div>
         </div>
         <div fxLayout="row wrap" class="invoice-detail-info-row">
@@ -305,10 +337,9 @@
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="invoice-detail-info-field">
-            <strong>{{ giamGiaHoaDon | number }}</strong>
+            <strong>{{ (giamGiaHoaDon || 0) | number }}</strong>
           </div>
         </div>
-
 
         <div *ngFor="let expensesOrder of invoice.expensesOrders">
           <div *ngIf="expensesOrder.auto === 1" fxLayout="row wrap" class="invoice-detail-info-row">
@@ -328,7 +359,7 @@
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="invoice-detail-info-field">
-            <strong>{{ invoice?.total_price - giamGiaHoaDon + invoice?.expenses_order_price | number }}</strong>
+            <strong>{{ tongTienHang + (isInvoiceVat ? tongVat : 0) - giamGiaHoaDon + invoice?.expenses_order_price | number }}</strong>
           </div>
         </div>
         <div fxLayout="row wrap" class="invoice-detail-info-row">
@@ -342,13 +373,13 @@
         </div>
 
         <div fxLayout="row wrap" class="invoice-detail-info-row"
-             *ngIf="invoice?.total_price - giamGiaHoaDon - KhachDaTra > 0">
+             *ngIf="tongTienHang + (isInvoiceVat ? tongVat : 0) - giamGiaHoaDon - KhachDaTra > 0">
           <div fxFlex="48" class="invoice-detail-info-field">
             <span class="invoice-detail-field-label">Còn nợ :</span>
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="invoice-detail-info-field">
-            <strong>{{ invoice?.total_price - giamGiaHoaDon - KhachDaTra | number }}</strong>
+            <strong>{{ tongTienHang + (isInvoiceVat ? tongVat : 0) - giamGiaHoaDon - KhachDaTra | number }}</strong>
           </div>
         </div>
 

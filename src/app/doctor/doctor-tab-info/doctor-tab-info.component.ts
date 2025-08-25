@@ -32,7 +32,7 @@ export class DoctorTabInfoComponent implements OnInit {
   }
 
   loadDoctor(id) {
-    this.doctorService.getDetail(id, 'province,district,ward').subscribe(res => {
+    this.doctorService.getDetail(id, 'province,ward').subscribe(res => {
       this.doctor = res;
     });
   }

@@ -20,7 +20,6 @@ export class Branch {
   status: string;
   address: string;
   province: Location;
-  district: Location;
   ward: Location;
 }
 

@@ -35,7 +35,6 @@ export class EmployeeReportRevenueTabComponent extends ListComponentBase impleme
 
   columnsToDisplay = [
     'name',
-    // 'district_name',
     // 'province_name',
     // 'address',
     'total_sale',

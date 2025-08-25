@@ -503,6 +503,17 @@
                         class="text-danger support-text">Vui lòng điền ký hiệu hóa đơn.
                       </small>
                     </div>
+                    <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                      <mat-form-field class="full-width">
+                        <mat-select placeholder="Loại hóa đơn"
+                                   [formControl]="einvoiceForm.controls['einvoice_invoice_type']">
+                          <mat-option value="1">Hóa đơn giá trị gia tăng</mat-option>
+                          <mat-option value="2">Hóa đơn bán hàng</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+
+
 
                     <!-- col half-->
                     <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100" class="m-t-10">
