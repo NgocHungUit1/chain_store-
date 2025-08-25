@@ -486,22 +486,22 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
       let typeOption = await this.optionStoreService.getValue('einvoice_invoice_type').toPromise();
 
       if (!enabledOption) {
-        enabledOption = { id: null, name: 'einvoice_enabled', value: 'false', description: 'Bật/tắt hóa đơn điện tử' };
+        enabledOption = { id: null, name: 'einvoice_enabled', value: 'false', no: '', auto: '', return_auto: '', type: '', sort: '', status: 1 };
       }
       if (!guidOption) {
-        guidOption = { id: null, name: 'einvoice_partner_guid', value: '', description: 'Partner GUID' };
+        guidOption = { id: null, name: 'einvoice_partner_guid', value: '', no: '', auto: '', return_auto: '', type: '', sort: '', status: 1 };
       }
       if (!tokenOption) {
-        tokenOption = { id: null, name: 'einvoice_partner_token', value: '', description: 'Partner Token' };
+        tokenOption = { id: null, name: 'einvoice_partner_token', value: '', no: '', auto: '', return_auto: '', type: '', sort: '', status: 1 };
       }
       if (!urlOption) {
-        urlOption = { id: null, name: 'einvoice_api_url', value: '', description: 'API URL' };
+        urlOption = { id: null, name: 'einvoice_api_url', value: '', no: '', auto: '', return_auto: '', type: '', sort: '', status: 1 };
       }
       if (!serialOption) {
-        serialOption = { id: null, name: 'einvoice_invoice_serial', value: '', description: 'Ký hiệu hóa đơn' };
+        serialOption = { id: null, name: 'einvoice_invoice_serial', value: '', no: '', auto: '', return_auto: '', type: '', sort: '', status: 1 };
       }
       if (!typeOption) {
-        typeOption = { id: null, name: 'einvoice_invoice_type', value: '1', description: 'Loại hóa đơn' };
+        typeOption = { id: null, name: 'einvoice_invoice_type', value: '1', no: '', auto: '', return_auto: '', type: '', sort: '', status: 1 };
       }
 
       enabledOption.value = formData.einvoice_enabled ? 'true' : 'false';
