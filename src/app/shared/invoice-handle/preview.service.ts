@@ -34,10 +34,7 @@ export interface InvoiceData {
     Ghi_Chu?: string;
     VAT: string;
   }>;
-
   Tong_Tien_Hang: string;
-  Chiet_Khau_Hoa_Don_Phan_Tram: string;
-  Chiet_Khau_Hoa_Don: string;
   Tong_Cong: string;
   Khach_Thanh_Toan: string;
   Con_Lai: string;

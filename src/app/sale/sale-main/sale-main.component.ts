@@ -2177,6 +2177,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       vat_percent: item?.product?.vat_percent || 0,
     }));
     const totalPrice = this.useEinvoice ? this.sumPrice + this.sumVat : this.sumPrice;
+
     const discount = this.discount_type === 'price' ? this.discount : Math.round((this.sumPrice * this.discount) / 100);
     const sumPayment = totalPrice - this.numberDiscount - this.numberPointDiscount + this.expenseOrder;
     const debt = this.tienKhachNo > 0 ? this.tienKhachNo : null;
@@ -2197,7 +2198,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       store: storeData,
       customer: this.customer || activeInvoice.customer || { name: 'Khách lẻ', phone: '' },
       detail: detail,
-      total_price: totalPrice,
+      total_price: this.sumPrice,
       total_vat: this.useEinvoice ? this.sumVat : 0,
       discount: discount || 0,
       sum_payment: sumPayment,
@@ -2579,19 +2580,17 @@ export class SaleMainComponent implements OnInit, DoCheck {
         VAT: item?.vat_percent
 
       })) || [],
-      Tong_Tien_Hang: numeral(preInvoiceData?.total_price || 0).format('0,0'),
-      Chiet_Khau_Hoa_Don_Phan_Tram: '', // Percentage not available in sample data
-      Chiet_Khau_Hoa_Don: numeral(preInvoiceData?.discount || 0).format('0,0'),
+      Tong_Tien_Hang: numeral(numeral(preInvoiceData?.total_price || 0).value() + numeral(preInvoiceData?.total_vat).value()).format('0,0'),
       Tong_Cong: numeral(preInvoiceData?.sum_payment || 0).format('0,0'),
       Tong_Tien_Hang_Bang_Chu: this.numberToVietnameseText(numeral(preInvoiceData?.sum_payment).value()),
       Tong_So_Luong: preInvoiceData?.detail?.reduce((acc, item) => acc + (item?.amount || 0), 0).toString(),
-      Chiet_Khau: numeral(preInvoiceData?.discount || 0).format('0,0'),
+      Chiet_Khau: preInvoiceData?.discount || '0',
       Khach_Thanh_Toan: numeral(preInvoiceData?.sum_payment || 0).format('0,0'),
       Con_Lai: numeral(preInvoiceData?.debt || 0).format('0,0'),
       Thong_Tin_Khach_Hang: customer_info,
       Ghi_Chu_Don_Hang: preInvoiceData?.note,
       VAT_Tong: numeral(preInvoiceData?.total_vat).format('0,0'),
-      Tong_Tien_Hang_Chua_VAT: this.useEinvoice ? numeral(numeral(preInvoiceData?.total_price).value() - numeral(preInvoiceData?.total_vat).value()).format('0,0') : numeral(preInvoiceData?.total_price).format('0,0')
+      Tong_Tien_Hang_Chua_VAT: numeral(preInvoiceData?.total_price).format('0,0')
     }
     const QrCode = this.form.get('selectedMethod').value === 'Chuyển khoản' ? this.getQrCode(this.selectedBankAccount) : of(null);
     QrCode.subscribe((qrCode) => {

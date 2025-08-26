@@ -123,16 +123,6 @@
     "meaning": "Tổng giá trị chiết khấu"
   },
   {
-    "name": "Chiet_Khau_Hoa_Don_Phan_Tram",
-    "sampleValue": "5%",
-    "meaning": "Phần trăm chiết khấu"
-  },
-  {
-    "name": "Chiet_Khau_Hoa_Don",
-    "sampleValue": "18,550",
-    "meaning": "Giá trị chiết khấu"
-  },
-  {
     "name": "Tong_Cong",
     "sampleValue": "352,450",
     "meaning": "Tổng cộng cần thanh toán"
