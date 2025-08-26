@@ -76,7 +76,8 @@
         "Don_Vi": "Viên",
         "Don_Gia": "15,000",
         "So_Lo": "123456",
-        "Ghi_Chu": "Sản phẩm giảm giá 10%"
+        "Ghi_Chu": "Hàng chính hãng",
+        "VAT": "1000"
       },
       {
         "STT": 2,
@@ -87,7 +88,8 @@
         "Don_Vi": "Viên",
         "Don_Gia": "25,000",
         "So_Lo": "654321",
-        "Ghi_Chu": "Sản phẩm khuyến mãi 20%"
+        "Ghi_Chu": "khuyến mãi 20%",
+        "VAT": "2000"
       },
       {
         "STT": 3,
@@ -98,7 +100,8 @@
         "Don_Vi": "Viên",
         "Don_Gia": "12,000",
         "So_Lo": "789012",
-        "Ghi_Chu": "Sản phẩm mới"
+        "Ghi_Chu": "Sản phẩm mới",
+        "VAT": "3000"
       }
 
     ],
@@ -213,5 +216,21 @@
     "name": "Ghi_Chu_Don_Hang",
     "sampleValue": "Hoá đơn này chỉ có giá trị tham khảo",
     "meaning": "Ghi chú đơn hàng"
+  },
+  {
+    "name": "VAT",
+    "sampleValue": "600",
+    "meaning": "Thuế giá trị gia tăng"
+  },
+  {
+    "name": "Tong_Tien_Hang_Chua_VAT",
+    "sampleValue": "337,318",
+    "meaning": "Tổng tiền hàng chưa tính VAT"
+  },
+  {
+    "name": "VAT_Tong",
+    "sampleValue": "6000",
+    "meaning": "Thuế giá trị gia tăng toàn bộ đơn hàng"
+
   }
 ]

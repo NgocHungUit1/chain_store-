@@ -339,7 +339,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
       if (this.store !== null && this.store['logo'] !== null && this.store['logo'].length > 0) {
         this.logo = this.store['logo'];
       }
-      this.description = this.store.description;
+      this.description = this.store?.description;
 
       this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
         const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
@@ -377,8 +377,8 @@ export class InvoiceTabInfoComponent implements OnChanges {
 
         // Thêm thông tin hóa đơn điện tử nếu có
         if (this.einvoiceStatusData && res.use_einvoice === 1) {
-          printContent += '<p style="">Số HĐĐT: <strong>' + this.einvoiceStatusData.invoice_info.einvoice_no + '</strong></p>';
-          printContent += '<p style="">Mã cơ quan thuế: <strong>' + this.einvoiceStatusData.bkav_status.tax_authority_code + '</strong></p>';
+          printContent += '<p style="">Số HĐĐT: <strong>' + this.einvoiceStatusData?.invoice_info?.einvoice_no + '</strong></p>';
+          printContent += '<p style="">Mã cơ quan thuế: <strong>' + this.einvoiceStatusData?.bkav_status?.tax_authority_code + '</strong></p>';
         }
 
         printContent += '<table>' +
@@ -393,7 +393,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
         printContent += '<th style="text-align:center;">T.Tiền</th>' +
           '</tr>';
 
-        const detail = res.detail;
+        const detail = res?.detail;
 
         /**
          * Chi tiet don hang
@@ -402,21 +402,21 @@ export class InvoiceTabInfoComponent implements OnChanges {
         detail.forEach(element => {
           if (element?.base_unit == null) {
             printContent += '<tr>' +
-              '<td>' + element.product?.product_name + '<br>' + element.price + '</td>' +
-              '<td style="text-align:center;">' + element.amount + '</td>';
+              '<td>' + element.product?.product_name + '<br>' + element?.price + '</td>' +
+              '<td style="text-align:center;">' + element?.amount + '</td>';
             if (this.autoPrintInSoLo === true) {
-              printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
+              printContent += '<td style="text-align:left;">' + element?.so_lo + '</td>';
             }
-            printContent += '<td style="text-align:right;">' + element.total + '</td>' +
+            printContent += '<td style="text-align:right;">' + element?.total + '</td>' +
               '</tr>';
           } else {
             printContent += '<tr>' +
-              '<td>' + element.product?.product_name + ' - ' + element?.base_unit + '<br>' + element.price + '</td>' +
-              '<td style="text-align:center;">' + element.amount + '</td>';
+              '<td>' + element?.product?.product_name + ' - ' + element?.base_unit + '<br>' + element?.price + '</td>' +
+              '<td style="text-align:center;">' + element?.amount + '</td>';
             if (this.autoPrintInSoLo === true) {
-              printContent += '<td style="text-align:left;">' + element.so_lo + '</td>';
+              printContent += '<td style="text-align:left;">' + element?.so_lo + '</td>';
             }
-            printContent += '<td style="text-align:right;">' + element.total + '</td>' +
+            printContent += '<td style="text-align:right;">' + element?.total + '</td>' +
               '</tr>';
           }
         });
@@ -430,15 +430,15 @@ export class InvoiceTabInfoComponent implements OnChanges {
         }
         printContent += '<tr>' +
           '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng tiền hàng :</td>' +
-          '<td style="text-align:right; font-weight:600;">' + res.total_price + '</td>' +
+          '<td style="text-align:right; font-weight:600;">' + res?.total_price + '</td>' +
           '</tr>';
         printContent += '<tr>' +
           '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Chiết khấu :</td>' +
-          '<td style="text-align:right; font-weight:600;">' + res.discount + '</td>' +
+          '<td style="text-align:right; font-weight:600;">' + res?.discount + '</td>' +
           '</tr>';
         printContent += '<tr>' +
           '<td style="text-align:right; font-weight:600;" colspan="' + colspan + '">Tổng thanh toán :</td>' +
-          '<td style="text-align:right; font-weight:600;">' + res.sum_payment + '</td>' +
+          '<td style="text-align:right; font-weight:600;">' + res?.sum_payment + '</td>' +
           '</tr>';
         if (res.debt !== null) {
           printContent += '<tr>' +
@@ -455,13 +455,18 @@ export class InvoiceTabInfoComponent implements OnChanges {
         // printContent += '<p style="text-align:left; font-size: 12px;font-style: italic;" >Hổ trợ : 0972 574 506</p>';
 
         printContent += '</section>';
+        try{
+          const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+          WindowPrt.document.write(printContent);
+          WindowPrt.document.close();
+          WindowPrt.focus();
+          WindowPrt.print();
+          // WindowPrt.close(); // lỗi tự đôngs
+        } catch (e) {
+          console.log(e);
+          this.notifySer?.notify('warning', 'Lỗi không xác định khi in hóa đơn!');
+        }
 
-        const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
-        WindowPrt.document.write(printContent);
-        WindowPrt.document.close();
-        WindowPrt.focus();
-        WindowPrt.print();
-        // WindowPrt.close(); // lỗi tự đôngs
       });
     });
   }

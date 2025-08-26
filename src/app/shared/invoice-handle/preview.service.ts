@@ -32,6 +32,7 @@ export interface InvoiceData {
     Don_Gia?: string; // Optional field for unit price
     So_Lo?: string;
     Ghi_Chu?: string;
+    VAT: string;
   }>;
 
   Tong_Tien_Hang: string;
@@ -46,6 +47,8 @@ export interface InvoiceData {
   Thong_Tin_Khach_Hang: string;
   Ma_QR: string;
   Ghi_Chu_Don_Hang: string;
+  Tong_Tien_Hang_Chua_VAT: string;
+  VAT_Tong: string;
 }
 
 @Injectable({
@@ -169,6 +172,7 @@ export class PreviewService {
         'STT',
         'So_Lo',
         'Ghi_Chu',
+        'VAT'
       ]
 
       // Generate rows for each item

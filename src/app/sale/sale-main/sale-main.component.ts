@@ -2173,9 +2173,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
       amount: item.amount || 0,
       total: (item.common_price || item.product.sell_price || item.product.end_price || 0) * (item.amount || 0),
       so_lo: item?.product_parcels&&item?.product_parcels.length>0? `SL: ${item.product_parcels[0].parcel_no}-HD: ${item.product_parcels[0].expiration_date}` : '',
-      note: item?.note || ''
+      note: item?.note || '',
+      vat_percent: item?.product?.vat_percent || 0,
     }));
-
     const totalPrice = this.useEinvoice ? this.sumPrice + this.sumVat : this.sumPrice;
     const discount = this.discount_type === 'price' ? this.discount : Math.round((this.sumPrice * this.discount) / 100);
     const sumPayment = totalPrice - this.numberDiscount - this.numberPointDiscount + this.expenseOrder;
@@ -2198,6 +2198,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       customer: this.customer || activeInvoice.customer || { name: 'Khách lẻ', phone: '' },
       detail: detail,
       total_price: totalPrice,
+      total_vat: this.useEinvoice ? this.sumVat : 0,
       discount: discount || 0,
       sum_payment: sumPayment,
       debt: debt,
@@ -2574,7 +2575,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
         Don_Vi: item?.base_unit ,
         Don_Gia: numeral(item?.price || 0).format('0,0'),
         So_Lo: item?.so_lo || '',
-        Ghi_Chu: item?.note || ''
+        Ghi_Chu: item?.note || '',
+        VAT: item?.vat_percent
+
       })) || [],
       Tong_Tien_Hang: numeral(preInvoiceData?.total_price || 0).format('0,0'),
       Chiet_Khau_Hoa_Don_Phan_Tram: '', // Percentage not available in sample data
@@ -2586,7 +2589,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
       Khach_Thanh_Toan: numeral(preInvoiceData?.sum_payment || 0).format('0,0'),
       Con_Lai: numeral(preInvoiceData?.debt || 0).format('0,0'),
       Thong_Tin_Khach_Hang: customer_info,
-      Ghi_Chu_Don_Hang: preInvoiceData?.note
+      Ghi_Chu_Don_Hang: preInvoiceData?.note,
+      VAT_Tong: numeral(preInvoiceData?.total_vat).format('0,0'),
+      Tong_Tien_Hang_Chua_VAT: this.useEinvoice ? numeral(numeral(preInvoiceData?.total_price).value() - numeral(preInvoiceData?.total_vat).value()).format('0,0') : numeral(preInvoiceData?.total_price).format('0,0')
     }
     const QrCode = this.form.get('selectedMethod').value === 'Chuyển khoản' ? this.getQrCode(this.selectedBankAccount) : of(null);
     QrCode.subscribe((qrCode) => {
@@ -2786,12 +2791,16 @@ export class SaleMainComponent implements OnInit, DoCheck {
         this.isLoadingResults = false;
         this.submitted = false;
         if (res !== false) {
-          if (typeof res === 'number' && this.autoPrint === true) {
-            //this.printInvoice(res);
-            this.printInvoiceTemplateAuto(res);
+          if (res !== false) {
+            if (typeof res === 'number' && this.autoPrint === true) {
+              //this.printInvoice(res);
+              this.printInvoiceTemplateAuto(res);
+            }
+            this.resetDataSiderBar();
+            this.notifySer.notify('success', 'Lưu thành công !');
+          } else {
+            this.notifySer.notify('warning', 'Thất bại !');
           }
-          this.resetDataSiderBar();
-          this.notifySer.notify('success', 'Lưu thành công !');
         } else {
           this.notifySer.notify('warning', 'Thất bại !');
         }
