@@ -135,7 +135,6 @@ export class WarehouseInfoTabComponent implements OnChanges {
     if (this.isLoadingResults === true) {
       return;
     }
-    this.isLoadingResults = true;
     // TODO: call confirm dialog
     if (this.checkPermissionDisable('Warehouse.Delete')) {
       this.notifySer.notify('error', 'Bạn không có quyền thực hiện chức năng này.');
@@ -157,7 +156,8 @@ export class WarehouseInfoTabComponent implements OnChanges {
         minHeight: '80%',
       });
       dialogRef.afterClosed().subscribe(result => {
-        if (result?.event === 'delete') {
+        if (result && result?.event === 'delete') {
+          this.isLoadingResults = true;
           this.mainService.delete(this.model.id).subscribe(res => {
             this.notifySer.notify('success', 'Xóa hóa đơn thành công!');
             this.isLoadingResults = false;
@@ -169,6 +169,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
         }
       });
     } else {
+      this.isLoadingResults = true;
       this.mainService.delete(this.model.id).subscribe(res => {
         this.notifySer.notify('success', 'Xóa hóa đơn thành công!');
         this.isLoadingResults = false;
