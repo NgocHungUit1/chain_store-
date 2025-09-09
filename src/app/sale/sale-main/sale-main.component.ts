@@ -2596,7 +2596,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
       Invoice: {
         invoice_id: mItemInvoice.invoice_id,
         customer_id: customer?.id,
-        total_amount:  this.sumPrice + (this.useEinvoice ? this.sumVat : 0),
         total_price:  this.sumPrice,
         total_vat: this.useEinvoice ? this.sumVat : 0,
         discount: this.discount,
