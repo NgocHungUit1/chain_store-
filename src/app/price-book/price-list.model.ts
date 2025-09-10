@@ -16,7 +16,7 @@ export class PriceListFilter extends ApiFilterBase {
   date_from = '';
   date_to = '';
   page = 1;
-  pageSize = 15;
+  pageSize = 50;
   sort = '';
 
   getModelSearch() {
