@@ -968,7 +968,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           warehouseProduct.discount = (item.discount !== null) ? item.discount : 0;
           warehouseProduct.discount_type = (item.discount_type !== null) ? item.discount_type : 'price';
           warehouseProduct.amount = (item.amount !== null) ? item.amount : 0;
-          warehouseProduct.product_unit_id = item.product_unit_id;
           warehouseProduct.productUnits = item.productUnits !== undefined ? item.productUnits : [];
           warehouseProduct.product_parcels = productParcels;
           warehouseProduct.vat = (item.vat !== null) ? item.vat : 0;
@@ -978,7 +977,20 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           warehouseProduct.productUnits.forEach(productUnit => {
             productUnit['quantity_of_stock'] = (productData.find(prod => prod.id == item.product_id)?.quantity?.number / productUnit['value']);
           });
-          warehouseProduct.inventory_quantity = warehouseProduct.productUnits.find(productUnit => productUnit['id'] === item.product_unit_id)['quantity_of_stock'];
+
+          const productUnitSelect = warehouseProduct.productUnits.find(unit => unit['id'] === item.product_unit_id);
+          if (productUnitSelect) {
+            warehouseProduct.product_unit_id = item.product_unit_id;
+            warehouseProduct.inventory_quantity = productUnit['quantity_of_stock'];
+          } else {
+            if (warehouseProduct.productUnits.length > 0) {
+              warehouseProduct.product_unit_id =  warehouseProduct.productUnits[0]['id'];
+              warehouseProduct.inventory_quantity =  warehouseProduct.productUnits[0]['quantity_of_stock'];
+            } else {
+              warehouseProduct.product_unit_id = null;
+              warehouseProduct.inventory_quantity = 0;
+            }
+          }
 
           if (productParcels.length > 0) {
             this.parcels = this.parcels.concat(productParcels);
