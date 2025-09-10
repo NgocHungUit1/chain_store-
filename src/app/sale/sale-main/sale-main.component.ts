@@ -602,12 +602,13 @@ export class SaleMainComponent implements OnInit, DoCheck {
                 // }
                 if (this.listProduct !== null) {
                   this.listProduct.forEach(elementData => {
-                    // debugger;
                     if (group[elementData.product_unit_id] !== undefined) {
-                      if (groupProductIdCommonPrice[elementData.product_id] && groupProductIdCommonPrice[elementData.product_id].length >= 1) {
+                      elementData.common_price = group[elementData.product_unit_id][0]['price'];
+
+                      if (!elementData.common_price
+                        && groupProductIdCommonPrice[elementData.product_id]
+                        && groupProductIdCommonPrice[elementData.product_id].length >= 1) {
                         elementData.common_price = groupProductIdCommonPrice[elementData.product_id][0].common_price;
-                      } else {
-                        elementData.common_price = group[elementData.product_unit_id][0]['price'];
                       }
                       elementData.common_price = elementData.common_price ?? 0;
 
@@ -627,7 +628,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
                         }
                       }
                     } else {
-                      if (groupProductIdCommonPrice[elementData.product_id] && groupProductIdCommonPrice[elementData.product_id].length >= 1) {
+                      if (groupProductIdCommonPrice[elementData.product_id]
+                        && groupProductIdCommonPrice[elementData.product_id].length >= 1) {
                         elementData.common_price = groupProductIdCommonPrice[elementData.product_id][0].common_price;
                       } else {
                         elementData.common_price = elementData.product.sell_price;
