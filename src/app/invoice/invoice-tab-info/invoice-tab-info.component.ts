@@ -172,6 +172,10 @@ export class InvoiceTabInfoComponent implements OnChanges {
       return;
     }
 
+    if (this.loading) {
+      return;
+    }
+
     const obj = {
       action: 'Delete',
       title: 'Xóa hàng hóa',
@@ -184,8 +188,10 @@ export class InvoiceTabInfoComponent implements OnChanges {
       minHeight: '80%',
     });
     dialogRef.afterClosed().subscribe(result => {
-      if (result.event === 'delete') {
+      if (result && result.event === 'delete') {
+        this.loading = true;
         this.invoiceService.delete(invoice.id).subscribe(res => {
+          this.loading = false;
           // console.log(res);
           if (res === true) {
             this.notifySer.notify('success', 'Xóa hóa đơn thành công!');

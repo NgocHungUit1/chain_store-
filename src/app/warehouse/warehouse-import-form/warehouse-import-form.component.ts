@@ -935,6 +935,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     this.apiFilter = this.buildFilterFromParams();
     this.warehouseProductService.getList(this.apiFilter).subscribe(res => {
       const newData = [];
+      let isChangeTotalAmount = false;
       const productIdsStr = res.body.map(item => item.product.id).join(',');
       const productFilter = new ProductFilter();
       productFilter.id = productIdsStr;
@@ -968,7 +969,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           warehouseProduct.discount = (item.discount !== null) ? item.discount : 0;
           warehouseProduct.discount_type = (item.discount_type !== null) ? item.discount_type : 'price';
           warehouseProduct.amount = (item.amount !== null) ? item.amount : 0;
-          warehouseProduct.product_unit_id = item.product_unit_id;
           warehouseProduct.productUnits = item.productUnits !== undefined ? item.productUnits : [];
           warehouseProduct.product_parcels = productParcels;
           warehouseProduct.vat = (item.vat !== null) ? item.vat : 0;
@@ -978,7 +978,26 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           warehouseProduct.productUnits.forEach(productUnit => {
             productUnit['quantity_of_stock'] = (productData.find(prod => prod.id == item.product_id)?.quantity?.number / productUnit['value']);
           });
-          warehouseProduct.inventory_quantity = warehouseProduct.productUnits.find(productUnit => productUnit['id'] === item.product_unit_id)['quantity_of_stock'];
+
+          let productUnitSelect = warehouseProduct.productUnits.find(unit => unit['id'] === item.product_unit_id);
+          if (productUnitSelect) {
+            warehouseProduct.product_unit_id = item.product_unit_id;
+            warehouseProduct.inventory_quantity = productUnit['quantity_of_stock'];
+          } else {
+            isChangeTotalAmount = true;
+
+            if (warehouseProduct.productUnits.length > 0) {
+              productUnitSelect = warehouseProduct.productUnits[0];
+              warehouseProduct.product_unit_id =  productUnitSelect['id'];
+              warehouseProduct.inventory_quantity =  productUnitSelect['quantity_of_stock'];
+              warehouseProduct.price = productUnitSelect['original_price'];
+              warehouseProduct.sell_price = productUnitSelect['sell_price'];
+              warehouseProduct.amount = ((warehouseProduct.price - item.discount) * item.quantity);
+            } else {
+              warehouseProduct.product_unit_id = null;
+              warehouseProduct.inventory_quantity = 0;
+            }
+          }
 
           if (productParcels.length > 0) {
             this.parcels = this.parcels.concat(productParcels);
@@ -989,6 +1008,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         this.tempDataForQuickFilter = [...newData]; // Create initial copy
         this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
         // this.recalculateWarehouse(true); no need recalculate when update data
+
+        if (isChangeTotalAmount) {
+          this.recalculateWarehouse();
+        }
         this.isLoadingResults = false;
       });
     });

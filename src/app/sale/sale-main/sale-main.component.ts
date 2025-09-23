@@ -599,58 +599,83 @@ export class SaleMainComponent implements OnInit, DoCheck {
                  */
                 this.sumPrice = 0;
                 this.sumVat = 0;
-                // if (
-                //   mItemInvoice.total_amount !== undefined &&
-                //   mItemInvoice.total_amount !== null
-                // ) {
-                //   this.sumPrice = mItemInvoice.total_amount;
-                // }
+                let isUpdateSumPrice = true;
+                // Ban hang theo dom
+                let isSamplePrescription = false;
+                if (this.listProduct && this.listProduct.length > 0) {
+                  isSamplePrescription = this.listProduct.every(
+                    elementData => (elementData.sample_prescription_id != null)
+                  );
+                }
+                if (
+                  mItemInvoice.total_amount !== undefined &&
+                  mItemInvoice.total_amount !== null &&
+                  isSamplePrescription
+                ) {
+                  this.sumPrice = mItemInvoice.total_amount;
+                  isUpdateSumPrice = false;
+                }
                 if (this.listProduct !== null) {
                   this.listProduct.forEach(elementData => {
-                    // debugger;
                     if (group[elementData.product_unit_id] !== undefined) {
-                      if (groupProductIdCommonPrice[elementData.product_id] && groupProductIdCommonPrice[elementData.product_id].length >= 1) {
+                      elementData.common_price = group[elementData.product_unit_id][0]['price'];
+
+                      if (!elementData.common_price
+                        && groupProductIdCommonPrice[elementData.product_id]
+                        && groupProductIdCommonPrice[elementData.product_id].length >= 1) {
                         elementData.common_price = groupProductIdCommonPrice[elementData.product_id][0].common_price;
-                      } else {
-                        elementData.common_price = group[elementData.product_unit_id][0]['price'];
                       }
                       elementData.common_price = elementData.common_price ?? 0;
 
                       if (!(elementData.sample_prescription_id !== undefined && elementData.sample_prescription_id !== null)) {
                         if (elementData.product.end_price === undefined) {
                           const productPrice = elementData.common_price * elementData.amount; // gia chung * so luong
-                          this.sumPrice += productPrice;
+                          if (isUpdateSumPrice) {
+                            this.sumPrice += productPrice;
+                          }
+
                           if (this.useEinvoice) {
-                            this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                            this.sumVat += Math.round(productPrice * ((elementData.product?.vat_percent || 0) / 100));
                           }
                         } else {
                           const productPrice = elementData.product.end_price * elementData.amount;  // gia ban * so luong
-                          this.sumPrice += productPrice;
+                          if (isUpdateSumPrice) {
+                            this.sumPrice += productPrice;
+                          }
+
                           if (this.useEinvoice) {
-                            this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                            this.sumVat += Math.round(productPrice * ((elementData.product?.vat_percent || 0) / 100));
                           }
                         }
                       }
                     } else {
-                      if (groupProductIdCommonPrice[elementData.product_id] && groupProductIdCommonPrice[elementData.product_id].length >= 1) {
+                      if (groupProductIdCommonPrice[elementData.product_id]
+                        && groupProductIdCommonPrice[elementData.product_id].length >= 1) {
                         elementData.common_price = groupProductIdCommonPrice[elementData.product_id][0].common_price;
-                      } else {
+                      }
+
+                      if (!elementData.common_price) {
                         elementData.common_price = elementData.product.sell_price;
                       }
+
                       elementData.common_price = elementData.common_price ?? 0;
 
                       if (!(elementData.sample_prescription_id !== undefined && elementData.sample_prescription_id !== null)) {
                         if (elementData.product.end_price === undefined) {
                           const productPrice = elementData.common_price * elementData.amount; // gia chung * so luong
-                          this.sumPrice += productPrice;
+                          if (isUpdateSumPrice) {
+                            this.sumPrice += productPrice;
+                          }
                           if (this.useEinvoice) {
-                            this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                            this.sumVat += Math.round(productPrice * ((elementData.product?.vat_percent || 0) / 100));
                           }
                         } else {
                           const productPrice = elementData.product.end_price * elementData.amount;  // gia ban * so luong
-                          this.sumPrice += productPrice;
+                          if (isUpdateSumPrice) {
+                            this.sumPrice += productPrice;
+                          }
                           if (this.useEinvoice) {
-                            this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                            this.sumVat += Math.round(productPrice * ((elementData.product?.vat_percent || 0) / 100));
                           }
                         }
                       }
@@ -700,21 +725,33 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
           this.sumPrice = 0;
           this.sumVat = 0;
-          // if (
-          //   mItemInvoice.total_amount !== undefined &&
-          //   mItemInvoice.total_amount !== null
-          // ) {
-          //   this.sumPrice = mItemInvoice.total_amount;
-          // }
+          let isUpdateSumPrice = true;
+          let isSamplePrescription = false;
+          if (this.listProduct && this.listProduct.length > 0) {
+            isSamplePrescription = this.listProduct.every(
+              elementData => (elementData.sample_prescription_id != null)
+            );
+          }
+          // Ban hang theo dom
+          if (
+            mItemInvoice.total_amount !== undefined &&
+            mItemInvoice.total_amount !== null &&
+            isSamplePrescription
+          ) {
+            this.sumPrice = mItemInvoice.total_amount;
+            isUpdateSumPrice = false;
+          }
           if (this.listProduct !== null) {
             this.listProduct.forEach(elementData => {
               if (elementData.product.end_price !== undefined) {
                 elementData.common_price = elementData.product.end_price;
                 if (!(elementData.sample_prescription_id !== undefined && elementData.sample_prescription_id !== null)) {
                   const productPrice = elementData.product.end_price * elementData.amount;
-                  this.sumPrice += productPrice;
+                  if (isUpdateSumPrice) {
+                    this.sumPrice += productPrice;
+                  }
                   if (this.useEinvoice) {
-                    this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                    this.sumVat += Math.round(productPrice * ((elementData.product?.vat_percent || 0) / 100));
                   }
                 }
               } else {
@@ -728,9 +765,11 @@ export class SaleMainComponent implements OnInit, DoCheck {
                     elementData.common_price = unitPrice['common_price'];
                     if (!(elementData.sample_prescription_id !== undefined && elementData.sample_prescription_id !== null)) {
                       const productPrice = elementData.common_price * elementData.amount;
-                      this.sumPrice += productPrice;
+                      if (isUpdateSumPrice) {
+                        this.sumPrice += productPrice;
+                      }
                       if (this.useEinvoice) {
-                        this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                        this.sumVat += Math.round(productPrice * ((elementData.product?.vat_percent || 0) / 100));
                       }
                     }
                   } else {
@@ -741,18 +780,22 @@ export class SaleMainComponent implements OnInit, DoCheck {
                     elementData.common_price = elementData.product.end_price;
                     if (!(elementData.sample_prescription_id !== undefined && elementData.sample_prescription_id !== null)) {
                       const productPrice = elementData.product.end_price * elementData.amount;
-                      this.sumPrice += productPrice;
+                      if (isUpdateSumPrice) {
+                        this.sumPrice += productPrice;
+                      }
                       if (this.useEinvoice) {
-                        this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                        this.sumVat += Math.round(productPrice * ((elementData.product?.vat_percent || 0) / 100));
                       }
                     }
                   } else {
                     elementData.common_price = elementData.product.sell_price;
                     if (!(elementData.sample_prescription_id !== undefined && elementData.sample_prescription_id !== null)) {
                       const productPrice = elementData.product.sell_price * elementData.amount;
-                      this.sumPrice += productPrice;
+                      if (isUpdateSumPrice) {
+                        this.sumPrice += productPrice;
+                      }
                       if (this.useEinvoice) {
-                        this.sumVat += productPrice * ((elementData.product?.vat_percent || 0) / 100);
+                        this.sumVat += Math.round(productPrice * ((elementData.product?.vat_percent || 0) / 100));
                       }
                     }
                   }
@@ -3195,21 +3238,21 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
     let realTotal = 0;
     this.listProduct.forEach(item => {
-      realTotal += (item.product.end_price > 0 ? item.product.end_price : item.common_price) * item.amount;
+      realTotal += (item.product.end_price > 0 ? item.product.end_price : (item.common_price || 0)) * item.amount;
     });
 
     // console.log(this.listProduct, this.sumPrice, realTotal);
 
     const diff = this.sumPrice - realTotal;
-    if (diff) {
+    if (diff !== 0) {
       this.listProduct.forEach(item => {
         /**
          * Điều chỉnh tổng giá hóa đơn, nên chia lại phần chênh lệch cho các sản phẩm trong đơn hàng theo tỉ lệ tương ứng.
          * => Tính lợi nhuận theo sản phẩm
          */
-        if (diff !== 0 && !(item.product.end_price > 0)) {
+        if (!(item.product.end_price > 0)) {
           const commPrice = Number(item.common_price);
-          item.common_price = Number(commPrice + (commPrice * diff / realTotal)).toFixed(0);
+          item.common_price = Math.round(commPrice + (commPrice * diff / realTotal));
         }
       });
     }
