@@ -16,8 +16,8 @@
             </span>
           </ng-container>
         </div>
-        <div  fxLayoutAlign.xs="center center">
-          <button *ngIf="currentTemplate" mat-icon-button (click)="onEdit()" matTooltip="Chỉnh sửa mẫu in">
+        <div fxLayoutAlign.xs="center center">
+          <button [disabled]="currentTemplate['store_id'] == null" *ngIf="currentTemplate" mat-icon-button (click)="onEdit()" matTooltip="Chỉnh sửa mẫu in">
             <mat-icon>edit</mat-icon>
           </button>
           <button mat-icon-button (click)="onAdd()" matTooltip="Tạo mẫu in mới">
