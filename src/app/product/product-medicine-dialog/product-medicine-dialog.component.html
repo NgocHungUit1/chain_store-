@@ -262,12 +262,19 @@
                 <div fxLayout="row wrap">
                   <div fxFlex="90">
                     <mat-form-field>
-                      <mat-select placeholder="Hãng sản xuất" formControlName="manufacturer">
-                        <mat-option>&#45;&#45;</mat-option>
-                        <mat-option *ngFor="let manufacturer of manufacturers" [value]="manufacturer.id">
+                      <input matInput
+                             type="text"
+                             placeholder="Hãng sản xuất"
+                             [formControl]="searchManufacturer"
+                             [matAutocomplete]="autoManufacturer">
+                      <mat-autocomplete
+                              #autoManufacturer="matAutocomplete"
+                              [displayWith]="displayManufacturer"
+                              (optionSelected)="selectedManufacturer($event.option.value)">
+                        <mat-option *ngFor="let manufacturer of filteredManufacturer | async" [value]="manufacturer">
                           {{ manufacturer.name }}
                         </mat-option>
-                      </mat-select>
+                      </mat-autocomplete>
                     </mat-form-field>
                   </div>
                   <div fxFlex="10">

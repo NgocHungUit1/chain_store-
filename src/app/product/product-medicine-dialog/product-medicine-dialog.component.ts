@@ -98,6 +98,9 @@ export class ProductMedicineDialogComponent implements OnInit {
 
   filteredMedicines: Observable<Medicine[]>;
 
+  searchManufacturer = new FormControl();
+  filteredManufacturer: Observable<any[]>;
+
   fieldLabels = {
     product_no: 'Mã hàng',
     barcode: 'Mã vạch',
@@ -234,6 +237,26 @@ export class ProductMedicineDialogComponent implements OnInit {
     manufacturerFilter.pageSize = 500;
     this.manufacturerSer.getList(manufacturerFilter).subscribe(res => {
       this.manufacturers = res.body;
+
+      this.filteredManufacturer = this.searchManufacturer.valueChanges.pipe(
+        startWith(''),
+        map(value => {
+          const medicine =  this.form.controls['medicine'].value;
+          if (typeof value === 'object' && value?.id) {
+            medicine.manufacturer = value.id;
+          } else {
+            medicine.manufacturer = null;
+          }
+          this.form.patchValue({medicine: medicine});
+
+          const inputValue = typeof value === 'string' ? value : value?.name || '';
+          const filterValue = inputValue.toLowerCase();
+
+          return filterValue
+            ? this.manufacturers.filter(m => m.name && m.name.toLowerCase().includes(filterValue))
+            : this.manufacturers;
+        })
+      );
     });
 
     this.initForm();
@@ -337,6 +360,12 @@ export class ProductMedicineDialogComponent implements OnInit {
 
       const medicine = product['medicine'];
       if (medicine !== null) {
+        if (product['manufacturer']) {
+          const selectedManufacturer = this.manufacturers.find(m => m.id == product['manufacturer']);
+          if (selectedManufacturer) {
+            this.searchManufacturer.setValue(selectedManufacturer);
+          }
+        }
         medicine.made_in = product['made_in'];
         medicine.manufacturer = product['manufacturer'];
       }
@@ -635,6 +664,8 @@ export class ProductMedicineDialogComponent implements OnInit {
       if (result !== false && result !== undefined) {
         this.manufacturers.push(result);
         this.form.patchValue({medicine: {manufacturer: result.id}});
+
+        this.searchManufacturer.setValue(result);
       }
     });
   }
@@ -731,6 +762,8 @@ export class ProductMedicineDialogComponent implements OnInit {
         medicine: medicine,
       });
       this.manufacturers.push(result);
+
+      this.searchManufacturer.setValue(result);
     });
   }
 
@@ -839,5 +872,13 @@ export class ProductMedicineDialogComponent implements OnInit {
         }
       }
     });
+  }
+
+  selectedManufacturer(manufacturer: Manufacturer): void {
+    this.searchManufacturer.setValue(manufacturer);
+  }
+
+  displayManufacturer(manufacturer: Manufacturer): string {
+    return manufacturer && manufacturer.name ? manufacturer.name : '';
   }
 }
