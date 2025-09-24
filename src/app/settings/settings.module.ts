@@ -14,6 +14,8 @@ import {SettingProfileComponent} from './setting-profile/setting-profile.compone
 import {NotificationListComponent} from './notification-list/notification-list.component';
 import {SettingSidenavComponent} from './setting-sidenav/setting-sidenav.component';
 import {SettingStoreComponent} from './setting-store/setting-store.component';
+import { SettingPrintEditorComponent } from './setting-print-editor/setting-print-editor.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -21,7 +23,8 @@ import {SettingStoreComponent} from './setting-store/setting-store.component';
     SettingProfileComponent,
     NotificationListComponent,
     SettingSidenavComponent,
-    SettingStoreComponent
+    SettingStoreComponent,
+    SettingPrintEditorComponent
   ],
   imports: [
     CommonModule,
@@ -34,7 +37,8 @@ import {SettingStoreComponent} from './setting-store/setting-store.component';
     PerfectScrollbarModule,
     Ng2SearchPipeModule,
     DemoMaterialModule,
-  ]
+    SharedModule,
+  ],
 })
 export class SettingsModule {
 }

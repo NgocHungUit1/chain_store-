@@ -44,7 +44,9 @@ import { BankAccountService } from '../../bank-account/bank-account.service';
 import { BankAccountFilter } from '../../bank-account/bank-account.model';
 import { SearchProductDialogComponent } from '../../common/search-product-dialog/search-product-dialog.component';
 import { ColumnVisibilityMap, SaleColumnVisibilityService } from '../../shared/sale-column-visibility.service';
-
+import { InvoiceData, PreviewService } from '../../shared/invoice-handle/preview.service';
+import { InvoiceTemplate, InvoiceTemplateService } from '../../shared/invoice-handle/invoice-template.service';
+import { PrintService } from '../../shared/invoice-handle/print.service';
 export const MY_FORMATS = {
   parse: {
     dateInput: 'DD/MM/YYYY',
@@ -56,14 +58,12 @@ export const MY_FORMATS = {
     monthYearA11yLabel: 'MMMM YYYY',
   },
 };
-
 interface BankAccount {
   id: string;
   bank_code: string;
   account_number: string;
   account_name: string;
 }
-
 @Component({
   selector: 'app-sale-main',
   encapsulation: ViewEncapsulation.None,
@@ -98,6 +98,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
     private productSer: ProductService,
     private bankAccountSer: BankAccountService,
     private saleColumnVisibilityService: SaleColumnVisibilityService,
+    private previewService: PreviewService,
+    private invoiceTemplateService: InvoiceTemplateService,
+    private printService: PrintService
   ) {
     this.optionStoreService.getValue('point_enabled').subscribe(res => {
       this.isPointEnabled = res.value === 'true';
@@ -275,6 +278,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
     'no', 'product_no', 'product_name', 'unit', 'amount', 'price', 'total',
   ];
 
+  // selected invoice template
+  selectedTemplate: InvoiceTemplate = null;
+
   @ViewChild('prescription') prescription;
   @ViewChild('customerSearch') customerSearch: ElementRef;
   @ViewChild('customerPayment') customerPayment: ElementRef;
@@ -303,7 +309,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
       this.tinhLaiTienThua(); // Tín: khách thanh toán = 0 thì mặc định thanh toán hết => nợ = 0
     }
   }
-
   /**
    *  So sanh danh sach cu
    * @param listProductUnitIdChoose
@@ -1055,6 +1060,14 @@ export class SaleMainComponent implements OnInit, DoCheck {
         }
         this.handleDetailOrder(this.localItemInvoice);
       });
+
+    // get info invoice template
+    this.loadInvoiceTemplates();
+    // listen when user change invoice template
+    this.invoiceTemplateService.templateChanged$.subscribe(template => {
+      this.selectedTemplate = template;
+    });
+
   }
 
   ngDoCheck() {
@@ -1472,6 +1485,15 @@ export class SaleMainComponent implements OnInit, DoCheck {
     });
   }
 
+  printInvoiceTemplateAuto(invoice_id: number) {
+    this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
+      if (res) {
+        this.printInvoiceTemplate(res);
+      }
+    });
+  }
+
+
   /**
    * Print Invoice
    */
@@ -1500,7 +1522,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
         const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
         const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
 
-        debugger;
         let printContent = '<title>' + res?.invoice_no + '</title>';
         printContent += `
           <style>
@@ -1716,9 +1737,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
           WindowPrt.focus();
           // WindowPrt.close(); // lỗi tự đôngs
         }
-
-
-        console.log(printContent);
       });
     });
   }
@@ -2189,20 +2207,20 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
 
   async getPreInvoiceData(): Promise<any> {
-    // debugger;
     const activeInvoice = this.localItemInvoice || new ItemInvoice();
     const formData = this.form.getRawValue();
-
     const detail = this.listProduct.map(item => ({
       product: { product_name: item.product.product_name },
       base_unit: item.base_unit || null,
       price: item.common_price || item.product.sell_price || item.product.end_price || 0,
       amount: item.amount || 0,
       total: (item.common_price || item.product.sell_price || item.product.end_price || 0) * (item.amount || 0),
-      so_lo: item.so_lo || '',
+      so_lo: item?.product_parcels&&item?.product_parcels.length>0? `SL: ${item.product_parcels[0].parcel_no}-HD: ${item.product_parcels[0].expiration_date}` : '',
+      note: item?.note || '',
+      vat_percent: item?.product?.vat_percent || 0,
     }));
-
     const totalPrice = this.useEinvoice ? this.sumPrice + this.sumVat : this.sumPrice;
+
     const discount = this.discount_type === 'price' ? this.discount : Math.round((this.sumPrice * this.discount) / 100);
     const sumPayment = totalPrice - this.numberDiscount - this.numberPointDiscount + this.expenseOrder;
     const debt = this.tienKhachNo > 0 ? this.tienKhachNo : null;
@@ -2223,13 +2241,16 @@ export class SaleMainComponent implements OnInit, DoCheck {
       store: storeData,
       customer: this.customer || activeInvoice.customer || { name: 'Khách lẻ', phone: '' },
       detail: detail,
-      total_price: totalPrice,
+      total_price: this.sumPrice,
+      total_vat: this.useEinvoice ? this.sumVat : 0,
       discount: discount || 0,
       sum_payment: sumPayment,
       debt: debt,
       nationalPrescription: activeInvoice.prescription_id ? this.getNationalPrescriptionData(activeInvoice.prescription_id) : null,
       invoice_no: activeInvoice.invoice_name || 'Chưa lưu',
-      created_at: createdAt,
+      created_at_iso: createdAt,
+      header: 'HÓA ĐƠN TẠM TÍNH',
+      note: activeInvoice?.noteSiderBar ?? ""
     };
   }
 
@@ -2332,6 +2353,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
         `;
       } else {
         printContent += `<p>Khách hàng: ${customer_name}</p>`;
+        const customer_phone = preInvoiceData?.customer?.phone || '';
         if (customer_phone) {
           printContent += `<p>SĐT: ${customer_phone}</p>`;
         }
@@ -2466,12 +2488,10 @@ export class SaleMainComponent implements OnInit, DoCheck {
           </section>
           `;
 
-        WindowPrt.document.write(printContent);
-        WindowPrt.document.close();
-        WindowPrt.focus();
-      }
-
-      console.log(printContent);
+          WindowPrt.document.write(printContent);
+          WindowPrt.document.close();
+          WindowPrt.focus();
+        }
       // WindowPrt.close(); // Uncomment if you want to auto-close after printing
     });
   }
@@ -2483,8 +2503,148 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
   async printPreInvoiceHandler() {
     const preInvoiceData = await this.getPreInvoiceData();
-    debugger;
-    this.printPreInvoiceV2(preInvoiceData);
+    //this.printPreInvoiceV2(preInvoiceData);
+    // print with template
+    this.printInvoiceTemplate(preInvoiceData);
+  }
+
+  executePrint(dataToPrint: any) {
+    //const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
+    const content = this.previewService.fillTemplate(this.selectedTemplate.body, dataToPrint);
+    const styleMatch = content.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+    const extractedStyle = styleMatch?.[1] || '';
+    const contentWithoutStyle = content.replace(styleMatch?.[0] || '', '');
+    // Replace all <style> tags with the extracted style
+    const printHtml = `
+        <!DOCTYPE html>
+        <html lang="vi">
+          <head>
+            <title>In hóa đơn</title>
+            <style>
+              @media print {
+               @page {
+                  margin: 0;
+                  size: auto;
+                }
+                ${extractedStyle}
+                table td {
+                  word-break: normal;
+                  overflow-wrap: break-word;
+                  white-space: pre-line;
+                }
+              }
+            </style>
+          </head>
+          <body>
+            ${contentWithoutStyle}
+            <script>
+               var qrLoaded = false;
+
+              function onQrLoaded() {
+                qrLoaded = true;
+                window.parent.postMessage({ action: 'PRINT_READY' }, '*');
+              }
+
+              window.onload = function () {
+                if (!qrLoaded) {
+                  window.parent.postMessage({ action: 'PRINT_READY' }, '*');
+                }
+              };
+            </script>
+          </body>
+        </html>
+      `;
+    this.printService.print(printHtml);
+    // WindowPrt.document.write(printHtml);
+    // WindowPrt.document.close();
+    // WindowPrt.focus();
+  }
+
+  /**
+   * Print invoice using a specific template
+   * @param preInvoiceData Data to be printed in the invoice
+   */
+  printInvoiceTemplate(preInvoiceData: any) {
+
+    const { nationalPrescription } = preInvoiceData || {};
+    let customer_info='';
+    if (nationalPrescription) {
+      customer_info = `
+      <p>Mã đơn thuốc: <b>${nationalPrescription?.nationalPrescriptionId || ''}</b></p>
+      <p>Tên đơn vị: <b>${nationalPrescription?.medicalFacilityName || ''}</b></p>
+      <p>Họ tên: <b>${nationalPrescription?.patientName || ''}</b></p>
+      <p>SĐT: <b>${nationalPrescription?.patientPhoneNumber || ''}</b></p>
+      <p>Ngày sinh: <b>${nationalPrescription?.patientDOB || ''}</b>
+        Cân nặng: <b>${nationalPrescription?.patientWeight || ''}</b>
+        Giới tính: <b>${nationalPrescription?.patientSex || ''}</b></p>
+      <br>
+      <p><b>Chẩn đoán:</b> ${nationalPrescription?.diagnostics?.[0]?.conclusion || ''}</p>
+        `;
+    } else {
+      const customer_name = preInvoiceData?.customer?.name || 'Khách lẻ';
+      customer_info += `<p>Khách hàng: ${customer_name}</p>`;
+      const customer_phone = preInvoiceData?.customer?.phone || '';
+      if (customer_phone) {
+        customer_info += `<p>SĐT: ${customer_phone}</p>`;
+      }
+    }
+
+    const dataToPrint: Partial<InvoiceData> = {
+      Logo: this.logo? `<img src="${this.logo}" style="max-width: 120px;">` :
+    `<img src="assets/images/Rx20_16x16_op1-1207.png" style="max-width: 120px;">`,
+      Ten_Cua_Hang: preInvoiceData?.store?.name || 'Chi nhánh trung tâm',
+      Dia_Chi_Cua_Hang: preInvoiceData?.store?.address || 'Địa chỉ cửa hàng',
+      So_Dien_Thoai_Cua_Hang: preInvoiceData?.store?.phone || 'Số điện thoại cửa hàng',
+      Tieu_De_In: preInvoiceData?.header|| 'HÓA ĐƠN BÁN HÀNG',
+      So_Hoa_Don: preInvoiceData?.invoice_no || 'Chưa lưu',
+      Ma_Don_Hang: preInvoiceData?.invoice_no || 'Chưa lưu',
+      Ngay: new Date(preInvoiceData?.created_at_iso).getDate().toString().padStart(2, '0'),
+      Thang: (new Date(preInvoiceData?.created_at_iso).getMonth() + 1).toString().padStart(2, '0'),
+      Nam: new Date(preInvoiceData?.created_at_iso).getFullYear().toString(),
+      Ngay_Ban: new Date(preInvoiceData?.created_at_iso).toLocaleDateString('vi-VN'),
+      Gio_Ban: new Date(preInvoiceData?.created_at_iso).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+      Nhan_Vien: this.user?.username || 'Admin',
+      Khach_Hang: preInvoiceData?.customer?.name || 'Khách lẻ',
+      So_Dien_Thoai: preInvoiceData?.customer?.phone || '',
+      Dia_Chi_Khach_Hang: preInvoiceData?.customer?.address || '',
+      Phuong_Xa_Khach_Hang: '', // Not available in sample data
+      Khu_Vuc_Khach_Hang_QH_TP: '', // Not available in sample data
+
+      items: preInvoiceData.detail?.map((item, index) => ({
+        STT: index+1,
+        Ten_Hang_Hoa: item?.product?.product_name || '',
+        Don_Gia_Chiet_Khau: numeral(item?.price || 0).format('0,0'), // handle later if needed
+        So_Luong: (item.amount || 0).toString(),
+        Thanh_Tien: numeral(item?.total || 0).format('0,0'),
+        Don_Vi: item?.base_unit ,
+        Don_Gia: numeral(item?.price || 0).format('0,0'),
+        So_Lo: item?.so_lo || '',
+        Ghi_Chu: item?.note || '',
+        VAT: item?.vat_percent
+
+      })) || [],
+      Tong_Tien_Hang: numeral(numeral(preInvoiceData?.total_price || 0).value() + numeral(preInvoiceData?.total_vat).value()).format('0,0'),
+      Tong_Cong: numeral(preInvoiceData?.sum_payment || 0).format('0,0'),
+      Tong_Tien_Hang_Bang_Chu: this.numberToVietnameseText(numeral(preInvoiceData?.sum_payment).value()),
+      Tong_So_Luong: preInvoiceData?.detail?.reduce((acc, item) => acc + (item?.amount || 0), 0).toString(),
+      Chiet_Khau: preInvoiceData?.discount || '0',
+      Khach_Thanh_Toan: numeral(preInvoiceData?.sum_payment || 0).format('0,0'),
+      Con_Lai: numeral(preInvoiceData?.debt || 0).format('0,0'),
+      Thong_Tin_Khach_Hang: customer_info,
+      Ghi_Chu_Don_Hang: preInvoiceData?.note,
+      VAT_Tong: numeral(preInvoiceData?.total_vat).format('0,0'),
+      Tong_Tien_Hang_Chua_VAT: numeral(preInvoiceData?.total_price).format('0,0')
+    }
+    const QrCode = this.form.get('selectedMethod').value === 'Chuyển khoản' ? this.getQrCode(this.selectedBankAccount) : of(null);
+    QrCode.subscribe((qrCode) => {
+      if (qrCode) {
+        dataToPrint['Ma_QR'] = `<img src="${qrCode}" style="width: 80px; height: 80px;" onload="onQrLoaded()" alt="">`;
+      } else {
+        dataToPrint['Ma_QR'] = '';
+      }
+      this.executePrint(dataToPrint);
+    });
+
   }
 
   payment() {
@@ -2595,7 +2755,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
         product_id: element.product.id,
         amount: element.amount,
         price: price,
-        note: element.note,
+        note: element?.note,
         discount: discount,
         discount_type: discount_type,
         product_unit_id: element.product_unit_id,
@@ -2673,11 +2833,16 @@ export class SaleMainComponent implements OnInit, DoCheck {
         this.isLoadingResults = false;
         this.submitted = false;
         if (res !== false) {
-          if (typeof res === 'number' && this.autoPrint === true) {
-            this.printInvoice(res);
+          if (res !== false) {
+            if (typeof res === 'number' && this.autoPrint === true) {
+              //this.printInvoice(res);
+              this.printInvoiceTemplateAuto(res);
+            }
+            this.resetDataSiderBar();
+            this.notifySer.notify('success', 'Lưu thành công !');
+          } else {
+            this.notifySer.notify('warning', 'Thất bại !');
           }
-          this.resetDataSiderBar();
-          this.notifySer.notify('success', 'Lưu thành công !');
         } else {
           this.notifySer.notify('warning', 'Thất bại !');
         }
@@ -2705,7 +2870,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
         if (res !== false) {
           if (typeof res === 'number' && this.autoPrint === true) {
             this.resetDataSiderBar();
-            this.printInvoice(res);
+            //this.printInvoice(res);
+            this.printInvoiceTemplateAuto(res);
           }
           this.resetDataSiderBar();
           this.notifySer.notify('success', 'Cập nhật đơn thành công !');
@@ -2866,6 +3032,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     this.numberDiscount = 0;
     this.isUsePoint = false;
     this.numberPointDiscount = 0;
+
     setTimeout(() => {
       this.listProduct = [];
       this.discount = 0;
@@ -2878,7 +3045,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
         ('0' + today.getMinutes()).slice(-2);
       this.form.patchValue({
         time: time,
-        total_amount: 0
+        total_amount: 0,
+        noteSiderBar: '',
       });
     }, 500);
   }
@@ -3095,6 +3263,14 @@ export class SaleMainComponent implements OnInit, DoCheck {
     return allPermissions.indexOf(permissionName) !== -1;
   }
 
+  // Coding parcel + add row function
+  // shownMenus: Set<number> = new Set();
+  // all_product_parcels: Map<string, object[]> = new Map();
+  // available_product_parcels: Map<string, object[]> = new Map();
+  // parcelItemControls: Map<number, FormControl> = new Map();
+  // parcelFilteredItems: Map<number, Observable<object[]>> = new Map();
+  // separatorKeysCodes: number[] = [ENTER, COMMA];
+
   /**
    * Receive index and active 1 of 3 actions
    * - If note is not showing -> show the initial textarea
@@ -3245,6 +3421,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     }
     return this.parcelItemControls?.get(product_index);
   }
+
 
 
   /**
@@ -3944,6 +4121,12 @@ export class SaleMainComponent implements OnInit, DoCheck {
       'saleDisplayedColumns',
       JSON.stringify(this.displayedColumns)
     );
+  }
+
+  // invoice templates
+  private loadInvoiceTemplates() {
+    // get from localStorage
+    this.selectedTemplate = this.invoiceTemplateService.getActiveTemplate();
   }
 }
 

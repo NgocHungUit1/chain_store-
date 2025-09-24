@@ -21,8 +21,8 @@
 <!--  <input type="hidden" name="codes" id="codes" />-->
 <!--</form>-->
 
-<button 
-  class="ml-xs overflow-visible" 
+<button
+  class="ml-xs overflow-visible"
   mat-icon-button
   style="margin-right: 10px"
   matTooltip="Hóa đơn">
@@ -105,10 +105,12 @@
 <!-- ============================================================== -->
 <!-- Profile - style you can find in header.scss -->
 <!-- ============================================================== -->
-<button 
-  class="ml-xs overflow-visible" 
-  mat-icon-button 
-  [matMenuTriggerFor]="printSetting" 
+<button
+  class="ml-xs overflow-visible print-button"
+  mat-icon-button
+  [matMenuTriggerFor]="printSetting"
+  [matBadge]="getBadgeLetterForSelectedTemplate()"
+  matBadgePosition="after"
   [ngStyle]="{ 'opacity': autoPrint ? '1' : '0.5' }"
   style="margin-right: 10px"
   matTooltip="In hóa đơn">
@@ -116,30 +118,76 @@
 </button>
 
 
-<mat-menu #printSetting="matMenu" class="mymegamenu">
+<mat-menu #printSetting="matMenu" class="mymegamenu" (closed)="onMenuClosed()">
   <div style="display: flex; flex-direction: column; gap: 10px; padding: 10px;">
     <mat-slide-toggle
       class="custom-toggle"
       [checked]="autoPrint"
       (change)="onChangeSlideToggleTuDongInHoaDon()"
-      (click)="onToggleClick($event)">
+      (click)="onToggleClick($event)"
+      labelPosition="before"
+      style="display: flex; align-items: center; justify-content: space-between;"
+    >
       Tự động in hóa đơn
     </mat-slide-toggle>
-    <mat-slide-toggle
-      class="custom-toggle"
-      [checked]="autoPrintInSoLo"
-      (change)="onChangeSlideToggleInSoLo($event)"
-      (click)="onToggleClick($event)">
-      In số lô
-    </mat-slide-toggle>
+<!--    <mat-slide-toggle-->
+<!--      class="custom-toggle"-->
+<!--      [checked]="autoPrintInSoLo"-->
+<!--      (change)="onChangeSlideToggleInSoLo($event)"-->
+<!--      (click)="onToggleClick($event)">-->
+<!--      In số lô-->
+<!--    </mat-slide-toggle>-->
+    <div>
+      <div class="template-header">
+        <span>Chọn mẫu in</span>
+      </div>
+      <div class="template-list">
+        <button
+          *ngFor="let template of invoiceTemplates; let i = index"
+          mat-button
+          class="template-button"
+          [class.selected]="selectedTemplateId === template.id"
+          (click)="onSelectInvoiceTemplate(template.id, $event)"
+          [matTooltip]="isTextTruncated(template?.name) ? template.name : ''"
+        >
+
+          <div class="template-content">
+            <div class="template-main">
+              <span class="template-name">{{ getLetterPrefix(i) }}. {{template.name}}</span>
+            </div>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="template-selection-section">
+    <div class="template-divider" style="border-top: 1px dashed #ccc; margin-bottom: 16px;"></div>
+    <div class="template-actions">
+      <button
+        mat-stroked-button
+        (click)="onClosePrintButton()"
+        tabindex="-1">
+        Bỏ qua
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="onSaveAndClosePrintButton()"
+        tabindex="4">
+        Xong
+      </button>
+    </div>
   </div>
 </mat-menu>
 
-<button 
-  class="ml-xs overflow-visible" 
+<button
+  class="ml-xs overflow-visible"
   mat-icon-button
   (click)="this.toggleRequested.emit()"
   style="margin-right: 10px"
   matTooltip="Tùy chọn hiển thị">
   <mat-icon>visibility</mat-icon>
 </button>
+
+
+

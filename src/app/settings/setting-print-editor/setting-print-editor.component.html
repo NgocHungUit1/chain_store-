@@ -1,0 +1,57 @@
+<div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" class="main-content-gap">
+  <div class="editor-section" fxFlex="50" fxFlex.xs="100" fxFlex.sm="100">
+      <div class="editor-header" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutAlign.xs="center center">
+        <div class="template-select" >
+          <ng-container *ngIf="!isLoading">
+            <span *ngIf="invoiceTemplates.length > 0">Mẫu in</span>
+            <mat-form-field *ngIf="invoiceTemplates.length > 0" appearance="fill" style="width: 200px; display: inline-block;">
+              <mat-select [(value)]="selectedTemplateId" (selectionChange)="onChangeInvoiceTemplate($event)">
+                <mat-option *ngFor="let template of invoiceTemplates" [value]="template.id">
+                  {{ template.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <span *ngIf="invoiceTemplates.length === 0" class="no-templates-text">
+              Không tìm thấy mẫu in nào
+            </span>
+          </ng-container>
+        </div>
+        <div  fxLayoutAlign.xs="center center">
+          <button *ngIf="currentTemplate" mat-icon-button (click)="onEdit()" matTooltip="Chỉnh sửa mẫu in">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button (click)="onAdd()" matTooltip="Tạo mẫu in mới">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="isLoading" class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Đang tải dữ liệu...</p>
+      </div>
+
+      <div *ngIf="!isLoading && invoiceTemplates.length === 0" class="empty-state-container">
+        <div class="empty-state-content">
+          <mat-icon class="empty-state-icon">description</mat-icon>
+          <h3>Không tìm thấy mẫu in nào</h3>
+          <p>Bạn chưa có mẫu in nào. Hãy tạo mẫu in mới để bắt đầu.</p>
+          <button mat-raised-button color="primary" (click)="onAdd()">
+            <mat-icon>add</mat-icon> Tạo mẫu in mới
+          </button>
+        </div>
+      </div>
+     <app-shared-editor [initContent]="editorConfig?.initialContent" *ngIf="currentTemplate" [config]="editorConfig" [templateData]="templateData">
+      </app-shared-editor>
+    </div>
+
+    <div class="preview-section" fxFlex="50" fxFlex.xs="100" fxFlex.sm="100">
+      <p fxLayoutAlign="end center" style="height: 20px;">Xem trước mẫu in</p>
+      <div id="preview-container" class="desktop-view">
+        <div *ngIf="invoiceTemplates.length === 0" class="empty-state-preview">
+          <p>Chưa có mẫu in nào để xem trước</p>
+        </div>
+        <div id="preview-content-main" [hidden]="invoiceTemplates.length === 0"></div>
+      </div>
+    </div>
+  </div>

@@ -2450,7 +2450,6 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   getParcelStatus(i) {
     const product = this.data[i];
-    // debugger;
     return product.product_parcels?.length === 0 && this.parcelItemControls.get(i)?.touched;
   }
 }

@@ -46,6 +46,7 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     'store': 'Hàng hóa',
     'partner': 'Đối tác',
     'print': 'Cài đặt khổ mẫu giấy in',
+    'edit-print': 'Chỉnh sửa mẫu in',
     'logo': 'Logo cửa hàng',
     'branch-connect': 'Liên thông theo chi nhánh',
     'score': 'Tích điểm',

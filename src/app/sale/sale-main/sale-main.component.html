@@ -182,7 +182,7 @@
                      *ngIf="isNoteShown(getProductIndex(masterProduct))">
                     <textarea #noteTextArea class="note-textarea note-textarea-{{getProductIndex(masterProduct)}}"
                               cdkTextareaAutosize
-                              placeholder="Ghi chú" [(ngModel)]="masterProduct.product.note"
+                              placeholder="Ghi chú" [(ngModel)]="masterProduct.note"
                               (ngModelChange)="handleUpdateStorage()">
                     </textarea>
                 </div>
