@@ -217,20 +217,19 @@ export class SettingPrintEditorComponent implements OnInit {
    * @param template
    * @private
    */
-  private saveTemplate(template: InvoiceTemplate): void {
+  private saveTemplate(template: Partial<InvoiceTemplate>): void {
     this.invoiceTemplateService.updateTemplate(template.id, template).subscribe({
       next: (response) => {
         if (response) {
-          console.log('Template updated successfully: ', response);
           this.invoiceTemplateService.getAllTemplates().subscribe(
             (templates) => {
               this.notifierSer.notify('success', 'Cập nhật mẫu in thành công!');
               this.invoiceTemplates = templates;
               // If updated template was selected, update current template
-              if (this.selectedTemplateId === template.id) {
-                this.currentTemplate = { ...template };
-                this.updateEditorContent(template.body);
-              }
+              const newTemplate = templates.find(t => t.id === template.id) ?? templates[0];
+              this.currentTemplate = { ...newTemplate };
+              this.updateEditorContent(newTemplate.body);
+
             },
             error => {
               console.error('Error loading templates after update:', error);

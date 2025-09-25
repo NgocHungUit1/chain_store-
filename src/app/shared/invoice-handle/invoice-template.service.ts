@@ -1,9 +1,8 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { map } from 'rxjs/operators';
-import { EventEmitter } from '@angular/core';
 
 //const invoiceTemplates = require('./fake-invoices.json'); // fake data for invoice templates
 //const invoiceTemplates = [];
@@ -13,6 +12,7 @@ export interface InvoiceTemplate {
   name: string;
   body: string;
   status: number;
+  store_id: any;
 }
 
 @Injectable({
@@ -25,17 +25,15 @@ export class InvoiceTemplateService {
   constructor(private http: HttpClient) {
   }
 
+  // getAllTemplates(): Observable<InvoiceTemplate[]> {
+  //   return this.http.get<InvoiceTemplate[]>(`${this.apiUrl}`).pipe(
+  //     map(template => template.filter(t => t.status === 10)) // Filter out inactive templates
+  //   );
+  // }
   getAllTemplates(): Observable<InvoiceTemplate[]> {
     return this.http.get<InvoiceTemplate[]>(`${this.apiUrl}`).pipe(
       map(template => template.filter(t => t.status === 10)) // Filter out inactive templates
     );
-    // // Return fake data instead of API call since API is not working
-    // return new Observable(observer => {
-    //   setTimeout(() => {
-    //     observer.next(this.getFallbackTemplates());
-    //     observer.complete();
-    //   }, 500); // Simulate network delay
-    // });
   }
 
   getTemplate(id: string): Observable<InvoiceTemplate> {
