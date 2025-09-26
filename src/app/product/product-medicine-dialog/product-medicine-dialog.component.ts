@@ -361,10 +361,26 @@ export class ProductMedicineDialogComponent implements OnInit {
       const medicine = product['medicine'];
       if (medicine !== null) {
         if (product['manufacturer']) {
-          const selectedManufacturer = this.manufacturers.find(m => m.id == product['manufacturer']);
-          if (selectedManufacturer) {
-            this.searchManufacturer.setValue(selectedManufacturer);
-          }
+          let attempts = 0;
+          const maxAttempts = 20;
+          const interval = setInterval(() => {
+            attempts++;
+            if (this.manufacturers.length > 0) {
+              const selectedManufacturer = this.manufacturers.find(
+                m => m.id == product['manufacturer']
+              );
+
+              if (selectedManufacturer) {
+                this.searchManufacturer.setValue(selectedManufacturer);
+              }
+
+              clearInterval(interval);
+            }
+
+            if (attempts >= maxAttempts) {
+              clearInterval(interval);
+            }
+          }, 100);
         }
         medicine.made_in = product['made_in'];
         medicine.manufacturer = product['manufacturer'];
