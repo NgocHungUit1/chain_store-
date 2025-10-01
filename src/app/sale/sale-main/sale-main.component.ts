@@ -2590,8 +2590,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
     }
 
     const dataToPrint: Partial<InvoiceData> = {
-      Logo: this.logo? `<img src="${this.logo}" style="max-width: 120px;">` :
-    `<img src="assets/images/Rx20_16x16_op1-1207.png" style="max-width: 120px;">`,
+      Logo: this.logo? `<img src="${this.logo}" style="max-width: 60px;">` :
+    `<img src="assets/images/Rx20_16x16_op1-1207.png" style="max-width: 60px;">`,
       Ten_Cua_Hang: preInvoiceData?.store?.name || 'Chi nhánh trung tâm',
       Dia_Chi_Cua_Hang: preInvoiceData?.store?.address || 'Địa chỉ cửa hàng',
       So_Dien_Thoai_Cua_Hang: preInvoiceData?.store?.phone || 'Số điện thoại cửa hàng',

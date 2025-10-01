@@ -106,8 +106,8 @@ export class PreviewService {
     data.Nam = today.getFullYear().toString();
     data.Ngay_Ban = today.toLocaleDateString('vi-VN', { year: 'numeric', month: '2-digit', day: '2-digit' });
     data.Gio_Ban = today.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-    data.Logo = this.logo? `<img src="${this.logo}" style="max-width: 120px;">` :
-      `<img src="assets/images/Rx20_16x16_op1-1207.png" style="max-width: 120px;">`;
+    data.Logo = this.logo? `<img src="${this.logo}" style="max-width: 60px;">` :
+      `<img src="assets/images/Rx20_16x16_op1-1207.png" style="max-width: 60px;">`;
     return data as InvoiceData;
   }
 
