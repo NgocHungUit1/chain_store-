@@ -67,25 +67,25 @@
         <div class="invoice-info-row">
           <div class="invoice-info-field">
             <span class="invoice-field-label">Số HĐĐT:</span>
-            <strong>{{ einvoiceStatusData.invoice_info.einvoice_no || '' }}</strong>
+            <strong>{{ einvoiceStatusData?.invoice_info?.einvoice_no || '' }}</strong>
           </div>
         </div>
         <div class="invoice-info-row">
           <div class="invoice-info-field">
             <span class="invoice-field-label">Mã tra cứu:</span>
-            <strong>{{ einvoiceStatusData.invoice_info.einvoice_mtc || '' }}</strong>
+            <strong>{{ einvoiceStatusData?.invoice_info?.einvoice_mtc || '' }}</strong>
           </div>
         </div>
         <div class="invoice-info-row">
           <div class="invoice-info-field">
             <span class="invoice-field-label">Trạng thái thuế:</span>
-            <label class="label label-success">{{ einvoiceStatusData.bkav_status.tax_status_text || '' }}</label>
+            <label class="label label-success">{{ einvoiceStatusData?.bkav_status?.tax_status_text || '' }}</label>
           </div>
         </div>
         <div class="invoice-info-row">
           <div class="invoice-info-field">
             <span class="invoice-field-label">Mã cơ quan thuế:</span>
-            <strong>{{ einvoiceStatusData.bkav_status.tax_authority_code || '' }}</strong>
+            <strong>{{ einvoiceStatusData?.bkav_status?.tax_authority_code || '' }}</strong>
           </div>
         </div>
       </div>
