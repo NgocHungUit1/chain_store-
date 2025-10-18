@@ -242,7 +242,7 @@ export class Dashboard3Component implements OnInit {
           show: true,
         },
         fill: {
-          colors: ['#009688', '#1e88e5'],
+          colors: ['#1e88e5', '#009688'],
           opacity: 1
         },
         tooltip: {

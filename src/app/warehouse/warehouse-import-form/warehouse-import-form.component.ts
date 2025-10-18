@@ -1302,7 +1302,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           warehouseProduct.quantity = 1; // de nhap so lo
           warehouseProduct.price = (res['original_price'] !== null) ? numeral(res['original_price']).format('0,0') : 0;
           warehouseProduct.sell_price = (res['sell_price'] !== null) ? numeral(res['sell_price']).format('0,0') : 0;
-          warehouseProduct.inventory_quantity = res['quantity']['number'];
+          warehouseProduct.inventory_quantity = res['quantity'] ? res['quantity']['number'] : 0;
           warehouseProduct.discount = 0;
           warehouseProduct.discount_type = 'price';
           warehouseProduct.amount = (res['original_price'] !== null) ? res['original_price'] : 0;
@@ -1373,7 +1373,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         warehouseProduct.quantity = +this.selectQuantity.value;
         warehouseProduct.price = (res['original_price'] !== null) ? numeral(res['original_price']).format('0,0') : 0;
         warehouseProduct.sell_price = (res['sell_price'] !== null) ? numeral(res['sell_price']).format('0,0') : 0;
-        warehouseProduct.inventory_quantity = res['quantity']['number'];
+        warehouseProduct.inventory_quantity = res['quantity'] ? res['quantity']['number'] : 0;
         warehouseProduct.discount = 0;
         warehouseProduct.discount_type = 'price';
         warehouseProduct.amount = (res['original_price'] !== null) ? res['original_price'] : 0;
