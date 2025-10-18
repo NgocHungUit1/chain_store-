@@ -274,7 +274,7 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
       if (res['quantity'] === null) {
         res['quantity_of_stock'] = 0;
       } else {
-        res['quantity_of_stock'] = res['quantity']['number'];
+        res['quantity_of_stock'] = res['quantity'] ? res['quantity']['number'] : 0;
       }
       const stockTakeItem = new StockTakeItem();
       stockTakeItem.product_id = res['id'];
