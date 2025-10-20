@@ -2230,6 +2230,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     const storeData = {
       name: storeRes['name'] || 'Store Name',    // Adjust if property names differ
       address: storeRes['address'] || 'Store Address',
+      phone: storeRes['phone'] || 'SDT'
     };
 
     const today = formData.today instanceof Date ? formData.today : new Date();
@@ -2633,7 +2634,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
       Thong_Tin_Khach_Hang: customer_info,
       Ghi_Chu_Don_Hang: preInvoiceData?.note,
       VAT_Tong: numeral(preInvoiceData?.total_vat).format('0,0'),
-      Tong_Tien_Hang_Chua_VAT: numeral(preInvoiceData?.total_price).format('0,0')
+      Tong_Tien_Hang_Chua_VAT: numeral(preInvoiceData?.total_price).format('0,0'),
+      Loi_Chao_Cuoi: this.description
     }
     const QrCode = this.form.get('selectedMethod').value === 'Chuyển khoản' ? this.getQrCode(this.selectedBankAccount) : of(null);
     QrCode.subscribe((qrCode) => {

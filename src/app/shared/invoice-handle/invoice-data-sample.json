@@ -221,6 +221,10 @@
     "name": "VAT_Tong",
     "sampleValue": "6000",
     "meaning": "Thuế giá trị gia tăng toàn bộ đơn hàng"
-
+  },
+  {
+    "name": "Loi_Chao_Cuoi",
+    "sampleValue": "See you later",
+    "meaning": "Lời chào ở cuối hóa đơn"
   }
 ]

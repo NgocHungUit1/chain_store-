@@ -46,6 +46,7 @@ export interface InvoiceData {
   Ghi_Chu_Don_Hang: string;
   Tong_Tien_Hang_Chua_VAT: string;
   VAT_Tong: string;
+  Loi_Chao_Cuoi: string;
 }
 
 @Injectable({
