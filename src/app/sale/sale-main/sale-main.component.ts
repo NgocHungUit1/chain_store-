@@ -100,7 +100,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     private saleColumnVisibilityService: SaleColumnVisibilityService,
     private previewService: PreviewService,
     private invoiceTemplateService: InvoiceTemplateService,
-    private printService: PrintService
+    private printService: PrintService,
   ) {
     this.optionStoreService.getValue('point_enabled').subscribe(res => {
       this.isPointEnabled = res.value === 'true';
@@ -971,6 +971,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       this.handleActiveUser();
       this.loadPriceBookDefault();
     });
+
 
     this.userService.getStoreBranchList().subscribe(res => {
       this.branchList = res.body;
@@ -2227,12 +2228,12 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
     // Await store data
     const storeRes = await this.storeSer.getDetail().toPromise();
+    const adminRes = await this.userService.getProfile().toPromise();
     const storeData = {
       name: storeRes['name'] || 'Store Name',    // Adjust if property names differ
       address: storeRes['address'] || 'Store Address',
-      phone: storeRes['phone'] || 'SDT'
+      phone: adminRes['phone_number']??''
     };
-
     const today = formData.today instanceof Date ? formData.today : new Date();
     const createdAt = formData.today && formData.time
       ? `${this.dp.transform(today, 'yyyy-MM-dd')} ${formData.time}`
