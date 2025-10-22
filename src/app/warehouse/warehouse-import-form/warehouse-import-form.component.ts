@@ -1072,7 +1072,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     // check parcel
     const products = this.data;
     for (const product of products) {
-      if(product.product_parcels.length === 0) {
+      const productType = product?.product['product_type'] || 'medicine';
+      if (productType === 'merchandise') {
+        continue; // skip merchandise products
+      }
+
+      if (product.product_parcels.length === 0) {
         this.notifySer.notify('warning', `${product?.product['product_no']}: chưa nhập lô cho sản phẩm!`);
         this.isLoadingResults = false;
         this.submitted = false;
@@ -2450,6 +2455,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
   getParcelStatus(i) {
     const product = this.data[i];
+
+    const productType = product?.product['product_type'] || 'medicine';
+    if (productType === 'merchandise') {
+      return false;
+    }
+
     return product.product_parcels?.length === 0 && this.parcelItemControls.get(i)?.touched;
   }
 }
