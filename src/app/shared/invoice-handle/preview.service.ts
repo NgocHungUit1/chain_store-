@@ -33,6 +33,7 @@ export interface InvoiceData {
     So_Lo?: string;
     Ghi_Chu?: string;
     VAT: string;
+    Anh_San_Pham?: string;
   }>;
   Tong_Tien_Hang: string;
   Tong_Cong: string;
@@ -170,7 +171,8 @@ export class PreviewService {
         'STT',
         'So_Lo',
         'Ghi_Chu',
-        'VAT'
+        'VAT',
+        'Anh_San_Pham'
       ]
 
       // Generate rows for each item

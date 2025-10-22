@@ -2219,6 +2219,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       so_lo: item?.product_parcels&&item?.product_parcels.length>0? `SL: ${item.product_parcels[0].parcel_no}-HD: ${item.product_parcels[0].expiration_date}` : '',
       note: item?.note || '',
       vat_percent: item?.product?.vat_percent || 0,
+      image: item?.product?.default_image
     }));
     const totalPrice = this.useEinvoice ? this.sumPrice + this.sumVat : this.sumPrice;
 
@@ -2230,9 +2231,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
     const storeRes = await this.storeSer.getDetail().toPromise();
     const adminRes = await this.userService.getProfile().toPromise();
     const storeData = {
-      name: storeRes['name'] || 'Store Name',    // Adjust if property names differ
-      address: storeRes['address'] || 'Store Address',
-      phone: adminRes['phone_number']??''
+      name: storeRes['name'] || '',    // Adjust if property names differ
+      address: storeRes['address'] || '',
+      phone: adminRes['phone_number'] || ''
     };
     const today = formData.today instanceof Date ? formData.today : new Date();
     const createdAt = formData.today && formData.time
@@ -2595,17 +2596,17 @@ export class SaleMainComponent implements OnInit, DoCheck {
       Logo: this.logo? `<img src="${this.logo}" style="max-width: 60px;">` :
     `<img src="assets/images/Rx20_16x16_op1-1207.png" style="max-width: 60px;">`,
       Ten_Cua_Hang: preInvoiceData?.store?.name || 'Chi nhánh trung tâm',
-      Dia_Chi_Cua_Hang: preInvoiceData?.store?.address || 'Địa chỉ cửa hàng',
-      So_Dien_Thoai_Cua_Hang: preInvoiceData?.store?.phone || 'Số điện thoại cửa hàng',
+      Dia_Chi_Cua_Hang: preInvoiceData?.store?.address || '',
+      So_Dien_Thoai_Cua_Hang: preInvoiceData?.store?.phone || '',
       Tieu_De_In: preInvoiceData?.header|| 'HÓA ĐƠN BÁN HÀNG',
-      So_Hoa_Don: preInvoiceData?.invoice_no || 'Chưa lưu',
-      Ma_Don_Hang: preInvoiceData?.invoice_no || 'Chưa lưu',
+      So_Hoa_Don: preInvoiceData?.invoice_no || '',
+      Ma_Don_Hang: preInvoiceData?.invoice_no || '',
       Ngay: new Date(preInvoiceData?.created_at_iso).getDate().toString().padStart(2, '0'),
       Thang: (new Date(preInvoiceData?.created_at_iso).getMonth() + 1).toString().padStart(2, '0'),
       Nam: new Date(preInvoiceData?.created_at_iso).getFullYear().toString(),
       Ngay_Ban: new Date(preInvoiceData?.created_at_iso).toLocaleDateString('vi-VN'),
       Gio_Ban: new Date(preInvoiceData?.created_at_iso).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
-      Nhan_Vien: this.user?.username || 'Admin',
+      Nhan_Vien: this.user?.username || '',
       Khach_Hang: preInvoiceData?.customer?.name || 'Khách lẻ',
       So_Dien_Thoai: preInvoiceData?.customer?.phone || '',
       Dia_Chi_Khach_Hang: preInvoiceData?.customer?.address || '',
@@ -2622,8 +2623,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
         Don_Gia: numeral(item?.price || 0).format('0,0'),
         So_Lo: item?.so_lo || '',
         Ghi_Chu: item?.note || '',
-        VAT: item?.vat_percent
-
+        VAT: item?.vat_percent,
+        Anh_San_Pham: item?.image||'/assets/images/default-product.png',
       })) || [],
       Tong_Tien_Hang: numeral(numeral(preInvoiceData?.total_price || 0).value() + numeral(preInvoiceData?.total_vat).value()).format('0,0'),
       Tong_Cong: numeral(preInvoiceData?.sum_payment || 0).format('0,0'),
@@ -2636,7 +2637,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       Ghi_Chu_Don_Hang: preInvoiceData?.note,
       VAT_Tong: numeral(preInvoiceData?.total_vat).format('0,0'),
       Tong_Tien_Hang_Chua_VAT: numeral(preInvoiceData?.total_price).format('0,0'),
-      Loi_Chao_Cuoi: this.description
+      Loi_Chao_Cuoi: this.description,
     }
     const QrCode = this.form.get('selectedMethod').value === 'Chuyển khoản' ? this.getQrCode(this.selectedBankAccount) : of(null);
     QrCode.subscribe((qrCode) => {

@@ -77,7 +77,8 @@
         "Don_Gia": "15,000",
         "So_Lo": "123456",
         "Ghi_Chu": "Hàng chính hãng",
-        "VAT": "1000"
+        "VAT": "1000",
+        "Anh_San_Pham": "/assets/images/default-product.png"
       },
       {
         "STT": 2,
@@ -89,7 +90,8 @@
         "Don_Gia": "25,000",
         "So_Lo": "654321",
         "Ghi_Chu": "khuyến mãi 20%",
-        "VAT": "2000"
+        "VAT": "2000",
+        "Anh_San_Pham": "/assets/images/default-product.png"
       },
       {
         "STT": 3,
@@ -101,7 +103,8 @@
         "Don_Gia": "12,000",
         "So_Lo": "789012",
         "Ghi_Chu": "Sản phẩm mới",
-        "VAT": "3000"
+        "VAT": "3000",
+        "Anh_San_Pham": "/assets/images/default-product.png"
       }
 
     ],
@@ -143,7 +146,7 @@
     "meaning": "Tổng tiền bằng chữ"
   },
   {
-    "name": "Ten_San_Pham",
+    "name": "Ten_Hang_Hoa",
     "sampleValue": "Paracetamol 500mg",
     "meaning": "Tên sản phẩm"
   },
@@ -156,6 +159,11 @@
     "name": "Don_Gia",
     "sampleValue": "15,000",
     "meaning": "Đơn giá sản phẩm"
+  },
+  {
+    "name": "Don_Vi",
+    "sampleValue": "15,000",
+    "meaning": "Đơn vị sản phẩm"
   },
   {
     "name": "Thanh_Tien",
@@ -226,5 +234,10 @@
     "name": "Loi_Chao_Cuoi",
     "sampleValue": "See you later",
     "meaning": "Lời chào ở cuối hóa đơn"
+  },
+  {
+    "name": "Anh_San_Pham",
+    "sampleValue": "/image_default.png",
+    "meaning": "Ảnh của sản phẩm"
   }
 ]
