@@ -23,6 +23,7 @@ export interface InvoiceData {
   Dia_Chi_Khach_Hang: string;
   Phuong_Xa_Khach_Hang: string;
   Khu_Vuc_Khach_Hang_QH_TP: string;
+  Don_Vi_Co_Quan_Khach_Hang: string;
   items: Array<{
     Ten_Hang_Hoa: string;
     Don_Gia_Chiet_Khau: string;

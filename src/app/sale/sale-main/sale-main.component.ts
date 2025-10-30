@@ -47,6 +47,7 @@ import { ColumnVisibilityMap, SaleColumnVisibilityService } from '../../shared/s
 import { InvoiceData, PreviewService } from '../../shared/invoice-handle/preview.service';
 import { InvoiceTemplate, InvoiceTemplateService } from '../../shared/invoice-handle/invoice-template.service';
 import { PrintService } from '../../shared/invoice-handle/print.service';
+import { LocationService } from '../../location/location.service';
 export const MY_FORMATS = {
   parse: {
     dateInput: 'DD/MM/YYYY',
@@ -101,6 +102,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     private previewService: PreviewService,
     private invoiceTemplateService: InvoiceTemplateService,
     private printService: PrintService,
+    public locationSer: LocationService,
   ) {
     this.optionStoreService.getValue('point_enabled').subscribe(res => {
       this.isPointEnabled = res.value === 'true';
@@ -1232,7 +1234,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
   lookupCustomer(value: string): Observable<Customer[]> {
     if (value !== null) {
-      return this.customerService.autocomplete(value, 'total_point,total_invoice,total_debt').pipe(
+      return this.customerService.autocomplete(value, 'total_point,total_invoice,total_debt,province,ward').pipe(
         // map the item property of the github results as our return object
         map(results => results),
         // catch errors
@@ -2211,7 +2213,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     const activeInvoice = this.localItemInvoice || new ItemInvoice();
     const formData = this.form.getRawValue();
     const detail = this.listProduct.map(item => ({
-      product: { product_name: item.product.product_name },
+      product: { product_name: item.product.product_name, default_image: item.product?.default_image },
       base_unit: item.base_unit || null,
       price: item.common_price || item.product.sell_price || item.product.end_price || 0,
       amount: item.amount || 0,
@@ -2219,7 +2221,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
       so_lo: item?.product_parcels&&item?.product_parcels.length>0? `SL: ${item.product_parcels[0].parcel_no}-HD: ${item.product_parcels[0].expiration_date}` : '',
       note: item?.note || '',
       vat_percent: item?.product?.vat_percent || 0,
-      image: item?.product?.default_image
     }));
     const totalPrice = this.useEinvoice ? this.sumPrice + this.sumVat : this.sumPrice;
 
@@ -2239,7 +2240,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
     const createdAt = formData.today && formData.time
       ? `${this.dp.transform(today, 'yyyy-MM-dd')} ${formData.time}`
       : new Date().toLocaleString();
-
     return {
       store: storeData,
       customer: this.customer || activeInvoice.customer || { name: 'Khách lẻ', phone: '' },
@@ -2610,9 +2610,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
       Khach_Hang: preInvoiceData?.customer?.name || 'Khách lẻ',
       So_Dien_Thoai: preInvoiceData?.customer?.phone || '',
       Dia_Chi_Khach_Hang: preInvoiceData?.customer?.address || '',
-      Phuong_Xa_Khach_Hang: '', // Not available in sample data
-      Khu_Vuc_Khach_Hang_QH_TP: '', // Not available in sample data
-
+      Phuong_Xa_Khach_Hang: preInvoiceData?.customer?.ward?.name ||'', // Not available in sample data
+      Khu_Vuc_Khach_Hang_QH_TP: preInvoiceData?.customer?.province?.name ||'', // Not available in sample data
+      Don_Vi_Co_Quan_Khach_Hang: preInvoiceData?.customer?.company_name ||'',
       items: preInvoiceData.detail?.map((item, index) => ({
         STT: index+1,
         Ten_Hang_Hoa: item?.product?.product_name || '',
@@ -2624,7 +2624,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
         So_Lo: item?.so_lo || '',
         Ghi_Chu: item?.note || '',
         VAT: item?.vat_percent,
-        Anh_San_Pham: item?.image||'/assets/images/default-product.png',
+        Anh_San_Pham: item?.product?.default_image||'/assets/images/default-product.png',
       })) || [],
       Tong_Tien_Hang: numeral(numeral(preInvoiceData?.total_price || 0).value() + numeral(preInvoiceData?.total_vat).value()).format('0,0'),
       Tong_Cong: numeral(preInvoiceData?.sum_payment || 0).format('0,0'),
