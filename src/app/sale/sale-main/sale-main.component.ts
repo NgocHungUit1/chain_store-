@@ -968,7 +968,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     /**
      * Load user login
      */
-    this.userService.getUserLogin().subscribe(res => {
+    this.userService.getProfile().subscribe((res: any) => {
       this.user = res;
       this.handleActiveUser();
       this.loadPriceBookDefault();
@@ -1218,11 +1218,14 @@ export class SaleMainComponent implements OnInit, DoCheck {
           id: user?.id,
           username: user?.username,
           email: user?.email,
+          phone_number: user?.phone_number,
         };
 
         this.user.id = user?.id;
         this.user.username = user?.username;
         this.user.email = user?.email;
+        this.user.phone_number= user?.phone_number;
+
       }
     });
     this.orderService.setListInvoiceLocalStorage(listInvoice);
@@ -2230,17 +2233,19 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
     // Await store data
     const storeRes = await this.storeSer.getDetail().toPromise();
-    const adminRes = await this.userService.getProfile().toPromise();
+
+
+    // const adminRes = await this.userService.getProfile().toPromise();
     const storeData = {
       name: storeRes['name'] || '',    // Adjust if property names differ
       address: storeRes['address'] || '',
-      phone: adminRes['phone_number'] || ''
     };
     const today = formData.today instanceof Date ? formData.today : new Date();
     const createdAt = formData.today && formData.time
       ? `${this.dp.transform(today, 'yyyy-MM-dd')} ${formData.time}`
       : new Date().toLocaleString();
     return {
+      created_user: this.user,
       store: storeData,
       customer: this.customer || activeInvoice.customer || { name: 'Khách lẻ', phone: '' },
       detail: detail,
@@ -2591,13 +2596,12 @@ export class SaleMainComponent implements OnInit, DoCheck {
         customer_info += `<p>SĐT: ${customer_phone}</p>`;
       }
     }
-
     const dataToPrint: Partial<InvoiceData> = {
       Logo: this.logo? `<img src="${this.logo}" style="max-width: 60px;">` :
     `<img src="assets/images/Rx20_16x16_op1-1207.png" style="max-width: 60px;">`,
       Ten_Cua_Hang: preInvoiceData?.store?.name || 'Chi nhánh trung tâm',
       Dia_Chi_Cua_Hang: preInvoiceData?.store?.address || '',
-      So_Dien_Thoai_Cua_Hang: preInvoiceData?.store?.phone || '',
+      So_Dien_Thoai_Cua_Hang: preInvoiceData?.created_user?.phone_number || '',
       Tieu_De_In: preInvoiceData?.header|| 'HÓA ĐƠN BÁN HÀNG',
       So_Hoa_Don: preInvoiceData?.invoice_no || '',
       Ma_Don_Hang: preInvoiceData?.invoice_no || '',
