@@ -541,7 +541,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
 
     if (typeReport === 'parcel-stock') {
       this.isLoadingResults = true;
-      this.parcelSer.getList(this.parcelStockFilter).subscribe(res => {
+      this.parcelSer.getReportListWithStockCard(this.parcelStockFilter).subscribe(res => {
         this.dataSource = res.body;
         let stt = 0;
         this.dataSource.forEach(elementData => {
@@ -554,14 +554,15 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       });
 
       if (summary) {
-        this.parcelSer.getSummary(this.parcelStockFilter).subscribe(res => {
-          // this.sumExpirationOrQuantityOfStock = res.body.total_quantity_of_stock;
-          // this.sumImportQuantity = res.body.total_import_quantity;
-          // this.sumExportQuantity = res.body.total_export_quantity;
+        this.parcelSer.getReportSummaryWithStockCard(this.parcelStockFilter).subscribe(res => {
+          console.log(res.body);
+          this.sumExpirationOrQuantityOfStock = res.body.total_quantity_of_stock;
+          this.sumImportQuantity = res.body.total_import_quantity;
+          this.sumExportQuantity = res.body.total_export_quantity;
 
-          this.sumExpirationOrQuantityOfStock = res.body.quantity_of_stock;
-          this.sumImportQuantity = res.body.quantity;
-          this.sumExportQuantity = res.body.quantity - res.body.quantity_of_stock;
+          // this.sumExpirationOrQuantityOfStock = res.body.quantity_of_stock;
+          // this.sumImportQuantity = res.body.quantity;
+          // this.sumExportQuantity = res.body.quantity - res.body.quantity_of_stock;
         });
       }
 

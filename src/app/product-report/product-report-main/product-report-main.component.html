@@ -669,7 +669,7 @@
                     *matHeaderCellDef> {{columnsHeader['parcel_quantity']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                     {{element.quantity | number }}
+                     {{element.total_import_quantity | number }}
                   </span>
                 </td>
               </ng-container>
@@ -682,7 +682,7 @@
                     *matHeaderCellDef> {{columnsHeader['parcel_export']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                     {{element.quantity - element.quantity_of_stock | number }}
+                     {{element.total_export_quantity | number }}
                   </span>
                 </td>
               </ng-container>
@@ -709,7 +709,7 @@
                     *matHeaderCellDef> Hạn sử dụng</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                    {{element.expiration_date }}
+                    {{element?.warehouse_product_parcel?.expiration_date }}
                   </span>
                 </td>
               </ng-container>

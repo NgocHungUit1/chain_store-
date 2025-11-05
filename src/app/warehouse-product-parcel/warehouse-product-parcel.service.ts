@@ -83,6 +83,38 @@ export class WarehouseProductParcelService {
     return url;
   }
 
+  getApiReportListWithStockCard(filter?: WarehouseProductParcelFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/warehouse-product-parcel/get-report-list-with-stock-card?per-page=' + filter.pageSize;
+
+    url += '&' + filter.toFilterString();
+    return url;
+  }
+
+  getApiReportSummaryWithStockCard(filter?: WarehouseProductParcelFilter) {
+    if (!filter.page) {
+      filter.page = 1;
+    }
+
+    if (!filter.pageSize) {
+      filter.pageSize = 20;
+    }
+
+    let url = '/warehouse-product-parcel/get-report-summary-with-stock-card';
+
+    url += '?' + filter.toFilterString();
+    return url;
+  }
+
+
+
   getApiUrlSummaryExpiration(filter?: WarehouseProductParcelFilter) {
     if (!filter.page) {
       filter.page = 1;
@@ -193,6 +225,16 @@ export class WarehouseProductParcelService {
   getDetail(id: string, expand: string) {
     const url = environment.apiUrl + '/warehouse-product-parcel/' + id + '?expand=' + expand;
     return this.http.get<WarehouseProductParcel>(url);
+  }
+
+  getReportListWithStockCard(filter?: WarehouseProductParcelFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiReportListWithStockCard(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+  }
+
+  getReportSummaryWithStockCard(filter?: WarehouseProductParcelFilter): Observable<HttpResponse<any>> {
+    const url = environment.apiUrl + this.getApiReportSummaryWithStockCard(filter);
+    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
 }
