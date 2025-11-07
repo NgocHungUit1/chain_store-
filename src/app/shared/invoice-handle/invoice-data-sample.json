@@ -65,6 +65,11 @@
     "meaning": "Quận/Huyện, Tỉnh/TP khách hàng"
   },
   {
+    "name": "Don_Vi_Co_Quan_Khach_Hang",
+    "sampleValue": "Công ty ABC",
+    "meaning": "Đơn vị cơ quan của khách hàng"
+  },
+  {
     "name": "items",
     "sampleValue": [
       {
