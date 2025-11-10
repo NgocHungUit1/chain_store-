@@ -14,6 +14,8 @@ interface ProductRow {
   productId: string;
   productNo: string;
   productName: string;
+  parcelNo: string;
+  expirationDate: string;
   selectedLot: string;
   lotOptions: Parcel[];
   quantity: string;
@@ -167,6 +169,8 @@ export class QualityControlCreateModalComponent implements OnInit {
         productId: product.id.toString(),
         productNo: product.product_no,
         productName: product.product_name,
+        parcelNo: '',
+        expirationDate: '',
         selectedLot: '',
         lotOptions: parcels || [],
         quantity: '0',
@@ -231,9 +235,31 @@ export class QualityControlCreateModalComponent implements OnInit {
   }
 
   formatLotDisplay(parcel: Parcel): string {
-    const expirationDate = new Date(parcel.expiration_date);
-    const formattedDate = expirationDate.toLocaleDateString('vi-VN');
+    if (!parcel.expiration_date) {
+      return parcel.parcel_no;
+    }
+
+    // Xử lý format ngày từ API (có thể là YYYY-MM-DD hoặc timestamp)
+    let formattedDate = parcel.expiration_date;
+
+    // Nếu là format YYYY-MM-DD hoặc timestamp, convert sang MM/YY
+    const dateObj = new Date(parcel.expiration_date);
+    if (!isNaN(dateObj.getTime())) {
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const year = String(dateObj.getFullYear()).slice(-2); // Lấy 2 chữ số cuối của năm
+      formattedDate = `${month}/${year}`;
+    }
+
     return `${parcel.parcel_no} - ${formattedDate}`;
+  }
+
+  formatExpirationDate(expirationDate: string): string {
+    if (!expirationDate) {
+      return '';
+    }
+
+    // Trả về nguyên định dạng từ API (YYYY-MM-DD)
+    return expirationDate;
   }
 
   onClose(): void {
@@ -279,6 +305,8 @@ export class QualityControlCreateModalComponent implements OnInit {
           productId: detail.product_id.toString(),
           productNo: detail.product_info ? detail.product_info.product_no : '',
           productName: detail.product_info ? detail.product_info.product_name : '',
+          parcelNo: detail.parcel_no || '',
+          expirationDate: this.formatExpirationDate(detail.expiration_date),
           selectedLot: detail.parcel_no,
           lotOptions: [parcel], // Thêm lô đã chọn
           quantity: detail.quantity.toString(),
@@ -445,7 +473,8 @@ export class QualityControlCreateModalComponent implements OnInit {
   loadAllProducts(): void {
     this.isLoading = true;
     this.productService.getAllQualityControlProducts().subscribe({
-      next: (data) => {
+      next: (response) => {
+        const data = response.body || [];
         this.processAllProductsData(data);
         this.isLoading = false;
       },
@@ -467,10 +496,13 @@ export class QualityControlCreateModalComponent implements OnInit {
           return; // Skip this item
         }
 
+        // Lấy expiration_date từ warehouse_product_parcel nếu có
+        const expirationDate = item.warehouse_product_parcel?.expiration_date || item.expiration_date || '';
+
         const parcel: Parcel = {
-          id: item.id,
+          id: item.warehouse_product_parcel?.id || item.id,
           parcel_no: item.parcel_no,
-          expiration_date: item.expiration_date,
+          expiration_date: expirationDate,
           quantity_of_stock: item.quantity_of_stock
         };
 
@@ -480,6 +512,8 @@ export class QualityControlCreateModalComponent implements OnInit {
           productId: item.product?.id || '',
           productNo: item.product?.product_no || '',
           productName: item.product?.product_name || '',
+          parcelNo: item.parcel_no || '',
+          expirationDate: this.formatExpirationDate(expirationDate),
           selectedLot: item.parcel_no,
           lotOptions: [parcel],
           quantity: item.quantity_of_stock,
@@ -507,7 +541,8 @@ export class QualityControlCreateModalComponent implements OnInit {
     if (this.dateTo) filter.date_to = this.formatDate(this.dateTo);
     this.isLoading = true;
     this.productService.getAllQualityControlProducts(filter).subscribe({
-      next: (data) => {
+      next: (response) => {
+        const data = response.body || [];
         this.processAllProductsData(data);
         this.isLoading = false;
       },
