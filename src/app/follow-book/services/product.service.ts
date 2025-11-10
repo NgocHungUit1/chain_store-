@@ -141,6 +141,14 @@ export class ProductService {
       params = params.set('WarehouseProductParcelSearch[keyword]', filter.search_string);
     }
 
+    if (filter.date_from) {
+      params = params.set('WarehouseProductParcelSearch[date_from]', filter.date_from);
+    }
+
+    if (filter.date_to) {
+      params = params.set('WarehouseProductParcelSearch[date_to]', filter.date_to);
+    }
+
     return this.http.get(`${this.baseUrl}/warehouse-product-parcel`, {
       params,
       observe: 'response'
