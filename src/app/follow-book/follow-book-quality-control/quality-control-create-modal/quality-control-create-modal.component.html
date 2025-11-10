@@ -52,7 +52,8 @@
             <tr>
               <th>STT</th>
               <th>Mã/Tên sản phẩm</th>
-              <th>Lô-HSD</th>
+              <th>Số lô</th>
+              <th>Hạn dùng</th>
               <th>Số lượng</th>
               <th>Đơn vị tính</th>
               <th>Nhận xét</th>
@@ -71,13 +72,10 @@
                 </div>
               </td>
               <td>
-                <mat-form-field appearance="outline" class="lot-select">
-                  <mat-select [(ngModel)]="row.selectedLot" (selectionChange)="onLotChange(row)">
-                    <mat-option *ngFor="let lot of row.lotOptions" [value]="lot.parcel_no">
-                      {{formatLotDisplay(lot)}}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
+                <input type="text" [(ngModel)]="row.parcelNo" readonly class="form-input">
+              </td>
+              <td>
+                <input type="text" [(ngModel)]="row.expirationDate" readonly class="form-input">
               </td>
               <td>
                 <input type="text" [(ngModel)]="row.quantity" readonly class="form-input" [title]="'Số lượng tồn: ' + row.quantityOfStock">

@@ -147,12 +147,23 @@ export class ProductService {
     });
   }
 
-  getAllQualityControlProducts(filter: any = {}): Observable<any[]> {
+  getAllQualityControlProducts(filter: any = {}): Observable<any> {
+    const pageSize = filter.pageSize || 1000; // Lấy nhiều records để hiển thị đủ
+    const page = filter.page || 1;
+
     let params = new HttpParams()
+      .set('per-page', pageSize.toString())
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString())
       .set('expand', 'product')
       .set('WarehouseProductParcelSearch[hasStock]', '1');
+
     if (filter.date_from) params = params.set('WarehouseProductParcelSearch[date_from]', filter.date_from);
     if (filter.date_to) params = params.set('WarehouseProductParcelSearch[date_to]', filter.date_to);
-    return this.http.get<any[]>(`${this.baseUrl}/warehouse-product-parcel/quality-control`, { params });
+
+    return this.http.get(`${this.baseUrl}/warehouse-product-parcel/get-report-list-with-stock-card`, {
+      params,
+      observe: 'response'
+    });
   }
 }
