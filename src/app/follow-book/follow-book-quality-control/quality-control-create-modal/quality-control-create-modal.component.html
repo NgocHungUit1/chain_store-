@@ -38,9 +38,9 @@
           </button>
         </div>
         <div class="results-info">
-          Hiển thị {{filteredRows.length > 0 ? (currentPage-1)*pageSize + 1 : 0}} -
-          {{Math.min(currentPage*pageSize, filteredRows.length)}}
-          của {{filteredRows.length}} kết quả
+          Hiển thị {{totalItems > 0 ? (currentPage-1)*pageSize + 1 : 0}} -
+          {{Math.min(currentPage*pageSize, totalItems)}}
+          của {{totalItems}} kết quả
         </div>
       </div>
 
@@ -120,7 +120,7 @@
               </td>
             </tr>
 
-            <tr *ngIf="filteredRows.length === 0">
+            <tr *ngIf="productRows.length === 0">
               <td colspan="8" class="no-data">
                 <div>Không tìm thấy dữ liệu phù hợp</div>
               </td>
@@ -129,7 +129,7 @@
         </table>
       </div>
 
-      <div class="pagination-container" *ngIf="!isLoading && filteredRows.length > pageSize">
+      <div class="pagination-container" *ngIf="!isLoading && totalPages > 1">
         <button mat-icon-button [disabled]="currentPage === 1" (click)="changePage(1)">
           <mat-icon>first_page</mat-icon>
         </button>

@@ -43,10 +43,10 @@ export class QualityControlCreateModalComponent implements OnInit {
   isEdit = false;
   defaultQualityNote = 'Đạt';
   searchText = '';
-  filteredRows: ProductRow[] = [];
   pageSize = 10;
   currentPage = 1;
   totalPages = 1;
+  totalItems = 0;
   dateFrom: Date | null = null;
   dateTo: Date | null = null;
 
@@ -120,8 +120,8 @@ export class QualityControlCreateModalComponent implements OnInit {
       // Nếu là chế độ chỉnh sửa, load dữ liệu từ API thông qua data đã được truyền vào
       this.loadEditData();
     } else {
-      // Nếu là chế độ tạo mới, load tất cả sản phẩm
-      this.loadAllProducts();
+      // Nếu là chế độ tạo mới, load sản phẩm theo trang
+      this.loadProductsByPage();
     }
 
     // Add search listener
@@ -154,9 +154,6 @@ export class QualityControlCreateModalComponent implements OnInit {
         }
       });
     }
-
-    // Khởi tạo danh sách đã lọc
-    this.filteredRows = [...this.productRows];
   }
 
   async selectProduct(product: Product): Promise<void> {
@@ -200,38 +197,14 @@ export class QualityControlCreateModalComponent implements OnInit {
   }
 
   removeRow(index: number): void {
-    console.log('Removing row with index:', index);
-    console.log('Before removal - total rows:', this.productRows.length);
-
-    // Tìm và xóa dòng từ danh sách chính
     const rowIndex = this.productRows.findIndex(row => row.index === index);
     if (rowIndex !== -1) {
       this.productRows.splice(rowIndex, 1);
-
-      // Cập nhật lại STT cho tất cả các dòng
       this.productRows.forEach((row, i) => {
         row.index = i + 1;
       });
-
-      // Cập nhật lại danh sách đã lọc
-      this.filteredRows = [...this.productRows];
-
-      // Tính lại tổng số trang
-      this.totalPages = Math.ceil(this.filteredRows.length / this.pageSize);
-
-      // Đảm bảo trang hiện tại không vượt quá tổng số trang
-      if (this.currentPage > this.totalPages && this.totalPages > 0) {
-        this.currentPage = this.totalPages;
-      } else if (this.totalPages === 0) {
-        this.currentPage = 1;
-      }
-
-      // Hiển thị thông báo
       this.notifyService.notify('success', 'Đã xóa sản phẩm khỏi danh sách');
     }
-
-    console.log('After removal - total rows:', this.productRows.length);
-    console.log('Current page:', this.currentPage, 'Total pages:', this.totalPages);
   }
 
   formatLotDisplay(parcel: Parcel): string {
@@ -239,14 +212,11 @@ export class QualityControlCreateModalComponent implements OnInit {
       return parcel.parcel_no;
     }
 
-    // Xử lý format ngày từ API (có thể là YYYY-MM-DD hoặc timestamp)
     let formattedDate = parcel.expiration_date;
-
-    // Nếu là format YYYY-MM-DD hoặc timestamp, convert sang MM/YY
     const dateObj = new Date(parcel.expiration_date);
     if (!isNaN(dateObj.getTime())) {
       const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-      const year = String(dateObj.getFullYear()).slice(-2); // Lấy 2 chữ số cuối của năm
+      const year = String(dateObj.getFullYear()).slice(-2);
       formattedDate = `${month}/${year}`;
     }
 
@@ -257,8 +227,6 @@ export class QualityControlCreateModalComponent implements OnInit {
     if (!expirationDate) {
       return '';
     }
-
-    // Trả về nguyên định dạng từ API (YYYY-MM-DD)
     return expirationDate;
   }
 
@@ -267,11 +235,9 @@ export class QualityControlCreateModalComponent implements OnInit {
   }
 
   private loadEditData(): void {
-    // Lấy dữ liệu từ data đã được truyền vào
     const qualityCheck = this.data.qualityCheck;
     const qualityCheckDetail = this.data.qualityCheckDetail;
 
-    // Cập nhật thông tin form
     this.infoForm.patchValue({
       date: new Date(qualityCheck.date),
       title: qualityCheck.title || `Sổ kiểm soát chất lượng định kỳ đột xuất ngày ${this.formatDateForTitle(new Date(qualityCheck.date))}`,
@@ -279,18 +245,13 @@ export class QualityControlCreateModalComponent implements OnInit {
       note: qualityCheck.note || ''
     });
 
-    // Kiểm tra xem có dữ liệu chi tiết không
     if (qualityCheckDetail && qualityCheckDetail.details && qualityCheckDetail.details.length > 0) {
-      // Xử lý dữ liệu chi tiết
       this.isLoading = true;
-
-      // Chuyển đổi details thành productRows
       const details = qualityCheckDetail.details;
       this.currentIndex = 1;
       this.productRows = [];
 
       details.forEach(detail => {
-        // Tạo đối tượng Parcel
         const parcel: Parcel = {
           id: detail.warehouse_product_parcel_id,
           parcel_no: detail.parcel_no,
@@ -298,17 +259,16 @@ export class QualityControlCreateModalComponent implements OnInit {
           quantity_of_stock: detail.quantity.toString()
         };
 
-        // Tạo ProductRow
         const productRow: ProductRow = {
           index: this.currentIndex++,
-          id: detail.id, // ID của chi tiết để cập nhật
+          id: detail.id,
           productId: detail.product_id.toString(),
           productNo: detail.product_info ? detail.product_info.product_no : '',
           productName: detail.product_info ? detail.product_info.product_name : '',
           parcelNo: detail.parcel_no || '',
           expirationDate: this.formatExpirationDate(detail.expiration_date),
           selectedLot: detail.parcel_no,
-          lotOptions: [parcel], // Thêm lô đã chọn
+          lotOptions: [parcel],
           quantity: detail.quantity.toString(),
           quantityOfStock: detail.parcel_info ? detail.parcel_info.quantity_of_stock : '',
           unit: detail.product_info ? detail.product_info.base_unit : '',
@@ -321,11 +281,6 @@ export class QualityControlCreateModalComponent implements OnInit {
         this.productRows.push(productRow);
       });
 
-      // Cập nhật danh sách đã lọc và phân trang
-      this.filteredRows = [...this.productRows];
-      this.totalPages = Math.ceil(this.filteredRows.length / this.pageSize);
-      this.currentPage = 1;
-
       this.isLoading = false;
     } else {
       console.warn('No details found in quality check detail response');
@@ -334,7 +289,6 @@ export class QualityControlCreateModalComponent implements OnInit {
   }
 
   onSubmit(): void {
-    // Đảm bảo tất cả các dòng đều có giá trị mặc định
     this.productRows.forEach(row => {
       if (!row.qualityNote) {
         row.qualityNote = 'Đạt';
@@ -355,7 +309,7 @@ export class QualityControlCreateModalComponent implements OnInit {
           const selectedParcel = row.lotOptions.find(lot => lot.parcel_no === row.selectedLot);
 
           return {
-            id: this.isEdit && row.id ? row.id : undefined, // Sử dụng ID từ dữ liệu nếu là chế độ chỉnh sửa
+            id: this.isEdit && row.id ? row.id : undefined,
             product_id: parseInt(row.productId),
             warehouse_product_parcel_id: selectedParcel?.id,
             parcel_no: row.selectedLot,
@@ -368,9 +322,6 @@ export class QualityControlCreateModalComponent implements OnInit {
           };
         })
       };
-
-      // Log để kiểm tra
-      console.log('Submit payload:', payload);
 
       this.isLoading = true;
       const request = this.isEdit ?
@@ -401,7 +352,6 @@ export class QualityControlCreateModalComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
 
-  // Add new method to handle lot selection
   onLotChange(row: ProductRow): void {
     const selectedParcel = row.lotOptions.find(lot => lot.parcel_no === row.selectedLot);
     if (selectedParcel) {
@@ -411,23 +361,19 @@ export class QualityControlCreateModalComponent implements OnInit {
   }
 
   refreshData(): void {
-    // Implementation of refreshData method
   }
 
   onSearchInput(event: Event) {
-    // Clear previous timer
     if (this.searchTimer) {
       clearTimeout(this.searchTimer);
     }
 
-    // Get input value
     const input = event.target as HTMLInputElement;
     const keyword = input.value.trim();
 
-    // Set new timer with shorter delay
     this.searchTimer = setTimeout(() => {
       this.performSearch(keyword);
-    }, 100); // Giảm xuống 100ms thay vì 300ms
+    }, 100);
   }
 
   private performSearch(keyword: string) {
@@ -461,7 +407,6 @@ export class QualityControlCreateModalComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    // Focus vào input search sau khi modal được hiển thị
     setTimeout(() => {
       if (this.searchInput && this.searchInput.nativeElement) {
         this.searchInput.nativeElement.focus();
@@ -469,34 +414,48 @@ export class QualityControlCreateModalComponent implements OnInit {
     }, 300);
   }
 
-  // Thêm phương thức mới để load tất cả sản phẩm
-  loadAllProducts(): void {
+  loadProductsByPage(): void {
     this.isLoading = true;
-    this.productService.getAllQualityControlProducts().subscribe({
+
+    const filter: any = {
+      page: this.currentPage,
+      pageSize: this.pageSize
+    };
+
+    if (this.dateFrom) {
+      filter.date_from = this.formatDate(this.dateFrom);
+    }
+    if (this.dateTo) {
+      filter.date_to = this.formatDate(this.dateTo);
+    }
+
+    this.productService.getAllQualityControlProducts(filter).subscribe({
       next: (response) => {
         const data = response.body || [];
-        this.processAllProductsData(data);
+        this.totalItems = parseInt(response.headers.get('X-Pagination-Total-Count') || '0');
+        this.totalPages = Math.ceil(this.totalItems / this.pageSize);
+        this.processProductsData(data);
         this.isLoading = false;
       },
       error: (error) => {
+        console.error('Error loading products:', error);
         this.isLoading = false;
         this.notifyService.notify('error', 'Có lỗi xảy ra khi tải dữ liệu sản phẩm');
       }
     });
   }
 
-  processAllProductsData(data: any[]): void {
+  processProductsData(data: any[]): void {
     this.productRows = [];
-    this.currentIndex = 1;
+    this.currentIndex = (this.currentPage - 1) * this.pageSize + 1;
 
     if (Array.isArray(data)) {
       data.forEach(item => {
         if (!item.product) {
           console.warn('Product information missing:', item);
-          return; // Skip this item
+          return;
         }
 
-        // Lấy expiration_date từ warehouse_product_parcel nếu có
         const expirationDate = item.warehouse_product_parcel?.expiration_date || item.expiration_date || '';
 
         const parcel: Parcel = {
@@ -506,7 +465,6 @@ export class QualityControlCreateModalComponent implements OnInit {
           quantity_of_stock: item.quantity_of_stock
         };
 
-        // Tạo ProductRow để hiển thị
         const productRow: ProductRow = {
           index: this.currentIndex++,
           productId: item.product?.id || '',
@@ -528,72 +486,38 @@ export class QualityControlCreateModalComponent implements OnInit {
         this.productRows.push(productRow);
       });
     }
-
-    // Cập nhật danh sách đã lọc và phân trang
-    this.filteredRows = [...this.productRows];
-    this.totalPages = Math.ceil(this.filteredRows.length / this.pageSize);
-    this.currentPage = 1;
   }
 
   searchByDate() {
-    const filter: any = {};
-    if (this.dateFrom) filter.date_from = this.formatDate(this.dateFrom);
-    if (this.dateTo) filter.date_to = this.formatDate(this.dateTo);
-    this.isLoading = true;
-    this.productService.getAllQualityControlProducts(filter).subscribe({
-      next: (response) => {
-        const data = response.body || [];
-        this.processAllProductsData(data);
-        this.isLoading = false;
-      },
-      error: () => {
-        this.isLoading = false;
-        this.notifyService.notify('error', 'Có lỗi xảy ra khi tải dữ liệu sản phẩm');
-      }
-    });
+    this.currentPage = 1;
+    this.loadProductsByPage();
   }
 
-  // Thêm phương thức lọc dữ liệu
-  filterData(): void {
-    if (!this.searchText) {
-      this.filteredRows = [...this.productRows];
-    } else {
+  onSearch(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.searchText = input.value;
+  }
+
+  getCurrentPageRows(): ProductRow[] {
+    if (this.searchText) {
       const searchLower = this.searchText.toLowerCase();
-      this.filteredRows = this.productRows.filter(row =>
+      return this.productRows.filter(row =>
         row.productNo.toLowerCase().includes(searchLower) ||
         row.productName.toLowerCase().includes(searchLower)
       );
     }
-
-    // Cập nhật tổng số trang và reset về trang 1
-    this.totalPages = Math.ceil(this.filteredRows.length / this.pageSize);
-    this.currentPage = 1;
+    return this.productRows;
   }
 
-  // Phương thức xử lý sự kiện tìm kiếm
-  onSearch(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.searchText = input.value;
-    this.filterData();
-  }
-
-  // Phương thức lấy danh sách dòng cho trang hiện tại
-  getCurrentPageRows(): ProductRow[] {
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    return this.filteredRows.slice(startIndex, startIndex + this.pageSize);
-  }
-
-  // Phương thức chuyển trang
   changePage(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
+    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
       this.currentPage = page;
+      this.loadProductsByPage();
     }
   }
 
-  // Thêm Math object để sử dụng trong template
   Math = Math;
 
-  // Thêm phương thức formatDateForTitle
   formatDateForTitle(date: Date): string {
     return date.toLocaleDateString('vi-VN', {
       day: '2-digit',
