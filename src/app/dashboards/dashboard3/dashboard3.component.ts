@@ -191,10 +191,6 @@ export class Dashboard3Component implements OnInit {
       });
       console.log(this.recentlyHistories);
     });
-
-    setTimeout(() => {
-      this.openEInvoiceModalAuto();
-    }, 500);
   }
 
   getRevenueData(payload) {
@@ -372,15 +368,6 @@ export class Dashboard3Component implements OnInit {
     return 0;
   }
 
-  // Hàm này chỉ dùng cho auto show
-  public openEInvoiceModalAuto(): void {
-    if (localStorage.getItem('hideEInvoiceModal') === '1') {
-      return;
-    }
-    this.openEInvoiceModal();
-  }
-
-  // Hàm này luôn mở modal (dùng cho click)
   public openEInvoiceModal(): void {
     const dialogRef = this.dialog.open(EInvoiceModalComponent, {
       width: '600px',
