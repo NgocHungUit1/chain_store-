@@ -273,6 +273,22 @@ const MENUITEMS = [
       { state: 'hygiene', name: 'Sổ theo dõi vệ sinh', type: 'link', icon: 'person', permissions: ['Hygiene-Logbook.List'] },
     ]
   },
+  {
+    state: 'accounting-book',
+    name: 'Sổ kế toán HKD',
+    type: 'sub',
+    icon: 'account_balance',
+    permissions: ['Report.Stock', 'Warehouse-Product-Parcel.Tracking'],
+    children: [
+      {
+        state: 'stock-detail',
+        name: 'Sổ chi tiết VTDCSP, hàng hóa',
+        type: 'link',
+        icon: 'description',
+        permissions: ['Report.Stock']
+      }
+    ]
+  },
   // {
   //     state: 'material',
   //     name: 'Ui',

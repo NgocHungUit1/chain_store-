@@ -1,0 +1,248 @@
+<mat-sidenav-container class='custom-filter-container'>
+  <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true">
+    <mat-toolbar class="dv-header">
+      <label class='custom-filter-container__title'>Sổ chi tiết VTDCSP, hàng hóa</label>
+    </mat-toolbar>
+    <div class='custom-filter-container__div-container'>
+      <mat-accordion multi>
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Sản phẩm
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <form [formGroup]="filterForm">
+            <mat-radio-group formControlName="productFilter">
+              <mat-radio-button style="display: inline; " value="selected"
+                                color='primary'
+                                (click)="openProductDialog()">{{ titleProduct }}
+                <button mat-icon-button aria-label="select">
+                  <mat-icon>search</mat-icon>
+                </button>
+              </mat-radio-button>
+            </mat-radio-group>
+          </form>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="true" *ngIf="selectedProduct">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Số lô
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class="parcel-filter-container">
+            <form [formGroup]="filterForm">
+              <mat-radio-group formControlName="parcelFilter" class="parcel-radio-group">
+                <mat-radio-button
+                  *ngFor="let parcel of parcelList"
+                  [value]="parcel.parcel_no"
+                  color='primary'
+                  (change)="selectParcel(parcel)"
+                  class="parcel-radio-item">
+                  <div class="parcel-info">
+                    <span class="parcel-no">{{ parcel.parcel_no }}</span>
+                    <span class="parcel-details">
+                      SL: {{ parcel.quantity | number }} |
+                      HSD: {{ parcel.exp_date | date:'dd/MM/yyyy' }}
+                    </span>
+                  </div>
+                </mat-radio-button>
+              </mat-radio-group>
+            </form>
+
+            <div class="no-parcels" *ngIf="parcelList.length === 0">
+              <p>Không có số lô nào</p>
+            </div>
+          </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Thời gian
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <form [formGroup]="filterForm">
+            <mat-radio-group (change)="radioTimeChange($event)" formControlName="typeTime">
+              <mat-radio-button style="display: inline; " value="default"
+                                color='primary'
+                                (click)="openTimeDefault()">{{ titleTimeDefault }}
+                <button mat-icon-button aria-label="add">
+                  <mat-icon>swap_vert</mat-icon>
+                </button>
+              </mat-radio-button>
+              <mat-radio-button style="display: inline; " value="choose"
+                                (click)="openTimeChoose()">{{ titleTimeChoose }}
+                <button mat-icon-button aria-label="add">
+                  <mat-icon>date_range</mat-icon>
+                </button>
+              </mat-radio-button>
+            </mat-radio-group>
+          </form>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar class="dv-header">
+      <button mat-icon-button (click)="leftside.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <span class="spacer"></span>
+
+      <button mat-raised-button color="primary" (click)="exportToExcel()" [disabled]="!selectedProduct || dataSource.data.length === 0">
+        <mat-icon>cloud_download</mat-icon>
+        Xuất Excel
+      </button>
+    </mat-toolbar>
+
+    <div class="table-container">
+      <div class="loading-shade" *ngIf="isLoadingResults">
+        <mat-spinner></mat-spinner>
+      </div>
+
+      <div class="summary-section" *ngIf="dataSource.data.length > 0">
+        <h3>SỔ CHI TIẾT VẬT LIỆU, DỤNG CỤ, SẢN PHẨM, HÀNG HÓA</h3>
+        <h4>(Mẫu số S2-HKD)</h4>
+
+        <div class="product-info">
+          <p><strong>Sản phẩm:</strong> {{selectedProduct?.product_name}} ({{selectedProduct?.product_no}})</p>
+          <p><strong>Đơn vị tính:</strong> {{selectedProduct?.base_unit}}</p>
+        </div>
+      </div>
+
+      <table mat-table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="doc_no">
+          <th mat-header-cell *matHeaderCellDef>Chứng từ<br>Số hiệu</th>
+          <td mat-cell *matCellDef="let element">{{element.no}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="change_date">
+          <th mat-header-cell *matHeaderCellDef>Ngày</th>
+          <td mat-cell *matCellDef="let element">{{element.date | date:'dd/MM/yyyy'}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>Diễn giải</th>
+          <td mat-cell *matCellDef="let element">{{element.description}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="unit">
+          <th mat-header-cell *matHeaderCellDef>Đơn vị<br>tính</th>
+          <td mat-cell *matCellDef="let element">{{selectedProduct?.base_unit}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="import_price">
+          <th mat-header-cell *matHeaderCellDef class="column-number">Nhập<br>Đơn giá</th>
+          <td mat-cell *matCellDef="let element" class="column-number">
+            {{element.import_price ? (element.import_price | number) : ''}}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="import_quantity">
+          <th mat-header-cell *matHeaderCellDef class="column-number">Nhập<br>Số lượng</th>
+          <td mat-cell *matCellDef="let element" class="column-number">
+            {{element.import_quantity ? (element.import_quantity | number) : ''}}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="import_value">
+          <th mat-header-cell *matHeaderCellDef class="column-number">Nhập<br>Thành tiền</th>
+          <td mat-cell *matCellDef="let element" class="column-number">
+            {{element.import_value ? (element.import_value | number) : ''}}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="export_quantity">
+          <th mat-header-cell *matHeaderCellDef class="column-number">Xuất<br>Số lượng</th>
+          <td mat-cell *matCellDef="let element" class="column-number">
+            {{element.export_quantity ? (element.export_quantity | number) : ''}}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="export_value">
+          <th mat-header-cell *matHeaderCellDef class="column-number">Xuất<br>Thành tiền</th>
+          <td mat-cell *matCellDef="let element" class="column-number">
+            {{element.export_value ? (element.export_value | number) : ''}}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="balance_quantity">
+          <th mat-header-cell *matHeaderCellDef class="column-number">Tồn<br>Số lượng</th>
+          <td mat-cell *matCellDef="let element" class="column-number">
+            {{element.balance_quantity | number}}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="balance_value">
+          <th mat-header-cell *matHeaderCellDef class="column-number">Tồn<br>Thành tiền</th>
+          <td mat-cell *matCellDef="let element" class="column-number">
+            {{element.balance_value | number}}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <!-- Summary Section (outside table) -->
+      <div class="summary-table" *ngIf="dataSource.data.length > 0">
+        <table>
+          <tr class="summary-row-header">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="column-header">Đơn giá</td>
+            <td class="column-header">Số lượng</td>
+            <td class="column-header">Thành tiền</td>
+            <td class="column-header">Số lượng</td>
+            <td class="column-header">Thành tiền</td>
+            <td class="column-header">Số lượng</td>
+            <td class="column-header">Thành tiền</td>
+          </tr>
+          <tr class="summary-row-data">
+            <td colspan="4" class="summary-label">Cộng số phát sinh trong kỳ</td>
+            <td></td>
+            <td class="column-number summary-value">{{summaryData.total_import_quantity | number}}</td>
+            <td class="column-number summary-value">{{summaryData.total_import_value | number}}</td>
+            <td class="column-number summary-value">{{summaryData.total_export_quantity | number}}</td>
+            <td class="column-number summary-value">{{summaryData.total_export_value | number}}</td>
+            <td class="column-number"></td>
+            <td class="column-number"></td>
+          </tr>
+          <tr class="summary-row-data">
+            <td colspan="4" class="summary-label">Số dư cuối kỳ</td>
+            <td></td>
+            <td class="column-number"></td>
+            <td class="column-number"></td>
+            <td class="column-number"></td>
+            <td class="column-number"></td>
+            <td class="column-number summary-value">{{summaryData.closing_balance_quantity | number}}</td>
+            <td class="column-number summary-value">{{summaryData.closing_balance_value | number}}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="no-data-message" *ngIf="!isLoadingResults && dataSource.data.length === 0 && selectedProduct">
+        <mat-icon>info</mat-icon>
+        <p>Không có dữ liệu trong khoảng thời gian đã chọn</p>
+      </div>
+
+      <div class="no-product-message" *ngIf="!selectedProduct && !isLoadingResults">
+        <mat-icon>search</mat-icon>
+        <p>Vui lòng chọn sản phẩm để xem sổ chi tiết</p>
+      </div>
+
+      <mat-paginator #paginator
+                     [pageSize]='10'
+                     [pageSizeOptions]='[10, 25, 50, 100]'
+                     showFirstLastButtons></mat-paginator>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

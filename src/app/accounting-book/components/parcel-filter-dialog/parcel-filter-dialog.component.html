@@ -1,0 +1,42 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title>Chọn số lô</h2>
+
+  <mat-dialog-content>
+    <div class="loading-container" *ngIf="isLoading">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <div class="parcel-list" *ngIf="!isLoading && parcelList.length > 0">
+      <mat-selection-list [multiple]="false">
+        <mat-list-option
+          *ngFor="let parcel of parcelList"
+          [value]="parcel"
+          [selected]="selectedParcel?.parcel_no === parcel.parcel_no"
+          (click)="selectParcel(parcel)">
+          <div class="parcel-item">
+            <div class="parcel-main">
+              <span class="parcel-no">{{ parcel.parcel_no }}</span>
+              <span class="parcel-quantity">SL: {{ parcel.quantity }}</span>
+            </div>
+            <div class="parcel-details">
+              <span class="parcel-price">Giá: {{ parcel.original_price | number }} đ</span>
+              <span class="parcel-exp" *ngIf="parcel.exp_date">HSD: {{ parcel.exp_date | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+        </mat-list-option>
+      </mat-selection-list>
+    </div>
+
+    <div class="no-results" *ngIf="!isLoading && parcelList.length === 0">
+      <mat-icon>info</mat-icon>
+      <p>Không có lô hàng nào</p>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Hủy</button>
+    <button mat-raised-button color="primary" (click)="onConfirm()" [disabled]="!selectedParcel">
+      Xác nhận
+    </button>
+  </mat-dialog-actions>
+</div>
