@@ -13,7 +13,7 @@ import {ProductService} from '../product.service';
 export class IdCodeFormDialogComponent implements OnInit {
 
   local_data: any;
-  printProductData: [];
+  printProductData: any[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<IdCodeFormDialogComponent>,
@@ -32,7 +32,6 @@ export class IdCodeFormDialogComponent implements OnInit {
   onNoClick(): void {
     this.dialogRef.close();
   }
-
 
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -75,6 +74,12 @@ export class IdCodeFormDialogComponent implements OnInit {
     const data = this.form.getRawValue();
     data['type'] = type;
     data['productData'] = this.printProductData;
+    data['productData'].forEach(item => {
+      const selectedUnit = item['product_units'].find(unit => unit['id'] === item['selected_unit_id']);
+      if (selectedUnit) {
+        item['selected_unit'] = selectedUnit;
+      }
+    });
 
     this.productSer.getPdfBarcode(data).subscribe((res: any) => {
       if (res && res.success === true) {

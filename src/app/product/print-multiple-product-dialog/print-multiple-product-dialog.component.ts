@@ -45,7 +45,15 @@ export class PrintMultipleProductDialogComponent implements OnInit {
     const tmpData = [];
 
     this.selected.forEach(item => {
-      tmpData.push({'product_no': item['product_no'], 'product_name': item['product_name'], print_quantity: 1});
+      console.log(item);
+      tmpData.push(
+        {
+          product_no: item['product_no'],
+          product_name: item['product_name'],
+          print_quantity: 1,
+          selected_unit_id: item['productUnits'][0]['id'],
+          product_units: item['productUnits'],
+        });
     });
 
     this.tempData = tmpData;

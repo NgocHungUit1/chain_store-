@@ -44,6 +44,17 @@
             </mat-select>
           </mat-form-field>
 
+          <mat-form-field *ngIf="form.controls['in_don_vi'].value === 'yes' && printProductData.length === 1">
+            <mat-label>Đơn vị</mat-label>
+            <mat-select
+              [ngModelOptions]="{standalone: true}"
+              [(ngModel)]="printProductData[0]['selected_unit_id']">
+              <mat-option *ngFor="let item of printProductData[0]['product_units']" [value]="item.id">
+                {{item.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
           <mat-form-field>
             <mat-label>Cửa hàng</mat-label>
             <mat-select formControlName="in_ten_cua_hang">

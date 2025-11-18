@@ -119,7 +119,13 @@ export class ProductTabInfoComponent extends BaseComponent implements OnChanges 
 
   openIdCodeFormDialog(product) {
     const obj = {
-      printProductData: [{print_quantity: 30, product_no: product['product_no'], product_name: product['product_name']}],
+      printProductData: [{
+        print_quantity: 30,
+        product_no: product['product_no'],
+        product_name: product['product_name'],
+        selected_unit_id: product['productUnits'][0]['id'],
+        product_units: product['productUnits'],
+      }],
     };
 
     const dialogRef = this.dialog.open(IdCodeFormDialogComponent, {

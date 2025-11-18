@@ -13,8 +13,9 @@ mat-card-content.mat-card-content {
   margin-left: 10px;
 }
 
-.mat-column-actions, .mat-column-product_no, .mat-column-print_quantity {
+.mat-column-actions, .mat-column-product_no, .mat-column-quantity, .mat-column-unit {
   flex: 1 0 0%;
+  max-width: 100px;
 }
 .mat-column-product_name {
   flex: 3 0 0%;
