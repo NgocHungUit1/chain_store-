@@ -2863,14 +2863,14 @@ export class SaleMainComponent implements OnInit, DoCheck {
         this.submitted = false;
       });
     } else {
-      if (!this.isAdminStore) {
-        this.notifySer.notify(
-          'error',
-          'Bạn không có quyền thực hiện chức năng này.'
-        );
-        this.submitted = false;
-        return;
-      }
+      // if (!this.isAdminStore) {
+      //   this.notifySer.notify(
+      //     'error',
+      //     'Bạn không có quyền thực hiện chức năng này.'
+      //   );
+      //   this.submitted = false;
+      //   return;
+      // }
       this.isLoadingResults = true;
       this.orderService.updateOrder(dataInvoice).subscribe(res => {
         this.isLoadingResults = false;
@@ -3173,9 +3173,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
       indexPermission = this.allPermission?.indexOf('Invoice.Sale-Order');
     } else {
       indexPermission = this.allPermission?.indexOf('Invoice.Update-Order');
-      if (!this.isAdminStore) {
-        return true;
-      }
+      // if (!this.isAdminStore) {
+      //   return true;
+      // }
     }
     if (indexPermission !== -1) {
       return false;

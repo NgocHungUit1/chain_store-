@@ -201,7 +201,7 @@
           Mở lại
         </button>
         <button class="m-r-10" mat-raised-button color="primary"
-                [disabled]="checkPermissionDisable('Warehouse.Update') || !isAdminStore || (this.store.can_change_completed == 0 && model.status == '10')"
+                [disabled]="checkPermissionDisable('Warehouse.Update') || (this.store.can_change_completed == 0 && model.status == '10')"
                 (click)="reopen()" *ngIf="model.status === 10">
           <mat-icon>edit</mat-icon>
           Cập nhật
@@ -231,7 +231,7 @@
         <!--Sao chép-->
         <!--</button>-->
         <button class="m-r-10" mat-raised-button color="danger"
-                [disabled]="checkPermissionDisable('Warehouse.Delete') || !isAdminStore || (this.store.can_change_completed == 0 && model.status == '10')"
+                [disabled]="checkPermissionDisable('Warehouse.Delete') || (this.store.can_change_completed == 0 && model.status == '10')"
                 (click)="delete()" >
 <!--          *ngIf="model.status === 9"-->
           <mat-icon>delete</mat-icon>

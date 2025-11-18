@@ -1151,10 +1151,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         }
 
         if (this.updateModelId !== null) {
-          if (this.model['status'] === 10 && !this.isAdminStore) {
-            this.notifySer.notify('error', 'Bạn không có quyền thực hiện chức năng này.');
-            return;
-          }
+          // if (this.model['status'] === 10 && !this.isAdminStore) {
+          //   this.notifySer.notify('error', 'Bạn không có quyền thực hiện chức năng này.');
+          //   return;
+          // }
           // delete data['date'];
           // delete data['supplier'];
           this.mainService.update(this.updateModelId, data).subscribe(res => { //
