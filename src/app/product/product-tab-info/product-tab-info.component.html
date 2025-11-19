@@ -139,7 +139,7 @@
           </button>
 
           <button mat-icon-button [matMenuTriggerFor]="menuActions"
-                  [disabled]="!canDo('Warehouse.Update') || !isAdminStore">
+                  [disabled]="!canDo('Warehouse.Update')">
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #menuActions="matMenu" yPosition="above">
@@ -198,7 +198,7 @@
           </button>
 
           <button mat-icon-button [matMenuTriggerFor]="menuActions"
-                  [disabled]="!canDo('Warehouse.Update') || !isAdminStore">
+                  [disabled]="!canDo('Warehouse.Update')">
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #menuActions="matMenu" yPosition="above">

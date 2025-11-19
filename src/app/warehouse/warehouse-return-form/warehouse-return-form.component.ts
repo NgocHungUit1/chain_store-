@@ -323,11 +323,11 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
       data['status'] = status;
 
       if (this.updateModelId !== null) {
-        if (this.model['status'] === 10 && !this.isAdminStore) {
-          this.notifySer.notify('error', 'Bạn không có quyền thực hiện chức năng này.');
-          this.isLoadingResults = false;
-          return;
-        }
+        // if (this.model['status'] === 10 && !this.isAdminStore) {
+        //   this.notifySer.notify('error', 'Bạn không có quyền thực hiện chức năng này.');
+        //   this.isLoadingResults = false;
+        //   return;
+        // }
 
         delete data['date'];
         delete data['supplier'];

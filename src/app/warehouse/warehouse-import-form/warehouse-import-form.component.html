@@ -760,7 +760,7 @@
                 </button>
                 <button style='padding: 50px;' *ngIf="updateModelId !== null && model !== null && model['status'] === 10" mat-raised-button
                         color="primary" fxFlex="100" (click)="submit(10)"
-                        [disabled]="this.form.invalid || checkPermissionDisable('Warehouse.Update') || !isAdminStore"
+                        [disabled]="this.form.invalid || checkPermissionDisable('Warehouse.Update')"
                         tabindex="11">
                   <mat-icon>check</mat-icon>
                   Lưu sửa đổi
