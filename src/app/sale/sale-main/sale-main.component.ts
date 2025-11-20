@@ -2841,16 +2841,12 @@ export class SaleMainComponent implements OnInit, DoCheck {
         this.isLoadingResults = false;
         this.submitted = false;
         if (res !== false) {
-          if (res !== false) {
-            if (typeof res === 'number' && this.autoPrint === true) {
-              //this.printInvoice(res);
-              this.printInvoiceTemplateAuto(res);
-            }
-            this.resetDataSiderBar();
-            this.notifySer.notify('success', 'Lưu thành công !');
-          } else {
-            this.notifySer.notify('warning', 'Thất bại !');
+          if (typeof res === 'number' && this.autoPrint === true) {
+            //this.printInvoice(res);
+            this.printInvoiceTemplateAuto(res);
           }
+          this.resetDataSiderBar();
+          this.notifySer.notify('success', 'Lưu thành công !');
         } else {
           this.notifySer.notify('warning', 'Thất bại !');
         }
@@ -3055,7 +3051,12 @@ export class SaleMainComponent implements OnInit, DoCheck {
         time: time,
         total_amount: 0,
         noteSiderBar: '',
+        customerPay: 0
       });
+      this.customerPay = 0;
+      this.selectedAmount = null;
+      this.tienThuaTraKhach = 0;
+      this.tienKhachNo = 0;
     }, 500);
   }
 
@@ -3818,7 +3819,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
   updateCustomerPay(amount: number): void {
     // Update the customerPay form control with the selected amount
     this.form.get('customerPay')?.setValue(numeral(amount.toString()).format('0,0'));
-
     this.tinhLaiTienThua();
   }
 
