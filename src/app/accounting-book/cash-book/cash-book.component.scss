@@ -1,0 +1,277 @@
+.custom-filter-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+}
+
+.left-sidebar {
+  width: 300px;
+}
+
+.custom-filter-container__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.custom-filter-container__div-container {
+  padding: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.dv-header {
+  background-color: #fff;
+  color: rgba(0, 0, 0, 0.87);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  height: 64px;
+  padding: 0 16px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.table-container {
+  position: relative;
+  flex: 1;
+  overflow: auto;
+  min-height: 400px;
+  background: white;
+  border-radius: 4px;
+  margin: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.summary-section {
+  padding: 20px;
+  border-bottom: 2px solid #e0e0e0;
+  background: #fff;
+
+  h3 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    text-transform: uppercase;
+    color: #333;
+  }
+
+  .date-info {
+    padding: 12px;
+    border-radius: 4px;
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+
+    p {
+      margin: 6px 0;
+      font-size: 14px;
+      color: #333;
+
+      strong {
+        color: #333;
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+.data-count {
+  padding: 12px 20px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+  }
+}
+
+.opening-balance-row {
+  padding: 12px 0;
+  border-bottom: 2px solid #dcf4fc;
+  background-color: #f5f5f5;
+
+  .opening-balance-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    td {
+      padding: 8px 12px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .opening-label {
+      font-weight: 600;
+      color: #333;
+      padding-left: 16px;
+    }
+
+    .opening-amount {
+      font-weight: 600;
+      color: #333;
+      text-align: right;
+    }
+  }
+}
+
+table {
+  width: 100%;
+  min-width: 1200px;
+
+  th.mat-header-cell {
+    background-color: #dcf4fc;
+    color: rgba(0, 0, 0, 0.6);
+    font-weight: 600;
+    font-size: 13px;
+    border: 1px solid #e0e0e0;
+    padding: 8px 12px;
+    text-align: center;
+  }
+
+  td.mat-cell {
+    border: 1px solid #e0e0e0;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  tr:hover td {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+
+  .sub-header {
+    font-size: 12px;
+    font-weight: 500;
+  }
+}
+
+.column-number {
+  text-align: right !important;
+}
+
+// Summary section styling (like cash-flow-list)
+.summary {
+  background-color: #fafafa;
+}
+
+.item-header, .item-value {
+  text-align: right;
+  font-size: 1.2rem;
+  padding-right: 10px;
+}
+
+.item-header {
+  font-weight: bold;
+}
+
+.item-value {
+  margin-top: -10px;
+}
+
+.no-data-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #999;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    color: #ccc;
+  }
+
+  p {
+    font-size: 16px;
+    margin: 0;
+  }
+}
+
+mat-paginator {
+  border-top: 1px solid #e0e0e0;
+}
+
+mat-expansion-panel {
+  margin-bottom: 8px;
+}
+
+mat-form-field {
+  margin-bottom: 8px;
+}
+
+// Set exact widths to match summary table
+.mat-column-entry_date {
+  width: 120px;
+  min-width: 120px;
+}
+
+.mat-column-voucher_date {
+  width: 120px;
+  min-width: 120px;
+}
+
+.mat-column-receipt_no {
+  width: 100px;
+  min-width: 100px;
+}
+
+.mat-column-payment_no {
+  width: 100px;
+  min-width: 100px;
+}
+
+.mat-column-description {
+  width: 200px;
+  min-width: 200px;
+}
+
+.mat-column-receipt_amount {
+  width: 120px;
+  min-width: 120px;
+}
+
+.mat-column-payment_amount {
+  width: 120px;
+  min-width: 120px;
+}
+
+.mat-column-balance {
+  width: 120px;
+  min-width: 120px;
+}
+
+.mat-column-note {
+  width: 150px;
+  min-width: 150px;
+}
+

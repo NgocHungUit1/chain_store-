@@ -96,4 +96,122 @@ export class AccountingBookService {
       responseType: 'blob'
     });
   }
+
+  getCashFlow(filter: { date_from?: string; date_to?: string }, page: number = 1, pageSize: number = 20): Observable<any> {
+    let params = new HttpParams()
+      .set('per-page', pageSize.toString())
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString())
+      .set('expand', 'createdFormat,code,items,balance')
+      .set('CashFlowSearch[type]', 'payment,receipt')
+      .set('type_money', 'money');
+
+    if (filter?.date_from) {
+      params = params.set('CashFlowSearch[date_from]', filter.date_from);
+    }
+
+    if (filter?.date_to) {
+      params = params.set('CashFlowSearch[date_to]', filter.date_to);
+    }
+
+    return this.http.get<any>(`${this.baseUrl}/cash-flow`, { params, observe: 'response' });
+  }
+
+  getCashFlowSummary(filter: { date_from?: string; date_to?: string }): Observable<any> {
+    let params = new HttpParams()
+      .set('per-page', '20')
+      .set('page', '1')
+      .set('pageSize', '20')
+      .set('expand', 'createdFormat,code,items')
+      .set('CashFlowSearch[type]', 'payment,receipt')
+      .set('type_money', 'money');
+
+    if (filter?.date_from) {
+      params = params.set('CashFlowSearch[date_from]', filter.date_from);
+    }
+
+    if (filter?.date_to) {
+      params = params.set('CashFlowSearch[date_to]', filter.date_to);
+    }
+
+    return this.http.get<any>(`${this.baseUrl}/cash-flow/summary`, { params });
+  }
+
+  exportCashFlow(filter: { date_from?: string; date_to?: string }): Observable<Blob> {
+    let params = new HttpParams()
+      .set('CashFlowSearch[type]', 'payment,receipt')
+      .set('type_money', 'money');
+
+    if (filter?.date_from) {
+      params = params.set('CashFlowSearch[date_from]', filter.date_from);
+    }
+
+    if (filter?.date_to) {
+      params = params.set('CashFlowSearch[date_to]', filter.date_to);
+    }
+
+    return this.http.get(`${this.baseUrl}/cash-flow/export-s6`, {
+      params,
+      responseType: 'blob'
+    });
+  }
+
+  getBankFlow(filter: { date_from?: string; date_to?: string }, page: number = 1, pageSize: number = 20): Observable<any> {
+    let params = new HttpParams()
+      .set('per-page', pageSize.toString())
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString())
+      .set('expand', 'createdFormat,code,items,balance')
+      .set('CashFlowSearch[type]', 'payment,receipt')
+      .set('type_money', 'bank');
+
+    if (filter?.date_from) {
+      params = params.set('CashFlowSearch[date_from]', filter.date_from);
+    }
+
+    if (filter?.date_to) {
+      params = params.set('CashFlowSearch[date_to]', filter.date_to);
+    }
+
+    return this.http.get<any>(`${this.baseUrl}/cash-flow`, { params, observe: 'response' });
+  }
+
+  getBankFlowSummary(filter: { date_from?: string; date_to?: string }): Observable<any> {
+    let params = new HttpParams()
+      .set('per-page', '20')
+      .set('page', '1')
+      .set('pageSize', '20')
+      .set('expand', 'createdFormat,code,items')
+      .set('CashFlowSearch[type]', 'payment,receipt')
+      .set('type_money', 'bank');
+
+    if (filter?.date_from) {
+      params = params.set('CashFlowSearch[date_from]', filter.date_from);
+    }
+
+    if (filter?.date_to) {
+      params = params.set('CashFlowSearch[date_to]', filter.date_to);
+    }
+
+    return this.http.get<any>(`${this.baseUrl}/cash-flow/summary`, { params });
+  }
+
+  exportBankFlow(filter: { date_from?: string; date_to?: string }): Observable<Blob> {
+    let params = new HttpParams()
+      .set('CashFlowSearch[type]', 'payment,receipt')
+      .set('type_money', 'bank');
+
+    if (filter?.date_from) {
+      params = params.set('CashFlowSearch[date_from]', filter.date_from);
+    }
+
+    if (filter?.date_to) {
+      params = params.set('CashFlowSearch[date_to]', filter.date_to);
+    }
+
+    return this.http.get(`${this.baseUrl}/cash-flow/export-s7`, {
+      params,
+      responseType: 'blob'
+    });
+  }
 }

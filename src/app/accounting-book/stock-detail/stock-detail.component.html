@@ -106,15 +106,7 @@
         <mat-spinner></mat-spinner>
       </div>
 
-      <div class="summary-section" *ngIf="dataSource.data.length > 0">
-        <h3>SỔ CHI TIẾT VẬT LIỆU, DỤNG CỤ, SẢN PHẨM, HÀNG HÓA</h3>
-        <h4>(Mẫu số S2-HKD)</h4>
 
-        <div class="product-info">
-          <p><strong>Sản phẩm:</strong> {{selectedProduct?.product_name}} ({{selectedProduct?.product_no}})</p>
-          <p><strong>Đơn vị tính:</strong> {{selectedProduct?.base_unit}}</p>
-        </div>
-      </div>
 
       <table mat-table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="doc_no">
