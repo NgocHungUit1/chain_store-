@@ -86,6 +86,7 @@
               <td>
                 <mat-form-field appearance="outline" class="full-width">
                   <input type="text" matInput [(ngModel)]="row.reason"
+                         (ngModelChange)="onFieldChange(row)"
                          [matAutocomplete]="reasonAuto"
                          placeholder="Nhập nhận xét">
                   <mat-autocomplete #reasonAuto="matAutocomplete">
@@ -98,6 +99,7 @@
               <td>
                 <mat-form-field appearance="outline" class="full-width">
                   <input type="text" matInput [(ngModel)]="row.qualityNote"
+                         (ngModelChange)="onFieldChange(row)"
                          [matAutocomplete]="qualityAuto"
                          placeholder="Nhập nhận xét">
                   <mat-autocomplete #qualityAuto="matAutocomplete">
