@@ -84,6 +84,7 @@ export class ItemInvoice {
   total_amount_with_vat: number;
   national_pharmacy_no: string;
   use_einvoice: boolean;
+  hasChangedCustomerPay: boolean;
 }
 
 export class ListInvoice {
