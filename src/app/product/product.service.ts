@@ -91,7 +91,7 @@ export class ProductService {
 
   removeImage(id: string, imageId: string) {
     const url = environment.apiUrl + '/product/remove-image';
-    return this.http.post(url, {product_id: id, image_id: id});
+    return this.http.post(url, {product_id: id, image_id: imageId});
   }
 
   delete(id: string) {
