@@ -294,13 +294,13 @@ const MENUITEMS = [
         icon: 'account_balance_wallet',
         permissions: ['Cash-Flow.List']
       },
-      // {
-      //   state: 'bank-book',
-      //   name: 'S7-HKD: Sổ tiền gửi ngân hàng',
-      //   type: 'link',
-      //   icon: 'account_balance',
-      //   permissions: ['Cash-Flow.List']
-      // }
+      {
+        state: 'bank-book',
+        name: 'S7-HKD: Sổ tiền gửi ngân hàng',
+        type: 'link',
+        icon: 'account_balance',
+        permissions: ['Cash-Flow.List']
+      }
     ]
   },
   // {

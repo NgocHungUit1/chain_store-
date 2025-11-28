@@ -25,6 +25,7 @@ interface StockCardDisplay extends StockCard {
   export_value?: number;
   balance_quantity?: number;
   balance_value?: number;
+  description?: string;
 }
 
 @Component({
