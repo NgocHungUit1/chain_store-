@@ -1,0 +1,49 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title>Chọn sản phẩm</h2>
+
+  <mat-dialog-content>
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Tìm kiếm sản phẩm</mat-label>
+      <input matInput
+             [formControl]="searchControl"
+             placeholder="Nhập tên hoặc mã sản phẩm"
+             autocomplete="off">
+      <mat-icon matPrefix>search</mat-icon>
+      <button mat-icon-button matSuffix (click)="clearSearch()" *ngIf="searchControl.value">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <div class="loading-container" *ngIf="isLoading">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <div class="product-list" *ngIf="!isLoading && productList.length > 0">
+      <mat-selection-list [multiple]="false">
+        <mat-list-option
+          *ngFor="let product of productList"
+          [value]="product"
+          [selected]="selectedProduct?.id === product.id"
+          (click)="selectProduct(product)">
+          <div class="product-item">
+            <span class="product-no">{{ product.product_no }}</span>
+            <span class="product-name">{{ product.product_name }}</span>
+            <span class="product-unit">({{ product.base_unit }})</span>
+          </div>
+        </mat-list-option>
+      </mat-selection-list>
+    </div>
+
+    <div class="no-results" *ngIf="!isLoading && productList.length === 0">
+      <mat-icon>info</mat-icon>
+      <p>Không tìm thấy sản phẩm phù hợp</p>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Hủy</button>
+    <button mat-raised-button color="primary" (click)="onConfirm()" [disabled]="!selectedProduct">
+      Xác nhận
+    </button>
+  </mat-dialog-actions>
+</div>

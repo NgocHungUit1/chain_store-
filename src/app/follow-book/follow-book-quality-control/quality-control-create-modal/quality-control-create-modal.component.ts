@@ -38,7 +38,7 @@ export class QualityControlCreateModalComponent implements OnInit {
   infoForm: FormGroup;
   searchResults: Product[] = [];
   isLoading = false;
-  productRows: ProductRow[] = [];
+  productRows: ProductRow[] = []; // Hiển thị trên UI (phân trang)
   currentIndex = 1;
   isEdit = false;
   defaultQualityNote = 'Đạt';
@@ -49,6 +49,14 @@ export class QualityControlCreateModalComponent implements OnInit {
   totalItems = 0;
   dateFrom: Date | null = null;
   dateTo: Date | null = null;
+
+  // Map để lưu user input (chỉ lưu những gì user THAY ĐỔI)
+  userInputMap = new Map<number, {
+    qualityNote: string;
+    qualityClassification: string;
+    result: number;
+    reason: string;
+  }>();
 
   // Thêm các tùy chọn cứng
   reasonOptions = [
@@ -120,7 +128,7 @@ export class QualityControlCreateModalComponent implements OnInit {
       // Nếu là chế độ chỉnh sửa, load dữ liệu từ API thông qua data đã được truyền vào
       this.loadEditData();
     } else {
-      // Nếu là chế độ tạo mới, load sản phẩm theo trang
+      // Nếu là chế độ tạo mới, load phân trang bình thường
       this.loadProductsByPage();
     }
 
@@ -200,9 +208,6 @@ export class QualityControlCreateModalComponent implements OnInit {
     const rowIndex = this.productRows.findIndex(row => row.index === index);
     if (rowIndex !== -1) {
       this.productRows.splice(rowIndex, 1);
-      this.productRows.forEach((row, i) => {
-        row.index = i + 1;
-      });
       this.notifyService.notify('success', 'Đã xóa sản phẩm khỏi danh sách');
     }
   }
@@ -289,60 +294,163 @@ export class QualityControlCreateModalComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.productRows.forEach(row => {
-      if (!row.qualityNote) {
-        row.qualityNote = 'Đạt';
+    if (!this.infoForm.valid) {
+      this.notifyService.notify('error', 'Vui lòng điền đầy đủ thông tin');
+      return;
+    }
+
+    // Nếu là chế độ edit, submit với productRows
+    if (this.isEdit) {
+      this.submitData(this.productRows);
+      return;
+    }
+
+    // Nếu là chế độ tạo mới, lưu user input của page hiện tại trước
+    this.saveCurrentPageUserInput();
+
+    // Load TẤT CẢ data từ API
+    this.isLoading = true;
+    const filter: any = {
+      page: 1,
+      pageSize: 10000 // Load hết
+    };
+
+    if (this.dateFrom) {
+      filter.date_from = this.formatDate(this.dateFrom);
+    }
+    if (this.dateTo) {
+      filter.date_to = this.formatDate(this.dateTo);
+    }
+
+    this.productService.getAllQualityControlProducts(filter).subscribe({
+      next: (response) => {
+        const allData = response.body || [];
+
+        // Merge với userInputMap
+        const mergedData = this.mergeDataWithUserInput(allData);
+
+        // Submit merged data
+        this.submitData(mergedData);
+      },
+      error: (error) => {
+        console.error('Error loading all products:', error);
+        this.isLoading = false;
+        this.notifyService.notify('error', 'Có lỗi xảy ra khi tải dữ liệu');
       }
     });
+  }
 
-    if (this.infoForm.valid && this.productRows.length > 0) {
-      const formattedDate = this.formatDate(this.infoForm.get('date')?.value);
+  private saveCurrentPageUserInput(): void {
+    // Lưu user input từ page hiện tại vào Map
+    this.productRows.forEach(row => {
+      this.userInputMap.set(row.index, {
+        qualityNote: row.qualityNote,
+        qualityClassification: row.qualityClassification,
+        result: row.result,
+        reason: row.reason
+      });
+    });
+  }
 
-      const payload = {
-        no: this.isEdit ? this.data.qualityCheck.no : '',
-        date: formattedDate,
-        title: this.infoForm.get('title')?.value,
-        reason: this.infoForm.get('reason')?.value,
-        note: this.infoForm.get('note')?.value,
-        status: QualityCheckStatus.COMPLETED,
-        details: this.productRows.map(row => {
-          const selectedParcel = row.lotOptions.find(lot => lot.parcel_no === row.selectedLot);
+  private mergeDataWithUserInput(allData: any[]): ProductRow[] {
+    const mergedRows: ProductRow[] = [];
+    let index = 1;
 
-          return {
-            id: this.isEdit && row.id ? row.id : undefined,
-            product_id: parseInt(row.productId),
-            warehouse_product_parcel_id: selectedParcel?.id,
-            parcel_no: row.selectedLot,
-            expiration_date: selectedParcel?.expiration_date,
-            quantity: parseInt(row.quantity),
-            result: row.result,
-            note: row.reason,
-            quality_comment: row.qualityNote,
-            quality_classification: row.qualityClassification
-          };
-        })
+    allData.forEach(item => {
+      if (!item.product) {
+        return;
+      }
+
+      const expirationDate = item.warehouse_product_parcel?.expiration_date || item.expiration_date || '';
+
+      const parcel: Parcel = {
+        id: item.warehouse_product_parcel?.id || item.id,
+        parcel_no: item.parcel_no,
+        expiration_date: expirationDate,
+        quantity_of_stock: item.quantity_of_stock
       };
 
-      this.isLoading = true;
-      const request = this.isEdit ?
-        this.productService.updateQualityControl(this.data.qualityCheck.id, payload) :
-        this.productService.createQualityControl(payload);
+      // Lấy user input nếu có
+      const userInput = this.userInputMap.get(index);
 
-      request.subscribe({
-        next: (response) => {
-          this.notifyService.notify('success', this.isEdit ? 'Cập nhật thành công' : 'Tạo mới thành công');
-          this.dialogRef.close(response);
-        },
-        error: (error) => {
-          console.error('Error:', error);
-          this.notifyService.notify('error', this.isEdit ? 'Có lỗi xảy ra khi cập nhật' : 'Có lỗi xảy ra khi tạo mới');
-          this.isLoading = false;
-        },
-        complete: () => {
-          this.isLoading = false;
-        }
-      });
+      const productRow: ProductRow = {
+        index: index,
+        productId: item.product?.id || '',
+        productNo: item.product?.product_no || '',
+        productName: item.product?.product_name || '',
+        parcelNo: item.parcel_no || '',
+        expirationDate: this.formatExpirationDate(expirationDate),
+        selectedLot: item.parcel_no,
+        lotOptions: [parcel],
+        quantity: item.quantity_of_stock,
+        quantityOfStock: item.quantity_of_stock,
+        unit: item.product?.base_unit || '',
+        reason: userInput?.reason || '',
+        qualityNote: userInput?.qualityNote || this.defaultQualityNote,
+        result: userInput?.result || 1,
+        qualityClassification: userInput?.qualityClassification || 'Loại A'
+      };
+
+      mergedRows.push(productRow);
+      index++;
+    });
+
+    return mergedRows;
+  }
+
+  private submitData(rowsToSubmit: ProductRow[]): void {
+    if (rowsToSubmit.length === 0) {
+      this.notifyService.notify('error', 'Không có dữ liệu để tạo');
+      this.isLoading = false;
+      return;
     }
+
+    const formattedDate = this.formatDate(this.infoForm.get('date')?.value);
+
+    const payload = {
+      no: this.isEdit ? this.data.qualityCheck.no : '',
+      date: formattedDate,
+      title: this.infoForm.get('title')?.value,
+      reason: this.infoForm.get('reason')?.value,
+      note: this.infoForm.get('note')?.value,
+      status: QualityCheckStatus.COMPLETED,
+      details: rowsToSubmit.map(row => {
+        const selectedParcel = row.lotOptions.find(lot => lot.parcel_no === row.selectedLot);
+
+        return {
+          id: this.isEdit && row.id ? row.id : undefined,
+          product_id: parseInt(row.productId),
+          warehouse_product_parcel_id: selectedParcel?.id,
+          parcel_no: row.selectedLot,
+          expiration_date: selectedParcel?.expiration_date,
+          quantity: parseInt(row.quantity),
+          result: row.result,
+          note: row.reason,
+          quality_comment: row.qualityNote || 'Đạt',
+          quality_classification: row.qualityClassification
+        };
+      })
+    };
+
+    this.isLoading = true;
+    const request = this.isEdit ?
+      this.productService.updateQualityControl(this.data.qualityCheck.id, payload) :
+      this.productService.createQualityControl(payload);
+
+    request.subscribe({
+      next: (response) => {
+        this.notifyService.notify('success', this.isEdit ? 'Cập nhật thành công' : 'Tạo mới thành công');
+        this.dialogRef.close(response);
+      },
+      error: (error) => {
+        console.error('Error:', error);
+        this.notifyService.notify('error', this.isEdit ? 'Có lỗi xảy ra khi cập nhật' : 'Có lỗi xảy ra khi tạo mới');
+        this.isLoading = false;
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
   }
 
   private formatDate(date: Date): string {
@@ -465,8 +573,13 @@ export class QualityControlCreateModalComponent implements OnInit {
           quantity_of_stock: item.quantity_of_stock
         };
 
+        const rowIndex = this.currentIndex++;
+
+        // Kiểm tra xem user đã nhập data cho row này chưa
+        const userInput = this.userInputMap.get(rowIndex);
+
         const productRow: ProductRow = {
-          index: this.currentIndex++,
+          index: rowIndex,
           productId: item.product?.id || '',
           productNo: item.product?.product_no || '',
           productName: item.product?.product_name || '',
@@ -477,10 +590,10 @@ export class QualityControlCreateModalComponent implements OnInit {
           quantity: item.quantity_of_stock,
           quantityOfStock: item.quantity_of_stock,
           unit: item.product?.base_unit || '',
-          reason: '',
-          qualityNote: this.defaultQualityNote,
-          result: 1,
-          qualityClassification: 'Loại A'
+          reason: userInput?.reason || '',
+          qualityNote: userInput?.qualityNote || this.defaultQualityNote,
+          result: userInput?.result || 1,
+          qualityClassification: userInput?.qualityClassification || 'Loại A'
         };
 
         this.productRows.push(productRow);
@@ -488,7 +601,11 @@ export class QualityControlCreateModalComponent implements OnInit {
     }
   }
 
+
   searchByDate() {
+    // Lưu user input của page hiện tại trước khi search lại
+    this.saveCurrentPageUserInput();
+
     this.currentPage = 1;
     this.loadProductsByPage();
   }
@@ -496,6 +613,16 @@ export class QualityControlCreateModalComponent implements OnInit {
   onSearch(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.searchText = input.value;
+  }
+
+  onFieldChange(row: ProductRow): void {
+    // Lưu user input vào Map ngay khi họ thay đổi
+    this.userInputMap.set(row.index, {
+      qualityNote: row.qualityNote,
+      qualityClassification: row.qualityClassification,
+      result: row.result,
+      reason: row.reason
+    });
   }
 
   getCurrentPageRows(): ProductRow[] {
@@ -511,6 +638,9 @@ export class QualityControlCreateModalComponent implements OnInit {
 
   changePage(page: number): void {
     if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
+      // Lưu user input của page hiện tại vào Map trước khi chuyển trang
+      this.saveCurrentPageUserInput();
+
       this.currentPage = page;
       this.loadProductsByPage();
     }

@@ -52,6 +52,10 @@ export const AppRoutes: Routes = [
         loadChildren: () => import('./follow-book/follow-book.module').then(m => m.FollowBookModule)
       },
       {
+        path: 'accounting-book',
+        loadChildren: () => import('./accounting-book/accounting-book.module').then(m => m.AccountingBookModule)
+      },
+      {
         path: 'setting',
         loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule)
       },
