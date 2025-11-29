@@ -150,7 +150,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
     this.getQrCode(acct)
       .pipe(finalize(() => this.isLoadingResults = false))
       .subscribe(qr => {
-        // debugger;
         this.selectedBankQr = qr;
       });
   }
@@ -200,6 +199,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
   selectUser = new FormControl();
   user: User = null;
   localItemInvoice: ItemInvoice;
+  hasChangedCustomerPay = false;
 
   public filteredCustomers: Observable<Customer[]>;
   public filteredUsers: Observable<User[]>;
@@ -307,9 +307,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
     this.getQrCode(this.selectedBankAccount).subscribe(qrCode => {
       this.selectedBankQr = qrCode;
     });    // …do whatever you need here…
-    if (this.form.controls['customerPay'].value !== 0) {
-      this.tinhLaiTienThua(); // Tín: khách thanh toán = 0 thì mặc định thanh toán hết => nợ = 0
-    }
+    // if (this.form.controls['customerPay'].value !== 0) {
+    //   this.tinhLaiTienThua(); // Tín: khách thanh toán = 0 thì mặc định thanh toán hết => nợ = 0
+    // }
   }
   /**
    *  So sanh danh sach cu
@@ -348,6 +348,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
     await this.handlePaymentSiderBar(mItemInvoice);
 
+    this.handleLoadNote(mItemInvoice);
 
     this.triggerLoadBankAccounts();
 
@@ -538,7 +539,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
         this.countProduct++;
       });
 
-      // debugger;
+      //
 
       // handle add common price
       const priceBookID = mItemInvoice.price_book_id; // this.orderService.getPriceBookID();
@@ -552,8 +553,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
         this.listProduct !== null
       ) {
         const listProductUnitIdChoose = list.map(obj => obj.product_unit_id);
-        // debugger;
-        // debugger;
+        //
+        //
         /**
          * Truong hop:  thay doi vs sl , pricebook
          *
@@ -700,6 +701,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
                 this.checkToAdjustItemPriceByTotalDiff();
                 this.handleDiscountSiderBar(mItemInvoice);
+                this.updateLocalStorageField("total_amount", this.sumPrice);
+                this.tinhLaiTienThua();
               } else {
                 console.log('ket qua ko phari la array');
               }
@@ -815,6 +818,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
           });
           this.checkToAdjustItemPriceByTotalDiff();
           this.handleDiscountSiderBar(mItemInvoice);
+          this.updateLocalStorageField("total_amount", this.sumPrice);
+          this.tinhLaiTienThua();
         }
       }
       this.handleExpenseOrder();
@@ -1365,8 +1370,16 @@ export class SaleMainComponent implements OnInit, DoCheck {
     const paymentSiderBar = mItemInvoice.paymentSiderBar;
     if (paymentSiderBar !== undefined) {
       this.form.patchValue({
-        customerPay: paymentSiderBar?.number,
+        customerPay: numeral(paymentSiderBar?.number).format(0,0),
       });
+      this.selectedAmount = paymentSiderBar.number;
+      this.selectedMethod = paymentSiderBar.type;
+      this.customerPay = paymentSiderBar.number;
+
+      this.hasChangedCustomerPay = mItemInvoice?.hasChangedCustomerPay || false;
+
+      this.tinhLaiTienThua();
+      // this.handleUpdateStorage();
     }
 
     // xu ly thay doi tab new thanh time hien tai
@@ -1690,7 +1703,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
         }
 
         printContent += `</table>`;
-        // debugger;
+        //
         // Add Vietnamese text for the amount
         printContent += `<p>${this.numberToVietnameseText(numeral(res?.sum_payment).value() || 0)}</p>`;
 
@@ -2677,7 +2690,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     // --- Determine Payment Method and Bank Account ---
     let paymentMethodValue = 'cash'; // Default to cash
     let bankAccountId;
-    // debugger;
+    //
     const selectedPaymentMethod = this.form.get('selectedMethod').value;
 
     if (selectedPaymentMethod === 'Chuyển khoản') {
@@ -2841,16 +2854,12 @@ export class SaleMainComponent implements OnInit, DoCheck {
         this.isLoadingResults = false;
         this.submitted = false;
         if (res !== false) {
-          if (res !== false) {
-            if (typeof res === 'number' && this.autoPrint === true) {
-              //this.printInvoice(res);
-              this.printInvoiceTemplateAuto(res);
-            }
-            this.resetDataSiderBar();
-            this.notifySer.notify('success', 'Lưu thành công !');
-          } else {
-            this.notifySer.notify('warning', 'Thất bại !');
+          if (typeof res === 'number' && this.autoPrint === true) {
+            //this.printInvoice(res);
+            this.printInvoiceTemplateAuto(res);
           }
+          this.orderService.removeActive();
+          this.notifySer.notify('success', 'Lưu thành công !');
         } else {
           this.notifySer.notify('warning', 'Thất bại !');
         }
@@ -2877,11 +2886,12 @@ export class SaleMainComponent implements OnInit, DoCheck {
         this.submitted = false;
         if (res !== false) {
           if (typeof res === 'number' && this.autoPrint === true) {
-            this.resetDataSiderBar();
+            //this.resetDataSiderBar();
             //this.printInvoice(res);
             this.printInvoiceTemplateAuto(res);
           }
-          this.resetDataSiderBar();
+          //this.resetDataSiderBar();
+          this.orderService.removeActive();
           this.notifySer.notify('success', 'Cập nhật đơn thành công !');
         } else {
           this.notifySer.notify('warning', 'Thất bại !');
@@ -3055,7 +3065,12 @@ export class SaleMainComponent implements OnInit, DoCheck {
         time: time,
         total_amount: 0,
         noteSiderBar: '',
+        customerPay: 0
       });
+      this.customerPay = 0;
+      this.selectedAmount = null;
+      this.tienThuaTraKhach = 0;
+      this.tienKhachNo = 0;
     }, 500);
   }
 
@@ -3150,9 +3165,12 @@ export class SaleMainComponent implements OnInit, DoCheck {
     // for case null: delete all in the customerPay input it will be null => làm cách của Đức thì nợ 100% hoá đơn thì ko được
     if (customerPayValue === 0 || customerPayValue === null) {
       customerPayValue = 0;
-      // this.tienThuaTraKhach = 0;
-      // this.tienKhachNo = 0;
-      // return;
+      // Handle the 0 case when switching between tab
+      if(!this.hasChangedCustomerPay){
+        this.tienThuaTraKhach = 0;
+        this.tienKhachNo = 0;
+        return;
+      }
     }
     const vat = this.useEinvoice ? this.sumVat : 0;
     this.tienThuaTraKhach =
@@ -3234,7 +3252,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
   }
 
   recalculateTotalAmount() {
-    // debugger;
+    //
     const formTotalAmount = numeral(this.form.controls['total_amount'].value).value();
     this.sumPrice = formTotalAmount;
     this.localItemInvoice.total_amount = formTotalAmount;
@@ -3816,10 +3834,25 @@ export class SaleMainComponent implements OnInit, DoCheck {
   }
 
   updateCustomerPay(amount: number): void {
+    this.hasChangedCustomerPay = true;
     // Update the customerPay form control with the selected amount
     this.form.get('customerPay')?.setValue(numeral(amount.toString()).format('0,0'));
-
+    const newpaymentSiderBar = {
+      number: amount,
+      type: this.form.get('selectedMethod')?.value
+    };
     this.tinhLaiTienThua();
+
+    let listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        element.paymentSiderBar = newpaymentSiderBar;
+        element.hasChangedCustomerPay = true;
+      }
+    });
+    this.orderService.setListInvoiceLocalStorage(listInvoice);
+
   }
 
   onMethodChange(): void {
@@ -4135,6 +4168,23 @@ export class SaleMainComponent implements OnInit, DoCheck {
   private loadInvoiceTemplates() {
     // get from localStorage
     this.selectedTemplate = this.invoiceTemplateService.getActiveTemplate();
+  }
+
+
+  private handleLoadNote(mItemInvoice: ItemInvoice) {
+      this.form.controls['noteSiderBar'].patchValue(mItemInvoice?.noteSiderBar);
+  }
+
+  private updateLocalStorageField(key:string, value:any){
+
+    const listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        element[key] = value;
+      }
+    });
+    this.orderService.setListInvoiceLocalStorageSilence(listInvoice);
   }
 }
 

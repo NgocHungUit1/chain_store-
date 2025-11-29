@@ -54,6 +54,10 @@ export class OrderService {
     this.subscribeObjectListInvoice = this.ObjectListInvoice.asObservable();
   }
 
+  public setListInvoiceLocalStorageSilence(data: ListInvoice){
+    localStorage.setItem(this.order_key_local, JSON.stringify(data));
+  }
+
   public setListInvoiceLocalStorage(data: ListInvoice) {
     localStorage.setItem(this.order_key_local, JSON.stringify(data));
     this.ObjectListInvoice.next(data);
@@ -108,6 +112,16 @@ export class OrderService {
     itemInvoice.is_return = false;
     itemInvoice.new = true;
     itemInvoice.price_book_id = last_price_book_id;
+    itemInvoice.paymentSiderBar = {
+      type: "cash",
+      number: 0
+    };
+    itemInvoice.discountSiderBar = {
+      type: "price",
+      number: 0
+    }
+    itemInvoice.noteSiderBar= '';
+
     listItemInvoice.push(itemInvoice);
     data.itemInvoice = listItemInvoice;
     this.setListInvoiceLocalStorage(data);

@@ -969,7 +969,10 @@
                           type="text"
                           style="color: black"
                           formControlName="customerPay"
-                          (keyup)="inputformatNumber($event); tinhLaiTienThua();"
+                          (keyup)="inputformatNumber($event)"
+                          (input)="inputformatNumber($event)"
+                          (change)="inputformatNumber($event); updateCustomerPay($event?.target?.value);"
+                          (blur)="inputformatNumber($event)"
                           autocomplete="off"
                           #customerPayment />
                       </mat-form-field>
