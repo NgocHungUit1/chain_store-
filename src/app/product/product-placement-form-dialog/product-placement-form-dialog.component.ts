@@ -3,6 +3,7 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {NotifierService} from 'angular-notifier';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {PlacementService} from '../placement.service';
+import { StoreService } from '../../store/store.service';
 
 @Component({
   selector: 'app-product-placement-form-dialog',
@@ -16,6 +17,7 @@ export class ProductPlacementFormDialogComponent implements OnInit {
     public notifySer: NotifierService,
     private fb: FormBuilder,
     private mainSer: PlacementService,
+    public storeSer: StoreService,
   ) { }
 
   public form: FormGroup;
@@ -27,7 +29,7 @@ export class ProductPlacementFormDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.fb.group({
-      store_id: [1],
+      store_id: [null, Validators.required],
       name: [
         null,
         Validators.compose([
@@ -35,6 +37,16 @@ export class ProductPlacementFormDialogComponent implements OnInit {
           Validators.maxLength(32)
         ])
       ],
+    });
+
+    this.loadStore();
+  }
+
+  loadStore(): void {
+    this.storeSer.getDetail().subscribe(store => {
+      this.form.patchValue({
+        store_id: store['id'],
+      });
     });
   }
 
