@@ -19,3 +19,7 @@
   display: flex;
   background-color: #ededed;
 }
+
+::ng-deep .product-info .product-info-row .product-field-description p:first-of-type {
+  margin-top: 0 !important;
+}

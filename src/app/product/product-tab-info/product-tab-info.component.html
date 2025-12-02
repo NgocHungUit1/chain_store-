@@ -45,8 +45,8 @@
 <!--            <span *ngIf="product.medicine">{{product.medicine.packing}}</span>-->
 <!--          </div>-->
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Vị trí:</span> <span
-            *ngFor="let placement of product.productPlacements">{{placement.name}}, </span>
+            <span class="product-field-label">Vị trí:</span>
+            <span>{{ getPlacementNames(product) }}</span>
           </div>
         </div>
         <div fxLayout="row wrap" class="product-info-row">
@@ -54,8 +54,9 @@
             <span class="product-field-label">Định mức tồn:</span> {{product.min_quantity}} > {{product.max_quantity}}
           </div>
           <div fxFlex="4"></div>
-          <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Mô tả:</span> {{product.description}}
+          <div fxFlex="48" class="product-info-field" style="display: flex;">
+            <span class="product-field-label">Mô tả:</span>
+            <div class="product-field-description" [innerHtml]="product.description"></div>
           </div>
         </div>
         <div fxLayout="row wrap" class="product-info-row">
