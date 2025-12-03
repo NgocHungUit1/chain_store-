@@ -279,5 +279,13 @@ export class ProductTabInfoComponent extends BaseComponent implements OnChanges 
     this.router.navigate(['/transaction/move/create']);
   }
 
+  getPlacementNames(product: Product): string {
+    if (!product?.productPlacements) {
+      return '';
+    }
+
+    return product.productPlacements.map(p => p.name).join(', ');
+  }
+
 
 }
