@@ -458,7 +458,14 @@ export class SaleMainComponent implements OnInit, DoCheck {
     const listItemInvoice = listInvoice.itemInvoice;
     listItemInvoice.forEach(element => {
       if (element.active === true) {
-        if (element.user === undefined || element.user === null) {
+        if (element.user === undefined ||
+            element.user === null || (
+            element.invoice_id < 0 && (
+            this.user.phone_number !== element.user.phone_number ||
+            this.user.email !== element.user.email
+            )
+          )
+        ) {
           element.user = this.user;
           this.orderService.setListInvoiceLocalStorage(listInvoice);
         }
