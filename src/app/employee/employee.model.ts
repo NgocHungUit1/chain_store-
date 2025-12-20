@@ -39,6 +39,8 @@ export class EmployeeFilter extends ApiFilterBase {
   page = 1;
   pageSize = 15;
   sort = '';
+  product_group_id = '';
+  product_type = '';
   isNotPageSize = false;
 
   getModelSearch() {

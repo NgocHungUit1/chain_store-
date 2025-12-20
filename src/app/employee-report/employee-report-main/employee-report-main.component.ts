@@ -1,26 +1,30 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {ListComponentBase} from '../../shared/base';
-import {ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {MatDialog} from '@angular/material/dialog';
-import {NotifierService} from 'angular-notifier';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {MatTable} from '@angular/material/table';
-import {MatPaginator} from '@angular/material/paginator';
-import {MatSort} from '@angular/material/sort';
-import {InvoiceService} from '../../invoice/invoice.service';
-import {DateFilter} from '../../invoice/invoice.model';
-import {DatetimeDefaultFilterDialogComponent} from '../../invoice/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
-import {DatetimeChooseFilterDialogComponent} from '../../invoice/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
-import {EmployeeReportService} from '../employee-report.service';
-import {AuthService} from '../../authentication/auth.service';
-import {EmployeeFilter} from '../../employee/employee.model';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ListComponentBase } from '../../shared/base';
+import { ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { NotifierService } from 'angular-notifier';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { MatTable } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { InvoiceService } from '../../invoice/invoice.service';
+import { DateFilter } from '../../invoice/invoice.model';
+import {
+  DatetimeDefaultFilterDialogComponent,
+} from '../../invoice/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
+import { DatetimeChooseFilterDialogComponent } from '../../invoice/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
+import { EmployeeReportService } from '../employee-report.service';
+import { AuthService } from '../../authentication/auth.service';
+import { EmployeeFilter } from '../../employee/employee.model';
+import { Group, GroupFilter } from '../../product/group.model';
+import { GroupService } from '../../group/group.service';
 
 @Component({
   selector: 'app-employee-report-main',
   templateUrl: './employee-report-main.component.html',
   styleUrls: ['./employee-report-main.component.css'],
-  changeDetection: ChangeDetectionStrategy.Default
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class EmployeeReportMainComponent extends ListComponentBase implements OnInit {
 
@@ -32,17 +36,22 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
     private serviceInvoice: InvoiceService,
     private fb: FormBuilder,
     private authSer: AuthService,
-    private ref: ChangeDetectorRef
+    private groupService: GroupService,
+    private ref: ChangeDetectorRef,
   ) {
     super();
+    this.productFilter = this.fb.group({
+      type: [['medicine', 'merchandise']],
+    });
   }
 
   @ViewChild('profitTab') profitTab;
   @ViewChild('commissionTab') commissionTab;
   @ViewChild('revenueTab') revenueTab;
-  @ViewChild('tabGroup', {static: true}) tabGroup;
+  @ViewChild('saleTab') saleTab;
+  @ViewChild('tabGroup', { static: true }) tabGroup;
 
-  @ViewChild(MatTable, {static: true}) table: MatTable<any>;
+  @ViewChild(MatTable, { static: true }) table: MatTable<any>;
 
   apiFilter: EmployeeFilter;
 
@@ -62,6 +71,20 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
   tabSelectedIndex = 0;
 
   dataSource: any[] = [];
+  productGroupFilter = new FormControl();
+  productGroups: Group[] = [];
+
+  productFilter: FormGroup;
+  typeProductFilterList = [
+    {
+      'value': 'medicine',
+      'name': 'Thuốc',
+    },
+    {
+      'value': 'merchandise',
+      'name': 'Hàng hóa',
+    },
+  ];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -71,7 +94,7 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
 
   searchForm = new FormControl();
   tab: string = '';
-  tabs = ['revenue', 'profit', 'commission'];
+  tabs = ['revenue', 'profit', 'commission', 'sale'];
 
   public downloadLink = '';
 
@@ -103,13 +126,15 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
     this.initDateFilter();
     this.tab = this.route.snapshot.paramMap.get('tab');
     if (this.tab === null || this.tab === undefined) {
-     if (this.canDo('Employee-Report.Revenue')) {
-       this.tab = 'revenue';
-     } else if (this.canDo('Employee-Report.Profit')) {
-       this.tab = 'profit';
-     } else if (this.canDo('Employee-Report.Commission')) {
-       this.tab = 'commission';
-     }
+      if (this.canDo('Employee-Report.Revenue')) {
+        this.tab = 'revenue';
+      } else if (this.canDo('Employee-Report.Profit')) {
+        this.tab = 'profit';
+      } else if (this.canDo('Employee-Report.Commission')) {
+        this.tab = 'commission';
+      } else if (this.canDo('Employee-Report.Sale')) {
+        this.tab = 'sale';
+      }
     }
     this.tabSelectedIndex = this.tabs.indexOf(this.tab);
 
@@ -117,7 +142,7 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
 
     this.statusEmployeeFilter = this.fb.group({
       status: [
-        [10, 9]
+        [10, 9],
       ],
     });
 
@@ -129,6 +154,14 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
       this.tabSelectedIndex = this.tabs.indexOf(this.tab);
       this.loadData();
     });
+
+    this.productGroupFilter.valueChanges.subscribe(res => {
+      this.apiFilter = this.buildFilterFromParams();
+      this.ref.detectChanges();
+      this.loadData();
+    });
+
+    this.getProductGroups();
   }
 
   buildFilterFromParams(): EmployeeFilter {
@@ -141,7 +174,7 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
     const objectKeys = Object.keys(filter) as Array<keyof EmployeeFilter>;
 
     for (const attr of objectKeys) {
-      write(filter, attr, this.route.snapshot.queryParams['ProductSearch[' + attr + ']']);
+      write(filter, attr, this.route.snapshot.queryParams['EmployeeSearch[' + attr + ']']);
     }
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
@@ -151,6 +184,8 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
 
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
+    filter.product_group_id = this.productGroupFilter.value;
+    filter.product_type = this.productFilter.controls['type'].value;
     return filter;
   }
 
@@ -161,6 +196,8 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
       this.profitTab.loadData();
     } else if (this.tabGroup.selectedIndex === 2) {
       this.commissionTab.loadData();
+    } else if (this.tabGroup.selectedIndex === 3) {
+      this.saleTab.loadData();
     }
   }
 
@@ -182,7 +219,7 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
 
   openTimeDefault() {
     const obj = {
-      'typeReport': this.reportType.controls['type'].value
+      'typeReport': this.reportType.controls['type'].value,
     };
     const dialogRef = this.dialog.open(DatetimeDefaultFilterDialogComponent, {
       data: obj,
@@ -258,17 +295,17 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
   buildFromTimeFilter() {
     this.timeFilter = this.fb.group({
       typeTime: [
-        'default'
+        'default',
       ],
     });
     this.timeExpireFilter = this.fb.group({
       typeTime: [
-        'next_3_month'
+        'next_3_month',
       ],
     });
 
     this.reportType = this.fb.group({
-      type: [this.tab]
+      type: [this.tab],
     });
   }
 
@@ -277,4 +314,20 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
 
     return allPermissions.indexOf(permissionName) !== -1;
   }
+
+  getProductGroups() {
+    const groupFilter = new GroupFilter();
+    groupFilter.pageSize = 100;
+    this.groupService.getList(groupFilter).subscribe(res => {
+      this.productGroups = res.body;
+    });
+  }
+
+  checkBoxFilterChange($event: any, value: any, field: string) {
+    this.handleFilterCheckbox(this.productFilter, field, value);
+    this.apiFilter = this.buildFilterFromParams();
+    this.ref.detectChanges();
+    this.loadData();
+  }
+
 }
