@@ -63,7 +63,7 @@
           </form>
         </mat-expansion-panel>
 
-        <mat-expansion-panel [expanded]='true' *ngIf="this.reportType.controls['type'].value === 'sale'">
+        <mat-expansion-panel [expanded]='true' >
           <mat-expansion-panel-header>
             <mat-panel-title>
               Loại hàng
@@ -89,15 +89,15 @@
             </mat-panel-title>
           </mat-expansion-panel-header>
 
-          <mat-radio-group
-            class='custom-filter-container__radio-container'
-            placeholder='Nhóm hàng'
-            color='primary'
-            [formControl]="productGroupFilter">
-            <mat-radio-button *ngFor='let group of productGroups' [value]='group.id'>
+          <div class='custom-filter-container__checkbox-container'>
+            <mat-checkbox
+              *ngFor='let group of productGroups' [value]='group.id'
+              [checked]="productFilter.value['group_id'].includes(group.id)"
+              (change)='checkBoxFilterChange($event, group.id, "group_id")'
+            >
               {{ group.name }}
-            </mat-radio-button>
-          </mat-radio-group>
+            </mat-checkbox>
+          </div>
         </mat-expansion-panel>
 
       </mat-accordion>

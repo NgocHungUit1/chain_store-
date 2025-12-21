@@ -18,9 +18,9 @@
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="total_quantity">
+      <ng-container matColumnDef="total_sale_quantity">
         <th mat-header-cell class="column-number"
-            *matHeaderCellDef> {{ columnsHeader['total_quantity'] }}
+            *matHeaderCellDef> {{ columnsHeader['total_sale_quantity'] }}
         </th>
         <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
@@ -29,7 +29,7 @@
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="sum_total_quantity">
+      <ng-container matColumnDef="sum_total_sale_quantity">
         <th mat-header-cell colspan="2" class="column-number color-export"
             *matHeaderCellDef>{{ sumData?.total_sale_quantity | number }}
         </th>
@@ -48,6 +48,23 @@
       <ng-container matColumnDef="sum_total_sale">
         <th mat-header-cell class="column-number color-export"
             *matHeaderCellDef>{{ sumData?.total_sale | number }}
+        </th>
+      </ng-container>
+
+      <ng-container matColumnDef="total_return_quantity">
+        <th mat-header-cell class="column-number"
+            *matHeaderCellDef> {{ columnsHeader['total_return_quantity'] }}
+        </th>
+        <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{ element?.total_return_quantity | number }}
+                  </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="sum_total_return_quantity">
+        <th mat-header-cell  class="column-number color-export"
+            *matHeaderCellDef>{{ sumData?.total_return_quantity | number }}
         </th>
       </ng-container>
 

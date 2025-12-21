@@ -42,6 +42,7 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
     super();
     this.productFilter = this.fb.group({
       type: [['medicine', 'merchandise']],
+      group_id: [[]],
     });
   }
 
@@ -71,7 +72,7 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
   tabSelectedIndex = 0;
 
   dataSource: any[] = [];
-  productGroupFilter = new FormControl();
+
   productGroups: Group[] = [];
 
   productFilter: FormGroup;
@@ -155,12 +156,6 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
       this.loadData();
     });
 
-    this.productGroupFilter.valueChanges.subscribe(res => {
-      this.apiFilter = this.buildFilterFromParams();
-      this.ref.detectChanges();
-      this.loadData();
-    });
-
     this.getProductGroups();
   }
 
@@ -184,7 +179,7 @@ export class EmployeeReportMainComponent extends ListComponentBase implements On
 
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
-    filter.product_group_id = this.productGroupFilter.value;
+    filter.product_group_id =  this.productFilter.controls['group_id'].value;
     filter.product_type = this.productFilter.controls['type'].value;
     return filter;
   }
