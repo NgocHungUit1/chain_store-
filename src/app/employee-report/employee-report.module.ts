@@ -22,15 +22,17 @@ import {
 import {
   EmployeeReportInvoiceProductListComponent
 } from './employee-report-invoice-list-dialog/employee-report-invoice-product-list/employee-report-invoice-product-list.component';
+import { EmployeeReportSaleTabComponent } from './employee-report-main/employee-report-sale-tab/employee-report-sale-tab.component';
 
 @NgModule({
   declarations: [
-    EmployeeReportMainComponent
-    , EmployeeReportRevenueTabComponent
-    , EmployeeReportProfitTabComponent
-    , EmployeeReportCommissionTabComponent
-    , EmployeeReportInvoiceListDialogComponent
-    , EmployeeReportInvoiceProductListComponent
+    EmployeeReportMainComponent,
+    EmployeeReportRevenueTabComponent,
+    EmployeeReportProfitTabComponent,
+    EmployeeReportCommissionTabComponent,
+    EmployeeReportInvoiceListDialogComponent,
+    EmployeeReportInvoiceProductListComponent,
+    EmployeeReportSaleTabComponent
   ],
   imports: [
     CommonModule,
