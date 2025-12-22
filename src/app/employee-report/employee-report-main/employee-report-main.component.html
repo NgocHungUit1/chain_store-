@@ -91,6 +91,7 @@
 
           <div class='custom-filter-container__checkbox-container'>
             <mat-checkbox
+              color='primary'
               *ngFor='let group of productGroups' [value]='group.id'
               [checked]="productFilter.value['group_id'].includes(group.id)"
               (change)='checkBoxFilterChange($event, group.id, "group_id")'
