@@ -432,8 +432,9 @@
       </button>
 
       <!-- Thêm nút tạo hóa đơn điện tử với điều kiện hiển thị chính xác hơn -->
+      <!-- TẠM THỜI: Bỏ check use_einvoice để cho phép xuất nhiều lần -->
       <button class="m-r-10" mat-raised-button color="accent" (click)="createEInvoice(invoice)"
-              *ngIf="invoice.order_status === 'done' && invoice.status == 10 && (invoice.use_einvoice === 0 || invoice.use_einvoice === null || invoice.use_einvoice === undefined)">
+              *ngIf="invoice.order_status === 'done' && invoice.status == 10">
         <mat-icon>receipt</mat-icon>
         Hóa đơn điện tử
       </button>
