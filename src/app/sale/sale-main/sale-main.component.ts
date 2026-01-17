@@ -1099,14 +1099,11 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
   deleteProduct(i: any) {
     this.orderService.deleteProduct(i);
-    // const mItemInvoice = this.getNewItemInvoice();
-    // if (mItemInvoice.listProduct.length === 0) {
-    //   this.sumPrice = 0;
-    // }
     this.handleExpenseOrder();
     if (this.listProduct.length === 0) {
       this.prescription_id = null;
-      // this.handleUpdateStorage();
+      // Reset paymentSiderBar when delete the last product
+      this.hasChangedCustomerPay = false;
     }
   }
 
@@ -1374,19 +1371,64 @@ export class SaleMainComponent implements OnInit, DoCheck {
    * Xu ly thanh toan siderbar
    */
   handlePaymentSiderBar(mItemInvoice) {
+    // Load selectedBankAccount from selectedBankAccountId of invoice
+    // Only set if bank account is different from current to avoid unnecessary reload
+    if (mItemInvoice.selectedBankAccountId && this.bankAccounts && this.bankAccounts.length > 0) {
+      const currentBankId = this._selectedBankAccount?.id;
+      if (currentBankId !== mItemInvoice.selectedBankAccountId) {
+        const savedBankAccount = this.bankAccounts.find(
+          bank => bank.id === mItemInvoice.selectedBankAccountId
+        );
+        if (savedBankAccount) {
+          this.selectedBankAccount = savedBankAccount;
+        }
+      }
+    } else if (!mItemInvoice.selectedBankAccountId && this._selectedBankAccount) {
+
+      this._selectedBankAccount = null;
+      this.selectedBankQr = '';
+    }
+
+    // New logic: Reset paymentSiderBar when delete the last product
+    if (!mItemInvoice.listProduct || mItemInvoice.listProduct.length === 0) {
+      this.form.patchValue({
+        customerPay: 0,
+        selectedMethod: 'Tiền mặt',
+      });
+      this.selectedAmount = null;
+      this.selectedMethod = 'Tiền mặt';
+      this.customerPay = 0;
+      this.hasChangedCustomerPay = false;
+      // Giữ nguyên selectedBankAccount (đã load ở trên) để khi user chọn lại Chuyển khoản, show lại giá trị đã chọn
+      this.tinhLaiTienThua();
+      return;
+    }
+
     const paymentSiderBar = mItemInvoice.paymentSiderBar;
     if (paymentSiderBar !== undefined) {
+      const methodType = paymentSiderBar.type || 'Tiền mặt';
       this.form.patchValue({
-        customerPay: numeral(paymentSiderBar?.number).format(0,0),
+        customerPay: numeral(paymentSiderBar?.number).format(0, 0),
+        selectedMethod: methodType, // Load phương thức thanh toán từ localStorage
       });
       this.selectedAmount = paymentSiderBar.number;
-      this.selectedMethod = paymentSiderBar.type;
+      this.selectedMethod = methodType;
       this.customerPay = paymentSiderBar.number;
 
       this.hasChangedCustomerPay = mItemInvoice?.hasChangedCustomerPay || false;
 
       this.tinhLaiTienThua();
       // this.handleUpdateStorage();
+    } else {
+      // New invoice - set default to Tiền mặt
+      this.form.patchValue({
+        customerPay: 0,
+        selectedMethod: 'Tiền mặt',
+      });
+      this.selectedAmount = null;
+      this.selectedMethod = 'Tiền mặt';
+      this.customerPay = 0;
+      this.hasChangedCustomerPay = false;
     }
 
     // xu ly thay doi tab new thanh time hien tai
@@ -3878,11 +3920,27 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
     this.bankAccountSer.getList(this.bankAccountFilter).subscribe((res) => {
       this.bankAccounts = res.body;
-      if (!this.selectedBankAccount) {
+
+      // Check the exist bank account in localStorage
+      const listInvoice = this.orderService.getListInvoiceLocalStorage();
+      const activeInvoice = listInvoice.itemInvoice?.find(inv => inv.active === true);
+      const savedBankAccountId = activeInvoice?.selectedBankAccountId;
+
+      if (savedBankAccountId) {
+        const savedBank = this.bankAccounts.find(bank => bank.id === savedBankAccountId);
+        if (savedBank) {
+          // Set bank account
+          if (this._selectedBankAccount?.id !== savedBankAccountId) {
+            this.selectedBankAccount = savedBank;
+          } else {
+            this.getQrCode(this._selectedBankAccount).subscribe(qrCode => {
+              this.selectedBankQr = qrCode;
+            });
+          }
+        }
+      } else if (!this._selectedBankAccount && this.bankAccounts.length > 0) {
+        // Set default bank account
         this.selectedBankAccount = this.bankAccounts[0];
-        this.getQrCode(this.selectedBankAccount).subscribe(qrCode => {
-          this.selectedBankQr = qrCode;
-        });
       }
       this.filterBanks();
     });
