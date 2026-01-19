@@ -436,7 +436,7 @@
       <button class="m-r-10" mat-raised-button color="accent" (click)="createEInvoice(invoice)"
               *ngIf="invoice.order_status === 'done' && invoice.status == 10">
         <mat-icon>receipt</mat-icon>
-        Hóa đơn điện tử
+        {{ invoice.use_einvoice === 1 ? 'Xuất thêm hóa đơn điện tử' : 'Hóa đơn điện tử' }}
       </button>
 
       <button class="m-r-10" mat-raised-button color="warn"
