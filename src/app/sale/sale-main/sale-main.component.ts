@@ -3719,13 +3719,18 @@ export class SaleMainComponent implements OnInit, DoCheck {
                     product.product_parcels = [];
                     if (product.parcel_no) {
                       const choseParcel = sortedParcels.find(parcel => parcel.parcel_no == product.parcel_no);
-                      product.product_parcels.push(choseParcel);
+                      if (choseParcel) {
+                        product.product_parcels.push(choseParcel);
+                      }
                     } else {
-                      product.product_parcels.push(sortedParcels[0]);
+                      if (sortedParcels && sortedParcels.length > 0) {
+                        product.product_parcels.push(sortedParcels[0]);
+                      }
                     }
                     const availableParcels = formattedRes.filter(parcel => {
                       if (product.product_parcels &&
                         product.product_parcels.length > 0 &&
+                        product.product_parcels[0] &&
                         product.product_parcels[0].parcel_no) {
                         return parcel.parcel_no !== product.product_parcels[0].parcel_no;
                       }
