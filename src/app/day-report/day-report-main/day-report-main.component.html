@@ -190,7 +190,7 @@
                         *ngIf="item.discount > 0 && item.discount_type === 'price'">- CK: {{ item.discount | number }}
                         <span *ngIf="item.discount_type === 'percent'">%</span>
                     </span>
-                      - SL: {{ item?.amount }}
+                      - SL: {{ item?.amount - item?.return_amount }}
                     </li>
                   </ol>
 
@@ -221,7 +221,7 @@
 
               <ng-container matColumnDef="total_price">
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{ columnsHeader['total_price'] }}</th>
-                <td mat-cell class="column-number" *matCellDef="let element"> {{ element.total_price | number }}</td>
+                <td mat-cell class="column-number" *matCellDef="let element"> {{ (element.total_price - element.total_return) | number }}</td>
               </ng-container>
 
               <ng-container matColumnDef="discount">
@@ -231,7 +231,7 @@
 
               <ng-container matColumnDef="payment">
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{ columnsHeader['payment'] }}</th>
-                <td mat-cell class="column-number" *matCellDef="let element"> {{ element.total_payment | number }}</td>
+                <td mat-cell class="column-number" *matCellDef="let element"> {{ (element.total_payment - element.total_return) | number }}</td>
               </ng-container>
 
 
