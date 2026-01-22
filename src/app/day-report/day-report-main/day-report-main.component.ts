@@ -154,7 +154,7 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'customer,payment,detail,priceBook,store,user,expensesOrders,createdFormat';
+    filter.expand = 'customer,payment,detail,priceBook,store,user,expensesOrders,createdFormat,returns,returnsDetails';
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
     filter.order_status = this.orderStatusFilter.controls['status'].value;
@@ -241,6 +241,12 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
         });
         elementData.total_payment = total_payment;
         // End - tong tien khach hang da tra, tien giam gia
+
+        let totalPriceReturns = 0;
+        elementData.returns.forEach(item => {
+          totalPriceReturns += item.total_price;
+        });
+        elementData.total_return = totalPriceReturns;
 
         if (elementData.discount_type === 'price') {
           discount_price = elementData.discount;
