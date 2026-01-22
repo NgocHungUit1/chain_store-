@@ -87,6 +87,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
   // second column
   TongTienHang = 0;
   GiamGia = 0;
+  ChiPhiKhac = 0;
   KhachHangTra = 0;
 
   //
@@ -102,6 +103,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     'national_pharmacy_no': 'Phiếu DQG',
     'total_price': 'Tổng tiền hàng',
     'discount': 'Giảm giá',
+    'expenses_order_price': 'Chi phí khác',
     'payment': 'Khách đã trả',
     'einvoice_no': 'Số HĐĐT',
     'einvoice_status': 'Trạng thái ĐĐT'
@@ -109,11 +111,11 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
 
   displayedColumns: string[] = ['select',
     '#', 'invoice_no', 'created_at', 'returns', 'customer', 'national_pharmacy_no',
-    'total_price', 'discount', 'payment', 'einvoice_no', 'einvoice_status'
+    'total_price', 'discount', 'expenses_order_price', 'payment', 'einvoice_no', 'einvoice_status'
   ];
   columnsToDisplay: string[] = ['select',
     '#', 'invoice_no', 'created_at', 'returns', 'customer', 'national_pharmacy_no',
-    'total_price', 'discount', 'payment', 'einvoice_no', 'einvoice_status'
+    'total_price', 'discount', 'expenses_order_price', 'payment', 'einvoice_no', 'einvoice_status'
   ];
   dataSource: Invoice[] = [];
   selection = new SelectionModel<Invoice>(true, []);
@@ -155,7 +157,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
   // for second column
   second_columnsToDisplay: string[] = ['select',
     'second_#', 'second_invoice_no', 'second_created_at', 'second_returns', 'second_customer',
-    'second_national_no', 'second_total_price', 'second_discount', 'second_payment',
+    'second_national_no', 'second_total_price', 'second_discount', 'second_expenses_order_price', 'second_payment',
     'second_einvoice_no', 'second_einvoice_status'
   ];
 
@@ -475,6 +477,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     this.service.getSumaryInvoice(this.apiFilter).subscribe(res => {
       this.TongTienHang = res.body['TongTienHang'];
       this.GiamGia = res.body['GiamGia'];
+      this.ChiPhiKhac = res.body['ChiPhiKhac'];
       this.KhachHangTra = res.body['KhachHangTra'];
     });
   }
