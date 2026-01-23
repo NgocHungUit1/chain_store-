@@ -77,6 +77,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
   productFilter: FormGroup;
   customerFilter: FormGroup;
   einvoiceFilter: FormGroup;
+  expensesFilter: FormGroup;
 
   currentDateFilter: DateFilter;
 
@@ -167,6 +168,11 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
   filteredCustomers: Observable<Customer[]>;
 
   einvoiceFilterList = [
+    { value: 'yes', name: 'Có' },
+    { value: 'no', name: 'Không' },
+  ];
+
+  expensesFilterList = [
     { value: 'yes', name: 'Có' },
     { value: 'no', name: 'Không' },
   ];
@@ -337,6 +343,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     filter.order_status = this.orderStatusFilter.controls['status'].value.join(',');
     filter.order_national = this.orderNationalFilter.controls['status'].value.join(',');
     filter.einvoice = this.einvoiceFilter.controls['status'].value.join(',');
+    filter.expenses = this.expensesFilter.controls['status'].value.join(',');
 
     const product = this.productFilter.controls['product']?.value;
     filter.product_id = product?.id;
@@ -370,6 +377,9 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
       customer: [null],
     });
     this.einvoiceFilter = this.fb.group({
+      status: new FormControl(['yes', 'no']),
+    });
+    this.expensesFilter = this.fb.group({
       status: new FormControl(['yes', 'no']),
     });
   }
@@ -698,6 +708,10 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     });
 
     this.einvoiceFilter.patchValue({
+      status: ['yes', 'no'],
+    });
+
+    this.expensesFilter.patchValue({
       status: ['yes', 'no'],
     });
   }
