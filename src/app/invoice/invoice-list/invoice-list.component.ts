@@ -77,6 +77,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
   productFilter: FormGroup;
   customerFilter: FormGroup;
   einvoiceFilter: FormGroup;
+  expensesFilter: FormGroup;
 
   currentDateFilter: DateFilter;
 
@@ -87,6 +88,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
   // second column
   TongTienHang = 0;
   GiamGia = 0;
+  ChiPhiKhac = 0;
   KhachHangTra = 0;
 
   //
@@ -102,6 +104,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     'national_pharmacy_no': 'Phiếu DQG',
     'total_price': 'Tổng tiền hàng',
     'discount': 'Giảm giá',
+    'expenses_order_price': 'Chi phí khác',
     'payment': 'Khách đã trả',
     'einvoice_no': 'Số HĐĐT',
     'einvoice_status': 'Trạng thái ĐĐT'
@@ -109,11 +112,11 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
 
   displayedColumns: string[] = ['select',
     '#', 'invoice_no', 'created_at', 'returns', 'customer', 'national_pharmacy_no',
-    'total_price', 'discount', 'payment', 'einvoice_no', 'einvoice_status'
+    'total_price', 'discount', 'expenses_order_price', 'payment', 'einvoice_no', 'einvoice_status'
   ];
   columnsToDisplay: string[] = ['select',
     '#', 'invoice_no', 'created_at', 'returns', 'customer', 'national_pharmacy_no',
-    'total_price', 'discount', 'payment', 'einvoice_no', 'einvoice_status'
+    'total_price', 'discount', 'expenses_order_price', 'payment', 'einvoice_no', 'einvoice_status'
   ];
   dataSource: Invoice[] = [];
   selection = new SelectionModel<Invoice>(true, []);
@@ -155,7 +158,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
   // for second column
   second_columnsToDisplay: string[] = ['select',
     'second_#', 'second_invoice_no', 'second_created_at', 'second_returns', 'second_customer',
-    'second_national_no', 'second_total_price', 'second_discount', 'second_payment',
+    'second_national_no', 'second_total_price', 'second_discount', 'second_expenses_order_price', 'second_payment',
     'second_einvoice_no', 'second_einvoice_status'
   ];
 
@@ -165,6 +168,11 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
   filteredCustomers: Observable<Customer[]>;
 
   einvoiceFilterList = [
+    { value: 'yes', name: 'Có' },
+    { value: 'no', name: 'Không' },
+  ];
+
+  expensesFilterList = [
     { value: 'yes', name: 'Có' },
     { value: 'no', name: 'Không' },
   ];
@@ -335,6 +343,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     filter.order_status = this.orderStatusFilter.controls['status'].value.join(',');
     filter.order_national = this.orderNationalFilter.controls['status'].value.join(',');
     filter.einvoice = this.einvoiceFilter.controls['status'].value.join(',');
+    filter.expenses = this.expensesFilter.controls['status'].value.join(',');
 
     const product = this.productFilter.controls['product']?.value;
     filter.product_id = product?.id;
@@ -368,6 +377,9 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
       customer: [null],
     });
     this.einvoiceFilter = this.fb.group({
+      status: new FormControl(['yes', 'no']),
+    });
+    this.expensesFilter = this.fb.group({
       status: new FormControl(['yes', 'no']),
     });
   }
@@ -475,6 +487,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     this.service.getSumaryInvoice(this.apiFilter).subscribe(res => {
       this.TongTienHang = res.body['TongTienHang'];
       this.GiamGia = res.body['GiamGia'];
+      this.ChiPhiKhac = res.body['ChiPhiKhac'];
       this.KhachHangTra = res.body['KhachHangTra'];
     });
   }
@@ -695,6 +708,10 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     });
 
     this.einvoiceFilter.patchValue({
+      status: ['yes', 'no'],
+    });
+
+    this.expensesFilter.patchValue({
       status: ['yes', 'no'],
     });
   }

@@ -75,6 +75,7 @@ export class InvoiceFilter extends ApiFilterBase {
   order_status = '';
   order_national = '';
   einvoice = '';
+  expenses = '';
   product_id = '';
   users = '';
   created_by = '';

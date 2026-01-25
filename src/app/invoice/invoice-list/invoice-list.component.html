@@ -93,6 +93,26 @@
             </div>
           </form>
         </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Chi phí khác
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <form [formGroup]="expensesFilter">
+            <div class='custom-filter-container__checkbox-container'>
+              <mat-checkbox *ngFor='let item of expensesFilterList'
+                            color='primary'
+                            [checked]="expensesFilter.value['status'].includes(item.value)"
+                            (change)='checkBoxFilterChange($event, item.value, "status", expensesFilter)'
+              >
+                {{ item.name }}
+              </mat-checkbox>
+            </div>
+          </form>
+        </mat-expansion-panel>
       </mat-accordion>
     </div>
 
@@ -317,6 +337,11 @@
                 <td mat-cell class="column-number" *matCellDef="let element"> {{ (element.discount_price || 0) | number }}</td>
               </ng-container>
 
+              <ng-container matColumnDef="expenses_order_price">
+                <th mat-header-cell class="column-number" *matHeaderCellDef> {{ columnsHeader['expenses_order_price'] }}</th>
+                <td mat-cell class="column-number" *matCellDef="let element"> {{ (element.expenses_order_price || 0) | number }}</td>
+              </ng-container>
+
               <ng-container matColumnDef="payment">
                 <th mat-header-cell class="column-number" *matHeaderCellDef> {{ columnsHeader['payment'] }}</th>
                 <td mat-cell class="column-number" *matCellDef="let element"> {{ element.total_payment | number }}</td>
@@ -404,6 +429,10 @@
 
               <ng-container matColumnDef="second_discount">
                 <th mat-header-cell class="column-number-sumary" *matHeaderCellDef> {{ GiamGia | number}} </th>
+              </ng-container>
+
+              <ng-container matColumnDef="second_expenses_order_price">
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef> {{ ChiPhiKhac | number }} </th>
               </ng-container>
 
               <ng-container matColumnDef="second_payment">
