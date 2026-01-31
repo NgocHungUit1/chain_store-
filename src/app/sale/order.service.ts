@@ -113,7 +113,7 @@ export class OrderService {
     itemInvoice.new = true;
     itemInvoice.price_book_id = last_price_book_id;
     itemInvoice.paymentSiderBar = {
-      type: "cash",
+      type: "Tiền mặt",
       number: 0
     };
     itemInvoice.discountSiderBar = {
@@ -335,6 +335,9 @@ export class OrderService {
 
           if(mItemInvoice.listProduct.length === 0) {
             mItemInvoice.prescription_id = null;
+            // Reset paymentSiderBar khi xoá sản phẩm cuối cùng
+            mItemInvoice.paymentSiderBar = { number: 0, type: 'Tiền mặt' };
+            mItemInvoice.hasChangedCustomerPay = false;
           }
         }
       }
