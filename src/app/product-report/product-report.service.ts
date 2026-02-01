@@ -304,7 +304,10 @@ export class ProductReportService {
    */
   exportExcel(filter?: ProductFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + '/report/export?' + filter.toFilterString();
-    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+    return this.http.get(url, {
+      observe: 'response',
+      responseType: 'blob'
+    });
   }
 
   downloadFileExcel(type: string) {

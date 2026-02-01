@@ -373,11 +373,31 @@ export class DayReportMainComponent extends ListComponentBase implements OnInit 
    */
   exportExcel() {
     this.apiFilter = this.buildFilterFromParams();
-    this.service.exportExcel(this.apiFilter).subscribe(res => {
-      // console.log(res);
-      const url = this.service.downloadFileExcel();
-      window.location.href = url;
-    });
+    this.service.exportExcel(this.apiFilter).subscribe(
+      (response: any) => {
+        // 1. Lấy nội dung file (Binary) từ body
+        const blob = new Blob([response.body], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+
+        const a = document.createElement('a');
+        const objectUrl = URL.createObjectURL(blob);
+
+        a.href = objectUrl;
+        a.download = 'Bao-cao-doanh-thu.xlsx';
+        a.click();
+
+        URL.revokeObjectURL(objectUrl);
+
+        this.notifySer.notify('success', 'Xuất file thành công!');
+        this.isLoadingResults = false;
+      },
+      (error) => {
+        console.error('Lỗi tải file:', error);
+        this.isLoadingResults = false;
+        this.notifySer.notify('error', 'Xuất file không thành công!');
+      }
+    );
   }
 
   checkBoxFilterChange($event: any, value: any, field: string, form: FormGroup) {

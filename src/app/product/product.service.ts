@@ -226,9 +226,13 @@ export class ProductService {
    */
   exportExcel(filter?: ProductFilter) {
     const url = environment.apiUrl + '/product/export?' + filter.toFilterString();
-    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+    return this.http.get(url, {
+      observe: 'response',
+      responseType: 'blob'
+    });
   }
 
+  // DECREASED FUNCTION
   downloadFileExcel() {
     const _token = this.auth.getToken();
     return environment.apiUrl + '/product/download-product?token=' + _token;
