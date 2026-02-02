@@ -82,7 +82,7 @@ export class ReportMainComponent extends ListComponentBase implements OnInit {
         stt++;
         elementData.stt = stt;
       });
-      // this.reloadFilter(res);
+      this.reloadFilter(res);
       this.isLoadingResults = false;
     });
   }
