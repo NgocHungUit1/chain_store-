@@ -294,6 +294,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
   private _prevTotal = this.total;
   private _selectedBankAccount: BankAccount | null = null;
+  private _lastLoadedInvoiceId: number | null = null; // Track last loaded invoice to detect tab switches
 
   // Coding parcel + add row function
   shownMenus: Set<number> = new Set();
@@ -459,10 +460,10 @@ export class SaleMainComponent implements OnInit, DoCheck {
     listItemInvoice.forEach(element => {
       if (element.active === true) {
         if (element.user === undefined ||
-            element.user === null || (
+          element.user === null || (
             element.invoice_id < 0 && (
-            this.user.phone_number !== element.user.phone_number ||
-            this.user.email !== element.user.email
+              this.user.phone_number !== element.user.phone_number ||
+              this.user.email !== element.user.email
             )
           )
         ) {
@@ -1099,14 +1100,11 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
   deleteProduct(i: any) {
     this.orderService.deleteProduct(i);
-    // const mItemInvoice = this.getNewItemInvoice();
-    // if (mItemInvoice.listProduct.length === 0) {
-    //   this.sumPrice = 0;
-    // }
     this.handleExpenseOrder();
     if (this.listProduct.length === 0) {
       this.prescription_id = null;
-      // this.handleUpdateStorage();
+      // Reset paymentSiderBar when delete the last product
+      this.hasChangedCustomerPay = false;
     }
   }
 
@@ -1374,19 +1372,66 @@ export class SaleMainComponent implements OnInit, DoCheck {
    * Xu ly thanh toan siderbar
    */
   handlePaymentSiderBar(mItemInvoice) {
+    // Detect if we're switching to a different invoice (tab switch)
+    const isTabSwitch = this._lastLoadedInvoiceId !== mItemInvoice.invoice_id;
+    this._lastLoadedInvoiceId = mItemInvoice.invoice_id;
+
+    // Load selectedBankAccount from localStorage only when switching tabs
+    if (isTabSwitch && this.bankAccounts && this.bankAccounts.length > 0) {
+      if (mItemInvoice.selectedBankAccountId) {
+        const savedBankAccount = this.bankAccounts.find(
+          bank => bank.id === mItemInvoice.selectedBankAccountId
+        );
+        if (savedBankAccount) {
+          this.selectedBankAccount = savedBankAccount;
+        }
+      } else {
+        // Invoice has no saved bank account, reset to default
+        this._selectedBankAccount = null;
+        this.selectedBankQr = '';
+      }
+    }
+
+    // New logic: Reset paymentSiderBar when delete the last product
+    if (!mItemInvoice.listProduct || mItemInvoice.listProduct.length === 0) {
+      this.form.patchValue({
+        customerPay: 0,
+        selectedMethod: 'Tiền mặt',
+      });
+      this.selectedAmount = null;
+      this.selectedMethod = 'Tiền mặt';
+      this.customerPay = 0;
+      this.hasChangedCustomerPay = false;
+      // Giữ nguyên selectedBankAccount (đã load ở trên) để khi user chọn lại Chuyển khoản, show lại giá trị đã chọn
+      this.tinhLaiTienThua();
+      return;
+    }
+
     const paymentSiderBar = mItemInvoice.paymentSiderBar;
     if (paymentSiderBar !== undefined) {
+      const methodType = paymentSiderBar.type || 'Tiền mặt';
       this.form.patchValue({
-        customerPay: numeral(paymentSiderBar?.number).format(0,0),
+        customerPay: numeral(paymentSiderBar?.number).format(0, 0),
+        selectedMethod: methodType, // Load phương thức thanh toán từ localStorage
       });
       this.selectedAmount = paymentSiderBar.number;
-      this.selectedMethod = paymentSiderBar.type;
+      this.selectedMethod = methodType;
       this.customerPay = paymentSiderBar.number;
 
       this.hasChangedCustomerPay = mItemInvoice?.hasChangedCustomerPay || false;
 
       this.tinhLaiTienThua();
       // this.handleUpdateStorage();
+    } else {
+      // New invoice - set default to Tiền mặt
+      this.form.patchValue({
+        customerPay: 0,
+        selectedMethod: 'Tiền mặt',
+      });
+      this.selectedAmount = null;
+      this.selectedMethod = 'Tiền mặt';
+      this.customerPay = 0;
+      this.hasChangedCustomerPay = false;
     }
 
     // xu ly thay doi tab new thanh time hien tai
@@ -2241,7 +2286,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       price: item.common_price || item.product.sell_price || item.product.end_price || 0,
       amount: item.amount || 0,
       total: (item.common_price || item.product.sell_price || item.product.end_price || 0) * (item.amount || 0),
-      so_lo: item?.product_parcels&&item?.product_parcels.length>0? `SL: ${item.product_parcels[0].parcel_no}-HD: ${item.product_parcels[0].expiration_date}` : '',
+      so_lo: item?.product_parcels && item?.product_parcels.length > 0 ? `SL: ${item.product_parcels[0].parcel_no}-HD: ${item.product_parcels[0].expiration_date}` : '',
       note: item?.note || '',
       vat_percent: item?.product?.vat_percent || 0,
     }));
@@ -3868,7 +3913,21 @@ export class SaleMainComponent implements OnInit, DoCheck {
   }
 
   onMethodChange(): void {
-    // console.log(`Selected payment method: ${this.selectedMethod}`);
+    const selectedMethod = this.form.get('selectedMethod')?.value;
+    this.selectedMethod = selectedMethod;
+    // Store selected method to localStorage
+    const listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        if (!element.paymentSiderBar) {
+          element.paymentSiderBar = { number: 0, type: selectedMethod };
+        } else {
+          element.paymentSiderBar.type = selectedMethod;
+        }
+      }
+    });
+    this.orderService.setListInvoiceLocalStorageSilence(listInvoice);
   }
 
   loadBankAccounts() {
@@ -3883,9 +3942,29 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
     this.bankAccountSer.getList(this.bankAccountFilter).subscribe((res) => {
       this.bankAccounts = res.body;
-      if (!this.selectedBankAccount) {
-        this.selectedBankAccount = this.bankAccounts[0];
-        this.getQrCode(this.selectedBankAccount).subscribe(qrCode => {
+
+      // Only load bank account from localStorage if there's no current selection
+      // This avoids overriding user's current selection when adding/removing products
+      if (!this._selectedBankAccount && this.bankAccounts.length > 0) {
+        const listInvoice = this.orderService.getListInvoiceLocalStorage();
+        const activeInvoice = listInvoice.itemInvoice?.find(inv => inv.active === true);
+        const savedBankAccountId = activeInvoice?.selectedBankAccountId;
+
+        if (savedBankAccountId) {
+          const savedBank = this.bankAccounts.find(bank => bank.id === savedBankAccountId);
+          if (savedBank) {
+            this.selectedBankAccount = savedBank;
+          } else {
+            // Fallback to first bank if saved bank not found
+            this.selectedBankAccount = this.bankAccounts[0];
+          }
+        } else {
+          // No saved bank, set default
+          this.selectedBankAccount = this.bankAccounts[0];
+        }
+      } else if (this._selectedBankAccount) {
+        // Just reload QR code for current bank (amount might have changed)
+        this.getQrCode(this._selectedBankAccount).subscribe(qrCode => {
           this.selectedBankQr = qrCode;
         });
       }
@@ -3919,6 +3998,18 @@ export class SaleMainComponent implements OnInit, DoCheck {
   selectBankAccount(bank: BankAccount | null) {
     this.selectedBankAccount = bank;
     this.isDropdownOpen = false;
+
+    // Save bank account id to localStorage for current invoice
+    if (bank) {
+      const listInvoice = this.orderService.getListInvoiceLocalStorage();
+      const listItemInvoice = listInvoice.itemInvoice;
+      listItemInvoice.forEach(element => {
+        if (element.active === true) {
+          element.selectedBankAccountId = bank.id;
+        }
+      });
+      this.orderService.setListInvoiceLocalStorageSilence(listInvoice);
+    }
   }
 
   getQrCode(bankAccount: BankAccount): Observable<string> {

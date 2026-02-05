@@ -85,6 +85,7 @@ export class ItemInvoice {
   national_pharmacy_no: string;
   use_einvoice: boolean;
   hasChangedCustomerPay: boolean;
+  selectedBankAccountId: string; // Lưu bank account id theo từng hoá đơn
 }
 
 export class ListInvoice {
