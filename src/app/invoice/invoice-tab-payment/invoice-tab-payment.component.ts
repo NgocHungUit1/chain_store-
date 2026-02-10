@@ -33,6 +33,7 @@ export class InvoiceTabPaymentComponent implements OnInit {
     'cash': 'Tiền mặt',
     'card': 'Thẻ',
     'transfer': 'Chuyển khoản',
+    'bank_transfer': 'Chuyển khoản',
   };
 
   constructor(
