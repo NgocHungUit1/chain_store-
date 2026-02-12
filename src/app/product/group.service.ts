@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { GroupFilter } from "./group.model";
-import {ResponseModel} from '../common/response.model';
+import { GroupFilter } from './group.model';
+import { ResponseModel } from '../common/response.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class GroupService {
 
@@ -85,8 +85,13 @@ export class GroupService {
     const url = environment.apiUrl + '/group/' + id;
     return this.http.delete<ResponseModel>(url, {});
   }
+
+  exportExcelReport(filter?: GroupFilter) {
+    const url = environment.apiUrl + '/group/export-excel-report?' + filter.toFilterString();
+    return this.http.get(url, {
+        observe: 'response',
+        responseType: 'blob',
+      },
+    );
+  }
 }
-
-
-
-
