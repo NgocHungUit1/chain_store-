@@ -633,26 +633,41 @@ export class InvoiceTabInfoComponent implements OnChanges {
    * @param invoice
    */
   createEInvoice(invoice) {
-    this.loading = true;
+    const obj = {
+      action: 'Connect',
+      title: 'Xác nhận xuất hóa đơn điện tử',
+      content: `Bạn có chắc chắn muốn xuất hóa đơn điện tử cho hóa đơn ${invoice.invoice_no} không?`,
+    };
 
-    this.invoiceService.createEInvoice(invoice.id).subscribe(
-      res => {
-        this.loading = false;
-        if (res && res.success === true) {
-          this.notifySer.notify('success', 'Tạo hóa đơn điện tử thành công!');
-          invoice.use_einvoice = 1;
-          this.loadData();
-        } else {
-          const errorMessage = res.message || 'Tạo hóa đơn điện tử thất bại!';
-          this.notifySer.notify('error', errorMessage);
-        }
-      },
-      error => {
-        this.loading = false;
-        console.error('Error creating e-invoice:', error);
-        this.notifySer.notify('error', 'Có lỗi xảy ra khi tạo hóa đơn điện tử!');
+    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
+      data: obj,
+      width: '30%',
+      minHeight: '60%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.event === 'confirm') {
+        this.loading = true;
+
+        this.invoiceService.createEInvoice(invoice.id).subscribe(
+          res => {
+            this.loading = false;
+            if (res && res.success === true) {
+              this.notifySer.notify('success', 'Tạo hóa đơn điện tử thành công!');
+              invoice.use_einvoice = 1;
+              this.loadData();
+            } else {
+              const errorMessage = res.message || 'Tạo hóa đơn điện tử thất bại!';
+              this.notifySer.notify('error', errorMessage);
+            }
+          },
+          error => {
+            this.loading = false;
+            console.error('Error creating e-invoice:', error);
+            this.notifySer.notify('error', 'Có lỗi xảy ra khi tạo hóa đơn điện tử!');
+          }
+        );
       }
-    );
+    });
   }
 
 }
