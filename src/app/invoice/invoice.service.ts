@@ -179,16 +179,19 @@ export class InvoiceService {
    */
   exportExcel(filter?: InvoiceFilter): Observable<HttpResponse<any>> {
     const url = environment.apiUrl + '/invoice/export?' + filter.toFilterString();
-    return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
+
+    return this.http.get(url, {
+      observe: 'response',
+      responseType: 'blob'
+    });
   }
 
+  // DECREASED FUNCTION
   downloadFileExcel() {
     const _token = this.auth.getToken();
     const url = environment.apiUrl + '/invoice/download-template?token=' + _token;
     return url;
   }
-
-
 
   getStateUrlInvoiceDetailList(filter?: InvoiceDetailFilter) {
     if (!filter.page) {

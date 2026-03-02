@@ -18,6 +18,8 @@ import { Observable, of } from 'rxjs';
 import { NationalPrescription } from '../order.model';
 import { NationalPrescriptionService } from '../../national-prescription/national-prescription.service';
 import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
+import { OrderService } from '../order.service';
+import { Product } from '../../product/product.model';
 
 // Định nghĩa class ImageSnippet tương tự product-medicine-dialog
 class ImageSnippet {
@@ -44,6 +46,8 @@ export class PrescriptionFormDialogComponent implements OnInit {
   prescription_id: string;
 
   prescriptionDetail: Prescription;
+  nationPrescriptionIdSelect = null;
+  prescriptionIdSelect = null;
 
   sexItems: any[] = [
     {
@@ -82,6 +86,7 @@ export class PrescriptionFormDialogComponent implements OnInit {
     private fb: FormBuilder,
     private service: PrescriptionService,
     private nationalPrescriptionService: NationalPrescriptionService,
+    private orderService: OrderService,
 
     private dialog: MatDialog,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object
@@ -168,9 +173,8 @@ export class PrescriptionFormDialogComponent implements OnInit {
           this.form.patchValue({
             no: 'DT' + no
           });
-          
           // this is duplicated set value for autocomplete input
-          this.selectProduct.setValue({nationalPrescriptionId: no});   
+          this.selectProduct.setValue({nationalPrescriptionId: no});
         }
       });
     }
@@ -350,7 +354,20 @@ export class PrescriptionFormDialogComponent implements OnInit {
         this.service.create(data).subscribe(res => {
           this.loading = false;
           this.notifySer.notify('success', 'Thêm đơn thuốc thành công!');
-          this.dialogRef.close(res);
+          if (this.nationPrescriptionIdSelect && this.prescriptionIdSelect) {
+            this.nationalPrescriptionService
+              .addToCart(this.nationPrescriptionIdSelect)
+              .subscribe(res => {
+                this.orderService.addNationalPrescriptionInvoice(this.prescriptionIdSelect, this.nationPrescriptionIdSelect);
+                res.forEach(element => {
+                  this.handlePriceListProduct(element);
+                });
+
+                this.dialogRef.close(res);
+              });
+          } else {
+            this.dialogRef.close(res);
+          }
         }, error => {
           this.loading = false;
           this.notifySer.notify('error', 'Thêm đơn thuốc thất bại: ' + (error.message || 'Lỗi không xác định'));
@@ -435,6 +452,28 @@ export class PrescriptionFormDialogComponent implements OnInit {
   }
 
   onSelectedProduct(product) {
+    this.nationPrescriptionIdSelect = product.nationalPrescriptionId;
+    this.prescriptionIdSelect = product.prescriptionId;
     this.loadDetail(product.prescriptionId);
+  }
+
+  handlePriceListProduct(product: Product, samplePrescriptionId = null) {
+    product.amount = parseInt(String(product.amount), 10);
+    if (!Number.isInteger(product.amount)) {
+      product.amount = 1;
+    }
+
+    // Default vat
+    product.vat_percent = 0;
+
+    let units = product.productUnits;
+    // tslint:disable-next-line:no-shadowed-variable
+    units.forEach(element => {
+      element.quantity_of_stock = Math.floor(
+        product.quantity_of_stock / element.value
+      );
+    });
+    product.productUnits = units;
+    this.orderService.addProduct(product, product.amount, samplePrescriptionId);
   }
 }

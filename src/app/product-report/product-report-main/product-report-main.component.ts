@@ -973,33 +973,94 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       const _apiFilter = this.apiFilter;
       _apiFilter.export = true;
       _apiFilter.type_report = typeReport;
-      this.service.exportExcel(_apiFilter).subscribe(res => {
-        const url = this.service.downloadFileExcel(typeReport);
-        window.location.href = url;
-        this.isLoadingResults = false;
-      });
+      this.service.exportExcel(_apiFilter).subscribe(
+        (response: any) => {
+          // const url = this.service.downloadFileExcel(typeReport);
+          // window.location.href = url;
+          const blob = new Blob([response.body], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+          });
+
+          const a = document.createElement('a');
+          const objectUrl = URL.createObjectURL(blob);
+
+          a.href = objectUrl;
+          a.download = 'Bao-cao-kho.xlsx';
+          a.click();
+
+          URL.revokeObjectURL(objectUrl);
+
+          this.notifySer.notify('success', 'Xuất file thành công!');
+          this.isLoadingResults = false;
+        },
+        (error) => {
+          console.error('Lỗi tải file:', error);
+          this.isLoadingResults = false;
+          this.notifySer.notify('error', 'Xuất file không thành công!');
+        }
+      );
     }
 
     if (typeReport === 'export-import') {
       const _apiFilter = this.apiFilter;
       _apiFilter.export = true;
       _apiFilter.type_report = typeReport;
-      this.service.exportExcel(_apiFilter).subscribe(res => {
-        const url = this.service.downloadFileExcel(typeReport);
-        window.location.href = url;
-        this.isLoadingResults = false;
-      });
+      this.service.exportExcel(_apiFilter).subscribe((response: any) => {
+          // const url = this.service.downloadFileExcel(typeReport);
+          // window.location.href = url;
+          const blob = new Blob([response.body], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+          });
+
+          const a = document.createElement('a');
+          const objectUrl = URL.createObjectURL(blob);
+
+          a.href = objectUrl;
+          a.download = 'Nhap-xuat-ton.xlsx';
+          a.click();
+
+          URL.revokeObjectURL(objectUrl);
+
+          this.notifySer.notify('success', 'Xuất file thành công!');
+          this.isLoadingResults = false;
+        },
+        (error) => {
+          console.error('Lỗi tải file:', error);
+          this.isLoadingResults = false;
+          this.notifySer.notify('error', 'Xuất file không thành công!');
+        }
+      );
     }
 
     if (typeReport === 'export-import-detail') {
       const _apiFilter = this.apiFilter;
       _apiFilter.export = true;
       _apiFilter.type_report = typeReport;
-      this.service.exportExcel(_apiFilter).subscribe(res => {
-        const url = this.service.downloadFileExcel(typeReport);
-        window.location.href = url;
-        this.isLoadingResults = false;
-      });
+      this.service.exportExcel(_apiFilter).subscribe((response: any) => {
+          // const url = this.service.downloadFileExcel(typeReport);
+          // window.location.href = url;
+          const blob = new Blob([response.body], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+          });
+
+          const a = document.createElement('a');
+          const objectUrl = URL.createObjectURL(blob);
+
+          a.href = objectUrl;
+          a.download = 'Nhap-xuat-ton-chi-tiet.xlsx';
+          a.click();
+
+          URL.revokeObjectURL(objectUrl);
+
+          this.notifySer.notify('success', 'Xuất file thành công!');
+          this.isLoadingResults = false;
+        },
+        (error) => {
+          console.error('Lỗi tải file:', error);
+          this.isLoadingResults = false;
+          this.notifySer.notify('error', 'Xuất file không thành công!');
+        }
+      );
     }
 
     if (typeReport === 'expiration-date') {
@@ -1011,11 +1072,31 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       const _apiFilter = this.apiFilter;
       _apiFilter.export = true;
       _apiFilter.type_report = typeReport;
-      this.service.exportExcel(_apiFilter).subscribe(res => {
-        const url = this.service.downloadFileExcel(typeReport);
-        window.location.href = url;
-        this.isLoadingResults = false;
-      });
+      this.service.exportExcel(_apiFilter).subscribe((response: any) => {
+          // const url = this.service.downloadFileExcel(typeReport);
+          // window.location.href = url;
+          const blob = new Blob([response.body], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+          });
+
+          const a = document.createElement('a');
+          const objectUrl = URL.createObjectURL(blob);
+
+          a.href = objectUrl;
+          a.download = 'Nha-cung-cap-theo-hang-nhap.xlsx';
+          a.click();
+
+          URL.revokeObjectURL(objectUrl);
+
+          this.notifySer.notify('success', 'Xuất file thành công!');
+          this.isLoadingResults = false;
+        },
+        (error) => {
+          console.error('Lỗi tải file:', error);
+          this.isLoadingResults = false;
+          this.notifySer.notify('error', 'Xuất file không thành công!');
+        }
+      );
     }
 
   }
