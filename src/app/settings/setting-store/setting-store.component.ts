@@ -59,7 +59,10 @@ export class SettingStoreComponent implements OnInit {
       expiration_date: [{value: null, disabled: true}, Validators.required],
       nation_username: [{value: null, disabled: true}, Validators.required],
       nation_password: [{value: null, disabled: true}, Validators.required],
-      registration_no: [{value: null, disabled: true}, Validators.required]});
+      registration_no: [{value: null, disabled: true}, Validators.required],
+      pharmacist_name:  [{value: null, disabled: true}, Validators.required],
+      pharmacist_license_number:  [{value: null, disabled: true}, Validators.required],
+    });
 
     this.loadData();
   }
@@ -74,6 +77,8 @@ export class SettingStoreComponent implements OnInit {
         registration_no: store['national_pharmacy_registration_no'],
         nation_username: store['national_pharmacy_login_username'],
         nation_password: store['national_pharmacy_login_password'],
+        pharmacist_name: store['pharmacist_name'],
+        pharmacist_license_number: store['pharmacist_license_number'],
       });
     });
   }
