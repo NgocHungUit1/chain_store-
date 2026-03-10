@@ -40,7 +40,7 @@
                 <div fxFlex="100">
                   <mat-form-field>
                     <mat-label>Ngày hết hạn</mat-label>
-                    <input matInput tabindex="4" formControlName="expiration_date" [value]="this.form.controls['expiration_date'].value | date:'dd/MM/yyyy'">
+                    <input matInput tabindex="3" formControlName="expiration_date" [value]="this.form.controls['expiration_date'].value | date:'dd/MM/yyyy'">
                   </mat-form-field>
                 </div>
 
@@ -65,8 +65,22 @@
                   </mat-form-field>
                 </div>
 
+                <div fxFlex="100">
+                  <mat-form-field>
+                    <mat-label>Tên dược sĩ</mat-label>
+                    <input matInput tabindex="8" formControlName="pharmacist_name" [value]="this.form.controls['pharmacist_name'].value">
+                  </mat-form-field>
+                </div>
 
-<!--                <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="6" (click)="submit()">-->
+                <div fxFlex="100">
+                  <mat-form-field>
+                    <mat-label>Số chứng chỉ hành nghề</mat-label>
+                    <input matInput tabindex="9" formControlName="pharmacist_license_number" [value]="this.form.controls['pharmacist_license_number'].value">
+                  </mat-form-field>
+                </div>
+
+
+                <!--                <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="6" (click)="submit()">-->
 <!--                  <mat-icon>save</mat-icon>-->
 <!--                  Lưu-->
 <!--                </button>-->
