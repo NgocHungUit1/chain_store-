@@ -131,17 +131,7 @@ export class Dashboard3Component implements OnInit {
   }
 
   ngOnInit(): void {
-    const today = format(new Date(), this.DATE_FORMAT);
-    this.dashboardService.getDataDashBoard(today, today).subscribe(res => {
-      this.saleResult = {
-        invoices: res?.invoice?.count ?? 0,
-        revenue: res?.invoice?.sum ?? 0,
-        returnOrders: res?.return?.count ?? 0,
-        returnMoney: res?.return?.sum ?? 0,
-        changePercent: res?.month?.now && res?.month?.after ? (res?.month?.now - res?.month?.after) * 100 / res?.month?.after : 0,
-      };
-    });
-
+    this.getDashboardDetail(this.convertTimeOptionToDates('today'));
     this.dashboardService.getAddInfo().subscribe(res => {
       this.adInfo = res;
     });
@@ -162,6 +152,8 @@ export class Dashboard3Component implements OnInit {
         ...this.convertTimeOptionToDates(res.period),
         group: res['groupBy']
       });
+
+      this.getDashboardDetail(this.convertTimeOptionToDates(res.period));
     });
 
 
@@ -190,6 +182,18 @@ export class Dashboard3Component implements OnInit {
         };
       });
       console.log(this.recentlyHistories);
+    });
+  }
+
+  getDashboardDetail({from, to}) {
+    this.dashboardService.getDataDashBoard(from, to).subscribe(res => {
+      this.saleResult = {
+        invoices: res?.invoice?.count ?? 0,
+        revenue: res?.invoice?.sum ?? 0,
+        returnOrders: res?.return?.count ?? 0,
+        returnMoney: res?.return?.sum ?? 0,
+        changePercent: res?.month?.now && res?.month?.after ? (res?.month?.now - res?.month?.after) * 100 / res?.month?.after : 0,
+      };
     });
   }
 

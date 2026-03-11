@@ -294,4 +294,42 @@ export class GroupReportComponent extends ListComponentBase implements OnInit {
   //   });
   // }
 
+  exportExcel() {
+    this.apiFilter = this.buildFilterFromParams();
+    this.service.exportExcelReport(this.apiFilter).subscribe(
+      (response: any) => {
+        // 1. Lấy nội dung file (Binary) từ body
+        const blob = new Blob([response.body], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let fileName = 'Bao-cao-nhom-hang.xlsx';
+        if (contentDisposition) {
+          const match = contentDisposition.match(/filename="?([^"]+)"?/);
+          if (match && match[1]) {
+            fileName = match[1];
+          }
+        }
+
+        const a = document.createElement('a');
+        const objectUrl = URL.createObjectURL(blob);
+
+        a.href = objectUrl;
+        a.download = fileName;
+        a.click();
+
+        URL.revokeObjectURL(objectUrl);
+
+        this.notifyService.notify('success', 'Xuất file thành công!');
+        this.isLoadingResults = false;
+      },
+      (error) => {
+        console.error('Lỗi tải file:', error);
+        this.isLoadingResults = false;
+        this.notifyService.notify('error', 'Xuất file không thành công!');
+      }
+    );
+  }
+
 }
