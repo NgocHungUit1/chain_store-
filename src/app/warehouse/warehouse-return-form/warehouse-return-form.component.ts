@@ -331,25 +331,37 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
 
         delete data['date'];
         delete data['supplier'];
-        this.mainService.update(this.updateModelId, data).subscribe(res => {
-          this.isLoadingResults = false;
-          this.notifySer.notify('success', 'Lưu thành công.');
-          if (status === 9) {
-            this.model = res;
-            this.router.navigate(['/transaction/warehouse-return/update/' + res['id']]);
-          } else {
-            this.router.navigate(['/transaction/warehouse-return/']);
+        this.mainService.update(this.updateModelId, data).subscribe({
+          next: (res) => {
+            this.isLoadingResults = false;
+            this.notifySer.notify('success', 'Lưu thành công.');
+            if (status === 9) {
+              this.model = res;
+              this.router.navigate(['/transaction/warehouse-return/update/' + res['id']]);
+            } else {
+              this.router.navigate(['/transaction/warehouse-return/']);
+            }
+          },
+          error: (err) => {
+            this.isLoadingResults = false;
+            this.notifySer.notify('error', 'Có lỗi xảy ra, vui lòng thử lại.');
           }
         });
       } else {
-        this.mainService.create(data).subscribe(res => {
-          this.isLoadingResults = false;
-          this.notifySer.notify('success', 'Lưu thành công.');
-          if (status === 9) {
-            this.model = res;
-            this.router.navigate(['/transaction/warehouse-return/update/' + res['id']]);
-          } else {
-            this.router.navigate(['/transaction/warehouse-return/']);
+        this.mainService.create(data).subscribe({
+          next: (res) => {
+            this.isLoadingResults = false;
+            this.notifySer.notify('success', 'Lưu thành công.');
+            if (status === 9) {
+              this.model = res;
+              this.router.navigate(['/transaction/warehouse-return/update/' + res['id']]);
+            } else {
+              this.router.navigate(['/transaction/warehouse-return/']);
+            }
+          },
+          error: (err) => {
+            this.isLoadingResults = false;
+            this.notifySer.notify('error', 'Có lỗi xảy ra, vui lòng thử lại.');
           }
         });
       }
