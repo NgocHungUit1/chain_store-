@@ -662,7 +662,12 @@ export class SaleMainComponent implements OnInit, DoCheck {
                     } else {
                       if (groupProductIdCommonPrice[elementData.product_id]
                         && groupProductIdCommonPrice[elementData.product_id].length >= 1) {
-                        elementData.common_price = groupProductIdCommonPrice[elementData.product_id][0].common_price;
+                        for (const item of groupProductIdCommonPrice[elementData.product_id]) {
+                          if (item.product_unit_id === elementData.product_unit_id) {
+                            elementData.common_price = item.common_price;
+                            break;
+                          }
+                        }
                       }
 
                       if (!elementData.common_price) {
