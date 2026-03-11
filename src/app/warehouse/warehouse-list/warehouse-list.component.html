@@ -366,14 +366,14 @@
               </ng-container>
 
               <ng-container matColumnDef="total_amount">
-                <th mat-header-cell class="column-center-text" *matHeaderCellDef> {{columnsHeader['total_amount']}}</th>
+                <th mat-header-cell class="column-right-text" *matHeaderCellDef> {{columnsHeader['total_amount']}}</th>
                 <td mat-cell class="column-right-text" *matCellDef="let element">
                   <b>{{ element.total_amount + element.expenses_price | currency : 'VND' : ''}}</b>
                 </td>
               </ng-container>
 
               <ng-container matColumnDef="discount_amount">
-                <th mat-header-cell class="column-center-text"
+                <th mat-header-cell class="column-right-text"
                     *matHeaderCellDef> {{columnsHeader['discount_amount']}}</th>
                 <td mat-cell class="column-right-text" *matCellDef="let element">
                   <!-- {{element.discount_amount | currency : 'VND' : ''}} -->
@@ -388,7 +388,7 @@
               </ng-container>
 
               <ng-container matColumnDef="paid_amount">
-                <th mat-header-cell class="column-center-text"
+                <th mat-header-cell class="column-right-text"
                     *matHeaderCellDef> {{ columnsHeader['paid_amount'] }}</th>
                 <td mat-cell class="column-right-text" *matCellDef="let element">
                   <span [class.red-warning]="element.paid_amount < element.total_amount">
@@ -397,8 +397,8 @@
                 </td>
               </ng-container>
 
-              <ng-container matColumnDef="remain_amount">
-                <th mat-header-cell class="column-center-text"
+              <ng-container matColumnDef="remain_amount" >
+                <th mat-header-cell class="column-right-text"
                     *matHeaderCellDef> {{ columnsHeader['remain_amount'] }}</th>
                 <td mat-cell class="column-right-text" *matCellDef="let element">
                   {{element.remain_amount | currency : 'VND' : ''}}</td>
