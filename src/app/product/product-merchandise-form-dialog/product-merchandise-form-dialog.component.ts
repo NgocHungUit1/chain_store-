@@ -270,7 +270,8 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       }]),
       unit_value: new FormControl(null, [Validators.required, Validators.min(2)]),
       unit_price: new FormControl(form['sell_price'], Validators.required),
-      unit_no: new FormControl(this.form.controls['product_no'].value + '-' + index)
+      unit_no: new FormControl(this.form.controls['product_no'].value + '-' + index),
+      barcode: new FormControl(null),
     });
     this.units.push(group);
   }
@@ -285,6 +286,15 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       data.units.forEach(item => {
         item.unit_price = numeral(item.unit_price).value();
       });
+
+      if (data.units && data.units.length > 0) {
+        const barcodes = data.units.map(i => i.barcode).filter(b => b !== null && b !== undefined && b !== '');
+        if (barcodes.length !== new Set(barcodes).size) {
+          this.notifySer.notify('warning', 'Mã vạch của đơn vị bị trùng, vui lòng cập nhật lại');
+          this.loading = false;
+          return;
+        }
+      }
 
       if (this.product_id === null) {
         // Create New
@@ -479,7 +489,8 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
             unit_value: new FormControl({value: pUnit['value'], disabled: true}, [Validators.required, Validators.min(2)]),
             unit_price: new FormControl(numeral(pUnit['sell_price']).value(), Validators.required),
             unit_no: new FormControl({value: pUnit['no'], disabled: true}),
-            id: new FormControl(pUnit['id'])
+            id: new FormControl(pUnit['id']),
+            barcode: new FormControl(pUnit['barcode']),
           });
           this.units.push(group);
         }
