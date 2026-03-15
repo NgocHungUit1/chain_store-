@@ -61,6 +61,10 @@ export class AuthInterceptor implements HttpInterceptor {
         return of(this.router.navigate(['/authentication/expiration']));
       case 422:
         const error = err.error;
+        if (error.message !== undefined) {
+          this.notify.notify('error', error['message']);
+          return;
+        }
         if (error[0]['message'] !== undefined) {
           this.notify.notify('error', error[0]['message']);
           return throwError(err);
