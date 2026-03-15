@@ -1157,29 +1157,45 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           // }
           // delete data['date'];
           // delete data['supplier'];
-          this.mainService.update(this.updateModelId, data).subscribe(res => { //
-            this.notifySer.notify('success', 'Lưu thành công.');
-            this.submitted = false;
-            this.isLoadingResults = false;
-            if (status === 9) {
-              this.model = res;
-              this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
-            } else {
-              this.router.navigate(['/transaction/warehouse/']);
-            }
-          });
+          this.mainService.update(this.updateModelId, data)
+            .subscribe({
+              next: (res) => { //
+                this.notifySer.notify('success', 'Lưu thành công.');
+                this.submitted = false;
+                this.isLoadingResults = false;
+                if (status === 9) {
+                  this.model = res;
+                  this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
+                } else {
+                  this.router.navigate(['/transaction/warehouse/']);
+                }
+              },
+              error: (err) => {
+                console.log(err);
+                this.notifySer.notify('error', 'Lưu thất bại, vui lòng thử lại sau');
+                this.submitted = false;
+                this.isLoadingResults = false;
+              }
+            });
         } else {
-          this.mainService.create(data).subscribe(res => {
-            this.notifySer.notify('success', 'Lưu thành công.');
-            this.submitted = false;
-            this.isLoadingResults = false;
-            if (status === 9) {
-              this.model = res;
-              this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
-            } else {
-              this.router.navigate(['/transaction/warehouse/']);
+          this.mainService.create(data).subscribe({
+            next: (res) => {
+              this.notifySer.notify('success', 'Lưu thành công.');
+              this.submitted = false;
+              this.isLoadingResults = false;
+              if (status === 9) {
+                this.model = res;
+                this.router.navigate(['/transaction/warehouse/update/' + res['id']]);
+              } else {
+                this.router.navigate(['/transaction/warehouse/']);
+              }
+            },
+            error: (err) => {
+              console.log(err);
+              this.notifySer.notify('error', 'Lưu thất bại, vui lòng thử lại sau');
+              this.submitted = false;
+              this.isLoadingResults = false;
             }
-
           });
         }
       } else {
