@@ -1062,6 +1062,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
             this.notifySer.notify('warning', 'Chưa nhập số lượng ' + element?.product?.product_name);
             reject();
           }
+
+          if (!element.product_unit_id) {
+            // @ts-ignore
+            this.notifySer.notify('warning', 'Vui lòng chọn đơn vị cho SP: ' +  element?.product?.product_name);
+            reject();
+          }
         });
         resolve();
       } else {

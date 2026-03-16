@@ -313,6 +313,22 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
     this.isLoadingResults = true;
     if (this.form.valid) {
       const data = this.form.getRawValue();
+
+      let isValidUnits = true;
+      this.data.forEach(item => {
+        if (!item.product_unit_id) {
+          // @ts-ignore
+          this.notifySer.notify('warning', 'Vui lòng chọn đơn vị cho SP: ' +  item?.product?.product_name);
+          isValidUnits = false;
+          return;
+        }
+      });
+
+      if (!isValidUnits) {
+        this.isLoadingResults = false;
+        return;
+      }
+
       data['supplier_id'] = data['supplier']['id'];
       if (this.form.controls['date'].value !== null && typeof this.form.controls['date'].value === 'object') {
         const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
