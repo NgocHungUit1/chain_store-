@@ -807,6 +807,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     });
 
     reader.readAsDataURL(file);
+    imageInput.value = '';
   }
 
   reloadImageButtons() {
