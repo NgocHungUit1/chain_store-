@@ -625,6 +625,16 @@ export class ProductMedicineDialogComponent implements OnInit {
           this.form.controls['units'] = new FormArray([]);
           this.loadProduct(product.id, true);
         }
+      }, error => {
+        this.loading = false;
+        if (error.status === 413) {
+          this.notifySer.notify('error', 'Hình ảnh quá lớn, vui lòng chọn ảnh nhỏ hơn!');
+        } else if (error.error && typeof error.error === 'object') {
+          const messages = ([] as string[]).concat(...Object.values(error.error) as string[][]);
+          messages.forEach(msg => this.notifySer.notify('error', msg));
+        } else {
+          this.notifySer.notify('error', 'Không thể tải hình ảnh!');
+        }
       });
     } else {
       this.loading = false;
