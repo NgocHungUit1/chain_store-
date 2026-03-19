@@ -99,6 +99,11 @@ export class ProductTabInfoComponent extends BaseComponent implements OnChanges 
           } else if (res['message'] !== undefined) {
             this.notifySer.notify('error', res['message']);
           }
+        }, err => {
+          if (err.error) {
+            const messages = ([] as string[]).concat(...Object.values(err.error) as string[][]);
+            messages.forEach(msg => this.notifySer.notify('error', msg));
+          }
         });
       }
       // if (result.event === 'Update') {

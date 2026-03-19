@@ -533,6 +533,10 @@ export class ProductMedicineDialogComponent implements OnInit {
               this.dialogRef.close({event: action, data: product, connect: connect});
             }, error => {
               this.loading = false;
+              if (error.error) {
+                const messages = ([] as string[]).concat(...Object.values(error.error) as string[][]);
+                messages.forEach(msg => this.notifySer.notify('error', msg));
+              }
             });
           });
         } else {
@@ -542,6 +546,10 @@ export class ProductMedicineDialogComponent implements OnInit {
             this.dialogRef.close({event: action, data: product, connect: connect});
           }, error => {
             this.loading = false;
+            if (error.error) {
+              const messages = ([] as string[]).concat(...Object.values(error.error) as string[][]);
+              messages.forEach(msg => this.notifySer.notify('error', msg));
+            }
           });
         }
 
@@ -553,6 +561,10 @@ export class ProductMedicineDialogComponent implements OnInit {
           this.dialogRef.close({event: action, data: product, connect: connect});
         }, error => {
           this.loading = false;
+          if (error.error) {
+            const messages = ([] as string[]).concat(...Object.values(error.error) as string[][]);
+            messages.forEach(msg => this.notifySer.notify('error', msg));
+          }
         });
       }
     } else {
@@ -629,7 +641,11 @@ export class ProductMedicineDialogComponent implements OnInit {
       const fieldControl = controls[i][1];
 
       if (fieldControl['errors'] !== null) {
-        this.notifySer.notify('error', 'Lỗi thông tin trường ' + this.fieldLabels[fieldName]);
+        if (fieldControl['errors']['required']) {
+          this.notifySer.notify('error', this.fieldLabels[fieldName] + ' là bắt buộc');
+        } else {
+          this.notifySer.notify('error', 'Lỗi thông tin trường ' + this.fieldLabels[fieldName]);
+        }
         hasError = true;
         break;
       }
@@ -776,17 +792,33 @@ export class ProductMedicineDialogComponent implements OnInit {
   }
 
   selectedMedicine(medicine) {
+    const nullToDash = (val: any) => (val === null || val === undefined || val === ''|| val==='NULL') ? '-' : val;
 
     this.form.patchValue({
       medicine_id: medicine['id'],
       product_name: medicine['medicine_name'],
-      medicine: medicine,
+      medicine: {
+        registration_no: nullToDash(medicine['registration_no']),
+        main_active_substance: nullToDash(medicine['main_active_substance']),
+        content: nullToDash(medicine['content']),
+        packing: nullToDash(medicine['packing']),
+        manufacturer: medicine['manufacturer'],
+        made_in: nullToDash(medicine['made_in']),
+      },
     });
+    console.log(nullToDash(medicine['registration_no']));
     this.manufacturerSer.save({'name': medicine['manufacturer']}).subscribe(res => {
       const result = <Manufacturer>res;
       medicine.manufacturer = result['id'];
       this.form.patchValue({
-        medicine: medicine,
+        medicine: {
+          registration_no: nullToDash(medicine['registration_no']),
+          main_active_substance: nullToDash(medicine['main_active_substance']),
+          content: nullToDash(medicine['content']),
+          packing: nullToDash(medicine['packing']),
+          manufacturer: medicine['manufacturer'],
+          made_in: nullToDash(medicine['made_in']),
+        },
       });
       this.manufacturers.push(result);
 

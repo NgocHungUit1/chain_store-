@@ -348,6 +348,15 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     return filter;
   }
 
+  loadGroups(): void {
+    const groupFilter = new GroupFilter();
+    groupFilter.pageSize = 100;
+    this.groupSer.getList(groupFilter).subscribe(res => {
+      this.groups = res.body;
+    });
+  }
+
+
   loadData(): void {
     const code = this.route.snapshot.paramMap.get('code');
     if (code !== null && code !== undefined) {
@@ -399,6 +408,14 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
   /**
    * Tim kiem theo trang thai sản phẩm
    */
+  deselectRadioGroup(event: MouseEvent, controlName: string, value: any) {
+    if (this.productFilter.controls[controlName].value === value) {
+      event.preventDefault();
+      this.productFilter.controls[controlName].setValue(null);
+      this.statusProductFilterChange();
+    }
+  }
+
   statusProductFilterChange() {
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
@@ -427,12 +444,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
       this.productFilter.patchValue({quota_stock: [code]});
     }
 
-    const groupFilter = new GroupFilter();
-    groupFilter.pageSize = 100;
-    // groupFilter.store_id = 1;
-    this.groupSer.getList(groupFilter).subscribe(res => {
-      this.groups = res.body;
-    });
+    this.loadGroups();
 
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
@@ -508,12 +520,14 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
               this.notifySer.notify('error', res['message']);
             }
             this.loadData();
+            this.loadGroups();
           });
         });
 
       } else {
         if (result?.event !== 'Cancel') {
           this.loadData();
+          this.loadGroups();
         }
       }
     });
@@ -533,6 +547,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       this.loadData();
+      this.loadGroups();
     });
   }
 
@@ -545,6 +560,10 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
         this.loadData();
       }
     });
+  }
+
+  onColumnSelectionChange(selected: string[]) {
+    this.displayedColumns = ['select', ...this.columnsToDisplay.filter(c => c !== 'select' && selected.includes(c))];
   }
 
   exportExcel() {
