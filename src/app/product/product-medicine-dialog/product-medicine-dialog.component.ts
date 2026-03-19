@@ -353,6 +353,8 @@ export class ProductMedicineDialogComponent implements OnInit {
 
   loadProduct(id, copy: any = null) {
     this.productSer.getDetail(id, 'medicine,images,productPlacements,productUnits,quantity').subscribe(product => {
+      const nullToDash = (val: any) => (val === null || val === undefined || val === '' || val === 'NULL') ? '-' : val;
+
       const placements = [];
       product['productPlacements'].forEach(pPlacement => {
         placements.push(pPlacement.id);
@@ -402,6 +404,15 @@ export class ProductMedicineDialogComponent implements OnInit {
       //   });
       // }
 
+      const medicinePatched = medicine ? {
+        registration_no: nullToDash(medicine['registration_no']),
+        main_active_substance: nullToDash(medicine['main_active_substance']),
+        content: nullToDash(medicine['content']),
+        packing: nullToDash(medicine['packing']),
+        manufacturer: medicine['manufacturer'],
+        made_in: nullToDash(medicine['made_in']),
+      } : medicine;
+
       if (copy === null) {
         this.form.patchValue({
           product_no: product['product_no'],
@@ -416,7 +427,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           weight: product['weight'],
           base_unit: product['base_unit'],
           medicine_id: product['medicine_id'],
-          medicine: medicine, // product['medicine'],
+          medicine: medicinePatched,
           placements: placements,
           min_quantity: product['min_quantity'],
           comm_percent: product['comm_percent'],
@@ -439,7 +450,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           weight: product['weight'],
           base_unit: product['base_unit'],
           medicine_id: product['medicine_id'],
-          medicine: medicine, // product['medicine'],
+          medicine: medicinePatched,
           placements: placements,
           min_quantity: product['min_quantity'],
           max_quantity: product['max_quantity'],
@@ -495,12 +506,20 @@ export class ProductMedicineDialogComponent implements OnInit {
     if (this.form.valid) {
       this.loading = true;
       const data = this.form.getRawValue();
+      const dashToNull = (val: any) => (val === '-') ? null : val;
       // if (data.medicine_id == null) {
       //   this.notifySer.notify('info', 'Vui lòng nhập lại tên thuốc để xác định lại mã dược quốc gia');
       //   this.form.controls['product_name'].setValue('');
       //   this.loading = false;
       //   return;
       // }
+      if (data.medicine) {
+        data.medicine.registration_no = dashToNull(data.medicine.registration_no);
+        data.medicine.main_active_substance = dashToNull(data.medicine.main_active_substance);
+        data.medicine.content = dashToNull(data.medicine.content);
+        data.medicine.packing = dashToNull(data.medicine.packing);
+        data.medicine.made_in = dashToNull(data.medicine.made_in);
+      }
       data.manufacturer = data.medicine.manufacturer;
       data.made_in = data.medicine.made_in;
       data.original_price = numeral(data.original_price).value();
