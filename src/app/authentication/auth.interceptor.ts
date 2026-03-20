@@ -63,13 +63,15 @@ export class AuthInterceptor implements HttpInterceptor {
         const error = err.error;
         if (error.message !== undefined) {
           this.notify.notify('error', error['message']);
-          return throwError(err);
+          return;
         }
-        if (error[0]?.message !== undefined) {
+        if (error[0]['message'] !== undefined) {
           this.notify.notify('error', error[0]['message']);
           return throwError(err);
+        } else {
+          this.notify.notify('error', err.statusText);
+          return throwError(err);
         }
-        return throwError(err);
 
       default:
         console.log(err);

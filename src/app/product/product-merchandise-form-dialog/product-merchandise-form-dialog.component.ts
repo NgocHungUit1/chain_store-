@@ -307,17 +307,10 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
               this.dialogRef.close({event: action, data: product});
             }, error => {
               this.loading = false;
-              if (error.error) {
-                const messages = ([] as string[]).concat(...Object.values(error.error) as string[][]);
-                messages.forEach(msg => this.notifySer.notify('error', msg));
-              }
             });
           }, error => {
             this.loading = false;
-            if (error.error) {
-              const messages = ([] as string[]).concat(...Object.values(error.error) as string[][]);
-              messages.forEach(msg => this.notifySer.notify('error', msg));
-            }
+
           });
         } else {
           this.productSer.create(data).subscribe(product => {
@@ -326,10 +319,6 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
             this.dialogRef.close({event: action, data: product});
           }, error => {
             this.loading = false;
-            if (error.error) {
-              const messages = ([] as string[]).concat(...Object.values(error.error) as string[][]);
-              messages.forEach(msg => this.notifySer.notify('error', msg));
-            }
           });
         }
 
@@ -341,10 +330,6 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
           this.dialogRef.close({event: action, data: product});
         }, error => {
           this.loading = false;
-          if (error.error) {
-            const messages = ([] as string[]).concat(...Object.values(error.error) as string[][]);
-            messages.forEach(msg => this.notifySer.notify('error', msg));
-          }
         });
       }
     } else {
