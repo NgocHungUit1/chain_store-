@@ -36,6 +36,9 @@ html .page-wrapper {
   .page-content {
     padding: 15px 15px 0;
   }
+  router-outlet + * {
+    height: 100%;
+  }
 }
 
 .page-content {

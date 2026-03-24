@@ -29,7 +29,6 @@ import {AuthService} from '../../authentication/auth.service';
   selector: 'app-product-list',
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css'],
-  host: { style: 'height: 100%' },
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({height: '0px', minHeight: '0'})),
