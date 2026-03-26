@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { StockDetailComponent } from './stock-detail/stock-detail.component';
 import { CashBookComponent } from './cash-book/cash-book.component';
 import { BankBookComponent } from './bank-book/bank-book.component';
+import { SaleRevenueBookComponent } from './sale-revenue-book/sale-revenue-book.component';
 
 const routes: Routes = [
   {
@@ -16,6 +17,10 @@ const routes: Routes = [
   {
     path: 'bank-book',
     component: BankBookComponent
+  },
+  {
+    path: 'sale-revenue-book',
+    component: SaleRevenueBookComponent
   },
   {
     path: '',

@@ -196,6 +196,23 @@ export class AccountingBookService {
     return this.http.get<any>(`${this.baseUrl}/cash-flow/summary`, { params });
   }
 
+  exportSaleRevenue(dateFrom: string, dateTo: string, quarter: number, year: number, orderStatus?: string): Observable<Blob> {
+    let params = new HttpParams()
+      .set('InvoiceSearch[date_from]', dateFrom)
+      .set('InvoiceSearch[date_to]', dateTo)
+      .set('quarter', quarter.toString())
+      .set('year', year.toString());
+
+    if (orderStatus) {
+      params = params.set('InvoiceSearch[order_status]', orderStatus);
+    }
+
+    return this.http.get(`${this.baseUrl}/invoice/export-revenue-log`, {
+      params,
+      responseType: 'blob'
+    });
+  }
+
   exportBankFlow(filter: { date_from?: string; date_to?: string }): Observable<Blob> {
     let params = new HttpParams()
       .set('CashFlowSearch[type]', 'payment,receipt')
