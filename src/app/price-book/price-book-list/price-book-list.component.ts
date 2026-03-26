@@ -63,6 +63,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
 
 
   apiFilter: PriceListProductFilter;
+  private previousTextSearch: string = null;
 
   selectProduct = new FormControl();
   data: PriceListProduct[] = [];
@@ -235,7 +236,8 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
         }
       });
 
-      if (res.textSearchProduct) {
+      if (res.textSearchProduct !== this.previousTextSearch) {
+        this.previousTextSearch = res.textSearchProduct;
         this.apiFilter = this.buildFilterFromParams();
         this.loadData();
       }
@@ -418,8 +420,13 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
   }
 
   savePrice(event: any, element) {
-    // console.log((event.target.value));
-    element['price'] = Number(event.target.value);
+    const price = Number(event.target.value);
+    if (price < 0) {
+      this.notifySer.notify('warning', 'Giá không được nhỏ hơn 0!');
+      event.target.value = element['price'];
+      return;
+    }
+    element['price'] = price;
     this.priceListProductSer.update(element.id, element).subscribe(element => {
       this.notifySer.notify('success', 'Lưu thành công!');
       this.apiFilter = this.buildFilterFromParams();

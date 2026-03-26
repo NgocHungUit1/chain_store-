@@ -253,11 +253,12 @@ export class StockTakeListComponent extends ListComponentBase implements OnInit 
   }
 
   openTimeDefault() {
-    const obj = {};
+    const obj = { currentTitle: this.titleTimeDefault };
     const dialogRef = this.dialog.open(DatetimeDefaultFilterDialogComponent, {
       data: obj,
       width: '40%',
       minHeight: '80%',
+      autoFocus: false,
     });
 
     dialogRef.afterClosed().subscribe(result => {
