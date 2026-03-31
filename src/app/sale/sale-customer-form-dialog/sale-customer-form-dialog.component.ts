@@ -8,12 +8,14 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import * as moment from 'moment';
 import { map, startWith } from 'rxjs/operators';
+import { MatDateProviders } from '../../shared/providers/mat-date.provider';
 
 
 @Component({
   selector: 'app-sale-customer-form-dialog',
   templateUrl: './sale-customer-form-dialog.component.html',
-  styleUrls: ['./sale-customer-form-dialog.component.css']
+  styleUrls: ['./sale-customer-form-dialog.component.css'],
+  providers: [...MatDateProviders]
 })
 export class SaleCustomerFormDialogComponent implements OnInit {
 

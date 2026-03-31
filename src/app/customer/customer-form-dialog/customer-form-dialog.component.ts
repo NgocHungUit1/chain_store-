@@ -8,11 +8,13 @@ import { Observable } from 'rxjs/Observable';
 import { LocationService } from '../../location/location.service';
 import { Location } from '../../location/location.model';
 import * as moment from 'moment';
+import { MatDateProviders } from '../../shared/providers/mat-date.provider';
 
 @Component({
   selector: 'app-customer-form-dialog',
   templateUrl: './customer-form-dialog.component.html',
-  styleUrls: ['./customer-form-dialog.component.css']
+  styleUrls: ['./customer-form-dialog.component.css'],
+  providers: [...MatDateProviders]
 })
 export class CustomerFormDialogComponent implements OnInit {
 
