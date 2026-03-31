@@ -1,5 +1,16 @@
-import { Component, DoCheck, ElementRef, HostListener, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import {
+  ChangeDetectorRef,
+  Component,
+  DoCheck,
+  ElementRef,
+  HostListener,
+  OnInit,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+  ViewEncapsulation,
+} from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { Observable, Subject } from 'rxjs';
@@ -48,6 +59,7 @@ import { InvoiceData, PreviewService } from '../../shared/invoice-handle/preview
 import { InvoiceTemplate, InvoiceTemplateService } from '../../shared/invoice-handle/invoice-template.service';
 import { PrintService } from '../../shared/invoice-handle/print.service';
 import { LocationService } from '../../location/location.service';
+import { AlwaysShowErrorMatcher } from '../../shared/services/always-show-error.matcher';
 export const MY_FORMATS = {
   parse: {
     dateInput: 'DD/MM/YYYY',
@@ -103,6 +115,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
     private invoiceTemplateService: InvoiceTemplateService,
     private printService: PrintService,
     public locationSer: LocationService,
+    private cdr: ChangeDetectorRef,
+    public alwaysMatcher: AlwaysShowErrorMatcher
   ) {
     this.optionStoreService.getValue('point_enabled').subscribe(res => {
       this.isPointEnabled = res.value === 'true';
@@ -303,6 +317,19 @@ export class SaleMainComponent implements OnInit, DoCheck {
   parcelItemControls: Map<number, FormControl> = new Map();
   parcelFilteredItems: Map<number, Observable<object[]>> = new Map();
   separatorKeysCodes: number[] = [ENTER, COMMA];
+
+  amountControls: { [key: number]: FormControl } = {};
+
+  getAmountControl(index: number): FormControl {
+    if (!this.amountControls[index]) {
+      const product = this.getMasterProducts()[index];
+      this.amountControls[index] = new FormControl(
+        product?.amount ?? 0
+      );
+    }
+    return this.amountControls[index];
+  }
+
 
   onTotalChange() {
     this.getQrCode(this.selectedBankAccount).subscribe(qrCode => {
@@ -1122,7 +1149,11 @@ export class SaleMainComponent implements OnInit, DoCheck {
     } else {
       newValue = currentValue - 1;
     }
-
+    if(newValue<0){
+      return;
+    }
+    const control = this.getAmountControl(i);
+    control.setValue(newValue);
     this.orderService.inputAmountProduct(i, newValue);
     this.handleAddRowIfNecessary(i, newValue);
     this.handleExpenseOrder();
@@ -1139,12 +1170,51 @@ export class SaleMainComponent implements OnInit, DoCheck {
   }
 
   inputAmountProduct(product_index, event) {
-    const value = Number(event.target.value);
+    let value = Number(event.target.value);
+    const control = this.getAmountControl(product_index);
+    if(!value || Number(value) < 0){
+      value = 1;
+      control.setValue(1);
+    }
+
     this.orderService.inputAmountProduct(product_index, value);
     this.handleAddRowIfNecessary(product_index, value);
     this.listProduct = [...this.listProduct];
   }
 
+  onAmountInput(event: Event, index: number): void {
+    const input = event.target as HTMLInputElement;
+    const raw = input.value.trim();
+    const value = +raw;
+    const control = this.getAmountControl(index);
+
+    if (raw === '') {
+      control.setErrors(null);
+      return;
+    }
+    if (isNaN(value) || raw.includes('-') && value >= 0) {
+      // malformed: "1-", "1.2.3", "--1"
+      control.setErrors({ invalidnum: true });
+      this.cdr.detectChanges();
+      return;
+    }
+
+    if (value < 0) {
+      // valid number but negative: "-10"
+      control.setErrors({ min: true });
+      this.cdr.detectChanges();
+      return;
+    }
+
+    control.setValue(value);
+    control.setErrors(null);
+  }
+  hasAnyAmountError(): boolean {
+    const error =  Object.values(this.amountControls).some(
+      control => control.status === 'INVALID'
+    );
+    return error;
+  }
   inputAmountProductReturn(product_index: number, event) {
     const value = event.target.value;
     this.orderService.inputAmountProductReturn(product_index, value);
@@ -2741,7 +2811,6 @@ export class SaleMainComponent implements OnInit, DoCheck {
         mItemInvoice = element;
       }
     });
-
     const customer = mItemInvoice.customer;
 
     // --- Determine Payment Method and Bank Account ---
