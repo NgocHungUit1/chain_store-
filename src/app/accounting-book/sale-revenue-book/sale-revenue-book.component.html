@@ -120,6 +120,14 @@
         <p>Vui lòng chọn khoảng thời gian để xem sổ chi tiết doanh thu</p>
       </div>
 
+      <mat-paginator #paginator
+                     [length]="pageTotalCount"
+                     [pageSize]="pageSize"
+                     [pageSizeOptions]="pageSizeOptions"
+                     [pageIndex]="page - 1"
+                     (page)="onMatPageChange($event)"
+                     showFirstLastButtons
+                     *ngIf="dataSource.data.length > 0"></mat-paginator>
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

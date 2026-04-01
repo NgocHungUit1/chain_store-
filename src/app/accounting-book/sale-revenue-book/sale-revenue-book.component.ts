@@ -177,6 +177,15 @@ export class SaleRevenueBookComponent implements OnInit {
       next: (res: any) => {
         const data = res.body || [];
         this.processData(data);
+
+        if (res.headers) {
+          this.pageTotalCount = Number(res.headers.get('X-Pagination-Total-Count')) || 0;
+          const perPage = Number(res.headers.get('X-Pagination-Per-Page')) || this.pageSize;
+          if (perPage !== this.pageSize) {
+            this.pageSize = perPage;
+          }
+        }
+
         this.isLoadingResults = false;
       },
       error: (error) => {
@@ -244,8 +253,8 @@ export class SaleRevenueBookComponent implements OnInit {
 
   private buildInvoiceFilter(): InvoiceFilter {
     const filter = new InvoiceFilter();
-    filter.page = 1;
-    filter.pageSize = 9999; // Lấy hết để group theo ngày ở frontend
+    filter.page = this.page;
+    filter.pageSize = this.pageSize;
     filter.expand = 'createdFormat';
 
     if (this.currentDateFilter) {

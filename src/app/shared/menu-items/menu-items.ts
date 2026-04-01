@@ -289,7 +289,14 @@ const MENUITEMS = [
       },
       {
         state: 'sale-revenue-book',
-        name: 'Sổ CT doanh thu bán hàng, HH',
+        name: 'Sổ doanh thu BH, HH (S1a)',
+        type: 'link',
+        icon: 'receipt_long',
+        permissions: ['Invoice.List']
+      },
+      {
+        state: 'sale-revenue-book-s2a',
+        name: 'Sổ doanh thu BH, HH (S2a)',
         type: 'link',
         icon: 'receipt_long',
         permissions: ['Invoice.List']

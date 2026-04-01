@@ -1,0 +1,139 @@
+<mat-sidenav-container class='custom-filter-container'>
+  <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true">
+    <mat-toolbar class="dv-header">
+      <label class='custom-filter-container__title'>Sổ doanh thu BH, HH (S2a)</label>
+    </mat-toolbar>
+    <div class='custom-filter-container__div-container'>
+      <mat-accordion multi>
+        <!-- Time Filter -->
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Thời gian</mat-panel-title>
+          </mat-expansion-panel-header>
+          <form [formGroup]="filterForm">
+            <mat-radio-group (change)="radioTimeChange($event)" formControlName="typeTime">
+              <mat-radio-button style="display: inline;" value="default" color='primary'
+                                (click)="openTimeDefault()">{{ titleTimeDefault }}
+                <button mat-icon-button><mat-icon>swap_vert</mat-icon></button>
+              </mat-radio-button>
+              <mat-radio-button style="display: inline;" value="choose"
+                                (click)="openTimeChoose()">{{ titleTimeChoose }}
+                <button mat-icon-button><mat-icon>date_range</mat-icon></button>
+              </mat-radio-button>
+            </mat-radio-group>
+          </form>
+        </mat-expansion-panel>
+
+        <!-- Order Status Filter -->
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Trạng thái đơn hàng</mat-panel-title>
+          </mat-expansion-panel-header>
+          <form [formGroup]="orderStatusFilter">
+            <mat-checkbox formControlName="pending" color="primary"
+                          (change)="onOrderStatusChange()">Chờ phát hành</mat-checkbox>
+            <br>
+            <mat-checkbox formControlName="done" color="primary"
+                          (change)="onOrderStatusChange()">Hoàn thành</mat-checkbox>
+          </form>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar class="dv-header">
+      <button mat-icon-button (click)="leftside.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span class="spacer"></span>
+      <button mat-raised-button color="primary" (click)="exportToExcel()" [disabled]="isExporting || isLoadingResults">
+        <mat-icon>cloud_download</mat-icon>
+        XUẤT EXCEL
+      </button>
+      <button style="margin-left: 10px" mat-raised-button color="primary" (click)="loadData()">
+        <mat-icon>refresh</mat-icon>
+        Làm mới
+      </button>
+    </mat-toolbar>
+
+    <div class="table-container">
+      <div class="loading-shade" *ngIf="isLoadingResults">
+        <mat-spinner></mat-spinner>
+      </div>
+
+      <!-- Grand Total -->
+      <mat-toolbar class="summary-toolbar" *ngIf="groups.length > 0">
+        <div class="summary">
+          <div class="summary-row">
+            <span class="summary-label">Tổng cộng:</span>
+            <span class="summary-value">{{ grandTotal | number }}</span>
+          </div>
+        </div>
+      </mat-toolbar>
+
+      <!-- Table with grouped data -->
+      <table class="s2a-table" *ngIf="groups.length > 0">
+        <thead>
+          <tr>
+            <th class="col-invoice-no">Số hiệu</th>
+            <th class="col-date">Ngày, tháng</th>
+            <th class="col-description">Diễn giải</th>
+            <th class="col-amount">Số tiền</th>
+          </tr>
+          <tr class="sub-header">
+            <td>A</td>
+            <td>B</td>
+            <td>C</td>
+            <td>1</td>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let group of groups; let gi = index">
+            <!-- Group header -->
+            <tr class="group-header-row">
+              <td colspan="4">{{ group.name }}</td>
+            </tr>
+
+            <!-- Group data rows -->
+            <tr *ngFor="let row of group.rows">
+              <td>{{ row.invoice_no }}</td>
+              <td class="text-center">{{ row.invoice_date }}</td>
+              <td>{{ row.description }}</td>
+              <td class="text-right">{{ row.line_total | number }}</td>
+            </tr>
+
+            <!-- Group total -->
+            <tr class="group-total-row">
+              <td colspan="3" class="text-center"><strong>Tổng cộng ({{ gi + 1 }})</strong></td>
+              <td class="text-right"><strong>{{ group.total | number }}</strong></td>
+            </tr>
+            <tr class="group-tax-row">
+              <td colspan="3" class="text-center">Thuế GTGT</td>
+              <td class="text-right"></td>
+            </tr>
+            <tr class="group-tax-row">
+              <td colspan="3" class="text-center">Thuế TNCN</td>
+              <td class="text-right"></td>
+            </tr>
+          </ng-container>
+        </tbody>
+        <tfoot>
+          <tr class="grand-total-row">
+            <td colspan="3" class="text-center"><strong>Tổng số thuế GTGT phải nộp</strong></td>
+            <td class="text-right"></td>
+          </tr>
+          <tr class="grand-total-row">
+            <td colspan="3" class="text-center"><strong>Tổng số thuế TNCN phải nộp</strong></td>
+            <td class="text-right"></td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div class="no-data-message" *ngIf="!isLoadingResults && groups.length === 0">
+        <mat-icon>search</mat-icon>
+        <p>Vui lòng chọn khoảng thời gian để xem sổ doanh thu</p>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
