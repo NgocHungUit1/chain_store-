@@ -12,11 +12,13 @@ import {Supplier} from '../../supplier/supplier.model';
 import {Warehouse, WarehouseFilter} from '../../warehouse/warehouse.model';
 import {WarehouseService} from '../../warehouse/warehouse.service';
 import {InvoiceFilter} from '../../invoice/invoice.model';
+import { MatDateProviders } from '../../shared/providers/mat-date.provider';
 
 @Component({
   selector: 'app-cash-flow-payment-dialog',
   templateUrl: './cash-flow-payment-dialog.component.html',
-  styleUrls: ['./cash-flow-payment-dialog.component.css']
+  styleUrls: ['./cash-flow-payment-dialog.component.css'],
+  providers: [...MatDateProviders]
 })
 export class CashFlowPaymentDialogComponent implements OnInit {
 

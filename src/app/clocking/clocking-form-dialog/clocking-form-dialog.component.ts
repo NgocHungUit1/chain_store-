@@ -7,11 +7,13 @@ import {ClockingService} from '../clocking.service';
 import {Employee} from '../../employee/employee.model';
 import {Timesheet} from '../../timesheet/timesheet.model';
 import {Clocking} from '../clocking.model';
+import { MatDateProviders } from '../../shared/providers/mat-date.provider';
 
 @Component({
   selector: 'app-clocking-form-dialog',
   templateUrl: './clocking-form-dialog.component.html',
-  styleUrls: ['./clocking-form-dialog.component.css']
+  styleUrls: ['./clocking-form-dialog.component.css'],
+  providers: [...MatDateProviders]
 })
 export class ClockingFormDialogComponent implements OnInit {
   form: FormGroup;

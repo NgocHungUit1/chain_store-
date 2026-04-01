@@ -13,11 +13,13 @@ import {Customer} from '../../customer/customer.model';
 import {CustomerService} from '../../customer/customer.service';
 import {InvoiceService} from '../../invoice/invoice.service';
 import {Invoice, InvoiceFilter} from '../../invoice/invoice.model';
+import { MatDateProviders } from '../../shared/providers/mat-date.provider';
 
 @Component({
   selector: 'app-cash-flow-receipt-dialog',
   templateUrl: './cash-flow-receipt-dialog.component.html',
-  styleUrls: ['./cash-flow-receipt-dialog.component.css']
+  styleUrls: ['./cash-flow-receipt-dialog.component.css'],
+  providers: [...MatDateProviders]
 })
 export class CashFlowReceiptDialogComponent implements OnInit {
 
