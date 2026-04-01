@@ -294,13 +294,13 @@ const MENUITEMS = [
         icon: 'receipt_long',
         permissions: ['Invoice.List']
       },
-      {
-        state: 'sale-revenue-book-s2a',
-        name: 'Sổ doanh thu BH, HH (S2a)',
-        type: 'link',
-        icon: 'receipt_long',
-        permissions: ['Invoice.List']
-      },
+      // {
+      //   state: 'sale-revenue-book-s2a',
+      //   name: 'Sổ doanh thu BH, HH (S2a)',
+      //   type: 'link',
+      //   icon: 'receipt_long',
+      //   permissions: ['Invoice.List']
+      // },
       {
         state: 'cash-book',
         name: 'S6-HKD: Sổ quỹ tiền mặt',
