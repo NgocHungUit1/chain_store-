@@ -188,29 +188,11 @@ export class SaleRevenueBookComponent implements OnInit {
   }
 
   processData(data: any[]): void {
-    // Group by date (extract date part from createdFormat "dd/MM/yyyy HH:mm")
-    const grouped: { [date: string]: number } = {};
-
-    data.forEach(item => {
-      const dateStr = (item.createdFormat || '').split(' ')[0]; // "01/12/2025"
-      if (!dateStr) { return; }
-      const amount = parseFloat(item.total_price || 0) + parseFloat(item.total_vat || 0);
-      grouped[dateStr] = (grouped[dateStr] || 0) + amount;
-    });
-
-    // Sort by date ascending
-    const displayData: SaleRevenueRow[] = Object.keys(grouped)
-      .sort((a, b) => {
-        // Parse "dd/MM/yyyy" to compare
-        const [dA, mA, yA] = a.split('/').map(Number);
-        const [dB, mB, yB] = b.split('/').map(Number);
-        return new Date(yA, mA - 1, dA).getTime() - new Date(yB, mB - 1, dB).getTime();
-      })
-      .map(date => ({
-        createdFormat: date,
-        description: 'Doanh thu bán lẻ thuốc, hàng hóa khác',
-        total_price: grouped[date]
-      }));
+    const displayData: SaleRevenueRow[] = data.map(item => ({
+      createdFormat: item.createdFormat || '',
+      description: 'Doanh thu bán lẻ thuốc, hàng hóa khác',
+      total_price: parseFloat(item.total_price || 0) + parseFloat(item.total_vat || 0)
+    }));
 
     this.dataSource.data = displayData;
   }
