@@ -389,6 +389,21 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
   }
 
   saveStockTake(balance_status: string = 'draft') {
+    const hasInvalidActual = this.data.some(item => {
+      const val = item['actual_number'];
+      return val === null || val === undefined || isNaN(Number(val));
+    });
+    if (hasInvalidActual) {
+      this.notifySer.notify('error', 'Số thực tế phải là số hợp lệ!');
+      return;
+    }
+
+    const hasNegativeActual = this.data.some(item => Number(item['actual_number']) < 0);
+    if (hasNegativeActual) {
+      this.notifySer.notify('error', 'Số thực tế không được nhỏ hơn 0!');
+      return;
+    }
+
     if (this.form.valid) {
       const data = this.form.getRawValue();
       if (balance_status === 'done') {

@@ -24,6 +24,7 @@ export class GroupFilter extends ApiFilterBase {
     keyword = '';
     date_from = '';
     date_to = '';
+    product_type = ''
 
     getModelSearch() {
         return 'GroupSearch';

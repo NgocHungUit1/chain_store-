@@ -99,6 +99,11 @@ export class ProductTabInfoComponent extends BaseComponent implements OnChanges 
           } else if (res['message'] !== undefined) {
             this.notifySer.notify('error', res['message']);
           }
+        }, err => {
+          if (err.error) {
+            const messages = ([] as string[]).concat(...Object.values(err.error) as string[][]);
+            messages.forEach(msg => this.notifySer.notify('error', msg));
+          }
         });
       }
       // if (result.event === 'Update') {
@@ -205,11 +210,28 @@ export class ProductTabInfoComponent extends BaseComponent implements OnChanges 
   }
 
   lock() {
-    this.productSer.lock(this.product.id).subscribe(x => {
-      this.product.status = '9';
-      this.notifySer.notify('success', 'Đã tạm ngừng thành công!');
+    const obj = {
+      action: 'Delete',
+      title: 'Xác nhận tạm ngừng danh sách đã chọn.',
+      content: '',
+    };
+
+    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
+      data: obj,
+      width: '30%',
+      minHeight: '60%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.event === 'confirm') {
+        this.productSer.lock(this.product.id).subscribe(x => {
+          this.product.status = '9';
+          this.notifySer.notify('success', 'Đã tạm ngừng thành công!');
+        });
+      }
     });
   }
+
+
 
   delete() {
     const obj = {

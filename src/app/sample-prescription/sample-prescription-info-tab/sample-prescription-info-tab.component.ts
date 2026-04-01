@@ -119,8 +119,7 @@ export class SamplePrescriptionInfoTabComponent extends BaseComponent implements
         this.samplePrescriptionService.delete(this.sample.id).subscribe(res => {
           if (res === true) {
             this.notifySer.notify('success', 'Xóa đơn thuốc mẫu thành công!');
-            this.loadData();
-            this.sample = null;
+            this.reload.emit();
           } else {
             this.notifySer.notify('danger', 'Không xóa được.');
           }

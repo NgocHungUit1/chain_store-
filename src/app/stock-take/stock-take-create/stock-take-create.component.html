@@ -152,7 +152,7 @@
                 <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
                   <mat-form-field>
 
-                    <input matInput  type="text" class="actual-number"
+                    <input matInput  type="number" class="actual-number"
                            [value]="element['actual_number']"
                            (change)="recalculateItem(i)"
                            [(ngModel)]="data[i]['actual_number']"
@@ -236,6 +236,7 @@
                   <mat-option *ngFor="let status of statuses" value="{{status.id}}"
                               disabled="!status.id">{{status.name}}</mat-option>
                 </mat-select>
+
               </mat-form-field>
             </div>
 

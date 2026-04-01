@@ -5,7 +5,7 @@
     <div fxLayout="column" fxLayoutGap="20px">
       <div fxFlex="100">
         <mat-form-field  fxFill>
-          <mat-label>Mã lô</mat-label>
+          <mat-label>Mã lô <span style="color: red">*</span></mat-label>
           <input matInput
                  formControlName="parcel_no"
                  placeholder="Nhập mã lô">
@@ -17,7 +17,7 @@
 
       <div fxFlex="100">
         <mat-form-field  fxFill>
-          <mat-label>Hạn sử dụng</mat-label>
+          <mat-label>Hạn sử dụng <span style="color: red">*</span></mat-label>
           <input matInput
                  [matDatepicker]="picker"
                  formControlName="expiration_date">
@@ -31,7 +31,7 @@
 
       <div fxFlex="100" class="quantity_parcel">
         <mat-form-field  fxFill>
-          <mat-label>Số lượng</mat-label>
+          <mat-label>Số lượng <span style="color: red">*</span></mat-label>
           <input matInput
                  type="number"
                  formControlName="quantity"

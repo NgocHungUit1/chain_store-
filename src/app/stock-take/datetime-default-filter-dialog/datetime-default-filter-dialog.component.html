@@ -9,12 +9,14 @@
           </mat-list-item>
           <mat-divider></mat-divider>
           <mat-list-item>
-            <button mat-button (click)="btnHomNay()" tabindex="2">
+            <button mat-button (click)="btnHomNay()" tabindex="2"
+                    [class.active-filter-btn]="local_data?.currentTitle === 'Hôm nay'">
               Hôm nay
             </button>
           </mat-list-item>
           <mat-list-item>
-            <button mat-button (click)="btnHomQua()" tabindex="2">
+            <button mat-button (click)="btnHomQua()" tabindex="2"
+                    [class.active-filter-btn]="local_data?.currentTitle === 'Hôm qua'">
               Hôm qua
             </button>
           </mat-list-item>
@@ -31,12 +33,14 @@
           </mat-list-item>
           <mat-divider></mat-divider>
           <mat-list-item>
-            <button mat-button (click)="btnTuanNay()" tabindex="3">
+            <button mat-button (click)="btnTuanNay()" tabindex="3"
+                    [class.active-filter-btn]="local_data?.currentTitle === 'Tuần này'">
               Tuần này
             </button>
           </mat-list-item>
           <mat-list-item>
-            <button mat-button (click)="btnTuanTruoc()" tabindex="4">
+            <button mat-button (click)="btnTuanTruoc()" tabindex="4"
+                    [class.active-filter-btn]="local_data?.currentTitle === 'Tuần trước'">
               Tuần trước
             </button>
           </mat-list-item>
@@ -51,12 +55,14 @@
           </mat-list-item>
           <mat-divider></mat-divider>
           <mat-list-item>
-            <button mat-button (click)="btnThangNay()" tabindex="5">
+            <button mat-button (click)="btnThangNay()" tabindex="5"
+                    [class.active-filter-btn]="local_data?.currentTitle === 'Tháng này'">
               Tháng này
             </button>
           </mat-list-item>
           <mat-list-item>
-            <button mat-button (click)="btnThangTruoc()" tabindex="6">
+            <button mat-button (click)="btnThangTruoc()" tabindex="6"
+                    [class.active-filter-btn]="local_data?.currentTitle === 'Tháng trước'">
               Tháng trước
             </button>
           </mat-list-item>

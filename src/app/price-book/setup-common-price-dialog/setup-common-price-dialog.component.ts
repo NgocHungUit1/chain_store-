@@ -81,7 +81,7 @@ export class SetupCommonPriceDialogComponent implements OnInit {
     this.updatePriceEvent();
   }
 
-  // cong thuc 
+  // cong thuc
   // result = a + calculation*b
   // result = a + calculation*b*a/100
 
@@ -159,6 +159,10 @@ export class SetupCommonPriceDialogComponent implements OnInit {
           result = a + calculation * b;
         } else {
           result = a + calculation * b * a / 100;
+        }
+        if (result < 0) {
+          this.notifySer.notify('warning', 'Giá chung không được nhỏ hơn 0!');
+          return;
         }
         var element = this.local_data;
         element['price'] = result; // add gia tri moi
