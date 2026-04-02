@@ -80,6 +80,7 @@ export class InvoiceFilter extends ApiFilterBase {
   users = '';
   created_by = '';
   keyword = '';
+  product_type = '';
 
   getModelSearch() {
     return 'InvoiceSearch';

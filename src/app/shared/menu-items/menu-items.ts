@@ -278,7 +278,7 @@ const MENUITEMS = [
     name: 'Sổ kế toán HKD',
     type: 'sub',
     icon: 'account_balance',
-    permissions: ['Report.Stock', 'Warehouse-Product-Parcel.Tracking', 'Cash-Flow.List'],
+    permissions: ['Report.Stock', 'Warehouse-Product-Parcel.Tracking', 'Cash-Flow.List', 'Invoice.List'],
     children: [
       {
         state: 'stock-detail',
@@ -287,6 +287,20 @@ const MENUITEMS = [
         icon: 'description',
         permissions: ['Report.Stock']
       },
+      {
+        state: 'sale-revenue-book',
+        name: 'Sổ doanh thu BH, HH (S1a)',
+        type: 'link',
+        icon: 'receipt_long',
+        permissions: ['Invoice.List']
+      },
+      // {
+      //   state: 'sale-revenue-book-s2a',
+      //   name: 'Sổ doanh thu BH, HH (S2a)',
+      //   type: 'link',
+      //   icon: 'receipt_long',
+      //   permissions: ['Invoice.List']
+      // },
       {
         state: 'cash-book',
         name: 'S6-HKD: Sổ quỹ tiền mặt',
