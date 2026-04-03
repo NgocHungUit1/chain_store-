@@ -499,6 +499,23 @@ Popup parcel list
       color: #ffff;
     }
   }
+  .print-button {
+    width: 100%;
+    height: 60px;
+    background-color: grey !important;
+    bottom: 0px;
+    margin-bottom: 10px;
+
+    span {
+      font-size: 20px;
+      font-weight: 600;
+      color: #ffff;
+    }
+  }
+  .disable{
+    background-color: #e0e0e0 !important;
+  }
+
 
   .support-content {
     font-size: 15px;
@@ -512,9 +529,7 @@ Popup parcel list
   }
 }
 
-.disable {
-  background-color: #a6aba6 !important;
-}
+
 
 .amount-cell-sub {
   margin-top: -24px;
@@ -1009,4 +1024,7 @@ Popup parcel list
   }
 
 
+}
+.disable {
+  background-color: #a6aba6 !important;
 }
