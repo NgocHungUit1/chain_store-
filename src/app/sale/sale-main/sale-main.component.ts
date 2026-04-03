@@ -1399,6 +1399,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       }
       this.discount = discountSiderBar?.number;
     } else {
+      this.discount = 0;
       this.numberDiscount = 0;
     }
   }
