@@ -1,11 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
-import { InvoiceService } from '../../invoice/invoice.service';
-import { InvoiceFilter, DateFilter } from '../../invoice/invoice.model';
+import { DateFilter } from '../../invoice/invoice.model';
 import { AccountingBookService } from '../services/accounting-book.service';
 import { NotifierService } from 'angular-notifier';
 import { DatetimeDefaultFilterDialogComponent } from '../../follow-book/components/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
@@ -23,9 +20,6 @@ interface SaleRevenueRow {
   styleUrls: ['./sale-revenue-book.component.scss']
 })
 export class SaleRevenueBookComponent implements OnInit {
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
-
   filterForm: FormGroup;
   dataSource = new MatTableDataSource<SaleRevenueRow>([]);
   displayedColumns: string[] = ['entry_date', 'description', 'amount'];
@@ -34,8 +28,9 @@ export class SaleRevenueBookComponent implements OnInit {
   isLoadingResults = false;
   isExporting = false;
   currentDateFilter: DateFilter;
+  allGroupedData: SaleRevenueRow[] = [];
 
-  // Pagination
+  // Pagination (client-side)
   page = 1;
   pageSize = 20;
   pageTotalCount = 0;
@@ -50,7 +45,6 @@ export class SaleRevenueBookComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private invoiceService: InvoiceService,
     private accountingBookService: AccountingBookService,
     private notifyService: NotifierService,
     private dialog: MatDialog
@@ -109,13 +103,9 @@ export class SaleRevenueBookComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.currentDateFilter = {
-          date_from: result.date_from,
-          date_to: result.date_to
-        };
+        this.currentDateFilter = { date_from: result.date_from, date_to: result.date_to };
         this.titleTimeDefault = result.title;
         this.filterForm.patchValue({ typeTime: 'default' });
-        this.page = 1;
         this.loadData();
       }
     });
@@ -131,13 +121,9 @@ export class SaleRevenueBookComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.currentDateFilter = {
-          date_from: result.date_from,
-          date_to: result.date_to
-        };
+        this.currentDateFilter = { date_from: result.date_from, date_to: result.date_to };
         this.titleTimeChoose = result.title;
         this.filterForm.patchValue({ typeTime: 'choose' });
-        this.page = 1;
         this.loadData();
       }
     });
@@ -154,42 +140,31 @@ export class SaleRevenueBookComponent implements OnInit {
   }
 
   onOrderStatusChange(): void {
-    this.page = 1;
     this.loadData();
   }
 
   loadData(): void {
     this.isLoadingResults = true;
 
-    const filter = this.buildInvoiceFilter();
+    const dateFrom = this.currentDateFilter?.date_from || '';
+    const dateTo = this.currentDateFilter?.date_to || '';
+    const statuses = this.getOrderStatuses();
 
-    // Load summary
-    this.invoiceService.getSumaryInvoice(filter).subscribe({
+    // Dùng API revenue-by-product-type (trả tất cả, không phân trang)
+    this.accountingBookService.getRevenueByProductType(dateFrom, dateTo, statuses).subscribe({
       next: (res: any) => {
-        const summary = res.body || res;
-        this.summaryTotal = parseFloat(summary.TongTienHang || 0);
-      },
-      error: () => {}
-    });
+        const allInvoices = [
+          ...(res.medicine || []),
+          ...(res.merchandise || [])
+        ];
+        const summary = res.summary || {};
+        this.summaryTotal = summary.grand_total || 0;
 
-    // Load list
-    this.invoiceService.getList(filter).subscribe({
-      next: (res: any) => {
-        const data = res.body || [];
-        this.processData(data);
-
-        if (res.headers) {
-          this.pageTotalCount = Number(res.headers.get('X-Pagination-Total-Count')) || 0;
-          const perPage = Number(res.headers.get('X-Pagination-Per-Page')) || this.pageSize;
-          if (perPage !== this.pageSize) {
-            this.pageSize = perPage;
-          }
-        }
-
+        this.processData(allInvoices);
         this.isLoadingResults = false;
       },
       error: (error) => {
-        console.error('Error loading invoices:', error);
+        console.error('Error loading data:', error);
         this.notifyService.notify('error', 'Có lỗi khi tải dữ liệu');
         this.isLoadingResults = false;
       }
@@ -197,19 +172,45 @@ export class SaleRevenueBookComponent implements OnInit {
   }
 
   processData(data: any[]): void {
-    const displayData: SaleRevenueRow[] = data.map(item => ({
-      createdFormat: item.createdFormat || '',
-      description: 'Doanh thu bán lẻ thuốc, hàng hóa khác',
-      total_price: parseFloat(item.total_price || 0) + parseFloat(item.total_vat || 0)
-    }));
+    // Group by date (extract date part from "dd/MM/yyyy HH:mm")
+    const grouped: { [date: string]: number } = {};
 
-    this.dataSource.data = displayData;
+    data.forEach(item => {
+      const dateStr = (item.invoice_date || '').split(' ')[0];
+      if (!dateStr) { return; }
+      const amount = parseFloat(item.line_total || 0);
+      grouped[dateStr] = (grouped[dateStr] || 0) + amount;
+    });
+
+    // Sort by date ascending (parse "dd/MM/yyyy")
+    this.allGroupedData = Object.keys(grouped)
+      .sort((a, b) => {
+        const [dA, mA, yA] = a.split('/').map(Number);
+        const [dB, mB, yB] = b.split('/').map(Number);
+        return new Date(yA, mA - 1, dA).getTime() - new Date(yB, mB - 1, dB).getTime();
+      })
+      .map(date => ({
+        createdFormat: date,
+        description: 'Doanh thu bán lẻ thuốc, hàng hóa khác',
+        total_price: grouped[date]
+      }));
+
+    // Client-side pagination
+    this.pageTotalCount = this.allGroupedData.length;
+    this.page = 1;
+    this.updatePageData();
+  }
+
+  updatePageData(): void {
+    const start = (this.page - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    this.dataSource.data = this.allGroupedData.slice(start, end);
   }
 
   onMatPageChange(event: any): void {
     this.page = event.pageIndex + 1;
     this.pageSize = event.pageSize;
-    this.loadData();
+    this.updatePageData();
   }
 
   exportToExcel(): void {
@@ -224,13 +225,9 @@ export class SaleRevenueBookComponent implements OnInit {
     const month = parts.length >= 2 && parts[1] ? parseInt(parts[1], 10) : (today.getMonth() + 1);
     const quarter = Math.ceil(month / 3);
 
-    const statuses = [];
-    if (this.orderStatusFilter.value.pending) { statuses.push('pending'); }
-    if (this.orderStatusFilter.value.done) { statuses.push('done'); }
-
     this.isExporting = true;
     this.accountingBookService.exportSaleRevenue(
-      dateFrom, dateTo, quarter, year, statuses.join(',')
+      dateFrom, dateTo, quarter, year, this.getOrderStatuses()
     ).subscribe({
       next: (blob: Blob) => {
         const fileName = `So-doanh-thu-S1a-HKD-Quy${quarter}-${year}.xlsx`;
@@ -251,27 +248,10 @@ export class SaleRevenueBookComponent implements OnInit {
     });
   }
 
-  private buildInvoiceFilter(): InvoiceFilter {
-    const filter = new InvoiceFilter();
-    filter.page = this.page;
-    filter.pageSize = this.pageSize;
-    filter.expand = 'createdFormat';
-
-    if (this.currentDateFilter) {
-      filter.date_from = this.currentDateFilter.date_from || '';
-      filter.date_to = this.currentDateFilter.date_to || '';
-    }
-
-    // Build order_status from checkboxes
+  private getOrderStatuses(): string {
     const statuses = [];
     if (this.orderStatusFilter.value.pending) { statuses.push('pending'); }
     if (this.orderStatusFilter.value.done) { statuses.push('done'); }
-    filter.order_status = statuses.join(',');
-
-    filter.order_national = 'yes,no';
-    filter.einvoice = 'yes,no';
-    filter.expenses = 'yes,no';
-
-    return filter;
+    return statuses.join(',');
   }
 }
