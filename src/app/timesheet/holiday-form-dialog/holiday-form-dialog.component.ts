@@ -5,11 +5,13 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {HolidayService} from '../../holiday/holiday.service';
 import * as moment from 'moment';
 import {HolidayPopupDeleteDialogComponent} from '../holiday-popup-delete-dialog/holiday-popup-delete-dialog.component';
+import { MatDateProviders } from '../../shared/providers/mat-date.provider';
 
 @Component({
   selector: 'app-holiday-form-dialog',
   templateUrl: './holiday-form-dialog.component.html',
-  styleUrls: ['./holiday-form-dialog.component.css']
+  styleUrls: ['./holiday-form-dialog.component.css'],
+  providers: [...MatDateProviders]
 })
 export class HolidayFormDialogComponent implements OnInit {
   constructor(

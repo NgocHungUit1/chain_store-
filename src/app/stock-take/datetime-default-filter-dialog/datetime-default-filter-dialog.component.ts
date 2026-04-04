@@ -56,7 +56,7 @@ export class DatetimeDefaultFilterDialogComponent implements OnInit {
     obj.date_from = date;
     obj.date_to = date;
     this.stockTakeService.setDateFilter(obj);
-    this.dialogRef.close({ 'title': 'Hôm  qua' });
+    this.dialogRef.close({ 'title': 'Hôm qua' });
   }
 
   btnTuanNay(): void {

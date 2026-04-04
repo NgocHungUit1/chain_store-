@@ -616,7 +616,7 @@
 
               <div fxFlex="100" style='margin-bottom: 4px'>
                 <mat-form-field>
-                  <input type="text" matInput formControlName="supplier" placeholder="Nhà cung cấp"
+                  <input type="text" matInput formControlName="supplier" placeholder="Nhà cung cấp *"
                          [value]="(form.controls['supplier'].value)?.name"
                          (click)="openSearchSupplierDialog()">
                   <!--                [matAutocomplete]="auto"-->
@@ -638,6 +638,9 @@
                   <!--                    </span>-->
                   <!--                  </mat-option>-->
                   <!--                </mat-autocomplete>-->
+                  <mat-error *ngIf="form.controls['supplier'].hasError('required')">
+                    Nhà cung cấp là bắt buộc
+                  </mat-error>
                 </mat-form-field>
               </div>
               <div fxFlex="40" style='margin-bottom: 4px'>
@@ -749,12 +752,12 @@
             <div fxLayout="row wrap" style='margin-top: auto'>
               <div fxFlex="100" style='gap: 1rem;'>
                 <button style='padding: 30px;' *ngIf="updateModelId === null || (model !== null && model['status'] === 9)" mat-raised-button
-                        color="accent" fxFlex="45" tabindex="10" [disabled]="this.form.invalid" (click)="submit(9)">
+                        color="accent" fxFlex="45" tabindex="10" (click)="submit(9)">
                   <mat-icon>save</mat-icon>
                   Lưu tạm
                 </button>
                 <button style='padding: 30px;' *ngIf="updateModelId === null || (model !== null && model['status'] === 9)" mat-raised-button
-                        color="primary" fxFlex="55" (click)="submit(10)" [disabled]="this.form.invalid" tabindex="11">
+                        color="primary" fxFlex="55" (click)="submit(10)" tabindex="11">
                   <mat-icon>check</mat-icon>
                   Hoàn thành
                 </button>

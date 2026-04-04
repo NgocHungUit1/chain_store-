@@ -9,11 +9,13 @@ import {Observable} from 'rxjs/Observable';
 import * as moment from 'moment';
 import {map, startWith} from 'rxjs/operators';
 import {TimesheetConfirmDeleteClockingDialogComponent} from '../timesheet-confirm-delete-clocking-dialog/timesheet-confirm-delete-clocking-dialog.component';
+import { MatDateProviders } from '../../shared/providers/mat-date.provider';
 
 @Component({
   selector: 'app-timesheet-form-delete-clocking-dialog',
   templateUrl: './timesheet-form-delete-clocking-dialog.component.html',
-  styleUrls: ['./timesheet-form-delete-clocking-dialog.component.css']
+  styleUrls: ['./timesheet-form-delete-clocking-dialog.component.css'],
+  providers: [...MatDateProviders]
 })
 export class TimesheetFormDeleteClockingDialogComponent implements OnInit {
 

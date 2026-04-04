@@ -91,6 +91,12 @@ export class GroupFormDialogComponent implements OnInit {
 
 
     submit() {
+        Object.keys(this.form.controls).forEach(key => {
+            const ctrl = this.form.controls[key];
+            if (ctrl.errors?.['ajaxValidator']) {
+                ctrl.setErrors(null);
+            }
+        });
         if (this.form.valid) {
             const data = this.form.getRawValue();
 
@@ -152,7 +158,13 @@ export class GroupFormDialogComponent implements OnInit {
             const fieldName = controls[i][0];
             const fieldControl = controls[i][1];
             if (fieldControl['errors'] !== null) {
-                this.notifySer.notify('error', 'Lỗi thông tin trường ' + this.fieldLabels[fieldName]);
+                if (fieldControl['errors']['required']) {
+                    this.notifySer.notify('error', this.fieldLabels[fieldName] + ' là bắt buộc');
+                } else if (fieldControl['errors']['ajaxValidator']) {
+                    this.notifySer.notify('error', fieldControl['errors']['ajaxValidator'].value);
+                } else {
+                    this.notifySer.notify('error', 'Lỗi thông tin trường ' + this.fieldLabels[fieldName]);
+                }
                 hasError = true;
                 break;
             }

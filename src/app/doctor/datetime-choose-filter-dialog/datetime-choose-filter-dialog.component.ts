@@ -4,11 +4,13 @@ import {NotifierService} from 'angular-notifier';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {DateFilter} from '../../invoice/invoice.model';
 import { DoctorService } from '../doctor.service';
+import { MatDateProviders } from '../../shared/providers/mat-date.provider';
 
 @Component({
   selector: 'app-datetime-choose-filter-dialog',
   templateUrl: './datetime-choose-filter-dialog.component.html',
-  styleUrls: ['./datetime-choose-filter-dialog.component.css']
+  styleUrls: ['./datetime-choose-filter-dialog.component.css'],
+  providers: [...MatDateProviders]
 })
 export class DatetimeChooseFilterDialogComponent implements OnInit {
 

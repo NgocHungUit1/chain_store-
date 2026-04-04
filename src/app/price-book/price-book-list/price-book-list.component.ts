@@ -20,6 +20,9 @@ import { of } from 'rxjs/internal/observable/of';
 import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 import { SetupCommonPriceDialogComponent } from '../setup-common-price-dialog/setup-common-price-dialog.component';
 import * as xlsx from 'xlsx';
+import { ConfirmationDialogComponent } from '../../shared/confirmation-dialog/confirmation-dialog.component';
+import { PopupConfirmDialogComponent } from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
+
 
 @Component({
   selector: 'app-price-book-list',
@@ -60,6 +63,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
 
 
   apiFilter: PriceListProductFilter;
+  private previousTextSearch: string = null;
 
   selectProduct = new FormControl();
   data: PriceListProduct[] = [];
@@ -232,7 +236,8 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
         }
       });
 
-      if (res.textSearchProduct) {
+      if (res.textSearchProduct !== this.previousTextSearch) {
+        this.previousTextSearch = res.textSearchProduct;
         this.apiFilter = this.buildFilterFromParams();
         this.loadData();
       }
@@ -281,6 +286,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
     const priceListID = this.priceListForm.controls['priceLists'].value;
     this.priceListSer.updateAll(priceListID).subscribe(res => {
       if (res === true) {
+        this.notifySer.notify('success', 'Thêm tất cả sản phẩm thành công!');
         this.loadData();
       }
     });
@@ -393,16 +399,34 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
   }
 
   removeProduct(id) {
-    this.priceListProductSer.delete(id).subscribe(product => {
-      this.notifySer.notify('success', 'Xóa thành công!');
-      this.apiFilter = this.buildFilterFromParams();
-      this.loadData();
+    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
+      data: {
+        action: 'Delete',
+        title: 'Xác nhận xóa?',
+        content: 'Bạn có chắc chắn muốn xóa sản phẩm này khỏi bảng giá không?',
+      },
+      width: '30%',
+      minHeight: '60%',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.event ==='confirm') {
+        this.priceListProductSer.delete(id).subscribe(product => {
+          this.notifySer.notify('success', 'Xóa thành công!');
+          this.apiFilter = this.buildFilterFromParams();
+          this.loadData();
+        });
+      }
     });
   }
 
   savePrice(event: any, element) {
-    // console.log((event.target.value));
-    element['price'] = Number(event.target.value);
+    const price = Number(event.target.value);
+    if (price < 0) {
+      this.notifySer.notify('warning', 'Giá không được nhỏ hơn 0!');
+      event.target.value = element['price'];
+      return;
+    }
+    element['price'] = price;
     this.priceListProductSer.update(element.id, element).subscribe(element => {
       this.notifySer.notify('success', 'Lưu thành công!');
       this.apiFilter = this.buildFilterFromParams();

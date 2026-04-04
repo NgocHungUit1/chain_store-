@@ -118,6 +118,18 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     '#', 'invoice_no', 'created_at', 'returns', 'customer', 'national_pharmacy_no',
     'total_price', 'discount', 'expenses_order_price', 'payment', 'einvoice_no', 'einvoice_status'
   ];
+
+  // for second column
+  second_columnsToDisplay: string[] = ['second_select',
+    'second_#', 'second_invoice_no', 'second_created_at', 'second_returns', 'second_customer',
+    'second_national_pharmacy_no', 'second_total_price', 'second_discount', 'second_expenses_order_price', 'second_payment',
+    'second_einvoice_no', 'second_einvoice_status'
+  ];
+  get second_displayedColumns(): string[] {
+    return this.displayedColumns.map(col => `second_${col}`).filter(col => this.second_columnsToDisplay.includes(col));
+  }
+
+
   dataSource: Invoice[] = [];
   selection = new SelectionModel<Invoice>(true, []);
   toggleMore = false;
@@ -153,13 +165,6 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
       'value': 'no',
       'name': 'Chưa liên thông',
     },
-  ];
-
-  // for second column
-  second_columnsToDisplay: string[] = ['select',
-    'second_#', 'second_invoice_no', 'second_created_at', 'second_returns', 'second_customer',
-    'second_national_no', 'second_total_price', 'second_discount', 'second_expenses_order_price', 'second_payment',
-    'second_einvoice_no', 'second_einvoice_status'
   ];
 
   codeSearch = null;

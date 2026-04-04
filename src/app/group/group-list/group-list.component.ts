@@ -109,6 +109,10 @@ export class GroupListComponent extends ListComponentBase implements OnInit {
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.expand = 'branch';
+    const selectedTypes = this.filterForm?.value['type'] ?? [];
+    if (selectedTypes.length > 0) {
+      filter.product_type = selectedTypes.map(t => t.value).join(',');
+    }
     return filter;
   }
 
@@ -146,6 +150,7 @@ export class GroupListComponent extends ListComponentBase implements OnInit {
     this.filterForm.patchValue({
       type: this.filterForm.value['type'].filter(item => item !== fruit)
     });
+    this.refreshData();
   }
 
   selected($event: MatAutocompleteSelectedEvent) {
@@ -163,6 +168,7 @@ export class GroupListComponent extends ListComponentBase implements OnInit {
     this.filterForm.patchValue({
       type: newValue
     });
+    this.refreshData();
   }
 
   refreshData() {

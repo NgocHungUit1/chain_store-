@@ -17,11 +17,13 @@ import { Move, MoveDetail, MoveDetailFilter } from '../move.model';
 import { MoveService } from '../move.service';
 import { MoveDetailService } from '../move-detail.service';
 import { UserService } from '../../user/user.service';
+import { MatDateProviders } from '../../shared/providers/mat-date.provider';
 
 @Component({
   selector: 'app-move-create',
   templateUrl: './move-create.component.html',
-  styleUrls: ['./move-create.component.css']
+  styleUrls: ['./move-create.component.css'],
+  providers: [...MatDateProviders]
 })
 export class MoveCreateComponent extends ListComponentBase implements OnInit {
 

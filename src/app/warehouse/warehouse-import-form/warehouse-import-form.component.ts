@@ -1040,6 +1040,10 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
 
   submit(status: number) {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     if (this.submitted === true) {
       return;
     }

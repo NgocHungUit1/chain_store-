@@ -305,9 +305,12 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
               this.notifySer.notify('success', 'Thêm hàng hóa thành công!');
               this.uploadImage(product, action);
               this.dialogRef.close({event: action, data: product});
+            }, error => {
+              this.loading = false;
             });
           }, error => {
             this.loading = false;
+
           });
         } else {
           this.productSer.create(data).subscribe(product => {
@@ -385,6 +388,16 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
           this.form.controls['units'] = new FormArray([]);
           this.loadProduct(product.id, true);
         }
+      }, error => {
+        this.loading = false;
+        if (error.status === 413) {
+          this.notifySer.notify('error', 'Hình ảnh quá lớn, vui lòng chọn ảnh nhỏ hơn!');
+        } else if (error.error && typeof error.error === 'object') {
+          const messages = ([] as string[]).concat(...Object.values(error.error) as string[][]);
+          messages.forEach(msg => this.notifySer.notify('error', msg));
+        } else {
+          this.notifySer.notify('error', 'Không thể tải hình ảnh!');
+        }
       });
     } else {
       this.loading = false;
@@ -399,7 +412,11 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       const fieldName = controls[i][0];
       const fieldControl = controls[i][1];
       if (fieldControl['errors'] !== null) {
-        this.notifySer.notify('error', 'Lỗi thông tin trường ' + this.fieldLabels[fieldName]);
+        if (fieldControl['errors']['required']) {
+          this.notifySer.notify('error', this.fieldLabels[fieldName] + ' là bắt buộc');
+        } else {
+          this.notifySer.notify('error', 'Lỗi thông tin trường ' + this.fieldLabels[fieldName]);
+        }
         hasError = true;
         break;
       }
@@ -545,6 +562,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
     });
 
     reader.readAsDataURL(file);
+    imageInput.value = '';
   }
 
   reloadImageButtons() {

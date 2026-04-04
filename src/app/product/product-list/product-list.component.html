@@ -59,7 +59,8 @@
                            (change)='statusProductFilterChange()'
                            formControlName='group'>
             <mat-radio-button *ngFor='let group of groups'
-            [value]='group.id'>
+            [value]='group.id'
+            (click)='deselectRadioGroup($event, "group", group.id)'>
             {{group.name}}</mat-radio-button>
           </mat-radio-group>
         </mat-expansion-panel>
@@ -237,14 +238,17 @@
                 (click)='selectColumn.toggle();'>
           <mat-icon>menu</mat-icon>
         </button>
-        <mat-select [(ngModel)]='displayedColumns'
+        <mat-select [ngModel]='displayedColumns'
+                    (ngModelChange)='onColumnSelectionChange($event)'
                     #selectColumn
                     [multiple]='true'
                     style='width: 100%; display: inline-flex; margin-left: -20px; color: white'
                     placeholder='Chọn cột'>
           <!--<mat-select-trigger></mat-select-trigger>-->
-          <mat-option *ngFor='let column of columnsToDisplay'
-                      [value]='column'>{{columnsHeader[column]}}</mat-option>
+          <ng-container *ngFor='let column of columnsToDisplay'>
+            <mat-option *ngIf="column !== 'select'"
+                        [value]='column'>{{columnsHeader[column]}}</mat-option>
+          </ng-container>
         </mat-select>
       </div>
       <button class='m-r-5 padding-x-10'
@@ -446,9 +450,9 @@
               </ng-container>
 
               <tr mat-header-row
-                  *matHeaderRowDef='columnsToDisplay'></tr>
+                  *matHeaderRowDef='displayedColumns'></tr>
               <tr mat-row
-                  *matRowDef='let element; columns: columnsToDisplay;'
+                  *matRowDef='let element; columns: displayedColumns;'
                   class='example-element-row'
                   [class.example-expanded-row]='expandedElement === element'
                   (click)='expandedElement = expandedElement === element ? null : element'>

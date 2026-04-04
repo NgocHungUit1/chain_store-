@@ -353,6 +353,8 @@ export class ProductMedicineDialogComponent implements OnInit {
 
   loadProduct(id, copy: any = null) {
     this.productSer.getDetail(id, 'medicine,images,productPlacements,productUnits,quantity').subscribe(product => {
+      const nullToDash = (val: any) => (val === null || val === undefined || val === '' || val === 'NULL') ? '-' : val;
+
       const placements = [];
       product['productPlacements'].forEach(pPlacement => {
         placements.push(pPlacement.id);
@@ -402,6 +404,15 @@ export class ProductMedicineDialogComponent implements OnInit {
       //   });
       // }
 
+      const medicinePatched = medicine ? {
+        registration_no: nullToDash(medicine['registration_no']),
+        main_active_substance: nullToDash(medicine['main_active_substance']),
+        content: nullToDash(medicine['content']),
+        packing: nullToDash(medicine['packing']),
+        manufacturer: medicine['manufacturer'],
+        made_in: nullToDash(medicine['made_in']),
+      } : medicine;
+
       if (copy === null) {
         this.form.patchValue({
           product_no: product['product_no'],
@@ -416,7 +427,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           weight: product['weight'],
           base_unit: product['base_unit'],
           medicine_id: product['medicine_id'],
-          medicine: medicine, // product['medicine'],
+          medicine: medicinePatched,
           placements: placements,
           min_quantity: product['min_quantity'],
           comm_percent: product['comm_percent'],
@@ -439,7 +450,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           weight: product['weight'],
           base_unit: product['base_unit'],
           medicine_id: product['medicine_id'],
-          medicine: medicine, // product['medicine'],
+          medicine: medicinePatched,
           placements: placements,
           min_quantity: product['min_quantity'],
           max_quantity: product['max_quantity'],
@@ -495,12 +506,20 @@ export class ProductMedicineDialogComponent implements OnInit {
     if (this.form.valid) {
       this.loading = true;
       const data = this.form.getRawValue();
+      const dashToNull = (val: any) => (val === '-') ? null : val;
       // if (data.medicine_id == null) {
       //   this.notifySer.notify('info', 'Vui lòng nhập lại tên thuốc để xác định lại mã dược quốc gia');
       //   this.form.controls['product_name'].setValue('');
       //   this.loading = false;
       //   return;
       // }
+      if (data.medicine) {
+        data.medicine.registration_no = dashToNull(data.medicine.registration_no);
+        data.medicine.main_active_substance = dashToNull(data.medicine.main_active_substance);
+        data.medicine.content = dashToNull(data.medicine.content);
+        data.medicine.packing = dashToNull(data.medicine.packing);
+        data.medicine.made_in = dashToNull(data.medicine.made_in);
+      }
       data.manufacturer = data.medicine.manufacturer;
       data.made_in = data.medicine.made_in;
       data.original_price = numeral(data.original_price).value();
@@ -542,6 +561,10 @@ export class ProductMedicineDialogComponent implements OnInit {
             this.dialogRef.close({event: action, data: product, connect: connect});
           }, error => {
             this.loading = false;
+            if (error.error) {
+              const messages = ([] as string[]).concat(...Object.values(error.error) as string[][]);
+              messages.forEach(msg => this.notifySer.notify('error', msg));
+            }
           });
         }
 
@@ -553,6 +576,10 @@ export class ProductMedicineDialogComponent implements OnInit {
           this.dialogRef.close({event: action, data: product, connect: connect});
         }, error => {
           this.loading = false;
+          if (error.error) {
+            const messages = ([] as string[]).concat(...Object.values(error.error) as string[][]);
+            messages.forEach(msg => this.notifySer.notify('error', msg));
+          }
         });
       }
     } else {
@@ -613,6 +640,16 @@ export class ProductMedicineDialogComponent implements OnInit {
           this.form.controls['units'] = new FormArray([]);
           this.loadProduct(product.id, true);
         }
+      }, error => {
+        this.loading = false;
+        if (error.status === 413) {
+          this.notifySer.notify('error', 'Hình ảnh quá lớn, vui lòng chọn ảnh nhỏ hơn!');
+        } else if (error.error && typeof error.error === 'object') {
+          const messages = ([] as string[]).concat(...Object.values(error.error) as string[][]);
+          messages.forEach(msg => this.notifySer.notify('error', msg));
+        } else {
+          this.notifySer.notify('error', 'Không thể tải hình ảnh!');
+        }
       });
     } else {
       this.loading = false;
@@ -629,7 +666,11 @@ export class ProductMedicineDialogComponent implements OnInit {
       const fieldControl = controls[i][1];
 
       if (fieldControl['errors'] !== null) {
-        this.notifySer.notify('error', 'Lỗi thông tin trường ' + this.fieldLabels[fieldName]);
+        if (fieldControl['errors']['required']) {
+          this.notifySer.notify('error', this.fieldLabels[fieldName] + ' là bắt buộc');
+        } else {
+          this.notifySer.notify('error', 'Lỗi thông tin trường ' + this.fieldLabels[fieldName]);
+        }
         hasError = true;
         break;
       }
@@ -776,17 +817,33 @@ export class ProductMedicineDialogComponent implements OnInit {
   }
 
   selectedMedicine(medicine) {
+    const nullToDash = (val: any) => (val === null || val === undefined || val === ''|| val==='NULL') ? '-' : val;
 
     this.form.patchValue({
       medicine_id: medicine['id'],
       product_name: medicine['medicine_name'],
-      medicine: medicine,
+      medicine: {
+        registration_no: nullToDash(medicine['registration_no']),
+        main_active_substance: nullToDash(medicine['main_active_substance']),
+        content: nullToDash(medicine['content']),
+        packing: nullToDash(medicine['packing']),
+        manufacturer: medicine['manufacturer'],
+        made_in: nullToDash(medicine['made_in']),
+      },
     });
+    console.log(nullToDash(medicine['registration_no']));
     this.manufacturerSer.save({'name': medicine['manufacturer']}).subscribe(res => {
       const result = <Manufacturer>res;
       medicine.manufacturer = result['id'];
       this.form.patchValue({
-        medicine: medicine,
+        medicine: {
+          registration_no: nullToDash(medicine['registration_no']),
+          main_active_substance: nullToDash(medicine['main_active_substance']),
+          content: nullToDash(medicine['content']),
+          packing: nullToDash(medicine['packing']),
+          manufacturer: medicine['manufacturer'],
+          made_in: nullToDash(medicine['made_in']),
+        },
       });
       this.manufacturers.push(result);
 
@@ -807,6 +864,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     });
 
     reader.readAsDataURL(file);
+    imageInput.value = '';
   }
 
   reloadImageButtons() {

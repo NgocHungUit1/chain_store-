@@ -4,11 +4,13 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { DateFilter } from '../invoice.model';
 import { InvoiceService } from '../invoice.service';
+import { MatDateProviders } from '../../shared/providers/mat-date.provider';
 
 @Component({
   selector: 'app-datetime-choose-filter-dialog',
   templateUrl: './datetime-choose-filter-dialog.component.html',
-  styleUrls: ['./datetime-choose-filter-dialog.component.css']
+  styleUrls: ['./datetime-choose-filter-dialog.component.css'],
+  providers: [...MatDateProviders]
 })
 export class DatetimeChooseFilterDialogComponent implements OnInit {
 

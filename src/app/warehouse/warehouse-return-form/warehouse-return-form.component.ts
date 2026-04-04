@@ -20,11 +20,13 @@ import { ProductService } from '../../product/product.service';
 import { WarehouseParcelFormDialogComponent } from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
 import { SupplierFormDialogComponent } from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
 import { UserService } from '../../user/user.service';
+import { MatDateProviders } from '../../shared/providers/mat-date.provider';
 
 @Component({
   selector: 'app-warehouse-return-form',
   templateUrl: './warehouse-return-form.component.html',
-  styleUrls: ['./warehouse-return-form.component.css']
+  styleUrls: ['./warehouse-return-form.component.css'],
+  providers: [...MatDateProviders]
 })
 export class WarehouseReturnFormComponent extends ListComponentBase implements OnInit {
 
