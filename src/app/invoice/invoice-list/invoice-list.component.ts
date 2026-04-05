@@ -512,14 +512,11 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     });
 
     this.searchInvoiceForm.valueChanges.pipe(debounceTime(800)).subscribe(res => {
-      if (res !== '') {
-        this.apiFilter = this.buildFilterFromParams();
+      this.apiFilter = this.buildFilterFromParams();
+      if (res !== '' && res !== null) {
         this.apiFilter.invoice_no = res;
-        this.loadData();
-      } else {
-        this.apiFilter = this.buildFilterFromParams();
-        this.loadData();
       }
+      this.loadData();
     });
 
     this.service.subscribeLoadInvoice.subscribe(action => {
@@ -546,6 +543,12 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
       })
     );
 
+    this.productFilter.controls['product'].valueChanges.pipe(debounceTime(300)).subscribe(value => {
+      if (value === null || value === '') {
+        this.filterChange();
+      }
+    });
+
     this.filteredCustomers = this.customerFilter.controls['customer'].valueChanges.pipe(
       startWith(''),
       // delay emits
@@ -561,6 +564,12 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
         }
       })
     );
+
+    this.customerFilter.controls['customer'].valueChanges.pipe(debounceTime(300)).subscribe(value => {
+      if (value === null || value === '') {
+        this.filterChange();
+      }
+    });
 
     this.selection.changed.subscribe(res => {
       if (this.selection.selected.length > 0) {
@@ -607,11 +616,12 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
   }
 
   openTimeDefault() {
-    const obj = {};
+    const obj = { currentTitle: this.titleTimeDefault };
     const dialogRef = this.dialog.open(DatetimeDefaultFilterDialogComponent, {
       data: obj,
       width: '40%',
       minHeight: '80%',
+      autoFocus: false,
     });
 
     dialogRef.afterClosed().subscribe(result => {

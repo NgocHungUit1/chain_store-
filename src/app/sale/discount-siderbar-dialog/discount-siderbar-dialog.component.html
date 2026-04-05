@@ -19,6 +19,7 @@
     </div>
 
   </form>
+  <mat-error *ngIf="errorMessage">{{ errorMessage }}</mat-error>
 </div>
 <div mat-dialog-actions>
   <button mat-raised-button color="primary" tabindex="3" (click)="submit()">

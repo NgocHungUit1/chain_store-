@@ -46,7 +46,7 @@ export class MedicalFacilityFormDialogComponent implements OnInit {
         ])
       ],
       phone_number: [
-        null, [Validators.maxLength(15)]
+        null, [Validators.pattern(/^(0\d{9}|\+84\d{9})$/)]
       ],
     });
     if (this.medical_facility_id !== null) {

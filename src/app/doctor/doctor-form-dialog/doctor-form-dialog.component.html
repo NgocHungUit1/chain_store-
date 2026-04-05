@@ -51,6 +51,7 @@
             <mat-form-field>
               <mat-label>Điện thoại</mat-label>
               <input matInput tabindex="2" formControlName="phone">
+              <mat-error *ngIf="form.controls['phone'].hasError('pattern')">Số điện thoại không hợp lệ (VD: 0xxxxxxxxx hoặc +84xxxxxxxxx)</mat-error>
             </mat-form-field>
           </div>
 
@@ -65,7 +66,8 @@
           <div fxFlex="100">
             <mat-form-field>
               <input matInput placeholder="Tỉnh/Thành phố" tabindex="6" aria-label="Tỉnh/Thành phố"
-                     [matAutocomplete]="province" formControlName="province">
+                     [matAutocomplete]="province" formControlName="province"
+                     (focus)="provinceFocus$.next('')">
               <button mat-icon-button matPrefix>
                 <mat-icon>search</mat-icon>
               </button>
@@ -85,7 +87,7 @@
           <div fxFlex="100">
             <mat-form-field>
               <input matInput placeholder="Phường/Xã" tabindex="8" aria-label="Phường/Xã" [matAutocomplete]="ward"
-                     formControlName="ward">
+                     formControlName="ward" (focus)="wardFocus$.next('')">
               <button mat-icon-button matPrefix>
                 <mat-icon>search</mat-icon>
               </button>
@@ -135,6 +137,7 @@
             <mat-form-field>
               <mat-label>Email </mat-label>
               <input matInput tabindex="11" formControlName="email">
+              <mat-error *ngIf="form.controls['email'].hasError('email')">Email không đúng định dạng</mat-error>
             </mat-form-field>
           </div>
 

@@ -184,6 +184,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
   listProduct: any = [];
   countProduct = 0;
+  invalidAmountItems = new Set<object>();
 
   sumPrice = 0;
   sumVat = 0;
@@ -1136,6 +1137,23 @@ export class SaleMainComponent implements OnInit, DoCheck {
   downAmountProduct(product_id) {
     this.orderService.downAmountProduct(product_id);
     this.handleExpenseOrder();
+  }
+
+  validateAmountInput(product_index, event) {
+    const raw = event.target.value;
+    const value = Number(raw);
+    const product = this.listProduct[product_index];
+    if (!product) { return; }
+    if (raw === '' || isNaN(value) || value < 0) {
+      this.invalidAmountItems.add(product);
+    } else {
+      this.invalidAmountItems.delete(product);
+    }
+  }
+
+  clearAmountError(product_index) {
+    const product = this.listProduct[product_index];
+    if (product) { this.invalidAmountItems.delete(product); }
   }
 
   inputAmountProduct(product_index, event) {
@@ -3669,7 +3687,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     if (product.product.is_sub_item) {
       return;
     }
-    const selectedParcel = product.product_parcels[0];
+    const selectedParcel = product.product_parcels?.[0];
     if (!selectedParcel) {
       return;
     }

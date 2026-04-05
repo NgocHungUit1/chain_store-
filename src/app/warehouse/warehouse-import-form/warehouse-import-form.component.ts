@@ -2136,8 +2136,14 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   priceChange(event: any, index) {
+    const parsedPrice = numeral(event.target.value).value();
+    if (parsedPrice < 0) {
+      this.notifySer.notify('error', 'Đơn giá không được nhỏ hơn 0');
+      event.target.value = numeral(this.data[index]['price']).format('0,0');
+      return;
+    }
     event.target.value = numeral(event.target.value).format('0,0');
-    this.data[index]['price'] = numeral(event.target.value).value();
+    this.data[index]['price'] = parsedPrice;
     this.recalculateItem(index);
   }
 
