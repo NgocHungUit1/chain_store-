@@ -8,6 +8,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { merge, Observable, Subject } from 'rxjs';
 import * as moment from 'moment';
 import { map, startWith } from 'rxjs/operators';
+import { MatDateProviders } from '../../shared/providers/mat-date.provider';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
 
@@ -28,6 +29,7 @@ const MY_FORMATS = {
   providers: [
     { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS] },
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+    ...MatDateProviders
   ],
 })
 export class SaleCustomerFormDialogComponent implements OnInit {
@@ -102,6 +104,7 @@ export class SaleCustomerFormDialogComponent implements OnInit {
       ])],
       email: [null, Validators.compose([
         Validators.email,
+        Validators.maxLength(20)
       ])],
       address: [null, Validators.compose([
         Validators.maxLength(200)

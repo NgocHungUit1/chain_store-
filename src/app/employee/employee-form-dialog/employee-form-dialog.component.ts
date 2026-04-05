@@ -14,6 +14,7 @@ import {UserFormDialogComponent} from '../../user/user-form-dialog/user-form-dia
 import {BranchService} from '../../branch/branch.service';
 import {BranchFilter} from '../../branch/branch.model';
 import {TimesheetService} from '../../timesheet/timesheet.service';
+import { MatDateProviders } from '../../shared/providers/mat-date.provider';
 
 class ImageSnippet {
   pending = false;
@@ -40,7 +41,8 @@ class MainSalaryItem {
 @Component({
   selector: 'app-employee-form-dialog',
   templateUrl: './employee-form-dialog.component.html',
-  styleUrls: ['./employee-form-dialog.component.css']
+  styleUrls: ['./employee-form-dialog.component.css'],
+  providers: [...MatDateProviders]
 })
 export class EmployeeFormDialogComponent implements OnInit {
 
