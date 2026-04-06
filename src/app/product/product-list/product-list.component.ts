@@ -117,6 +117,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     'product_name': 'Tên hàng',
     'base_unit': 'Đơn vị',
     'original_price': 'Giá vốn',
+    'avg_original_price': 'Giá vốn trung bình',
     'sell_price': 'Giá bán',
     'status': 'Trạng thái',
     'quantity': 'Tồn kho',
