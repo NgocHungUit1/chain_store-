@@ -77,13 +77,13 @@
             </div>
 
             <div fxFlex="10" *ngIf="form.controls['doctor_id'].value !== null">
-              <button mat-button aria-label="edit" (click)="openDoctorFormDialog()">
+              <button mat-button aria-label="edit" (click)="openDoctorFormDialog(form.controls['doctor_id'].value)">
                 <mat-icon>edit</mat-icon>
               </button>
             </div>
 
             <div fxFlex="10">
-              <button mat-button aria-label="add" (click)="openDoctorFormDialog()">
+              <button mat-button aria-label="add" (click)="openDoctorFormDialog(null)">
                 <mat-icon>add</mat-icon>
               </button>
             </div>
@@ -181,7 +181,7 @@
 
           <div fxFlex="100">
             <mat-form-field>
-              <input matInput tabindex="2" formControlName="weight" placeholder = "Cân nặng">
+              <input matInput tabindex="2" formControlName="weight" placeholder="Cân nặng" type="text">
             </mat-form-field>
           </div>
 

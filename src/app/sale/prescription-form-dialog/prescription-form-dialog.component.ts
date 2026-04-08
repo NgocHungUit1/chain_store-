@@ -283,6 +283,8 @@ export class PrescriptionFormDialogComponent implements OnInit {
     });
 
     reader.readAsDataURL(file);
+    imageInput.value = '';
+
   }
 
   reloadImageButtons() {
@@ -304,8 +306,28 @@ export class PrescriptionFormDialogComponent implements OnInit {
     this.selectedFiles.splice(index, 1);
     this.reloadImageButtons();
   }
+  validateForm(){
+    const weightValue = this.form.controls['weight'].value;
+    if (weightValue !== null && weightValue !== '') {
+      const weightPattern = /^([1-9]\d*(\.\d+)?|0\.\d*[1-9]\d*)$/;
+      if (!weightPattern.test(weightValue)) {
+        this.notifySer.notify('error', 'Cân nặng phải là số lớn hơn 0');
+        return false;
+      }
+    }
+    const phoneValue = this.form.controls['phone'].value;
+    if (phoneValue !== null && phoneValue !== '') {
+      const phonePattern = /^(0\d{9}|\+84\d{9})$/;
+      if (!phonePattern.test(phoneValue)) {
+        this.notifySer.notify('error', 'Số điện thoại không hợp lệ (VD: 0xxxxxxxxx hoặc +84xxxxxxxxx)');
+        return false;
+      }
+    }
+    return true;
+  }
 
   submit() {
+    if(!this.validateForm()) return;
     if (this.form.valid) {
       this.loading = true;
       const data = this.form.getRawValue();
@@ -377,9 +399,9 @@ export class PrescriptionFormDialogComponent implements OnInit {
     }
   }
 
-  openDoctorFormDialog() {
+  openDoctorFormDialog(doctorId: string | null = null) {
     const obj = {
-      doctor_id: this.form.controls['doctor_id'].value,
+      doctor_id: doctorId,
     };
     const dialogRef = this.dialog.open(DoctorFormDialogComponent, {
       data: obj,
@@ -390,8 +412,19 @@ export class PrescriptionFormDialogComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== false && result !== undefined) {
-        this.doctors.push(result);
-        this.form.controls['doctor_id'].setValue(result.id);
+        if (doctorId !== null) {
+          // Cập nhật: thay thế thông tin bác sĩ trong danh sách, không thêm mới
+          const index = this.doctors.findIndex(d => d.id === doctorId);
+          if (index !== -1) {
+            this.doctors[index] = result;
+            this.doctors = [...this.doctors]; // trigger re-render mat-select
+          }
+          this.form.controls['doctor_id'].setValue(result.id);
+        } else {
+          // Thêm mới
+          this.doctors.push(result);
+          this.form.controls['doctor_id'].setValue(result.id);
+        }
       }
     });
   }

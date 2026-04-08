@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit, Optional } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Location } from '../../location/location.model';
-import { Observable } from 'rxjs/Observable';
+import { merge, Observable, Subject } from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { LocationService } from '../../location/location.service';
@@ -34,6 +34,8 @@ export class DoctorFormDialogComponent implements OnInit {
   wards: Location[] = [];
   filteredProvinces: Observable<any[]>;
   filteredWards: Observable<any[]>;
+  provinceFocus$ = new Subject<string>();
+  wardFocus$ = new Subject<string>();
   local_data: any;
   doctor_id: string;
   branchList: any;
@@ -82,9 +84,11 @@ export class DoctorFormDialogComponent implements OnInit {
           Validators.maxLength(100)
         ])
       ],
-      phone: [null],
+      phone: [null, Validators.compose([
+        Validators.pattern(/^(0\d{9}|\+84\d{9})$/)
+      ])],
       email: [null, Validators.compose([
-        Validators.maxLength(25)
+        Validators.email,
       ])],
       address: [null, Validators.compose([
         Validators.maxLength(200)
@@ -105,14 +109,22 @@ export class DoctorFormDialogComponent implements OnInit {
       this.provinces = locations;
     });
 
-    this.filteredProvinces = this.form.controls['province'].valueChanges.pipe(
+    this.filteredProvinces = merge(
+      this.form.controls['province'].valueChanges,
+      this.provinceFocus$
+    ).pipe(
       startWith(''),
-      map(province => (province ? this.filterProvince(province) : this.provinces.slice()))
+      map(value => typeof value === 'string' ? value : ''),
+      map(text => text ? this.filterProvince(text) : this.provinces.slice())
     );
 
-    this.filteredWards = this.form.controls['ward'].valueChanges.pipe(
+    this.filteredWards = merge(
+      this.form.controls['ward'].valueChanges,
+      this.wardFocus$
+    ).pipe(
       startWith(''),
-      map(ward => (ward ? this.filterWard(ward) : this.wards.slice()))
+      map(value => typeof value === 'string' ? value : ''),
+      map(text => text ? this.filterWard(text) : this.wards.slice())
     );
 
     if (this.doctor_id !== null && this.doctor_id !== undefined) {
