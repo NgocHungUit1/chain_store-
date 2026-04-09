@@ -69,7 +69,7 @@
 
               <div fxFlex="10" class="row-amount">
                 <div *ngIf="localItemInvoice?.is_return !== true; else changeAmount">
-                  <div fxLayout="row wrap" style="overflow: visible">
+                  <div fxLayout="row wrap">
                     <mat-form-field
                                     floatLabel="never" style="font-size: 20px; text-align: center">
                       <button matPrefix mat-icon-button class="row-button-edit-amount"
@@ -77,26 +77,19 @@
                         <mat-icon>keyboard_arrow_up</mat-icon>
                       </button>
                       <input
-                        matInput tabindex="3"  class="row-amount-number" style="caret-color: red; font-size:14px;"
-                        (change)="inputAmountProduct(getProductIndex(masterProduct), $event)"
-                        autocomplete="off"
-                        [ngClass]="{'is_morethan_stock': masterProduct && masterProduct?.product_parcels && masterProduct?.product_parcels[0] && (masterProduct?.product_parcels[0]?.quantity_of_stock<masterProduct.amount ) }"
-                        (input)="onAmountInput($event, getProductIndex(masterProduct))"
-                        [formControl]="getAmountControl(getProductIndex(masterProduct))"
-                        [errorStateMatcher]="alwaysMatcher"
-                      />
-                      <mat-error style="font-size: 10px; position: relative; top:18px; height: 38px" *ngIf="getAmountControl(getProductIndex(masterProduct)).hasError('min')">
-                        Số lượng không được bé hơn không
-                      </mat-error>
-                      <mat-error style="font-size: 10px; position: relative; top:18px; height: 38px" *ngIf="getAmountControl(getProductIndex(masterProduct)).hasError('invalidnum')">
-                        Số lượng phải là số
-                      </mat-error>
+                        matInput tabindex="3" min="0" class="row-amount-number" style="caret-color: red; font-size:14px;"
+                        (input)="validateAmountInput(getProductIndex(masterProduct), $event)"
+                        (change)="clearAmountError(getProductIndex(masterProduct)); inputAmountProduct(getProductIndex(masterProduct), $event)"
 
+                        [value]="masterProduct?.amount" autocomplete="off"
+                        [ngClass]="{'is_morethan_stock': masterProduct && masterProduct?.product_parcels && masterProduct?.product_parcels[0] && (masterProduct?.product_parcels[0]?.quantity_of_stock<masterProduct.amount ) }"
+                      />
                       <button matSuffix mat-icon-button class="row-button-edit-amount"
                               (click)="adjustAmountProduct(getProductIndex(masterProduct), 'down')">
                         <mat-icon>keyboard_arrow_down</mat-icon>
                       </button>
                     </mat-form-field>
+                    <div *ngIf="invalidAmountItems.has(masterProduct)" style="position: absolute; top:60px; color: red; font-size: 11px; white-space: nowrap; height: 16px;">Số lượng không hợp lệ</div>
                   </div>
                 </div>
                 <ng-template #changeAmount>
@@ -108,25 +101,19 @@
                       </button>
                       <input matInput tabindex="3" min="0" max="{{ masterProduct?.max_amount_return }}"
                              class="row-amount-number"
-                             autocomplete="off"
-                             (change)="inputAmountProduct(getProductIndex(masterProduct), $event)"
+                             (input)="validateAmountInput(getProductIndex(masterProduct), $event)"
+                             (change)="clearAmountError(getProductIndex(masterProduct)); inputAmountProductReturn(getProductIndex(masterProduct), $event)"
+                             value="{{ masterProduct?.amount }}" autocomplete="off"
                              [ngClass]="{'is_morethan_stock': masterProduct && masterProduct?.product_parcels && masterProduct.product_parcels[0] &&( masterProduct?.product_parcels[0]?.quantity_of_stock<masterProduct.amount ) }"
-                             (input)="onAmountInput($event, getProductIndex(masterProduct))"
-                             [formControl]="getAmountControl(getProductIndex(masterProduct))"
-                             [errorStateMatcher]="alwaysMatcher"
                       />
-                      <mat-error style="font-size: 10px; position: relative; top:18px; height: 38px" *ngIf="getAmountControl(getProductIndex(masterProduct)).hasError('min')">
-                        Số lượng không được bé hơn không
-                      </mat-error>
-                      <mat-error style="font-size: 10px; position: relative; top:18px; height: 38px" *ngIf="getAmountControl(getProductIndex(masterProduct)).hasError('invalidnum')">
-                        Số lượng phải là số
-                      </mat-error>
+
                       <button matSuffix mat-icon-button class="row-button-edit-amount"
                               (click)="downAmountProduct(getProductIndex(masterProduct))">
                         <mat-icon>keyboard_arrow_down</mat-icon>
                       </button>
                     </mat-form-field>
                     <span class="amount-cell-sub">/{{ masterProduct?.max_amount_return }}</span>
+                    <div [style.height]="invalidAmountItems.has(masterProduct) ? '16px' : '0'" [style.overflow]="invalidAmountItems.has(masterProduct) ? 'visible' : 'hidden'" style="color: red; font-size: 11px; white-space: nowrap; width: 100%;">Số lượng không hợp lệ</div>
                   </div>
                 </ng-template>
               </div>
@@ -366,25 +353,17 @@
                           <mat-icon>keyboard_arrow_up</mat-icon>
                         </button>
                         <input matInput tabindex="3" min="0" class="row-amount-number" style="caret-color: red; font-size:14px;"
-                               (change)="inputAmountProduct(getProductIndex(subItem), $event)" [value]="subItem?.amount"
+                               (input)="validateAmountInput(getProductIndex(subItem), $event)"
+                               (change)="clearAmountError(getProductIndex(subItem)); inputAmountProduct(getProductIndex(subItem), $event)" [value]="subItem?.amount"
                                autocomplete="off"
                                [ngClass]="{'is_morethan_stock': subItem.product_parcels[0] &&( subItem?.product_parcels[0]?.quantity_of_stock<subItem.amount ) }"
-                               (input)="onAmountInput($event, getProductIndex(subItem))"
-                               [formControl]="getAmountControl(getProductIndex(subItem))"
-                               [errorStateMatcher]="alwaysMatcher"
                         />
-                        <mat-error style="font-size: 10px; position: relative; top:18px; height: 38px" *ngIf="getAmountControl(getProductIndex(subItem)).hasError('min')">
-                          Số lượng không được bé hơn không
-                        </mat-error>
-                        <mat-error style="font-size: 10px; position: relative; top:18px; height: 38px" *ngIf="getAmountControl(getProductIndex(subItem)).hasError('invalidnum')">
-                          Số lượng phải là số
-                        </mat-error>
-
                         <button matSuffix mat-icon-button class="row-button-edit-amount"
                                 (click)="adjustAmountProduct(getProductIndex(subItem), 'down')">
                           <mat-icon>keyboard_arrow_down</mat-icon>
                         </button>
                       </mat-form-field>
+                      <div [style.height]="invalidAmountItems.has(subItem) ? '16px' : '0'" [style.overflow]="invalidAmountItems.has(subItem) ? 'visible' : 'hidden'" style="color: red; font-size: 11px; white-space: nowrap; width: 100%;">Số lượng không hợp lệ</div>
                     </div>
                   </div>
                   <ng-template #changeAmountSub>
@@ -397,15 +376,17 @@
                         <input matInput tabindex="3" min="0" max="{{ subItem?.max_amount_return }}"
                                class="row-amount-number"
                                [ngClass]="{'is_morethan_stock': subItem.product_parcels[0] &&( subItem?.product_parcels[0]?.quantity_of_stock<subItem.amount ) }"
-                               (input)="inputAmountProductReturn(getProductIndex(subItem), $event.target.value)"
+                               (input)="validateAmountInput(getProductIndex(subItem), $event)"
+                               (change)="clearAmountError(getProductIndex(subItem)); inputAmountProductReturn(getProductIndex(subItem), $event.target.value)"
                                value="{{ subItem?.amount }}" autocomplete="off" />
                         <button matSuffix mat-icon-button class="row-button-edit-amount"
                                 (click)="downAmountProduct(getProductIndex(subItem))">
                           <mat-icon>keyboard_arrow_down</mat-icon>
                         </button>
                       </mat-form-field>
-
+                      
                       <span class="amount-cell-sub">/{{ subItem?.max_amount_return }}</span>
+                      <div [style.height]="invalidAmountItems.has(subItem) ? '16px' : '0'" [style.overflow]="invalidAmountItems.has(subItem) ? 'visible' : 'hidden'" style="color: red; font-size: 11px; white-space: nowrap; width: 100%;">Số lượng không hợp lệ</div>
                     </div>
                   </ng-template>
                 </div>
@@ -1221,12 +1202,10 @@
             <div class="sidebar-order-bottom">
               <div class="sidebar-order-bottom-buttons">
                 <button
+                  style="width: 80px; background-color: gray !important;"
                   mat-button
-                  (click)="printPreInvoiceHandler()"
-                  [disabled]="hasAnyAmountError()"
-                  class="print-button {{hasAnyAmountError() ? 'disable' : ''}}"
-                  style="width: 80px; background-color: gray;"
-                >
+                  class="payment-button"
+                  (click)="printPreInvoiceHandler()">
                   <span>In</span>
                 </button>
               <div
@@ -1238,9 +1217,9 @@
                 <button
                   mat-button
                   class="payment-button btn-success {{
-                    checkPermissionSaleDisable() || hasAnyAmountError() ? 'disable' : ''
+                    (checkPermissionSaleDisable() || invalidAmountItems.size > 0) ? 'disable' : ''
                   }}"
-                  [disabled]="checkPermissionSaleDisable() || hasAnyAmountError()"
+                  [disabled]="checkPermissionSaleDisable() || invalidAmountItems.size > 0"
                   (click)="payment()">
                   <span>Thanh toán (F7)</span>
                 </button>

@@ -32,6 +32,8 @@ export class DiscountSiderbarDialogComponent implements OnInit {
   ];
 
   public form: FormGroup;
+  sumPrice: number = 0;
+  errorMessage: string = '';
 
   onNoClick(): void {
     this.dialogRef.close();
@@ -52,6 +54,7 @@ export class DiscountSiderbarDialogComponent implements OnInit {
         mItemInvoice = element;
       }
     });
+    this.sumPrice = mItemInvoice.total_amount ?? 0;
 
     const discountSiderBar = mItemInvoice.discountSiderBar;
     if (discountSiderBar !== null && discountSiderBar !== undefined && discountSiderBar.number > 0) {
@@ -72,6 +75,16 @@ export class DiscountSiderbarDialogComponent implements OnInit {
 
   submit() {
     const data = this.form.getRawValue();
+    const discountValue = numeral(data.number).value();
+    if (data.type === 'price' && discountValue > this.sumPrice) {
+      this.errorMessage = 'Giảm giá không được lớn hơn tổng tiền hàng';
+      return;
+    }
+    if (data.type === 'percent' && discountValue > 100) {
+      this.errorMessage = 'Giảm giá theo % không được lớn hơn 100%';
+      return;
+    }
+    this.errorMessage = '';
     let listInvoice = this.orderService.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;
     let activeiTemInvoice = new ItemInvoice();

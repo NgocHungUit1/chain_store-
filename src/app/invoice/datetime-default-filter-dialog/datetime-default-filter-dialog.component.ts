@@ -57,7 +57,7 @@ export class DatetimeDefaultFilterDialogComponent implements OnInit {
     obj.date_from = date;
     obj.date_to = date;
     this.invoiceService.setDateFilter(obj);
-    this.dialogRef.close({ 'title': 'Hôm  qua' });
+    this.dialogRef.close({ 'title': 'Hôm qua' });
   }
 
   btnAllTime(): void {
@@ -148,7 +148,7 @@ export class DatetimeDefaultFilterDialogComponent implements OnInit {
     obj.date_to = moment().format("YYYY-MM-DD");
     obj.date_from = moment().subtract(3, 'months').format("YYYY-MM-DD");
     this.invoiceService.setDateFilter(obj);
-    this.dialogRef.close({ 'title': '3 Tháng trước' });
+    this.dialogRef.close({ 'title': '3 tháng trước' });
   }
 
   btn6ThangTruoc(){
@@ -156,7 +156,7 @@ export class DatetimeDefaultFilterDialogComponent implements OnInit {
     obj.date_to = moment().format("YYYY-MM-DD");
     obj.date_from = moment().subtract(6, 'months').format("YYYY-MM-DD");
     this.invoiceService.setDateFilter(obj);
-    this.dialogRef.close({ 'title': '6 Tháng trước' });
+    this.dialogRef.close({ 'title': '6 tháng trước' });
   }
 
 }

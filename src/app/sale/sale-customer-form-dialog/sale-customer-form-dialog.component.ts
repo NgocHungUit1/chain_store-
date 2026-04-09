@@ -5,26 +5,44 @@ import { LocationService } from '../../location/location.service';
 import { Location } from '../../location/location.model';
 import { NotifierService } from 'angular-notifier';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
+import { merge, Observable, Subject } from 'rxjs';
 import * as moment from 'moment';
 import { map, startWith } from 'rxjs/operators';
 import { MatDateProviders } from '../../shared/providers/mat-date.provider';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
 
+const MY_FORMATS = {
+  parse: { dateInput: 'DD/MM/YYYY' },
+  display: {
+    dateInput: 'DD/MM/YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 
 @Component({
   selector: 'app-sale-customer-form-dialog',
   templateUrl: './sale-customer-form-dialog.component.html',
   styleUrls: ['./sale-customer-form-dialog.component.css'],
-  providers: [...MatDateProviders]
+  providers: [
+    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS] },
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+    ...MatDateProviders
+  ],
 })
 export class SaleCustomerFormDialogComponent implements OnInit {
 
   form: FormGroup;
   loading = false;
+  today = new Date();
   provinces: Location[] = [];
   wards: Location[] = [];
   filteredProvinces: Observable<any[]>;
   filteredWards: Observable<any[]>;
+  provinceFocus$ = new Subject<string>();
+  wardFocus$ = new Subject<string>();
   local_data: any;
   customer_id: string;
 
@@ -56,6 +74,21 @@ export class SaleCustomerFormDialogComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  autoFormatDate(event: any) {
+    const inputType = (event as InputEvent).inputType;
+    if (inputType === 'deleteContentBackward' || inputType === 'deleteContentForward') {
+      event.target.value = event.target.value.replace(/\/$/, '');
+      return;
+    }
+    let digits = event.target.value.replace(/\D/g, '').slice(0, 8);
+    if (digits.length >= 4) {
+      digits = digits.slice(0, 2) + '/' + digits.slice(2, 4) + '/' + digits.slice(4);
+    } else if (digits.length >= 2) {
+      digits = digits.slice(0, 2) + '/' + digits.slice(2);
+    }
+    event.target.value = digits;
+  }
+
   initForm() {
     this.form = this.fb.group({
       name: [
@@ -67,9 +100,10 @@ export class SaleCustomerFormDialogComponent implements OnInit {
       ],
       phone: [null, Validators.compose([
         Validators.required,
-        Validators.maxLength(20)
+        Validators.pattern(/^(0\d{9}|\+84\d{9})$/)
       ])],
       email: [null, Validators.compose([
+        Validators.email,
         Validators.maxLength(20)
       ])],
       address: [null, Validators.compose([
@@ -99,14 +133,22 @@ export class SaleCustomerFormDialogComponent implements OnInit {
       this.provinces = locations;
     });
 
-    this.filteredProvinces = this.form.controls['province'].valueChanges.pipe(
+    this.filteredProvinces = merge(
+      this.form.controls['province'].valueChanges,
+      this.provinceFocus$
+    ).pipe(
       startWith(''),
-      map(province => (province ? this.filterProvince(province) : this.provinces.slice()))
+      map(value => typeof value === 'string' ? value : ''),
+      map(text => text ? this.filterProvince(text) : this.provinces.slice())
     );
 
-    this.filteredWards = this.form.controls['ward'].valueChanges.pipe(
+    this.filteredWards = merge(
+      this.form.controls['ward'].valueChanges,
+      this.wardFocus$
+    ).pipe(
       startWith(''),
-      map(ward => (ward ? this.filterWard(ward) : this.wards.slice()))
+      map(value => typeof value === 'string' ? value : ''),
+      map(text => text ? this.filterWard(text) : this.wards.slice())
     );
 
     if (this.customer_id !== null && this.customer_id !== undefined) {
@@ -173,7 +215,6 @@ export class SaleCustomerFormDialogComponent implements OnInit {
         const formattedDate = moment(momentDate).format('YYYY-MM-DD');
         data['dob'] = formattedDate;
       }
-
       if (data['province'] !== null) {
         data['province_id'] = data['province'].id;
       }
