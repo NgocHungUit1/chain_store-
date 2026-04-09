@@ -1190,8 +1190,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
     });
   }
 
-  openPriceDetailOrderDialog(i: any, product: Product, common_price: string) {
-    console.log(common_price);
+  openPriceDetailOrderDialog(i: any, product: Product, common_price: string, invoiceDetail: any) {
+    product.product_unit_id = invoiceDetail['product_unit_id'] || null;
+    product.product_unit_value = invoiceDetail['product_unit_value'] || 0;
     const obj = {
       i: i,
       product: product,

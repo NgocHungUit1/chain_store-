@@ -421,6 +421,7 @@ export class OrderService {
   }
 
   updateProduct(i: any, product: Product) {
+    console.log(product);
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
