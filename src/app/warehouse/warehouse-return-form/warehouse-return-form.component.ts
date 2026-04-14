@@ -89,6 +89,10 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
   ];
   data: WarehouseProduct[] = [];
   productDataSource = new MatTableDataSource<WarehouseProduct>([]);
+  invalidQuantityItems = new Set<object>();
+  quantityErrors = new Map<object, string>();
+  invalidPriceItems = new Set<object>();
+  priceErrors = new Map<object, string>();
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -386,8 +390,66 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
     }
   }
 
+  validateQuantityInput(i: number, event: Event) {
+    const input = (event.target as HTMLInputElement).value.trim();
+    const item = this.data[i];
+    const num = Number(input);
+    if (!input || isNaN(num) || !/^\d+(\.\d+)?$/.test(input)) {
+      this.invalidQuantityItems.add(item);
+      this.quantityErrors.set(item, 'Số lượng không hợp lệ');
+      return;
+    }
+    if (num <= 0) {
+      this.invalidQuantityItems.add(item);
+      this.quantityErrors.set(item, 'Số lượng phải lớn hơn 0');
+      return;
+    }
+    const inventory = item['inventory_quantity'];
+    if (inventory !== undefined && inventory !== null && num > inventory) {
+      this.invalidQuantityItems.add(item);
+      this.quantityErrors.set(item, `Số lượng không được vượt quá tồn kho (${inventory})`);
+      return;
+    }
+    this.invalidQuantityItems.delete(item);
+    this.quantityErrors.delete(item);
+    this.recalculateItem(i);
+  }
+
+  clearQuantityError(i: number) {
+    const item = this.data[i];
+    this.invalidQuantityItems.delete(item);
+    this.quantityErrors.delete(item);
+  }
+
+
+  clearPriceError(i: number) {
+    const item = this.data[i];
+    this.invalidPriceItems.delete(item);
+    this.priceErrors.delete(item);
+  }
+
+  validatePriceInput(i: number, event: Event) {
+    const input = (event.target as HTMLInputElement).value.trim();
+    const item = this.data[i];
+    const num = Number(input);
+    if (input === '' || isNaN(num) || !/^-?\d+(\.\d+)?$/.test(input)) {
+      this.invalidPriceItems.add(item);
+      this.priceErrors.set(item, 'Đơn giá không hợp lệ');
+      return;
+    }
+    if (num < 0) {
+      this.invalidPriceItems.add(item);
+      this.priceErrors.set(item, 'Đơn giá không được nhỏ hơn 0');
+      return;
+    }
+    this.invalidPriceItems.delete(item);
+    this.priceErrors.delete(item);
+    this.recalculateItem(i);
+  }
+
+
   onSelectedProduct(product) {
-    this.productSer.getDetail(product.id, 'productUnits').subscribe(res => {
+    this.productSer.getDetail(product.id, 'productUnits,quantity').subscribe(res => {
       const warehouseProduct = new WarehouseProduct();
       warehouseProduct.product_id = product.id;
       warehouseProduct.product = product;
@@ -398,10 +460,17 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
       warehouseProduct.productUnits = res['productUnits'];
       warehouseProduct.product_parcels = [];
 
+      const baseQty = res['quantity'] ? res['quantity']['number'] : 0;
+      warehouseProduct.inventory_quantity = baseQty;
+
       if (res['productUnits'].length > 0) {
         res['productUnits'].sort((a, b) => (a.value > b.value) ? 1 : -1);
+        res['productUnits'].forEach(pu => {
+          pu['quantity_of_stock'] = Math.floor(baseQty / (pu['value'] || 1));
+        });
         warehouseProduct.product_unit_id = res['productUnits'][0]['id'];
         warehouseProduct.price = res['productUnits'][0]['original_price'];
+        warehouseProduct.inventory_quantity = res['productUnits'][0]['quantity_of_stock'];
       }
 
       const newData = this.data.concat([warehouseProduct]);
@@ -472,7 +541,13 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
   }
 
   changeQuantity(index, value) {
-    this.data[index]['quantity'] = Number(this.data[index]['quantity']) + Number(value);
+    const newQty = Number(this.data[index]['quantity']) + Number(value);
+    const inventory = this.data[index]['inventory_quantity'];
+    if (Number(value) > 0 && inventory !== undefined && inventory !== null && newQty > inventory) {
+      this.notifySer.notify('error', `Số lượng không được vượt quá tồn kho (${inventory})`);
+      return;
+    }
+    this.data[index]['quantity'] = newQty;
     if (this.data[index]['product_parcels'].length === 1) {
       this.data[index]['product_parcels'][0]['quantity'] = this.data[index]['quantity'];
     }
@@ -520,6 +595,17 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
       this.data[index]['price'] = unitBase['original_price'] * unit['value'];
       this.data[index]['sell_price'] = unit['sell_price'];
       this.data[index]['inventory_quantity'] = unit['quantity_of_stock'];
+      // Re-validate quantity against new unit's inventory
+      const item = this.data[index];
+      const qty = Number(item['quantity']);
+      const inventory = unit['quantity_of_stock'];
+      if (inventory !== undefined && inventory !== null && qty > inventory) {
+        this.invalidQuantityItems.add(item);
+        this.quantityErrors.set(item, `Số lượng không được vượt quá tồn kho (${inventory})`);
+      } else {
+        this.invalidQuantityItems.delete(item);
+        this.quantityErrors.delete(item);
+      }
       // this.data[index]['price'] = (unit['original_price'] !== 0) ? unit['original_price'] : unit['sell_price']; //unit['original_price'];
       this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
 

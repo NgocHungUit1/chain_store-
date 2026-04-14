@@ -945,8 +945,7 @@
                       <input
                         matInput
                         type="text"
-                        *ngIf="sumPrice - numberDiscount <= 0"
-                        value="{{ (sumPrice - numberDiscount) * -1 | number }}"
+                        value="{{ sumPrice - numberDiscount | number }}"
                         autocomplete="off" />
                     </div>
                   </div>
