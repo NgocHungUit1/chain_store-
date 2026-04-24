@@ -334,6 +334,9 @@
                     {{ element.product.product_no }}</div>
                   <div style="display: flex">
                   <div class="custom-parcel-filter-container">
+                      <div *ngIf="data[i]['parcel_qty_mismatch']" style="color: #d32f2f; font-size: 11px; margin-bottom: 2px;">
+                        ⚠ Tổng SL lô chưa khớp với SL dòng hàng
+                      </div>
                       <div class="chip-list">
                         <mat-chip-list #chiplist aria-label="Parcel selection">
                           <mat-chip

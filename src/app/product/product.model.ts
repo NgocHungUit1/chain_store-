@@ -56,6 +56,7 @@ export class Product {
   quantity: Quantity;
   master_product_id: string; // use for subItem
   is_sub_item: number;
+  batch_tracking_enabled: boolean;
   vat_percent?: number;
 }
 

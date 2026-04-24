@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { Warehouse, WarehouseProduct, WarehouseProductFilter } from '../warehouse.model';
 import { WarehouseService } from '../warehouse.service';
+import { IResponse } from '../../common/response.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { WarehouseProductService } from '../warehouse-product.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -115,11 +116,16 @@ export class WarehouseInfoTabComponent implements OnChanges {
     }
     this.isLoadingResults = true;
     if (this.model.status === 9) {
-      this.mainService.update(this.model.id, {status: 10}).subscribe(res => {
-        const typeStr = res['type'] === 'import' ? 'nhập' : 'trả';
-        this.isLoadingResults = false;
-        this.model.status = res['status'];
-        this.notifySer.notify('success', 'Hoàn thành đơn ' + typeStr + ' hàng');
+      this.mainService.update(this.model.id, {status: 10}).subscribe((res: IResponse<Warehouse>) => {
+        if (res && res.success) {
+          const warehouse: Warehouse = res.data;
+          const typeStr = warehouse.type === 'import' ? 'nhập' : 'trả';
+          this.isLoadingResults = false;
+          this.model.status = warehouse.status;
+          this.notifySer.notify('success', 'Hoàn thành đơn ' + typeStr + ' hàng');
+        } else {
+          this.notifySer.notify('error', res.message || 'Có lỗi xảy ra');
+        }
       }, error => {
         this.isLoadingResults = false;
       });

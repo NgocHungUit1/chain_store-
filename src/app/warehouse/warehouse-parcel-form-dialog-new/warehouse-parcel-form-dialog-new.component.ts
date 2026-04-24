@@ -8,6 +8,7 @@ export interface ParcelData  {
   parcel_no: string;
   expiration_date: Date;
   quantity: number;
+  unit_cost: number | null;
   product_id: string;
   product_name: string;
   product_no: string;
@@ -53,7 +54,8 @@ export class WarehouseParcelFormDialogNewComponent implements OnInit {
       quantity: new FormControl(data.quantity??'', [
         Validators.required,
         Validators.min(1),
-      ])
+      ]),
+      unit_cost: new FormControl(data.unit_cost ?? null)
     });
   }
   onNoClick(): void {
@@ -65,7 +67,8 @@ export class WarehouseParcelFormDialogNewComponent implements OnInit {
       this.parcelForm.patchValue({
         parcel_no: this.data.parcel_no,
         expiration_date: this.data.expiration_date,
-        quantity: this.data.quantity
+        quantity: this.data.quantity,
+        unit_cost: this.data.unit_cost,
       });
     }
   }

@@ -425,7 +425,7 @@
                             (reload)='loadData();'></app-product-tab-stock>
                         </ng-template>
                       </mat-tab>
-                      <mat-tab label='Tồn kho theo Lô'>
+                      <mat-tab label='Tồn kho theo Lô' *ngIf="element.batch_tracking_enabled">
                         <ng-template matTabContent>
                           <app-product-tab-stock-parcel
                             [expandedElement]='element == expandedElement ? true : false'

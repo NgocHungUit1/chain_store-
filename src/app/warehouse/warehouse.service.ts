@@ -6,6 +6,7 @@ import { resWarehousePrint, Warehouse, WarehouseFilter } from './warehouse.model
 import { ResInvoicePrint } from '../sale/order.model';
 import { AuthService } from '../authentication/auth.service';
 import {InvoiceFilter} from '../invoice/invoice.model';
+import { IResponse } from '../common/response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -55,12 +56,12 @@ export class WarehouseService {
 
   update(id: string, pos: any) {
     const url = environment.apiUrl + '/warehouse/' + id;
-    return this.http.put<Warehouse>(url, pos);
+    return this.http.put<IResponse<Warehouse>>(url, pos);
   }
 
   create(data) {
     const url = environment.apiUrl + '/warehouse';
-    return this.http.post<Warehouse>(url, data);
+    return this.http.post<IResponse<Warehouse>>(url, data);
   }
 
   autocomplete(term: string) {

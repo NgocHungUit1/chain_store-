@@ -149,6 +149,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
       max_quantity: [0],
       description: [null],
       note: [null],
+      batch_tracking_enabled: [false],
     });
   }
 
@@ -468,6 +469,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
           description: product['description'],
           note: product['note'],
           comm_percent: product['comm_percent'],
+          batch_tracking_enabled: product['batch_tracking_enabled'],
         });
       } else {
         this.form.patchValue({
@@ -490,6 +492,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
           description: product['description'],
           note: product['note'],
           comm_percent: product['comm_percent'],
+          batch_tracking_enabled: product['batch_tracking_enabled'],
         });
         this.productSer.getRenderProductNo().subscribe(product_no => {
           this.form.patchValue({
