@@ -80,6 +80,8 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
 
   data: SamplePrescriptionItem[] = [];
   productDataSource = new MatTableDataSource<SamplePrescriptionItem>([]);
+  invalidQuantityItems = new Set<object>();
+  quantityErrors = new Map<object, string>();
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -262,8 +264,31 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
 
   }
 
+  validateAmountInput(i: number, event: Event) {
+    const input = (event.target as HTMLInputElement).value.trim();
+    const item = this.data[i];
+    const num = Number(input);
+    if (!input || isNaN(num) || !/^\d+(\.\d+)?$/.test(input)) {
+      this.invalidQuantityItems.add(item);
+      this.quantityErrors.set(item, 'Số lượng không hợp lệ');
+      return;
+    }
+    if (num <= 0) {
+      this.invalidQuantityItems.add(item);
+      this.quantityErrors.set(item, 'Số lượng phải lớn hơn 0');
+      return;
+    }
+    this.invalidQuantityItems.delete(item);
+    this.quantityErrors.delete(item);
+  }
+
   changeQuantity(index, value) {
-    this.data[index]['amount'] = Number(this.data[index]['amount']) + Number(value);
+    const newQty = Number(this.data[index]['amount']) + Number(value);
+    if (newQty <= 0) { return; }
+    this.data[index]['amount'] = newQty;
+    const item = this.data[index];
+    this.invalidQuantityItems.delete(item);
+    this.quantityErrors.delete(item);
   }
 
   saveSample() {
