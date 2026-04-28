@@ -1091,8 +1091,28 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         this.submitted = false;
         return;
       }
-    }
 
+      for (const parcel of product.product_parcels) {
+        const expDate = parcel['expiration_date'];
+        if (typeof expDate === 'string') {
+          const parsed = moment(expDate, 'YYYY-MM-DD', true);
+          if (!parsed.isValid()) {
+            const fallback = moment(expDate);
+            if (!fallback.isValid()) {
+              this.notifySer.notify('warning', `Ngày hết hạn số lô SP ${product?.product['product_no']} không hợp lệ!`);
+              this.isLoadingResults = false;
+              this.submitted = false;
+              return;
+            }
+            parcel['expiration_date'] = fallback.format('YYYY-MM-DD');
+          }
+        } else if (expDate instanceof Date) {
+          parcel['expiration_date'] = moment(expDate).format('YYYY-MM-DD');
+        } else if (expDate && typeof expDate === 'object' && expDate._d) {
+          parcel['expiration_date'] = moment(expDate._d).format('YYYY-MM-DD');
+        }
+      }
+    }
 
     promise.then(() => {
       // console.log(this.form.valid);
