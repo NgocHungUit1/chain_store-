@@ -12,6 +12,8 @@ export class WarehouseDiscountDialogComponent implements OnInit {
   discount_amount: number;
   discount_type: string;
   local_data: any;
+  total_price: number = 0;
+  errorMessage: string = '';
 
   constructor(
     public dialogRef: MatDialogRef<WarehouseDiscountDialogComponent>,
@@ -20,6 +22,7 @@ export class WarehouseDiscountDialogComponent implements OnInit {
     this.local_data = {...data};
     this.discount_amount = this.local_data.discount_amount;
     this.discount_type = this.local_data.discount_type;
+    this.total_price = this.local_data.total_price ?? 0;
   }
 
   typeItems: any[] = [
@@ -73,8 +76,16 @@ export class WarehouseDiscountDialogComponent implements OnInit {
 
   submit() {
     const data = this.form.getRawValue();
-    //standardize number value to make it to be actual number
     data.number = data.number ? Number(data.number.toString().replace(/,/g, '')) : 0;
+    if (data.type === 'price' && this.total_price > 0 && data.number > this.total_price) {
+      this.errorMessage = 'Chiết khấu không được lớn hơn tổng tiền hàng';
+      return;
+    }
+    if (data.type === 'percent' && data.number > 100) {
+      this.errorMessage = 'Chiết khấu theo % không được lớn hơn 100%';
+      return;
+    }
+    this.errorMessage = '';
     this.dialogRef.close(data);
   }
 
