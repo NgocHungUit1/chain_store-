@@ -8,7 +8,7 @@ export interface ParcelData  {
   parcel_no: string;
   expiration_date: Date;
   quantity: number;
-  unit_cost: number | null;
+  unit_cost?: number | null;
   product_id: string;
   product_name: string;
   product_no: string;

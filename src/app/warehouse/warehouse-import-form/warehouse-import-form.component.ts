@@ -70,7 +70,7 @@ export interface NewParcel {
   parcel_no: string;
   expiration_date: Date;
   quantity: number;
-  unit_cost: number | null;
+  unit_cost?: number | null;
 }
 /////////
 
