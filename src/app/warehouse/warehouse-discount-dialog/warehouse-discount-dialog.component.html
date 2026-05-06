@@ -22,6 +22,7 @@
 
     </form>
 </div>
+<mat-error *ngIf="errorMessage" style="padding: 0 0 8px;">{{ errorMessage }}</mat-error>
 <div mat-dialog-actions>
     <button mat-raised-button color="primary" tabindex="3" (click)="submit()">
         <mat-icon>save</mat-icon>Lưu

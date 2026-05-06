@@ -406,7 +406,7 @@
                           <app-product-tab-info
                             [product_id]='element.id'
                             [expandedElement]='element == expandedElement ? true : false'
-                            (reload)='loadData();'></app-product-tab-info>
+                            (reload)='loadData(); loadGroups();'></app-product-tab-info>
                         </ng-template>
                       </mat-tab>
                       <mat-tab label='Thẻ kho'>

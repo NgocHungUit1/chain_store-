@@ -1,6 +1,16 @@
 import {Component, Inject, OnInit, Optional} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from "@angular/material/dialog";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from "@angular/forms";
+
+function futureDateValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (!control.value) return null;
+    const selected = new Date(control.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return selected < today ? { pastDate: true } : null;
+  };
+}
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from "@angular/material/core";
 import {MomentDateAdapter} from "@angular/material-moment-adapter";
 
@@ -43,6 +53,7 @@ export interface ParcelData  {
 })
 export class WarehouseParcelFormDialogNewComponent implements OnInit {
   parcelForm: FormGroup;
+  today: Date = new Date();
   constructor(
     public dialogRef: MatDialogRef<WarehouseParcelFormDialogNewComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ParcelData) {
@@ -50,7 +61,7 @@ export class WarehouseParcelFormDialogNewComponent implements OnInit {
     console.log('Dialog data:', data);
     this.parcelForm = new FormGroup({
       parcel_no: new FormControl('', [Validators.required]),
-      expiration_date: new FormControl('', [Validators.required]),
+      expiration_date: new FormControl('', [Validators.required, futureDateValidator()]),
       quantity: new FormControl(data.quantity??'', [
         Validators.required,
         Validators.min(1),

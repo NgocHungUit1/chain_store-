@@ -48,6 +48,7 @@ export class CreatePriceListFormDialogComponent implements OnInit {
 
   public form: FormGroup;
   loading = false;
+  minDateTo: Date = null;
 
   initForm() {
     const today = new Date();
@@ -75,6 +76,16 @@ export class CreatePriceListFormDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    this.minDateTo = new Date(this.form.controls['date_from'].value);
+    this.form.controls['date_from'].valueChanges.subscribe(value => {
+      if (value) {
+        this.minDateTo = new Date(value);
+        const dateTo = this.form.controls['date_to'].value;
+        if (dateTo && new Date(dateTo) < new Date(value)) {
+          this.form.controls['date_to'].setValue(null);
+        }
+      }
+    });
     if (this.action === 'update') {
       this.loadForm();
     }
@@ -97,6 +108,9 @@ export class CreatePriceListFormDialogComponent implements OnInit {
         date_to: date_to,
         status: element['status']
       });
+      if (date_from) {
+        this.minDateTo = new Date(date_from);
+      }
     });
 
   }

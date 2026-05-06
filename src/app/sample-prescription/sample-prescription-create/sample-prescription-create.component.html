@@ -4,7 +4,7 @@
       <button mat-icon-button routerLink="/store/sample-prescription">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <label class="font-18">Thêm đơn thuốc mẫu </label>
+      <label class="font-18">{{ updateModelId ? 'Cập nhật đơn thuốc mẫu' : 'Thêm đơn thuốc mẫu' }}</label>
       <div class="select-product">
         <mat-form-field>
           <input type="text" [formControl]="selectProduct" matInput [matAutocomplete]="chooseProduct"
@@ -79,7 +79,8 @@
                     <input matInput type="text" class="amount" style="text-align:center"
                            [value]="element['amount']"
                            [(ngModel)]="data[i]['amount']"
-                           autocomplete="off">
+                           autocomplete="off"
+                           (input)="validateAmountInput(i, $event)">
                     <button mat-icon-button matPrefix (click)="changeQuantity(i, -1)"
                             [disabled]="element['amount'] === 1 ">
                       <mat-icon>indeterminate_check_box</mat-icon>
@@ -88,6 +89,9 @@
                       <mat-icon>add_box</mat-icon>
                     </button>
                   </mat-form-field>
+                  <div style="height: 16px; color: red; font-size: 9px; white-space: normal; position: absolute; max-width: 100px; margin-top: -5px;margin-left: 8px">
+                    {{ quantityErrors.get(data[i]) }}
+                  </div>
                 </td>
               </ng-container>
 
@@ -180,7 +184,7 @@
 
             <div fxFlex="100">
               <button mat-raised-button
-                      color="primary" fxFlex="100" (click)="saveSample()" [disabled]="this.form.invalid"
+                      color="primary" fxFlex="100" (click)="saveSample()" [disabled]="this.form.invalid || invalidQuantityItems.size > 0"
                       tabindex="11">
                 <mat-icon>check</mat-icon>
                 Lưu đơn

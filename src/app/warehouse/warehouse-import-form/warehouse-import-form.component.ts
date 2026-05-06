@@ -802,15 +802,16 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
               this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
               this.openConfirmLoadTempDataFormDialog().subscribe(confirm => {
                 if (confirm) {
-                  console.log('User agreed');
                   this.form.patchValue({
                     no: 'PN' + res,
                     discount_amount: 0,
                     discount_type: 'price',
                     ...formData
                   });
+                  this.recalculateWarehouse();
                 } else {
-                  console.log('User disagreed');
+                  this.data = [];
+                  this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
                   this.form.patchValue({
                     no: 'PN' + res,
                     total_price: 0,
@@ -1122,8 +1123,32 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         this.submitted = false;
         return;
       }
-    }
 
+      if (!product.product_parcels || product.product_parcels.length === 0) {
+        continue;
+      }
+
+      for (const parcel of product.product_parcels) {
+        const expDate = parcel['expiration_date'];
+        if (typeof expDate === 'string') {
+          const parsed = moment(expDate, 'YYYY-MM-DD', true);
+          if (!parsed.isValid()) {
+            const fallback = moment(expDate);
+            if (!fallback.isValid()) {
+              this.notifySer.notify('warning', `Ngày hết hạn số lô SP ${product?.product['product_no']} không hợp lệ!`);
+              this.isLoadingResults = false;
+              this.submitted = false;
+              return;
+            }
+            parcel['expiration_date'] = fallback.format('YYYY-MM-DD');
+          }
+        } else if (expDate instanceof Date) {
+          parcel['expiration_date'] = moment(expDate).format('YYYY-MM-DD');
+        } else if (expDate && typeof expDate === 'object' && expDate._d) {
+          parcel['expiration_date'] = moment(expDate._d).format('YYYY-MM-DD');
+        }
+      }
+    }
 
     promise.then(() => {
       // console.log(this.form.valid);
@@ -1374,12 +1399,20 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           warehouseProduct.quantity = 1; // de nhap so lo
           warehouseProduct.price = (res['original_price'] !== null) ? numeral(res['original_price']).format('0,0') : 0;
           warehouseProduct.sell_price = (res['sell_price'] !== null) ? numeral(res['sell_price']).format('0,0') : 0;
-          warehouseProduct.inventory_quantity = res['quantity'] ? res['quantity']['number'] : 0;
+          const baseQty1 = res['quantity'] ? res['quantity']['number'] : 0;
+          warehouseProduct.inventory_quantity = baseQty1;
           warehouseProduct.discount = 0;
           warehouseProduct.discount_type = 'price';
           warehouseProduct.amount = (res['original_price'] !== null) ? res['original_price'] : 0;
           // warehouseProduct.amount = 0; // (res['original_price'] !== null) ? res['original_price'] : 0;
           warehouseProduct.productUnits = res['productUnits'];
+          if (res['productUnits']) {
+            res['productUnits'].forEach(pu => {
+              if (!pu['quantity_of_stock']) {
+                pu['quantity_of_stock'] = Math.floor(baseQty1 / (pu['value'] || 1));
+              }
+            });
+          }
           warehouseProduct.product_parcels = [];
           warehouseProduct.vat = 0;
           warehouseProduct.vat_type = 'price';
@@ -1445,12 +1478,20 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         warehouseProduct.quantity = +this.selectQuantity.value;
         warehouseProduct.price = (res['original_price'] !== null) ? numeral(res['original_price']).format('0,0') : 0;
         warehouseProduct.sell_price = (res['sell_price'] !== null) ? numeral(res['sell_price']).format('0,0') : 0;
-        warehouseProduct.inventory_quantity = res['quantity'] ? res['quantity']['number'] : 0;
+        const baseQty2 = res['quantity'] ? res['quantity']['number'] : 0;
+        warehouseProduct.inventory_quantity = baseQty2;
         warehouseProduct.discount = 0;
         warehouseProduct.discount_type = 'price';
         warehouseProduct.amount = (res['original_price'] !== null) ? res['original_price'] : 0;
         // warehouseProduct.amount = 0; // (res['original_price'] !== null) ? res['original_price'] : 0;
         warehouseProduct.productUnits = res['productUnits'];
+        if (res['productUnits']) {
+          res['productUnits'].forEach(pu => {
+            if (!pu['quantity_of_stock']) {
+              pu['quantity_of_stock'] = Math.floor(baseQty2 / (pu['value'] || 1));
+            }
+          });
+        }
         warehouseProduct.product_parcels = [];
         warehouseProduct.vat = 0;
         warehouseProduct.vat_type = 'price';
@@ -1773,12 +1814,14 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   openDiscountDialogWarehouse() {
+    this.recalculateWarehouse();
     const dialogRef = this.dialog.open(WarehouseDiscountDialogComponent, {
       width: '30%',
       minHeight: '80%',
       data: {
         discount_amount: this.form.controls['discount_amount'].value,
         discount_type: this.form.controls['discount_type'].value,
+        total_price: numeral(this.form.controls['total_price'].value).value(),
       }
     });
 
@@ -1808,6 +1851,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         data: {
           discount_amount: this.data[i]['discount'],
           discount_type: this.data[i]['discount_type'],
+          total_price: numeral(this.data[i]['price']).value() * this.data[i]['quantity'],
         }
       });
 

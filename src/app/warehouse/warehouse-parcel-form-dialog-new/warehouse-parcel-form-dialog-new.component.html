@@ -20,11 +20,15 @@
           <mat-label>Hạn sử dụng <span style="color: red">*</span></mat-label>
           <input matInput
                  [matDatepicker]="picker"
+                 [min]="today"
                  formControlName="expiration_date">
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
           <mat-error class="field-error" *ngIf="parcelForm.get('expiration_date')?.errors?.required">
             Hạn sử dụng là bắt buộc
+          </mat-error>
+          <mat-error class="field-error" *ngIf="parcelForm.get('expiration_date')?.errors?.pastDate">
+            Hạn sử dụng không được trong quá khứ
           </mat-error>
         </mat-form-field>
       </div>

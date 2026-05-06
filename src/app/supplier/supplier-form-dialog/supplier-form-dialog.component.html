@@ -25,6 +25,8 @@
             <mat-form-field>
               <mat-label>Điện thoại</mat-label>
               <input matInput tabindex="3" formControlName="phone_number" required>
+              <mat-error *ngIf="form.controls['phone_number'].hasError('required')">Số điện thoại không được để trống</mat-error>
+              <mat-error *ngIf="form.controls['phone_number'].hasError('pattern')">Số điện thoại không hợp lệ (VD: 0xxxxxxxxx hoặc +84xxxxxxxxx)</mat-error>
             </mat-form-field>
           </div>
           <div fxFlex="100">
@@ -36,7 +38,8 @@
           <div fxFlex="100">
             <mat-form-field>
               <input matInput placeholder="Tỉnh/Thành phố" tabindex="5" aria-label="Tỉnh/Thành phố"
-                     [matAutocomplete]="province" formControlName="province">
+                     [matAutocomplete]="province" formControlName="province"
+                     (focus)="provinceFocus$.next('')">
               <mat-autocomplete #province="matAutocomplete" [displayWith]="displayLocation"
                                 (optionSelected)='onProvinceChange($event.option.value)'>
                 <mat-option *ngFor="let province of filteredProvinces | async" [value]="province">
@@ -48,7 +51,8 @@
           <div fxFlex="100">
             <mat-form-field>
               <input matInput placeholder="Phường/Xã" tabindex="7" aria-label="Phường/Xã" [matAutocomplete]="ward"
-                     formControlName="ward">
+                     formControlName="ward"
+                     (focus)="wardFocus$.next('')">
               <mat-autocomplete #ward="matAutocomplete" [displayWith]="displayLocation">
                 <mat-option *ngFor="let ward of filteredWards | async" [value]="ward">
                   <span>{{ward.name}}</span>
