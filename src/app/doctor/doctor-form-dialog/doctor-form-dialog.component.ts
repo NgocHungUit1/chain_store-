@@ -85,7 +85,6 @@ export class DoctorFormDialogComponent implements OnInit {
         ])
       ],
       phone: [null, Validators.compose([
-        Validators.pattern(/^(0\d{9}|\+84\d{9})$/)
       ])],
       email: [null, Validators.compose([
         Validators.email,
