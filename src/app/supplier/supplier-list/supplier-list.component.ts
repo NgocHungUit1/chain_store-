@@ -203,7 +203,7 @@ export class SupplierListComponent extends ListComponentBase implements OnInit {
       width: '45%',
     });
     dialogRef.afterClosed().subscribe(result => {
-      if (result['success']) {
+      if (result && result['success']) {
         this.loadData();
       }
     });

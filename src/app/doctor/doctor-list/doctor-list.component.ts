@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ListComponentBase } from '../../shared/base';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
@@ -37,7 +37,8 @@ export class DoctorListComponent extends ListComponentBase implements OnInit {
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private notifyService: NotifierService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private cdr: ChangeDetectorRef
   ) {
     super();
   }
@@ -119,8 +120,14 @@ export class DoctorListComponent extends ListComponentBase implements OnInit {
   loadData(): void {
     this.isLoadingResults = true;
     this.service.getList(this.apiFilter).subscribe(res => {
-      this.data = res.body;
-      this.itemDataSource = new MatTableDataSource<Doctor>(this.data);
+      this.data = [...res.body];
+      if (!this.itemDataSource) {
+        this.itemDataSource = new MatTableDataSource<Doctor>(this.data);
+      } else {
+        this.itemDataSource.data = [...this.data];
+        this.cdr.detectChanges();
+
+      }
       this.reloadFilter(res);
       this.isLoadingResults = false;
     });
@@ -252,6 +259,11 @@ export class DoctorListComponent extends ListComponentBase implements OnInit {
   checkBoxFilterChange($event: any, value: any, field: string) {
     this.handleFilterCheckbox(this.statusFilter, field, value);
     this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
+  }
+
+  reloadTableData(): void {
+    console.log('reloadTableData');
     this.loadData();
   }
 }

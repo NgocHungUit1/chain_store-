@@ -37,17 +37,18 @@ export class SupplierUploadDialogComponent implements OnInit {
       this.submitted = false;
       if (uploadRes['success']) {
         this.notifierSer.notify('success', 'Tải dữ liệu thành công!');
-        this.dialogRef.close(true);
+        this.dialogRef.close({success: true});
       }
       // } else {
       //   this.notifierSer.notify('error', 'Tải dữ liệu không thành công!');
       // }
 
-      if (!Array.isArray(uploadRes['errors'])) {
+      if (uploadRes['errors'] && !Array.isArray(uploadRes['errors'])) {
         this.notifierSer.notify('error', uploadRes['errors']);
       }
 
       if (Array.isArray(uploadRes['errors'])) {
+        console.log('debug', uploadRes['errors']);
         uploadRes['errors'].forEach(error => {
           this.notifierSer.notify('error', error);
         });
