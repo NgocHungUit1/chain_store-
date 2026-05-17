@@ -333,6 +333,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
       priceListChoose: this.priceListChoose,
       action: 'update',
     };
+
     const dialogRef = this.dialog.open(CreatePriceListFormDialogComponent, {
       data: obj,
       width: '40%',

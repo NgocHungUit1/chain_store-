@@ -121,7 +121,7 @@
           </div>
           <div fxFlex="2"></div>
           <div fxFlex="32" class="invoice-info-field">
-            <span class="invoice-field-label">Ngày sinh :</span>{{ prescription?.age }}
+            <span class="invoice-field-label">Tuổi :</span>{{ prescription?.age }}
           </div>
           <div fxFlex="2"></div>
           <div fxFlex="32" class="invoice-info-field">
@@ -152,7 +152,7 @@
 
         <div fxLayout="row wrap" class="invoice-info-row">
           <div fxFlex="32" class="invoice-info-field">
-            <span class="invoice-field-label">SĐT cơ sở khám bệnh :</span> {{ prescription?.medicalFacility?.mobile_phone }}
+            <span class="invoice-field-label">SĐT cơ sở khám bệnh :</span> {{ prescription?.medicalFacility?.phone_number }}
           </div>
           <div fxFlex="2"></div>
           <div fxFlex="32" class="invoice-info-field">
@@ -182,7 +182,8 @@
 
         <div fxLayout="row wrap" class="invoice-info-row">
           <div fxFlex="32" class="invoice-info-field">
-            <span class="invoice-field-label">Ngày tạo:</span> {{ prescription.prescription_date }}
+            <span class="invoice-field-label">Ngày tạo:</span>
+            {{ prescription.prescription_date ? prescription.prescription_date : (prescription.created_at * 1000 | date: 'dd-MM-yyyy') }}
           </div>
           <div fxFlex="2"></div>
           <div fxFlex="32" class="invoice-info-field">

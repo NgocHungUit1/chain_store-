@@ -264,15 +264,21 @@ export class InvoiceTabInfoComponent implements OnChanges {
     };
     mItemInvoice.use_einvoice = invoice.use_einvoice;
     mItemInvoice.total_vat = invoice.total_vat;
-    mItemInvoice.noteSiderBar = invoice?.note??"";
+    mItemInvoice.noteSiderBar = invoice?.note ?? '';
     const aProductInfo: ProductInfo[] = [];
     const invoiceDetailFilter = new InvoiceDetailFilter();
     invoiceDetailFilter.invoice_id = invoice.id;
     invoiceDetailFilter.pageSize = 200;
     invoiceDetailFilter.expand = 'product,quantity,productUnits';
     this.invoiceService.getInvoiceDetailList(invoiceDetailFilter).subscribe(res => {
-      const detail = res.body; // invoice.detail || [];
-      detail.forEach(element => {
+      const details = res.body; // invoice.detail || [];
+      for (const element of details) {
+        // tslint:disable-next-line:triple-equals
+        if (element?.product?.status != 10) {
+          // Skip product not active
+          continue;
+        }
+
         const units = element.productUnits;
         units.forEach(item => {
           item.quantity_of_stock = Math.floor(element.quantity.number / item.value);
@@ -298,7 +304,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
         mProductInfo.note = element.note;
         mProductInfo.parcel_no = element.parcel_no;
         aProductInfo.push(mProductInfo);
-      });
+      }
       mItemInvoice.listProduct = aProductInfo;
       this.orderService.addItemInvoiceUpdate(mItemInvoice);
       this.router.navigate(['/sale']);
