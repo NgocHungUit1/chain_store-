@@ -9,6 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { OptionStoreService } from '../../common/option-store.service';
 import { PopupDeleteDialogComponent } from '../../common/popup-delete-dialog/popup-delete-dialog.component';
 import {Store} from '../../store/store.model';
+import {PrintMultipleProductDialogComponent} from '../../product/print-multiple-product-dialog/print-multiple-product-dialog.component';
 
 @Component({
   selector: 'app-warehouse-info-tab',
@@ -442,6 +443,20 @@ export class WarehouseInfoTabComponent implements OnChanges {
       WindowPrt.focus();
       WindowPrt.print();
       // WindowPrt.close();
+    });
+  }
+
+  openPrintLabel() {
+    const selected = this.data.map(item => ({
+      product_no: item.product['product_no'],
+      product_name: item.product['product_name'],
+      productUnits: [item['productUnit']],
+      print_quantity: item.quantity,
+    }));
+    this.dialog.open(PrintMultipleProductDialogComponent, {
+      data: { selected },
+      width: '50%',
+      minHeight: '60%',
     });
   }
 

@@ -50,7 +50,7 @@ export class PrintMultipleProductDialogComponent implements OnInit {
         {
           product_no: item['product_no'],
           product_name: item['product_name'],
-          print_quantity: 1,
+          print_quantity: item['print_quantity'] ?? 1,
           selected_unit_id: item['productUnits'][0]['id'],
           product_units: item['productUnits'],
         });
