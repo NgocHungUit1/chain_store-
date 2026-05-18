@@ -54,12 +54,14 @@ export class InvoiceTabInfoComponent implements OnChanges {
   giamGiaHoaDonText = '';
   orderStatus = {
     'pending': 'Đang xử lý',
-    'done': 'Hoàn thành'
+    'done': 'Hoàn thành',
+    'cancel': 'Đã hủy'
   };
 
   orderStatusColor = {
     'pending': 'label label-warning',
-    'done': 'label label-success'
+    'done': 'label label-success',
+    'cancel': 'label label-danger'
   };
 
   autoPrintInSoLo = false;
@@ -104,10 +106,15 @@ export class InvoiceTabInfoComponent implements OnChanges {
   loadData() {
     this.loading = true;
     this.invoiceService.getInfo(this.invoice.id,
-      'amount,detail,priceBook,paymentInfo,expensesOrders,branch,payment,customer,store,user,returns,today,time,createdFormat,total_payment'
+      'amount,detail,priceBook,paymentInfo,expensesOrders,branch,payment,customer,store,user,returns,today,time,createdFormat,total_payment,isFullyReturned'
     ).subscribe(res => {
       const invoiceData = res;
       this.invoice = res;
+
+      if (this.invoice.isFullyReturned) {
+        this.invoice.order_status = 'cancel';
+      }
+
       const detail = res['detail'];
       this.isInvoiceVat = !!invoiceData.use_einvoice;
       if (this.isInvoiceVat) {
@@ -468,7 +475,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
         // printContent += '<p style="text-align:left; font-size: 12px;font-style: italic;" >Hổ trợ : 0972 574 506</p>';
 
         printContent += '</section>';
-        try{
+        try {
           const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
           WindowPrt.document.write(printContent);
           WindowPrt.document.close();

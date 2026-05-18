@@ -54,6 +54,7 @@ export class Invoice {
   expenses_order_price: number;
   prescription_id: string;
   use_einvoice: number;
+  isFullyReturned?: boolean;
 }
 
 export class InvoiceFilter extends ApiFilterBase {
