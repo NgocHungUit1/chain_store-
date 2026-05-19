@@ -102,7 +102,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
     filter.pageSize = 100;//this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.warehouse_id = this.model.id;
-    filter.expand = 'product,productUnit,productParcelsForView,discountText';
+    filter.expand = 'product,productUnit,productParcelsForView,discountText,productUnits';
     return filter;
   }
 
@@ -450,7 +450,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
     const selected = this.data.map(item => ({
       product_no: item.product['product_no'],
       product_name: item.product['product_name'],
-      productUnits: [item['productUnit']],
+      productUnits: item['productUnits'],
       print_quantity: item.quantity,
     }));
     this.dialog.open(PrintMultipleProductDialogComponent, {
