@@ -7,7 +7,6 @@ import { CustomerPopupDeleteDialogComponent } from '../../customer/customer-popu
 import { Doctor } from '../doctor.model';
 import { DoctorService } from '../doctor.service';
 import { DoctorFormDialogComponent } from '../doctor-form-dialog/doctor-form-dialog.component';
-import { DoctorDeleteDialogComponent } from '../doctor-delete-dialog/doctor-delete-dialog.component';
 import { PopupConfirmDialogComponent } from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 
 @Component({
