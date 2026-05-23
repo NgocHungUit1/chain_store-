@@ -16,11 +16,11 @@ import {MatTableDataSource} from '@angular/material/table';
 export class PrintMultipleProductDialogComponent implements OnInit {
 
   local_data: any;
-  selected: [];
+  selected: any[];
   dataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
   isLoadingResults = false;
   tempData = [];
-
+  unitUpdate = false;
   constructor(
     public dialogRef: MatDialogRef<PrintMultipleProductDialogComponent>,
     public notifySer: NotifierService,
@@ -30,6 +30,7 @@ export class PrintMultipleProductDialogComponent implements OnInit {
   @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
     this.local_data = {...data};
     this.selected = this.local_data.selected;
+    this.unitUpdate = this.local_data.unitUpdate;
   }
 
   onNoClick(): void {
@@ -51,7 +52,7 @@ export class PrintMultipleProductDialogComponent implements OnInit {
           product_no: item['product_no'],
           product_name: item['product_name'],
           print_quantity: item['print_quantity'] ?? 1,
-          selected_unit_id: item['productUnits'][0]['id'],
+          selected_unit_id: item?.['selected_unit']?.['id'] ?? item['productUnits'][0]['id'],
           product_units: item['productUnits'],
         });
     });
@@ -85,6 +86,22 @@ export class PrintMultipleProductDialogComponent implements OnInit {
   remove(index) {
     this.tempData.splice(index, 1);
 
+    this.updateDatasource();
+  }
+
+  onUnitChange(i: number, event: any){
+    // Flag to ignore change
+    if(!this.unitUpdate){ return; }
+    const data = this.selected[i];
+    const initialUnit = data['selected_unit'];
+    const targetUnit = data['productUnits']?.find((v) => v?.id == event?.value);
+    if (!targetUnit || !targetUnit['value'] || !initialUnit['value']) { return; }
+    const printQty = data['print_quantity'] || 1;
+    // Calculate the new number base on the initial value.
+    // The min should be 1.
+    const newValue = Math.max(Math.round(initialUnit['value'] / targetUnit['value'] * printQty), 1);
+    const item = this.tempData[i];
+    item['print_quantity'] = newValue;
     this.updateDatasource();
   }
 

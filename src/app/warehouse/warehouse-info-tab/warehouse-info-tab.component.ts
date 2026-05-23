@@ -452,9 +452,14 @@ export class WarehouseInfoTabComponent implements OnChanges {
       product_name: item.product['product_name'],
       productUnits: item['productUnits'],
       print_quantity: item.quantity,
+      selected_unit: item['productUnit']
     }));
+
     this.dialog.open(PrintMultipleProductDialogComponent, {
-      data: { selected },
+      data: {
+        selected: selected,
+        unitUpdate: true
+      },
       width: '50%',
       minHeight: '60%',
     });
