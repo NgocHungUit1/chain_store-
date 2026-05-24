@@ -36,7 +36,8 @@
       <mat-form-field fxFill>
         <mat-label>Giá nhập (đơn giá)</mat-label>
         <input matInput
-               type="number"
+                type="text"
+               mask="separator.0" thousandSeparator=","
                autocomplete="off"
                placeholder="Nhập đơn giá theo lô"
                [(ngModel)]="data['unit_cost']"
@@ -68,7 +69,7 @@
 
 <mat-dialog-actions align="end" fxLayoutGap="8px">
   <button mat-raised-button
-          [mat-dialog-close]="data"
+          (click)="onSave()"
           color="primary"
           tabindex="4"
           [disabled]="quantityInput.invalid">

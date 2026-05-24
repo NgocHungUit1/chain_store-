@@ -85,8 +85,12 @@ export class WarehouseParcelFormDialogNewComponent implements OnInit {
   }
   onSave(): void {
     if (this.parcelForm.valid) {
-
-      this.dialogRef.close(this.parcelForm.value);
+      const value = this.parcelForm.value;
+      const raw = value.unit_cost;
+      value.unit_cost = raw !== null && raw !== undefined && raw !== ''
+        ? Number(String(raw).replace(/,/g, ''))
+        : null;
+      this.dialogRef.close(value);
     } else {
       this.markFormGroupTouched(this.parcelForm);
     }
