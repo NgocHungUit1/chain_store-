@@ -115,6 +115,9 @@ export class SaleCustomerFormDialogComponent implements OnInit {
       tax_code: [null, Validators.compose([
         Validators.maxLength(20)
       ])],
+      id_card: [null, Validators.compose([
+        Validators.maxLength(20)
+      ])],
       ward: [null],
       province: [null],
       note: [null],
@@ -169,6 +172,7 @@ export class SaleCustomerFormDialogComponent implements OnInit {
         address: customer['address'],
         company_name: customer['company_name'],
         tax_code: customer['tax_code'],
+        id_card: customer['id_card'],
         ward: customer['ward'],
         province: customer['province'],
         note: customer['note'],
