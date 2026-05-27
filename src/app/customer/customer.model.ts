@@ -10,6 +10,7 @@ export class Customer {
   dob: string;
   email: string;
   tax_code: string;
+  id_card: string;
   facebook: string;
   note: string;
   status: string;
@@ -33,6 +34,7 @@ export class CustomerFilter extends ApiFilterBase {
   dob = '';
   email = '';
   tax_code = '';
+  id_card = '';
   facebook = '';
   note = '';
   address = '';
