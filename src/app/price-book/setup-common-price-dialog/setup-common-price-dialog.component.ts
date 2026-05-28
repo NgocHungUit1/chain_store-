@@ -107,9 +107,9 @@ export class SetupCommonPriceDialogComponent implements OnInit {
     }
 
     if (data.choose === 'sell') {
-      a = this.local_data.product.sell_price;
+      a = this.local_data.productUnit.sell_price;
     } else if (data.choose === 'original') {
-      a = this.local_data.product.original_price;
+      a = this.local_data.productUnit.original_price;
     } else {
       if (this.element_common_price === null) {
         a = this.local_data.price;
@@ -144,9 +144,9 @@ export class SetupCommonPriceDialogComponent implements OnInit {
         }
 
         if (data.choose === 'sell') {
-          a = this.local_data.product.sell_price;
+          a = this.local_data.productUnit.sell_price;
         } else if (data.choose === 'original') {
-          a = this.local_data.product.original_price;
+          a = this.local_data.productUnit.original_price;
         } else {
           if (data.element_common_price === null) {
             a = this.local_data.price;
