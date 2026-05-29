@@ -70,7 +70,9 @@
         </div>
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
-
+            <span class="product-field-label">Quản lý theo lô:</span>
+            <label *ngIf="product.batch_tracking_enabled" class="label label-success">Đã bật</label>
+            <label *ngIf="!product.batch_tracking_enabled" class="label label-warning">Chưa bật</label>
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field" *ngIf="canDo('Product.View-Original-Price')">

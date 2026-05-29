@@ -29,6 +29,7 @@ import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/pop
 import {Store} from '../../store/store.model';
 import {StoreService} from '../../store/store.service';
 import {AuthService} from '../../authentication/auth.service';
+import {IResponse} from '../../common/response.model';
 
 
 @Component({
@@ -220,7 +221,7 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
         const total = this.selection.selected.length;
         this.selection.selected.forEach((item, index, array) => {
           if (item.status === 9) {
-            this.mainService.update(item.id, {status: 10}).subscribe(res => {
+            this.mainService.update(item.id, {status: 10}).subscribe((res: IResponse<Warehouse>) => {
               this.refreshData();
             });
           }

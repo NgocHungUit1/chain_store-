@@ -2929,15 +2929,15 @@ export class SaleMainComponent implements OnInit, DoCheck {
       this.orderService.saleOrder(dataInvoice).subscribe(res => {
         this.isLoadingResults = false;
         this.submitted = false;
-        if (res !== false) {
-          if (typeof res === 'number' && this.autoPrint === true) {
-            //this.printInvoice(res);
-            this.printInvoiceTemplateAuto(res);
+        if (res && res.success) {
+          if (this.autoPrint === true) {
+            this.printInvoiceTemplateAuto(res.data);
           }
           this.orderService.removeActive();
           this.notifySer.notify('success', 'Lưu thành công !');
         } else {
-          this.notifySer.notify('warning', 'Thất bại !');
+          const message = res?.message || 'Thất bại !';
+          this.notifySer.notify('error', message);
         }
         this.actionChoosePriceBook();
         this.loadData();
@@ -2945,7 +2945,10 @@ export class SaleMainComponent implements OnInit, DoCheck {
         this.orderService.setLoadProduct(false);
         this.orderService.setLoadDetailPage(true);
       }, error => {
+        this.isLoadingResults = false;
         this.submitted = false;
+        const msg = error?.error?.message || 'Thất bại !';
+        this.notifySer.notify('error', msg);
       });
     } else {
       // if (!this.isAdminStore) {
@@ -2960,17 +2963,15 @@ export class SaleMainComponent implements OnInit, DoCheck {
       this.orderService.updateOrder(dataInvoice).subscribe(res => {
         this.isLoadingResults = false;
         this.submitted = false;
-        if (res !== false) {
-          if (typeof res === 'number' && this.autoPrint === true) {
-            //this.resetDataSiderBar();
-            //this.printInvoice(res);
-            this.printInvoiceTemplateAuto(res);
+        if (res && res.success) {
+          if (this.autoPrint === true) {
+            this.printInvoiceTemplateAuto(res.data);
           }
-          //this.resetDataSiderBar();
           this.orderService.removeActive();
           this.notifySer.notify('success', 'Cập nhật đơn thành công !');
         } else {
-          this.notifySer.notify('warning', 'Thất bại !');
+          const message = res?.message || 'Thất bại !';
+          this.notifySer.notify('error', message);
         }
         this.actionChoosePriceBook();
         this.loadData();
@@ -2978,6 +2979,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
         this.orderService.setLoadDetailPage(true);
       }, error => {
         this.submitted = false;
+        const msg = error?.error?.message || 'Thất bại !';
+        this.notifySer.notify('error', msg);
       });
     }
     this.handleExpenseOrder();

@@ -143,6 +143,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     'min_quantity': 'Tồn tối thiểu',
     'max_quantity': 'Tồn tối đa',
     'comm_percent': 'Hoa hồng',
+    'batch_tracking_enabled': 'Quản lý theo lô',
   };
 
   productTypeLable = {

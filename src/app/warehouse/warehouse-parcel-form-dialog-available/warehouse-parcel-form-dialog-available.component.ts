@@ -21,4 +21,12 @@ export class WarehouseParcelFormDialogAvailableComponent {
     this.dialogRef.close();
   }
 
+  onSave(): void {
+    const raw = this.data['unit_cost'];
+    this.data['unit_cost'] = raw !== null && raw !== undefined && raw !== ''
+      ? Number(String(raw).replace(/,/g, ''))
+      : null;
+    this.dialogRef.close(this.data);
+  }
+
 }

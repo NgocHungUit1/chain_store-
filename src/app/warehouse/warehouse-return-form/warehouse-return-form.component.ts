@@ -6,7 +6,7 @@ import { NotifierService } from 'angular-notifier';
 import { MatDialog } from '@angular/material/dialog';
 import { ListComponentBase } from '../../shared/base';
 import { WarehouseProductService } from '../warehouse-product.service';
-import { WarehouseProduct, WarehouseProductFilter } from '../warehouse.model';
+import { Warehouse, WarehouseProduct, WarehouseProductFilter } from '../warehouse.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs/index';
@@ -15,6 +15,7 @@ import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operat
 import { of } from 'rxjs/internal/observable/of';
 import { SupplierService } from '../../supplier/supplier.service';
 import { WarehouseService } from '../warehouse.service';
+import { IResponse } from '../../common/response.model';
 import { Product } from '../../product/product.model';
 import { ProductService } from '../../product/product.service';
 import { WarehouseParcelFormDialogComponent } from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
@@ -354,14 +355,19 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
         delete data['date'];
         delete data['supplier'];
         this.mainService.update(this.updateModelId, data).subscribe({
-          next: (res) => {
-            this.isLoadingResults = false;
-            this.notifySer.notify('success', 'Lưu thành công.');
-            if (status === 9) {
-              this.model = res;
-              this.router.navigate(['/transaction/warehouse-return/update/' + res['id']]);
+          next: (res: IResponse<Warehouse>) => {
+            if (res && res.success) {
+              this.isLoadingResults = false;
+              this.notifySer.notify('success', 'Lưu thành công.');
+              if (status === 9) {
+                this.model = res.data;
+                this.router.navigate(['/transaction/warehouse-return/update/' + res.data.id]);
+              } else {
+                this.router.navigate(['/transaction/warehouse-return/']);
+              }
             } else {
-              this.router.navigate(['/transaction/warehouse-return/']);
+              this.isLoadingResults = false;
+              this.notifySer.notify('error', res.message || 'Có lỗi xảy ra, vui lòng thử lại.');
             }
           },
           error: (err) => {
@@ -371,14 +377,19 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
         });
       } else {
         this.mainService.create(data).subscribe({
-          next: (res) => {
-            this.isLoadingResults = false;
-            this.notifySer.notify('success', 'Lưu thành công.');
-            if (status === 9) {
-              this.model = res;
-              this.router.navigate(['/transaction/warehouse-return/update/' + res['id']]);
+          next: (res: IResponse<Warehouse>) => {
+            if (res && res.success) {
+              this.isLoadingResults = false;
+              this.notifySer.notify('success', 'Lưu thành công.');
+              if (status === 9) {
+                this.model = res.data;
+                this.router.navigate(['/transaction/warehouse-return/update/' + res.data.id]);
+              } else {
+                this.router.navigate(['/transaction/warehouse-return/']);
+              }
             } else {
-              this.router.navigate(['/transaction/warehouse-return/']);
+              this.isLoadingResults = false;
+              this.notifySer.notify('error', res.message || 'Có lỗi xảy ra, vui lòng thử lại.');
             }
           },
           error: (err) => {
