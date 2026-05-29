@@ -27,6 +27,7 @@ import { MatRadioChange } from '@angular/material/radio';
 import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 import {OptionStoreService} from '../../common/option-store.service';
 import { ProductNewUnitComponent } from '../product-new-unit/product-new-unit.component';
+import { VAT_OPTIONS } from '../../shared/constants/vat.constant';
 
 
 class ImageSnippet {
@@ -42,6 +43,8 @@ const PRODUCT_UNITS_STORAGE_KEY = 'rx20_product_units';
   styleUrls: ['./product-medicine-dialog.component.css']
 })
 export class ProductMedicineDialogComponent implements OnInit {
+
+  vatOptions = VAT_OPTIONS;
 
   constructor(
     private fb: FormBuilder,
@@ -188,6 +191,7 @@ export class ProductMedicineDialogComponent implements OnInit {
       placements: [[]],
       product_name: [this.local_data && this.local_data['product_name'] ? this.local_data['product_name'] : null, Validators.required],
       sell_price: [0, Validators.required],
+      vat_percent: [null],
       original_price: [0],
       weight: [null],
       base_unit: [this.defaultUnit, Validators.required],
@@ -424,6 +428,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           group_id: product['group_id'],
           product_name: product['product_name'],
           sell_price: numeral(product['sell_price']).value(),
+          vat_percent: product['vat_percent'],
           original_price: numeral(product['original_price']).value(),
           weight: product['weight'],
           base_unit: product['base_unit'],
@@ -448,6 +453,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           group_id: product['group_id'],
           product_name: product['product_name'],
           sell_price: numeral(product['sell_price']).value(),
+          vat_percent: product['vat_percent'],
           original_price: numeral(product['original_price']).value(),
           weight: product['weight'],
           base_unit: product['base_unit'],

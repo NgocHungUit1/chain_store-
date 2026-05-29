@@ -51,6 +51,18 @@
                          required placeholder="Giá bán cơ bản" autocomplete="off">
                 </mat-form-field>
               </div>
+              <div fxFlex="100">
+                <mat-form-field>
+                  <mat-label>VAT (%)</mat-label>
+                  <input matInput formControlName="vat_percent"
+                         [matAutocomplete]="vatAuto" type="number" autocomplete="off">
+                  <mat-autocomplete #vatAuto="matAutocomplete">
+                    <mat-option *ngFor="let opt of vatOptions" [value]="opt.value">
+                      {{opt.label}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
             </div>
 
             <div fxLayout="row wrap">

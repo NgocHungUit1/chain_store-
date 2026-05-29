@@ -43,7 +43,9 @@
           <td mat-cell *matCellDef="let row; let i = index;">
             <mat-form-field style="padding: 0 20px;">
               <mat-select
-                [(ngModel)]="tempData[i]['selected_unit_id']">
+                [(ngModel)]="tempData[i]['selected_unit_id']"
+                (selectionChange)="onUnitChange(i, $event)"
+              >
                 <mat-option *ngFor="let item of tempData[i]['product_units']" [value]="item.id">
                   {{item.name}}
                 </mat-option>

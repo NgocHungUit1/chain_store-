@@ -49,6 +49,10 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { InvoiceDetailDialogComponent } from './e-invoice/invoice-detail-dialog.component';
 import { NgxMaskModule } from 'ngx-mask';
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+import { PrintMultipleProductDialogComponent } from '../product/print-multiple-product-dialog/print-multiple-product-dialog.component';
+import { IdCodeFormDialogComponent } from '../product/id-code-form-dialog/id-code-form-dialog.component';
+import { ViewIdCodeFormDialogComponent } from '../product/view-id-code-form-dialog/view-id-code-form-dialog.component';
 
 @NgModule({
   declarations: [
@@ -89,6 +93,7 @@ import { NgxMaskModule } from 'ngx-mask';
     DemoMaterialModule,
     InputSelectAllModule,
     DComonModule,
+    NgxExtendedPdfViewerModule,
     SharedModule,
     HttpClientModule,
     MatFormFieldModule,
@@ -114,7 +119,10 @@ import { NgxMaskModule } from 'ngx-mask';
     RegisterDialogComponent,
     SyncDialogComponent,
     LoadDialogComponent,
-    InvoiceDetailDialogComponent
+    InvoiceDetailDialogComponent,
+    PrintMultipleProductDialogComponent,
+    IdCodeFormDialogComponent,
+    ViewIdCodeFormDialogComponent,
   ]
 })
 export class WarehouseModule {}
