@@ -459,6 +459,7 @@ export class SaleSiderbarOrderComponent implements OnInit {
      * Gang du lieu data
      */
     const dataInvoice = {
+      is_web_app: true,
       Invoice: {
         invoice_id: mItemInvoice.invoice_id,
         customer_id: customer?.id,
