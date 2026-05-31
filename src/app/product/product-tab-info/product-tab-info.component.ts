@@ -51,7 +51,7 @@ export class ProductTabInfoComponent extends BaseComponent implements OnChanges 
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.expandedElement) {
-      this.productSer.getDetail(this.product_id, 'medicine,productUnits,productPlacements,group,images').subscribe(res => {
+      this.productSer.getDetail(this.product_id, 'medicine,productUnits,productPlacements,group,images,quantity').subscribe(res => {
         this.product = <Product>res;
         const data = [];
         if (this.product.images.length === 0) {
@@ -122,10 +122,10 @@ export class ProductTabInfoComponent extends BaseComponent implements OnChanges 
     });
   }
 
-  openIdCodeFormDialog(product) {
+  openIdCodeFormDialog(product, useQuantity = true) {
     const obj = {
       printProductData: [{
-        print_quantity: 30,
+        print_quantity: useQuantity? product['quantity']?.['number']||1: 30,
         product_no: product['product_no'],
         product_name: product['product_name'],
         selected_unit_id: product['productUnits'][0]['id'],

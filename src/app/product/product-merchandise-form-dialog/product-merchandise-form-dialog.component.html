@@ -51,6 +51,18 @@
                          required placeholder="Giá bán cơ bản" autocomplete="off">
                 </mat-form-field>
               </div>
+              <div fxFlex="100">
+                <mat-form-field>
+                  <mat-label>VAT (%)</mat-label>
+                  <input matInput formControlName="vat_percent"
+                         [matAutocomplete]="vatAuto" type="number" autocomplete="off">
+                  <mat-autocomplete #vatAuto="matAutocomplete">
+                    <mat-option *ngFor="let opt of vatOptions" [value]="opt.value">
+                      {{opt.label}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
             </div>
 
             <div fxLayout="row wrap">
@@ -83,6 +95,14 @@
               </div>
             </div>
 
+            <div fxLayout="row wrap" style="margin: 8px 0;">
+              <mat-checkbox
+                color="primary"
+                formControlName="batch_tracking_enabled"
+              >
+                <span style="font-size: 17px; font-weight: bold;">Quản lý theo lô</span>
+              </mat-checkbox>
+            </div>
 
             <!--            <div fxLayout="row wrap">-->
             <!--              <div fxFlex="100">-->

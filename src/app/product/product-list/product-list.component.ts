@@ -143,6 +143,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     'min_quantity': 'Tồn tối thiểu',
     'max_quantity': 'Tồn tối đa',
     'comm_percent': 'Hoa hồng',
+    'batch_tracking_enabled': 'Quản lý theo lô',
   };
 
   productTypeLable = {
@@ -222,10 +223,16 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     });
   }
 
-  openPrintMultipleProduct() {
+  openPrintMultipleProduct(useQuality = true) {
+    const data = this.selection.selected?.map((item) => ({
+      ...item,
+      ...(useQuality && { print_quantity: item.quantity?.number }),
+      selected_unit: item['productUnit'],
+    }));
     const dialogRef = this.dialog.open(PrintMultipleProductDialogComponent, {
       data: {
-        selected: this.selection.selected
+        selected: data,
+        unitUpdate: true,
       },
       width: '50%',
       minHeight: '60%',

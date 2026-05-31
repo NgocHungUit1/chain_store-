@@ -25,6 +25,13 @@
     <td mat-cell *matCellDef="let element"> {{ element.expiration_date }} </td>
   </ng-container>
 
+  <ng-container matColumnDef="unit_cost">
+    <th mat-header-cell class="column-number" *matHeaderCellDef> {{ columnsHeader['unit_cost'] }} </th>
+    <td mat-cell class="column-number" *matCellDef="let element">
+      {{ element.unit_cost | number : '1.0-0' }}
+    </td>
+  </ng-container>
+
   <ng-container matColumnDef="actions">
     <th mat-header-cell *matHeaderCellDef> </th>
     <td mat-cell *matCellDef="let element">

@@ -3,12 +3,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
 import { Warehouse, WarehouseProduct, WarehouseProductFilter } from '../warehouse.model';
 import { WarehouseService } from '../warehouse.service';
+import { IResponse } from '../../common/response.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { WarehouseProductService } from '../warehouse-product.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OptionStoreService } from '../../common/option-store.service';
 import { PopupDeleteDialogComponent } from '../../common/popup-delete-dialog/popup-delete-dialog.component';
 import {Store} from '../../store/store.model';
+import {PrintMultipleProductDialogComponent} from '../../product/print-multiple-product-dialog/print-multiple-product-dialog.component';
 
 @Component({
   selector: 'app-warehouse-info-tab',
@@ -101,7 +103,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
     filter.pageSize = 100;//this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.warehouse_id = this.model.id;
-    filter.expand = 'product,productUnit,productParcelsForView,discountText';
+    filter.expand = 'product,productUnit,productParcelsForView,discountText,productUnits';
     return filter;
   }
 
@@ -115,11 +117,16 @@ export class WarehouseInfoTabComponent implements OnChanges {
     }
     this.isLoadingResults = true;
     if (this.model.status === 9) {
-      this.mainService.update(this.model.id, {status: 10}).subscribe(res => {
-        const typeStr = res['type'] === 'import' ? 'nhập' : 'trả';
-        this.isLoadingResults = false;
-        this.model.status = res['status'];
-        this.notifySer.notify('success', 'Hoàn thành đơn ' + typeStr + ' hàng');
+      this.mainService.update(this.model.id, {status: 10}).subscribe((res: IResponse<Warehouse>) => {
+        if (res && res.success) {
+          const warehouse: Warehouse = res.data;
+          const typeStr = warehouse.type === 'import' ? 'nhập' : 'trả';
+          this.isLoadingResults = false;
+          this.model.status = warehouse.status;
+          this.notifySer.notify('success', 'Hoàn thành đơn ' + typeStr + ' hàng');
+        } else {
+          this.notifySer.notify('error', res.message || 'Có lỗi xảy ra');
+        }
       }, error => {
         this.isLoadingResults = false;
       });
@@ -442,6 +449,25 @@ export class WarehouseInfoTabComponent implements OnChanges {
       WindowPrt.focus();
       WindowPrt.print();
       // WindowPrt.close();
+    });
+  }
+
+  openPrintLabel() {
+    const selected = this.data.map(item => ({
+      product_no: item.product['product_no'],
+      product_name: item.product['product_name'],
+      productUnits: item['productUnits'],
+      print_quantity: item.quantity,
+      selected_unit: item['productUnit']
+    }));
+
+    this.dialog.open(PrintMultipleProductDialogComponent, {
+      data: {
+        selected: selected,
+        unitUpdate: true
+      },
+      width: '50%',
+      minHeight: '60%',
     });
   }
 

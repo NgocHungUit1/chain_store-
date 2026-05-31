@@ -29,13 +29,14 @@ export class ProductTabStockParcelComponent extends ListComponentBase implements
   apiFilter: WarehouseProductParcelFilter;
   isLoadingResults = false;
   isRateLimitReached = false;
-  displayedColumns: string[] = ['#', 'parcel_no', 'expiration_date', 'quantity_of_stock', 'actions'];
+  displayedColumns: string[] = ['#', 'parcel_no', 'expiration_date', 'quantity_of_stock', 'unit_cost', 'actions'];
 
   columnsHeader = {
     '#': '#',
     'parcel_no': 'Số lô',
     'quantity_of_stock': 'Tồn kho',
     'expiration_date': 'Hạn sử dụng',
+    'unit_cost': 'Đơn giá nhập',
   };
 
   data: WarehouseProductParcel[] = [];
