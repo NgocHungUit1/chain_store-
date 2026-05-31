@@ -55,12 +55,12 @@ import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 export class CartComponent implements OnInit, OnDestroy {
   mobileQuery: MediaQueryList;
   dir = 'ltr';
-  green: boolean = true;
-  blue: boolean = false;
+  green = true;
+  blue = false;
   dark: boolean;
   minisidebar: boolean;
   boxed: boolean;
-  danger: boolean = false;
+  danger = false;
   showHide: boolean;
   sidebarOpened;
   placeholderSearch = 'Tìm sản phẩm (F3)';
@@ -77,7 +77,7 @@ export class CartComponent implements OnInit, OnDestroy {
   public productsHistory: Observable<Product[]>;
   listmItemInvoice: ItemInvoice[] = [];
 
-  selectedProductValue: Product
+  selectedProductValue: Product;
 
   //
   activeLink = 0;
@@ -91,15 +91,15 @@ export class CartComponent implements OnInit, OnDestroy {
   public storeDetail: object = null;
   logo = 'assets/images/Rx20_16x16_op1-1207.png';
 
-  public showProductImage:    boolean = true;  // maps to key 'image'
-  public showProductCode:     boolean = true;  // maps to key 'product_no'
-  public showSalePrice:       boolean = true;  // maps to key 'price'
-  public showDiscount:        boolean = true;  // maps to key 'discount'
-  public allowEditAsMoney:    boolean = true;  // maps to key 'edit_as_money'
-  public showLastSalePrice:   boolean = true;  // maps to key 'last_sale_price'
-  public allowAddRow:         boolean = true;  // maps to key 'add_row'
-  public allowQuantityOfStock:         boolean = false;  // maps to key 'quantity_of_stock'
-  public enableNote:          boolean = false;  // maps to key 'note'
+  public showProductImage = true;  // maps to key 'image'
+  public showProductCode = true;  // maps to key 'product_no'
+  public showSalePrice = true;  // maps to key 'price'
+  public showDiscount = true;  // maps to key 'discount'
+  public allowEditAsMoney = true;  // maps to key 'edit_as_money'
+  public showLastSalePrice = true;  // maps to key 'last_sale_price'
+  public allowAddRow = true;  // maps to key 'add_row'
+  public allowQuantityOfStock = false;  // maps to key 'quantity_of_stock'
+  public enableNote = false;  // maps to key 'note'
 
   @ViewChild('inputSearch') inputSearch: ElementRef;
   @ViewChild('inputQuantity') inputQuantity: ElementRef;
@@ -107,7 +107,7 @@ export class CartComponent implements OnInit, OnDestroy {
   @ViewChild('visibilitySidenav') visibilitySidenav: MatSidenav;
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
 
-  canNegativeStock: boolean = false;
+  canNegativeStock = false;
 
   constructor(
     changeDetectorRef: ChangeDetectorRef,
@@ -163,11 +163,11 @@ export class CartComponent implements OnInit, OnDestroy {
       debounceTime(300),
       // use switch map so as to cancel previous subscribed events, before creating new once
       switchMap(value => {
-        if(typeof value == 'object') value = '';
+        if (typeof value == 'object') { value = ''; }
         value = (value || '').trim();
         if (value !== '') {
           // lookup from github
-          switch(this.iconChangeType) {
+          switch (this.iconChangeType) {
             case 'assignment':
               return this.lookupSamplePrescription(value);
             case 'nation':
@@ -284,7 +284,7 @@ export class CartComponent implements OnInit, OnDestroy {
       this.amountProduct = 1;
     }
 
-    if(this.searchMode){
+    if (this.searchMode) {
       this.selectedProductValue = product;
       this.inputQuantity.nativeElement.select();
       return;
@@ -309,12 +309,12 @@ export class CartComponent implements OnInit, OnDestroy {
     return mItemInvoice.listProduct;
   }
 
-  addProduct(product, amountProduct = 1){
+  addProduct(product, amountProduct = 1) {
 
     const listProducts = this.getListProducts();
-    const existingQuantity = listProducts?.find(item=>item.product_id == product.id)?.amount ?? 0;
+    const existingQuantity = listProducts?.find(item => item.product_id == product.id)?.amount ?? 0;
 
-    switch(this.iconChangeType) {
+    switch (this.iconChangeType) {
       case 'cached':
         // tim san pham
         this.orderService.pushHistorySearch(product, product.store_id);
@@ -342,8 +342,12 @@ export class CartComponent implements OnInit, OnDestroy {
           // tslint:disable-next-line:no-shadowed-variable
           res['items'].forEach(element => {
             // console.log(element);
-            element.amount*= amountProduct
-            this.handlePriceListProduct(element, product.id);
+
+            if (element.status === 10) {
+              element.amount *= amountProduct;
+              this.handlePriceListProduct(element, product.id);
+            }
+
           });
           this.resetUserInput();
         });
@@ -372,7 +376,7 @@ export class CartComponent implements OnInit, OnDestroy {
     // Default vat
     product.vat_percent = 0;
 
-    let units = product.productUnits;
+    const units = product.productUnits;
     // tslint:disable-next-line:no-shadowed-variable
     units.forEach(element => {
       element.quantity_of_stock = Math.floor(
@@ -397,7 +401,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
   // Mini sidebar
   changeTypeSearch(currentSearchType) {
-    switch(currentSearchType) {
+    switch (currentSearchType) {
       case 'cached':
         this.selectProduct.patchValue(null);
         this.placeholderSearch = 'Tìm đơn thuốc mẫu';
@@ -464,7 +468,7 @@ export class CartComponent implements OnInit, OnDestroy {
     this.addProduct(this.selectedProductValue, this.amountProduct);
   }
 
-  resetUserInput(){
+  resetUserInput() {
     this.selectedProductValue = null;
     this.selectProduct.patchValue(null);
     this.amountProduct = 1;
@@ -472,7 +476,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   displayProductFn(product: any): string {
-    if (!product) return ''; // Handle null/undefined
+    if (!product) { return ''; } // Handle null/undefined
     return product.product_name; // Show only the product name
   }
 
