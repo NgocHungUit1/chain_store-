@@ -20,7 +20,7 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(
     private router: Router,
     private auth: AuthService,
-    private notify: NotifierService
+    private notify: NotifierService,
   ) {
   }
 
@@ -29,6 +29,23 @@ export class AuthInterceptor implements HttpInterceptor {
     // request = request.clone({
     //   withCredentials: true
     // });
+
+    const isExpiredHosting = localStorage.getItem('isExpiredHosting');
+    if (isExpiredHosting === '1') {
+      const lastNotify = Number(localStorage.getItem('lastHostingNotifyTime') || 0);
+
+      if (Date.now() - lastNotify > 5000) {
+        localStorage.setItem(
+          'lastHostingNotifyTime',
+          Date.now().toString()
+        );
+
+        this.notify.notify(
+          'error',
+          'Tài khoản cần nâng cấp phí hosting – LH 0972 574 506'
+        );
+      }
+    }
 
     return next.handle(request)
       .pipe(

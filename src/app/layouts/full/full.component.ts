@@ -105,6 +105,26 @@ export class FullComponent implements OnDestroy {
 
     this.storeSer.getDetail().subscribe(res => {
       this.storeDetail = res;
+      const hostingExpirationDate = this.storeDetail['hosting_expiration_date'] || null; // NULL or YYYY-MM-DD
+      // Check hosting expiration date vs current date
+      if (hostingExpirationDate !== null) {
+        const currentDate = new Date();
+        const expirationDate = new Date(hostingExpirationDate);
+        const timeDiff = expirationDate.getTime() - currentDate.getTime();
+        const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+        if (dayDiff < 4 && dayDiff >= 0) {
+          this.notifySer.notify(
+            'warning', 'Cửa hàng của bạn còn ' + dayDiff + ' ngày hosting, vui lòng liên hệ LH 0972 574 506 để được tư vấn.'
+          );
+        }
+        // else if (dayDiff < 0) {
+        //   this.notifySer.notify('error', 'Tài khoản cần nâng cấp phí hosting – LH 0972 574 506');
+        // }
+        localStorage.setItem('isExpiredHosting', dayDiff < 0 ? '1' : '0');
+      } else {
+        localStorage.setItem('isExpiredHosting', '0');
+      }
+
       if (this.storeDetail['features'].indexOf('logo') >= 0 && this.storeDetail['logo'] !== null) {
         this.logo = this.storeDetail['logo'];
       }
