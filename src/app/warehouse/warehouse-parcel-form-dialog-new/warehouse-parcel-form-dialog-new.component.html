@@ -20,11 +20,15 @@
           <mat-label>Hạn sử dụng <span style="color: red">*</span></mat-label>
           <input matInput
                  [matDatepicker]="picker"
+                 [min]="today"
                  formControlName="expiration_date">
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
           <mat-error class="field-error" *ngIf="parcelForm.get('expiration_date')?.errors?.required">
             Hạn sử dụng là bắt buộc
+          </mat-error>
+          <mat-error class="field-error" *ngIf="parcelForm.get('expiration_date')?.errors?.pastDate">
+            Hạn sử dụng không được trong quá khứ
           </mat-error>
         </mat-form-field>
       </div>
@@ -40,6 +44,17 @@
             <span *ngIf="parcelForm.get('quantity')?.errors?.required">Số lượng là bắt buộc</span>
             <span *ngIf="parcelForm.get('quantity')?.errors?.min">Số lượng phải lớn hơn 0</span>
           </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex="100">
+        <mat-form-field fxFill>
+          <mat-label>Giá nhập (đơn giá)</mat-label>
+          <input matInput
+                 type="text"
+                 mask="separator.0" thousandSeparator=","
+                 formControlName="unit_cost"
+                 placeholder="Nhập đơn giá theo lô">
         </mat-form-field>
       </div>
     </div>

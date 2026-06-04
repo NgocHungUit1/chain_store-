@@ -100,7 +100,6 @@ export class SaleCustomerFormDialogComponent implements OnInit {
       ],
       phone: [null, Validators.compose([
         Validators.required,
-        Validators.pattern(/^(0\d{9}|\+84\d{9})$/)
       ])],
       email: [null, Validators.compose([
         Validators.email,

@@ -315,14 +315,14 @@ export class PrescriptionFormDialogComponent implements OnInit {
         return false;
       }
     }
-    const phoneValue = this.form.controls['phone'].value;
+    /*const phoneValue = this.form.controls['phone'].value;
     if (phoneValue !== null && phoneValue !== '') {
       const phonePattern = /^(0\d{9}|\+84\d{9})$/;
       if (!phonePattern.test(phoneValue)) {
         this.notifySer.notify('error', 'Số điện thoại không hợp lệ (VD: 0xxxxxxxxx hoặc +84xxxxxxxxx)');
         return false;
       }
-    }
+    }*/
     return true;
   }
 

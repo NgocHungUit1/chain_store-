@@ -27,12 +27,13 @@ export class InvoiceTabInfoComponent implements OnChanges {
   @Input() store: Store;
   @Output() reload: EventEmitter<any> = new EventEmitter();
 
-  defaultDisplayedColumns: string[] = ['product_no', 'product_name','note', 'amount', 'common_price', 'discount', 'price', 'total_price'];
-  displayedColumns: string[] = ['product_no', 'product_name','note', 'amount', 'common_price', 'discount', 'price', 'total_price'];
+  defaultDisplayedColumns: string[] = ['product_no', 'product_name', 'parcel_no', 'note', 'amount', 'common_price', 'discount', 'price', 'total_price'];
+  displayedColumns: string[] = ['product_no', 'product_name', 'parcel_no', 'note', 'amount', 'common_price', 'discount', 'price', 'total_price'];
 
   columnsHeader = {
     'product_no': 'Mã hàng',
     'product_name': 'Tên hàng',
+    'parcel_no': 'Số lô',
     'amount': 'Số lượng',
     'common_price': 'Đơn giá',
     'discount': 'Giảm giá',

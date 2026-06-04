@@ -155,7 +155,7 @@
       </button>
       <mat-menu #menuActions='matMenu'>
         <button mat-menu-item
-                (click)='openPrintMultipleProduct()'>
+                (click)='openPrintMultipleProduct(true)'>
           <mat-icon>print</mat-icon>
           In tem mã
         </button>
@@ -406,7 +406,7 @@
                           <app-product-tab-info
                             [product_id]='element.id'
                             [expandedElement]='element == expandedElement ? true : false'
-                            (reload)='loadData();'></app-product-tab-info>
+                            (reload)='loadData(); loadGroups();'></app-product-tab-info>
                         </ng-template>
                       </mat-tab>
                       <mat-tab label='Thẻ kho'>
@@ -425,7 +425,7 @@
                             (reload)='loadData();'></app-product-tab-stock>
                         </ng-template>
                       </mat-tab>
-                      <mat-tab label='Tồn kho theo Lô'>
+                      <mat-tab label='Tồn kho theo Lô' *ngIf="element.batch_tracking_enabled">
                         <ng-template matTabContent>
                           <app-product-tab-stock-parcel
                             [expandedElement]='element == expandedElement ? true : false'

@@ -1,6 +1,16 @@
 import {Component, Inject, OnInit, Optional} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from "@angular/material/dialog";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from "@angular/forms";
+
+function futureDateValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (!control.value) return null;
+    const selected = new Date(control.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return selected < today ? { pastDate: true } : null;
+  };
+}
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from "@angular/material/core";
 import {MomentDateAdapter} from "@angular/material-moment-adapter";
 
@@ -8,6 +18,7 @@ export interface ParcelData  {
   parcel_no: string;
   expiration_date: Date;
   quantity: number;
+  unit_cost?: number | null;
   product_id: string;
   product_name: string;
   product_no: string;
@@ -42,6 +53,7 @@ export interface ParcelData  {
 })
 export class WarehouseParcelFormDialogNewComponent implements OnInit {
   parcelForm: FormGroup;
+  today: Date = new Date();
   constructor(
     public dialogRef: MatDialogRef<WarehouseParcelFormDialogNewComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ParcelData) {
@@ -49,11 +61,12 @@ export class WarehouseParcelFormDialogNewComponent implements OnInit {
     console.log('Dialog data:', data);
     this.parcelForm = new FormGroup({
       parcel_no: new FormControl('', [Validators.required]),
-      expiration_date: new FormControl('', [Validators.required]),
+      expiration_date: new FormControl('', [Validators.required, futureDateValidator()]),
       quantity: new FormControl(data.quantity??'', [
         Validators.required,
         Validators.min(1),
-      ])
+      ]),
+      unit_cost: new FormControl(data.unit_cost ?? null)
     });
   }
   onNoClick(): void {
@@ -65,14 +78,19 @@ export class WarehouseParcelFormDialogNewComponent implements OnInit {
       this.parcelForm.patchValue({
         parcel_no: this.data.parcel_no,
         expiration_date: this.data.expiration_date,
-        quantity: this.data.quantity
+        quantity: this.data.quantity,
+        unit_cost: this.data.unit_cost,
       });
     }
   }
   onSave(): void {
     if (this.parcelForm.valid) {
-
-      this.dialogRef.close(this.parcelForm.value);
+      const value = this.parcelForm.value;
+      const raw = value.unit_cost;
+      value.unit_cost = raw !== null && raw !== undefined && raw !== ''
+        ? Number(String(raw).replace(/,/g, ''))
+        : null;
+      this.dialogRef.close(value);
     } else {
       this.markFormGroupTouched(this.parcelForm);
     }

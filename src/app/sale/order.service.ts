@@ -16,6 +16,7 @@ import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Customer } from '../customer/customer.model';
 import { element } from 'protractor';
+import { IResponse } from '../common/response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -421,6 +422,7 @@ export class OrderService {
   }
 
   updateProduct(i: any, product: Product) {
+    console.log(product);
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;
     let mItemInvoice = new ItemInvoice();
@@ -479,7 +481,7 @@ export class OrderService {
    */
   saleOrder(data) {
     const url = environment.apiUrl + '/invoice/sale-order';
-    return this.http.post(url, data);
+    return this.http.post<IResponse<number>>(url, data);
   }
 
 
@@ -494,7 +496,7 @@ export class OrderService {
 
   updateOrder(data) {
     const url = environment.apiUrl + '/invoice/update-order';
-    return this.http.post(url, data);
+    return this.http.post<IResponse<number>>(url, data);
   }
 
   /**

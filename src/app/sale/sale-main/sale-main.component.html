@@ -132,7 +132,8 @@
                         openPriceDetailOrderDialog(
                           getProductIndex(masterProduct),
                           masterProduct.product,
-                          masterProduct.common_price
+                          masterProduct.common_price,
+                          masterProduct
                         )
                       ">
                           edit
@@ -209,7 +210,7 @@
 
 
             <!--            parcel item-->
-            <div *ngIf="!masterProduct?.product?.not_in_store"
+            <div *ngIf="!masterProduct?.product?.not_in_store && masterProduct?.product?.batch_tracking_enabled"
               fxLayout="row wrap" fxLayoutAlign="center center" class="product-item sub-item-row"
                  style="margin-top: -8px">
               <div style='width: 52px;' *ngIf="displayedColumns.includes('image')"></div>
@@ -306,7 +307,7 @@
                 <div fxFlex="1"></div>
                 <div fxFlex="2"></div>
                 <div fxFlex="32">
-                  <div class="chip-list">
+                  <div class="chip-list" *ngIf="subItem?.product?.batch_tracking_enabled">
                     <mat-chip-list #chiplistSub aria-label="Parcel selection">
                       <mat-chip class="chip-item" *ngFor="let parcel of subItem.product_parcels" [selectable]="true"
                                 [removable]="true" (removed)="removeParcel(getProductIndex(subItem))">
@@ -384,7 +385,7 @@
                           <mat-icon>keyboard_arrow_down</mat-icon>
                         </button>
                       </mat-form-field>
-                      
+
                       <span class="amount-cell-sub">/{{ subItem?.max_amount_return }}</span>
                       <div [style.height]="invalidAmountItems.has(subItem) ? '16px' : '0'" [style.overflow]="invalidAmountItems.has(subItem) ? 'visible' : 'hidden'" style="color: red; font-size: 11px; white-space: nowrap; width: 100%;">Số lượng không hợp lệ</div>
                     </div>
@@ -403,7 +404,8 @@
                         openPriceDetailOrderDialog(
                           getProductIndex(subItem),
                           subItem.product,
-                          subItem.common_price
+                          subItem.common_price,
+                          subItem
                         )
                       ">
                             edit

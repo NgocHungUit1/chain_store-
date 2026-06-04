@@ -4,7 +4,7 @@ import { NotifierService } from 'angular-notifier';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { SupplierService } from '../supplier.service';
 import { map, startWith } from 'rxjs/operators';
-import { Observable } from 'rxjs/Observable';
+import { merge, Observable, Subject } from 'rxjs';
 import { LocationService } from '../../location/location.service';
 import { Location } from '../../location/location.model';
 import { HttpClient } from '@angular/common/http';
@@ -16,13 +16,14 @@ import { environment } from '../../../environments/environment';
   styleUrls: ['./supplier-form-dialog.component.css']
 })
 export class SupplierFormDialogComponent implements OnInit {
-
   form: FormGroup;
   loading = false;
   provinces: Location[] = [];
   wards: Location[] = [];
   filteredProvinces: Observable<any[]>;
   filteredWards: Observable<any[]>;
+  provinceFocus$ = new Subject<string>();
+  wardFocus$ = new Subject<string>();
   local_data: any;
   supplier_id: string;
 
@@ -54,7 +55,9 @@ export class SupplierFormDialogComponent implements OnInit {
           Validators.maxLength(60)
         ])
       ],
-      phone_number: [null, Validators.required],
+      phone_number: [null, Validators.compose([
+        Validators.required,
+      ])],
       email: [null],
       address: [null],
       company_name: [null],
@@ -68,12 +71,18 @@ export class SupplierFormDialogComponent implements OnInit {
       this.provinces = locations;
     });
 
-    this.filteredProvinces = this.form.controls['province'].valueChanges.pipe(
+    this.filteredProvinces = merge(
+      this.form.controls['province'].valueChanges,
+      this.provinceFocus$
+    ).pipe(
       startWith(''),
       map(province => (province ? this.filterProvince(province) : this.provinces.slice()))
     );
 
-    this.filteredWards = this.form.controls['ward'].valueChanges.pipe(
+    this.filteredWards = merge(
+      this.form.controls['ward'].valueChanges,
+      this.wardFocus$
+    ).pipe(
       startWith(''),
       map(ward => (ward ? this.filterWard(ward) : this.wards.slice()))
     );

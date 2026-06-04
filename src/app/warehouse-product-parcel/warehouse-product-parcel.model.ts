@@ -11,6 +11,7 @@ export class WarehouseProductParcel {
   quantity_of_stock: number;
   manufacture_date: string;
   expiration_date: string;
+  unit_cost?: number | null;
   warehouseProduct: WarehouseProduct;
   warehouse: Warehouse;
   product: Product;

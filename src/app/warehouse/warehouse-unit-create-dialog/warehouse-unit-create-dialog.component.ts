@@ -86,6 +86,11 @@ export class WarehouseUnitCreateDialogComponent implements OnInit {
         this.notifySer.notify('error', 'Đã tồn tại mã đơn vị ' + unit.unit_no);
         return;
       }
+      if (this.data.productUnits.find(productUnit => productUnit.name === unit.unit_name)) {
+        isValidUnitNo = false;
+        this.notifySer.notify('error', 'Tên đơn vị "' + unit.unit_name + '" đã tồn tại trong sản phẩm này');
+        return;
+      }
     });
 
     if (!isValidUnitNo) {

@@ -32,9 +32,22 @@
       </mat-form-field>
     </div>
 
+    <div fxFlex="100">
+      <mat-form-field fxFill>
+        <mat-label>Giá nhập (đơn giá)</mat-label>
+        <input matInput
+                type="text"
+               mask="separator.0" thousandSeparator=","
+               autocomplete="off"
+               placeholder="Nhập đơn giá theo lô"
+               [(ngModel)]="data['unit_cost']"
+               name="unit_cost">
+      </mat-form-field>
+    </div>
+
     <div fxFlex="100" class="quantity_parcel">
       <mat-form-field  fxFill>
-        <mat-label>Số lượng <span style="color: red">*</span></mat-label>
+        <mat-label>Số lượng </mat-label>
         <input matInput
                type="number"
                tabindex="3"
@@ -56,7 +69,7 @@
 
 <mat-dialog-actions align="end" fxLayoutGap="8px">
   <button mat-raised-button
-          [mat-dialog-close]="data"
+          (click)="onSave()"
           color="primary"
           tabindex="4"
           [disabled]="quantityInput.invalid">

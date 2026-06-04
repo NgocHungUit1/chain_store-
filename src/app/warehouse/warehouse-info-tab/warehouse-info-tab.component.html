@@ -194,7 +194,11 @@
           <mat-icon>print</mat-icon>
           In đơn
         </button>
-
+        <button class="m-r-5 padding-x-10" mat-raised-button
+                (click)="openPrintLabel()">
+          <mat-icon>format_align_justify</mat-icon>
+          In tem
+        </button>
         <button class="m-r-10" mat-raised-button color="primary"
                 (click)="reopen()" *ngIf="model.status === 9">
           <mat-icon>undo</mat-icon>

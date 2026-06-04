@@ -1,5 +1,5 @@
 <h2 mat-dialog-title><strong>{{title}}</strong></h2>
-<h4>{{ content }}</h4>
+<h4 [innerHtml]="content"></h4>
 <button class="m-r-10" mat-stroked-button color="primary" (click)="confirm()">
   <mat-icon>check_circle_outline</mat-icon> Đồng ý
 </button>

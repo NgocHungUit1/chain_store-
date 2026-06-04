@@ -24,7 +24,7 @@
       <div fxFlex="48">
         <mat-form-field>
           <mat-label>Đến ngày</mat-label>
-          <input matInput tabindex="3" [matDatepicker]="date_to" formControlName="date_to">
+          <input matInput tabindex="3" [matDatepicker]="date_to" formControlName="date_to" [min]="minDateTo">
           <mat-datepicker-toggle matSuffix [for]="date_to"></mat-datepicker-toggle>
           <mat-datepicker #date_to></mat-datepicker>
         </mat-form-field>
