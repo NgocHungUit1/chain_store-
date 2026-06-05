@@ -81,7 +81,10 @@ export class DoctorService {
     return this.http.post(url, {});
   }
 
-
+  delete(id) {
+    const url = environment.apiUrl + '/doctor/delete?id=' + id;
+    return this.http.delete(url, {});
+  }
 
   setDateFilter(obj: DateFilter) {
     this.dateFilter.next(obj);

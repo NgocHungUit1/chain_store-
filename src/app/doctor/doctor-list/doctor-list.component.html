@@ -122,7 +122,7 @@
                        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
                     <mat-tab-group style="width: 100%;">
                       <mat-tab label="Thông tin">
-                        <app-doctor-tab-info [doctor]="element" ></app-doctor-tab-info>
+                        <app-doctor-tab-info [doctor]="element" (reload)="reloadTableData()"></app-doctor-tab-info>
                       </mat-tab>
                     </mat-tab-group>
                   </div>

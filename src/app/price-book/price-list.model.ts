@@ -18,6 +18,8 @@ export class PriceListFilter extends ApiFilterBase {
   page = 1;
   pageSize = 50;
   sort = '';
+  status =  '';
+  is_valid = '';
 
   getModelSearch() {
     return 'PriceListSearch';

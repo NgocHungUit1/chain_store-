@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CustomerService } from '../../customer/customer.service';
 import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
@@ -7,6 +7,7 @@ import { CustomerPopupDeleteDialogComponent } from '../../customer/customer-popu
 import { Doctor } from '../doctor.model';
 import { DoctorService } from '../doctor.service';
 import { DoctorFormDialogComponent } from '../doctor-form-dialog/doctor-form-dialog.component';
+import { PopupConfirmDialogComponent } from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 
 @Component({
   selector: 'app-doctor-tab-info',
@@ -16,6 +17,7 @@ import { DoctorFormDialogComponent } from '../doctor-form-dialog/doctor-form-dia
 export class DoctorTabInfoComponent implements OnInit {
 
   @Input() doctor: Doctor;
+  @Output() reload: EventEmitter<any> = new EventEmitter();
 
   sexHeader = {
     '1': 'Nam',
@@ -57,23 +59,28 @@ export class DoctorTabInfoComponent implements OnInit {
     });
   }
 
-  openDeleteCustomer(id) {
+  openDeleteDoctor(doctorId: number): void {
+    const obj = {
+      action: 'Delete',
+      title: 'Xóa bác sĩ',
+      doctor_id: doctorId,
+      content: 'Bạn có chắc chắn muốn xóa bác sĩ này không?'
+    };
 
-    // let obj = {
-    //   action: 'Delete',
-    //   title: 'Xóa khách hàng',
-    //   customer_id: id,
-    // };
-    //
-    // const dialogRef = this.dialog.open(CustomerPopupDeleteDialogComponent, {
-    //   data: obj,
-    //   width: '20%',
-    //   minHeight: '80%',
-    // });
-    //
-    // dialogRef.afterClosed().subscribe(result => {
-    //
-    // });
+    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
+      data: obj,
+      width: '20%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result?.event === 'confirm') {
+        this.doctorService.delete(doctorId).subscribe(res => {
+          this.notifyService.notify('success', 'Xóa bác sĩ thành công!');
+        });
+        this.reload.emit(true);
+      }
+    });
   }
 
   lock() {

@@ -121,7 +121,7 @@
           </div>
           <div fxFlex="2"></div>
           <div fxFlex="32" class="invoice-info-field">
-            <span class="invoice-field-label">Ngày sinh :</span>{{ prescription?.age }}
+            <span class="invoice-field-label">Tuổi :</span>{{ prescription?.age }}
           </div>
           <div fxFlex="2"></div>
           <div fxFlex="32" class="invoice-info-field">
@@ -152,7 +152,7 @@
 
         <div fxLayout="row wrap" class="invoice-info-row">
           <div fxFlex="32" class="invoice-info-field">
-            <span class="invoice-field-label">SĐT cơ sở khám bệnh :</span> {{ prescription?.medicalFacility?.mobile_phone }}
+            <span class="invoice-field-label">SĐT cơ sở khám bệnh :</span> {{ prescription?.medicalFacility?.phone_number }}
           </div>
           <div fxFlex="2"></div>
           <div fxFlex="32" class="invoice-info-field">
@@ -182,7 +182,8 @@
 
         <div fxLayout="row wrap" class="invoice-info-row">
           <div fxFlex="32" class="invoice-info-field">
-            <span class="invoice-field-label">Ngày tạo:</span> {{ prescription.prescription_date }}
+            <span class="invoice-field-label">Ngày tạo:</span>
+            {{ prescription.prescription_date ? prescription.prescription_date : (prescription.created_at * 1000 | date: 'dd-MM-yyyy') }}
           </div>
           <div fxFlex="2"></div>
           <div fxFlex="32" class="invoice-info-field">
@@ -397,7 +398,7 @@
   <div fxLayout="row wrap">
     <div fxFlex="100">
       <button class="m-r-10" mat-raised-button color="primary"
-              [disabled]="checkPermissionDisable('Invoice.Update-Order') || (this.store.can_change_completed == 0 && invoice.status == 10)"
+              [disabled]="checkPermissionDisable('Invoice.Update-Order') || (this.store.can_change_completed == 0 && invoice.status == 10) || invoice?.isFullyReturned"
               (click)="updateInvoice(invoice)">
         <mat-icon>edit</mat-icon>
         Cập nhật
@@ -411,7 +412,7 @@
         In
       </button>
 
-      <button class="m-r-10" mat-raised-button color="primary" (click)="returnInvoice(invoice)">
+      <button class="m-r-10" mat-raised-button color="primary" *ngIf="!invoice?.isFullyReturned" (click)="returnInvoice(invoice)">
         <mat-icon>arrow_back</mat-icon>
         Trả hàng
       </button>
@@ -447,6 +448,7 @@
       </button>
 
       <button class="m-r-10" mat-raised-button color="warn"
+              *ngIf="!invoice?.isFullyReturned"
               [disabled]="checkPermissionDisable('Invoice.Delete-Invoice') || (this.store.can_change_completed == 0 && invoice.status == 10)"
               (click)='deleteInvoice(invoice)'>
         <mat-icon>delete</mat-icon>
