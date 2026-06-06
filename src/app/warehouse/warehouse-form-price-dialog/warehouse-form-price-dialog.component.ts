@@ -52,7 +52,8 @@ export class WarehouseFormPriceDialogComponent implements OnInit {
         numeral(this.sell_price).format('0,0')
       ],
       price: [
-        numeral(this.price).format('0,0')
+        // Giá vốn cho phép số lẻ (tối đa 2 chữ số thập phân) để khớp hóa đơn
+        numeral(this.price).format('0,0.[00]')
       ],
       discount: [
         numeral(this.discount).format('0,0')
@@ -91,7 +92,10 @@ export class WarehouseFormPriceDialogComponent implements OnInit {
     const numValue = Number(inputValue);
 
     if (!isNaN(numValue)) {
-        const formattedValue = numeral(numValue).format('0,0');
+        // Riêng giá vốn (price) giữ phần thập phân đang gõ; các trường khác làm tròn số nguyên
+        const formattedValue = controlName === 'price'
+          ? this.formatNumberKeepDecimal(event.target.value)
+          : numeral(numValue).format('0,0');
         event.target.value = formattedValue;
         control.setValue(formattedValue, { emitEvent: false });
         this[controlName] = formattedValue;
@@ -99,6 +103,24 @@ export class WarehouseFormPriceDialogComponent implements OnInit {
         event.target.value = this[controlName];
         control.setValue(this[controlName], { emitEvent: false });
     }
+  }
+
+  /**
+   * Format số có giữ phần thập phân (tối đa 2 chữ số) khi đang gõ.
+   * Phần nguyên thêm dấu phân cách hàng nghìn, giữ dấu "." cuối để gõ tiếp số lẻ.
+   */
+  formatNumberKeepDecimal(value: any): string {
+    if (value === null || value === undefined) { return ''; }
+    const str = value.toString().replace(/,/g, '').replace(/[^0-9.]/g, '');
+    if (str === '') { return ''; }
+    const dotIndex = str.indexOf('.');
+    if (dotIndex === -1) {
+      return numeral(str).format('0,0');
+    }
+    const intPart = str.slice(0, dotIndex);
+    const decPart = str.slice(dotIndex + 1).replace(/\./g, '').slice(0, 2);
+    const intFormatted = intPart === '' ? '0' : numeral(intPart).format('0,0');
+    return intFormatted + '.' + decPart;
   }
 
   submit() {

@@ -75,7 +75,7 @@
 
           <ng-container matColumnDef="price">
             <th mat-header-cell class="column-left" *matHeaderCellDef> {{columnsHeader['price']}}</th>
-            <td mat-cell class="column-left" *matCellDef="let element"> {{ element.price | currency : 'VND' : '' }}</td>
+            <td mat-cell class="column-left" *matCellDef="let element"> {{ element.price | currency : 'VND' : '' : '1.0-2' }}</td>
           </ng-container>
 
           <ng-container matColumnDef="discount">
@@ -93,7 +93,7 @@
           <ng-container matColumnDef="amount">
             <th mat-header-cell class="column-left" *matHeaderCellDef> {{columnsHeader['amount']}}</th>
             <td mat-cell class="column-left" *matCellDef="let element">
-              <b>{{ element.amount | currency : 'VND' : ''}}</b>
+              <b>{{ element.amount | currency : 'VND' : '' : '1.0-2'}}</b>
             </td>
           </ng-container>
 
@@ -130,7 +130,7 @@
             <label *ngIf="model.type === 'return'">Tiền hàng trả:</label>
           </div>
           <div fxLayout="row" fxLayoutAlign="end" fxFlex="40" class="product-info-field">
-            <span>{{model.total_price | currency : 'VND' : ''}}</span>
+            <span>{{model.total_price | currency : 'VND' : '' : '1.0-2'}}</span>
           </div>
         </div>
         <div fxLayout="row wrap" class="product-info-row">
@@ -138,7 +138,7 @@
             <label>Giảm giá:</label>
           </div>
           <div fxLayout="row" fxLayoutAlign="end" fxFlex="40" class="product-info-field">
-            <span *ngIf="model.discount_type === 'price' ">{{ model.discount_amount | currency : 'VND' : ''}}</span>
+            <span *ngIf="model.discount_type === 'price' ">{{ model.discount_amount | currency : 'VND' : '' : '1.0-2'}}</span>
             <span *ngIf="model.discount_type === 'percent' ">
               {{ model.total_price * model.discount_amount / 100 | number }}  {{ '(' + model.discount_amount + '%)'}}
             </span>
@@ -166,7 +166,7 @@
           </div>
           <div fxLayout="row" fxLayoutAlign="end" fxFlex="40" class="product-info-field">
             <b>
-              <span>{{model.total_amount + model.expenses_price | currency : 'VND' : ''}}</span>
+              <span>{{model.total_amount + model.expenses_price | currency : 'VND' : '' : '1.0-2'}}</span>
             </b>
           </div>
         </div>
@@ -177,7 +177,7 @@
             <label *ngIf="model.type === 'return'">NCC đã trả:</label>
           </div>
           <div fxLayout="row" fxLayoutAlign="end" fxFlex="40" class="product-info-field">
-            <span>{{model.paid_amount | currency : 'VND' : ''}}</span>
+            <span>{{model.paid_amount | currency : 'VND' : '' : '1.0-2'}}</span>
           </div>
         </div>
 

@@ -1530,22 +1530,25 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   recalculateItem(i) {
     if (this.data[i] !== undefined) {
       const price = numeral(this.data[i]['price']).value();
+      let amount;
       if (this.data[i]['discount_type'] === 'price') {
-        this.data[i]['amount'] = Math.round((price * this.data[i]['quantity']) - this.data[i]['discount']);
+        amount = (price * this.data[i]['quantity']) - this.data[i]['discount'];
       } else {
-        this.data[i]['amount'] =
-          Math.round((price - (price * this.data[i]['discount']) / 100) * this.data[i]['quantity']);
+        amount = (price - (price * this.data[i]['discount']) / 100) * this.data[i]['quantity'];
       }
 
       // tính thue suat
       const vat = numeral(this.data[i]['vat']).value();
       if (vat !== 0) {
         if (this.data[i]['vat_type'] === 'price') {
-          this.data[i]['amount'] = this.data[i]['amount'] + vat;
+          amount = amount + vat;
         } else {
-          this.data[i]['amount'] = this.data[i]['amount'] + (this.data[i]['amount'] * vat) / 100;
+          amount = amount + (amount * vat) / 100;
         }
       }
+
+      // Giữ phần lẻ tới 2 số (khớp hóa đơn) thay vì làm tròn về số nguyên
+      this.data[i]['amount'] = this.round2(amount);
 
       this.recalculateWarehouse();
     }
@@ -1592,21 +1595,21 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
     // Tinh vao cong no
     if (discount_type === 'price') {
-      totalAmount = Number(price) - Number(discount);
+      totalAmount = this.round2(Number(price) - Number(discount));
 
       // handle the auto payfull case => skip when update
       if(this.payFullDefault && !isSubmit && !this.updateModelId){
         paidAmount = totalAmount;
       }
-      remainAmount = Number(paidAmount) - totalAmount;
+      remainAmount = this.round2(Number(paidAmount) - totalAmount);
     } else {
-      totalAmount = Math.round(Number(price) - Number(price) * Number(discount) / 100);
+      totalAmount = this.round2(Number(price) - Number(price) * Number(discount) / 100);
 
       // handle the auto payfull case => skip when update
       if(this.payFullDefault && !isSubmit && !this.updateModelId){
         paidAmount = totalAmount;
       }
-      remainAmount = Math.round(Number(paidAmount) - totalAmount);
+      remainAmount = this.round2(Number(paidAmount) - totalAmount);
     }
 
     if (this.optionStore_transaction_expenses.value === 'yes') {
@@ -1631,13 +1634,13 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
 
     let formValues = {
       quantity: numeral(quantity).format('0,0'),
-      total_price: numeral(price).format('0,0'),
-      remain_amount: numeral(remainAmount).format('0,0'),
-      total_amount: numeral(totalAmount).format('0,0'),
-      expenses_price: numeral(this.expensesTransaction).format('0,0')
+      total_price: numeral(price).format('0,0.[00]'),
+      remain_amount: numeral(remainAmount).format('0,0.[00]'),
+      total_amount: numeral(totalAmount).format('0,0.[00]'),
+      expenses_price: numeral(this.expensesTransaction).format('0,0.[00]')
     };
     if(this.payFullDefault){
-      formValues['paid_amount'] =  numeral(paidAmount).format('0,0')
+      formValues['paid_amount'] =  numeral(paidAmount).format('0,0.[00]')
     }
     this.form.patchValue(formValues);
 
@@ -1645,11 +1648,11 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     this.localStorageService.setItem(this.WAREHOUSEFORMKEY,{
       ...temp,
       quantity: numeral(quantity).format('0,0'),
-      total_price: numeral(price).format('0,0'),
-      remain_amount: numeral(remainAmount).format('0,0'),
-      total_amount: numeral(totalAmount).format('0,0'),
-      expenses_price: numeral(this.expensesTransaction).format('0,0'),
-      paid_amount: numeral(paidAmount).format('0,0')
+      total_price: numeral(price).format('0,0.[00]'),
+      remain_amount: numeral(remainAmount).format('0,0.[00]'),
+      total_amount: numeral(totalAmount).format('0,0.[00]'),
+      expenses_price: numeral(this.expensesTransaction).format('0,0.[00]'),
+      paid_amount: numeral(paidAmount).format('0,0.[00]')
     })
   }
 
@@ -2190,7 +2193,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     const data = this.form.getRawValue();
     const paid_amount = numeral(data['total_amount']).value() + numeral(data['expenses_price']).value();
     this.form.patchValue({
-      paid_amount: numeral(paid_amount).format('0,0'),
+      paid_amount: numeral(paid_amount).format('0,0.[00]'),
     });
     this.recalculateWarehouse();
   }
@@ -2207,7 +2210,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
    * Format input number
    */
   inputformatNumber(event: any) {
-    event.target.value = numeral(event.target.value).format('0,0');
+    event.target.value = this.formatNumberKeepDecimal(event.target.value);
   }
 
   quantityChange(event: any, index) {
@@ -2221,15 +2224,43 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   priceChange(event: any, index) {
-    const parsedPrice = numeral(event.target.value).value();
+    const formatted = this.formatNumberKeepDecimal(event.target.value);
+    const parsedPrice = numeral(formatted).value();
     if (parsedPrice < 0) {
       this.notifySer.notify('error', 'Đơn giá không được nhỏ hơn 0');
-      event.target.value = numeral(this.data[index]['price']).format('0,0');
+      event.target.value = this.formatNumberKeepDecimal(this.data[index]['price']);
       return;
     }
-    event.target.value = numeral(event.target.value).format('0,0');
+    event.target.value = formatted;
+    // Lưu number: pipe showValueExpenses là impure nhưng trả về cùng chuỗi khi giá
+    // trị số không đổi (vd lúc vừa gõ dấu "."), nên không ghi đè/cắt phần thập phân
+    // đang gõ dở. Giữ number để các phép tính amount trực tiếp khác không bị NaN.
     this.data[index]['price'] = parsedPrice;
     this.recalculateItem(index);
+  }
+
+  /**
+   * Format số có giữ phần thập phân (tối đa 2 chữ số) khi người dùng đang gõ.
+   * - Phần nguyên: thêm dấu phân cách hàng nghìn.
+   * - Giữ dấu "." cuối để người dùng gõ tiếp số lẻ (vd "72,626.").
+   */
+  formatNumberKeepDecimal(value: any): string {
+    if (value === null || value === undefined) { return ''; }
+    const str = value.toString().replace(/,/g, '').replace(/[^0-9.]/g, '');
+    if (str === '') { return ''; }
+    const dotIndex = str.indexOf('.');
+    if (dotIndex === -1) {
+      return numeral(str).format('0,0');
+    }
+    const intPart = str.slice(0, dotIndex);
+    const decPart = str.slice(dotIndex + 1).replace(/\./g, '').slice(0, 2);
+    const intFormatted = intPart === '' ? '0' : numeral(intPart).format('0,0');
+    return intFormatted + '.' + decPart;
+  }
+
+  /** Làm tròn tới 2 chữ số thập phân (đơn vị: đồng, giữ phần lẻ khớp hóa đơn). */
+  round2(value: number): number {
+    return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
   }
 
   openWarehouseExpenses() {
@@ -2554,18 +2585,18 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     let totalAmount = 0;
     let remainAmount = 0;
     if (discount_type === 'price') {
-      totalAmount = Number(price) - Number(discount);
-      remainAmount = Number(paidAmount) - totalAmount;
+      totalAmount = this.round2(Number(price) - Number(discount));
+      remainAmount = this.round2(Number(paidAmount) - totalAmount);
     } else {
-      totalAmount = Math.round(Number(price) - Number(price) * Number(discount) / 100);
-      remainAmount = Math.round(Number(paidAmount) - totalAmount);
+      totalAmount = this.round2(Number(price) - Number(price) * Number(discount) / 100);
+      remainAmount = this.round2(Number(paidAmount) - totalAmount);
     }
     let formValues = {
       quantity: numeral(quantity).format('0,0'),
-      total_price: numeral(price).format('0,0'),
-      remain_amount: numeral(remainAmount).format('0,0'),
-      total_amount: numeral(totalAmount).format('0,0'),
-      paid_amount: numeral(paidAmount).format('0,0'),
+      total_price: numeral(price).format('0,0.[00]'),
+      remain_amount: numeral(remainAmount).format('0,0.[00]'),
+      total_amount: numeral(totalAmount).format('0,0.[00]'),
+      paid_amount: numeral(paidAmount).format('0,0.[00]'),
     };
     this.form.patchValue(formValues);
   }

@@ -530,7 +530,7 @@
                       <input style="text-align: right"
                              matInput
                              class="quantity-input"
-                             [value]="element['amount'] | currency : 'VND' : ''"
+                             [value]="element['amount'] | currency : 'VND' : '' : '1.0-2'"
                              (click)="openAmountDialog(i)"
 
                       >
@@ -539,7 +539,7 @@
                   <td *ngIf="!allow_amount_adjust"
                       mat-cell
                       style='text-align:right; vertical-align: top; padding: 1.5rem 0.5rem 0 0; min-width:90px;'>
-                    <span>{{element['amount'] | currency : 'VND' : ''}}</span>
+                    <span>{{element['amount'] | currency : 'VND' : '' : '1.0-2'}}</span>
                   </td>
                 </ng-container>
               </ng-container>
