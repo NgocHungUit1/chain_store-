@@ -342,7 +342,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'customer,payment,store,user,returns,today,time,createdFormat';
+    filter.expand = 'customer,payment,store,user,returns,today,time,createdFormat,prescription';
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
     filter.order_status = this.orderStatusFilter.controls['status'].value.join(',');

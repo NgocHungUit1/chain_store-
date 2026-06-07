@@ -349,7 +349,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
       this.description = this.store?.description;
 
       this.orderService.getDataInvoiceToPrint(invoice_id).subscribe(res => {
-        const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : 'Khách lẻ';
+        const customer_name = (res?.customer?.name !== null && res?.customer?.name !== undefined) ? res?.customer?.name : (res?.prescription?.name || 'Khách lẻ');
         const customer_phone = (res?.customer?.phone !== null && res?.customer?.phone !== undefined) ? res?.customer?.phone : '';
         let printContent = '<title>' + res?.invoice_no + '</title>';
         printContent += '<style> ' +
