@@ -320,9 +320,12 @@
               <ng-container matColumnDef="customer">
                 <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['customer'] }}</th>
                 <td mat-cell *matCellDef="let element">
-                  <span *ngIf="element.customer !== null; else khachle">{{ element.customer?.name }}</span>
-                  <ng-template #khachle>
-                    <span>Khách lẻ</span>
+                  <span *ngIf="element.customer !== null; else noCustomer">{{ element.customer?.name }}</span>
+                  <ng-template #noCustomer>
+                    <span *ngIf="element.prescription?.name; else khachle">{{ element.prescription.name }}</span>
+                    <ng-template #khachle>
+                      <span>Khách lẻ</span>
+                    </ng-template>
                   </ng-template>
                 </td>
               </ng-container>

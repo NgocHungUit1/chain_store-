@@ -2680,7 +2680,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       <p><b>Chẩn đoán:</b> ${nationalPrescription?.diagnostics?.[0]?.conclusion || ''}</p>
         `;
     } else {
-      const customer_name = preInvoiceData?.customer?.name || 'Khách lẻ';
+      const customer_name = preInvoiceData?.customer?.name || preInvoiceData?.prescription?.name || 'Khách lẻ';
       customer_info += `<p>Khách hàng: ${customer_name}</p>`;
       const customer_phone = preInvoiceData?.customer?.phone || '';
       if (customer_phone) {
