@@ -14,7 +14,7 @@
                   [ngClass]="{'active': isSelected(parcel)}">
           {{parcel['parcel_no']}} - {{parcel['expiration_date'] | date:'dd/MM/yyyy'}}
           <ng-container *ngIf="parcel['quantity_of_stock']">
-            - Tồn: {{parcel['quantity_of_stock']}}
+            - Tồn: {{getConvertedStock(parcel)}} {{unitName}}
           </ng-container>
         </mat-chip>
       </div>
@@ -23,7 +23,10 @@
           <mat-icon>remove</mat-icon>
         </button>
         <input type="number"
-               [(ngModel)]="quantity"
+               [ngModel]="quantity"
+               (change)="onQuantityInput($event.target['value'])"
+               min="1"
+               [max]="getConvertedStock(parcel)"
                class="quantity-input">
 
         <button mat-button class="quantity-button" (click)="increment(parcel)">

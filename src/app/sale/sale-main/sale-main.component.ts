@@ -3212,14 +3212,32 @@ export class SaleMainComponent implements OnInit, DoCheck {
     const units = itemProduct?.product?.productUnits;
     const item = units.find(element => element.id === e.value);
     const curListProduct = this.listProduct;
+    const oldUnitValue = curListProduct[i]['product_unit_value'] || 1;
+    const newUnitValue = item['value'] || 1;
+    curListProduct[i]['amount'] = Math.floor((curListProduct[i]['amount'] * oldUnitValue) / newUnitValue) || 1;
     curListProduct[i]['product_unit_id'] = item['id'];
-    curListProduct[i]['product_unit_value'] = item['value'];
+    curListProduct[i]['product_unit_value'] = newUnitValue;
     curListProduct[i]['product']['sell_price'] = item['sell_price'];
     curListProduct[i]['product']['end_price'] = item['sell_price'];
     curListProduct[i]['product']['product_no'] = item['no'];
     curListProduct[i]['common_price'] = item['price'];
 
-    console.log(curListProduct);
+    // Apply same unit change to related rows (same master product)
+    const cp = curListProduct[i]['product'];
+    const masterId = cp.is_sub_item ? cp.master_product_id : cp.id;
+    curListProduct.forEach((row, idx) => {
+      if (idx === i) { return; }
+      const rp = row['product'];
+      if ((rp.is_sub_item ? rp.master_product_id : rp.id) === masterId) {
+        row['amount'] = Math.floor((row['amount'] * oldUnitValue) / newUnitValue) || 1;
+        row['product_unit_id'] = item['id'];
+        row['product_unit_value'] = newUnitValue;
+        row['product']['sell_price'] = item['sell_price'];
+        row['product']['end_price'] = item['sell_price'];
+        row['product']['product_no'] = item['no'];
+        row['common_price'] = item['price'];
+      }
+    });
 
     this.listProduct = curListProduct;
     const listInvoice = this.orderService.getListInvoiceLocalStorage();
@@ -3609,6 +3627,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
         quantity: product.amount,
         selectedParcel: selectedParcel,
         allParcels: this.all_product_parcels.get(product_id),
+        unit_value: product['product_unit_value'] || 1,
+        unit_name: product.product?.productUnits?.find(u => u.id === product['product_unit_id'])?.name || product['base_unit'] || '',
       }
     });
 
@@ -3698,7 +3718,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
     if (!selectedParcel) {
       return;
     }
-    const sum_amount = new_input_amount;
+    const unit_value = product['product_unit_value'] || 1;
+    // quantity_of_stock in parcels is always in basic units; convert input to basic for comparison
+    const sum_amount_basic = new_input_amount * unit_value;
     let redu = 0;
     let isLastParcel = false;
     const availableParcels = this.getAvailableItems(product_index).filter(
@@ -3711,38 +3733,47 @@ export class SaleMainComponent implements OnInit, DoCheck {
     if (existSubItemProduct?.product?.is_sub_item) {
       return;
     }
-    if (sum_amount > selectedParcel.quantity_of_stock) {
-      product.amount = selectedParcel.quantity_of_stock;
-      this.listProduct[product_index] = { ...product };
-      this.listProduct = [...this.listProduct];
-      redu += selectedParcel.quantity_of_stock;
-
-
+    if (sum_amount_basic > selectedParcel.quantity_of_stock) {
       const sortedParcels = [...availableParcels].sort((a, b) => {
         const dateA = new Date(a['expiration_date']);
         const dateB = new Date(b['expiration_date']);
         return dateA.getTime() - dateB.getTime();
       });
+
+      // If parcel stock is not divisible by unit, fall back to basic unit for all rows
+      const hasRemainder = unit_value > 1 && (selectedParcel.quantity_of_stock % unit_value !== 0);
+      if (hasRemainder) {
+        const baseUnit = product.product?.productUnits?.find(u => u.value === 1);
+        if (baseUnit) {
+          product['product_unit_id'] = baseUnit.id;
+          product['product_unit_value'] = 1;
+          product['product']['sell_price'] = baseUnit['sell_price'];
+          product['product']['end_price'] = baseUnit['sell_price'];
+          product['product']['product_no'] = baseUnit['no'];
+          product['common_price'] = baseUnit['price'];
+        } else {
+          product['product_unit_value'] = 1;
+        }
+      }
+      const effectiveUnit = hasRemainder ? 1 : unit_value;
+      product.amount = Math.floor(selectedParcel.quantity_of_stock / effectiveUnit);
+      this.listProduct[product_index] = { ...product };
+      this.listProduct = [...this.listProduct];
+      redu += selectedParcel.quantity_of_stock;
+
       for (let i = 0; i < sortedParcels.length; i++) {
         const parcel = sortedParcels[i];
-
-        if (redu >= sum_amount) {
+        if (redu >= sum_amount_basic) {
           break;
         }
-        const remain = sum_amount - redu;
+        const remain_basic = sum_amount_basic - redu;
+        isLastParcel = (i === sortedParcels.length - 1) || (redu + parcel['quantity_of_stock'] >= sum_amount_basic);
 
-        isLastParcel = (i === sortedParcels.length - 1) || (redu + parcel['quantity_of_stock'] >= sum_amount);
-
-        let quantityToAdd;
-        if (isLastParcel) {
-          quantityToAdd = remain;
-        } else {
-          quantityToAdd = Math.min(parcel['quantity_of_stock'], remain);
-        }
-
+        const quantityToAdd_basic = isLastParcel ? remain_basic : Math.min(parcel['quantity_of_stock'], remain_basic);
+        const quantityToAdd = Math.floor(quantityToAdd_basic / effectiveUnit);
         this.addNewRow(product_index, parcel, quantityToAdd);
-        redu += quantityToAdd;
-        if (redu >= sum_amount) {
+        redu += quantityToAdd * effectiveUnit;
+        if (redu >= sum_amount_basic) {
           break;
         }
       }
