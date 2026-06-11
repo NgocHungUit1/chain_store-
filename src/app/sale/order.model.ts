@@ -118,6 +118,7 @@ export class ResInvoicePrint {
   sum_payment: string; // tong thanh tona
   debt: string; // no
   nationalPrescription: NationalPrescription;
+  prescription?: any;
   use_einvoice: number;
 }
 
