@@ -2224,13 +2224,12 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   }
 
   priceChange(event: any, index) {
-    const formatted = this.formatNumberKeepDecimal(event.target.value);
+    // Cho phép đơn giá âm (nghiệp vụ điều chỉnh giảm/nhập trả). Đoạn chặn < 0
+    // trước đây (commit 142df000) đã được gỡ theo yêu cầu khách hàng.
+    // formatNumberKeepDecimal strip dấu "-", nên giữ lại dấu trừ cục bộ tại đây.
+    const isNegative = (event.target.value || '').toString().trim().startsWith('-');
+    const formatted = (isNegative ? '-' : '') + this.formatNumberKeepDecimal(event.target.value);
     const parsedPrice = numeral(formatted).value();
-    if (parsedPrice < 0) {
-      this.notifySer.notify('error', 'Đơn giá không được nhỏ hơn 0');
-      event.target.value = this.formatNumberKeepDecimal(this.data[index]['price']);
-      return;
-    }
     event.target.value = formatted;
     // Lưu number: pipe showValueExpenses là impure nhưng trả về cùng chuỗi khi giá
     // trị số không đổi (vd lúc vừa gõ dấu "."), nên không ghi đè/cắt phần thập phân

@@ -92,9 +92,12 @@ export class WarehouseFormPriceDialogComponent implements OnInit {
     const numValue = Number(inputValue);
 
     if (!isNaN(numValue)) {
-        // Riêng giá vốn (price) giữ phần thập phân đang gõ; các trường khác làm tròn số nguyên
+        // Riêng giá vốn (price) giữ phần thập phân đang gõ + cho phép số âm;
+        // các trường khác làm tròn số nguyên. formatNumberKeepDecimal strip dấu
+        // "-" nên giữ lại dấu trừ cục bộ cho riêng giá vốn.
+        const priceNegative = event.target.value.toString().trim().startsWith('-');
         const formattedValue = controlName === 'price'
-          ? this.formatNumberKeepDecimal(event.target.value)
+          ? (priceNegative ? '-' : '') + this.formatNumberKeepDecimal(event.target.value)
           : numeral(numValue).format('0,0');
         event.target.value = formattedValue;
         control.setValue(formattedValue, { emitEvent: false });
