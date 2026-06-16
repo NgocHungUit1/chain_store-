@@ -93,6 +93,7 @@ export class ProductFilter extends ApiFilterBase {
   group_id = '';
   stock = '';
   quota_stock = '';
+  batch_tracking_enabled = '';
 
   getModelSearch() {
     return 'ProductSearch';

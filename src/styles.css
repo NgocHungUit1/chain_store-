@@ -62,3 +62,11 @@
   padding-left: 10px;
   padding-right: 10px;
 }
+
+/* UX-01: cho phép tooltip checkbox "Quản lý theo lô" xuống nhiều dòng và dễ đọc */
+.tooltip-multiline {
+  white-space: pre-line;
+  max-width: 320px !important;
+  font-size: 13px;
+  line-height: 1.4;
+}

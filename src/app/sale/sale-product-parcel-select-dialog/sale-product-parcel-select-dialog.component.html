@@ -11,7 +11,12 @@
       <div class="parcel-info">
         <mat-chip [class.selected]="isSelected(parcel)"
                   (click)="toggleParcelSelection(parcel)"
-                  [ngClass]="{'active': isSelected(parcel)}">
+                  [ngClass]="['parcel-chip--' + getExpiryStatus(parcel['expiration_date']), isSelected(parcel) ? 'active' : '']"
+                  [matTooltip]="getExpiryTooltip(parcel['expiration_date'])">
+          <mat-icon class="parcel-expiry-icon"
+                    *ngIf="getExpiryStatus(parcel['expiration_date']) !== 'normal'">
+            {{ getExpiryStatus(parcel['expiration_date']) === 'expired' ? 'error' : 'warning' }}
+          </mat-icon>
           {{parcel['parcel_no']}} - {{parcel['expiration_date'] | date:'dd/MM/yyyy'}}
           <ng-container *ngIf="parcel['quantity_of_stock']">
             - Tồn: {{getConvertedStock(parcel)}} {{unitName}}
