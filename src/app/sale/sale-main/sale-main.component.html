@@ -221,10 +221,17 @@
               <div fxFlex="32" class="chip-list">
                 <mat-chip-list #chiplist aria-label="Parcel selection">
                   <mat-chip
-                    class="chip-item" *ngFor="let parcel of masterProduct.product_parcels"
+                    class="chip-item"
+                    [ngClass]="'parcel-chip--' + getExpiryStatus(parcel['expiration_date'])"
+                    *ngFor="let parcel of masterProduct.product_parcels"
                     [selectable]="true"
                     [disableRipple]="true"
+                    [matTooltip]="getExpiryTooltip(parcel['expiration_date'])"
                     [removable]="true" (removed)="removeParcel(getProductIndex(masterProduct))">
+                    <mat-icon class="parcel-expiry-icon"
+                              *ngIf="getExpiryStatus(parcel['expiration_date']) !== 'normal'">
+                      {{ getExpiryStatus(parcel['expiration_date']) === 'expired' ? 'error' : 'warning' }}
+                    </mat-icon>
                     {{ parcel['parcel_no'] }} - {{ parcel['expiration_date'] | date:'dd/MM/yyyy' }}
                     <mat-icon matChipRemove>cancel</mat-icon>
                   </mat-chip>
@@ -248,7 +255,12 @@
                                   class="parcel-option-list"
                                   [panelWidth]="240">
                   <mat-option *ngFor="let parcel of (getFilterItems(getProductIndex(masterProduct)) | async) || []"
-                              [value]="parcel" class="parcel-option">
+                              [value]="parcel" class="parcel-option"
+                              [ngClass]="'parcel-option--' + getExpiryStatus(parcel?.expiration_date)">
+                    <mat-icon class="parcel-expiry-icon"
+                              *ngIf="getExpiryStatus(parcel?.expiration_date) !== 'normal'">
+                      {{ getExpiryStatus(parcel?.expiration_date) === 'expired' ? 'error' : 'warning' }}
+                    </mat-icon>
                     {{ parcel?.parcel_no }} - {{ parcel?.expiration_date | date:'dd/MM/yyyy' }} - tồn:
                     {{ parcel?.quantity_of_stock }}
                   </mat-option>
@@ -309,8 +321,15 @@
                 <div fxFlex="32">
                   <div class="chip-list" *ngIf="subItem?.product?.batch_tracking_enabled">
                     <mat-chip-list #chiplistSub aria-label="Parcel selection">
-                      <mat-chip class="chip-item" *ngFor="let parcel of subItem.product_parcels" [selectable]="true"
+                      <mat-chip class="chip-item"
+                                [ngClass]="'parcel-chip--' + getExpiryStatus(parcel['expiration_date'])"
+                                *ngFor="let parcel of subItem.product_parcels" [selectable]="true"
+                                [matTooltip]="getExpiryTooltip(parcel['expiration_date'])"
                                 [removable]="true" (removed)="removeParcel(getProductIndex(subItem))">
+                        <mat-icon class="parcel-expiry-icon"
+                                  *ngIf="getExpiryStatus(parcel['expiration_date']) !== 'normal'">
+                          {{ getExpiryStatus(parcel['expiration_date']) === 'expired' ? 'error' : 'warning' }}
+                        </mat-icon>
                         {{ parcel['parcel_no'] }} - {{ parcel['expiration_date'] | date:'dd/MM/yyyy' }}
                         <mat-icon matChipRemove>cancel</mat-icon>
                       </mat-chip>
@@ -334,7 +353,12 @@
                                       class="parcel-option-list"
                                       [panelWidth]="240">
                       <mat-option *ngFor="let parcel of (getFilterItems(getProductIndex(subItem)) | async) || []"
-                                  [value]="parcel" class="parcel-option">
+                                  [value]="parcel" class="parcel-option"
+                                  [ngClass]="'parcel-option--' + getExpiryStatus(parcel?.expiration_date)">
+                        <mat-icon class="parcel-expiry-icon"
+                                  *ngIf="getExpiryStatus(parcel?.expiration_date) !== 'normal'">
+                          {{ getExpiryStatus(parcel?.expiration_date) === 'expired' ? 'error' : 'warning' }}
+                        </mat-icon>
                         {{ parcel?.parcel_no }} - {{ parcel?.expiration_date | date:'dd/MM/yyyy' }} - tồn:
                         {{ parcel?.quantity_of_stock }}
                       </mat-option>

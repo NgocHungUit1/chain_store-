@@ -141,7 +141,9 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     'warehouse_product_parcel_expiration': 'HSD',
     'warehouse_product_parcel_quantity': 'SL nhập',
     'warehouse_product_parcel_export': 'SL xuất',
-    'warehouse_product_parcel_quantity_of_stock': 'Tồn kho'
+    'warehouse_product_parcel_quantity_of_stock': 'Tồn kho',
+    'warehouse_product_parcel_unit_cost': 'Đơn giá',
+    'warehouse_product_parcel_value_of_stock': 'Giá trị tồn',
   };
 
   // for sale
@@ -197,6 +199,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
   sumExpirationOrQuantityOfStock: number;
   sumImportQuantity: number;
   sumExportQuantity: number;
+  sumValueOfStock: number;
 
   searchProductForm = new FormControl();
   tab: string = '';
@@ -559,6 +562,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
           this.sumExpirationOrQuantityOfStock = res.body.total_quantity_of_stock;
           this.sumImportQuantity = res.body.total_import_quantity;
           this.sumExportQuantity = res.body.total_export_quantity;
+          this.sumValueOfStock = res.body.total_value_of_stock;
 
           // this.sumExpirationOrQuantityOfStock = res.body.quantity_of_stock;
           // this.sumImportQuantity = res.body.quantity;
@@ -848,16 +852,19 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
 
     if (type === 'parcel-stock') {
       this.displayedColumns = ['#', 'warehouse_product_no', 'warehouse_product_name', 'warehouse_product_parcel_no',
-        'warehouse_product_parcel_expiration', 'warehouse_product_parcel_quantity',
-        'warehouse_product_parcel_export', 'warehouse_product_parcel_quantity_of_stock'
+        'warehouse_product_parcel_expiration', 'warehouse_product_parcel_unit_cost', 'warehouse_product_parcel_quantity',
+        'warehouse_product_parcel_export', 'warehouse_product_parcel_quantity_of_stock',
+        'warehouse_product_parcel_value_of_stock'
       ];
       this.columnsToDisplay = ['#', 'warehouse_product_no', 'warehouse_product_name', 'warehouse_product_parcel_no',
-        'warehouse_product_parcel_expiration', 'warehouse_product_parcel_quantity', 'warehouse_product_parcel_export',
-        'warehouse_product_parcel_quantity_of_stock'
+        'warehouse_product_parcel_expiration', 'warehouse_product_parcel_unit_cost',
+        'warehouse_product_parcel_quantity', 'warehouse_product_parcel_export',
+        'warehouse_product_parcel_quantity_of_stock', 'warehouse_product_parcel_value_of_stock'
       ];
       this.second_columnsToDisplay = [
         'second_warehouse_product_parcel_quantity',
-        'second_warehouse_product_parcel_export', 'second_warehouse_product_parcel_quantity_of_stock'
+        'second_warehouse_product_parcel_export', 'second_warehouse_product_parcel_quantity_of_stock',
+        'second_warehouse_product_parcel_value_of_stock'
       ];
 
       this.parcelStockFilter = this.buildFilterParcelStock();

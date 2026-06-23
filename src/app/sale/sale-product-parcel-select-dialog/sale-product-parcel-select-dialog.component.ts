@@ -30,6 +30,54 @@ export class SaleProductParcelSelectDialogComponent implements OnInit {
   getConvertedStock(parcel: object): number {
     return Math.floor(parcel['quantity_of_stock'] / this.unitValue);
   }
+
+  /**
+   * UX-05: Số ngày còn lại đến hạn sử dụng của lô.
+   */
+  getDaysUntilExpiry(expirationDate: any): number | null {
+    if (!expirationDate) {
+      return null;
+    }
+    const expiry = new Date(expirationDate);
+    if (isNaN(expiry.getTime())) {
+      return null;
+    }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    expiry.setHours(0, 0, 0, 0);
+    return Math.floor((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  }
+
+  /**
+   * UX-05: Trạng thái hạn sử dụng: 'expired' | 'warning' | 'normal'.
+   */
+  getExpiryStatus(expirationDate: any): string {
+    const days = this.getDaysUntilExpiry(expirationDate);
+    if (days === null) {
+      return 'normal';
+    }
+    if (days < 0) {
+      return 'expired';
+    }
+    if (days <= 30) {
+      return 'warning';
+    }
+    return 'normal';
+  }
+
+  getExpiryTooltip(expirationDate: any): string {
+    const days = this.getDaysUntilExpiry(expirationDate);
+    if (days === null) {
+      return '';
+    }
+    if (days < 0) {
+      return 'Lô đã hết hạn ' + Math.abs(days) + ' ngày';
+    }
+    if (days <= 30) {
+      return 'Lô sắp hết hạn (còn ' + days + ' ngày)';
+    }
+    return 'Còn hạn ' + days + ' ngày';
+  }
   ngOnInit() {
     // Initialize your parcels list and setup search
     this.searchControl.valueChanges.pipe(

@@ -120,3 +120,22 @@ mat-dialog-content {
   -webkit-appearance: none;
   margin: 0;
 }
+
+/* UX-04/UX-05: cảnh báo & làm nổi bật lô theo hạn sử dụng */
+.parcel-expiry-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+mat-chip.parcel-chip--warning {
+  background-color: #fff8e1 !important;
+  color: #e65100 !important;
+}
+mat-chip.parcel-chip--warning .parcel-expiry-icon { color: #f9a825 !important; }
+mat-chip.parcel-chip--expired {
+  background-color: #ffebee !important;
+  color: #c62828 !important;
+}
+mat-chip.parcel-chip--expired .parcel-expiry-icon { color: #c62828 !important; }

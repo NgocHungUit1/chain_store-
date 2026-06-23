@@ -3585,6 +3585,61 @@ export class SaleMainComponent implements OnInit, DoCheck {
    * @param id
    * @param item
    */
+  /**
+   * UX-05: Tính số ngày còn lại đến hạn sử dụng của lô.
+   * Trả về null nếu không có hạn sử dụng.
+   */
+  getDaysUntilExpiry(expirationDate: any): number | null {
+    if (!expirationDate) {
+      return null;
+    }
+    const expiry = new Date(expirationDate);
+    if (isNaN(expiry.getTime())) {
+      return null;
+    }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    expiry.setHours(0, 0, 0, 0);
+    return Math.floor((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  }
+
+  /**
+   * UX-04/UX-05: Trạng thái hạn sử dụng của lô:
+   * - 'expired'  : đã hết hạn (đỏ)
+   * - 'warning'  : sắp hết hạn (<= 30 ngày) (vàng)
+   * - 'normal'   : còn hạn
+   */
+  getExpiryStatus(expirationDate: any): string {
+    const days = this.getDaysUntilExpiry(expirationDate);
+    if (days === null) {
+      return 'normal';
+    }
+    if (days < 0) {
+      return 'expired';
+    }
+    if (days <= 30) {
+      return 'warning';
+    }
+    return 'normal';
+  }
+
+  /**
+   * UX-05: Tooltip mô tả cảnh báo hạn sử dụng cho lô.
+   */
+  getExpiryTooltip(expirationDate: any): string {
+    const days = this.getDaysUntilExpiry(expirationDate);
+    if (days === null) {
+      return '';
+    }
+    if (days < 0) {
+      return 'Lô đã hết hạn ' + Math.abs(days) + ' ngày';
+    }
+    if (days <= 30) {
+      return 'Lô sắp hết hạn (còn ' + days + ' ngày)';
+    }
+    return 'Còn hạn ' + days + ' ngày';
+  }
+
   removeParcel(id: number): void {
     const product = this.listProduct[id];
     if (!product) {

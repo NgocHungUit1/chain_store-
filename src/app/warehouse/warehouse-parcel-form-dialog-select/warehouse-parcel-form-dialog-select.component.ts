@@ -27,6 +27,15 @@ export class WarehouseParcelFormDialogSelectComponent implements OnInit {
     this.availableParcels = data['selectedParcels'];
   }
 
+
+  get selectedLotCount(): number {
+    return (this.availableParcels || []).filter(p => Number(p['quantity']) > 0).length;
+  }
+
+  get totalParcelQty(): number {
+    return (this.availableParcels || []).reduce((sum, p) => sum + (Number(p['quantity']) || 0), 0);
+  }
+
   ngOnInit() {
     // Initialize your parcels list and setup search
     this.searchControl.valueChanges.pipe(
