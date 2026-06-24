@@ -78,6 +78,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
   customerFilter: FormGroup;
   einvoiceFilter: FormGroup;
   expensesFilter: FormGroup;
+  paymentMethodFilter: FormGroup;
 
   currentDateFilter: DateFilter;
 
@@ -106,24 +107,25 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     'discount': 'Giảm giá',
     'expenses_order_price': 'Chi phí khác',
     'payment': 'Khách đã trả',
+    'payment_method': 'Phương thức TT',
     'einvoice_no': 'Số HĐĐT',
     'einvoice_status': 'Trạng thái ĐĐT'
   };
 
   displayedColumns: string[] = ['select',
     '#', 'invoice_no', 'created_at', 'returns', 'customer', 'national_pharmacy_no',
-    'total_price', 'discount', 'expenses_order_price', 'payment', 'einvoice_no', 'einvoice_status'
+    'total_price', 'discount', 'expenses_order_price', 'payment', 'payment_method', 'einvoice_no', 'einvoice_status'
   ];
   columnsToDisplay: string[] = ['select',
     '#', 'invoice_no', 'created_at', 'returns', 'customer', 'national_pharmacy_no',
-    'total_price', 'discount', 'expenses_order_price', 'payment', 'einvoice_no', 'einvoice_status'
+    'total_price', 'discount', 'expenses_order_price', 'payment', 'payment_method', 'einvoice_no', 'einvoice_status'
   ];
 
   // for second column
   second_columnsToDisplay: string[] = ['second_select',
     'second_#', 'second_invoice_no', 'second_created_at', 'second_returns', 'second_customer',
     'second_national_pharmacy_no', 'second_total_price', 'second_discount', 'second_expenses_order_price', 'second_payment',
-    'second_einvoice_no', 'second_einvoice_status'
+    'second_payment_method', 'second_einvoice_no', 'second_einvoice_status'
   ];
   get second_displayedColumns(): string[] {
     return this.displayedColumns.map(col => `second_${col}`).filter(col => this.second_columnsToDisplay.includes(col));
@@ -180,6 +182,20 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
   expensesFilterList = [
     { value: 'yes', name: 'Có' },
     { value: 'no', name: 'Không' },
+  ];
+
+  // Map giá trị payment_method -> nhãn hiển thị (đồng bộ với tab Lịch sử thanh toán)
+  typeMethods = {
+    'cash': 'Tiền mặt',
+    'card': 'Thẻ',
+    'transfer': 'Chuyển khoản',
+    'bank_transfer': 'Chuyển khoản',
+    'point': 'Điểm',
+  };
+
+  paymentMethodFilterList = [
+    { value: 'cash', name: 'Tiền mặt' },
+    { value: 'bank_transfer', name: 'Chuyển khoản' },
   ];
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -322,6 +338,19 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     return (product === undefined || product === null) ? undefined : product.product_name;
   }
 
+  // Gộp các phương thức thanh toán (không trùng) của 1 hóa đơn để hiển thị ở cột
+  paymentMethodLabel(element: Invoice): string {
+    const payments = (element?.payment || []) as any[];
+    const labels: string[] = [];
+    for (const p of payments) {
+      const label = this.typeMethods[p?.payment_method] || p?.payment_method;
+      if (label && !labels.includes(label)) {
+        labels.push(label);
+      }
+    }
+    return labels.join(', ');
+  }
+
   displayCustomer(customer?: Customer): string | undefined {
     return (customer === undefined || customer === null) ? undefined : customer.name;
   }
@@ -349,6 +378,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     filter.order_national = this.orderNationalFilter.controls['status'].value.join(',');
     filter.einvoice = this.einvoiceFilter.controls['status'].value.join(',');
     filter.expenses = this.expensesFilter.controls['status'].value.join(',');
+    filter.payment_method = this.paymentMethodFilter.controls['status'].value.join(',');
 
     const product = this.productFilter.controls['product']?.value;
     filter.product_id = product?.id;
@@ -386,6 +416,9 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     });
     this.expensesFilter = this.fb.group({
       status: new FormControl(['yes', 'no']),
+    });
+    this.paymentMethodFilter = this.fb.group({
+      status: new FormControl(['cash', 'bank_transfer']),
     });
   }
 
