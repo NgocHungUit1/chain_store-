@@ -81,6 +81,7 @@ export class InvoiceFilter extends ApiFilterBase {
   created_by = '';
   keyword = '';
   product_type = '';
+  payment_method = '';
 
   getModelSearch() {
     return 'InvoiceSearch';

@@ -90,6 +90,11 @@ tr.mat-header-row:nth-child(1) {
   background-color: #dcf4fc;
 }
 
+.mat-column-payment_method,
+th.mat-header-cell.mat-column-payment_method {
+  padding-left: 24px;
+}
+
 .mat-column-einvoice_no {
   padding-left: 24px;
   text-align: center;
