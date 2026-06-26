@@ -123,9 +123,14 @@
                     </p>
                     <p *ngIf="element.product.product_name.length <= 45">{{ element.product.product_name }}</p>
                   </b>
-                  <span *ngIf="element.parcel_no" class="span-product-no" style="color:#1976d2">
-                    Lô: {{ element.parcel_no }}<span *ngIf="element.expiration_date"> - HSD: {{ element.expiration_date }}</span>
-                  </span>
+                  <mat-form-field *ngIf="element.lots && element.lots.length" style="width: 220px; margin-top: 4px;">
+                    <mat-label>Chọn lô</mat-label>
+                    <mat-select [(ngModel)]="data[i]['parcel_no']" (selectionChange)="onLotChange(i, $event.value)">
+                      <mat-option *ngFor="let lot of element.lots" [value]="lot.parcel_no">
+                        {{ lot.parcel_no }} - HSD: {{ lot.expiration_date }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
 
 
                 </td>
