@@ -14,6 +14,9 @@ export class StockTakeItem {
   product_id: string;
   product: object;
   product_unit_id: string;
+  parcel_no: string;
+  expiration_date: string;
+  lots: any[];
   quantity_of_stock: number;
   actual_number: number;
   deviation_number: number;

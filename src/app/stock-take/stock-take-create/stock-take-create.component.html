@@ -123,6 +123,14 @@
                     </p>
                     <p *ngIf="element.product.product_name.length <= 45">{{ element.product.product_name }}</p>
                   </b>
+                  <mat-form-field *ngIf="element.lots && element.lots.length" style="width: 220px; margin-top: 4px;">
+                    <mat-label>Chọn lô</mat-label>
+                    <mat-select [(ngModel)]="data[i]['parcel_no']" (selectionChange)="onLotChange(i, $event.value)">
+                      <mat-option *ngFor="let lot of element.lots" [value]="lot.parcel_no">
+                        {{ lot.parcel_no }} - HSD: {{ lot.expiration_date }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
 
 
                 </td>
@@ -131,7 +139,9 @@
               <ng-container matColumnDef="product_unit_id">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_unit_id']}}</th>
                 <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
-                  <mat-form-field *ngIf="element.productUnits.length">
+                  <!-- SP theo lô: ép đơn vị cơ bản, không cho đổi -->
+                  <span *ngIf="element.parcel_no">{{ element.product.base_unit }}</span>
+                  <mat-form-field *ngIf="!element.parcel_no && element.productUnits.length">
                     <mat-select [(ngModel)]="data[i]['product_unit_id']"
                                 (selectionChange)="onUnitChange(i, $event)">
                       <mat-option *ngFor="let unit of element.productUnits" [value]="unit.id">{{unit.name}}</mat-option>
