@@ -10,6 +10,7 @@ import {
 import {ListComponentBase} from '../../shared/base';
 import {ActivatedRoute} from '@angular/router';
 import {AuthService} from '../../authentication/auth.service';
+import {NotifierService} from 'angular-notifier';
 import {GroupFormDialogComponent} from '../../group/group-form-dialog/group-form-dialog.component';
 import {
   WarehouseProductParcelChangeStockFormDialogComponent
@@ -48,6 +49,7 @@ export class ProductTabStockParcelComponent extends ListComponentBase implements
     private route: ActivatedRoute,
     private authSer: AuthService,
     private dialog: MatDialog,
+    private notifySer: NotifierService,
   ) {
     super();
   }
@@ -110,6 +112,39 @@ export class ProductTabStockParcelComponent extends ListComponentBase implements
       if (result) {
         this.loadData();
       }
+    });
+  }
+
+  // ----- Sửa hạn dùng của lô (inline) -----
+  startEditExp(element) {
+    element._newExp = element.expiration_date ? new Date(element.expiration_date) : null;
+    element._editingExp = true;
+  }
+
+  cancelEditExp(element) {
+    element._editingExp = false;
+  }
+
+  saveExp(element) {
+    if (!element._newExp) {
+      this.notifySer.notify('warning', 'Vui lòng chọn hạn sử dụng.');
+      return;
+    }
+    const d = new Date(element._newExp);
+    const dateStr = d.getFullYear() + '-'
+      + ('0' + (d.getMonth() + 1)).slice(-2) + '-'
+      + ('0' + d.getDate()).slice(-2);
+
+    this.warehouseParcelService.updateExpiration(element.id, dateStr).subscribe(res => {
+      if (res && res.success) {
+        this.notifySer.notify('success', 'Cập nhật hạn dùng thành công!');
+        element._editingExp = false;
+        this.loadData();
+      } else {
+        this.notifySer.notify('error', (res && res.message) ? res.message : 'Cập nhật thất bại');
+      }
+    }, () => {
+      this.notifySer.notify('error', 'Có lỗi xảy ra, vui lòng thử lại.');
     });
   }
 

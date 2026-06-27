@@ -191,6 +191,11 @@ export class WarehouseProductParcelService {
     return this.http.put<WarehouseProductParcel>(url, pos);
   }
 
+  updateExpiration(id: string, expiration_date: string) {
+    const url = environment.apiUrl + '/warehouse-product-parcel/update-expiration';
+    return this.http.post<any>(url, {id, expiration_date});
+  }
+
   create(data) {
     const url = environment.apiUrl + '/warehouse-product-parcel';
     return this.http.post<WarehouseProductParcel>(url, data);
