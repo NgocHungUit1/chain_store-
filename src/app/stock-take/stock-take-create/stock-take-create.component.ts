@@ -215,11 +215,15 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
         stockTakeItem.parcel_no = item.parcel_no;
         stockTakeItem.expiration_date = item.expiration_date;
         if (item.parcel_no) {
-          // dựng lại option lô đã lưu để dropdown hiển thị
+          // tồn đã lưu là theo đơn vị đã chọn -> quy về tồn lô gốc (viên)
+          const u = (item.productUnits || []).find(x => x.id === item.product_unit_id);
+          const uv = Number(u && u.value) || 1;
+          stockTakeItem.lot_base_qty = (Number(item.quantity_of_stock) || 0) * uv;
+          // dựng lại option lô (tồn theo viên) để dropdown + quy đổi đơn vị hoạt động
           stockTakeItem.lots = [{
             parcel_no: item.parcel_no,
             expiration_date: item.expiration_date,
-            quantity_of_stock: item.quantity_of_stock
+            quantity_of_stock: stockTakeItem.lot_base_qty
           }];
         }
         stockTakeItem.quantity_of_stock = item.quantity_of_stock;
@@ -324,8 +328,9 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
   }
 
   /**
-   * Thêm SP quản lý theo lô: 1 dòng/SP, có dropdown chọn lô (như màn bán hàng).
-   * Ép đơn vị cơ bản. Thêm lô mới phải qua Nhập hàng, kiểm kho chỉ điều chỉnh lô đã có.
+   * Thêm SP quản lý theo lô: 1 dòng/SP, có dropdown chọn lô + chọn đơn vị.
+   * Tồn lô gốc lưu theo đơn vị cơ bản (lot_base_qty); hiển thị/nhập quy đổi theo đơn vị chọn.
+   * Thêm lô mới phải qua Nhập hàng, kiểm kho chỉ điều chỉnh lô đã có.
    */
   addBatchProductLots(res, units) {
     this.productSer.getParcelNew(res['id']).subscribe((parcels: any) => {
@@ -343,6 +348,7 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
 
       // units đã sort tăng dần theo value ⇒ phần tử đầu là đơn vị cơ bản (value = 1)
       const baseUnit = units[0];
+      const baseVal = Number(baseUnit['value']) || 1;
       const first = lots[0];
       const item = new StockTakeItem();
       item.product_id = res['id'];
@@ -352,9 +358,10 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
       item.lots = lots;
       item.parcel_no = first['parcel_no'];
       item.expiration_date = first['expiration_date'];
-      item.view_quantity_of_stock = Number(first['quantity_of_stock']) || 0;
-      item.actual_number = item.view_quantity_of_stock; // mặc định = tồn lô (lệch 0)
-      item.price = baseUnit['original_price'];
+      item.lot_base_qty = Number(first['quantity_of_stock']) || 0; // tồn lô theo đơn vị cơ bản (viên)
+      item.view_quantity_of_stock = item.lot_base_qty / baseVal;   // quy đổi theo đơn vị mặc định
+      item.actual_number = item.view_quantity_of_stock;            // mặc định = tồn lô (lệch 0)
+      item.price = Number(baseUnit['original_price']) || 0;
       item.deviation_number = 0;
       item.deviation_price = 0;
 
@@ -379,7 +386,11 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
     }
     item['parcel_no'] = lot['parcel_no'];
     item['expiration_date'] = lot['expiration_date'];
-    item['view_quantity_of_stock'] = Number(lot['quantity_of_stock']) || 0;
+    item['lot_base_qty'] = Number(lot['quantity_of_stock']) || 0;
+    // quy đổi tồn lô theo đơn vị đang chọn
+    const unit = item['productUnits'].find(u => u['id'] === item['product_unit_id']) || item['productUnits'][0];
+    const v = Number(unit && unit['value']) || 1;
+    item['view_quantity_of_stock'] = item['lot_base_qty'] / v;
     item['actual_number'] = item['view_quantity_of_stock'];
     this.recalculateItem(index);
   }
@@ -418,15 +429,35 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
    * @param select
    */
   onUnitChange(index, select) {
-    if (this.data[index] !== undefined) {
-      const unit = this.data[index]['productUnits'].find(element => element['id'] === select.value);
-      const unitBase = this.data[index]['productUnits'].find(element => element['is_base'] === 1);
-      this.data[index]['view_quantity_of_stock'] = unit['quantity_of_stock'];
-      this.data[index]['deviation_number'] = this.data[index]['actual_number'] - this.data[index]['view_quantity_of_stock'];
-      this.data[index]['price'] = unitBase['original_price'] * unit['value'];
-      this.data[index]['deviation_price'] = this.data[index]['deviation_number'] * this.data[index]['price'];
-      this.recalculateStockTake();
+    if (this.data[index] === undefined) {
+      return;
     }
+    const item = this.data[index];
+    const unit = item['productUnits'].find(element => element['id'] === select.value);
+    if (!unit) {
+      return;
+    }
+
+    if (item['parcel_no']) {
+      // Dòng theo lô: tồn = tồn lô gốc (viên) / value đơn vị đang chọn
+      const v = Number(unit['value']) || 1;
+      const baseUnit = item['productUnits'][0]; // batch: units đã sort tăng dần ⇒ [0] = cơ bản
+      item['view_quantity_of_stock'] = (Number(item['lot_base_qty']) || 0) / v;
+      item['actual_number'] = item['view_quantity_of_stock']; // reset về tồn lô (lệch 0)
+      item['price'] = (Number(baseUnit && baseUnit['original_price']) || 0) * v;
+      item['deviation_number'] = item['actual_number'] - item['view_quantity_of_stock'];
+      item['deviation_price'] = item['deviation_number'] * item['price'];
+      this.recalculateStockTake();
+      return;
+    }
+
+    // SP thường: giữ nguyên logic cũ
+    const unitBase = item['productUnits'].find(element => element['is_base'] === 1);
+    item['view_quantity_of_stock'] = unit['quantity_of_stock'];
+    item['deviation_number'] = item['actual_number'] - item['view_quantity_of_stock'];
+    item['price'] = unitBase['original_price'] * unit['value'];
+    item['deviation_price'] = item['deviation_number'] * item['price'];
+    this.recalculateStockTake();
   }
 
   changeQuantity(index, value) {

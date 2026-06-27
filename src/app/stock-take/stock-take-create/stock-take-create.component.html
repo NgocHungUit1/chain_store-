@@ -139,9 +139,7 @@
               <ng-container matColumnDef="product_unit_id">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_unit_id']}}</th>
                 <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0' *matCellDef="let element; let i = index">
-                  <!-- SP theo lô: ép đơn vị cơ bản, không cho đổi -->
-                  <span *ngIf="element.parcel_no">{{ element.product.base_unit }}</span>
-                  <mat-form-field *ngIf="!element.parcel_no && element.productUnits.length">
+                  <mat-form-field *ngIf="element.productUnits.length">
                     <mat-select [(ngModel)]="data[i]['product_unit_id']"
                                 (selectionChange)="onUnitChange(i, $event)">
                       <mat-option *ngFor="let unit of element.productUnits" [value]="unit.id">{{unit.name}}</mat-option>
