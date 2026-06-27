@@ -193,7 +193,7 @@
                 <td mat-cell
                     class='column-number'
                     *matCellDef='let element'>
-                  {{ element.productUnit?.original_price | number }}</td>
+                  {{ (element.product?.original_price || 0) * (element.productUnit?.value || 0)  | number }}</td>
               </ng-container>
 
               <ng-container matColumnDef='sell_price'>

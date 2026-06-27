@@ -120,6 +120,7 @@ export class SaleSiderbarOrderComponent implements OnInit {
   loadData() {
     this.loadUserLogin();
     const priceListFilter = new PriceListFilter();
+    priceListFilter.is_valid = '1';
     // lay PriceBook
     this.priceListSer.getList(priceListFilter).subscribe(res => {
       this.priceLists = res.body;

@@ -100,6 +100,24 @@
             </mat-checkbox>
           </div>
         </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]='true'>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Quản lý theo lô
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class='custom-filter-container__checkbox-container'>
+            <mat-checkbox *ngFor='let item of batchTrackingFilterList'
+                          color='primary'
+                          [checked]="productFilter.value['batch_tracking'].includes(item.value)"
+                          (change)='checkBoxFilterChange($event, item.value, "batch_tracking")'
+            >
+              {{ item.name }}
+            </mat-checkbox>
+          </div>
+        </mat-expansion-panel>
       </mat-accordion>
 
       <!--<pre>{{productFilter.value | json}}</pre>-->
@@ -374,6 +392,25 @@
                   <ng-template #quantityNull>
                     <span class='label label-danger'>0</span>
                   </ng-template>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef='batch_tracking_enabled'>
+                <th mat-header-cell
+                    class='column-number'
+                    *matHeaderCellDef> {{columnsHeader['batch_tracking_enabled']}}</th>
+                <td mat-cell
+                    class='column-number'
+                    *matCellDef='let element'>
+                  <label *ngIf='element.batch_tracking_enabled'
+                         class='label label-success'
+                         matTooltip='Hàng hóa được quản lý theo lô (FEFO)'>
+                    Đã bật
+                  </label>
+                  <label *ngIf='!element.batch_tracking_enabled'
+                         class='label label-warning'>
+                    Chưa bật
+                  </label>
                 </td>
               </ng-container>
 

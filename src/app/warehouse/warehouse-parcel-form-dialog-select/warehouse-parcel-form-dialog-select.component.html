@@ -35,6 +35,11 @@
     </div>
   </mat-dialog-content>
 
+  <div class="parcel-qty-summary">
+    <mat-icon>inventory_2</mat-icon>
+    <span>Tổng SL lô: <strong>{{ selectedLotCount | number }}</strong> / Tổng số lượng các lô: <strong>{{ totalParcelQty | number }}</strong></span>
+  </div>
+
   <mat-dialog-actions align="end">
     <button mat-raised-button mat-button color="primary" (click)="onSave()"  tabindex="4"><mat-icon>save</mat-icon> Ok</button>
     <button mat-raised-button mat-button  (click)="onCancel()"><mat-icon>cancel</mat-icon> Bỏ qua</button>

@@ -54,12 +54,14 @@ export class InvoiceTabInfoComponent implements OnChanges {
   giamGiaHoaDonText = '';
   orderStatus = {
     'pending': 'Đang xử lý',
-    'done': 'Hoàn thành'
+    'done': 'Hoàn thành',
+    'cancel': 'Đã hủy'
   };
 
   orderStatusColor = {
     'pending': 'label label-warning',
-    'done': 'label label-success'
+    'done': 'label label-success',
+    'cancel': 'label label-danger'
   };
 
   autoPrintInSoLo = false;
@@ -104,10 +106,15 @@ export class InvoiceTabInfoComponent implements OnChanges {
   loadData() {
     this.loading = true;
     this.invoiceService.getInfo(this.invoice.id,
-      'amount,detail,priceBook,paymentInfo,expensesOrders,branch,payment,customer,store,user,returns,today,time,createdFormat,total_payment'
+      'amount,detail,priceBook,paymentInfo,expensesOrders,branch,payment,customer,store,user,returns,today,time,createdFormat,total_payment,isFullyReturned'
     ).subscribe(res => {
       const invoiceData = res;
       this.invoice = res;
+
+      if (this.invoice.isFullyReturned) {
+        this.invoice.order_status = 'cancel';
+      }
+
       const detail = res['detail'];
       this.isInvoiceVat = !!invoiceData.use_einvoice;
       if (this.isInvoiceVat) {
@@ -264,15 +271,21 @@ export class InvoiceTabInfoComponent implements OnChanges {
     };
     mItemInvoice.use_einvoice = invoice.use_einvoice;
     mItemInvoice.total_vat = invoice.total_vat;
-    mItemInvoice.noteSiderBar = invoice?.note??"";
+    mItemInvoice.noteSiderBar = invoice?.note ?? '';
     const aProductInfo: ProductInfo[] = [];
     const invoiceDetailFilter = new InvoiceDetailFilter();
     invoiceDetailFilter.invoice_id = invoice.id;
     invoiceDetailFilter.pageSize = 200;
     invoiceDetailFilter.expand = 'product,quantity,productUnits';
     this.invoiceService.getInvoiceDetailList(invoiceDetailFilter).subscribe(res => {
-      const detail = res.body; // invoice.detail || [];
-      detail.forEach(element => {
+      const details = res.body; // invoice.detail || [];
+      for (const element of details) {
+        // tslint:disable-next-line:triple-equals
+        if (element?.product?.status != 10) {
+          // Skip product not active
+          continue;
+        }
+
         const units = element.productUnits;
         units.forEach(item => {
           item.quantity_of_stock = Math.floor(element.quantity.number / item.value);
@@ -298,7 +311,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
         mProductInfo.note = element.note;
         mProductInfo.parcel_no = element.parcel_no;
         aProductInfo.push(mProductInfo);
-      });
+      }
       mItemInvoice.listProduct = aProductInfo;
       this.orderService.addItemInvoiceUpdate(mItemInvoice);
       this.router.navigate(['/sale']);
@@ -462,7 +475,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
         // printContent += '<p style="text-align:left; font-size: 12px;font-style: italic;" >Hổ trợ : 0972 574 506</p>';
 
         printContent += '</section>';
-        try{
+        try {
           const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
           WindowPrt.document.write(printContent);
           WindowPrt.document.close();

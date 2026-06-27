@@ -150,6 +150,32 @@ html .page-wrapper .page-content {
         justify-content: space-between !important;
       }
 
+      /* UX-04/UX-05: làm nổi bật lô đã chọn + cảnh báo hạn sử dụng */
+      .chip-item.parcel-chip--warning {
+        background-color: #fff8e1 !important;
+        color: #e65100 !important;
+        height: auto !important;
+        padding: 2px 4px !important;
+        font-weight: 600 !important;
+      }
+      .chip-item.parcel-chip--expired {
+        background-color: #ffebee !important;
+        color: #c62828 !important;
+        height: auto !important;
+        padding: 2px 4px !important;
+        font-weight: 600 !important;
+      }
+      .parcel-expiry-icon {
+        font-size: 13px !important;
+        width: 13px !important;
+        height: 13px !important;
+        line-height: 13px !important;
+        vertical-align: middle;
+        margin-right: 2px;
+      }
+      .parcel-chip--warning .parcel-expiry-icon { color: #f9a825 !important; }
+      .parcel-chip--expired .parcel-expiry-icon { color: #c62828 !important; }
+
       .parcel-seletor{
         display: flex !important;
         height: 24px !important;
@@ -370,6 +396,22 @@ Popup parcel list
   padding: 10px;
   .parcel-option{
     font-size: 1rem !important;
+  }
+  /* UX-05: cảnh báo hạn sử dụng trong danh sách chọn lô */
+  .parcel-option--warning {
+    color: #e65100 !important;
+    .parcel-expiry-icon { color: #f9a825 !important; }
+  }
+  .parcel-option--expired {
+    color: #c62828 !important;
+    .parcel-expiry-icon { color: #c62828 !important; }
+  }
+  .parcel-expiry-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+    margin-right: 4px;
   }
 }
 

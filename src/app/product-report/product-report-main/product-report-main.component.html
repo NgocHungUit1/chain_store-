@@ -674,7 +674,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_warehouse_product_parcel_quantity">
-                <th colspan="6" mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sumImportQuantity | number }}</th>
+                <th colspan="7" mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sumImportQuantity | number }}</th>
               </ng-container>
 
               <ng-container matColumnDef="warehouse_product_parcel_export">
@@ -700,19 +700,44 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="second_warehouse_product_parcel_quantity_of_stock">
-                <th colspan="7" mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sumExpirationOrQuantityOfStock | number }}</th>
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sumExpirationOrQuantityOfStock | number }}</th>
               </ng-container>
 
 
               <ng-container matColumnDef="warehouse_product_parcel_expiration">
                 <th mat-header-cell class="column-number"
-                    *matHeaderCellDef> Hạn sử dụng</th>
+                    *matHeaderCellDef>{{columnsHeader['warehouse_product_parcel_expiration']}}</th>
                 <td mat-cell class="column-number" *matCellDef="let element">
                   <span>
-                    {{element?.warehouse_product_parcel?.expiration_date }}
+                    {{element?.warehouse_product_parcel?.expiration_date || element?.expiration_date }}
                   </span>
                 </td>
               </ng-container>
+
+              <ng-container matColumnDef="warehouse_product_parcel_unit_cost">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef>{{columnsHeader['warehouse_product_parcel_unit_cost']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{(element?.unit_cost || 0) | number }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="warehouse_product_parcel_value_of_stock">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef>{{columnsHeader['warehouse_product_parcel_value_of_stock']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                    {{(element?.unit_cost || 0) * element.quantity_of_stock | number }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="second_warehouse_product_parcel_value_of_stock">
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{sumValueOfStock | number}}</th>
+              </ng-container>
+
 
               <ng-container matColumnDef="warehouse_product_no">
                 <th mat-header-cell
@@ -824,7 +849,6 @@
                 <th mat-header-cell class="column-number color-export"
                     *matHeaderCellDef></th>
               </ng-container>
-
 
               <ng-container matColumnDef="supplier_total_import">
                 <th mat-header-cell class="column-number"

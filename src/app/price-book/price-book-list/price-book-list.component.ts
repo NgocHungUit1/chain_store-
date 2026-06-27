@@ -333,6 +333,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
       priceListChoose: this.priceListChoose,
       action: 'update',
     };
+
     const dialogRef = this.dialog.open(CreatePriceListFormDialogComponent, {
       data: obj,
       width: '40%',
@@ -381,7 +382,7 @@ export class PriceBookListComponent extends ListComponentBase implements OnInit 
           const mPriceListProduct = new PriceListProduct();
           mPriceListProduct.product_id = product.id;
           mPriceListProduct.price_list_id = priceListID;
-          mPriceListProduct.price = product.sell_price;
+          mPriceListProduct.price = element.sell_price;
           mPriceListProduct.product_unit_id = element.id;
 
           this.priceListProductSer.create(mPriceListProduct).subscribe(mPriceListProduct => {

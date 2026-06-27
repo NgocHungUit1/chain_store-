@@ -22,7 +22,8 @@ import { DatetimeDefaultFilterDialogComponent } from './datetime-default-filter-
     DoctorFormDialogComponent,
     DoctorTabInfoComponent,
     DatetimeDefaultFilterDialogComponent,
-    DatetimeChooseFilterDialogComponent
+    DatetimeChooseFilterDialogComponent,
+
   ],
   imports: [
     CommonModule,

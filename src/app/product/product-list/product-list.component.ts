@@ -110,6 +110,17 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     },
   ];
 
+  batchTrackingFilterList = [
+    {
+      'value': 1,
+      'name': 'Quản lý theo lô',
+    },
+    {
+      'value': 0,
+      'name': 'Không theo lô',
+    },
+  ];
+
   columnsHeader = {
     '#': '#',
     // 'product_type': 'Phân loại',
@@ -151,8 +162,8 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     'merchandise': 'Hàng hóa',
   };
 
-  displayedColumns: string[] = ['select', '#', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'quantity', 'status'];
-  columnsToDisplay: string[] = ['select', '#', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'quantity', 'status'];
+  displayedColumns: string[] = ['select', '#', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'quantity', 'batch_tracking_enabled', 'status'];
+  columnsToDisplay: string[] = ['select', '#', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'quantity', 'batch_tracking_enabled', 'status'];
   dataSource: Product[] = [];
   selection = new SelectionModel<Product>(true, []);
   toggleMore = false;
@@ -330,6 +341,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     filter.group_id = this.productFilter.controls['group'].value;
     filter.stock = this.productFilter.controls['stock'].value;
     filter.quota_stock = this.productFilter.controls['quota_stock'].value;
+    filter.batch_tracking_enabled = this.productFilter.controls['batch_tracking'].value;
     return filter;
   }
 
@@ -442,6 +454,9 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
         ['empty', 'have']
       ],
       quota_stock: [[]],
+      batch_tracking: [
+        [1, 0]
+      ],
     });
 
     const queryString = window.location.search;
