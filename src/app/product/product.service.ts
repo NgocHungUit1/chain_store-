@@ -249,6 +249,12 @@ export class ProductService {
     return res;
   }
 
+  // Dùng cho màn NHẬP HÀNG: liệt kê cả lô đã hết (tồn=0) để chọn nhập lại
+  getParcelForImport(id: string) {
+    const url = environment.apiUrl + `/warehouse-product-parcel/group-by-product?WarehouseProductParcelSearch[product_id]=${id}&WarehouseProductParcelSearch[includeEmpty]=1`;
+    return this.http.get(url);
+  }
+
   getPdfBarcode(data = {}) {
     const url = environment.apiUrl + '/product/print-pdf-barcode';
     return this.http.post(url, data);
