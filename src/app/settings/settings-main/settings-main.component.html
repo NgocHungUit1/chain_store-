@@ -291,6 +291,19 @@
                       </div>
                     </div>
 
+                    <div fxLayout="row wrap" class="line-option">
+                      <div fxFlex="60px" class="custom-toggle">
+                        <mat-slide-toggle
+                          [formControl]="storeForm.controls['require_payment_before_print']"
+                        ></mat-slide-toggle>
+                      </div>
+                      <div fxFlex="auto">
+                        <b>Bắt buộc thanh toán trước khi in</b>
+                        <br>
+                        <span> Chỉ cho phép in hóa đơn bán sau khi đã bấm Thanh toán (tránh in cho khách một giá rồi ghi hóa đơn giá khác).</span>
+                      </div>
+                    </div>
+
                     <!-- col half-->
                     <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
                       <button mat-raised-button color="primary" type="submit"

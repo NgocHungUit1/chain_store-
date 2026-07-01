@@ -211,6 +211,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
   autoPrint = true;
   autoPrintInSoLo = false;
+  // Cấu hình cửa hàng: bắt buộc thanh toán trước khi in (chặn in trước)
+  requirePaymentBeforePrint = false;
 
   changePriceBook = false;
 
@@ -1000,6 +1002,11 @@ export class SaleMainComponent implements OnInit, DoCheck {
     });
 
     this.getAutoPrintValue();
+
+    // Đọc cấu hình "Bắt buộc thanh toán trước khi in" của cửa hàng
+    this.storeSer.getDetail().subscribe(res => {
+      this.requirePaymentBeforePrint = !!res['require_payment_before_print'];
+    });
 
     this.orderService.subscribeLoadDetailPage.subscribe(action => {
       if (action === true) {
@@ -2601,6 +2608,11 @@ export class SaleMainComponent implements OnInit, DoCheck {
   }
 
   async printPreInvoiceHandler() {
+    // Nếu cửa hàng bật "Bắt buộc thanh toán trước khi in" -> chặn in trước
+    if (this.requirePaymentBeforePrint) {
+      this.notifySer.notify('warning', 'Vui lòng thanh toán trước khi in hóa đơn.');
+      return;
+    }
     const preInvoiceData = await this.getPreInvoiceData();
     //this.printPreInvoiceV2(preInvoiceData);
     // print with template

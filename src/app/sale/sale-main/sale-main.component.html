@@ -1229,6 +1229,8 @@
               <div class="sidebar-order-bottom-buttons">
                 <button
                   style="width: 80px; background-color: gray !important;"
+                  [style.opacity]="requirePaymentBeforePrint ? 0.5 : 1"
+                  [matTooltip]="requirePaymentBeforePrint ? 'Vui lòng thanh toán trước khi in' : ''"
                   mat-button
                   class="payment-button"
                   (click)="printPreInvoiceHandler()">

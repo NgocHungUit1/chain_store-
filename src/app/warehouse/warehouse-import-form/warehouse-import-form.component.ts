@@ -314,7 +314,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     const product_id = product.product_id.toString();
     const existingParcelNos = new Set(product.product_parcels.map(item => item['parcel_no']));
 
-    return this.productSer.getParcelNew(product_id).pipe(
+    return this.productSer.getParcelForImport(product_id).pipe(
       map(res => {
 
         if (res) {

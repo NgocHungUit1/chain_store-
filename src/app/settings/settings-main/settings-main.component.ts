@@ -102,6 +102,7 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     this.storeForm = this.fb.group({
       description: [''],
       can_change_completed: [false],
+      require_payment_before_print: [false],
     });
 
     this.commForm = this.fb.group({
@@ -141,7 +142,11 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
           this.imageButtons[0]['isShow'] = false;
         }
 
-        this.storeForm.patchValue({description: res['description'], can_change_completed: res['can_change_completed']});
+        this.storeForm.patchValue({
+          description: res['description'],
+          can_change_completed: res['can_change_completed'],
+          require_payment_before_print: !!res['require_payment_before_print'],
+        });
 
         this.storeFeatures = res['features'];
       });
