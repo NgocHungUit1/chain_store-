@@ -172,6 +172,9 @@ export class WarehouseInfoTabComponent implements OnChanges {
             setTimeout(function () {
               location.reload();
             }, 1000);
+          }, error => {
+            this.isLoadingResults = false;
+            this.notifySer.notify('error', error?.error?.message || 'Không thể xóa đơn nhập.');
           });
         }
       });
@@ -184,6 +187,9 @@ export class WarehouseInfoTabComponent implements OnChanges {
         setTimeout(function () {
           location.reload();
         }, 1000);
+      }, error => {
+        this.isLoadingResults = false;
+        this.notifySer.notify('error', error?.error?.message || 'Không thể xóa đơn nhập.');
       });
     }
 
