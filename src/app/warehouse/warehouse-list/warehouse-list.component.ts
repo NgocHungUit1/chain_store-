@@ -327,16 +327,22 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     dialogRef.afterClosed().subscribe(result => {
       if (result?.event === 'confirm') {
         let itemsProcessed = 0;
+        let failedCount = 0;
         this.selection.selected.forEach((item, index, array) => {
           this.mainService.delete(item.id).subscribe(res => {
-            // if (res?.success) {
-            //
-            // } else {
-            //   this.notifySer.notify('warning', res?.message);
-            // }
             itemsProcessed++;
             if (itemsProcessed === array.length) {
-              this.notifyService.notify('success', 'Xóa danh sách thành công.');
+              if (failedCount === 0) {
+                this.notifyService.notify('success', 'Xóa danh sách thành công.');
+              }
+              this.refreshData();
+            }
+          }, error => {
+            // Hiện thông báo lỗi từ BE (vd: chặn xóa vì hàng đã bán) cho từng phiếu bị chặn.
+            itemsProcessed++;
+            failedCount++;
+            this.notifyService.notify('error', error?.error?.message || 'Không thể xóa đơn nhập.');
+            if (itemsProcessed === array.length) {
               this.refreshData();
             }
           });
