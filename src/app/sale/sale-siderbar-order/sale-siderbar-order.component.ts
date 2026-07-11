@@ -246,6 +246,30 @@ export class SaleSiderbarOrderComponent implements OnInit {
             }
             // End Discount
           });
+        } else if (Array.isArray(list)) {
+          // Không chọn bảng giá: vẫn tính "Tiền hàng" theo giá sản phẩm
+          // để tránh hiển thị 0đ khi mở đơn để cập nhật.
+          this.sumPrice = 0;
+          this.listProduct.forEach(elementData => {
+            const unitPrice = elementData.product.end_price !== undefined
+              ? elementData.product.end_price
+              : (elementData.common_price !== undefined ? elementData.common_price : elementData.product.sell_price);
+            this.sumPrice += (unitPrice || 0) * elementData.amount;
+          });
+
+          const discountSiderBar = mItemInvoice.discountSiderBar;
+          if (discountSiderBar !== undefined) {
+            if (discountSiderBar?.type === 'price') {
+              this.numberDiscount = discountSiderBar?.number;
+              this.discount_type = 'price';
+            } else {
+              this.numberDiscount = this.sumPrice * discountSiderBar?.number / 100;
+              this.discount_type = 'percent';
+            }
+            this.discount = discountSiderBar?.number;
+          } else {
+            this.numberDiscount = 0;
+          }
         }
 
         // customerPay

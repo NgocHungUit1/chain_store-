@@ -56,7 +56,8 @@ export class WarehouseFormPriceDialogComponent implements OnInit {
         numeral(this.price).format('0,0.[00]')
       ],
       discount: [
-        numeral(this.discount).format('0,0')
+        // Giữ phần thập phân (chiết khấu % cho phép số lẻ); VNĐ không có phần lẻ vẫn hiển thị nguyên
+        numeral(this.discount).format('0,0.[00]')
       ],
       discount_type: [this.discount_type],
       vat: [
@@ -78,9 +79,13 @@ export class WarehouseFormPriceDialogComponent implements OnInit {
   }
 
   onNumberInput(event: any, controlName: string): void {
-    // Early return for percentage-based VAT and discount
-    if (controlName === "vat" && this.vat_type === "percent") return;
-    if (controlName === "discount" && this.discount_type === "percent") return;
+    // Đọc loại (VNĐ/%) từ form control để tránh dùng giá trị stale khi user vừa
+    // bấm toggle (this.discount_type/vat_type chỉ set lúc khởi tạo, không đổi theo toggle).
+    const discountType = this.form.get('discount_type')?.value ?? this.discount_type;
+    const vatType = this.form.get('vat_type')?.value ?? this.vat_type;
+
+    // VAT theo % để gõ tự do (không format)
+    if (controlName === "vat" && vatType === "percent") return;
 
     // Get the current form control and its current value
     const control = this.form.get(controlName);
@@ -93,12 +98,22 @@ export class WarehouseFormPriceDialogComponent implements OnInit {
 
     if (!isNaN(numValue)) {
         // Riêng giá vốn (price) giữ phần thập phân đang gõ + cho phép số âm;
-        // các trường khác làm tròn số nguyên. formatNumberKeepDecimal strip dấu
+        // Chiết khấu % cũng cho phép số lẻ (tối đa 2 chữ số thập phân), giới hạn 100;
+        // các trường còn lại làm tròn số nguyên. formatNumberKeepDecimal strip dấu
         // "-" nên giữ lại dấu trừ cục bộ cho riêng giá vốn.
-        const priceNegative = event.target.value.toString().trim().startsWith('-');
-        const formattedValue = controlName === 'price'
-          ? (priceNegative ? '-' : '') + this.formatNumberKeepDecimal(event.target.value)
-          : numeral(numValue).format('0,0');
+        const isPercentDiscount = controlName === 'discount' && discountType === 'percent';
+        let formattedValue: string;
+        if (controlName === 'price') {
+          const priceNegative = event.target.value.toString().trim().startsWith('-');
+          formattedValue = (priceNegative ? '-' : '') + this.formatNumberKeepDecimal(event.target.value);
+        } else if (isPercentDiscount) {
+          formattedValue = this.formatNumberKeepDecimal(event.target.value);
+          if (Number(formattedValue.replace(/,/g, '')) > 100) {
+            formattedValue = '100';
+          }
+        } else {
+          formattedValue = numeral(numValue).format('0,0');
+        }
         event.target.value = formattedValue;
         control.setValue(formattedValue, { emitEvent: false });
         this[controlName] = formattedValue;

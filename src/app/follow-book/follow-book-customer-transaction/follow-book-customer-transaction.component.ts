@@ -110,7 +110,10 @@ export class FollowBookCustomerTransactionComponent extends ListComponentBase im
                   unit: detail.base_unit,
                   quantity: detail.amount,
                   customer_name: invoice.customer ? invoice.customer.name : 'Khách lẻ',
-                  address: invoice.customer ? invoice.customer.address : ''
+                  // Ưu tiên địa chỉ khách hàng; nếu không có (vd khách lẻ) thì lấy địa chỉ trên đơn thuốc (KSĐB)
+                  address: (invoice.customer && invoice.customer.address)
+                    ? invoice.customer.address
+                    : (invoice.prescription ? (invoice.prescription.address || '') : '')
                 });
               });
             }
