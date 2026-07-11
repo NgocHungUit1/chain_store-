@@ -3856,17 +3856,41 @@ export class SaleMainComponent implements OnInit, DoCheck {
     try {
       const listProduct = mItemInvoice.listProduct;
       if (listProduct !== undefined) {
+        // Khi CẬP NHẬT đơn: tồn theo lô lấy từ API là tồn HIỆN TẠI (đã bị trừ bởi
+        // chính đơn đang sửa). Phải cộng lại số lượng của đơn cũ vào đúng lô để so
+        // tồn theo mốc trước khi bán (vd: lô còn 22 + đơn cũ 28 = 50), tránh báo âm.
+        const isUpdate = !!(mItemInvoice.invoice_id && mItemInvoice.invoice_id > 0);
+        const restockByParcel = new Map<string, number>();
+        if (isUpdate) {
+          listProduct.forEach(p => {
+            const parcelNo = p['parcel_no'] || p['product_parcels']?.[0]?.['parcel_no'];
+            if (!parcelNo) {
+              return;
+            }
+            const unitValue = p['product_unit_value'] || 1;
+            const backQty = (Number(p['invoice_detail_amount']) || 0) * unitValue;
+            if (backQty <= 0) {
+              return;
+            }
+            const key = `${p.product_id}|${parcelNo}`;
+            restockByParcel.set(key, (restockByParcel.get(key) || 0) + backQty);
+          });
+        }
         listProduct.map(async (product) => {
           const product_id = product.product_id.toString();
           return new Promise<void>((resolveProduct, rejectProduct) => {
             this.productSer.getParcelNew(product_id).pipe(
               map(res => {
                 if (res && Array.isArray(res) && res.length > 0) {
-                  return (res as object[]).map(item => ({
-                    parcel_no: item['parcel_no'],
-                    expiration_date: item['expiration_date'],
-                    quantity_of_stock: item['quantity_of_stock']
-                  }));
+                  return (res as object[]).map(item => {
+                    const key = `${product_id}|${item['parcel_no']}`;
+                    const back = restockByParcel.get(key) || 0;
+                    return {
+                      parcel_no: item['parcel_no'],
+                      expiration_date: item['expiration_date'],
+                      quantity_of_stock: item['quantity_of_stock'] + back
+                    };
+                  });
                 }
                 return [];
               })

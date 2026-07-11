@@ -20,7 +20,7 @@ export class CustomerTransactionService {
     // params = params.set('pageSize', filter.pageSize.toString());
 
     // Tham số mở rộng
-    params = params.set('expand', 'customer,payment,store,user,returns,today,time,createdFormat,invoiceDetails');
+    params = params.set('expand', 'customer,payment,store,user,returns,today,time,createdFormat,invoiceDetails,prescription');
 
     // Lọc trạng thái đơn hàng
     params = params.set('InvoiceSearch[order_status]', 'pending,done');

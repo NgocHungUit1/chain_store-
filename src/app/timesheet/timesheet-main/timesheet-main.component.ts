@@ -161,15 +161,11 @@ export class TimesheetMainComponent extends ListComponentBase implements OnInit 
     this.apiFilter.employee_ids = this.arrEmployeeSearch.toString();
     this.apiFilter.shifts_ids = this.arrShiftsSearch.toString();
 
-    let startDate;
     if (this.typeDateTimeSheet !==  'month') {
-      if (moment(this.dateNowTimesheet).weekday() === 0) {
-        startDate = moment(this.dateNowTimesheet).subtract(1, 'week').weekday(1);
-      } else {
-        startDate = moment(this.dateNowTimesheet).weekday(1);
-      }
-      this.apiFilter.start_date = startDate.weekday(1).format('YYYY-MM-DD');
-      this.apiFilter.end_date = moment(this.dateNowTimesheet).weekday(7).add(1, 'days').format('YYYY-MM-DD');
+      // Tuần Thứ 2 -> Chủ nhật (độc lập locale). end_date để hở 1 ngày (Thứ 2 tuần sau).
+      const startOfWeek = moment(this.dateNowTimesheet).startOf('isoWeek');
+      this.apiFilter.start_date = startOfWeek.format('YYYY-MM-DD');
+      this.apiFilter.end_date = startOfWeek.clone().add(7, 'days').format('YYYY-MM-DD');
     } else {
       this.apiFilter.start_date = moment(this.dateNowTimesheet).startOf('month').format('YYYY-MM-DD');
       this.apiFilter.end_date = moment(this.dateNowTimesheet).endOf('month').add(1, 'days').format('YYYY-MM-DD');
@@ -296,12 +292,10 @@ export class TimesheetMainComponent extends ListComponentBase implements OnInit 
     if (this.typeDateTimeSheet === 'day') {
       this.listDayTimeSheet.push(moment(this.dateNowTimesheet));
     } else if (this.typeDateTimeSheet === 'week') {
+      // Luôn lấy tuần Thứ 2 -> Chủ nhật chứa ngày đang chọn (độc lập locale)
+      const startOfWeek = moment(this.dateNowTimesheet).startOf('isoWeek');
       for (let i = 0; i < 7; i++) {
-        if (moment(this.dateNowTimesheet).weekday() === 0) {
-          this.listDayTimeSheet.push(moment(this.dateNowTimesheet).subtract(1, 'week').weekday(i + 1));
-        } else {
-          this.listDayTimeSheet.push(moment(this.dateNowTimesheet).weekday(i + 1));
-        }
+        this.listDayTimeSheet.push(startOfWeek.clone().add(i, 'days'));
       }
     } else if (this.typeDateTimeSheet === 'month') {
       for (let i = 0; i < moment(this.dateNowTimesheet).daysInMonth(); i++) {
@@ -311,10 +305,14 @@ export class TimesheetMainComponent extends ListComponentBase implements OnInit 
   }
 
   getNameWeekday(date) {
+    // Dùng isoWeekday (Thứ 2=1 ... Chủ nhật=7) để độc lập với moment locale
+    // (nơi khác gọi moment.locale('vi') khiến weekday() bắt đầu từ Thứ 2 → lệch nhãn).
+    // listNameWeekday index: 0=CN,1=T2,...,6=T7 → map bằng isoWeekday() % 7.
+    const index = date.isoWeekday() % 7;
     if (this.typeDateTimeSheet !== 'month') {
-      return this.listNameWeekday[date.weekday()].name_day_week;
+      return this.listNameWeekday[index].name_day_week;
     }
-    return this.listNameWeekday[date.weekday()].name_month;
+    return this.listNameWeekday[index].name_month;
   }
 
   changeDateSelect(event) {
