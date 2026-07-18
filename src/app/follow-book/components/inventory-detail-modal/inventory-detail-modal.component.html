@@ -10,10 +10,6 @@
     <span class="product-info-label">Đơn vị:</span>
     <span class="product-info-value">{{productInfo.product?.base_unit}}</span>
   </div>
-  <div class="product-info-row">
-    <span class="product-info-label">HSD:</span>
-    <span class="product-info-value">{{productInfo.expiration_date | date: 'dd/MM/yyyy'}}</span>
-  </div>
 </div>
 
 <div mat-dialog-content>
@@ -52,6 +48,12 @@
       <ng-container matColumnDef="parcel_no">
         <th mat-header-cell *matHeaderCellDef>Lô</th>
         <td mat-cell *matCellDef="let row">{{row.parcel_no || ''}}</td>
+      </ng-container>
+
+      <!-- Hạn dùng theo lô Column -->
+      <ng-container matColumnDef="expiration_date">
+        <th mat-header-cell *matHeaderCellDef>Hạn dùng</th>
+        <td mat-cell *matCellDef="let row">{{ row.expiration_date ? (row.expiration_date | date: 'dd/MM/yyyy') : '' }}</td>
       </ng-container>
 
       <!-- Imports Column -->

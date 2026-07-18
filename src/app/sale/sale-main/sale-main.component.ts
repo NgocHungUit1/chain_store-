@@ -119,6 +119,24 @@ export class SaleMainComponent implements OnInit, DoCheck {
     this.optionStoreService.getValue('sale_negative_stock').subscribe(res => {
       this.canNegativeStock = res.value === 'yes';
     });
+
+    // Thứ tự xuất lô: 'fifo' = nhập trước xuất trước; mặc định FEFO (hạn gần nhất trước)
+    this.optionStoreService.getValue('lot_selection_order').subscribe(res => {
+      this.lotOrderIsFifo = !!res && res.value === 'fifo';
+    });
+  }
+
+  // FEFO (mặc định): sắp lô theo hạn dùng gần nhất trước.
+  // FIFO: giữ nguyên thứ tự backend đã sắp (theo ngày nhập) — FE không có ngày nhập nên không tự sắp.
+  private orderParcels(list: any[]): any[] {
+    if (this.lotOrderIsFifo) {
+      return [...list];
+    }
+    return [...list].sort((a, b) => {
+      const dateA = new Date(a['expiration_date']);
+      const dateB = new Date(b['expiration_date']);
+      return dateA.getTime() - dateB.getTime();
+    });
   }
 
   get total(): number {
@@ -226,6 +244,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
   prescription_id: null; // ban theo don thuoc
 
   canNegativeStock = false;
+  lotOrderIsFifo = false;
   isPointEnabled = false;
   pointToCashRate = 0;
   canPayByPointAfterInvoices = 0;
@@ -3736,11 +3755,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
         const availableParcels = this.getAvailableItems(product_index).filter(
           parcel => parcel['parcel_no'] !== selectedParcel.parcel_no
         );
-        const sortedParcels = [...availableParcels].sort((a, b) => {
-          const dateA = new Date(a['expiration_date']);
-          const dateB = new Date(b['expiration_date']);
-          return dateA.getTime() - dateB.getTime();
-        });
+        const sortedParcels = this.orderParcels(availableParcels);
         for (let i = 0; i < sortedParcels.length; i++) {
           const parcel = sortedParcels[i];
 
@@ -3801,11 +3816,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       return;
     }
     if (sum_amount_basic > selectedParcel.quantity_of_stock) {
-      const sortedParcels = [...availableParcels].sort((a, b) => {
-        const dateA = new Date(a['expiration_date']);
-        const dateB = new Date(b['expiration_date']);
-        return dateA.getTime() - dateB.getTime();
-      });
+      const sortedParcels = this.orderParcels(availableParcels);
 
       // If parcel stock is not divisible by unit, fall back to basic unit for all rows
       const hasRemainder = unit_value > 1 && (selectedParcel.quantity_of_stock % unit_value !== 0);
@@ -3903,11 +3914,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
                 if (formattedRes && formattedRes.length > 0) {
                   this.all_product_parcels.set(product_id, formattedRes as object[]);
 
-                  const sortedParcels = [...formattedRes].sort((a, b) => {
-                    const dateA = new Date(a.expiration_date);
-                    const dateB = new Date(b.expiration_date);
-                    return dateA.getTime() - dateB.getTime();
-                  });
+                  const sortedParcels = this.orderParcels(formattedRes);
 
                   if (!!product.product_parcels) {
                     this.available_product_parcels.set(product_id, formattedRes);
