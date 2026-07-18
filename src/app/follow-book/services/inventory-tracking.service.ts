@@ -65,7 +65,8 @@ export class InventoryTrackingService {
       .set('page', filter.page.toString())
       .set('pageSize', filter.pageSize.toString())
       .set('StockCardSearch[product_id]', filter.product_id.toString())
-      .set('expand', 'supplier');
+      // parcel + expiration_date: lấy hạn dùng theo từng lô cho cột "Hạn dùng"
+      .set('expand', 'supplier,parcel,expiration_date');
 
     return this.http.get(`${this.baseUrl}/stock-card`, {
       params,

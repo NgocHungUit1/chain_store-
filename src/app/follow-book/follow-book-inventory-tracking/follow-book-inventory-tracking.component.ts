@@ -18,13 +18,14 @@ import { InventoryDetailModalComponent } from '../components/inventory-detail-mo
   styleUrls: ['../shared/follow-book.component.scss', './follow-book-inventory-tracking.component.scss']
 })
 export class FollowBookInventoryTrackingComponent extends ListComponentBase implements OnInit {
-  displayedColumns = ['stt', 'product_info', 'unit', 'expiration_date', 'final_stock', 'actions'];
-  columnsToDisplay = ['stt', 'product_info', 'unit', 'expiration_date', 'final_stock', 'actions'];
+  // Danh sách gộp theo MÃ (1 dòng/sản phẩm) -> bỏ cột HSD ở ngoài (1 mã nhiều lô nhiều hạn);
+  // hạn dùng theo từng lô xem ở modal chi tiết.
+  displayedColumns = ['stt', 'product_info', 'unit', 'final_stock', 'actions'];
+  columnsToDisplay = ['stt', 'product_info', 'unit', 'final_stock', 'actions'];
   columnsHeader = {
     'stt': 'STT',
     'product_info': 'Mã/Tên sản phẩm',
     'unit': 'Đơn vị',
-    'expiration_date': 'HSD',
     'final_stock': 'Tồn cuối',
     'actions': 'Thao tác'
   };

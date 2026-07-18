@@ -12,7 +12,7 @@ import { NotifierService } from 'angular-notifier';
   styleUrls: ['./inventory-detail-modal.component.scss']
 })
 export class InventoryDetailModalComponent extends ListComponentBase implements OnInit {
-  displayedColumns = ['stt', 'date', 'document_no', 'supplier', 'parcel_no', 'imports', 'exports', 'final_stock'];
+  displayedColumns = ['stt', 'date', 'document_no', 'supplier', 'parcel_no', 'expiration_date', 'imports', 'exports', 'final_stock'];
   dataSource = [];
   productInfo: any;
   totalItems = 0;
@@ -79,6 +79,8 @@ export class InventoryDetailModalComponent extends ListComponentBase implements 
         document_no: item.no || '',
         supplier: item.supplier?.name || '',
         parcel_no: item.parcel_no || '',
+        // Hạn dùng của lô (từ relation parcel / field expiration_date backend trả về)
+        expiration_date: item.expiration_date || (item.parcel ? item.parcel.expiration_date : null),
         // Đảm bảo giá trị 0 thay vì null
         imports: item.quantity > 0 ? item.quantity : 0,
         exports: item.quantity < 0 ? Math.abs(item.quantity) : 0,
