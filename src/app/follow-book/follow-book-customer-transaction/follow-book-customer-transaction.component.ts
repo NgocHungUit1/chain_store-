@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DatetimeDefaultFilterDialogComponent } from '../components/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
 import { DatetimeChooseFilterDialogComponent } from '../components/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
 import { CustomerTransactionService } from '../services/customer-transaction.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-follow-book-customer-transaction',
@@ -91,35 +92,42 @@ export class FollowBookCustomerTransactionComponent extends ListComponentBase im
 
   loadData(): void {
     this.isLoadingResults = true;
+    const perPage = 50;
 
-    this.customerTransactionService.getCustomerTransactions(this.apiFilter).subscribe(
+    // BE giới hạn per-page tối đa 50 -> lấy trang 1 rồi lặp lấy hết các trang còn lại,
+    // gom toàn bộ hóa đơn trong kỳ (sổ phải hiển thị đủ, không chỉ trang đầu).
+    this.customerTransactionService.getCustomerTransactions(this.apiFilter, 1, perPage).subscribe(
       response => {
-        if (response && response.body) {
-          this.dataSource = [];
-          let stt = 1;
+        const pageCount = parseInt(response.headers.get('X-Pagination-Page-Count') || '1', 10) || 1;
+        const allInvoices: any[] = (response && response.body) ? [...response.body] : [];
 
-          // Xử lý từng hóa đơn và hiển thị tất cả chi tiết
-          response.body.forEach((invoice: any) => {
-            if (invoice.invoiceDetails && invoice.invoiceDetails.length > 0) {
-              invoice.invoiceDetails.forEach((detail: any) => {
-                this.dataSource.push({
-                  stt: stt++,
-                  date: invoice.createdFormat,
-                  medicine_name: detail.product ? detail.product.product_name : 'N/A',
-                  ingredients: detail.product && detail.product.medicine ? detail.product.medicine.name : 'N/A',
-                  unit: detail.base_unit,
-                  quantity: detail.amount,
-                  customer_name: invoice.customer ? invoice.customer.name : 'Khách lẻ',
-                  // Ưu tiên địa chỉ khách hàng; nếu không có (vd khách lẻ) thì lấy địa chỉ trên đơn thuốc (KSĐB)
-                  address: (invoice.customer && invoice.customer.address)
-                    ? invoice.customer.address
-                    : (invoice.prescription ? (invoice.prescription.address || '') : '')
-                });
-              });
-            }
-          });
+        if (pageCount <= 1) {
+          this.buildDataSource(allInvoices);
+          this.isLoadingResults = false;
+          return;
         }
-        this.isLoadingResults = false;
+
+        const requests = [];
+        for (let p = 2; p <= pageCount; p++) {
+          requests.push(this.customerTransactionService.getCustomerTransactions(this.apiFilter, p, perPage));
+        }
+        forkJoin(requests).subscribe(
+          (responses: any[]) => {
+            responses.forEach(r => {
+              if (r && r.body) {
+                allInvoices.push(...r.body);
+              }
+            });
+            this.buildDataSource(allInvoices);
+            this.isLoadingResults = false;
+          },
+          error => {
+            console.error('Error loading data (pages):', error);
+            this.buildDataSource(allInvoices);
+            this.isLoadingResults = false;
+            this.notifyService.notify('error', 'Có lỗi xảy ra khi tải dữ liệu');
+          }
+        );
       },
       error => {
         console.error('Error loading data:', error);
@@ -127,6 +135,32 @@ export class FollowBookCustomerTransactionComponent extends ListComponentBase im
         this.notifyService.notify('error', 'Có lỗi xảy ra khi tải dữ liệu');
       }
     );
+  }
+
+  // Dựng danh sách dòng chi tiết từ TẤT CẢ hóa đơn đã gom (mỗi invoiceDetail = 1 dòng)
+  private buildDataSource(invoices: any[]): void {
+    this.dataSource = [];
+    let stt = 1;
+    invoices.forEach((invoice: any) => {
+      if (invoice.invoiceDetails && invoice.invoiceDetails.length > 0) {
+        invoice.invoiceDetails.forEach((detail: any) => {
+          this.dataSource.push({
+            stt: stt++,
+            date: invoice.createdFormat,
+            medicine_name: detail.product ? detail.product.product_name : 'N/A',
+            ingredients: detail.product && detail.product.medicine ? detail.product.medicine.name : 'N/A',
+            unit: detail.base_unit,
+            quantity: detail.amount,
+            customer_name: invoice.customer ? invoice.customer.name : 'Khách lẻ',
+            // Ưu tiên địa chỉ khách hàng; nếu không có (vd khách lẻ) thì lấy địa chỉ trên đơn thuốc (KSĐB)
+            address: (invoice.customer && invoice.customer.address)
+              ? invoice.customer.address
+              : (invoice.prescription ? (invoice.prescription.address || '') : '')
+          });
+        });
+      }
+    });
+    this.totalItems = this.dataSource.length;
   }
 
   initDateFilter() {

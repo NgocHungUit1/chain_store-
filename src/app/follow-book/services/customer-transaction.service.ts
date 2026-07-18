@@ -11,13 +11,12 @@ export class CustomerTransactionService {
 
   constructor(private http: HttpClient) {}
 
-  getCustomerTransactions(filter: any): Observable<any> {
+  getCustomerTransactions(filter: any, page: number = 1, perPage: number = 50): Observable<any> {
     let params = new HttpParams();
 
-    // Bỏ các tham số phân trang
-    // params = params.set('per-page', filter.pageSize.toString());
-    // params = params.set('page', filter.page.toString());
-    // params = params.set('pageSize', filter.pageSize.toString());
+    // Phân trang: BE giới hạn per-page tối đa 50 -> component lặp qua tất cả trang để lấy hết
+    params = params.set('per-page', perPage.toString());
+    params = params.set('page', page.toString());
 
     // Tham số mở rộng
     params = params.set('expand', 'customer,payment,store,user,returns,today,time,createdFormat,invoiceDetails,prescription');
