@@ -64,6 +64,8 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
   optionStore_transaction_expenses_order: OptionStore;
   optionStore_transaction_expenses_transaction: OptionStore;
   optionStore_sale_negative_stock: OptionStore;
+  optionStore_lot_selection_order: OptionStore;
+  lotSelectionOrder = 'fefo'; // 'fefo' (mặc định) | 'fifo'
   optionStore_print_type: OptionStore; // print_type
   point_enabled: OptionStore;
   point_cash_to_point_rate: OptionStore;
@@ -154,6 +156,11 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
 
     this.optionStoreService.getValue('sale_negative_stock').subscribe(res => {
       this.optionStore_sale_negative_stock = res;
+    });
+
+    this.optionStoreService.getValue('lot_selection_order').subscribe(res => {
+      this.optionStore_lot_selection_order = res;
+      this.lotSelectionOrder = (res && res.value === 'fifo') ? 'fifo' : 'fefo';
     });
 
     this.optionStoreService.getValue('transaction_expenses_order').subscribe(res => {
@@ -247,6 +254,15 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
         // console.log(res);
       });
     }
+  }
+
+  changeLotSelectionOrder() {
+    if (!this.optionStore_lot_selection_order) {
+      return;
+    }
+    this.optionStore_lot_selection_order.value = this.lotSelectionOrder;
+    this.optionStoreService.update(this.optionStore_lot_selection_order.id, this.optionStore_lot_selection_order).subscribe(res => {
+    });
   }
 
   changePrintType() {

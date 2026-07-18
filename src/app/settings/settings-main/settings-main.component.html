@@ -170,6 +170,23 @@
                     </span>
                   </div>
                 </div>
+
+                <div fxLayout="row wrap" class="line-option" style="margin-top: 16px;">
+                  <div fxFlex="auto">
+                    <b>Thứ tự xuất lô khi bán</b>
+                    <br>
+                    <mat-radio-group [(ngModel)]="lotSelectionOrder" (change)="changeLotSelectionOrder()">
+                      <mat-radio-button value="fefo" style="margin-right: 24px;">
+                        Hạn dùng gần nhất trước (FEFO) <i>(mặc định)</i>
+                      </mat-radio-button>
+                      <mat-radio-button value="fifo">
+                        Nhập trước xuất trước (FIFO)
+                      </mat-radio-button>
+                    </mat-radio-group>
+                    <br>
+                    <span>Chọn cách hệ thống tự chọn lô khi bán: theo hạn dùng (khuyến nghị cho thuốc) hoặc theo thứ tự nhập.</span>
+                  </div>
+                </div>
               </mat-card-content>
             </mat-card>
 
