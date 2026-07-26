@@ -143,14 +143,30 @@ export class FollowBookCustomerTransactionComponent extends ListComponentBase im
     let stt = 1;
     invoices.forEach((invoice: any) => {
       if (invoice.invoiceDetails && invoice.invoiceDetails.length > 0) {
+        // Khách đã trả hàng thì trừ khỏi số bán (theo product_id). Trả hết -> ẩn dòng,
+        // trả một phần -> giảm số. Gom tổng số đã trả của từng thuốc trên hóa đơn này.
+        const returnedByProduct = this.buildReturnedMap(invoice);
         invoice.invoiceDetails.forEach((detail: any) => {
+          const soldQty = Number(detail.amount) || 0;
+          const productId = detail.product_id != null ? detail.product_id
+            : (detail.product ? detail.product.id : null);
+          const remainReturn = productId != null ? (returnedByProduct[productId] || 0) : 0;
+          // Trừ phần đã trả; số còn lại thực khách giữ
+          const reduce = Math.min(soldQty, remainReturn);
+          const netQty = soldQty - reduce;
+          if (productId != null) {
+            returnedByProduct[productId] = remainReturn - reduce; // dùng dần cho các dòng cùng thuốc
+          }
+          if (netQty <= 0) {
+            return; // trả hết -> không lên sổ
+          }
           this.dataSource.push({
             stt: stt++,
             date: invoice.createdFormat,
             medicine_name: detail.product ? detail.product.product_name : 'N/A',
             ingredients: detail.product && detail.product.medicine ? detail.product.medicine.name : 'N/A',
             unit: detail.base_unit,
-            quantity: detail.amount,
+            quantity: netQty,
             customer_name: invoice.customer ? invoice.customer.name : 'Khách lẻ',
             // Ưu tiên địa chỉ khách hàng; nếu không có (vd khách lẻ) thì lấy địa chỉ trên đơn thuốc (KSĐB)
             address: (invoice.customer && invoice.customer.address)
@@ -161,6 +177,21 @@ export class FollowBookCustomerTransactionComponent extends ListComponentBase im
       }
     });
     this.totalItems = this.dataSource.length;
+  }
+
+  // Tổng số lượng đã trả theo từng product_id của 1 hóa đơn (gộp mọi phiếu trả).
+  private buildReturnedMap(invoice: any): { [productId: number]: number } {
+    const map: { [productId: number]: number } = {};
+    const returns = invoice.returns || [];
+    returns.forEach((ret: any) => {
+      const details = ret.detail || ret.detailInfo || [];
+      details.forEach((rd: any) => {
+        const pid = rd.product_id != null ? rd.product_id : (rd.product ? rd.product.id : null);
+        if (pid == null) { return; }
+        map[pid] = (map[pid] || 0) + (Number(rd.amount) || 0);
+      });
+    });
+    return map;
   }
 
   initDateFilter() {

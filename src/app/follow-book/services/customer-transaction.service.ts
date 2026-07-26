@@ -19,7 +19,8 @@ export class CustomerTransactionService {
     params = params.set('page', page.toString());
 
     // Tham số mở rộng
-    params = params.set('expand', 'customer,payment,store,user,returns,today,time,createdFormat,invoiceDetails,prescription');
+    // returns.detail: cần chi tiết trả hàng (product_id, amount) để trừ số đã trả khỏi số bán
+    params = params.set('expand', 'customer,payment,store,user,returns,returns.detail,today,time,createdFormat,invoiceDetails,prescription');
 
     // Lọc trạng thái đơn hàng
     params = params.set('InvoiceSearch[order_status]', 'pending,done');
