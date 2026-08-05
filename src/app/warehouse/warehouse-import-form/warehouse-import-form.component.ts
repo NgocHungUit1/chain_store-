@@ -155,6 +155,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
   expensesTransaction: number;
   expensesTransactions: ExpensesTransaction[] = [];
   optionStore_transaction_expenses: OptionStore;
+  allowPastExpiration = false;
   tempProductId = null;
   barcode: string;
 
@@ -428,8 +429,8 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     const unitValue: number = selectedUnit?.['value'] ?? 1;
     // Dialog displays unit_cost per selected unit; DB stores per base unit (÷ unitValue on save)
     const dialogData: ParcelData = parcel ?
-      {...parcel, unit_cost: parcel.unit_cost != null ? parcel.unit_cost * unitValue : null, product_id: product_id, product_name: product_name, product_no: product_no}
-      : {...this.tmp_new_parcel_data, quantity: product_quantity, product_id: product_id, product_name: product_name, product_no: product_no, unit_cost: rawLinePrice};
+      {...parcel, unit_cost: parcel.unit_cost != null ? parcel.unit_cost * unitValue : null, product_id: product_id, product_name: product_name, product_no: product_no, allowPastExpiration: this.allowPastExpiration}
+      : {...this.tmp_new_parcel_data, quantity: product_quantity, product_id: product_id, product_name: product_name, product_no: product_no, unit_cost: rawLinePrice, allowPastExpiration: this.allowPastExpiration};
     const parcelDialogRef  = this.dialog.open(WarehouseParcelFormDialogNewComponent, {
       width: '30%',
       data: dialogData,
@@ -678,6 +679,11 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
         this.optionStore_transaction_expenses = res;
         resolve();
       });
+    });
+
+    // Cho phép nhập lô có hạn dùng quá khứ (mặc định tắt) - dùng để mở/khóa chặn ngày ở dialog lô
+    this.optionStoreService.getValue('allow_past_expiration').subscribe(res => {
+      this.allowPastExpiration = res && res.value === 'yes';
     });
 
     optionStorePromise.then(() => {

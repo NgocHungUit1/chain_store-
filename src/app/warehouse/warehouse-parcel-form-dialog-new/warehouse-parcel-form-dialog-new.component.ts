@@ -22,6 +22,8 @@ export interface ParcelData  {
   product_id: string;
   product_name: string;
   product_no: string;
+  // Cửa hàng bật setting -> cho phép nhập lô có hạn dùng trong quá khứ (phục vụ báo cáo)
+  allowPastExpiration?: boolean;
 }
 
 
@@ -54,14 +56,20 @@ export interface ParcelData  {
 export class WarehouseParcelFormDialogNewComponent implements OnInit {
   parcelForm: FormGroup;
   today: Date = new Date();
+  // Cho phép hạn dùng quá khứ khi cửa hàng bật setting -> bỏ chặn ngày quá khứ
+  allowPastExpiration = false;
   constructor(
     public dialogRef: MatDialogRef<WarehouseParcelFormDialogNewComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ParcelData) {
 
     console.log('Dialog data:', data);
+    this.allowPastExpiration = !!(data && data.allowPastExpiration);
+    const expirationValidators = this.allowPastExpiration
+      ? [Validators.required]
+      : [Validators.required, futureDateValidator()];
     this.parcelForm = new FormGroup({
       parcel_no: new FormControl('', [Validators.required]),
-      expiration_date: new FormControl('', [Validators.required, futureDateValidator()]),
+      expiration_date: new FormControl('', expirationValidators),
       quantity: new FormControl(data.quantity??'', [
         Validators.required,
         Validators.min(1),
