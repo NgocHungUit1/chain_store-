@@ -20,7 +20,7 @@
           <mat-label>Hạn sử dụng <span style="color: red">*</span></mat-label>
           <input matInput
                  [matDatepicker]="picker"
-                 [min]="today"
+                 [min]="allowPastExpiration ? null : today"
                  formControlName="expiration_date">
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>

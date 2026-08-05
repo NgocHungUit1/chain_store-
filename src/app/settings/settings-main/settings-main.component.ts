@@ -65,6 +65,8 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
   optionStore_transaction_expenses_transaction: OptionStore;
   optionStore_sale_negative_stock: OptionStore;
   optionStore_lot_selection_order: OptionStore;
+  optionStore_allow_past_expiration: OptionStore;
+  allowPastExpiration = false;
   lotSelectionOrder = 'fefo'; // 'fefo' (mặc định) | 'fifo'
   optionStore_print_type: OptionStore; // print_type
   point_enabled: OptionStore;
@@ -161,6 +163,11 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     this.optionStoreService.getValue('lot_selection_order').subscribe(res => {
       this.optionStore_lot_selection_order = res;
       this.lotSelectionOrder = (res && res.value === 'fifo') ? 'fifo' : 'fefo';
+    });
+
+    this.optionStoreService.getValue('allow_past_expiration').subscribe(res => {
+      this.optionStore_allow_past_expiration = res;
+      this.allowPastExpiration = res && res.value === 'yes';
     });
 
     this.optionStoreService.getValue('transaction_expenses_order').subscribe(res => {
@@ -262,6 +269,15 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     }
     this.optionStore_lot_selection_order.value = this.lotSelectionOrder;
     this.optionStoreService.update(this.optionStore_lot_selection_order.id, this.optionStore_lot_selection_order).subscribe(res => {
+    });
+  }
+
+  changeAllowPastExpiration() {
+    if (!this.optionStore_allow_past_expiration) {
+      return;
+    }
+    this.optionStore_allow_past_expiration.value = this.allowPastExpiration ? 'yes' : 'no';
+    this.optionStoreService.update(this.optionStore_allow_past_expiration.id, this.optionStore_allow_past_expiration).subscribe(res => {
     });
   }
 

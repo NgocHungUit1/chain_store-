@@ -187,6 +187,20 @@
                     <span>Chọn cách hệ thống tự chọn lô khi bán: theo hạn dùng (khuyến nghị cho thuốc) hoặc theo thứ tự nhập.</span>
                   </div>
                 </div>
+
+                <div fxLayout="row wrap" class="line-option" style="margin-top: 16px;">
+                  <div fxFlex="60px" class="custom-toggle">
+                    <mat-slide-toggle
+                      [(ngModel)]="allowPastExpiration"
+                      (change)="changeAllowPastExpiration()"
+                    ></mat-slide-toggle>
+                  </div>
+                  <div fxFlex="auto">
+                    <b>Cho phép nhập lô có hạn dùng quá khứ</b>
+                    <br>
+                    <span>Khi bật, lúc nhập hàng có thể thêm lô với hạn sử dụng đã qua (phục vụ nhập bù/báo cáo). Mặc định tắt.</span>
+                  </div>
+                </div>
               </mat-card-content>
             </mat-card>
 
