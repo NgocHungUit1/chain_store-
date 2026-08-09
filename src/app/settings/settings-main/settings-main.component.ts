@@ -100,7 +100,12 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
       national_pharmacy_registration_no: [{value: null, disabled: true}, Validators.compose([Validators.required])],
       national_pharmacy_login_username: [{value: null, disabled: true}, Validators.compose([Validators.required])],
       national_pharmacy_login_password: [{value: null, disabled: true}, Validators.compose([Validators.required])],
-      use_branch_national_connect: [false, Validators.compose([Validators.required])]
+      use_branch_national_connect: [false, Validators.compose([Validators.required])],
+      // Liên thông CSDL Dược quốc gia dùng tài khoản do TTYQG cấp riêng, không dùng
+      // chung với tài khoản liên thông cũ ở trên.
+      national_pharmacy_v2_login_username: [{value: null, disabled: true}],
+      national_pharmacy_v2_login_password: [{value: null, disabled: true}],
+      use_branch_national_v2_connect: [false]
     });
 
     this.storeForm = this.fb.group({
@@ -136,6 +141,7 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
       this.branchSer.getConnect().subscribe(res => {
         this.connectForm.patchValue(res);
         this.onConnectChange();
+        this.onConnectV2Change();
       });
     }
 
@@ -235,6 +241,56 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
       this.connectForm.controls['national_pharmacy_registration_no'].disable();
       this.connectForm.controls['national_pharmacy_login_username'].disable();
       this.connectForm.controls['national_pharmacy_login_password'].disable();
+    }
+  }
+
+  /**
+   * Tài khoản CSDL Dược quốc gia của chi nhánh, bật/tắt độc lập với tài khoản
+   * liên thông cũ: một cơ sở có thể dùng tài khoản riêng cho hệ này nhưng vẫn dùng
+   * tài khoản cửa hàng cho hệ kia.
+   */
+  /** Đang gọi API kiểm tra kết nối */
+  testingConnectionV2 = false;
+
+  /** Kết quả kiểm tra gần nhất, hiển thị ngay dưới nút */
+  testConnectionV2Result: { success: boolean; message: string } = null;
+
+  /**
+   * Kiểm tra tài khoản CSDL Dược quốc gia có đăng nhập được không.
+   *
+   * Kiểm tra giá trị đang nhập trên form (chưa cần bấm Lưu) để người dùng phát hiện
+   * sai tài khoản ngay, thay vì tới lúc đẩy phiếu mới biết.
+   */
+  testConnectionV2() {
+    if (this.testingConnectionV2) {
+      return;
+    }
+
+    const username = this.connectForm.getRawValue()['national_pharmacy_v2_login_username'];
+    const password = this.connectForm.getRawValue()['national_pharmacy_v2_login_password'];
+
+    this.testingConnectionV2 = true;
+    this.testConnectionV2Result = null;
+
+    this.branchSer.testConnectionV2(username, password).subscribe(res => {
+      this.testingConnectionV2 = false;
+      this.testConnectionV2Result = res;
+      this.notifySer.notify(res.success ? 'success' : 'error', res.message);
+    }, error => {
+      this.testingConnectionV2 = false;
+      const message = error?.error?.message || 'Không gọi được API kiểm tra kết nối.';
+      this.testConnectionV2Result = {success: false, message};
+      this.notifySer.notify('error', message);
+    });
+  }
+
+  onConnectV2Change() {
+    if (this.connectForm.controls['use_branch_national_v2_connect'].value) {
+      this.connectForm.controls['national_pharmacy_v2_login_username'].enable();
+      this.connectForm.controls['national_pharmacy_v2_login_password'].enable();
+    } else {
+      this.connectForm.controls['national_pharmacy_v2_login_username'].disable();
+      this.connectForm.controls['national_pharmacy_v2_login_password'].disable();
     }
   }
 

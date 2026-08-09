@@ -60,6 +60,10 @@ export class SettingStoreComponent implements OnInit {
       nation_username: [{value: null, disabled: true}, Validators.required],
       nation_password: [{value: null, disabled: true}, Validators.required],
       registration_no: [{value: null, disabled: true}, Validators.required],
+      // Tài khoản liên thông CSDL Dược quốc gia của cửa hàng (chỉ xem, do quản trị
+      // viên khai báo ở trang quản trị)
+      nation_v2_username: [{value: null, disabled: true}],
+      nation_v2_password: [{value: null, disabled: true}],
       pharmacist_name:  [{value: null, disabled: true}, Validators.required],
       pharmacist_license_number:  [{value: null, disabled: true}, Validators.required],
     });
@@ -77,6 +81,8 @@ export class SettingStoreComponent implements OnInit {
         registration_no: store['national_pharmacy_registration_no'],
         nation_username: store['national_pharmacy_login_username'],
         nation_password: store['national_pharmacy_login_password'],
+        nation_v2_username: store['national_pharmacy_v2_login_username'],
+        nation_v2_password: store['national_pharmacy_v2_login_password'],
         pharmacist_name: store['pharmacist_name'],
         pharmacist_license_number: store['pharmacist_license_number'],
       });

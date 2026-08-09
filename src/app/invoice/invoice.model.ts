@@ -4,6 +4,7 @@ import { PriceList } from '../price-book/price-list.model';
 import { Branch } from '../branch/branch.model';
 import { ExpensesOrder } from '../expenses-order/expenses-order.model';
 import { Product, Quantity } from '../product/product.model';
+import { NationalPharmacyV2Transaction } from '../common/national-pharmacy-v2/national-pharmacy-v2.model';
 
 export class User {
   username: string;
@@ -55,6 +56,8 @@ export class Invoice {
   prescription_id: string;
   use_einvoice: number;
   isFullyReturned?: boolean;
+  /** Lần liên thông CSDL Dược quốc gia v1.1 gần nhất (?expand=nationalPharmacyV2) */
+  nationalPharmacyV2: NationalPharmacyV2Transaction;
 }
 
 export class InvoiceFilter extends ApiFilterBase {

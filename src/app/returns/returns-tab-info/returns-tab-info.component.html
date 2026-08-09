@@ -39,5 +39,13 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumns" class="header-element-row"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
+
+<!-- Liên thông CSDL Dược quốc gia v1.1: phiếu trả hàng đẩy dưới dạng phiếu nhập hàng -->
+<div align="end" class="m-t-10" *ngIf="model">
+  <button mat-raised-button color="accent" (click)="connectV2()" [disabled]="npV2DialogOpen">
+    <mat-icon>cloud_upload</mat-icon>
+    {{ npV2Service.hasTransaction(model.nationalPharmacyV2) ? 'CSDL Dược Quốc gia: ' + npV2Service.statusLabel(model.nationalPharmacyV2?.status) : 'Liên thông CSDL Dược Quốc gia' }}
+  </button>
+</div>
 <div layout="row" layout-margin style="height: 30px;">
 </div>

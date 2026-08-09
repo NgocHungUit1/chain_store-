@@ -47,6 +47,7 @@ import { WarehouseParcelFormDialogNewComponent } from './warehouse/warehouse-par
 import { WarehouseConfirmLoadDataFormComponent } from './warehouse/warehouse-confirm-load-data-form/warehouse-confirm-load-data-form.component';
 import { ProductNewUnitComponent } from './product/product-new-unit/product-new-unit.component';
 import { EditInvoiceDialogComponent } from './settings/edit-invoice-dialog/edit-invoice-dialog.component';
+import { NationalPharmacyV2ConnectDialogComponent } from './common/national-pharmacy-v2/national-pharmacy-v2-connect-dialog/national-pharmacy-v2-connect-dialog.component';
 
 // Registering Syncfusion license key
 registerLicense('ORg4AjUWIQA/Gnt2V1hhQlJAfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hSn5UdkFjXXxccHNTRmZb');
@@ -77,6 +78,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     WarehouseConfirmLoadDataFormComponent,
     ProductNewUnitComponent,
     EditInvoiceDialogComponent,
+    NationalPharmacyV2ConnectDialogComponent,
   ],
   imports: [
     BrowserModule,

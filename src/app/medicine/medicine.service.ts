@@ -45,8 +45,8 @@ export class MedicineService {
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
-  getDetail(id: string) {
-    const url = environment.apiUrl + '/medicine/' + id;
+  getDetail(id: string, expand: string = '') {
+    const url = environment.apiUrl + '/medicine/' + id + (expand ? '?expand=' + expand : '');
     return this.http.get<object>(url);
   }
 
@@ -68,6 +68,17 @@ export class MedicineService {
   connect(id) {
     const url = environment.apiUrl + '/medicine/connect?id=' + id;
     return this.http.post(url, {});
+  }
+
+  /**
+   * Đồng bộ mã định danh thuốc từ CSDL Dược quốc gia theo số GPLH của thuốc.
+   *
+   * Cần gọi sau khi người dùng nhập/sửa số GPLH: backend xoá mã cũ khi GPLH thay đổi
+   * vì mã cũ đã trỏ sang thuốc khác.
+   */
+  syncNationalDrugId(id: string | number) {
+    const url = environment.apiUrl + '/medicine/sync-national-drug-id?id=' + id;
+    return this.http.post<any>(url, {});
   }
 
   disconnect(id) {

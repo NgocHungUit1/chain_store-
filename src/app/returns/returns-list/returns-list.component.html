@@ -95,7 +95,7 @@
                     <mat-tab-group style="width: 100%;">
                       <mat-tab label="Thông tin">
                         <ng-template matTabContent>
-                          <app-returns-tab-info [detail]="element.detailInfo"></app-returns-tab-info>
+                          <app-returns-tab-info [detail]="element.detailInfo" [model]="element"></app-returns-tab-info>
                         </ng-template>
                       </mat-tab>
                       <!-- <mat-tab label="Lịch sử thanh toán">

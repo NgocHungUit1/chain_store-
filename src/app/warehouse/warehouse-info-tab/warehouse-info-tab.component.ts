@@ -11,6 +11,9 @@ import { OptionStoreService } from '../../common/option-store.service';
 import { PopupDeleteDialogComponent } from '../../common/popup-delete-dialog/popup-delete-dialog.component';
 import {Store} from '../../store/store.model';
 import {PrintMultipleProductDialogComponent} from '../../product/print-multiple-product-dialog/print-multiple-product-dialog.component';
+import { NationalPharmacyV2ConnectDialogComponent } from '../../common/national-pharmacy-v2/national-pharmacy-v2-connect-dialog/national-pharmacy-v2-connect-dialog.component';
+import { NationalPharmacyV2Service } from '../../common/national-pharmacy-v2/national-pharmacy-v2.service';
+import { WarehouseType } from '../../common/national-pharmacy-v2/national-pharmacy-v2.model';
 
 @Component({
   selector: 'app-warehouse-info-tab',
@@ -61,7 +64,8 @@ export class WarehouseInfoTabComponent implements OnChanges {
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
-    public optionStoreService: OptionStoreService
+    public optionStoreService: OptionStoreService,
+    public npV2Service: NationalPharmacyV2Service
   ) {
   }
 
@@ -214,6 +218,41 @@ export class WarehouseInfoTabComponent implements OnChanges {
         this.notifySer.notify('success', 'Liên thông thành công.');
       } else if (res['message'] !== undefined) {
         this.notifySer.notify('error', res['message']);
+      }
+    });
+  }
+
+  /** Dialog liên thông đang mở — chặn mở thêm khi người dùng bấm nút nhiều lần */
+  npV2DialogOpen = false;
+
+  /**
+   * Liên thông phiếu lên CSDL Dược quốc gia v1.1.
+   *
+   * Khác liên thông v1: người dùng phải chọn lý do nhập/xuất (mục 6.4.1, 6.4.2) nên
+   * mở dialog thay vì gọi API trực tiếp. v1.1 cũng không có API gỡ liên thông.
+   */
+  connectV2(item: Warehouse) {
+    if (this.npV2DialogOpen) {
+      return;
+    }
+    this.npV2DialogOpen = true;
+
+    const dialogRef = this.dialog.open(NationalPharmacyV2ConnectDialogComponent, {
+      width: '520px',
+      data: {
+        source: 'warehouse',
+        id: item.id,
+        referenceNumber: item.no,
+        warehouseType: item.type as WarehouseType,
+        transaction: item.nationalPharmacyV2,
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.npV2DialogOpen = false;
+
+      if (result && result.event === 'changed') {
+        item.nationalPharmacyV2 = result.transaction;
       }
     });
   }

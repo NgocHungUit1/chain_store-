@@ -136,7 +136,7 @@ export class StockTakeListComponent extends ListComponentBase implements OnInit 
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'store,user,balanceBy,deviationPriceSum,totalPrice';
+    filter.expand = 'store,user,balanceBy,deviationPriceSum,totalPrice,nationalPharmacyV2';
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
     filter.balance_status = this.balanceStatusFilter.controls['status'].value;

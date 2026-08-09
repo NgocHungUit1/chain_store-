@@ -26,7 +26,14 @@ export class BranchFormDialogComponent implements OnInit {
 
   nationalPharmacyLoginUsername: string;
   nationalPharmacyLoginPassword: string;
+  useBranchNationalConnect: boolean;
+
+  /** Tài khoản liên thông CSDL Dược quốc gia, do TTYQG cấp riêng */
+  nationalPharmacyV2LoginUsername: string;
+  nationalPharmacyV2LoginPassword: string;
+  useBranchNationalV2Connect: boolean;
   hidePassword = true;
+  hideV2Password = true;
 
   statusItems: any[] = [
     {
@@ -130,6 +137,12 @@ export class BranchFormDialogComponent implements OnInit {
       this.nationalPharmacyLoginUsername =  branch['national_pharmacy_login_username'];
       // @ts-ignore
       this.nationalPharmacyLoginPassword = branch['national_pharmacy_login_password'];
+
+      this.useBranchNationalConnect = !!branch['use_branch_national_connect'];
+
+      this.nationalPharmacyV2LoginUsername = branch['national_pharmacy_v2_login_username'];
+      this.nationalPharmacyV2LoginPassword = branch['national_pharmacy_v2_login_password'];
+      this.useBranchNationalV2Connect = !!branch['use_branch_national_v2_connect'];
 
       if (branch['province_id'] !== null) {
         this.locationSer.autocomplete('', 'ward', branch['province_id']).subscribe(locations => {

@@ -1,0 +1,57 @@
+.np-v2-row {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.np-v2-label {
+  display: inline-block;
+  min-width: 130px;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.np-v2-field {
+  margin-top: 16px;
+}
+
+.np-v2-hint {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.54);
+  margin-top: 4px;
+}
+
+.np-v2-error {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-left: 3px solid #f44336;
+  background: #fdecea;
+  color: #b71c1c;
+}
+
+.np-v2-error ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+}
+
+.np-v2-warning {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-left: 3px solid #ff9800;
+  background: #fff4e5;
+  color: #8a4b00;
+}
+
+.np-v2-status-completed {
+  color: #2e7d32;
+}
+
+.np-v2-status-accepted,
+.np-v2-status-processing {
+  color: #1565c0;
+}
+
+.np-v2-status-rejected,
+.np-v2-status-error,
+.np-v2-status-failed {
+  color: #c62828;
+}

@@ -1,0 +1,115 @@
+<h2 mat-dialog-title><strong>{{ title }}</strong></h2>
+
+<mat-dialog-content>
+  <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+
+  <div class="np-v2-row" *ngIf="data.referenceNumber">
+    <span class="np-v2-label">Số chứng từ</span>
+    <strong>{{ data.referenceNumber }}</strong>
+  </div>
+
+  <!-- Trạng thái lần liên thông gần nhất.
+       Dùng hasTransaction chứ không phải isConnected: phiếu bị từ chối vẫn có mã giao
+       dịch và người dùng cần thấy mã đó để tra trên cổng CSDL Dược. -->
+  <div class="np-v2-row" *ngIf="hasTransaction">
+    <span class="np-v2-label">Mã giao dịch</span>
+    <strong>{{ transaction.transaction_id }}</strong>
+  </div>
+  <div class="np-v2-row" *ngIf="transaction?.status">
+    <span class="np-v2-label">Trạng thái</span>
+    <strong [ngClass]="'np-v2-status-' + transaction.status">{{ statusLabel(transaction.status) }}</strong>
+  </div>
+  <div class="np-v2-error" *ngIf="transaction?.error_message">
+    {{ transaction.error_message }}
+  </div>
+
+  <!-- Lý do nhập/xuất: chỉ phiếu kho, tập giá trị phụ thuộc loại cơ sở (mục 6.4) -->
+  <div *ngIf="data.source === 'warehouse'" class="np-v2-field">
+    <mat-form-field appearance="outline" style="width: 100%;">
+      <mat-label>Lý do {{ data.warehouseType === 'return' ? 'xuất' : 'nhập' }} hàng</mat-label>
+      <mat-select [(ngModel)]="reason" [disabled]="isLoading">
+        <mat-option *ngFor="let option of reasonOptions" [value]="option.value">
+          {{ option.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div class="np-v2-hint" *ngIf="isRetail">
+      Cơ sở bán lẻ chỉ được dùng các lý do trong danh sách trên.
+    </div>
+  </div>
+
+  <!-- Lượt gửi trước mất kết nối: có thể CSDL Dược đã nhận phiếu rồi -->
+  <div class="np-v2-warning" *ngIf="isUncertain">
+    <strong>Chưa rõ kết quả lượt gửi trước.</strong>
+    Kết nối bị mất giữa chừng nên không xác định được CSDL Dược quốc gia đã tiếp nhận
+    phiếu hay chưa. Vui lòng kiểm tra trên cổng CSDL Dược quốc gia trước khi gửi lại —
+    nếu phiếu đã vào rồi thì <strong>không thể xoá</strong> bản ghi trùng.
+  </div>
+
+  <!-- Bước xác nhận trước khi đẩy lại: một lần gửi trùng là một bản ghi thừa vĩnh
+       viễn ở phía cơ quan quản lý vì v1.1 không có API xoá giao dịch -->
+  <div class="np-v2-warning" *ngIf="resubmitConfirming">
+    Phiếu này đã được CSDL Dược quốc gia tiếp nhận. Đẩy lại sẽ tạo thêm một giao dịch
+    mới và <strong>không thể xoá</strong>. Bạn chắc chắn muốn đẩy lại?
+  </div>
+
+  <!-- Phiếu đã được tiếp nhận: v1.1 không có API xoá/sửa nên phải xác nhận mới đẩy lại -->
+  <div class="np-v2-warning" *ngIf="result && result.already_synced">
+    {{ result.message }}
+    <div class="np-v2-hint">
+      CSDL Dược quốc gia không có API sửa hoặc xoá giao dịch. Đẩy lại sẽ tạo thêm một
+      giao dịch mới bên cơ quan quản lý.
+    </div>
+  </div>
+
+  <!-- Lỗi dữ liệu chi tiết theo từng sản phẩm -->
+  <div class="np-v2-error" *ngIf="result && !result.success && !result.already_synced">
+    <div>{{ result.message }}</div>
+    <ul *ngIf="result.errors?.length > 1">
+      <li *ngFor="let error of result.errors">{{ error }}</li>
+    </ul>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button color="primary" (click)="submit()"
+          *ngIf="!isConnected && !(result && result.already_synced) && !resubmitConfirming"
+          [disabled]="!canSubmit">
+    <mat-icon>cloud_upload</mat-icon>
+    {{ isLoading ? 'Đang gửi...' : 'Liên thông' }}
+  </button>
+
+  <button mat-stroked-button color="warn" (click)="submit(true)"
+          *ngIf="(isConnected || (result && result.already_synced)) && !resubmitConfirming"
+          [disabled]="!canSubmit">
+    <mat-icon>cloud_upload</mat-icon>
+    {{ isLoading ? 'Đang gửi...' : 'Đẩy lại' }}
+  </button>
+
+  <button mat-flat-button color="warn" (click)="submit(true)"
+          *ngIf="resubmitConfirming" [disabled]="!canSubmit">
+    <mat-icon>check</mat-icon>
+    Xác nhận đẩy lại
+  </button>
+
+  <button mat-stroked-button color="grey" (click)="cancelResubmit()"
+          *ngIf="resubmitConfirming" [disabled]="isLoading">
+    Không
+  </button>
+
+  <!-- Luôn hiện: backend tra log theo id phiếu nên không cần client biết trước mã
+       giao dịch. Danh sách nạp trước lúc phiếu được gửi sẽ không có nationalPharmacyV2,
+       nếu bám vào đó thì nút biến mất đúng lúc cần tra nhất. Phiếu chưa từng liên thông
+       thì backend trả "Phiếu chưa được liên thông lên CSDL Dược quốc gia." -->
+  <button mat-stroked-button color="accent" (click)="checkStatus()"
+          *ngIf="!resubmitConfirming" [disabled]="isLoading">
+    <mat-icon>sync</mat-icon>
+    Tra trạng thái
+  </button>
+
+  <button mat-stroked-button color="grey" (click)="close()"
+          *ngIf="!resubmitConfirming" [disabled]="isLoading">
+    <mat-icon>cancel</mat-icon>
+    Đóng
+  </button>
+</mat-dialog-actions>

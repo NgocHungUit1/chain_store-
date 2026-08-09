@@ -3,6 +3,7 @@ import { Product } from '../product/product.model';
 import { Supplier } from '../supplier/supplier.model';
 import { User } from '../user/user.model';
 import { ExpensesTransaction } from '../expenses-transaction/expenses-transaction.model';
+import { NationalPharmacyV2Transaction } from '../common/national-pharmacy-v2/national-pharmacy-v2.model';
 
 export class Warehouse {
   id: string;
@@ -25,6 +26,8 @@ export class Warehouse {
   created_user: User;
   warehouseExpensess: ExpensesTransaction[];
   expenses_price: number;
+  /** Lần liên thông CSDL Dược quốc gia v1.1 gần nhất (?expand=nationalPharmacyV2) */
+  nationalPharmacyV2: NationalPharmacyV2Transaction;
 }
 
 export class WarehouseFilter extends ApiFilterBase {

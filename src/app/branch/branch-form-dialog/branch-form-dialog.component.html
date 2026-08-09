@@ -242,7 +242,10 @@
       <div fxLayout="row wrap">
         <div fxFlex="100">
           <mat-divider></mat-divider>
-          <h3>Thông tin tài khoản kết nối liên thông</h3>
+          <h3>
+            Tài khoản liên thông Dược Quốc gia &mdash; hệ thống cũ
+            <small *ngIf="!useBranchNationalConnect"> (đang dùng chung tài khoản của cửa hàng)</small>
+          </h3>
           <div fxLayout="row wrap">
             <div fxFlex="48">
               <mat-form-field class="npl-info" appearance="fill">
@@ -259,6 +262,35 @@
                 <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword"
                         [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
                   <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tài khoản liên thông CSDL Dược quốc gia: cấp riêng, khác tài khoản trên -->
+        <div fxFlex="100">
+          <mat-divider></mat-divider>
+          <h3>
+            Tài khoản liên thông CSDL Dược Quốc gia &mdash; hệ thống mới
+            <small *ngIf="!useBranchNationalV2Connect"> (đang dùng chung tài khoản của cửa hàng)</small>
+          </h3>
+          <div fxLayout="row wrap">
+            <div fxFlex="48">
+              <mat-form-field class="npl-info" appearance="fill">
+                <mat-label>Tài khoản</mat-label>
+                <input matInput value="{{ nationalPharmacyV2LoginUsername }}" readonly>
+              </mat-form-field>
+            </div>
+            <div fxFlex="4"></div>
+            <div fxFlex="48">
+              <mat-form-field class="npl-info" appearance="fill">
+                <mat-label>Mật khẩu</mat-label>
+                <input matInput [type]="hideV2Password ? 'password' : 'text'"
+                       value="{{ nationalPharmacyV2LoginPassword }}" readonly>
+                <button mat-icon-button matSuffix (click)="hideV2Password = !hideV2Password"
+                        [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideV2Password">
+                  <mat-icon>{{hideV2Password ? 'visibility_off' : 'visibility'}}</mat-icon>
                 </button>
               </mat-form-field>
             </div>

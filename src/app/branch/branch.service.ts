@@ -67,6 +67,19 @@ export class BranchService {
     return this.http.post<object>(url, data);
   }
 
+  /**
+   * Thử đăng nhập CSDL Dược quốc gia bằng tài khoản đang nhập trên form.
+   *
+   * Gửi kèm username/password để kiểm tra được giá trị vừa nhập mà chưa cần lưu.
+   */
+  testConnectionV2(username: string, password: string) {
+    const url = environment.apiUrl + '/branch/test-connection-v2';
+    return this.http.post<{ success: boolean; message: string }>(url, {
+      national_pharmacy_v2_login_username: username,
+      national_pharmacy_v2_login_password: password,
+    });
+  }
+
   update(id: string, pos: any) {
     const url = environment.apiUrl + '/branch/' + id;
     return this.http.put(url, pos);
