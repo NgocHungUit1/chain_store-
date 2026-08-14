@@ -1,6 +1,8 @@
 .mat-dialog-content {
   min-height: 60px;
   padding-top: 10px;
+  /* giữ xuống dòng của message nhiều dòng (vd cảnh báo rủi ro dạng gạch đầu dòng) */
+  white-space: pre-line;
 }
 
 mat-dialog-actions {

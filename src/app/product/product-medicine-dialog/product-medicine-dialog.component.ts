@@ -26,6 +26,7 @@ import { loadConfigurationFromPath } from 'tslint/lib/configuration';
 import { MatRadioChange } from '@angular/material/radio';
 import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 import {OptionStoreService} from '../../common/option-store.service';
+import {BatchTrackingConfirmService} from '../batch-tracking-confirm.service';
 import { ProductNewUnitComponent } from '../product-new-unit/product-new-unit.component';
 import { VAT_OPTIONS } from '../../shared/constants/vat.constant';
 
@@ -58,6 +59,7 @@ export class ProductMedicineDialogComponent implements OnInit {
     public optionStoreService: OptionStoreService,
     public notifySer: NotifierService,
     private dialog: MatDialog,
+    private batchTrackingConfirmSer: BatchTrackingConfirmService,
     // @Optional() is used to prevent error if no data is passed
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
     // console.log(data);
@@ -98,6 +100,11 @@ export class ProductMedicineDialogComponent implements OnInit {
   manufacturers = [];
 
   defaultCommPercent = '0';
+
+  /** Cửa hàng có quyền tự bật/tắt quản lý theo lô (Cài đặt > Giao dịch) */
+  batchSelfManage = false;
+  /** Cấu hình lô lúc mở form — để biết người dùng có đổi hay không */
+  initialBatchTracking = false;
 
   filteredMedicines: Observable<Medicine[]>;
 
@@ -332,6 +339,10 @@ export class ProductMedicineDialogComponent implements OnInit {
     this.optionStoreService.getValue('comm_percent_product').subscribe(res => {
       this.defaultCommPercent = res.value;
     });
+
+    this.optionStoreService.getValue('batch_tracking_self_manage').subscribe(res => {
+      this.batchSelfManage = res && res.value === 'yes';
+    });
   }
 
   public _filterMadeIn(value: any): string[] {
@@ -442,6 +453,7 @@ export class ProductMedicineDialogComponent implements OnInit {
           note: product['note'],
           batch_tracking_enabled: product['batch_tracking_enabled'],
         });
+        this.initialBatchTracking = !!product['batch_tracking_enabled'];
       } else {
 
         this.form.patchValue({
@@ -579,17 +591,21 @@ export class ProductMedicineDialogComponent implements OnInit {
 
       } else if (this.product_id !== null) {
         // UPDATE
-        this.productSer.update(this.product_id, data).subscribe(product => {
-          this.notifySer.notify('success', 'Cập nhật thuốc thành công!');
-          this.uploadImage(product, action);
-          this.dialogRef.close({event: action, data: product, connect: connect});
-        }, error => {
-          this.loading = false;
-          // if (error.error) {
-          //   const messages = ([] as string[]).concat(...Object.values(error.error) as string[][]);
-          //   messages.forEach(msg => this.notifySer.notify('error', msg));
-          // }
-        });
+        // Chỉ hỏi cảnh báo rủi ro khi cửa hàng đã bật quyền tự quản lý; chưa bật thì cứ gửi,
+        // server sẽ cho qua (SP chưa phát sinh lô) hoặc trả về hướng dẫn bật quyền.
+        const newBatchTracking = !!data.batch_tracking_enabled;
+        if (newBatchTracking !== this.initialBatchTracking && this.batchSelfManage) {
+          this.batchTrackingConfirmSer.confirmChange(newBatchTracking).subscribe(confirmed => {
+            if (!confirmed) {
+              this.loading = false;
+              this.form.patchValue({batch_tracking_enabled: this.initialBatchTracking});
+              return;
+            }
+            this.doUpdate(data, action, connect);
+          });
+        } else {
+          this.doUpdate(data, action, connect);
+        }
       }
     } else {
       // Form errors
@@ -609,6 +625,21 @@ export class ProductMedicineDialogComponent implements OnInit {
         }
       }
     }
+  }
+
+  /** Gọi API cập nhật + hiện đúng lý do khi server từ chối (vd chưa có quyền đổi cấu hình lô). */
+  doUpdate(data, action, connect) {
+    this.productSer.update(this.product_id, data).subscribe(product => {
+      this.notifySer.notify('success', 'Cập nhật thuốc thành công!');
+      this.uploadImage(product, action);
+      this.dialogRef.close({event: action, data: product, connect: connect});
+    }, error => {
+      this.loading = false;
+      const message = error && error.error ? error.error['message'] : null;
+      if (message) {
+        this.notifySer.notify('error', message);
+      }
+    });
   }
 
   uploadImage(product, action) {

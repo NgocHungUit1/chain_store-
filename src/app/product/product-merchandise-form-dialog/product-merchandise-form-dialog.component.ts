@@ -13,6 +13,7 @@ import {ProductPlacementFormDialogComponent} from '../product-placement-form-dia
 import * as numeral from 'numeral';
 import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 import {OptionStoreService} from '../../common/option-store.service';
+import {BatchTrackingConfirmService} from '../batch-tracking-confirm.service';
 import { ProductNewUnitComponent } from '../product-new-unit/product-new-unit.component';
 import { VAT_OPTIONS } from '../../shared/constants/vat.constant';
 
@@ -46,6 +47,11 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
   manufacturers = [];
 
   defaultCommPercent: string = '0';
+
+  /** Cửa hàng có quyền tự bật/tắt quản lý theo lô (Cài đặt > Giao dịch) */
+  batchSelfManage = false;
+  /** Cấu hình lô lúc mở form — để biết người dùng có đổi hay không */
+  initialBatchTracking = false;
 
   fieldLabels = {
     product_no: 'Mã hàng',
@@ -97,6 +103,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
     private placementSer: PlacementService,
     public optionStoreService: OptionStoreService,
     private dialog: MatDialog,
+    private batchTrackingConfirmSer: BatchTrackingConfirmService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Object) {
     this.local_data = {...data};
     this.action = this.local_data.action;
@@ -207,6 +214,10 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
 
     this.optionStoreService.getValue('comm_percent_product').subscribe(res => {
       this.defaultCommPercent = res.value;
+    });
+
+    this.optionStoreService.getValue('batch_tracking_self_manage').subscribe(res => {
+      this.batchSelfManage = res && res.value === 'yes';
     });
   }
 
@@ -329,13 +340,21 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
 
       } else if (this.product_id !== null) {
         // UPDATE
-        this.productSer.update(this.product_id, data).subscribe(product => {
-          this.notifySer.notify('success', 'Cập nhật hàng hóa thành công!');
-          this.uploadImage(product, action);
-          this.dialogRef.close({event: action, data: product});
-        }, error => {
-          this.loading = false;
-        });
+        // Chỉ hỏi cảnh báo rủi ro khi cửa hàng đã bật quyền tự quản lý; chưa bật thì cứ gửi,
+        // server sẽ cho qua (SP chưa phát sinh lô) hoặc trả về hướng dẫn bật quyền.
+        const newBatchTracking = !!data.batch_tracking_enabled;
+        if (newBatchTracking !== this.initialBatchTracking && this.batchSelfManage) {
+          this.batchTrackingConfirmSer.confirmChange(newBatchTracking).subscribe(confirmed => {
+            if (!confirmed) {
+              this.loading = false;
+              this.form.patchValue({batch_tracking_enabled: this.initialBatchTracking});
+              return;
+            }
+            this.doUpdate(data, action);
+          });
+        } else {
+          this.doUpdate(data, action);
+        }
       }
     } else {
       // Form errors
@@ -354,6 +373,21 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
         }
       }
     }
+  }
+
+  /** Gọi API cập nhật + hiện đúng lý do khi server từ chối (vd chưa có quyền đổi cấu hình lô). */
+  doUpdate(data, action) {
+    this.productSer.update(this.product_id, data).subscribe(product => {
+      this.notifySer.notify('success', 'Cập nhật hàng hóa thành công!');
+      this.uploadImage(product, action);
+      this.dialogRef.close({event: action, data: product});
+    }, error => {
+      this.loading = false;
+      const message = error && error.error ? error.error['message'] : null;
+      if (message) {
+        this.notifySer.notify('error', message);
+      }
+    });
   }
 
   uploadImage(product, action) {
@@ -476,6 +510,7 @@ export class ProductMerchandiseFormDialogComponent implements OnInit {
           comm_percent: product['comm_percent'],
           batch_tracking_enabled: product['batch_tracking_enabled'],
         });
+        this.initialBatchTracking = !!product['batch_tracking_enabled'];
       } else {
         this.form.patchValue({
           product_no: '',
