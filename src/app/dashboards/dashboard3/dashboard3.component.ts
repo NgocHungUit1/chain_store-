@@ -58,6 +58,8 @@ export class Dashboard3Component implements OnInit {
   DATE_FORMAT = 'YYYY-MM-DD';
 
 
+  dqgGuideUrl = 'assets/document/huong-dan-dang-ky-duoc-quoc-gia-2026.pdf';
+
   alertExpiredCount = 100;
   timeSelected = 'next_3_month';
   timeSelects = [
