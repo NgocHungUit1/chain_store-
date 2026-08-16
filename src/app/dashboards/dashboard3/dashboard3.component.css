@@ -88,6 +88,26 @@
     color: black;
     flex-direction: column;
 }
+/* Dòng thông báo 2 dòng: tiêu đề + tóm tắt (link mở PDF hướng dẫn) */
+.timeline.timeline-notify .dqg-guide {
+    display: block;
+    margin-bottom: 1rem;
+    padding-top: 1rem;
+    font-weight: normal;
+}
+.timeline.timeline-notify .dqg-guide-title {
+    display: block;
+    color: #26c6da;
+    line-height: 21px;
+}
+.timeline.timeline-notify .dqg-guide-desc {
+    display: block;
+    color: black;
+    line-height: 21px;
+}
+.timeline.timeline-notify .dqg-guide:hover .dqg-guide-title {
+    text-decoration: underline;
+}
 .timeline .timeline-item-description {
     font-size: 1rem
 }
