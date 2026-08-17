@@ -677,6 +677,19 @@
                 <th colspan="7" mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sumImportQuantity | number }}</th>
               </ng-container>
 
+              <ng-container matColumnDef="warehouse_product_parcel_return">
+                <th mat-header-cell class="column-number"
+                    *matHeaderCellDef> {{columnsHeader['parcel_return']}}</th>
+                <td mat-cell class="column-number" *matCellDef="let element">
+                  <span>
+                     {{element.total_return_sale_quantity | number }}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="second_warehouse_product_parcel_return">
+                <th mat-header-cell class="column-number-sumary" *matHeaderCellDef>{{ sumReturnQuantity | number }}</th>
+              </ng-container>
+
               <ng-container matColumnDef="warehouse_product_parcel_export">
                 <th mat-header-cell class="column-number"
                     *matHeaderCellDef> {{columnsHeader['parcel_export']}}</th>

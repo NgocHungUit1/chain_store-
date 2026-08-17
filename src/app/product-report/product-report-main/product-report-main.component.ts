@@ -128,6 +128,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     'expiration_day_exits': 'Số ngày còn lại',
     'expiration_quantity': 'Số lượng',
     'parcel_quantity': 'Số lượng nhập',
+    'parcel_return': 'Trả lại',
     'parcel_export': 'Số lượng xuất',
     'supplier_total': 'SL NCC',
     'supplier_total_import': 'SL nhập',
@@ -198,6 +199,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
 
   sumExpirationOrQuantityOfStock: number;
   sumImportQuantity: number;
+  sumReturnQuantity: number;
   sumExportQuantity: number;
   sumValueOfStock: number;
 
@@ -564,6 +566,7 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
           console.log(res.body);
           this.sumExpirationOrQuantityOfStock = res.body.total_quantity_of_stock;
           this.sumImportQuantity = res.body.total_import_quantity;
+          this.sumReturnQuantity = res.body.total_return_sale_quantity;
           this.sumExportQuantity = res.body.total_export_quantity;
           this.sumValueOfStock = res.body.total_value_of_stock;
 
@@ -856,16 +859,18 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     if (type === 'parcel-stock') {
       this.displayedColumns = ['#', 'warehouse_product_no', 'warehouse_product_name', 'warehouse_product_parcel_no',
         'warehouse_product_parcel_expiration', 'warehouse_product_parcel_unit_cost', 'warehouse_product_parcel_quantity',
+        'warehouse_product_parcel_return',
         'warehouse_product_parcel_export', 'warehouse_product_parcel_quantity_of_stock',
         'warehouse_product_parcel_value_of_stock'
       ];
       this.columnsToDisplay = ['#', 'warehouse_product_no', 'warehouse_product_name', 'warehouse_product_parcel_no',
         'warehouse_product_parcel_expiration', 'warehouse_product_parcel_unit_cost',
-        'warehouse_product_parcel_quantity', 'warehouse_product_parcel_export',
+        'warehouse_product_parcel_quantity', 'warehouse_product_parcel_return',
+        'warehouse_product_parcel_export',
         'warehouse_product_parcel_quantity_of_stock', 'warehouse_product_parcel_value_of_stock'
       ];
       this.second_columnsToDisplay = [
-        'second_warehouse_product_parcel_quantity',
+        'second_warehouse_product_parcel_quantity', 'second_warehouse_product_parcel_return',
         'second_warehouse_product_parcel_export', 'second_warehouse_product_parcel_quantity_of_stock',
         'second_warehouse_product_parcel_value_of_stock'
       ];
