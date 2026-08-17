@@ -17,77 +17,140 @@
           <span fxFlex="1 1 0%"></span>
         </div>
       </mat-toolbar>
+
       <mat-card-content class="chat-middle-box">
-        <form [formGroup]="form">
-          <div fxLayout="row wrap">
-            <div fxFlex="100">
-              <div fxLayout="row wrap">
+        <form [formGroup]="form" class="store-info-form">
 
-                <div fxFlex="100">
-                  <mat-form-field>
-                    <mat-label>Loại hợp đồng</mat-label>
-                    <input matInput tabindex="1" formControlName="pricing_plan_id" [value]="pricingPlan[this.form.controls['pricing_plan_id'].value]">
-                  </mat-form-field>
-                </div>
-
-                <div fxFlex="100">
-                  <mat-form-field>
-                    <mat-label>Ngày tạo</mat-label>
-                    <input matInput tabindex="2" formControlName="created_at" [value]="this.form.controls['created_at'].value * 1000 | date:'dd/MM/yyyy'">
-                  </mat-form-field>
-                </div>
-
-                <div fxFlex="100">
-                  <mat-form-field>
-                    <mat-label>Ngày hết hạn</mat-label>
-                    <input matInput tabindex="3" formControlName="expiration_date" [value]="this.form.controls['expiration_date'].value | date:'dd/MM/yyyy'">
-                  </mat-form-field>
-                </div>
-
-                <div fxFlex="100">
-                  <mat-form-field>
-                    <mat-label>Mã cơ sở</mat-label>
-                    <input matInput tabindex="5" formControlName="registration_no" [value]="this.form.controls['registration_no'].value">
-                  </mat-form-field>
-                </div>
-
-                <div fxFlex="100">
-                  <mat-form-field>
-                    <mat-label>Tài khoản kết nối</mat-label>
-                    <input matInput tabindex="6" formControlName="nation_username" [value]="this.form.controls['nation_username'].value">
-                  </mat-form-field>
-                </div>
-
-                <div fxFlex="100">
-                  <mat-form-field>
-                    <mat-label>Mật khẩu kết nối</mat-label>
-                    <input matInput tabindex="7" formControlName="nation_password" [value]="this.form.controls['nation_password'].value">
-                  </mat-form-field>
-                </div>
-
-                <div fxFlex="100">
-                  <mat-form-field>
-                    <mat-label>Tên dược sĩ</mat-label>
-                    <input matInput tabindex="8" formControlName="pharmacist_name" [value]="this.form.controls['pharmacist_name'].value">
-                  </mat-form-field>
-                </div>
-
-                <div fxFlex="100">
-                  <mat-form-field>
-                    <mat-label>Số chứng chỉ hành nghề</mat-label>
-                    <input matInput tabindex="9" formControlName="pharmacist_license_number" [value]="this.form.controls['pharmacist_license_number'].value">
-                  </mat-form-field>
-                </div>
-
-
-                <!--                <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="6" (click)="submit()">-->
-<!--                  <mat-icon>save</mat-icon>-->
-<!--                  Lưu-->
-<!--                </button>-->
-
+          <!-- Nhóm 1: thông tin hợp đồng - chỉ xem -->
+          <div class="info-group">
+            <div class="info-group-title">
+              <mat-icon>description</mat-icon>
+              <span>Thông tin hợp đồng</span>
+              <small>chỉ xem</small>
+            </div>
+            <div fxLayout="row wrap" fxLayoutGap="16px grid">
+              <div fxFlex.gt-sm="50" fxFlex="100">
+                <mat-form-field>
+                  <mat-label>Loại hợp đồng</mat-label>
+                  <input matInput formControlName="pricing_plan_id"
+                         [value]="pricingPlan[this.form.controls['pricing_plan_id'].value]">
+                </mat-form-field>
+              </div>
+              <div fxFlex.gt-sm="50" fxFlex="100">
+                <mat-form-field>
+                  <mat-label>Ngày tạo</mat-label>
+                  <input matInput formControlName="created_at"
+                         [value]="this.form.controls['created_at'].value * 1000 | date:'dd/MM/yyyy'">
+                </mat-form-field>
               </div>
             </div>
+          </div>
 
+          <!-- Nhóm 2: kết nối Dược Quốc Gia -->
+          <div class="info-group">
+            <div class="info-group-title">
+              <mat-icon>vpn_key</mat-icon>
+              <span>Kết nối Dược Quốc Gia</span>
+            </div>
+            <div fxLayout="row wrap" fxLayoutGap="16px grid">
+              <div fxFlex.gt-sm="33.33" fxFlex="100">
+                <mat-form-field>
+                  <mat-label>Mã cơ sở</mat-label>
+                  <input matInput formControlName="registration_no">
+                  <mat-icon matSuffix class="lock-icon"
+                            matTooltip="Chỉ bộ phận hỗ trợ được đổi mã cơ sở">lock</mat-icon>
+                </mat-form-field>
+              </div>
+              <div fxFlex.gt-sm="33.33" fxFlex="100">
+                <mat-form-field>
+                  <mat-label>Tài khoản csdlduoc</mat-label>
+                  <input matInput tabindex="1" formControlName="nation_username" autocomplete="off">
+                </mat-form-field>
+              </div>
+              <div fxFlex.gt-sm="33.33" fxFlex="100">
+                <mat-form-field>
+                  <mat-label>Mật khẩu csdlduoc</mat-label>
+                  <input matInput tabindex="2" formControlName="nation_password" autocomplete="new-password"
+                         [type]="hidePassword ? 'password' : 'text'">
+                  <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword"
+                          [matTooltip]="hidePassword ? 'Hiện mật khẩu' : 'Ẩn mật khẩu'">
+                    <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                  </button>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+
+          <!-- Nhóm 3: chủ cơ sở -->
+          <div class="info-group">
+            <div class="info-group-title">
+              <mat-icon>store</mat-icon>
+              <span>Chủ cơ sở</span>
+            </div>
+            <div fxLayout="row wrap" fxLayoutGap="16px grid">
+              <div fxFlex.gt-sm="33.33" fxFlex="100">
+                <mat-form-field>
+                  <mat-label>Họ và tên</mat-label>
+                  <input matInput tabindex="3" formControlName="owner_name">
+                </mat-form-field>
+              </div>
+              <div fxFlex.gt-sm="33.33" fxFlex="100">
+                <mat-form-field>
+                  <mat-label>Số điện thoại</mat-label>
+                  <input matInput tabindex="4" formControlName="phone">
+                </mat-form-field>
+              </div>
+              <div fxFlex.gt-sm="33.33" fxFlex="100">
+                <mat-form-field>
+                  <mat-label>Email</mat-label>
+                  <input matInput tabindex="5" formControlName="email" type="email">
+                  <mat-error *ngIf="form.controls['email'].hasError('email')">Email không hợp lệ</mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+
+          <!-- Nhóm 4: dược sĩ phụ trách -->
+          <div class="info-group">
+            <div class="info-group-title">
+              <mat-icon>local_pharmacy</mat-icon>
+              <span>Dược sĩ phụ trách</span>
+            </div>
+            <div fxLayout="row wrap" fxLayoutGap="16px grid">
+              <div fxFlex.gt-sm="33.33" fxFlex="100">
+                <mat-form-field>
+                  <mat-label>Họ và tên</mat-label>
+                  <input matInput tabindex="6" formControlName="pharmacist_name">
+                </mat-form-field>
+              </div>
+              <div fxFlex.gt-sm="33.33" fxFlex="100">
+                <mat-form-field>
+                  <mat-label>Số điện thoại</mat-label>
+                  <input matInput tabindex="7" formControlName="pharmacist_phone">
+                </mat-form-field>
+              </div>
+              <div fxFlex.gt-sm="33.33" fxFlex="100">
+                <mat-form-field>
+                  <mat-label>Email</mat-label>
+                  <input matInput tabindex="8" formControlName="pharmacist_email" type="email">
+                  <mat-error *ngIf="form.controls['pharmacist_email'].hasError('email')">Email không hợp lệ</mat-error>
+                </mat-form-field>
+              </div>
+              <div fxFlex.gt-sm="33.33" fxFlex="100">
+                <mat-form-field>
+                  <mat-label>Số CCHN</mat-label>
+                  <input matInput tabindex="9" formControlName="pharmacist_license_number">
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions" fxLayout="row" fxLayoutAlign="end center">
+            <button mat-raised-button color="primary" tabindex="8"
+                    [disabled]="loading || form.invalid" (click)="submit()">
+              <mat-icon>save</mat-icon>
+              Lưu thay đổi
+            </button>
           </div>
 
         </form>

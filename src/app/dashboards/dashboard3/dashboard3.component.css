@@ -100,6 +100,25 @@
     color: #26c6da;
     line-height: 21px;
 }
+/* Nhãn MỚI: đỏ, to, nằm đầu dòng cho khách nhìn thấy ngay */
+.timeline.timeline-notify .badge-new {
+    display: inline-block;
+    margin-right: 8px;
+    padding: 1px 8px;
+    border-radius: 4px;
+    background: #e53935;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 19px;
+    letter-spacing: 0.5px;
+    vertical-align: 1px;
+    animation: badge-new-blink 1.4s ease-in-out infinite;
+}
+@keyframes badge-new-blink {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.45; }
+}
 .timeline.timeline-notify .dqg-guide-desc {
     display: block;
     color: black;

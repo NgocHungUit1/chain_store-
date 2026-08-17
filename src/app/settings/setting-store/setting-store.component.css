@@ -24,3 +24,114 @@
 .mat-form-field .mat-input-element:disabled {
   color: rgba(0, 0, 0, 0.87);
 }
+
+/* ===== Màn Thông tin cửa hàng: chia nhóm có tiêu đề ===== */
+.store-info-form {
+  padding: 12px 20px 28px;
+  max-width: 1180px;
+}
+
+.info-group {
+  margin-bottom: 8px;
+  padding: 14px 18px 4px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.info-group + .info-group {
+  margin-top: 16px;
+}
+
+.info-group-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid #eee;
+  font-weight: 600;
+  font-size: 15px;
+  color: #00897b;
+}
+
+.info-group-title .mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.info-group-title small {
+  font-weight: 400;
+  font-size: 12px;
+  color: #9e9e9e;
+  font-style: italic;
+}
+
+/* Chữ trong ô to hơn cho dễ đọc */
+.info-group .mat-form-field {
+  font-size: 14px;
+}
+
+.info-group .mat-form-field .mat-input-element {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Nhãn và phần thân ô nằm TRONG template của Material -> phải ::ng-deep mới với tới */
+:host ::ng-deep .info-group .mat-form-field-label {
+  font-size: 13px;
+}
+
+:host ::ng-deep .info-group .mat-form-field-infix {
+  padding: 0.45em 0;
+}
+
+/*
+ * Ô bị khoá: Material vẽ gạch ĐỨT cho input disabled -> nhìn lệch hẳn với các ô
+ * còn lại. Ép về gạch LIỀN cho đồng bộ toàn màn, chỉ để màu nhạt hơn để vẫn
+ * nhận ra là không sửa được.
+ */
+:host ::ng-deep .info-group .mat-form-field-disabled .mat-form-field-underline {
+  background-image: none !important;
+  background-color: rgba(0, 0, 0, 0.18) !important;
+  background-size: auto !important;
+  height: 1px;
+}
+
+:host ::ng-deep .info-group .mat-form-field-disabled .mat-form-field-underline .mat-form-field-ripple {
+  background-color: rgba(0, 0, 0, 0.18) !important;
+}
+
+/* Chữ trong ô khoá vẫn đọc rõ, không mờ như mặc định */
+.info-group .mat-input-element:disabled {
+  color: rgba(0, 0, 0, 0.72);
+}
+
+.info-group .lock-icon {
+  color: #bdbdbd;
+  font-size: 17px;
+  width: 17px;
+  height: 17px;
+}
+
+.form-actions {
+  margin-top: 16px;
+  padding: 0 4px;
+}
+
+.form-actions button {
+  font-size: 14px;
+  padding: 2px 20px;
+  height: 38px;
+}
+
+.form-actions button .mat-icon {
+  margin-right: 6px;
+}
+
+@media (max-width: 599px) {
+  .store-info-form { padding: 12px 12px 24px; }
+  .info-group { padding: 12px 12px 4px; }
+  .info-group-title { font-size: 14px; }
+}
