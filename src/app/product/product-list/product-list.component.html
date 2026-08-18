@@ -215,6 +215,14 @@
         Xuất Excel
       </button>
       <button mat-raised-button
+              color='accent'
+              (click)='exportNationalPharmacyOpeningStock()'
+              style='margin-right: 10px'
+              matTooltip='Xuất phiếu tồn đầu kỳ đúng khuôn file mẫu để nộp lên cổng csdlduoc.com.vn'>
+        <mat-icon>cloud_download</mat-icon>
+        Xuất phiếu tồn đầu kỳ
+      </button>
+      <button mat-raised-button
               color='primary'
               [matMenuTriggerFor]='createMenu'
               class='m-r-5 padding-x-10'
