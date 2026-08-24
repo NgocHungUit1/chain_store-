@@ -196,6 +196,18 @@ export class WarehouseProductParcelService {
     return this.http.post<any>(url, {id, expiration_date});
   }
 
+  /** Đếm trước xem đổi số lô sẽ đụng vào những bảng nào, không ghi gì */
+  previewUpdateParcelNo(id: string, parcel_no: string) {
+    const url = environment.apiUrl + '/warehouse-product-parcel/preview-update-parcel-no';
+    return this.http.post<any>(url, {id, parcel_no});
+  }
+
+  /** Đổi số lô ở tất cả nơi đang giữ số lô đó: lô hàng, thẻ kho, hoá đơn, kiểm kho, kiểm nghiệm */
+  updateParcelNo(id: string, parcel_no: string) {
+    const url = environment.apiUrl + '/warehouse-product-parcel/update-parcel-no';
+    return this.http.post<any>(url, {id, parcel_no});
+  }
+
   create(data) {
     const url = environment.apiUrl + '/warehouse-product-parcel';
     return this.http.post<WarehouseProductParcel>(url, data);

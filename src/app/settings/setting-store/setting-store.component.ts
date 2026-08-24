@@ -31,6 +31,7 @@ export class SettingStoreComponent implements OnInit {
 
   form: FormGroup;
   loading = false;
+  hidePassword = true;
   local_data: any;
   user_id: string;
   checkChangePassword = false;
@@ -52,20 +53,27 @@ export class SettingStoreComponent implements OnInit {
   }
 
   initForm() {
+    // Khoá: thông tin hợp đồng và mã cơ sở - chỉ bộ phận hỗ trợ đổi được (sai mã cơ sở
+    // là hỏng liên thông Dược Quốc Gia). Các ô còn lại cửa hàng tự cập nhật.
     this.form = this.fb.group({
-      pricing_plan_id: [{value: null, disabled: true}, Validators.required],
-      created_by: [{value: null, disabled: true}, Validators.required],
-      created_at: [{value: null, disabled: true}, Validators.required],
-      expiration_date: [{value: null, disabled: true}, Validators.required],
-      nation_username: [{value: null, disabled: true}, Validators.required],
-      nation_password: [{value: null, disabled: true}, Validators.required],
-      registration_no: [{value: null, disabled: true}, Validators.required],
-      // Tài khoản liên thông CSDL Dược quốc gia của cửa hàng (chỉ xem, do quản trị
-      // viên khai báo ở trang quản trị)
+      pricing_plan_id: [{value: null, disabled: true}],
+      created_by: [{value: null, disabled: true}],
+      created_at: [{value: null, disabled: true}],
+      registration_no: [{value: null, disabled: true}],
+
+      nation_username: [null],
+      nation_password: [null],
+      // Tài khoản liên thông CSDL Dược quốc gia (hệ thống mới) - chỉ xem, do quản trị
+      // viên khai báo ở trang quản trị
       nation_v2_username: [{value: null, disabled: true}],
       nation_v2_password: [{value: null, disabled: true}],
-      pharmacist_name:  [{value: null, disabled: true}, Validators.required],
-      pharmacist_license_number:  [{value: null, disabled: true}, Validators.required],
+      owner_name: [null],
+      phone: [null],
+      email: [null, Validators.email],
+      pharmacist_name: [null],
+      pharmacist_license_number: [null],
+      pharmacist_phone: [null],
+      pharmacist_email: [null, Validators.email],
     });
 
     this.loadData();
@@ -77,40 +85,52 @@ export class SettingStoreComponent implements OnInit {
         pricing_plan_id: store['pricing_plan_id'],
         created_by: store['created_by'],
         created_at: store['created_at'],
-        expiration_date: store['expiration_date'],
         registration_no: store['national_pharmacy_registration_no'],
         nation_username: store['national_pharmacy_login_username'],
         nation_password: store['national_pharmacy_login_password'],
         nation_v2_username: store['national_pharmacy_v2_login_username'],
         nation_v2_password: store['national_pharmacy_v2_login_password'],
+        owner_name: store['owner_name'],
+        phone: store['phone'],
+        email: store['email'],
         pharmacist_name: store['pharmacist_name'],
         pharmacist_license_number: store['pharmacist_license_number'],
+        pharmacist_phone: store['pharmacist_phone'],
+        pharmacist_email: store['pharmacist_email'],
       });
     });
   }
 
   submit() {
-    if (this.form.valid) {
-      const data = this.form.getRawValue();
-      this.userService.updateProfile(data).subscribe(res => {
-        this.loading = false;
-        if (res['success']) {
-          this.notifySer.notify('success', 'Cập nhật thành công!');
-        } else {
-          const errors = JSON.parse(res['error_message']);
-          errors.forEach(error => {
-            this.notifySer.notify('error', error);
-          });
-        }
-      }, error => {
-        this.loading = false;
-        if (error.status === 422) {
-          error.error.forEach(err => {
-            this.form.controls[err.field].setErrors({'error': true});
-          });
-        }
-      });
+    if (this.form.invalid || this.loading) {
+      return;
     }
+
+    this.loading = true;
+    const v = this.form.value;   // chỉ lấy ô đang mở, ô khoá không gửi lên
+
+    this.storeSer.updateInfo({
+      national_pharmacy_login_username: v.nation_username,
+      national_pharmacy_login_password: v.nation_password,
+      owner_name: v.owner_name,
+      phone: v.phone,
+      email: v.email,
+      pharmacist_name: v.pharmacist_name,
+      pharmacist_license_number: v.pharmacist_license_number,
+      pharmacist_phone: v.pharmacist_phone,
+      pharmacist_email: v.pharmacist_email,
+    }).subscribe(res => {
+      this.loading = false;
+      if (res['success']) {
+        this.notifySer.notify('success', 'Cập nhật thông tin cửa hàng thành công!');
+      } else {
+        this.notifySer.notify('warning', 'Không có thay đổi nào để lưu');
+      }
+    }, error => {
+      this.loading = false;
+      const message = error && error.error ? error.error['message'] : null;
+      this.notifySer.notify('error', message || 'Cập nhật thất bại, vui lòng thử lại');
+    });
   }
 
   ajaxValidate(error) {

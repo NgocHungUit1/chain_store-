@@ -1,0 +1,167 @@
+.tieu-de {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+/* Hai ô cùng là mat-form-field nên tự thẳng hàng với nhau, không phải canh tay */
+.hang-lo {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 4px 0;
+}
+
+.o-lo {
+  flex: 1;
+  min-width: 0;
+}
+
+:host ::ng-deep .o-lo input {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Ô số lô cũ bị disabled: Material vẽ gạch đứt, đổi thành gạch liền cho đồng bộ */
+:host ::ng-deep .o-lo .mat-form-field-underline {
+  background-image: none !important;
+  background-color: rgba(0, 0, 0, 0.42) !important;
+  height: 1px !important;
+}
+
+:host ::ng-deep .o-lo input:disabled {
+  color: rgba(0, 0, 0, 0.62);
+}
+
+.mui-ten {
+  color: rgba(0, 0, 0, 0.3);
+  margin-top: 22px;
+  flex: 0 0 auto;
+}
+
+/* Nhắc lô nằm ở nhiều dòng */
+.nhieu-dong {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  background: #e3f2fd;
+  border-radius: 4px;
+  padding: 8px 11px;
+  margin: 4px 0 10px;
+  font-size: 12.5px;
+  line-height: 18px;
+  color: #0d47a1;
+}
+
+.nhieu-dong mat-icon {
+  font-size: 17px;
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+
+.mo-ta {
+  font-size: 12.5px;
+  color: rgba(0, 0, 0, 0.6);
+  line-height: 18px;
+  margin: 10px 0;
+}
+
+/* Bảng đếm số dòng bị đụng */
+.bang-tac-dong {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  margin: 12px 0;
+  overflow: hidden;
+}
+
+.dong-tac-dong {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 12px;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.dong-tac-dong.mo {
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.dong-tac-dong.tong {
+  background: #f5f7fa;
+  font-weight: 600;
+  border-bottom: none;
+}
+
+/* Cảnh báo hoá đơn đã gửi ra ngoài */
+.canh-bao {
+  background: #fff3e0;
+  border-left: 4px solid #ef6c00;
+  border-radius: 0 4px 4px 0;
+  padding: 10px 14px;
+  margin: 12px 0;
+}
+
+.canh-bao-tieu-de {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: #e65100;
+  font-size: 12.5px;
+  letter-spacing: 0.4px;
+}
+
+.canh-bao ul {
+  margin: 6px 0;
+  padding-left: 20px;
+}
+
+.canh-bao li {
+  font-size: 13px;
+  line-height: 20px;
+  color: #5d4037;
+}
+
+.canh-bao p {
+  font-size: 12.5px;
+  line-height: 18px;
+  color: #5d4037;
+  margin: 6px 0 0;
+}
+
+.khong-canh-bao {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: rgba(0, 0, 0, 0.55);
+  margin: 10px 0;
+}
+
+.khong-canh-bao mat-icon {
+  font-size: 17px;
+  width: 17px;
+  height: 17px;
+}
+
+.luu-vet {
+  font-size: 11.5px;
+  font-style: italic;
+  color: rgba(0, 0, 0, 0.45);
+  margin: 10px 0 0;
+}
+
+.loi {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffebee;
+  color: #c62828;
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin: 8px 0;
+}

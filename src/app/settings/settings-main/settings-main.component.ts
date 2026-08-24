@@ -10,6 +10,7 @@ import {ActivatedRoute, Route} from '@angular/router';
 import {Location} from '@angular/common';
 import {BaseComponent} from '../../shared/base';
 import {AuthService} from '../../authentication/auth.service';
+import {ConfirmationDialogComponent} from '../../shared/confirmation-dialog/confirmation-dialog.component';
 
 class ImageSnippet {
   constructor(public src: string, public file: File, public id: string) {
@@ -67,6 +68,8 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
   optionStore_lot_selection_order: OptionStore;
   optionStore_allow_past_expiration: OptionStore;
   allowPastExpiration = false;
+  optionStore_batch_tracking_self_manage: OptionStore;
+  batchTrackingSelfManage = false;
   lotSelectionOrder = 'fefo'; // 'fefo' (mặc định) | 'fifo'
   optionStore_print_type: OptionStore; // print_type
   point_enabled: OptionStore;
@@ -174,6 +177,11 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     this.optionStoreService.getValue('allow_past_expiration').subscribe(res => {
       this.optionStore_allow_past_expiration = res;
       this.allowPastExpiration = res && res.value === 'yes';
+    });
+
+    this.optionStoreService.getValue('batch_tracking_self_manage').subscribe(res => {
+      this.optionStore_batch_tracking_self_manage = res;
+      this.batchTrackingSelfManage = res && res.value === 'yes';
     });
 
     this.optionStoreService.getValue('transaction_expenses_order').subscribe(res => {
@@ -334,6 +342,60 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     }
     this.optionStore_allow_past_expiration.value = this.allowPastExpiration ? 'yes' : 'no';
     this.optionStoreService.update(this.optionStore_allow_past_expiration.id, this.optionStore_allow_past_expiration).subscribe(res => {
+    });
+  }
+
+  /**
+   * Quyền tự bật/tắt quản lý theo lô: bật thì phải xác nhận đã đọc cảnh báo rủi ro,
+   * tắt thì lưu thẳng (đưa cửa hàng về trạng thái an toàn, không cần hỏi).
+   */
+  changeBatchTrackingSelfManage() {
+    if (!this.optionStore_batch_tracking_self_manage) {
+      return;
+    }
+
+    if (!this.batchTrackingSelfManage) {
+      this.saveBatchTrackingSelfManage();
+      return;
+    }
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '560px',
+      disableClose: true,
+      data: {
+        title: 'Xác nhận bật quyền tự bật/tắt quản lý theo lô',
+        message: 'Khi bật, nhân viên cửa hàng có thể tự tắt quản lý theo lô cho sản phẩm đã có tồn kho.\n\n'
+          + '• Sản phẩm bị tắt lô sẽ không còn ghi số lô và hạn dùng khi nhập và khi bán → không truy xuất được lô '
+          + 'khi có sự cố về thuốc, không cảnh báo được hàng cận date.\n'
+          + '• Rủi ro pháp lý: dữ liệu phát sinh trong thời gian tắt lô không đáp ứng yêu cầu truy xuất nguồn gốc theo lô.\n'
+          + '• Báo cáo tồn kho theo lô và hạn dùng của sản phẩm đó sẽ không còn chính xác.\n'
+          + '• Khi bật lô trở lại, phần tồn chưa có lô được gom vào một lô "tồn cũ" (hạn 31/12/2028); '
+          + 'số lô và hạn dùng thật của phần tồn đó không khôi phục được.\n\n'
+          + 'Cửa hàng xác nhận đã đọc, hiểu và tự chịu trách nhiệm về các rủi ro trên?',
+        confirmButtonText: 'Tôi đã hiểu, bật quyền',
+        cancelButtonText: 'Bỏ qua'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        this.saveBatchTrackingSelfManage();
+      } else {
+        this.batchTrackingSelfManage = false;
+      }
+    });
+  }
+
+  private saveBatchTrackingSelfManage() {
+    this.optionStore_batch_tracking_self_manage.value = this.batchTrackingSelfManage ? 'yes' : 'no';
+    this.optionStoreService.update(this.optionStore_batch_tracking_self_manage.id,
+      this.optionStore_batch_tracking_self_manage).subscribe(() => {
+      this.notifySer.notify('success', this.batchTrackingSelfManage
+        ? 'Đã bật quyền tự bật/tắt quản lý theo lô'
+        : 'Đã tắt quyền tự bật/tắt quản lý theo lô');
+    }, () => {
+      this.batchTrackingSelfManage = !this.batchTrackingSelfManage;
+      this.notifySer.notify('error', 'Lưu cài đặt thất bại, vui lòng thử lại');
     });
   }
 

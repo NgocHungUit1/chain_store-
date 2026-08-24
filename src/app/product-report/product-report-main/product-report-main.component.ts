@@ -325,6 +325,9 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.hasStock = 1;
+    // Lô đã bán hết trong kỳ vẫn phải lên báo cáo và lên file Excel (khách cần xem
+    // nhập/xuất của lô đó). Chỉ màn này bật, tab lô của sản phẩm giữ nguyên như cũ.
+    filter.includeEmpty = 1;
     filter.expand = 'product';
 
     filter.parcel_no = this.searchProductForm.value;
@@ -858,7 +861,8 @@ export class ProductReportMainComponent extends ListComponentBase implements OnI
       ];
       this.columnsToDisplay = ['#', 'warehouse_product_no', 'warehouse_product_name', 'warehouse_product_parcel_no',
         'warehouse_product_parcel_expiration', 'warehouse_product_parcel_unit_cost',
-        'warehouse_product_parcel_quantity', 'warehouse_product_parcel_export',
+        'warehouse_product_parcel_quantity',
+        'warehouse_product_parcel_export',
         'warehouse_product_parcel_quantity_of_stock', 'warehouse_product_parcel_value_of_stock'
       ];
       this.second_columnsToDisplay = [

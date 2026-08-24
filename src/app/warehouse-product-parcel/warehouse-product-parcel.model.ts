@@ -22,6 +22,7 @@ export class WarehouseProductParcelFilter extends ApiFilterBase {
   parcel_no = '';
   product_id = '';
   hasStock = 0;
+  includeEmpty = 0;   // 1 = lấy cả lô đã bán hết (tồn 0), dùng cho báo cáo/xuất Excel theo lô
   warehouse_product_id = 0;
   quantity = 0;
   quantity_of_stock = 0;

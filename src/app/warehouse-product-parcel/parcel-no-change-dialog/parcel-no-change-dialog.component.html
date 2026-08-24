@@ -1,0 +1,100 @@
+<h2 mat-dialog-title class="tieu-de">
+  <mat-icon>edit</mat-icon> Đổi số lô
+</h2>
+
+<div mat-dialog-content>
+
+  <div class="hang-lo">
+    <mat-form-field class="o-lo">
+      <mat-label>Số lô hiện tại</mat-label>
+      <input matInput [value]="oldParcelNo" disabled>
+    </mat-form-field>
+    <mat-icon class="mui-ten">arrow_forward</mat-icon>
+    <mat-form-field class="o-lo">
+      <mat-label>Số lô mới</mat-label>
+      <input matInput maxlength="32" [(ngModel)]="newParcelNo"
+             (ngModelChange)="onNewParcelNoChange()" autocomplete="off" cdkFocusInitial>
+      <mat-hint align="end">{{ (newParcelNo || '').length }}/32</mat-hint>
+    </mat-form-field>
+  </div>
+
+  <!-- Cùng một số lô có thể nằm ở nhiều phiếu nhập -> nhiều dòng trong bảng.
+       Nói trước để người dùng không tưởng phần mềm đổi nhầm sang lô khác. -->
+  <div class="nhieu-dong" *ngIf="soDongCungLo > 1">
+    <mat-icon>info</mat-icon>
+    <span>
+      Số lô <b>{{ oldParcelNo }}</b> đang hiện ở <b>{{ soDongCungLo }} dòng</b> trong bảng
+      (cùng một lô, nhập về nhiều lần). Cả {{ soDongCungLo }} dòng sẽ đổi cùng lúc —
+      nếu chỉ đổi một dòng thì lô bị tách làm hai, báo cáo sẽ sai.
+    </span>
+  </div>
+
+  <div class="loi" *ngIf="loi">
+    <mat-icon>error_outline</mat-icon> {{ loi }}
+  </div>
+
+  <!-- Bước 1: đếm trước xem đụng vào đâu -->
+  <div class="khoi-kiem-tra" *ngIf="!ketQuaDem">
+    <p class="mo-ta">
+      Số lô được ghi ở nhiều nơi: lô hàng, thẻ kho, hoá đơn đã bán, phiếu kiểm kho, phiếu kiểm nghiệm.
+      Bấm kiểm tra để xem sẽ đụng vào bao nhiêu dòng trước khi đổi.
+    </p>
+    <button mat-raised-button color="primary" (click)="demTacDong()"
+            [disabled]="!hopLe || dangDem">
+      <mat-icon>search</mat-icon>
+      {{ dangDem ? 'Đang kiểm tra...' : 'Kiểm tra ảnh hưởng' }}
+    </button>
+  </div>
+
+  <!-- Bước 2: kết quả đếm + cảnh báo -->
+  <div *ngIf="ketQuaDem">
+    <div class="bang-tac-dong">
+      <div class="dong-tac-dong" *ngFor="let r of ketQuaDem.chi_tiet"
+           [class.mo]="r.so_dong === 0">
+        <span>{{ r.bang }}</span>
+        <b>{{ r.so_dong | number }} dòng</b>
+      </div>
+      <div class="dong-tac-dong tong">
+        <span>Tổng cộng</span>
+        <b>{{ ketQuaDem.tong_dong | number }} dòng</b>
+      </div>
+    </div>
+
+    <div class="canh-bao" *ngIf="coCanhBao">
+      <div class="canh-bao-tieu-de">
+        <mat-icon>warning</mat-icon> ĐỌC KỸ TRƯỚC KHI ĐỔI
+      </div>
+      <ul>
+        <li *ngIf="ketQuaDem.hoa_don_da_lien_thong_dqg > 0">
+          <b>{{ ketQuaDem.hoa_don_da_lien_thong_dqg }}</b> hoá đơn đã liên thông <b>Dược Quốc Gia</b>
+        </li>
+        <li *ngIf="ketQuaDem.hoa_don_da_xuat_hddt > 0">
+          <b>{{ ketQuaDem.hoa_don_da_xuat_hddt }}</b> hoá đơn đã phát hành <b>hoá đơn điện tử</b>
+        </li>
+      </ul>
+      <p>
+        Số lô đã gửi ra ngoài <b>không sửa được</b>. Đổi ở đây thì dữ liệu trong phần mềm
+        sẽ <b>khác với số lô đã báo cáo</b>. Cửa hàng tự chịu trách nhiệm phần chênh lệch này.
+      </p>
+    </div>
+
+    <div class="khong-canh-bao" *ngIf="!coCanhBao && ketQuaDem.so_hoa_don > 0">
+      <mat-icon>info</mat-icon>
+      {{ ketQuaDem.so_hoa_don }} hoá đơn có lô này, chưa hoá đơn nào gửi ra ngoài.
+    </div>
+
+    <p class="luu-vet">
+      Thao tác này được ghi nhật ký: ai đổi, lúc nào, từ số lô nào sang số lô nào.
+    </p>
+  </div>
+
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="huy()">Huỷ</button>
+  <button mat-raised-button color="warn" *ngIf="ketQuaDem"
+          (click)="xacNhan()" [disabled]="dangLuu">
+    <mat-icon>check</mat-icon>
+    {{ dangLuu ? 'Đang đổi...' : 'Xác nhận đổi số lô' }}
+  </button>
+</div>

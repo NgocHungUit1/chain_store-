@@ -137,6 +137,7 @@
           </div>
 
           <div fxLayout="row wrap" style="margin: 8px 0;">
+            <div fxFlex="100">
               <mat-checkbox
                 color="primary"
                 formControlName="batch_tracking_enabled"
@@ -147,6 +148,12 @@
                 <span style="font-size: 17px; font-weight: bold;">Quản lý theo lô</span>
               </mat-checkbox>
             </div>
+            <div fxFlex="100" *ngIf="product_id !== null && !batchSelfManage"
+                 style="font-size: 12px; color: #757575; margin-top: 2px;">
+              Sản phẩm đã phát sinh nhập/bán theo lô chỉ đổi được cấu hình này khi vào <b>Cài đặt &gt; Giao dịch</b> bật
+              <b>"Tự bật/tắt quản lý theo lô trên từng sản phẩm"</b> (có kèm cảnh báo rủi ro).
+            </div>
+          </div>
 
           <!-- Start Unit -->
           <div fxFlex="100">
