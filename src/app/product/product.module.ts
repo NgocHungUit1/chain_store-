@@ -34,6 +34,9 @@ import {ProductTabStockParcelComponent} from './product-tab-stock-parcel/product
 import {
   WarehouseProductParcelChangeStockFormDialogComponent
 } from '../warehouse-product-parcel/warehouse-product-parcel-change-stock-form-dialog/warehouse-product-parcel-change-stock-form-dialog.component';
+import {
+  ParcelNoChangeDialogComponent
+} from '../warehouse-product-parcel/parcel-no-change-dialog/parcel-no-change-dialog.component';
 
 
 @NgModule({
@@ -55,7 +58,8 @@ import {
     IdCodeFormDialogComponent,
     ViewIdCodeFormDialogComponent,
     PrintMultipleProductDialogComponent,
-    WarehouseProductParcelChangeStockFormDialogComponent
+    WarehouseProductParcelChangeStockFormDialogComponent,
+    ParcelNoChangeDialogComponent
   ],
   imports: [
     CommonModule,
@@ -86,7 +90,8 @@ import {
     ProductPlacementFormDialogComponent,
     ProductUploadDialogComponent,
     PrintMultipleProductDialogComponent,
-    WarehouseProductParcelChangeStockFormDialogComponent
+    WarehouseProductParcelChangeStockFormDialogComponent,
+    ParcelNoChangeDialogComponent
   ]
 })
 export class ProductModule {

@@ -15,6 +15,9 @@ import {GroupFormDialogComponent} from '../../group/group-form-dialog/group-form
 import {
   WarehouseProductParcelChangeStockFormDialogComponent
 } from '../../warehouse-product-parcel/warehouse-product-parcel-change-stock-form-dialog/warehouse-product-parcel-change-stock-form-dialog.component';
+import {
+  ParcelNoChangeDialogComponent
+} from '../../warehouse-product-parcel/parcel-no-change-dialog/parcel-no-change-dialog.component';
 
 @Component({
   selector: 'app-product-tab-stock-parcel',
@@ -111,6 +114,31 @@ export class ProductTabStockParcelComponent extends ListComponentBase implements
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.loadData();
+      }
+    });
+  }
+
+  /**
+   * Đổi số lô. Không sửa tại chỗ như hạn dùng mà mở hộp thoại riêng,
+   * vì thao tác này còn đụng vào thẻ kho và hoá đơn đã bán nên phải
+   * cho người dùng xem trước ảnh hưởng rồi mới xác nhận.
+   */
+  openChangeParcelNoDialog(element) {
+    // Cùng một số lô có thể nằm ở nhiều phiếu nhập nên hiện thành nhiều dòng.
+    // Đếm trước để hộp thoại nói rõ sẽ đổi mấy dòng.
+    const soDongCungLo = (this.data || []).filter(x => x['parcel_no'] === element.parcel_no).length;
+
+    const dialogRef = this.dialog.open(ParcelNoChangeDialogComponent, {
+      data: {parcelId: element.id, parcelNo: element.parcel_no, soDongCungLo: soDongCungLo},
+      width: '560px',
+      maxWidth: '95vw',
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadData();
+        this.reload.emit();
       }
     });
   }
