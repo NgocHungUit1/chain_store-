@@ -1,6 +1,7 @@
 import { Customer } from '../customer/customer.model';
 import { ApiFilterBase } from '../shared/base';
 import { PriceList } from '../price-book/price-list.model';
+import { NationalPharmacyV2Transaction } from '../common/national-pharmacy-v2/national-pharmacy-v2.model';
 
 export class User {
   username: string;
@@ -24,6 +25,8 @@ export class ReturnsDetail {
 export class Returns {
   id: string;
   invoice_id: number;
+  /** API trả về field `return_no`; `returns_no` chỉ dùng cho filter */
+  return_no: string;
   returns_no: string;
   customer: Customer;
   total_price: number;
@@ -40,6 +43,8 @@ export class Returns {
   user: User;
   created_by: string;
   created_at: string;
+  /** Lần liên thông CSDL Dược quốc gia v1.1 gần nhất (?expand=nationalPharmacyV2) */
+  nationalPharmacyV2: NationalPharmacyV2Transaction;
 }
 
 export class ReturnsFilter extends ApiFilterBase {

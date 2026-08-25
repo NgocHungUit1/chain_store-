@@ -81,7 +81,7 @@ export class ReturnsListComponent extends ListComponentBase implements OnInit {
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'customer,priceBook,store,user,detailInfo';
+    filter.expand = 'customer,priceBook,store,user,detailInfo,nationalPharmacyV2';
 
     return filter;
   }

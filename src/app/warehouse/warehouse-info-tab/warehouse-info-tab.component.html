@@ -218,17 +218,26 @@
         <button class="m-r-10" mat-raised-button color="accent" (click)="connect(model)"
                 *ngIf="model.status === 10 && model.national_pharmacy_no === null">
           <mat-icon>open_in_full</mat-icon>
-          Liên thông
+          Liên thông (hệ thống cũ)
         </button>
         <button class="m-r-10" mat-raised-button color="accent" (click)="reconnect(model)"
                 *ngIf="model.national_pharmacy_no !== null">
           <mat-icon>sync</mat-icon>
-          Cập nhật liên thông
+          Cập nhật liên thông (hệ thống cũ)
         </button>
         <button class="m-r-10" mat-raised-button color="warn" (click)="disconnect(model)"
                 *ngIf="model.national_pharmacy_no !== null">
           <mat-icon>close_fullscreen</mat-icon>
-          Gỡ liên thông
+          Gỡ liên thông (hệ thống cũ)
+        </button>
+
+        <!-- Liên thông CSDL Dược quốc gia v1.1: trạng thái nằm ở nationalPharmacyV2,
+             không dùng cột national_pharmacy_no của liên thông v1 -->
+        <button class="m-r-10" mat-raised-button color="accent" (click)="connectV2(model)"
+                [disabled]="checkPermissionDisable('Warehouse.Connect-V2') || npV2DialogOpen"
+                *ngIf="model.status === 10">
+          <mat-icon>cloud_upload</mat-icon>
+          {{ npV2Service.hasTransaction(model.nationalPharmacyV2) ? 'CSDL Dược Quốc gia: ' + npV2Service.statusLabel(model.nationalPharmacyV2?.status) : 'Liên thông CSDL Dược Quốc gia' }}
         </button>
         <!--<button class="m-r-10" mat-raised-button color="accent" >-->
         <!--<mat-icon>file_copy</mat-icon>-->

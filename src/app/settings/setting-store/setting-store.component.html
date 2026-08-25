@@ -63,19 +63,35 @@
               </div>
               <div fxFlex.gt-sm="33.33" fxFlex="100">
                 <mat-form-field>
-                  <mat-label>Tài khoản csdlduoc</mat-label>
+                  <mat-label>Tài khoản kết nối (hệ thống cũ)</mat-label>
                   <input matInput tabindex="1" formControlName="nation_username" autocomplete="off">
                 </mat-form-field>
               </div>
               <div fxFlex.gt-sm="33.33" fxFlex="100">
                 <mat-form-field>
-                  <mat-label>Mật khẩu csdlduoc</mat-label>
+                  <mat-label>Mật khẩu kết nối (hệ thống cũ)</mat-label>
                   <input matInput tabindex="2" formControlName="nation_password" autocomplete="new-password"
                          [type]="hidePassword ? 'password' : 'text'">
                   <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword"
                           [matTooltip]="hidePassword ? 'Hiện mật khẩu' : 'Ẩn mật khẩu'">
                     <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
                   </button>
+                </mat-form-field>
+              </div>
+              <div fxFlex.gt-sm="33.33" fxFlex="100">
+                <mat-form-field>
+                  <mat-label>Tài khoản CSDL Dược Quốc gia (hệ thống mới)</mat-label>
+                  <input matInput formControlName="nation_v2_username" autocomplete="off">
+                  <mat-icon matSuffix class="lock-icon"
+                            matTooltip="Chỉ bộ phận hỗ trợ được đổi tài khoản hệ thống mới">lock</mat-icon>
+                </mat-form-field>
+              </div>
+              <div fxFlex.gt-sm="33.33" fxFlex="100">
+                <mat-form-field>
+                  <mat-label>Mật khẩu CSDL Dược Quốc gia (hệ thống mới)</mat-label>
+                  <input matInput type="password" formControlName="nation_v2_password" autocomplete="new-password">
+                  <mat-icon matSuffix class="lock-icon"
+                            matTooltip="Chỉ bộ phận hỗ trợ được đổi mật khẩu hệ thống mới">lock</mat-icon>
                 </mat-form-field>
               </div>
             </div>

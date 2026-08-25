@@ -181,3 +181,10 @@ input {
     margin-top: 20px;
   }
 }
+.np-test-ok {
+  color: #2e7d32;
+}
+
+.np-test-fail {
+  color: #c62828;
+}

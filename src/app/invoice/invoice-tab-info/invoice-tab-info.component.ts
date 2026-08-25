@@ -14,6 +14,8 @@ import {OptionStoreService} from '../../common/option-store.service';
 import {StoreService} from '../../store/store.service';
 import {Store} from '../../store/store.model';
 import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
+import { NationalPharmacyV2ConnectDialogComponent } from '../../common/national-pharmacy-v2/national-pharmacy-v2-connect-dialog/national-pharmacy-v2-connect-dialog.component';
+import { NationalPharmacyV2Service } from '../../common/national-pharmacy-v2/national-pharmacy-v2.service';
 
 @Component({
   selector: 'app-invoice-tab-info',
@@ -91,7 +93,8 @@ export class InvoiceTabInfoComponent implements OnChanges {
     private router: Router,
     private medicineService: MedicineService,
     public prescriptionService: PrescriptionService,
-    public optionStoreService: OptionStoreService
+    public optionStoreService: OptionStoreService,
+    public npV2Service: NationalPharmacyV2Service
   ) {
   }
 
@@ -227,6 +230,40 @@ export class InvoiceTabInfoComponent implements OnChanges {
         this.notifySer.notify('success', 'Liên thông thành công.');
       } else if (res['message'] !== undefined) {
         this.notifySer.notify('error', res['message']);
+      }
+    });
+  }
+
+  /** Dialog liên thông đang mở — chặn mở thêm khi người dùng bấm nút nhiều lần */
+  npV2DialogOpen = false;
+
+  /**
+   * Liên thông hoá đơn bán lẻ lên CSDL Dược quốc gia v1.1.
+   *
+   * v1.1 đã bỏ API POST /invoices, hoá đơn được đẩy dưới dạng phiếu xuất hàng với
+   * lý do "Xuất bán lẻ" nên không cần chọn lý do.
+   */
+  connectV2(item: Invoice) {
+    if (this.npV2DialogOpen) {
+      return;
+    }
+    this.npV2DialogOpen = true;
+
+    const dialogRef = this.dialog.open(NationalPharmacyV2ConnectDialogComponent, {
+      width: '520px',
+      data: {
+        source: 'invoice',
+        id: item.id,
+        referenceNumber: item.invoice_no,
+        transaction: item.nationalPharmacyV2,
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.npV2DialogOpen = false;
+
+      if (result && result.event === 'changed') {
+        item.nationalPharmacyV2 = result.transaction;
       }
     });
   }

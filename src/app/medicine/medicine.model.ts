@@ -11,6 +11,8 @@ export class Medicine {
   manufacturer: string;
   made_in: string;
   unit: string;
+  /** Mã định danh thuốc trên CSDL Dược quốc gia, đồng bộ theo số GPLH */
+  national_drug_id: string;
 }
 
 

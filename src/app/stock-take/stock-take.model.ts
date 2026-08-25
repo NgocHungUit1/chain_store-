@@ -1,4 +1,5 @@
 import { ApiFilterBase } from '../shared/base';
+import { NationalPharmacyV2Transaction } from '../common/national-pharmacy-v2/national-pharmacy-v2.model';
 
 export class User {
   username: string;
@@ -67,6 +68,8 @@ export class StockTake {
   balanceBy: object;
   deviationPriceSum: number; // tong gia tri lech
   totalPrice: number; // tong thuc te
+  /** Lần liên thông CSDL Dược quốc gia v1.1 gần nhất (?expand=nationalPharmacyV2) */
+  nationalPharmacyV2: NationalPharmacyV2Transaction;
 }
 
 export class StockTakeFilter extends ApiFilterBase {

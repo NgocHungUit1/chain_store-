@@ -11,6 +11,8 @@ import { StockTakeService } from '../stock-take.service';
 import { StockTakeItemService } from '../stock-take-item.service';
 import { StockTakeBalanceDialogComponent } from '../stock-take-balance-dialog/stock-take-balance-dialog.component';
 import { OptionStoreService } from '../../common/option-store.service';
+import { NationalPharmacyV2ConnectDialogComponent } from '../../common/national-pharmacy-v2/national-pharmacy-v2-connect-dialog/national-pharmacy-v2-connect-dialog.component';
+import { NationalPharmacyV2Service } from '../../common/national-pharmacy-v2/national-pharmacy-v2.service';
 
 @Component({
   selector: 'app-stock-take-info-tab',
@@ -57,7 +59,41 @@ export class StockTakeInfoTabComponent implements OnChanges {
     private router: Router,
     private dialog: MatDialog,
     private optionStoreService: OptionStoreService,
+    public npV2Service: NationalPharmacyV2Service,
   ) {
+  }
+
+  /** Dialog liên thông đang mở — chặn mở thêm khi người dùng bấm nút nhiều lần */
+  npV2DialogOpen = false;
+
+  /**
+   * Liên thông phiếu kiểm kho lên CSDL Dược quốc gia v1.1
+   * (POST /transactions/stock-taking, mục 5.4.7).
+   * Backend chỉ nhận phiếu đã hoàn thành cân bằng kho.
+   */
+  connectV2(item: StockTake) {
+    if (this.npV2DialogOpen) {
+      return;
+    }
+    this.npV2DialogOpen = true;
+
+    const dialogRef = this.dialog.open(NationalPharmacyV2ConnectDialogComponent, {
+      width: '520px',
+      data: {
+        source: 'stock-take',
+        id: item.id,
+        referenceNumber: item.no,
+        transaction: item.nationalPharmacyV2,
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.npV2DialogOpen = false;
+
+      if (result && result.event === 'changed') {
+        item.nationalPharmacyV2 = result.transaction;
+      }
+    });
   }
 
   ngOnChanges(changes: SimpleChanges) {

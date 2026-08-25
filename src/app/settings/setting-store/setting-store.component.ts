@@ -63,6 +63,10 @@ export class SettingStoreComponent implements OnInit {
 
       nation_username: [null],
       nation_password: [null],
+      // Tài khoản liên thông CSDL Dược quốc gia (hệ thống mới) - chỉ xem, do quản trị
+      // viên khai báo ở trang quản trị
+      nation_v2_username: [{value: null, disabled: true}],
+      nation_v2_password: [{value: null, disabled: true}],
       owner_name: [null],
       phone: [null],
       email: [null, Validators.email],
@@ -84,6 +88,8 @@ export class SettingStoreComponent implements OnInit {
         registration_no: store['national_pharmacy_registration_no'],
         nation_username: store['national_pharmacy_login_username'],
         nation_password: store['national_pharmacy_login_password'],
+        nation_v2_username: store['national_pharmacy_v2_login_username'],
+        nation_v2_password: store['national_pharmacy_v2_login_password'],
         owner_name: store['owner_name'],
         phone: store['phone'],
         email: store['email'],

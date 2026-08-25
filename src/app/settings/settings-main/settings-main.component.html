@@ -254,10 +254,20 @@
               </mat-card-content>
             </mat-card>
 
-            <mat-card *ngIf=" settingsType === 'branch-connect' ">
-              <mat-card-content>
-                <form [formGroup]="connectForm" (ngSubmit)="saveConnect()">
+            <!-- Hai hệ thống liên thông chạy song song, tách thành hai thẻ riêng để
+                 người dùng không nhầm tài khoản của hệ này sang hệ kia -->
+            <form *ngIf=" settingsType === 'branch-connect' "
+                  [formGroup]="connectForm" (ngSubmit)="saveConnect()">
 
+              <mat-card class="m-b-20">
+                <mat-card-header>
+                  <mat-card-title>Liên thông Dược Quốc gia &mdash; hệ thống cũ</mat-card-title>
+                  <mat-card-subtitle>
+                    Hệ thống liên thông của Cục Quản lý Dược, dùng Mã cơ sở kèm tài khoản kết nối.
+                  </mat-card-subtitle>
+                </mat-card-header>
+
+                <mat-card-content>
                   <div fxLayout="row wrap" class="line-option">
                     <div fxFlex="60px" class="custom-toggle">
                       <mat-slide-toggle
@@ -266,14 +276,13 @@
                       ></mat-slide-toggle>
                     </div>
                     <div fxFlex="auto">
-                      <b><a routerLink="/partner/expenses-transaction">Liên thông theo chi nhánh</a></b>
+                      <b>Dùng tài khoản riêng cho chi nhánh này</b>
                       <br>
-                      <span> Cho phép các chi nhánh trong mỗi chuỗi liên thông theo các Tài khoản liên thông khác nhau.
-                    </span>
+                      <span>Tắt thì chi nhánh dùng chung tài khoản của cửa hàng.</span>
                     </div>
                   </div>
+
                   <div fxLayout="row wrap">
-                    <!-- col full-->
                     <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
                       <mat-form-field>
                         <input matInput placeholder="Mã cơ sở"
@@ -296,7 +305,7 @@
                     </div>
                     <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
                       <mat-form-field>
-                        <input matInput placeholder="Mật khẩu kết nối"
+                        <input matInput type="password" placeholder="Mật khẩu kết nối"
                                [formControl]="connectForm.controls['national_pharmacy_login_password']">
                       </mat-form-field>
                       <small
@@ -304,20 +313,75 @@
                         class="text-danger support-text">Vui lòng điền mật khẩu kết nối.
                       </small>
                     </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
 
-                    <!-- col half-->
-                    <div fxFlex.gt-sm="50" fxFlex.gt-xs="100" fxFlex="10">
-                      <button mat-raised-button color="primary" type="submit"
-                              [disabled]="!connectForm.valid">
-                        <mat-icon>save</mat-icon>
-                        Lưu
-                      </button>
+              <mat-card>
+                <mat-card-header>
+                  <mat-card-title>Liên thông CSDL Dược Quốc gia &mdash; hệ thống mới</mat-card-title>
+                  <mat-card-subtitle>
+                    Theo Quyết định 232/QĐ-TTYQG ngày 17/7/2026. Tài khoản do Trung tâm Thông tin
+                    Y tế Quốc gia cấp, <b>khác với tài khoản hệ thống cũ</b> ở trên.
+                  </mat-card-subtitle>
+                </mat-card-header>
+
+                <mat-card-content>
+                  <div fxLayout="row wrap" class="line-option">
+                    <div fxFlex="60px" class="custom-toggle">
+                      <mat-slide-toggle
+                        [formControl]="connectForm.controls['use_branch_national_v2_connect']"
+                        (change)="onConnectV2Change()"
+                      ></mat-slide-toggle>
+                    </div>
+                    <div fxFlex="auto">
+                      <b>Dùng tài khoản riêng cho chi nhánh này</b>
+                      <br>
+                      <span>Tắt thì chi nhánh dùng chung tài khoản của cửa hàng.</span>
                     </div>
                   </div>
-                </form>
-              </mat-card-content>
 
-            </mat-card>
+                  <div fxLayout="row wrap">
+                    <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                      <mat-form-field>
+                        <input matInput placeholder="Tài khoản CSDL Dược Quốc gia"
+                               [formControl]="connectForm.controls['national_pharmacy_v2_login_username']">
+                      </mat-form-field>
+                    </div>
+                    <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                      <mat-form-field>
+                        <input matInput type="password" placeholder="Mật khẩu CSDL Dược Quốc gia"
+                               [formControl]="connectForm.controls['national_pharmacy_v2_login_password']">
+                      </mat-form-field>
+                    </div>
+
+                    <!-- Kiểm tra tài khoản ngay, không phải chờ tới lúc đẩy phiếu mới biết sai -->
+                    <div fxFlex="100">
+                      <button mat-stroked-button color="accent" type="button"
+                              (click)="testConnectionV2()" [disabled]="testingConnectionV2">
+                        <mat-icon>wifi_tethering</mat-icon>
+                        {{ testingConnectionV2 ? 'Đang kiểm tra...' : 'Kiểm tra kết nối' }}
+                      </button>
+
+                      <span class="m-l-10" *ngIf="testConnectionV2Result"
+                            [ngClass]="testConnectionV2Result.success ? 'np-test-ok' : 'np-test-fail'">
+                        {{ testConnectionV2Result.success ? '✓' : '✗' }}
+                        {{ testConnectionV2Result.message }}
+                      </span>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <!-- Một nút lưu cho cả hai thẻ: cùng đi qua một endpoint branch/update-connect -->
+              <div class="m-t-20">
+                <button mat-raised-button color="primary" type="submit"
+                        [disabled]="!connectForm.valid">
+                  <mat-icon>save</mat-icon>
+                  Lưu cấu hình liên thông
+                </button>
+              </div>
+            </form>
 
             <mat-card *ngIf="settingsType === 'store-info' ">
               <mat-card-content>

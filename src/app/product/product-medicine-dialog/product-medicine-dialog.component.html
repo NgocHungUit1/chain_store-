@@ -273,6 +273,39 @@
                              autocomplete="off">
                     </mat-form-field>
                   </div>
+
+                  <!-- Mã định danh thuốc trên CSDL Dược quốc gia: bắt buộc phải có mới
+                       liên thông được phiếu, và phải đồng bộ lại mỗi khi số đăng ký đổi -->
+                  <div fxFlex="100" class="np-drug-id" *ngIf="canSyncNationalDrugId">
+                    <div>
+                      <span class="np-drug-id-label">Mã thuốc CSDL Dược Quốc gia:</span>
+                      <strong *ngIf="nationalDrugId" class="np-drug-id-ok">{{ nationalDrugId }}</strong>
+                      <strong *ngIf="!nationalDrugId" class="np-drug-id-missing">Chưa có</strong>
+
+                      <button mat-stroked-button color="accent" type="button" class="m-l-10"
+                              (click)="syncNationalDrugId()" [disabled]="syncingNationalDrugId">
+                        <mat-icon>sync</mat-icon>
+                        {{ syncingNationalDrugId ? 'Đang đồng bộ...' : 'Đồng bộ' }}
+                      </button>
+                    </div>
+
+                    <div class="np-drug-id-hint" *ngIf="nationalDrugUnits.length">
+                      Đơn vị CSDL Dược chấp nhận cho thuốc này: <b>{{ nationalDrugUnits.join(', ') }}</b>.
+                      Phiếu dùng đơn vị khác sẽ không liên thông được.
+                    </div>
+
+                    <div class="np-drug-id-hint" *ngIf="nationalDrugId && !nationalDrugUnits.length">
+                      Chưa có thông tin quy cách đóng gói của thuốc, bấm Đồng bộ để lấy về.
+                    </div>
+
+                    <div class="np-drug-id-warning" *ngIf="registrationNoChanged">
+                      Số đăng ký đã thay đổi. Mã thuốc cũ không còn đúng, hệ thống sẽ tự đồng bộ lại khi lưu.
+                    </div>
+
+                    <div class="np-drug-id-hint" *ngIf="!nationalDrugId && !registrationNoChanged">
+                      Chưa có mã này thì phiếu nhập/xuất chứa thuốc sẽ không liên thông được.
+                    </div>
+                  </div>
                 </div>
                 <div fxLayout="row wrap">
                   <div fxFlex="100">

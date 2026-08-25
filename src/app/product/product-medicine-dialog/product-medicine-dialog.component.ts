@@ -180,6 +180,59 @@ export class ProductMedicineDialogComponent implements OnInit {
 
   selectedFiles: ImageSnippet[] = [];
 
+  /** Mã định danh thuốc trên CSDL Dược quốc gia của thuốc đang sửa */
+  nationalDrugId: string = null;
+
+  /** Đơn vị tính CSDL Dược chấp nhận cho thuốc này */
+  nationalDrugUnits: string[] = [];
+
+  /** Số GPLH lúc mở dialog, dùng để biết người dùng có sửa hay không */
+  private originalRegistrationNo: string = null;
+
+  syncingNationalDrugId = false;
+
+  /** Số GPLH đã bị sửa so với lúc mở dialog */
+  get registrationNoChanged(): boolean {
+    const medicineGroup = this.form.get('medicine');
+    const current = medicineGroup ? medicineGroup.get('registration_no').value : null;
+
+    return this.originalRegistrationNo !== null
+      && (current || '').trim() !== (this.originalRegistrationNo || '').trim();
+  }
+
+  /** Có thuốc đã lưu để đồng bộ hay không (sản phẩm mới chưa có medicine_id) */
+  get canSyncNationalDrugId(): boolean {
+    return !!this.form.get('medicine_id').value;
+  }
+
+  /**
+   * Đồng bộ mã định danh thuốc từ CSDL Dược quốc gia theo số GPLH.
+   *
+   * Không có mã này thì phiếu nhập/xuất chứa thuốc sẽ không liên thông được.
+   */
+  syncNationalDrugId() {
+    const medicineId = this.form.get('medicine_id').value;
+
+    if (this.syncingNationalDrugId || !medicineId) {
+      return;
+    }
+
+    this.syncingNationalDrugId = true;
+
+    this.medicineSer.syncNationalDrugId(medicineId).subscribe(res => {
+      this.syncingNationalDrugId = false;
+      this.nationalDrugId = res['national_drug_id'] || null;
+      this.nationalDrugUnits = res['units'] || [];
+      this.originalRegistrationNo = this.form.get('medicine').get('registration_no').value;
+
+      this.notifySer.notify(res['success'] ? 'success' : 'error',
+        res['message'] || 'Không đồng bộ được mã thuốc quốc gia.');
+    }, error => {
+      this.syncingNationalDrugId = false;
+      this.notifySer.notify('error', error?.error?.message || 'Có lỗi khi đồng bộ mã thuốc quốc gia.');
+    });
+  }
+
   initForm() {
     this.form = this.fb.group({
       product_no: [
@@ -368,7 +421,7 @@ export class ProductMedicineDialogComponent implements OnInit {
   }
 
   loadProduct(id, copy: any = null) {
-    this.productSer.getDetail(id, 'medicine,images,productPlacements,productUnits,quantity').subscribe(product => {
+    this.productSer.getDetail(id, 'medicine,medicine.nationalDrugUnits,images,productPlacements,productUnits,quantity').subscribe(product => {
       const nullToDash = (val: any) => (val === null || val === undefined || val === '' || val === 'NULL') ? '-' : val;
 
       const placements = [];
@@ -419,6 +472,11 @@ export class ProductMedicineDialogComponent implements OnInit {
       //     quantity_of_stock: numeral(product['quantity'].number).value(),
       //   });
       // }
+
+      // Trạng thái mã định danh CSDL Dược của thuốc đang sửa
+      this.nationalDrugId = medicine ? (medicine['national_drug_id'] || null) : null;
+      this.nationalDrugUnits = medicine && medicine['nationalDrugUnits'] ? medicine['nationalDrugUnits'] : [];
+      this.originalRegistrationNo = medicine ? (medicine['registration_no'] || null) : null;
 
       const medicinePatched = medicine ? {
         registration_no: nullToDash(medicine['registration_no']),
@@ -629,8 +687,19 @@ export class ProductMedicineDialogComponent implements OnInit {
 
   /** Gọi API cập nhật + hiện đúng lý do khi server từ chối (vd chưa có quyền đổi cấu hình lô). */
   doUpdate(data, action, connect) {
+    const needSyncDrugId = this.registrationNoChanged && this.canSyncNationalDrugId;
+    const medicineIdToSync = this.form.get('medicine_id').value;
+
     this.productSer.update(this.product_id, data).subscribe(product => {
       this.notifySer.notify('success', 'Cập nhật thuốc thành công!');
+
+      // Backend xoá national_drug_id khi số GPLH đổi, nên đồng bộ lại ngay
+      if (needSyncDrugId) {
+        this.medicineSer.syncNationalDrugId(medicineIdToSync).subscribe(sync => {
+          this.notifySer.notify(sync['success'] ? 'success' : 'warning', sync['message']);
+        });
+      }
+
       this.uploadImage(product, action);
       this.dialogRef.close({event: action, data: product, connect: connect});
     }, error => {
