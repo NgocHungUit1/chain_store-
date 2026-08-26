@@ -212,7 +212,10 @@ export class PrescriptionFormDialogComponent implements OnInit {
         doctor_advice: data['doctor_advice'],
       });
 
-      this.nationalProductDataSource = data['nationalProducts'];
+      // API trả null khi đơn thuốc không có thuốc quốc gia. Gán thẳng null vào đây
+      // làm template đọc .length của null -> TypeError, dialog dựng hỏng giữa chừng
+      // nên các ô thông tin bác sĩ/bệnh nhân không hiện ra.
+      this.nationalProductDataSource = data['nationalProducts'] || [];
 
       // Lấy thông tin host từ environment
       const apiUrlParts = environment.apiUrl.split('/');
