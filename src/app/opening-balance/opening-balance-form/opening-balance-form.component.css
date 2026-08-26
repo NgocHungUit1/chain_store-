@@ -1,0 +1,251 @@
+/* Bảng phải trải hết chiều rộng vùng nội dung, nếu không nó co lại vừa dữ liệu */
+table {
+  width: 100%;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.opening-balance-form {
+  min-height: calc(100vh - 64px);
+}
+
+.side-panel {
+  padding: 16px;
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
+  background: #fafafa;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.table-container {
+  position: relative;
+}
+
+.table-loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.6);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/*
+ * Angular Material chỉ set padding cho ô ĐẦU và ô CUỐI của hàng, các ô giữa
+ * không có padding ngang -> các ô nhập dính sát vào nhau. Phải tự thêm.
+ */
+th.mat-header-cell,
+td.mat-cell {
+  padding: 6px 10px;
+}
+
+th.mat-header-cell:first-of-type,
+td.mat-cell:first-of-type {
+  padding-left: 16px;
+}
+
+th.mat-header-cell:last-of-type,
+td.mat-cell:last-of-type {
+  padding-right: 16px;
+}
+
+tr.mat-header-row {
+  background: #f4f6f8;
+}
+
+th.mat-header-cell {
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.72);
+  white-space: nowrap;
+}
+
+/* Bề rộng tối thiểu cho các cột nhập liệu, tránh ô bị bóp còn vài ký tự */
+.mat-column-parcel_no {
+  min-width: 120px;
+}
+
+.mat-column-expiration_date {
+  min-width: 160px;
+}
+
+.mat-column-quantity,
+.mat-column-price {
+  min-width: 110px;
+}
+
+.mat-column-amount {
+  min-width: 110px;
+}
+
+.mat-column-unit {
+  min-width: 90px;
+}
+
+.mat-column-placement {
+  min-width: 140px;
+}
+
+/* ---- Ô nhập trong lưới: viền mảnh để lưới vẫn đọc được như bảng ---- */
+.cell-input {
+  width: 100%;
+  min-width: 70px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 3px;
+  padding: 4px 6px;
+  font-size: 13px;
+  background: #fff;
+}
+
+.cell-input:focus {
+  outline: none;
+  border-color: #1976d2;
+}
+
+.cell-input:disabled {
+  background: transparent;
+  border-color: transparent;
+}
+
+.cell-select {
+  min-width: 70px;
+  font-size: 13px;
+}
+
+.cell-invalid {
+  border-color: #d32f2f;
+  background: #fdecea;
+}
+
+.cell-warn {
+  border-color: #ed6c02;
+  background: #fff6e5;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.chip-lot {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 6px;
+  font-size: 10px;
+  line-height: 16px;
+  border-radius: 8px;
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+/* ---- Khối cảnh báo ---- */
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 8px 16px;
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.alert .alert-icon {
+  flex: none;
+  font-size: 20px;
+  height: 20px;
+  width: 20px;
+}
+
+.alert .code {
+  display: inline-block;
+  min-width: 32px;
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.alert-error {
+  background: #fdecea;
+  color: #8b1f1a;
+}
+
+.alert-warning {
+  background: #fff6e5;
+  color: #7a4b06;
+}
+
+.alert-info {
+  background: #e8f1fb;
+  color: #14456f;
+}
+
+.alert-ok {
+  background: #e9f5ee;
+  color: #17603a;
+}
+
+/* ---- Khối tổng hợp bên phải ---- */
+.summary {
+  margin: 8px 0 16px;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 13px;
+}
+
+.summary-row.total {
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  margin-top: 6px;
+  padding-top: 8px;
+  font-size: 15px;
+}
+
+.summary-row.total b {
+  color: #1565c0;
+}
+
+.actions {
+  margin-top: 8px;
+}
+
+.m-b-10 {
+  margin-bottom: 10px;
+}
+
+.hint {
+  margin-top: 12px;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.54);
+  line-height: 1.5;
+}
+
+.readonly-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px;
+  background: #eeeeee;
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.empty-state {
+  padding: 40px 16px;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.54);
+}

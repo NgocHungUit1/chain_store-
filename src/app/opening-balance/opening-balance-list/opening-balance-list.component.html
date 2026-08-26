@@ -1,0 +1,207 @@
+<mat-sidenav-container class='custom-filter-container'>
+  <mat-sidenav #leftside id="leftside" position="left" class="left-sidebar" mode="side" opened="true">
+    <mat-toolbar class="dv-header">
+      <label class='custom-filter-container__title'>Phiếu nhập tồn đầu</label>
+    </mat-toolbar>
+
+    <div class='custom-filter-container__div-container'>
+      <mat-accordion multi>
+
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Thời gian</mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <form [formGroup]="timeFilter">
+            <mat-radio-group (change)="radioTimeChange($event)" formControlName="typeTime">
+              <mat-radio-button style="display: inline; " value="default"
+                                color='primary'
+                                (click)="openTimeDefault()">{{ titleTimeDefault }}
+                <button mat-icon-button aria-label="Chọn khoảng thời gian dựng sẵn">
+                  <mat-icon>swap_vert</mat-icon>
+                </button>
+              </mat-radio-button>
+              <mat-radio-button style="display: inline; " value="choose"
+                                (click)="openTimeChoose()">{{ titleTimeChoose }}
+                <button mat-icon-button aria-label="Chọn khoảng ngày">
+                  <mat-icon>date_range</mat-icon>
+                </button>
+              </mat-radio-button>
+            </mat-radio-group>
+          </form>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Trạng thái</mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <form [formGroup]="statusFilter">
+            <div class='custom-filter-container__checkbox-container'>
+              <mat-checkbox *ngFor='let item of statusFilterList'
+                            color='primary'
+                            [checked]="statusFilter.value['status'].includes(item.value)"
+                            (change)='checkBoxFilterChange($event, item.value, "status")'>
+                {{ item.name }}
+              </mat-checkbox>
+            </div>
+          </form>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Chi nhánh</mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <form [formGroup]="branchFilter">
+            <mat-form-field style="width: 100%">
+              <mat-select formControlName="branch_id" (selectionChange)="onFilterChange()">
+                <mat-option value="">Tất cả chi nhánh</mat-option>
+                <mat-option *ngFor="let branch of branchList" [value]="branch.id">{{ branch.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </form>
+        </mat-expansion-panel>
+
+      </mat-accordion>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar class="dv-header">
+      <button mat-icon-button (click)="leftside.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <div class="customer-filter-container">
+        <mat-form-field appearance="outline" class='search-input'>
+          <input matInput [formControl]="searchForm" placeholder="Theo mã phiếu tồn đầu...">
+          <button mat-icon-button matPrefix>
+            <mat-icon>search</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+
+      <span fxFlex="1 1 0%"></span>
+
+      <button mat-raised-button color="primary" class="m-r-5"
+              routerLink="/store/opening-balance/create">
+        <mat-icon>add</mat-icon>
+        Tạo phiếu tồn đầu
+      </button>
+
+      <a mat-raised-button color="primary" class="m-r-5" [href]="downloadLink" target="_blank">
+        <mat-icon>file_download</mat-icon>
+        Xuất Excel
+      </a>
+
+      <div class="diva-column-select">
+        <button mat-raised-button color="primary" (click)="selectColumn.toggle();">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <mat-select [(ngModel)]="displayedColumns" #selectColumn [multiple]="true"
+                    style="width: 100%; display: inline-flex; margin-left: -20px; color: white"
+                    placeholder="Chọn cột">
+          <mat-option *ngFor="let column of columnsToDisplay" [value]="column">{{ columnsHeader[column] }}</mat-option>
+        </mat-select>
+      </div>
+
+      <button style="margin-left: 10px" mat-raised-button color="primary" (click)="loadData()">
+        <mat-icon>refresh</mat-icon>
+        Làm mới
+      </button>
+    </mat-toolbar>
+
+    <div fxLayout="row wrap">
+      <div fxFlex="100">
+        <div class="table-container">
+          <div class="table-loading-shade" *ngIf="isLoadingResults">
+            <mat-spinner></mat-spinner>
+          </div>
+
+          <div class="table-responsive">
+            <table mat-table [dataSource]="dataSource" class="no-wrap">
+
+              <ng-container matColumnDef="no">
+                <th mat-header-cell *matHeaderCellDef>{{ columnsHeader['no'] }}</th>
+                <td mat-cell *matCellDef="let element">
+                  <b class="text-primary">{{ element.no }}</b>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef>{{ columnsHeader['date'] }}</th>
+                <td mat-cell *matCellDef="let element">{{ element.date | date:'dd/MM/yyyy' }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="branch_id">
+                <th mat-header-cell *matHeaderCellDef>{{ columnsHeader['branch_id'] }}</th>
+                <td mat-cell *matCellDef="let element">{{ branchNames[element.branch_id] }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="product_count">
+                <th mat-header-cell *matHeaderCellDef class="text-right">{{ columnsHeader['product_count'] }}</th>
+                <td mat-cell *matCellDef="let element" class="text-right">{{ element.product_count | number }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="total_quantity">
+                <th mat-header-cell *matHeaderCellDef class="text-right">{{ columnsHeader['total_quantity'] }}</th>
+                <td mat-cell *matCellDef="let element" class="text-right">{{ element.total_quantity | number }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="total_amount">
+                <th mat-header-cell *matHeaderCellDef class="text-right">{{ columnsHeader['total_amount'] }}</th>
+                <td mat-cell *matCellDef="let element" class="text-right">
+                  <b>{{ element.total_amount | number }}</b>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="created_user">
+                <th mat-header-cell *matHeaderCellDef>{{ columnsHeader['created_user'] }}</th>
+                <td mat-cell *matCellDef="let element">{{ element.created_user?.username }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="note">
+                <th mat-header-cell *matHeaderCellDef>{{ columnsHeader['note'] }}</th>
+                <td mat-cell *matCellDef="let element" class="note-cell" [title]="element.note">{{ element.note }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>{{ columnsHeader['status'] }}</th>
+                <td mat-cell *matCellDef="let element">
+                  <label class="{{ statusClasses[element.status] }}">{{ statusLabels[element.status] }}</label>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element">
+                  <button mat-icon-button color="warn"
+                          *ngIf="canDelete(element)"
+                          matTooltip="Xoá phiếu"
+                          (click)="confirmDelete($event, element)">
+                    <mat-icon>delete_outline</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                  class="clickable-row"
+                  (click)="openRow(row)"></tr>
+            </table>
+          </div>
+
+          <div class="empty-state" *ngIf="!isLoadingResults && dataSource.length === 0">
+            Chưa có phiếu tồn đầu nào. Nhấn <b>Tạo phiếu tồn đầu</b> để khai báo hàng có sẵn trong kho.
+          </div>
+
+          <mat-paginator #paginator [length]="pageTotalCount" [pageSize]="pageSize"
+                         [pageSizeOptions]="pageSizeOptions"
+                         (page)="onMatPageChange($event)" [pageIndex]="page - 1"
+                         showFirstLastButtons></mat-paginator>
+        </div>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
