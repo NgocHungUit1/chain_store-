@@ -20,6 +20,10 @@ export const StoreRoutes: Routes = [
         path: 'group',
         loadChildren: () => import('../group/group.module').then(m => m.GroupModule)
       },
+      {
+        path: 'opening-balance',
+        loadChildren: () => import('../opening-balance/opening-balance.module').then(m => m.OpeningBalanceModule)
+      },
     ]
   }
 ];

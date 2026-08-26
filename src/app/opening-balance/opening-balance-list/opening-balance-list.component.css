@@ -1,0 +1,81 @@
+/* Bảng phải trải hết chiều rộng vùng nội dung, nếu không nó co lại vừa dữ liệu */
+table {
+  width: 100%;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table-container {
+  position: relative;
+}
+
+.table-loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 56px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.6);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/*
+ * Angular Material chỉ set padding cho ô ĐẦU và ô CUỐI của hàng, các ô ở giữa
+ * không có padding ngang. Cột nào có tiêu đề rộng hơn dữ liệu thì chữ tiêu đề
+ * dính liền vào cột bên cạnh. Phải tự thêm padding cho mọi ô.
+ */
+th.mat-header-cell,
+td.mat-cell {
+  padding: 0 14px;
+}
+
+th.mat-header-cell:first-of-type,
+td.mat-cell:first-of-type {
+  padding-left: 20px;
+}
+
+th.mat-header-cell:last-of-type,
+td.mat-cell:last-of-type {
+  padding-right: 20px;
+}
+
+tr.mat-header-row {
+  background: #f4f6f8;
+}
+
+th.mat-header-cell {
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.72);
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* Ghi chú thường dài, cắt bớt và cho xem đầy đủ bằng tooltip của trình duyệt */
+.note-cell {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.empty-state {
+  padding: 32px 16px;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.54);
+}
