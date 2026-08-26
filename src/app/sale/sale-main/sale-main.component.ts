@@ -539,7 +539,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       mItemInvoice.listProduct.length === 0
     ) {
       this.listProduct = [];
-      this.prescription.checked = false;
+      this.datOTickBanTheoDon(false);
       this.prescription_id = null;
       this.sumPrice = 0;
       this.sumVat = 0;
@@ -554,7 +554,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
         mItemInvoice.prescription_id !== undefined &&
         mItemInvoice.prescription_id !== null
       ) {
-        this.prescription.checked = true;
+        this.datOTickBanTheoDon(true);
         this.prescription_id = mItemInvoice.prescription_id;
       }
 
@@ -2935,10 +2935,10 @@ export class SaleMainComponent implements OnInit, DoCheck {
         price_book_id: this.form.controls['priceBookID'].value,
         branch_id: this.form.controls['branch_id'].value,
         expenses_order_price: this.expenseOrder,
-        prescription_id: this.prescription.checked
+        prescription_id: this.banThuocTheoDon
           ? (mItemInvoice.prescription_id || this.prescription_id)
           : null,
-        national_pharmacy_no: this.prescription.checked ? mItemInvoice.national_pharmacy_no : null,
+        national_pharmacy_no: this.banThuocTheoDon ? mItemInvoice.national_pharmacy_no : null,
         use_einvoice: this.form.get('use_einvoice').value ? 1 : 0,
       },
       UserID: mItemInvoice.user.id,
@@ -3156,7 +3156,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     this.sumVat = 0;
     this.countProduct = 0;
     this.listProduct = [];
-    this.prescription.checked = false;
+    this.datOTickBanTheoDon(false);
     this.prescription_id = null;
     this.discount = 0;
     this.numberDiscount = 0;
@@ -3332,25 +3332,57 @@ export class SaleMainComponent implements OnInit, DoCheck {
   }
 
   /**
+   * Ô tick "Bán thuốc theo đơn".
+   *
+   * Lưu ý dễ nhầm: form control tên `prescription_id` giữ TRẠNG THÁI TICK (boolean),
+   * còn id thật của đơn thuốc nằm ở `this.prescription_id`. Hai thứ khác nhau.
+   *
+   * Trước đây code gán thẳng `this.prescription.checked = true` — chỉ đổi hiển thị,
+   * không đổi form control. Angular đồng bộ lại là dấu tick biến mất, rồi lúc thanh
+   * toán đọc `this.prescription.checked` thấy false nên gửi prescription_id = null
+   * => hoá đơn mất liên kết đơn thuốc dù đơn đã tạo trong DB.
+   */
+  get banThuocTheoDon(): boolean {
+    return !!this.form?.get('prescription_id')?.value;
+  }
+
+  private datOTickBanTheoDon(tick: boolean) {
+    if (this.form?.get('prescription_id')) {
+      this.form.get('prescription_id').setValue(tick, {emitEvent: false});
+    }
+    if (this.prescription) {
+      this.prescription.checked = tick;
+    }
+  }
+
+  /**
    * Ban thuoc theo don
    */
   clickPrescription() {
-    const obj = {
-      prescription_id: this.prescription_id,
-    };
-    if (this.prescription.checked) {
-      const dialogRef = this.dialog.open(PrescriptionFormDialogComponent, {
-        data: obj,
-        width: '60%',
-        minHeight: '80%',
-      });
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (result !== undefined) {
-          this.prescription_id = result.id;
-        }
-      });
+    if (!this.banThuocTheoDon) {
+      return;
     }
+    // Ưu tiên id đã lưu trong giỏ: nếu chỉ đọc biến component thì sau F5 hoặc
+    // đổi tab hoá đơn sẽ mở ra form trắng dù đơn thuốc đã có.
+    const idDangCo = this.localItemInvoice?.prescription_id || this.prescription_id;
+
+    const dialogRef = this.dialog.open(PrescriptionFormDialogComponent, {
+      data: {prescription_id: idDangCo},
+      width: '60%',
+      minHeight: '80%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // Bấm "Bỏ qua" thì đóng bằng undefined, giữ nguyên id cũ.
+      if (result && result.id) {
+        this.prescription_id = result.id;
+        // Ghi vào giỏ để không mất khi tải lại trang hay chuyển tab hoá đơn
+        this.orderService.updatePrescriptionId(result.id);
+        if (this.localItemInvoice) {
+          this.localItemInvoice.prescription_id = result.id;
+        }
+      }
+    });
   }
 
   @HostListener('window:keydown', ['$event'])
