@@ -69,7 +69,10 @@ const MENUITEMS = [
       {state: 'sample-prescription', name: 'Đơn thuốc mẫu', type: 'link', icon: 'list_alt', permissions: ['Sample-Prescription.List']},
       {state: 'price-book', name: 'Thiết lập giá', type: 'link', icon: 'loyalty', permissions: ['Price-List.List']},
       {state: 'stock-take', name: 'Kiểm kho', type: 'link', icon: 'check_circle_outline', permissions: ['Stock-Take.List']},
-      {state: 'opening-balance', name: 'Nhập tồn đầu', type: 'link', icon: 'inventory', permissions: ['Opening-Balance.List']},
+      // TẠM ẨN menu Nhập tồn đầu: tính năng còn đang hoàn thiện, chưa cho khách thấy.
+      // Route và toàn bộ mã nguồn vẫn giữ nguyên, chỉ giấu lối vào ở thanh menu.
+      // Mở lại: bỏ dấu chú thích ở dòng dưới rồi build lại.
+      // {state: 'opening-balance', name: 'Nhập tồn đầu', type: 'link', icon: 'inventory', permissions: ['Opening-Balance.List']},
     ]
   },
   {
