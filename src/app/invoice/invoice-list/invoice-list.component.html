@@ -154,6 +154,13 @@
           <mat-icon>close_fullscreen</mat-icon>
           Gỡ liên thông
         </button>
+        <button mat-raised-button color="primary" (click)="createEInvoiceSelect()" class="m-r-5"
+                [disabled]="einvoiceRunning"
+                matTooltip="Chỉ xuất cho hoá đơn đã hoàn thành và chưa phát hành HĐĐT">
+          <mat-icon>receipt</mat-icon>
+          <span *ngIf="!einvoiceRunning">Xuất HĐĐT</span>
+          <span *ngIf="einvoiceRunning">Đang xuất {{ einvoiceDone }}/{{ einvoiceTotal }}...</span>
+        </button>
         <button mat-raised-button color="warn" (click)="deleteSelect()" class="m-r-5">
           <mat-icon>delete</mat-icon>
           Xóa

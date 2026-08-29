@@ -212,7 +212,10 @@ export class PrescriptionFormDialogComponent implements OnInit {
         doctor_advice: data['doctor_advice'],
       });
 
-      this.nationalProductDataSource = data['nationalProducts'];
+      // API trả null khi đơn thuốc không có thuốc quốc gia. Gán thẳng null vào đây
+      // làm template đọc .length của null -> TypeError, dialog dựng hỏng giữa chừng
+      // nên các ô thông tin bác sĩ/bệnh nhân không hiện ra.
+      this.nationalProductDataSource = data['nationalProducts'] || [];
 
       // Lấy thông tin host từ environment
       const apiUrlParts = environment.apiUrl.split('/');
@@ -373,22 +376,25 @@ export class PrescriptionFormDialogComponent implements OnInit {
         });
       } else {
         // Create
-        this.service.create(data).subscribe(res => {
+        this.service.create(data).subscribe(donThuocMoi => {
           this.loading = false;
           this.notifySer.notify('success', 'Thêm đơn thuốc thành công!');
           if (this.nationPrescriptionIdSelect && this.prescriptionIdSelect) {
             this.nationalPrescriptionService
               .addToCart(this.nationPrescriptionIdSelect)
-              .subscribe(res => {
+              .subscribe(dsSanPham => {
                 this.orderService.addNationalPrescriptionInvoice(this.prescriptionIdSelect, this.nationPrescriptionIdSelect);
-                res.forEach(element => {
+                dsSanPham.forEach(element => {
                   this.handlePriceListProduct(element);
                 });
 
-                this.dialogRef.close(res);
+                // Phải trả về ĐƠN THUỐC vừa tạo, không phải danh sách sản phẩm.
+                // Trước đây hai biến cùng tên res nên nhánh này trả nhầm danh sách,
+                // màn bán hàng đọc result.id ra undefined -> mất liên kết đơn thuốc.
+                this.dialogRef.close(donThuocMoi);
               });
           } else {
-            this.dialogRef.close(res);
+            this.dialogRef.close(donThuocMoi);
           }
         }, error => {
           this.loading = false;

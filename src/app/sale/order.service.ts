@@ -406,6 +406,23 @@ export class OrderService {
     this.setListInvoiceLocalStorage(ListInvoice);
   }
 
+  /**
+   * Lưu id đơn thuốc vào hoá đơn đang mở trong giỏ.
+   *
+   * Trước đây id chỉ nằm trong biến của component màn bán hàng nên F5 hoặc
+   * chuyển sang tab hoá đơn khác là mất, hoá đơn lưu ra không có đơn thuốc.
+   */
+  updatePrescriptionId(prescriptionId) {
+    const listInvoice = this.getListInvoiceLocalStorage();
+    const listItemInvoice = listInvoice.itemInvoice;
+    listItemInvoice.forEach(element => {
+      if (element.active === true) {
+        element.prescription_id = prescriptionId;
+      }
+    });
+    this.setListInvoiceLocalStorage(listInvoice);
+  }
+
   updateNoteDetailOrder(i: any, note_detail_sale: string) {
     let ListInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = ListInvoice.itemInvoice;

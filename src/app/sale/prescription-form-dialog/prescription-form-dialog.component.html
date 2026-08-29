@@ -224,7 +224,7 @@
         Đơn thuốc đã quá hạn quy định 5 ngày
     </div>
 
-    <div *ngIf="nationalProductDataSource.length > 0">
+    <div *ngIf="nationalProductDataSource?.length > 0">
       <h3>Thành phần</h3>
       <div class="table-responsive table-national-product">
         <table mat-table [dataSource]="nationalProductDataSource" class="mat-elevation-z8" style="width: 100%">

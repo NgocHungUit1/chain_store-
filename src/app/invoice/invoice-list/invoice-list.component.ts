@@ -262,6 +262,119 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     this._disconnectSelect();
   }
 
+  // ===== Xuất hoá đơn điện tử hàng loạt =====
+
+  /** Đang chạy tới hoá đơn thứ mấy, để hiện tiến độ và khoá nút */
+  einvoiceRunning = false;
+  einvoiceDone = 0;
+  einvoiceTotal = 0;
+
+  /**
+   * Hoá đơn đủ điều kiện xuất HĐĐT: đã hoàn thành, chưa bị huỷ, và CHƯA phát hành.
+   *
+   * Bỏ qua hoá đơn đã phát hành là chủ ý: API xuất HĐĐT không chặn xuất trùng
+   * (đoạn kiểm tra use_einvoice trong InvoiceController đang bị comment lại),
+   * nên bấm nhầm trên hoá đơn đã có HĐĐT là phát hành thêm một số nữa ở cơ quan
+   * thuế - sai sót đó không thu lại được từ đây.
+   */
+  private laHoaDonXuatDuoc(item): boolean {
+    return item && item.order_status === 'done' && Number(item.status) === 10
+      && Number(item.use_einvoice) !== 1 && Number(item.einvoice_status) !== 1;
+  }
+
+  createEInvoiceSelect() {
+    if (this.einvoiceRunning) {
+      return;
+    }
+    const chon = this.selection.selected;
+    if (!chon.length) {
+      this.notifySer.notify('warning', 'Chưa chọn hoá đơn nào.');
+      return;
+    }
+
+    const lam = chon.filter(x => this.laHoaDonXuatDuoc(x));
+    const boQua = chon.length - lam.length;
+
+    if (!lam.length) {
+      this.notifySer.notify('warning',
+        'Không có hoá đơn nào xuất được. ' + chon.length + ' hoá đơn đã chọn đều đã phát hành HĐĐT, '
+        + 'chưa hoàn thành hoặc đã huỷ.');
+      return;
+    }
+
+    let content = 'Sẽ xuất hóa đơn điện tử cho <b>' + lam.length + '</b> hóa đơn.';
+    if (boQua > 0) {
+      content += '<br>Bỏ qua <b>' + boQua + '</b> hóa đơn đã phát hành HĐĐT hoặc chưa hoàn thành.';
+    }
+    content += '<br><br>Hóa đơn đã phát hành thì <b>không thu hồi được</b>, hãy kiểm tra kỹ danh sách đã chọn.';
+
+    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
+      data: {action: 'Connect', title: 'Xác nhận xuất hóa đơn điện tử hàng loạt', content: content},
+      width: '30%',
+      minHeight: '60%',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.event === 'confirm') {
+        this.chayXuatEInvoice(lam);
+      }
+    });
+  }
+
+  /**
+   * Chạy TUẦN TỰ từng hoá đơn, không bắn song song như liên thông.
+   * Mỗi lần xuất là một lượt gọi sang Bkav; bắn 50 lượt cùng lúc dễ bị chặn
+   * hoặc timeout, mà lỗi giữa chừng thì không biết cái nào đã phát hành cái nào chưa.
+   */
+  private chayXuatEInvoice(danhSach: any[]) {
+    this.einvoiceRunning = true;
+    this.einvoiceTotal = danhSach.length;
+    this.einvoiceDone = 0;
+
+    const thanhCong: string[] = [];
+    const that: { no: string, ly_do: string }[] = [];
+
+    const chayTiep = (i: number) => {
+      if (i >= danhSach.length) {
+        this.einvoiceRunning = false;
+        this.baoKetQuaEInvoice(thanhCong, that);
+        this.refreshData();
+        return;
+      }
+      const item = danhSach[i];
+      this.service.createEInvoice(item.id).subscribe(
+        res => {
+          if (res && res.success === true) {
+            thanhCong.push(item.invoice_no);
+          } else {
+            that.push({no: item.invoice_no, ly_do: (res && res.message) ? res.message : 'Không rõ lỗi'});
+          }
+          this.einvoiceDone = i + 1;
+          chayTiep(i + 1);
+        },
+        () => {
+          that.push({no: item.invoice_no, ly_do: 'Lỗi kết nối'});
+          this.einvoiceDone = i + 1;
+          chayTiep(i + 1);
+        }
+      );
+    };
+
+    chayTiep(0);
+  }
+
+  private baoKetQuaEInvoice(thanhCong: string[], that: { no: string, ly_do: string }[]) {
+    if (thanhCong.length) {
+      this.notifySer.notify('success', 'Đã xuất HĐĐT cho ' + thanhCong.length + ' hóa đơn.');
+    }
+    if (that.length) {
+      // Liệt kê tối đa 5 hoá đơn lỗi cho gọn, còn lại gộp số
+      const dau = that.slice(0, 5).map(x => x.no + ': ' + x.ly_do).join(' | ');
+      const conLai = that.length > 5 ? ' ... và ' + (that.length - 5) + ' hóa đơn khác' : '';
+      this.notifySer.notify('error', that.length + ' hóa đơn thất bại — ' + dau + conLai);
+    }
+  }
+
   _disconnectSelect() {
     const obj = {
       action: 'Connect',
