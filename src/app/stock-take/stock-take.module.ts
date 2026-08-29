@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { QuillModule } from 'ngx-quill';
 import { DemoMaterialModule } from '../demo-material-module';
+import { NationalPharmacyV2Module } from '../common/national-pharmacy-v2/national-pharmacy-v2.module';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { StockTakeListComponent } from './stock-take-list/stock-take-list.component';
 import { StockTakeRoutes } from './stock-take.routing';
@@ -32,6 +33,7 @@ import { SharedModule } from '../shared/shared.module';
     PerfectScrollbarModule,
     Ng2SearchPipeModule,
     DemoMaterialModule,
+    NationalPharmacyV2Module,
     InputSelectAllModule,
     SharedModule,
   ],

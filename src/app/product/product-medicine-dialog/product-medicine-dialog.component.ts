@@ -958,6 +958,89 @@ export class ProductMedicineDialogComponent implements OnInit {
 
       this.searchManufacturer.setValue(result);
     });
+
+    this.applyNationalPackagings(medicine);
+  }
+
+  /**
+   * Điền mã định danh + quy cách đóng gói CSDL Dược quốc gia của thuốc vừa chọn, và
+   * TỰ CHỌN đơn vị cơ bản theo quy cách đó.
+   *
+   * `/medicine/autocomplete` giờ chỉ trả danh mục thuốc quốc gia và join sẵn
+   * `packagings`, nên không phải gọi thêm request nào mới biết thuốc này được khai
+   * những đơn vị nào — trước đây phải bấm "Đồng bộ" rồi mới thấy.
+   */
+  private applyNationalPackagings(medicine: any) {
+    this.nationalDrugId = medicine['national_drug_id'] || null;
+
+    const packagings = Array.isArray(medicine['packagings']) ? medicine['packagings'] : [];
+    const unitNames: string[] = [];
+
+    packagings.forEach(item => {
+      const name = (item && item.unit_name) ? String(item.unit_name).trim() : '';
+      // Cùng một unit_name có thể xuất hiện nhiều lần (khác gtin theo cấp đóng gói),
+      // nhưng ô đơn vị cơ bản chỉ quan tâm tên.
+      if (name !== '' && unitNames.indexOf(name) === -1) {
+        unitNames.push(name);
+      }
+    });
+
+    this.nationalDrugUnits = unitNames;
+
+    // Chưa đồng bộ được quy cách của thuốc: giữ nguyên đơn vị người dùng đang chọn,
+    // đừng xoá đi rồi bắt họ nhập lại.
+    if (!unitNames.length) {
+      return;
+    }
+
+    // `medicine.unit` là đơn vị đầu tiên trong quy cách mà backend đã lưu; ưu tiên nó
+    // cho khớp dữ liệu hai bên, không khớp thì lấy đơn vị đầu danh sách.
+    const preferred = this.matchUnitName(unitNames, medicine['unit']) || unitNames[0];
+
+    this.form.patchValue({ base_unit: this.registerUnitName(preferred) });
+  }
+
+  /**
+   * Tên trong `names` khớp `value` (bỏ qua hoa-thường), null nếu không có.
+   */
+  private matchUnitName(names: string[], value: any): string {
+    const key = (value === null || value === undefined) ? '' : String(value).trim().toLowerCase();
+
+    if (key === '') {
+      return null;
+    }
+
+    return names.find(name => name.toLowerCase() === key) || null;
+  }
+
+  /**
+   * Đảm bảo tên đơn vị có mặt trong `filterUnits`, nếu không <mat-select> sẽ hiển thị
+   * trống vì giá trị vừa chọn không ứng với option nào.
+   *
+   * Khi danh sách sẵn có một tên chỉ khác hoa-thường/dấu ("viên" vs "Viên") thì THAY
+   * bằng tên chuẩn của CSDL Dược chứ không thêm dòng gần như trùng: cổng csdlduoc
+   * đọc thẳng chữ để so khớp nên tên sai chính tả sẽ làm phiếu bị từ chối.
+   */
+  private registerUnitName(name: string): string {
+    const index = this.filterUnits.findIndex(unit => unit.toLowerCase() === name.toLowerCase());
+
+    if (index !== -1 && this.filterUnits[index] === name) {
+      return name;
+    }
+
+    if (index === -1) {
+      this.filterUnits.push(name);
+    } else {
+      this.filterUnits[index] = name;
+    }
+
+    try {
+      localStorage.setItem(PRODUCT_UNITS_STORAGE_KEY, JSON.stringify(this.filterUnits));
+    } catch (e) {
+      console.log(e);
+    }
+
+    return name;
   }
 
   processFile(imageInput) {

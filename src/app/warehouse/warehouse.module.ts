@@ -7,6 +7,7 @@ import {RouterModule} from '@angular/router';
 import {Ng2SearchPipeModule} from 'ng2-search-filter';
 import {QuillModule} from 'ngx-quill';
 import {DemoMaterialModule} from '../demo-material-module';
+import { NationalPharmacyV2Module } from '../common/national-pharmacy-v2/national-pharmacy-v2.module';
 import {PerfectScrollbarModule} from 'ngx-perfect-scrollbar';
 import {WarehouseRoutes} from './warehouse.routing';
 import {WarehouseListComponent} from './warehouse-list/warehouse-list.component';
@@ -91,6 +92,7 @@ import { ViewIdCodeFormDialogComponent } from '../product/view-id-code-form-dial
     PerfectScrollbarModule,
     Ng2SearchPipeModule,
     DemoMaterialModule,
+    NationalPharmacyV2Module,
     InputSelectAllModule,
     DComonModule,
     NgxExtendedPdfViewerModule,

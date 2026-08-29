@@ -1,0 +1,29 @@
+<div class="np-v2-status">
+  <span class="np-v2-label">{{ label }}</span>
+
+  <label class="label np-v2-chip" [ngClass]="chipClass">
+    <mat-icon class="np-v2-chip-icon">{{ chipIcon }}</mat-icon>
+    {{ npV2Service.statusLabel(transaction?.status) }}
+  </label>
+
+  <span class="np-v2-meta" *ngIf="!compact && npV2Service.hasTransaction(transaction)">
+    <span class="np-v2-code" [matTooltip]="transaction.transaction_id">
+      Mã GD: {{ transaction.transaction_id }}
+    </span>
+    <ng-container *ngIf="timestamp"> · {{ timestamp * 1000 | date:'dd/MM/yyyy HH:mm' }}</ng-container>
+  </span>
+
+  <div class="np-v2-hint" *ngIf="npV2Service.isPending(transaction)">
+    CSDL Dược xử lý bất đồng bộ — bấm nút liên thông để tra lại kết quả.
+  </div>
+
+  <div class="np-v2-hint np-v2-hint-warn" *ngIf="npV2Service.isUncertain(transaction)">
+    Lượt gửi trước bị mất kết nối, chưa rõ CSDL Dược đã nhận hay chưa. Kiểm tra trên cổng
+    csdlduoc.com.vn trước khi gửi lại để tránh tạo phiếu trùng.
+  </div>
+
+  <div class="np-v2-error" *ngIf="transaction?.error_message">
+    <mat-icon>warning</mat-icon>
+    <span>{{ transaction.error_message }}</span>
+  </div>
+</div>

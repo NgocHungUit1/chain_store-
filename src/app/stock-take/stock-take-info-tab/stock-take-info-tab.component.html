@@ -41,6 +41,13 @@
           </div>
         </div>
 
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="100" class="product-info-field">
+            <app-national-pharmacy-v2-status
+              [transaction]="stockTake.nationalPharmacyV2"></app-national-pharmacy-v2-status>
+          </div>
+        </div>
+
       </div>
       <div fxFlex="30" class="product-info">
         <div fxLayout="row wrap">
@@ -165,7 +172,7 @@
         <button class="m-r-10" mat-raised-button color="accent" (click)="connectV2(stockTake)" [disabled]="npV2DialogOpen"
                 *ngIf="stockTake.balance_status == 'done'">
           <mat-icon>cloud_upload</mat-icon>
-          {{ npV2Service.hasTransaction(stockTake.nationalPharmacyV2) ? 'CSDL Dược Quốc gia: ' + npV2Service.statusLabel(stockTake.nationalPharmacyV2?.status) : 'Liên thông CSDL Dược Quốc gia' }}
+          {{ npV2Service.hasTransaction(stockTake.nationalPharmacyV2) ? 'Cập nhật liên thông CSDL Dược' : 'Liên thông CSDL Dược Quốc gia' }}
         </button>
 
       </div>
