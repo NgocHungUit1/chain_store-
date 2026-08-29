@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { QuillModule } from 'ngx-quill';
 import { DemoMaterialModule } from '../demo-material-module';
+import { NationalPharmacyV2Module } from '../common/national-pharmacy-v2/national-pharmacy-v2.module';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { ReturnsListComponent } from './returns-list/returns-list.component';
 import { ReturnsTabInfoComponent } from './returns-tab-info/returns-tab-info.component';
@@ -26,7 +27,8 @@ import { ReturnsTabInfoComponent } from './returns-tab-info/returns-tab-info.com
     DragulaModule.forRoot(),
     PerfectScrollbarModule,
     Ng2SearchPipeModule,
-    DemoMaterialModule
+    DemoMaterialModule,
+    NationalPharmacyV2Module,
   ]
 })
 export class ReturnsModule { }

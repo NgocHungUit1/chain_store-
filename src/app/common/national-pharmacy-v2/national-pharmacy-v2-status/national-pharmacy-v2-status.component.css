@@ -1,0 +1,71 @@
+.np-v2-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+}
+
+/* CSS của component là scoped nên không dùng lại được .product-field-label của
+   các tab cha — định nghĩa lại cho khớp: min-width 100px, inline-block */
+.np-v2-label {
+  min-width: 100px;
+  display: inline-block;
+}
+
+.np-v2-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+/* .label mặc định là chữ trắng, nền label-default lại sáng nên phải đổi màu chữ */
+.np-v2-chip.label-default {
+  color: #4c5667;
+}
+
+.np-v2-chip-icon {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  line-height: 14px;
+}
+
+.np-v2-meta {
+  color: #8c96a3;
+  font-size: 12px;
+}
+
+.np-v2-code {
+  cursor: help;
+}
+
+/* Hai khối dưới chiếm trọn hàng để không chen ngang chip trạng thái */
+.np-v2-hint,
+.np-v2-error {
+  flex: 1 0 100%;
+  font-size: 12px;
+}
+
+.np-v2-hint {
+  color: #8c96a3;
+}
+
+.np-v2-hint-warn {
+  color: #e6a23c;
+}
+
+.np-v2-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  color: #f5354b;
+}
+
+.np-v2-error mat-icon {
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
+  line-height: 15px;
+  flex-shrink: 0;
+}

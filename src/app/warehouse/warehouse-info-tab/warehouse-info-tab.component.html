@@ -26,6 +26,12 @@
             *ngIf="model.created_user">{{model.created_user.username}}</span>
           </div>
         </div>
+        <div fxLayout="row wrap" class="product-info-row">
+          <div fxFlex="100" class="product-info-field">
+            <app-national-pharmacy-v2-status
+              [transaction]="model.nationalPharmacyV2"></app-national-pharmacy-v2-status>
+          </div>
+        </div>
 
       </div>
       <div fxFlex="30" class="product-info">
@@ -237,7 +243,7 @@
                 [disabled]="checkPermissionDisable('Warehouse.Connect-V2') || npV2DialogOpen"
                 *ngIf="model.status === 10">
           <mat-icon>cloud_upload</mat-icon>
-          {{ npV2Service.hasTransaction(model.nationalPharmacyV2) ? 'CSDL Dược Quốc gia: ' + npV2Service.statusLabel(model.nationalPharmacyV2?.status) : 'Liên thông CSDL Dược Quốc gia' }}
+          {{ npV2Service.hasTransaction(model.nationalPharmacyV2) ? 'Cập nhật liên thông CSDL Dược' : 'Liên thông CSDL Dược Quốc gia' }}
         </button>
         <!--<button class="m-r-10" mat-raised-button color="accent" >-->
         <!--<mat-icon>file_copy</mat-icon>-->

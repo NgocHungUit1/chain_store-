@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { QuillModule } from 'ngx-quill';
 import { DemoMaterialModule } from '../demo-material-module';
+import { NationalPharmacyV2Module } from '../common/national-pharmacy-v2/national-pharmacy-v2.module';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { InvoiceRoutes } from './invoice.routing';
 import { InvoiceListComponent } from './invoice-list/invoice-list.component';
@@ -36,7 +37,8 @@ import { InvoiceTabReturnsComponent } from './invoice-tab-returns/invoice-tab-re
     DragulaModule.forRoot(),
     PerfectScrollbarModule,
     Ng2SearchPipeModule,
-    DemoMaterialModule
+    DemoMaterialModule,
+    NationalPharmacyV2Module,
   ]
 })
 export class InvoiceModule { }

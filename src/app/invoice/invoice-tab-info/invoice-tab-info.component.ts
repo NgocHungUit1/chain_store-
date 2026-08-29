@@ -108,8 +108,12 @@ export class InvoiceTabInfoComponent implements OnChanges {
 
   loadData() {
     this.loading = true;
+    // Phải xin cả nationalPharmacyV2: dòng dưới ghi đè toàn bộ this.invoice, thiếu
+    // field này là mất trạng thái liên thông mà danh sách đã nạp -> giao diện quay về
+    // "Chưa liên thông" dù hoá đơn đã đẩy lên CSDL Dược.
     this.invoiceService.getInfo(this.invoice.id,
-      'amount,detail,priceBook,paymentInfo,expensesOrders,branch,payment,customer,store,user,returns,today,time,createdFormat,total_payment,isFullyReturned'
+      'amount,detail,priceBook,paymentInfo,expensesOrders,branch,payment,customer,store,user,returns,today,time,'
+      + 'createdFormat,total_payment,isFullyReturned,' + NationalPharmacyV2Service.EXPAND_FIELD
     ).subscribe(res => {
       const invoiceData = res;
       this.invoice = res;
