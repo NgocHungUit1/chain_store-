@@ -27,6 +27,7 @@ import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/pop
 import {StoreService} from '../../store/store.service';
 import {Store} from '../../store/store.model';
 import {Location} from '@angular/common';
+import {PrescriptionDetailsDialogComponent} from '../prescription-details-dialog/prescription-details-dialog.component';
 
 @Component({
   selector: 'app-invoice-list',
@@ -79,10 +80,12 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
   einvoiceFilter: FormGroup;
   expensesFilter: FormGroup;
   paymentMethodFilter: FormGroup;
+  prescriptionTypeFilter: FormGroup;
 
   currentDateFilter: DateFilter;
 
   searchInvoiceForm = new FormControl();
+  patientNameSearchForm = new FormControl();
 
   store: Store = null;
 
@@ -102,6 +105,7 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     'created_at': 'Thời gian',
     'returns': 'Mã trả hàng',
     'customer': 'Khách hàng',
+    'patient_name': 'Tên bệnh nhân',
     'national_pharmacy_no': 'Phiếu DQG',
     'total_price': 'Tổng tiền hàng',
     'discount': 'Giảm giá',
@@ -113,17 +117,17 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
   };
 
   displayedColumns: string[] = ['select',
-    '#', 'invoice_no', 'created_at', 'returns', 'customer', 'national_pharmacy_no',
+    '#', 'invoice_no', 'created_at', 'returns', 'customer', 'patient_name', 'national_pharmacy_no',
     'total_price', 'discount', 'expenses_order_price', 'payment', 'payment_method', 'einvoice_no', 'einvoice_status'
   ];
   columnsToDisplay: string[] = ['select',
-    '#', 'invoice_no', 'created_at', 'returns', 'customer', 'national_pharmacy_no',
+    '#', 'invoice_no', 'created_at', 'returns', 'customer', 'patient_name', 'national_pharmacy_no',
     'total_price', 'discount', 'expenses_order_price', 'payment', 'payment_method', 'einvoice_no', 'einvoice_status'
   ];
 
   // for second column
   second_columnsToDisplay: string[] = ['second_select',
-    'second_#', 'second_invoice_no', 'second_created_at', 'second_returns', 'second_customer',
+    'second_#', 'second_invoice_no', 'second_created_at', 'second_returns', 'second_customer', 'second_patient_name',
     'second_national_pharmacy_no', 'second_total_price', 'second_discount', 'second_expenses_order_price', 'second_payment',
     'second_payment_method', 'second_einvoice_no', 'second_einvoice_status'
   ];
@@ -196,6 +200,11 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
   paymentMethodFilterList = [
     { value: 'cash', name: 'Tiền mặt' },
     { value: 'bank_transfer', name: 'Chuyển khoản' },
+  ];
+
+  prescriptionTypeFilterList = [
+    { value: '1', name: 'Có đơn thuốc' },
+    { value: '0', name: 'Không có đơn thuốc (Bán lẻ)' },
   ];
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -468,6 +477,10 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     return (customer === undefined || customer === null) ? undefined : customer.name;
   }
 
+  displayPatient(invoice: Invoice): string {
+    return invoice?.patient_name || '';
+  }
+
   buildFilterFromParams(): InvoiceFilter {
     function write<K extends keyof InvoiceFilter>(arg: InvoiceFilter, key: K, value: InvoiceFilter[K]): void {
       arg[key] = value;
@@ -484,7 +497,10 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'customer,payment,store,user,returns,today,time,createdFormat,prescription,nationalPharmacyV2';
+    filter.expand = 'customer,payment,store,user,returns,today,time,createdFormat,prescription,nationalPharmacyV2,patient_name';
+    const prescriptionTypes = this.prescriptionTypeFilter?.controls['status']?.value || [];
+    filter.has_prescription = prescriptionTypes.length === 1 ? prescriptionTypes[0] : null;
+    filter.patient_name = this.patientNameSearchForm?.value || '';
     filter.date_from = objDateFilter.date_from;
     filter.date_to = objDateFilter.date_to;
     filter.order_status = this.orderStatusFilter.controls['status'].value.join(',');
@@ -533,6 +549,12 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     this.paymentMethodFilter = this.fb.group({
       status: new FormControl(['cash', 'bank_transfer']),
     });
+    this.prescriptionTypeFilter = this.fb.group({
+      status: [this.route.snapshot.queryParams['InvoiceSearch[has_prescription]']
+        ? [this.route.snapshot.queryParams['InvoiceSearch[has_prescription]']]
+        : ['1', '0']],
+    });
+    this.patientNameSearchForm.setValue(this.route.snapshot.queryParams['InvoiceSearch[patient_name]'] || '', {emitEvent: false});
   }
 
   /**
@@ -546,6 +568,13 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
   checkBoxFilterChange($event: any, value: any, field: string, form: FormGroup) {
     this.handleFilterCheckbox(form, field, value);
     this.apiFilter = this.buildFilterFromParams();
+    this.loadData();
+  }
+
+  prescriptionTypeFilterChange(value: string): void {
+    this.handleFilterCheckbox(this.prescriptionTypeFilter, 'status', value);
+    this.apiFilter = this.buildFilterFromParams();
+    this.apiFilter.page = 1;
     this.loadData();
   }
   initDateFilter() {
@@ -662,6 +691,12 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
       if (res !== '' && res !== null) {
         this.apiFilter.invoice_no = res;
       }
+      this.loadData();
+    });
+
+    this.patientNameSearchForm.valueChanges.pipe(debounceTime(800)).subscribe(() => {
+      this.apiFilter = this.buildFilterFromParams();
+      this.apiFilter.page = 1;
       this.loadData();
     });
 
@@ -848,7 +883,26 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
 
   filterChange() {
     this.apiFilter = this.buildFilterFromParams();
+    this.apiFilter.page = 1;
     this.loadData();
+  }
+
+  openPrescriptionDetails(element: Invoice): void {
+    if (!element?.prescription_id) {
+      this.notifySer.notify('info', 'Hóa đơn này không có đơn thuốc.');
+      return;
+    }
+
+    this.dialog.open(PrescriptionDetailsDialogComponent, {
+      width: '760px',
+      maxWidth: '95vw',
+      autoFocus: false,
+      data: {
+        invoiceId: element.id,
+        prescriptionId: element.prescription_id,
+        patientName: element.patient_name || element.prescription?.name,
+      },
+    });
   }
 
   toggleDropdown() {

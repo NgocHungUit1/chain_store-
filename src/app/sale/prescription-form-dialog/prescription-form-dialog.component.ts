@@ -41,6 +41,7 @@ export class PrescriptionFormDialogComponent implements OnInit {
   filteredProducts: Observable<any[]>;
 
   loading = false;
+  ageDisplay = '';
 
   local_data: any;
   prescription_id: string;
@@ -108,6 +109,7 @@ export class PrescriptionFormDialogComponent implements OnInit {
           Validators.maxLength(100)
         ])
       ],
+      dob: [null],
       phone: [null],
       address: [null, Validators.compose([
         Validators.maxLength(200)
@@ -192,6 +194,7 @@ export class PrescriptionFormDialogComponent implements OnInit {
       this.form.patchValue({
         no: data['no'],
         name: data['name'],
+        dob: data['dob'] ? moment(data['dob']).toDate() : null,
         phone: data['phone'],
         email: data['email'],
         address: data['address'],
@@ -203,7 +206,7 @@ export class PrescriptionFormDialogComponent implements OnInit {
         doctor_id: data['doctor_id'],
         person: data['person'],
         weight: data['weight'],
-        age: data['age'],
+        age: data['age_display'] !== undefined ? data['age_display'] : data['age'],
         medical_facility_id: data['medical_facility_id'],
         medical_facility_phone_number: data['medicalFacility'] ? data['medicalFacility']['phone_number'] : null,
         prescription_type: data['prescription_type'],
@@ -211,6 +214,7 @@ export class PrescriptionFormDialogComponent implements OnInit {
         doctor_note: data['doctor_note'],
         doctor_advice: data['doctor_advice'],
       });
+      this.ageDisplay = data['age_display'] !== undefined ? data['age_display'] : data['age'] || '';
 
       // API trả null khi đơn thuốc không có thuốc quốc gia. Gán thẳng null vào đây
       // làm template đọc .length của null -> TypeError, dialog dựng hỏng giữa chừng
@@ -261,6 +265,27 @@ export class PrescriptionFormDialogComponent implements OnInit {
 
       this.reloadImageButtons();
     });
+  }
+
+  onDobChange(value: Date): void {
+    const birthDate = moment(value);
+    const today = moment();
+
+    if (!value || !birthDate.isValid() || birthDate.isAfter(today, 'day')) {
+      this.ageDisplay = '';
+      return;
+    }
+
+    const years = today.diff(birthDate, 'years');
+    if (years > 0) {
+      this.ageDisplay = `${years} tuổi`;
+      return;
+    }
+
+    const months = today.diff(birthDate, 'months');
+    this.ageDisplay = months > 0
+      ? `${months} tháng tuổi`
+      : `${today.diff(birthDate, 'days')} ngày tuổi`;
   }
 
   processFile(imageInput) {
@@ -336,7 +361,7 @@ export class PrescriptionFormDialogComponent implements OnInit {
       const data = this.form.getRawValue();
 
       // Xử lý ngày tháng nếu có
-      if (data['dob'] !== null && data['dob'] !== undefined) {
+      if (data['dob']) {
         const momentDate = new Date(data['dob']);
         const formattedDate = moment(momentDate).format('YYYY-MM-DD');
         data['dob'] = formattedDate;

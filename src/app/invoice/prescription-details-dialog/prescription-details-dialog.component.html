@@ -1,0 +1,60 @@
+<h2 mat-dialog-title>Thông tin đơn thuốc</h2>
+
+<mat-dialog-content>
+  <div *ngIf="isLoading" class="dialog-state">
+    <mat-spinner diameter="36"></mat-spinner>
+    <span>Đang tải thông tin đơn thuốc...</span>
+  </div>
+
+  <div *ngIf="!isLoading && errorMessage" class="dialog-state error-state">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage && prescription" class="prescription-details">
+    <div class="detail-grid">
+      <div><strong>Bệnh nhân</strong><span>{{ display(prescription.name || data.patientName) }}</span></div>
+      <div><strong>Mã đơn thuốc</strong><span>{{ display(prescription.no) }}</span></div>
+      <div><strong>Bác sĩ kê đơn</strong><span>{{ display(prescription.doctor?.doctor_name ) }}</span></div>
+      <div><strong>Cơ sở KCB</strong><span>{{ display(prescription.medicalFacility?.name || prescription.medical_facility) }}</span></div>
+      <div><strong>Chẩn đoán</strong><span>{{ display(prescription.note || prescription.doctor_note) }}</span></div>
+      <div><strong>Ngày kê đơn</strong>
+        <span *ngIf="prescription.prescription_date; else noPrescriptionDate">
+          {{ prescription.prescription_date | date:'dd/MM/yyyy' }}
+        </span>
+        <ng-template #noPrescriptionDate>
+          <span>Chưa có thông tin</span>
+        </ng-template>
+      </div>
+    </div>
+
+    <h4>Danh sách biệt dược/hoạt chất</h4>
+    <table *ngIf="invoice?.detail?.length; else noProducts" class="product-table">
+      <thead>
+        <tr>
+          <th>STT</th>
+          <th>Biệt dược</th>
+          <th>Hoạt chất</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let detail of invoice.detail; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ display(productName(detail)) }}</td>
+          <td>{{ display(activeSubstance(detail)) }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #noProducts>
+      <p>Chưa có thông tin thuốc hoặc hoạt chất.</p>
+    </ng-template>
+
+    <div class="advice" *ngIf="prescription.doctor_advice">
+      <strong>Hướng dẫn dùng thuốc</strong>
+      <p>{{ prescription.doctor_advice }}</p>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="close()">Đóng</button>
+</mat-dialog-actions>

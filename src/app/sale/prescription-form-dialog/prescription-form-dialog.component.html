@@ -6,11 +6,11 @@
       <div fxFlex="49">
         <div fxLayout="row wrap">
           <div fxFlex="auto">
-              
-                <!-- 
+
+                <!--
                 (focus)="focusInputSearch($event)"
                 (keydown.enter)="onkeydown($event)"
-                [placeholder]="placeholderSearch" 
+                [placeholder]="placeholderSearch"
                 -->
                 <mat-form-field>
                   <input
@@ -56,7 +56,7 @@
                   </mat-autocomplete>
                 </mat-form-field>
           </div>
-          
+
           <!-- <div fxFlex="100">
             <mat-form-field>
               <input matInput tabindex="1" formControlName="no" required placeholder="Mã đơn thuốc">
@@ -165,13 +165,21 @@
             </mat-form-field>
           </div>
 
-          <div fxFlex="100">
+          <div fxFlex="49">
             <mat-form-field>
-              <input matInput tabindex="2" formControlName="age" placeholder = "Tuổi">
+              <input matInput tabindex="2" [matDatepicker]="dobPicker" formControlName="dob" placeholder="Ngày/tháng/năm sinh" (dateChange)="onDobChange($event.value)">
+              <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
+              <mat-datepicker #dobPicker></mat-datepicker>
             </mat-form-field>
           </div>
 
-          <div fxFlex="100" class="form-radio-field">
+          <div fxFlex="49" class="ml-2">
+            <mat-form-field>
+              <input matInput tabindex="2" [value]="ageDisplay" placeholder="Tuổi" readonly>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100" class="form-radio-field" style="margin-bottom: 20px">
             <mat-radio-group tabindex="10" formControlName="sex" placeholder = "Giới tính">
               <mat-radio-button *ngFor="let sexItem of sexItems" [value]="sexItem.id">
                 {{sexItem.title}}
@@ -181,37 +189,37 @@
 
           <div fxFlex="100">
             <mat-form-field>
+              <input matInput tabindex="2" formControlName="phone" placeholder="SĐT liên hệ">
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <input matInput tabindex="2" formControlName="address" placeholder="Địa chỉ">
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <input matInput tabindex="2" formControlName="cmnd" placeholder="Số CCCD/CMND">
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <input matInput tabindex="2" formControlName="bhyt" placeholder="Mã thẻ BHYT">
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
+              <input matInput tabindex="2" formControlName="person" placeholder="Người giám hộ">
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="100">
+            <mat-form-field>
               <input matInput tabindex="2" formControlName="weight" placeholder="Cân nặng" type="text">
-            </mat-form-field>
-          </div>
-
-          <div fxFlex="100">
-            <mat-form-field>
-              <input matInput tabindex="2" formControlName="cmnd" placeholder = "CMND/Căn cước">
-            </mat-form-field>
-          </div>
-
-          <div fxFlex="100">
-            <mat-form-field>
-              <input matInput tabindex="2" formControlName="bhyt" placeholder = "Thẻ BHYT">
-            </mat-form-field>
-          </div>
-
-          <div fxFlex="100">
-            <mat-form-field>
-              <input matInput tabindex="11" formControlName="address" placeholder = "Địa chỉ">
-            </mat-form-field>
-          </div>
-
-          <div fxFlex="100">
-            <mat-form-field>
-              <input matInput tabindex="11" formControlName="person" placeholder = "Người giám hộ">
-            </mat-form-field>
-          </div>
-
-          <div fxFlex="100">
-            <mat-form-field>
-              <input matInput tabindex="11" formControlName="phone" placeholder = "Điện thoại liên hệ">
             </mat-form-field>
           </div>
 

@@ -33,6 +33,23 @@
           </form>
         </mat-expansion-panel>
 
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Phân loại đơn thuốc
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class="custom-filter-container__checkbox-container" aria-label="Phân loại đơn thuốc">
+            <mat-checkbox *ngFor="let item of prescriptionTypeFilterList"
+                          color="primary"
+                          [checked]="prescriptionTypeFilter.value['status'].includes(item.value)"
+                          (change)="prescriptionTypeFilterChange(item.value)">
+              {{ item.name }}
+            </mat-checkbox>
+          </div>
+        </mat-expansion-panel>
+
 
         <mat-expansion-panel [expanded]="true">
           <mat-expansion-panel-header>
@@ -253,6 +270,19 @@
 
           </form>
 
+          <mat-form-field>
+            <mat-label>Tên bệnh nhân</mat-label>
+            <input matInput [formControl]="patientNameSearchForm" placeholder="Tìm tên bệnh nhân" autocomplete="off">
+            <button mat-icon-button matPrefix aria-label="Tìm theo tên bệnh nhân">
+              <mat-icon>search</mat-icon>
+            </button>
+            <button mat-icon-button matSuffix
+                    (click)="patientNameSearchForm.setValue('')"
+                    *ngIf="patientNameSearchForm.value">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-form-field>
+
         </div>
       </div>
 
@@ -322,7 +352,14 @@
 
               <ng-container matColumnDef="invoice_no">
                 <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['invoice_no'] }}</th>
-                <td mat-cell *matCellDef="let element"> {{ element.invoice_no }}</td>
+                <td mat-cell *matCellDef="let element">
+                  <button *ngIf="element.prescription_id; else plainInvoice" mat-button class="link-button"
+                          (click)="openPrescriptionDetails(element); $event.stopPropagation()"
+                          [attr.aria-label]="'Xem đơn thuốc của hóa đơn ' + element.invoice_no">
+                    {{ element.invoice_no }}
+                  </button>
+                  <ng-template #plainInvoice>{{ element.invoice_no }}</ng-template>
+                </td>
               </ng-container>
 
               <ng-container matColumnDef="national_pharmacy_no">
@@ -347,13 +384,19 @@
               <ng-container matColumnDef="customer">
                 <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['customer'] }}</th>
                 <td mat-cell *matCellDef="let element">
-                  <span *ngIf="element.customer !== null; else noCustomer">{{ element.customer?.name }}</span>
-                  <ng-template #noCustomer>
-                    <span *ngIf="element.prescription?.name; else khachle">{{ element.prescription.name }}</span>
-                    <ng-template #khachle>
-                      <span>Khách lẻ</span>
-                    </ng-template>
-                  </ng-template>
+                  <span>{{ element.customer?.name || 'Khách lẻ' }}</span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="patient_name">
+                <th mat-header-cell *matHeaderCellDef>{{ columnsHeader['patient_name'] }}</th>
+                <td mat-cell *matCellDef="let element">
+                  <button *ngIf="displayPatient(element) && element.prescription_id; else plainPatient" mat-button
+                          class="link-button" (click)="openPrescriptionDetails(element); $event.stopPropagation()"
+                          aria-label="Xem đơn thuốc theo tên bệnh nhân">
+                    {{ displayPatient(element) }}
+                  </button>
+                  <ng-template #plainPatient>{{ displayPatient(element) }}</ng-template>
                 </td>
               </ng-container>
 
@@ -455,6 +498,10 @@
               </ng-container>
 
               <ng-container matColumnDef="second_customer">
+                <th mat-header-cell *matHeaderCellDef></th>
+              </ng-container>
+
+              <ng-container matColumnDef="second_patient_name">
                 <th mat-header-cell *matHeaderCellDef></th>
               </ng-container>
 

@@ -54,6 +54,8 @@ export class Invoice {
   expensesOrders: ExpensesOrder[];
   expenses_order_price: number;
   prescription_id: string;
+  patient_name: string;
+  prescription?: any;
   use_einvoice: number;
   isFullyReturned?: boolean;
   /** Lần liên thông CSDL Dược quốc gia v1.1 gần nhất (?expand=nationalPharmacyV2) */
@@ -86,6 +88,8 @@ export class InvoiceFilter extends ApiFilterBase {
   keyword = '';
   product_type = '';
   payment_method = '';
+  has_prescription: string = null;
+  patient_name = '';
 
   getModelSearch() {
     return 'InvoiceSearch';

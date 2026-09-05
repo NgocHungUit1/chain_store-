@@ -106,6 +106,11 @@ export class InvoiceService {
     return this.http.get<Invoice>(url);
   }
 
+  public getPrescriptionInvoiceDetail(id: string): Observable<Invoice> {
+    const expand = 'amount,detail,priceBook,paymentInfo,expensesOrders,branch,payment,customer,store,user,returns,today,time,createdFormat,total_payment,isFullyReturned';
+    return this.getInfo(id, expand);
+  }
+
   update(id: string, pos: any) {
     const url = environment.apiUrl + '/invoice/' + id;
     return this.http.put(url, pos);

@@ -3,6 +3,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { ReturnsFilter, Returns } from './returns.model';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -46,6 +47,10 @@ export class ReturnsService {
     return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
   }
 
+  // hidden now
+  // getStatisticsSource(filter?: ReturnsFilter): Observable<Returns[]> {
+  //   return this.getList(filter).pipe(map(res => res.body || []));
+  // }
 
   public getReturns(id: string, expand: string = ''): Observable<Returns> {
     const url = environment.apiUrl + '/returns/' + id + '?expand=' + expand;
@@ -77,8 +82,8 @@ export class ReturnsService {
     return this.http.post(url, { invoice_id: invoice_id, price_book_id: price_book_id });
   }
 
-  
-  
+
+
 }
 
 

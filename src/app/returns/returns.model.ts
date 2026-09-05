@@ -20,6 +20,15 @@ export class ReturnsDetail {
   price: number;
   discount: number;
   discount_type: string;
+  base_unit: string;
+  product: {
+    id?: string;
+    product_no?: string;
+    product_name?: string;
+  };
+  productUnit: {
+    name?: string;
+  };
 }
 
 export class Returns {
@@ -28,6 +37,7 @@ export class Returns {
   /** API trả về field `return_no`; `returns_no` chỉ dùng cho filter */
   return_no: string;
   returns_no: string;
+  customer_id: string;
   customer: Customer;
   total_price: number;
   total_payment: number;
@@ -39,6 +49,7 @@ export class Returns {
   store: Store;
   payment: object[];
   detail: ReturnsDetail[];
+  detailInfo: ReturnsDetail[];
   order_status: string;
   user: User;
   created_by: string;
@@ -62,6 +73,7 @@ export class ReturnsFilter extends ApiFilterBase {
   sort = '';
   date_from = '';
   date_to = '';
+  medicine_code = '';
   national_pharmacy_no = '';
   keyword = '';
 
@@ -71,3 +83,10 @@ export class ReturnsFilter extends ApiFilterBase {
 
 }
 
+
+export interface ReturnedItemStatistics {
+  medicineCode: string;
+  personCount: number;
+  pillCount: number;
+  totalAmount: number;
+}

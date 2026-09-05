@@ -50,6 +50,10 @@ export class PrescriptionService {
     return this.http.get<Prescription>(url);
   }
 
+  getInvoicePrescriptionDetail(id: string) {
+    return this.getDetail(id, 'medicalFacility,nationalProducts');
+  }
+
   update(id: string, pos: any) {
     const url = environment.apiUrl + '/prescription/' + id;
     return this.http.put(url, pos);
