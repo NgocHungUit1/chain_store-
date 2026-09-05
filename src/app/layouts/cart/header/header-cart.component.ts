@@ -171,6 +171,10 @@ export class AppHeaderCartComponent implements OnInit {
 
   }
 
+  quickPrintLastInvoice() {
+    this.shareDataSer.requestQuickPrintLastInvoice();
+  }
+
   onChangeSlideToggleTuDongInHoaDon() {
     this.autoPrint = !this.autoPrint;
     this.optionStore_auto_print.value = this.autoPrint === false ? 'no' : 'yes';

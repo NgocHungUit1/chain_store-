@@ -546,6 +546,19 @@ export class OrderService {
     return this.http.post<ResInvoicePrint>(url, {invoice_id: invoice_id});
   }
 
+  getLatestSaleInvoiceForQuickPrint() {
+    const expand = 'customer,payment,store,user,returns,today,time,createdFormat,prescription,nationalPharmacyV2,patient_name';
+    const query = [
+      'page=1',
+      'pageSize=1',
+      'per-page=1',
+      'expand=' + expand,
+    ];
+    const url = environment.apiUrl + '/invoice?' + query.join('&');
+    return this.http.get<any[]>(url);
+  }
+
+
   /**
    * API get data to print returns
    * @param returns_id
