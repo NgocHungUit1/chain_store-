@@ -455,6 +455,13 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
       }
     }
 
+    // Không có khoảng ngày = đang mở đúng một phiếu theo mã, cố ý bỏ giới hạn thời
+    // gian. Đánh dấu 'all' để lần dựng lại component còn biết mà giữ nguyên.
+    if (!this.apiFilter.date_from && !this.apiFilter.date_to) {
+      thamSo['timeType'] = 'all';
+      return thamSo;
+    }
+
     const loai = this.timeFilter?.controls['typeTime']?.value;
     if (loai) {
       thamSo['timeType'] = loai;
@@ -481,8 +488,18 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     // quay lại là mất khoảng thời gian đã chọn.
     const tuUrl = this.route.snapshot.queryParams['WarehouseSearch[date_from]'];
     const denUrl = this.route.snapshot.queryParams['WarehouseSearch[date_to]'];
+    const loaiThoiGian = this.route.snapshot.queryParams['timeType'];
 
-    if (tuUrl && denUrl) {
+    if (loaiThoiGian === 'all') {
+      // Đang mở đúng một phiếu theo mã (bấm từ Thẻ kho): cố ý KHÔNG giới hạn thời
+      // gian, nếu không thì phiếu cũ hơn 3 tháng sẽ không hiện ra.
+      //
+      // Phải đánh dấu tường minh trên URL vì ghiBoLocLenUrl() điều hướng từ
+      // 'warehouse/code/:code' sang 'warehouse', Angular huỷ rồi dựng lại component,
+      // làm mất đoạn xoá ràng buộc ngày mà loadData() vừa thực hiện.
+      obj.date_from = '';
+      obj.date_to = '';
+    } else if (tuUrl && denUrl) {
       obj.date_from = tuUrl;
       obj.date_to = denUrl;
       this.khoiPhucThoiGianTuUrl = (tuUrl !== macDinhTu || denUrl !== macDinhDen);
@@ -503,9 +520,13 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
       this.khoiPhucThoiGianTuUrl = (loaiUrl === 'choose');
     }
 
-    const date_from = new Date(obj.date_from);
-    const date_to = new Date(obj.date_to);
-    this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+    // Không giới hạn thời gian thì để nguyên nhãn mặc định; dựng Date từ chuỗi rỗng
+    // sẽ ra "NaN/NaN/NaN" trên giao diện.
+    if (obj.date_from && obj.date_to) {
+      const date_from = new Date(obj.date_from);
+      const date_to = new Date(obj.date_to);
+      this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+    }
 
     this.currentDateFilter = obj;
     this.service.setDateFilter(obj);
