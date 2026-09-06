@@ -171,6 +171,10 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
 
   codeSearch = null;
 
+  // Khoảng thời gian trên URL khác khoảng mặc định -> người dùng đã tự chọn,
+  // cần bật lại radio "tự chọn" sau khi buildFrom() dựng form.
+  khoiPhucThoiGianTuUrl = false;
+
   filteredProducts: Observable<Product[]>;
   filteredCustomers: Observable<Customer[]>;
 
@@ -502,6 +506,70 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     return filter;
   }
 
+  /**
+   * Đọc lại một bộ lọc nhiều lựa chọn từ URL.
+   *
+   * buildFilterFromParams() lấy giá trị các nhóm checkbox từ chính form chứ không
+   * từ URL, nên nếu form luôn dựng bằng giá trị mặc định thì mọi lựa chọn của người
+   * dùng biến mất khi quay lại màn hình. Hàm này lấy lại từ URL nếu có.
+   *
+   * Lưu ý: toFilterString() bỏ qua giá trị rỗng, nên trường hợp người dùng bỏ chọn
+   * hết thì tham số không xuất hiện trên URL và ta trả về mặc định.
+   */
+  private locNhieuLuaChonTuUrl(thamSo: string, macDinh: string[]): string[] {
+    const giaTri = this.route.snapshot.queryParams['InvoiceSearch[' + thamSo + ']'];
+    if (giaTri === undefined || giaTri === null || giaTri === '') {
+      return macDinh;
+    }
+    return String(giaTri).split(',');
+  }
+
+  /**
+   * Đưa bộ lọc hiện tại lên thanh địa chỉ để quay lại còn khôi phục được.
+   *
+   * PHẢI dùng router.navigate, KHÔNG dùng location.go.
+   *
+   * location.go() chỉ gọi history.pushState và gắn lại đúng navigationId của lần
+   * điều hướng hiện tại. Router vì thế không biết URL đã đổi: mọi lần đổi bộ lọc
+   * đều mang chung một navigationId, mà URL Router nhớ cho id đó là URL gốc KHÔNG
+   * có tham số lọc. Nên khi bấm Back, Router khôi phục theo id -> ra URL gốc, sạch
+   * bộ lọc. Đó là lý do "trên thanh địa chỉ có đủ tham số mà back lại vẫn mất".
+   *
+   * router.navigate tạo một lần điều hướng thật, Router nhớ đúng URL kèm tham số,
+   * nên Back khôi phục đúng. replaceUrl để không đẩy thêm một mục lịch sử cho mỗi
+   * lần gõ phím / tick chọn.
+   */
+  private ghiBoLocLenUrl(): void {
+    this.router.navigate(['/transaction/invoice'], {
+      queryParams: this.thamSoLocChoUrl(),
+      replaceUrl: true,
+    });
+  }
+
+  /** Chuyển chuỗi lọc + hai tham số thời gian thành object cho router.navigate. */
+  private thamSoLocChoUrl(): { [key: string]: string } {
+    const thamSo: { [key: string]: string } = {};
+
+    for (const cap of this.apiFilter.toFilterString().split('&')) {
+      if (!cap) {
+        continue;
+      }
+      const viTri = cap.indexOf('=');
+      if (viTri > 0) {
+        thamSo[cap.substring(0, viTri)] = cap.substring(viTri + 1);
+      }
+    }
+
+    const loai = this.timeFilter?.controls['typeTime']?.value;
+    if (loai) {
+      thamSo['timeType'] = loai;
+    }
+    if (this.titleTimeDefault) {
+      thamSo['timeTitle'] = this.titleTimeDefault;
+    }
+    return thamSo;
+  }
+
   buildFrom() {
     this.timeFilter = this.fb.group({
       typeTime: [
@@ -510,12 +578,12 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     });
     this.orderStatusFilter = this.fb.group({
       status: [
-        ['pending', 'done']
+        this.locNhieuLuaChonTuUrl('order_status', ['pending', 'done'])
       ],
     });
     this.orderNationalFilter = this.fb.group({
       status: [
-        ['yes', 'no']
+        this.locNhieuLuaChonTuUrl('order_national', ['yes', 'no'])
       ],
     });
     this.productFilter = this.fb.group({
@@ -525,13 +593,13 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
       customer: [null],
     });
     this.einvoiceFilter = this.fb.group({
-      status: new FormControl(['yes', 'no']),
+      status: new FormControl(this.locNhieuLuaChonTuUrl('einvoice', ['yes', 'no'])),
     });
     this.expensesFilter = this.fb.group({
-      status: new FormControl(['yes', 'no']),
+      status: new FormControl(this.locNhieuLuaChonTuUrl('expenses', ['yes', 'no'])),
     });
     this.paymentMethodFilter = this.fb.group({
-      status: new FormControl(['cash', 'bank_transfer']),
+      status: new FormControl(this.locNhieuLuaChonTuUrl('payment_method', ['cash', 'bank_transfer'])),
     });
   }
 
@@ -556,10 +624,36 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     const obj = new DateFilter();
     // tháng này
 
-    obj.date_to = moment().format("YYYY-MM-DD");
-    obj.date_from = moment().subtract(3, 'months').format("YYYY-MM-DD");
-    // obj.date_from = this.service.convertDateYYYYMMDD(first);
-    // obj.date_to = this.service.convertDateYYYYMMDD(today);
+    const macDinhTu = moment().subtract(3, 'months').format("YYYY-MM-DD");
+    const macDinhDen = moment().format("YYYY-MM-DD");
+
+    // Ưu tiên khoảng thời gian đang có sẵn trên URL (loadData() đã ghi ra bằng
+    // location.go). Trước đây hàm này luôn ghi đè về "3 tháng gần nhất", nên lọc
+    // xong bấm vào một hoá đơn rồi quay lại là mất khoảng thời gian đã chọn.
+    const tuUrl = this.route.snapshot.queryParams['InvoiceSearch[date_from]'];
+    const denUrl = this.route.snapshot.queryParams['InvoiceSearch[date_to]'];
+
+    if (tuUrl && denUrl) {
+      obj.date_from = tuUrl;
+      obj.date_to = denUrl;
+      // Trùng khoảng mặc định thì vẫn coi là "3 tháng trước" để radio hiển thị đúng ô đã bấm.
+      this.khoiPhucThoiGianTuUrl = (tuUrl !== macDinhTu || denUrl !== macDinhDen);
+    } else {
+      obj.date_from = macDinhTu;
+      obj.date_to = macDinhDen;
+    }
+
+    // Nhãn preset của ô radio trên. URL nói rõ thì tin URL, vì date_from/date_to
+    // không cho biết người dùng đã chọn "Hôm nay" hay "Tháng này".
+    const nhanUrl = this.route.snapshot.queryParams['timeTitle'];
+    if (nhanUrl) {
+      this.titleTimeDefault = nhanUrl;
+    }
+    // Ô radio đang đứng. Có timeType thì dùng thẳng, khỏi phải suy từ khoảng ngày.
+    const loaiUrl = this.route.snapshot.queryParams['timeType'];
+    if (loaiUrl === 'default' || loaiUrl === 'choose') {
+      this.khoiPhucThoiGianTuUrl = (loaiUrl === 'choose');
+    }
 
     const date_from = new Date(obj.date_from);
     const date_to = new Date(obj.date_to);
@@ -587,6 +681,14 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     }
     this.downloadLink = this.service.getDownloadLink(this.apiFilter);
     this.isLoadingResults = true;
+
+    // Ghi URL NGAY lúc phát request, không đợi response.
+    // Trước đây ghi trong callback: nhiều lần loadData() chồng nhau (đổi bộ lọc,
+    // subscribeDateFilter, ô tìm kiếm debounce...) thì response nào về sau cùng sẽ
+    // ghi đè URL - kể cả response của bộ lọc CŨ. Đó là lý do filter lúc giữ được
+    // lúc không, và thỉnh thoảng quay lại thấy khoảng thời gian của lần lọc trước.
+    this.ghiBoLocLenUrl();
+
     this.service.getList(this.apiFilter).subscribe(res => {
       const data = res.body;
       let stt = 0;
@@ -627,10 +729,6 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
 
       this.reloadFilter(res);
 
-      let url = '/transaction/invoice';
-      url += '?' + this.apiFilter.toFilterString();
-      this.location.go(url);
-
       this.isLoadingResults = false;
     });
 
@@ -646,6 +744,11 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
   ngOnInit(): void {
     this.initDateFilter();
     this.buildFrom();
+    // initDateFilter() chạy trước buildFrom() nên không tự đặt được radio;
+    // đặt ở đây để ô "tự chọn" sáng đúng khi khoảng thời gian lấy lại từ URL.
+    if (this.khoiPhucThoiGianTuUrl) {
+      this.timeFilter.patchValue({ typeTime: 'choose' });
+    }
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
 
@@ -781,6 +884,10 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
       this.timeFilter.patchValue({
         typeTime: 'default',
       });
+      // Hộp thoại gọi setDateFilter() TRƯỚC khi đóng, nên loadData() đã ghi URL xong
+      // từ lúc nhãn và radio còn là giá trị cũ. Ghi lại ở đây để URL mang đúng
+      // preset vừa chọn, nếu không thì quay lại luôn thấy "3 tháng trước".
+      this.ghiBoLocLenUrl();
     });
   }
 
@@ -801,6 +908,8 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
       const date_from = new Date(date.date_from);
       const date_to = new Date(date.date_to);
       this.titleTimeChoose = this.convertDate(date_from) + ' - ' + this.convertDate(date_to);
+      // Xem chú thích ở openTimeDefault(): URL đã được ghi trước khi radio đổi.
+      this.ghiBoLocLenUrl();
     });
   }
 
