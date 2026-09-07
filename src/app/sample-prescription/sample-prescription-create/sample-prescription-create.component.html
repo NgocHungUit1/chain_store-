@@ -92,6 +92,32 @@
                   <div style="height: 16px; color: red; font-size: 9px; white-space: normal; position: absolute; max-width: 100px; margin-top: -5px;margin-left: 8px">
                     {{ quantityErrors.get(data[i]) }}
                   </div>
+                  <div *ngIf="getDoseCount() > 1" style="font-size: 11px; color: #1976d2; margin-top: -2px;">
+                    &times;{{ getDoseCount() }} = <b>{{ getTotalAmount(data[i]) | number }}</b>
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="original_price">
+                <th mat-header-cell style="text-align:right" *matHeaderCellDef> {{ columnsHeader['original_price'] }}</th>
+                <td mat-cell style="text-align:right" *matCellDef="let element; let i = index">
+                  <span [style.color]="getOriginalPrice(data[i]) ? '#d32f2f' : '#9e9e9e'">
+                    {{ getOriginalPrice(data[i]) ? (getOriginalPrice(data[i]) | number) : 'chưa có' }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="sell_price">
+                <th mat-header-cell style="text-align:right" *matHeaderCellDef> {{ columnsHeader['sell_price'] }}</th>
+                <td mat-cell style="text-align:right" *matCellDef="let element; let i = index">
+                  {{ getSellPrice(data[i]) | number }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="sub_total">
+                <th mat-header-cell style="text-align:right" *matHeaderCellDef> {{ columnsHeader['sub_total'] }}</th>
+                <td mat-cell style="text-align:right" *matCellDef="let element; let i = index">
+                  <b>{{ getSubTotal(data[i]) | number }}</b>
                 </td>
               </ng-container>
 
@@ -160,10 +186,50 @@
 
             <div fxFlex="100">
               <mat-form-field>
+                <mat-label>Số liều (chỉ để xem thử)</mat-label>
+                <input matInput type="number" min="1" [ngModel]="doseCount"
+                       [ngModelOptions]="{standalone: true}"
+                       (ngModelChange)="onDoseCountChange($event)"
+                       autocomplete="off">
+                <button mat-icon-button matPrefix type="button" (click)="changeDoseCount(-1)"
+                        [disabled]="getDoseCount() <= 1">
+                  <mat-icon>indeterminate_check_box</mat-icon>
+                </button>
+                <button mat-icon-button matSuffix type="button" (click)="changeDoseCount(1)">
+                  <mat-icon>add_box</mat-icon>
+                </button>
+              </mat-form-field>
+              <div style="font-size: 11px; color: #757575; margin-top: -12px; margin-bottom: 8px;">
+                Đơn mẫu luôn được lưu theo <b>1 liều</b>. Số liều ở đây chỉ để xem thử tiền và vốn.
+              </div>
+            </div>
+
+            <div fxFlex="100">
+              <mat-form-field>
                 <mat-label>Giá tiền</mat-label>
                 <input matInput tabindex="4" formControlName="total_amount" (keyup)="inputFormatNumber($event)" required
                        value="{{ form.get('total_amount').value }}">
               </mat-form-field>
+            </div>
+
+            <div fxFlex="100" style="background:#f5f5f5; border-radius:4px; padding:10px 12px; margin-bottom:12px;">
+              <div style="display:flex; justify-content:space-between; font-size:12px; line-height:22px;">
+                <span>Tổng vốn<span *ngIf="getDoseCount() > 1"> ({{ getDoseCount() }} liều)</span></span>
+                <b style="color:#d32f2f">{{ getTotalCost() | number }}</b>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:12px; line-height:22px;">
+                <span>Tổng theo giá bán</span>
+                <b>{{ getTotalSell() | number }}</b>
+              </div>
+              <mat-divider style="margin:6px 0"></mat-divider>
+              <div style="display:flex; justify-content:space-between; font-size:12px; line-height:22px;">
+                <span>Giá trọn gói<span *ngIf="getDoseCount() > 1"> &times;{{ getDoseCount() }}</span></span>
+                <b>{{ getPackagePrice() * getDoseCount() | number }}</b>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:13px; line-height:24px;">
+                <span><b>Lãi</b></span>
+                <b [style.color]="getProfit() >= 0 ? '#388e3c' : '#d32f2f'">{{ getProfit() | number }}</b>
+              </div>
             </div>
 
             <div fxFlex="100">

@@ -64,7 +64,10 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
     'product_no': 'Mã hàng',
     'product_name': 'Tên hàng',
     'product_unit_id': 'Đơn vị',
-    'amount': 'Số lượng',
+    'amount': 'SL/liều',
+    'original_price': 'Giá vốn',
+    'sell_price': 'Giá bán',
+    'sub_total': 'Thành tiền',
     'note': 'Liều dùng',
   };
 
@@ -74,9 +77,18 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
     'product_name',
     'product_unit_id',
     'amount',
+    'original_price',
+    'sell_price',
+    'sub_total',
     'note',
     'actions'
   ];
+
+  /**
+   * Số liều để xem thử. Đơn mẫu LUÔN được lưu theo 1 liều, con số này chỉ dùng để
+   * xem bán N liều thì thu bao nhiêu, vốn bao nhiêu — không ảnh hưởng dữ liệu lưu xuống.
+   */
+  doseCount = 1;
 
   data: SamplePrescriptionItem[] = [];
   productDataSource = new MatTableDataSource<SamplePrescriptionItem>([]);
@@ -289,6 +301,81 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
     const item = this.data[index];
     this.invalidQuantityItems.delete(item);
     this.quantityErrors.delete(item);
+  }
+
+  /**
+   * Đơn vị tính đang được chọn ở dòng này, để lấy đúng giá vốn / giá bán.
+   */
+  getSelectedUnit(item): any {
+    if (!item || !item.productUnits || !item.productUnits.length) { return null; }
+    const found = item.productUnits.find(u => u.id === item.product_unit_id);
+    return found ? found : item.productUnits[0];
+  }
+
+  /** Giá vốn theo đơn vị đang chọn */
+  getOriginalPrice(item): number {
+    const unit = this.getSelectedUnit(item);
+    return unit ? Number(unit.original_price) || 0 : 0;
+  }
+
+  /** Giá bán theo đơn vị đang chọn */
+  getSellPrice(item): number {
+    const unit = this.getSelectedUnit(item);
+    return unit ? Number(unit.sell_price) || 0 : 0;
+  }
+
+  /** Số lượng của một liều, luôn là con số được lưu xuống */
+  getAmountPerDose(item): number {
+    const n = Number(item && item.amount);
+    return isNaN(n) || n <= 0 ? 0 : n;
+  }
+
+  /** Tổng số lượng thực bán = số lượng 1 liều nhân số liều đang xem */
+  getTotalAmount(item): number {
+    return this.getAmountPerDose(item) * this.getDoseCount();
+  }
+
+  /** Thành tiền của dòng theo số liều đang xem */
+  getSubTotal(item): number {
+    return this.getSellPrice(item) * this.getTotalAmount(item);
+  }
+
+  getDoseCount(): number {
+    const n = Number(this.doseCount);
+    return isNaN(n) || n < 1 ? 1 : Math.floor(n);
+  }
+
+  onDoseCountChange(value) {
+    const n = Number(value);
+    this.doseCount = (isNaN(n) || n < 1) ? 1 : Math.floor(n);
+  }
+
+  changeDoseCount(step: number) {
+    const next = this.getDoseCount() + step;
+    if (next < 1) { return; }
+    this.doseCount = next;
+  }
+
+  /** Tổng vốn cả đơn theo số liều đang xem */
+  getTotalCost(): number {
+    return this.data.reduce((sum, item) => sum + this.getOriginalPrice(item) * this.getTotalAmount(item), 0);
+  }
+
+  /** Tổng tiền theo giá bán niêm yết, theo số liều đang xem */
+  getTotalSell(): number {
+    return this.data.reduce((sum, item) => sum + this.getSubTotal(item), 0);
+  }
+
+  /** Giá trọn gói nhà thuốc tự đặt ở ô "Giá tiền" (là giá của 1 liều) */
+  getPackagePrice(): number {
+    const raw = this.form && this.form.get('total_amount') ? this.form.get('total_amount').value : 0;
+    const n = numeral(raw).value();
+    return n ? n : 0;
+  }
+
+  /** Lãi = giá trọn gói (đã nhân liều) trừ vốn */
+  getProfit(): number {
+    return this.getPackagePrice() * this.getDoseCount() - this.getTotalCost();
   }
 
   saveSample() {

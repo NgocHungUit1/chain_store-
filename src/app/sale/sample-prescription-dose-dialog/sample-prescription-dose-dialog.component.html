@@ -1,0 +1,85 @@
+<h2 mat-dialog-title style="margin-bottom: 8px; font-size: 22px;">
+  <mat-icon style="vertical-align: middle; margin-right: 8px; font-size: 26px; height: 26px; width: 26px;">assignment</mat-icon>
+  {{ sampleName }}
+</h2>
+
+<mat-dialog-content style="max-height: 70vh;">
+
+  <div fxLayout="row" fxLayoutAlign="start center" style="margin-bottom: 20px;">
+    <div fxFlex="40">
+      <mat-form-field style="width: 100%; font-size: 20px;">
+        <mat-label>Số liều</mat-label>
+        <input matInput type="number" min="1" style="text-align: center; font-weight: 600;" [ngModel]="doseCount"
+               (ngModelChange)="onDoseChange($event)" autocomplete="off"
+               (keydown.enter)="confirm()">
+        <button mat-icon-button matPrefix type="button" (click)="changeDose(-1)"
+                [disabled]="getDoseCount() <= 1">
+          <mat-icon>indeterminate_check_box</mat-icon>
+        </button>
+        <button mat-icon-button matSuffix type="button" (click)="changeDose(1)">
+          <mat-icon>add_box</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+    <div fxFlex="60" style="text-align: right;">
+      <div style="font-size: 13px; color: #757575;">Tiền phải thu</div>
+      <div style="font-size: 30px; font-weight: 600; color: #00695c; line-height: 38px;">
+        {{ getTotalPrice() | number }}
+      </div>
+      <div *ngIf="getDoseCount() > 1" style="font-size: 12px; color: #757575;">
+        {{ packagePrice | number }} &times; {{ getDoseCount() }} liều
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="hasNotEnough()" class="dose-warning"
+       style="background:#fff3e0; border-left:3px solid #ef6c00; padding:12px 14px; margin-bottom:14px; font-size:13.5px; border-radius:4px;">
+    <b style="color:#ef6c00;">Không đủ hàng cho {{ getDoseCount() }} liều.</b>
+    <span *ngIf="getMaxDose() > 0"> Tồn kho hiện tại bán được tối đa <b>{{ getMaxDose() }}</b> liều.</span>
+    <span *ngIf="getMaxDose() <= 0"> Có thuốc đã hết hàng.</span>
+  </div>
+
+  <table class="table" style="width:100%; font-size:14px; border-collapse:collapse;">
+    <thead>
+      <tr style="background:#f5f5f5; text-align:left;">
+        <th style="padding:10px 8px;">Thuốc</th>
+        <th style="padding:10px 8px; text-align:center; width:110px;">1 liều</th>
+        <th style="padding:10px 8px; text-align:center; width:120px;">Cần xuất</th>
+        <th style="padding:10px 8px; text-align:center; width:100px;">Tồn</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of items" [style.background]="isNotEnough(item) ? '#fff8e1' : 'transparent'">
+        <td style="padding:10px 8px; border-bottom:1px solid #eee;">
+          <b>{{ item.product_name }}</b>
+          <div style="color:#9e9e9e; font-size:12px;">{{ item.product_no }}</div>
+        </td>
+        <td style="padding:10px 8px; text-align:center; border-bottom:1px solid #eee;">
+          {{ getAmountPerDose(item) | number }} {{ getUnitName(item) }}
+        </td>
+        <td style="padding:10px 8px; text-align:center; border-bottom:1px solid #eee;">
+          <b style="font-size:15px;">{{ getTotalAmount(item) | number }}</b>
+        </td>
+        <td style="padding:10px 8px; text-align:center; border-bottom:1px solid #eee;"
+            [style.color]="isNotEnough(item) ? '#ef6c00' : '#9e9e9e'">
+          {{ getStockInUnit(item) | number }}
+        </td>
+      </tr>
+      <tr *ngIf="!items.length">
+        <td colspan="4" style="padding:20px; text-align:center; color:#9e9e9e;">
+          Đơn mẫu này chưa có thuốc nào còn bán được.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" style="padding: 12px 24px 16px;">
+  <button mat-button (click)="cancel()" style="font-size:15px;">Huỷ</button>
+  <button mat-raised-button color="primary" (click)="confirm()" [disabled]="!items.length"
+          style="font-size:15px; padding: 4px 20px;">
+    <mat-icon>add_shopping_cart</mat-icon>
+    Thêm {{ getDoseCount() }} liều
+  </button>
+</mat-dialog-actions>

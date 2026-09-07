@@ -34,6 +34,9 @@ import { OrderService } from '../../sale/order.service';
 import { ItemInvoice } from '../../sale/order.model';
 import { NotifierService } from 'angular-notifier';
 import { SamplePrescriptionService } from '../../sample-prescription/sample-prescription.service';
+import { MatDialog } from '@angular/material/dialog';
+// tslint:disable-next-line:max-line-length
+import { SamplePrescriptionDoseDialogComponent } from '../../sale/sample-prescription-dose-dialog/sample-prescription-dose-dialog.component';
 import { NationalPrescriptionService } from '../../national-prescription/national-prescription.service';
 
 
@@ -117,6 +120,7 @@ export class CartComponent implements OnInit, OnDestroy {
     private orderService: OrderService,
     private productSer: ProductService,
     private samplePrescriptionService: SamplePrescriptionService,
+    private dialog: MatDialog,
     private nationalPrescriptionService: NationalPrescriptionService,
     private priceListSer: PriceListService,
     private notifySer: NotifierService,
@@ -359,18 +363,38 @@ export class CartComponent implements OnInit, OnDestroy {
         this.samplePrescriptionService
         .getDetailForCart(product.id)
         .subscribe(res => {
-          this.orderService.setOrderSumPrice(res['total_amount']);
-          // tslint:disable-next-line:no-shadowed-variable
-          res['items'].forEach(element => {
-            // console.log(element);
+          const doseDialog = this.dialog.open(SamplePrescriptionDoseDialogComponent, {
+            width: '900px',
+            maxWidth: '95vw',
+            data: {
+              sample: res,
+              sampleName: product.name ? product.name : product.product_name,
+              initialDose: amountProduct,
+              canNegativeStock: this.canNegativeStock,
+            },
+          });
 
-            if (element.status === 10) {
-              element.amount *= amountProduct;
-              this.handlePriceListProduct(element, product.id);
+          doseDialog.afterClosed().subscribe(doseCount => {
+            if (!doseCount || doseCount < 1) {
+              this.resetUserInput();
+              return;
             }
 
+            /**
+             * Giá của đơn mẫu là giá trọn gói MỘT liều, phải nhân theo số liều.
+             * Thiếu chỗ nhân này thì xuất kho đủ N liều mà chỉ thu tiền 1 liều.
+             */
+            this.orderService.setOrderSumPrice(res['total_amount'] * doseCount);
+
+            // tslint:disable-next-line:no-shadowed-variable
+            res['items'].forEach(element => {
+              if (element.status === 10) {
+                element.amount *= doseCount;
+                this.handlePriceListProduct(element, product.id);
+              }
+            });
+            this.resetUserInput();
           });
-          this.resetUserInput();
         });
         break;
       case 'nation':
