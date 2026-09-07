@@ -538,7 +538,16 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
       if (this.codeSearch == null) {
         this.apiFilter.no = code;
         this.codeSearch = code;
+        // Mở đúng một phiếu theo mã (bấm từ Thẻ kho) thì BỎ ràng buộc thời gian.
+        // Thiếu hai dòng này thì bộ lọc mặc định 3 tháng vẫn áp, phiếu nhập cũ
+        // hơn 3 tháng không hiện ra dù đã nhảy đúng màn. Màn Hoá đơn bán vốn đã
+        // làm việc này, màn Nhập hàng thì chưa.
+        this.apiFilter.date_from = '';
+        this.apiFilter.date_to = '';
       } else {
+        const objDateFilter = this.service.getDateFilter();
+        this.apiFilter.date_from = objDateFilter.date_from;
+        this.apiFilter.date_to = objDateFilter.date_to;
         this.apiFilter.no = '';
       }
     }
