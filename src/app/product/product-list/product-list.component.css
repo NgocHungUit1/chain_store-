@@ -90,3 +90,13 @@ form .mat-card-content {
   padding-top: 10px;
   padding-bottom: 15px;
 }
+
+/* Tồn kho: bỏ badge nền, chỉ in đậm cho dễ đọc.
+   Giữ màu chữ cam cho hàng dưới mức tồn tối thiểu để không mất cảnh báo. */
+.stock-number {
+  font-weight: 600;
+}
+
+.stock-number.stock-low {
+  color: #ef6c00;
+}

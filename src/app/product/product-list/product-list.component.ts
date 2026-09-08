@@ -619,35 +619,6 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     );
   }
 
-  exportNationalPharmacyOpeningStock() {
-    this.apiFilter = this.buildFilterFromParams();
-    this.isLoadingResults = true;
-    this.service.exportNationalPharmacyOpeningStock(this.apiFilter).subscribe(
-      (response: any) => {
-        const blob = new Blob([response.body], {
-          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        });
-
-        const a = document.createElement('a');
-        const objectUrl = URL.createObjectURL(blob);
-
-        a.href = objectUrl;
-        a.download = 'Phieu-nhap-ton-dau-ky.xlsx';
-        a.click();
-
-        URL.revokeObjectURL(objectUrl);
-
-        this.notifySer.notify('success', 'Xuất file thành công!');
-        this.isLoadingResults = false;
-      },
-      (error) => {
-        console.error('Lỗi tải file:', error);
-        this.isLoadingResults = false;
-        this.notifySer.notify('error', 'Xuất file không thành công!');
-      }
-    );
-  }
-
   canDo(permissionName: string): boolean {
     const allPermissions = this.authSer.getPermissionsFromLocalStorage();
 
