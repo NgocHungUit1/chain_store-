@@ -232,17 +232,6 @@ export class ProductService {
     });
   }
 
-  /**
-   * Xuất phiếu tồn đầu kỳ đúng khuôn file mẫu để nộp lên cổng csdlduoc.com.vn
-   * @param filter
-   */
-  exportNationalPharmacyOpeningStock(filter?: ProductFilter) {
-    const url = environment.apiUrl + '/product/export-national-pharmacy-opening-stock?' + filter.toFilterString();
-    return this.http.get(url, {
-      observe: 'response',
-      responseType: 'blob'
-    });
-  }
 
   // DECREASED FUNCTION
   downloadFileExcel() {

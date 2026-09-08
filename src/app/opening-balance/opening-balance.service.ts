@@ -55,6 +55,21 @@ export class OpeningBalanceService {
     return this.http.get<OpeningBalance>(url);
   }
 
+  /**
+   * Xuất phiếu tồn đầu kỳ đúng khuôn để nộp lên cổng csdlduoc.com.vn.
+   *
+   * Dùng lại nguyên API đang nằm ở ProductController - chỉ dời NÚT sang màn này
+   * cho đúng chỗ nghiệp vụ, không bê hàm sang controller khác để khỏi phát sinh
+   * rủi ro. Không truyền bộ lọc: xuất trọn tồn đầu kỳ của chi nhánh.
+   */
+  exportNationalPharmacyOpeningStock() {
+    const url = environment.apiUrl + '/product/export-national-pharmacy-opening-stock';
+    return this.http.get(url, {
+      observe: 'response',
+      responseType: 'blob'
+    });
+  }
+
   create(data) {
     return this.http.post<any>(environment.apiUrl + '/opening-balance', data);
   }

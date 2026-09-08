@@ -156,6 +156,30 @@ export class OpeningBalanceListComponent extends ListComponentBase implements On
    * Mặc định "Toàn thời gian": phiếu tồn đầu thường được lập một lần lúc khai
    * trương rồi không đụng nữa, mặc định theo tháng sẽ làm người dùng tưởng mất phiếu.
    */
+  /** Xuất phiếu tồn đầu kỳ để nộp lên cổng Dược Quốc Gia. */
+  exportNationalPharmacyOpeningStock() {
+    this.isLoadingResults = true;
+    this.service.exportNationalPharmacyOpeningStock().subscribe(
+      (response: any) => {
+        const blob = new Blob([response.body], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+        const a = document.createElement('a');
+        const objectUrl = URL.createObjectURL(blob);
+        a.href = objectUrl;
+        a.download = 'Phieu-nhap-ton-dau-ky.xlsx';
+        a.click();
+        URL.revokeObjectURL(objectUrl);
+        this.notifySer.notify('success', 'Xuất file thành công!');
+        this.isLoadingResults = false;
+      },
+      () => {
+        this.isLoadingResults = false;
+        this.notifySer.notify('error', 'Xuất file không thành công!');
+      }
+    );
+  }
+
   initDateFilter() {
     const obj = new DateFilter();
     obj.date_from = null;
