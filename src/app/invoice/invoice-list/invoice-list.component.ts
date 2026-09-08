@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild, OnDestroy} from '@angular/core';
 import {Router} from '@angular/router';
 import {ListComponentBase} from '../../shared/base';
 import {MatDialog} from '@angular/material/dialog';
@@ -15,7 +15,7 @@ import {DatetimeDefaultFilterDialogComponent} from '../datetime-default-filter-d
 import {DatetimeChooseFilterDialogComponent} from '../datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
 import {catchError, debounceTime, map, startWith, switchMap} from 'rxjs/operators';
 import {Product} from '../../product/product.model';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {Supplier} from '../../supplier/supplier.model';
 import {of} from 'rxjs/internal/observable/of';
 import {ProductService} from '../../product/product.service';
@@ -41,7 +41,7 @@ import {PrescriptionDetailsDialogComponent} from '../prescription-details-dialog
     ]),
   ]
 })
-export class InvoiceListComponent extends ListComponentBase implements OnInit, AfterViewInit {
+export class InvoiceListComponent extends ListComponentBase implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private service: InvoiceService,
@@ -556,6 +556,9 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
    * lần gõ phím / tick chọn.
    */
   private ghiBoLocLenUrl(): void {
+    if (this.daHuy) {
+      return;
+    }
     this.router.navigate(['/transaction/invoice'], {
       queryParams: this.thamSoLocChoUrl(),
       replaceUrl: true,
@@ -792,6 +795,23 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     });
   }
 
+  /**
+   * Các đăng ký vào subject DÙNG CHUNG toàn app. Bắt buộc phải huỷ khi rời màn.
+   *
+   * Không huỷ thì component đã chết vẫn nghe được sự kiện: sang màn khác, màn đó
+   * đặt bộ lọc thời gian -> đăng ký ma ở đây bắn -> loadData() -> ghiBoLocLenUrl()
+   * gọi router.navigate KÉO NGƯỢC người dùng về màn này. Trước kia ghi URL bằng
+   * location.go() nên chỉ vẽ lại thanh địa chỉ, vô hại; đổi sang router.navigate
+   * thì nó điều hướng thật.
+   */
+  private cacDangKy = new Subscription();
+  private daHuy = false;
+
+  ngOnDestroy(): void {
+    this.daHuy = true;
+    this.cacDangKy.unsubscribe();
+  }
+
   ngOnInit(): void {
     this.initDateFilter();
     this.buildFrom();
@@ -803,13 +823,13 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
 
-    this.service.subscribeDateFilter.subscribe(obj => {
+    this.cacDangKy.add(this.service.subscribeDateFilter.subscribe(obj => {
       if (JSON.stringify(this.currentDateFilter) !== JSON.stringify(obj)) {
         this.currentDateFilter = obj;
         this.apiFilter = this.buildFilterFromParams();
         this.loadData();
       }
-    });
+    }));
 
     this.searchInvoiceForm.valueChanges.pipe(debounceTime(800)).subscribe(res => {
       this.apiFilter = this.buildFilterFromParams();
@@ -825,13 +845,13 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
       this.loadData();
     });
 
-    this.service.subscribeLoadInvoice.subscribe(action => {
+    this.cacDangKy.add(this.service.subscribeLoadInvoice.subscribe(action => {
       if (action === true) {
         this.apiFilter = this.buildFilterFromParams();
         this.loadData();
         this.service.setLoadInvoice(false);
       }
-    });
+    }));
 
     this.filteredProducts = this.productFilter.controls['product'].valueChanges.pipe(
       startWith(''),

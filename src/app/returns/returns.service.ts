@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { ReturnsFilter, Returns } from './returns.model';
+import { ReturnsFilter, Returns, ReturnedItemStatistics } from './returns.model';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -47,10 +47,15 @@ export class ReturnsService {
     return this.http.get<HttpResponse<any>>(url, { observe: 'response' });
   }
 
-  // hidden now
-  // getStatisticsSource(filter?: ReturnsFilter): Observable<Returns[]> {
-  //   return this.getList(filter).pipe(map(res => res.body || []));
-  // }
+  /**
+   * Thống kê số lượng trả theo từng loại thuốc trong kỳ.
+   * Server gộp sẵn theo đúng bộ lọc đang áp, nên số là của TRỌN kỳ chứ không
+   * phải chỉ trang đang xem.
+   */
+  getThongKeThuoc(filter?: ReturnsFilter): Observable<ReturnedItemStatistics[]> {
+    const url = environment.apiUrl + '/returns/thong-ke-thuoc?' + (filter ? filter.toFilterString() : '');
+    return this.http.get<ReturnedItemStatistics[]>(url);
+  }
 
   public getReturns(id: string, expand: string = ''): Observable<Returns> {
     const url = environment.apiUrl + '/returns/' + id + '?expand=' + expand;

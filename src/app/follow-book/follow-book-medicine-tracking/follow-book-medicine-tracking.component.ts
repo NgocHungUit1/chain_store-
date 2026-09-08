@@ -30,7 +30,7 @@ export class FollowBookMedicineTrackingComponent extends ListComponentBase imple
     'bn_name': 'Họ và tên BN',
     'address': 'Địa chỉ',
     'age': 'Tuổi',
-    'diagnosis': 'Chuẩn đoán'
+    'diagnosis': 'Chẩn đoán'
   };
 
   @ViewChild(MatPaginator) paginator: MatPaginator;

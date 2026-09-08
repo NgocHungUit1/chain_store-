@@ -31,42 +31,6 @@
           </form>
         </mat-expansion-panel>
 
-        <mat-expansion-panel [expanded]="true">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              Khách hàng
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-
-          <form [formGroup]="customerFilter" class="advanced-filter">
-            <mat-form-field>
-              <input type="text" matInput [formControl]="customerFilter?.controls['customer']"
-                     placeholder="Tên khách hàng"
-                     [matAutocomplete]="autoCustomer" autocomplete="off">
-              <button mat-icon-button matPrefix>
-                <mat-icon>search</mat-icon>
-              </button>
-              <button mat-icon-button matSuffix
-                      (click)="this.customerFilter.patchValue({customer: null}); filterChange()"
-                      *ngIf="this.customerFilter?.controls['customer'].value ">
-                <mat-icon>delete</mat-icon>
-              </button>
-              <mat-autocomplete #autoCustomer="matAutocomplete" [displayWith]="displayCustomer">
-                <mat-option (click)="filterChange()" style="height: 50px;
-                                      line-height: 24px;
-                                      word-break: break-word;
-                                      display: block;
-                                      white-space: pre-wrap;"
-                            *ngFor="let customer of filteredCustomers | async" [value]="customer">
-                    <span class="supplier-option">
-                       <span>{{ customer.name}}</span><span *ngIf="customer.phone"> - {{ customer.phone}}</span>
-                    </span>
-                </mat-option>
-              </mat-autocomplete>
-            </mat-form-field>
-          </form>
-        </mat-expansion-panel>
-
 <!--        Don't have now-->
 <!--        <mat-expansion-panel [expanded]="true">-->
 <!--          <mat-expansion-panel-header>-->
@@ -107,27 +71,6 @@
 <!--        </mat-expansion-panel>-->
 
 <!--        <mat-expansion-panel [expanded]="true">-->
-<!--          <mat-expansion-panel-header>-->
-<!--            <mat-panel-title>-->
-<!--              Thống kê mặt hàng trả-->
-<!--            </mat-panel-title>-->
-<!--          </mat-expansion-panel-header>-->
-
-<!--          <section class="return-statistics" [class.return-statistics&#45;&#45;loading]="isLoadingResults">-->
-<!--            <div class="return-statistics__item">-->
-<!--              <span>Số người</span>-->
-<!--              <strong>{{ statistics.personCount | number }}</strong>-->
-<!--            </div>-->
-<!--            <div class="return-statistics__item">-->
-<!--              <span>Số lượng</span>-->
-<!--              <strong>{{ statistics.pillCount | number }}</strong>-->
-<!--            </div>-->
-<!--            <div class="return-statistics__item">-->
-<!--              <span>Tổng tiền</span>-->
-<!--              <strong>{{ statistics.totalAmount | number }}</strong>-->
-<!--            </div>-->
-<!--          </section>-->
-<!--        </mat-expansion-panel>-->
       </mat-accordion>
     </div>
 
@@ -140,7 +83,7 @@
 
       <div class="customer-filter-container">
         <mat-form-field appearance="outline" class='search-input'>
-          <input matInput [formControl]="searchForm" placeholder="Theo mã trả hàng" #input>
+          <input matInput [formControl]="searchForm" placeholder="Mã phiếu trả, tên thuốc, hoạt chất, mã hàng, tên hoặc SĐT khách" #input>
           <button mat-icon-button matPrefix>
             <mat-icon>search</mat-icon>
           </button>
@@ -165,11 +108,59 @@
           <mat-option *ngFor="let column of columnsToDisplay" [value]="column">{{columnsHeader[column]}}</mat-option>
         </mat-select>
       </div>
+      <button style="margin-left: 10px" mat-raised-button color="primary" (click)="toggleThongKe()">
+        <mat-icon>{{ hienThongKe ? 'expand_less' : 'bar_chart' }}</mat-icon>
+        Thống kê thuốc trả
+      </button>
       <button style="margin-left: 10px" mat-raised-button color="primary" (click)="loadData()">
         <mat-icon>refresh</mat-icon>
         Làm mới
       </button>
     </mat-toolbar>
+
+    <!-- Thống kê thuốc trả trong kỳ (PRD 4.2). Số do server gộp sẵn theo đúng bộ
+         lọc đang áp, nên là của TRỌN kỳ chứ không phải riêng trang đang xem. -->
+    <div class="thong-ke-thuoc" *ngIf="hienThongKe">
+      <div class="thong-ke-thuoc__dang-tai" *ngIf="dangTaiThongKe">Đang tính...</div>
+
+      <div class="thong-ke-thuoc__trong" *ngIf="!dangTaiThongKe && thongKeThuoc.length === 0">
+        Không có thuốc nào được trả trong khoảng thời gian và điều kiện đang lọc.
+      </div>
+
+      <table class="thong-ke-thuoc__bang" *ngIf="!dangTaiThongKe && thongKeThuoc.length > 0">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Mã hàng</th>
+            <th>Tên thuốc</th>
+            <th>ĐVT</th>
+            <th class="so">Số lượng trả</th>
+            <th class="so">Số phiếu</th>
+            <th class="so">Thành tiền</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let d of thongKeThuoc; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ d.product_no }}</td>
+            <td>{{ d.product_name }}</td>
+            <td>{{ d.don_vi }}</td>
+            <td class="so"><strong>{{ d.so_luong_tra | number }}</strong></td>
+            <td class="so">{{ d.so_phieu | number }}</td>
+            <td class="so">{{ d.thanh_tien | number }}</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4">Tổng {{ thongKeThuoc.length | number }} loại thuốc</td>
+            <td class="so"><strong>{{ tongSoLuongTra | number }}</strong></td>
+            <td class="so"></td>
+            <td class="so"><strong>{{ tongThanhTien | number }}</strong></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
     <div fxLayout="row wrap">
       <div fxFlex="100">
         <div class="table-container">

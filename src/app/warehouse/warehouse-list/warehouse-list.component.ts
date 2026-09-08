@@ -1,4 +1,4 @@
-import {Component, HostListener, OnInit, ViewChild} from '@angular/core';
+import {Component, HostListener, OnInit, ViewChild, OnDestroy} from '@angular/core';
 import {MatTable} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
@@ -17,7 +17,7 @@ import {InvoiceService} from '../../invoice/invoice.service';
 import {DatetimeDefaultFilterDialogComponent} from '../../invoice/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
 import {DatetimeChooseFilterDialogComponent} from '../../invoice/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
 import {DateFilter, Invoice} from '../../invoice/invoice.model';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {Supplier} from '../../supplier/supplier.model';
 import {of} from 'rxjs/internal/observable/of';
 import {SupplierService} from '../../supplier/supplier.service';
@@ -43,7 +43,7 @@ import {IResponse} from '../../common/response.model';
     ]),
   ]
 })
-export class WarehouseListComponent extends ListComponentBase implements OnInit {
+export class WarehouseListComponent extends ListComponentBase implements OnInit, OnDestroy {
 
   constructor(
     private mainService: WarehouseService,
@@ -426,6 +426,9 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
    * nên Back khôi phục đúng.
    */
   private ghiBoLocLenUrl(): void {
+    if (this.daHuy) {
+      return;
+    }
     this.router.navigate(['/transaction/warehouse'], {
       queryParams: this.thamSoLocChoUrl(),
       replaceUrl: true,
@@ -572,6 +575,23 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     });
   }
 
+  /**
+   * Các đăng ký vào subject DÙNG CHUNG toàn app. Bắt buộc phải huỷ khi rời màn.
+   *
+   * Không huỷ thì component đã chết vẫn nghe được sự kiện: sang màn khác, màn đó
+   * đặt bộ lọc thời gian -> đăng ký ma ở đây bắn -> loadData() -> ghiBoLocLenUrl()
+   * gọi router.navigate KÉO NGƯỢC người dùng về màn này. Trước kia ghi URL bằng
+   * location.go() nên chỉ vẽ lại thanh địa chỉ, vô hại; đổi sang router.navigate
+   * thì nó điều hướng thật.
+   */
+  private cacDangKy = new Subscription();
+  private daHuy = false;
+
+  ngOnDestroy(): void {
+    this.daHuy = true;
+    this.cacDangKy.unsubscribe();
+  }
+
   ngOnInit() {
 
     this.initDateFilter();
@@ -602,13 +622,13 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit 
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
 
-    this.service.subscribeDateFilter.subscribe(obj => {
+    this.cacDangKy.add(this.service.subscribeDateFilter.subscribe(obj => {
       if (JSON.stringify(this.currentDateFilter) !== JSON.stringify(obj)) {
         this.currentDateFilter = obj;
         this.apiFilter = this.buildFilterFromParams();
         this.loadData();
       }
-    });
+    }));
 
     this.searchProductForm.valueChanges.pipe(debounceTime(800)).subscribe(res => {
       if (res !== '') {

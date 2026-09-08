@@ -62,22 +62,18 @@ export class ReturnsListComponent extends ListComponentBase implements OnInit {
 
   apiFilter: ReturnsFilter;
   expandedElement: Returns | null;
-  customerFilter: FormGroup;
   // productFilter: FormGroup;
   timeFilter: FormGroup;
   filterError = '';
   emptyDetailMessage = '';
-  filteredCustomers: Observable<Customer[]>;
   // filteredProducts: Observable<Product[]>;
   currentDateFilter: DateFilter;
   titleTimeDefault = '3 tháng trước';
   titleTimeChoose = 'Lựa chọn khác';
-  statistics: ReturnedItemStatistics = {
-    medicineCode: '',
-    personCount: 0,
-    pillCount: 0,
-    totalAmount: 0
-  };
+  // Thống kê thuốc trả trong kỳ. Server gộp sẵn nên đây chỉ việc hiển thị.
+  thongKeThuoc: ReturnedItemStatistics[] = [];
+  hienThongKe = false;
+  dangTaiThongKe = false;
 
   searchForm = new FormControl();
 
@@ -114,17 +110,48 @@ export class ReturnsListComponent extends ListComponentBase implements OnInit {
       filter.date_from = objDateFilter.date_from;
       filter.date_to = objDateFilter.date_to;
     }
-    const customer = this.customerFilter && this.customerFilter.controls['customer'] ? this.customerFilter.controls['customer'].value : null;
-    filter.customer_id = customer && customer.id ? customer.id : '';
+    // Không còn ô lọc khách hàng riêng: tên và SĐT khách đã nằm trong ô tìm kiếm
+    // đa năng (ReturnsSearch[keyword]) để dược sĩ chỉ phải gõ một chỗ.
     // const product = this.productFilter && this.productFilter.controls['product'] ? this.productFilter.controls['product'].value : null;
     // filter.medicine_code = product && product.product_no ? product.product_no : '';
 
     return filter;
   }
 
+  /** Mở/đóng bảng thống kê. Mở tới đâu tải tới đó, khỏi gọi API thừa. */
+  toggleThongKe(): void {
+    this.hienThongKe = !this.hienThongKe;
+    if (this.hienThongKe) {
+      this.taiThongKe();
+    }
+  }
+
+  taiThongKe(): void {
+    this.dangTaiThongKe = true;
+    this.service.getThongKeThuoc(this.apiFilter).subscribe(res => {
+      this.thongKeThuoc = res || [];
+      this.dangTaiThongKe = false;
+    }, () => {
+      this.thongKeThuoc = [];
+      this.dangTaiThongKe = false;
+    });
+  }
+
+  /** Tổng số lượng trả của cả kỳ, để hiện ở dòng tổng. */
+  get tongSoLuongTra(): number {
+    return this.thongKeThuoc.reduce((t, d) => t + Number(d.so_luong_tra || 0), 0);
+  }
+
+  get tongThanhTien(): number {
+    return this.thongKeThuoc.reduce((t, d) => t + Number(d.thanh_tien || 0), 0);
+  }
+
   loadData(): void {
     this.isLoadingResults = true;
     // this.clearStatistics();
+    if (this.hienThongKe) {
+      this.taiThongKe();
+    }
     this.service.getList(this.apiFilter).subscribe(res => {
       let data = res.body;
       let stt = 0;
@@ -184,9 +211,6 @@ export class ReturnsListComponent extends ListComponentBase implements OnInit {
     this.timeFilter = this.fb.group({
       typeTime: ['default']
     });
-    this.customerFilter = this.fb.group({
-      customer: [null]
-    });
     // this.productFilter = this.fb.group({
     //   product: [null]
     // });
@@ -197,29 +221,15 @@ export class ReturnsListComponent extends ListComponentBase implements OnInit {
       if (res !== '') {
         this.apiFilter = this.buildFilterFromParams();
         this.apiFilter.keyword = res;
+        // Đang ở trang 3 mà tìm từ mới thì kết quả mới thường không có tới trang 3,
+        // không đưa về trang 1 là người dùng thấy bảng trống tưởng không tìm ra.
+        this.apiFilter.page = 1;
         this.loadData();
         // this.service.setLoadProduct(false);
       } else {
         this.apiFilter = this.buildFilterFromParams();
         this.loadData();
         // this.service.setLoadProduct(false);
-      }
-    });
-
-    this.filteredCustomers = this.customerFilter.controls['customer'].valueChanges.pipe(
-      startWith(''),
-      debounceTime(300),
-      switchMap(value => {
-        if (value !== '') {
-          return this.lookupCustomer(value);
-        }
-        return of(null);
-      })
-    );
-
-    this.customerFilter.controls['customer'].valueChanges.pipe(debounceTime(300)).subscribe(value => {
-      if (value === null || value === '') {
-        this.filterChange();
       }
     });
 
@@ -269,55 +279,7 @@ export class ReturnsListComponent extends ListComponentBase implements OnInit {
   //   }, () => this.clearStatistics());
   // }
 
-  private calculateStatistics(returns: Returns[], medicineCode: string): ReturnedItemStatistics {
-    const namedPeople = {};
-    const countedWalkInReturns = {};
-    const countedTransactions = {};
-    let pillCount = 0;
-    let totalAmount = 0;
 
-    returns.forEach(item => {
-      let transactionMatched = false;
-      const details = item.detailInfo || item.detail || [];
-
-      details.forEach(detail => {
-        const code = detail.product && detail.product.product_no ? detail.product.product_no : '';
-        if (!medicineCode || code === medicineCode) {
-          transactionMatched = true;
-          pillCount += Number(detail.amount || 0);
-        }
-      });
-
-      if (transactionMatched) {
-        if (item.customer && item.customer.id) {
-          namedPeople[item.customer.id] = true;
-        } else {
-          countedWalkInReturns[item.id] = true;
-        }
-
-        if (!countedTransactions[item.id]) {
-          countedTransactions[item.id] = true;
-          totalAmount += Number(item.total_price || 0);
-        }
-      }
-    });
-
-    return {
-      medicineCode: medicineCode,
-      personCount: Object.keys(namedPeople).length + Object.keys(countedWalkInReturns).length,
-      pillCount: pillCount,
-      totalAmount: totalAmount
-    };
-  }
-
-  private clearStatistics(): void {
-    this.statistics = {
-      medicineCode: this.apiFilter && this.apiFilter.medicine_code ? this.apiFilter.medicine_code : '',
-      personCount: 0,
-      pillCount: 0,
-      totalAmount: 0
-    };
-  }
 
   displayCustomer(customer?: Customer): string | undefined {
     return (customer === undefined || customer === null) ? undefined : customer.name;

@@ -546,14 +546,27 @@ export class OrderService {
     return this.http.post<ResInvoicePrint>(url, {invoice_id: invoice_id});
   }
 
-  getLatestSaleInvoiceForQuickPrint() {
+  /**
+   * Hoá đơn vừa bán, để in nhanh.
+   *
+   * PHẢI lọc theo createdBy = người đang đăng nhập. API chỉ giới hạn theo chi
+   * nhánh, nên nhà thuốc có hai quầy bán cùng lúc thì "hoá đơn mới nhất" rất dễ
+   * là của quầy kia -> in nhầm hoá đơn mang tên và thuốc của khách khác.
+   *
+   * Lấy 20 dòng chứ không phải 1: cần chọn hoá đơn đã hoàn thành, mà hoá đơn mới
+   * nhất có thể đang ở trạng thái xử lý dở.
+   */
+  getLatestSaleInvoiceForQuickPrint(createdBy?: number | string) {
     const expand = 'customer,payment,store,user,returns,today,time,createdFormat,prescription,nationalPharmacyV2,patient_name';
     const query = [
       'page=1',
-      'pageSize=1',
-      'per-page=1',
+      'pageSize=20',
+      'per-page=20',
       'expand=' + expand,
     ];
+    if (createdBy) {
+      query.push('InvoiceSearch[created_by]=' + createdBy);
+    }
     const url = environment.apiUrl + '/invoice?' + query.join('&');
     return this.http.get<any[]>(url);
   }

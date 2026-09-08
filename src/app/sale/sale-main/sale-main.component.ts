@@ -1627,11 +1627,14 @@ export class SaleMainComponent implements OnInit, DoCheck {
     }
 
     this.quickPrintLastInvoiceInProgress = true;
-    this.orderService.getLatestSaleInvoiceForQuickPrint()
+    // Truyền id người đang đăng nhập để không vớ phải hoá đơn của quầy khác.
+    this.orderService.getLatestSaleInvoiceForQuickPrint(this.user?.id)
       .pipe(
         switchMap(res => {
           const list = Array.isArray(res) ? res : [];
-          const latestInvoice = list.find(invoice => invoice?.order_status === 'done') || list[0];
+          // Chỉ in hoá đơn ĐÃ HOÀN THÀNH. Bỏ dự phòng "|| list[0]" vì nó sẽ in ra
+          // đơn đang xử lý dở khi không tìm được đơn hoàn thành nào.
+          const latestInvoice = list.find(invoice => invoice?.order_status === 'done');
           const invoiceId = Number(latestInvoice?.id || latestInvoice?.invoice_id || 0);
 
           if (invoiceId <= 0) {

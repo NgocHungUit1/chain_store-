@@ -84,9 +84,13 @@ export class ReturnsFilter extends ApiFilterBase {
 }
 
 
+/** Một dòng thống kê: mỗi loại thuốc một dòng, số liệu của trọn kỳ đang lọc. */
 export interface ReturnedItemStatistics {
-  medicineCode: string;
-  personCount: number;
-  pillCount: number;
-  totalAmount: number;
+  product_id: number;
+  product_no: string;
+  product_name: string;
+  don_vi: string;
+  so_luong_tra: number;
+  so_phieu: number;
+  thanh_tien: number;
 }
