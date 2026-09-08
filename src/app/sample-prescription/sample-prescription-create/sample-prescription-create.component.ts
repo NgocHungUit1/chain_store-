@@ -78,8 +78,8 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
     'product_unit_id',
     'amount',
     'original_price',
-    'sell_price',
-    'sub_total',
+    // Bỏ 'sell_price' và 'sub_total': đơn mẫu bán theo GIÁ TRỌN GÓI ở ô "Giá tiền",
+    // không bán theo giá niêm yết từng món, nên hai cột đó chỉ gây hiểu nhầm.
     'note',
     'actions'
   ];
@@ -373,9 +373,18 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
     return n ? n : 0;
   }
 
-  /** Lãi = giá trọn gói (đã nhân liều) trừ vốn */
+  /**
+   * Lãi = doanh thu trừ vốn, theo số liều đang xem.
+   *
+   * Chưa nhập giá trọn gói thì lấy tổng theo giá bán niêm yết làm doanh thu, chứ
+   * không lấy 0. Lấy 0 thì Lãi ra âm đúng bằng tổng vốn — nhìn như đơn thuốc nào
+   * cũng lỗ, trong khi thật ra người dùng mới chỉ chưa điền giá.
+   */
   getProfit(): number {
-    return this.getPackagePrice() * this.getDoseCount() - this.getTotalCost();
+    const goi = this.getPackagePrice() * this.getDoseCount();
+    const doanhThu = goi > 0 ? goi : this.getTotalSell();
+
+    return doanhThu - this.getTotalCost();
   }
 
   saveSample() {
@@ -411,8 +420,21 @@ export class SamplePrescriptionCreateComponent extends ListComponentBase impleme
     }
   }
 
+  /**
+   * Định dạng ô số có dấu phân cách nghìn.
+   *
+   * PHẢI ghi ngược lại vào form control, không chỉ sửa event.target.value: trước
+   * đây chỉ đổi chữ hiển thị trên DOM nên ô hiện 15,000 mà form vẫn giữ giá trị cũ,
+   * kéo theo Giá trọn gói ra 0 và Lãi thành số âm bằng đúng tổng vốn.
+   */
   inputFormatNumber(event: any) {
-    event.target.value = numeral(event.target.value).format('0,0');
+    const so = numeral(event.target.value).value() || 0;
+    const daDinhDang = numeral(so).format('0,0');
+    event.target.value = daDinhDang;
+    const o = this.form.get('total_amount');
+    if (o) {
+      o.setValue(daDinhDang, { emitEvent: false });
+    }
   }
 
   /**

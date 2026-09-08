@@ -11,40 +11,78 @@
   min-width: 450px;
 }
 
-.mat-column-quantity, .mat-column-price {
-  max-width: 32px;
-  text-align: right;
-}
+/* ===== Độ rộng cột =====
+   Đặt rõ cho TỪNG cột. Trước đây nhiều cột không có luật, mat-table cho chúng
+   flex:1 nên cột "#" nở ra nuốt hết chỗ dôi, tạo khoảng trống lớn giữa bảng.
+   Vài cột lại bị ép quá hẹp (Đơn vị 36px, SL/liều 35px) nên chữ bị bóp. */
 
-.mat-column-amount {
-  max-width: 35px;
+.mat-column-\# {
+  flex: 0 0 44px;
+  max-width: 44px;
   text-align: center;
 }
 
-.mat-column-note {
-  max-width: 50px;
-  margin-right: 10px;
-}
-
-.mat-column-product_unit_id {
-  max-width: 36px;
-  text-align: right;
+.mat-column-product_name {
+  flex: 2 1 0px;
+  min-width: 220px;
 }
 
 .mat-column-product_no {
   flex: 1 1 0px;
 }
 
-.mat-column-actions {
-  max-width: 25px;
+.mat-column-product_unit_id {
+  flex: 0 0 100px;
+  max-width: 100px;
+}
+
+.mat-column-amount {
+  flex: 0 0 90px;
+  max-width: 90px;
   text-align: center;
 }
 
-.mat-column-product_name {
-  flex: 1 1 0px;
-  max-width: 160px;
+.mat-column-original_price {
+  flex: 0 0 100px;
+  max-width: 100px;
+  text-align: right;
+  padding-right: 14px;
 }
 
+/* Liều dùng là ô nhập chữ tự do -> cho chiếm phần rộng còn lại. */
+.mat-column-note {
+  flex: 2 1 0px;
+  min-width: 200px;
+}
+
+.mat-column-actions {
+  flex: 0 0 52px;
+  max-width: 52px;
+  text-align: center;
+}
+
+.mat-column-quantity, .mat-column-price {
+  flex: 0 0 90px;
+  max-width: 90px;
+  text-align: right;
+}
+
+/* ===== Giãn dòng =====
+   Các ô có mat-form-field nên cao hơn dòng thường; không nới thì chữ dính sát
+   mép trên và hai dòng chồng lên nhau. */
+.mat-table .mat-row {
+  min-height: 60px;
+}
+
+.mat-table .mat-cell,
+.mat-table .mat-header-cell {
+  padding: 8px 6px;
+  align-items: center;
+}
+
+.mat-table .mat-header-cell {
+  font-weight: 600;
+}
 
 .mat-table .mat-form-field {
   padding-left: 10px;

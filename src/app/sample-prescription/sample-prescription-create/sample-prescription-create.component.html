@@ -207,8 +207,9 @@
             <div fxFlex="100">
               <mat-form-field>
                 <mat-label>Giá tiền</mat-label>
-                <input matInput tabindex="4" formControlName="total_amount" (keyup)="inputFormatNumber($event)" required
-                       value="{{ form.get('total_amount').value }}">
+                <!-- Không đặt thêm value="{{ ... }}": ô đã có formControlName, hai thứ cùng
+                     ghi vào một ô thì giá trị gõ vào và giá trị trong form lệch nhau. -->
+                <input matInput tabindex="4" formControlName="total_amount" (input)="inputFormatNumber($event)" required>
               </mat-form-field>
             </div>
 
@@ -221,7 +222,6 @@
                 <span>Tổng theo giá bán</span>
                 <b>{{ getTotalSell() | number }}</b>
               </div>
-              <mat-divider style="margin:6px 0"></mat-divider>
               <div style="display:flex; justify-content:space-between; font-size:12px; line-height:22px;">
                 <span>Giá trọn gói<span *ngIf="getDoseCount() > 1"> &times;{{ getDoseCount() }}</span></span>
                 <b>{{ getPackagePrice() * getDoseCount() | number }}</b>
