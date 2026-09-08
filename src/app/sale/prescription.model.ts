@@ -7,7 +7,9 @@ export class Prescription {
   doctor_id: any;
   name: string;
   patient: string;
+  dob: string;
   age: string;
+  age_display: string;
   weight: string;
   cmnd: string;
   bhyt: string;

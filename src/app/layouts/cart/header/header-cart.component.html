@@ -29,6 +29,16 @@
     <mat-icon (click)="goToInvoices()">receipt</mat-icon>
 </button>
 
+<button
+  class="ml-xs overflow-visible"
+  mat-icon-button
+  style="margin-right: 10px"
+  matTooltip="In lại hóa đơn vừa bán"
+  aria-label="In lại hóa đơn vừa bán"
+  (click)="quickPrintLastInvoice()">
+  <mat-icon>receipt_long</mat-icon>
+</button>
+
 <!--<button [matMenuTriggerFor]="notification" mat-icon-button class="m-r-10">-->
 <!--  <mat-icon>message</mat-icon>-->
 <!--  <div class="notify">-->

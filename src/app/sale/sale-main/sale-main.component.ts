@@ -229,6 +229,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
   autoPrint = true;
   autoPrintInSoLo = false;
+  quickPrintLastInvoiceInProgress = false;
   // Cấu hình cửa hàng: bắt buộc thanh toán trước khi in (chặn in trước)
   requirePaymentBeforePrint = false;
 
@@ -1036,6 +1037,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
       this.loadData().then(r => {
       });
     });
+    this.sharedDataSer.quickPrintLastInvoice$.subscribe(() => {
+      this.quickPrintLastInvoiceHandler();
+    });
     this.isLoadingResults = false;
 
     this.storeSer.getDetail().subscribe(res => {
@@ -1614,6 +1618,39 @@ export class SaleMainComponent implements OnInit, DoCheck {
         this.printInvoiceTemplate(res);
       }
     });
+  }
+
+  quickPrintLastInvoiceHandler() {
+    if (this.quickPrintLastInvoiceInProgress === true) {
+      this.notifySer.notify('warning', 'Đang tải hóa đơn vừa bán, vui lòng thử lại sau.');
+      return;
+    }
+
+    this.quickPrintLastInvoiceInProgress = true;
+    this.orderService.getLatestSaleInvoiceForQuickPrint()
+      .pipe(
+        switchMap(res => {
+          const list = Array.isArray(res) ? res : [];
+          const latestInvoice = list.find(invoice => invoice?.order_status === 'done') || list[0];
+          const invoiceId = Number(latestInvoice?.id || latestInvoice?.invoice_id || 0);
+
+          if (invoiceId <= 0) {
+            this.notifySer.notify('warning', 'Chưa có hóa đơn vừa bán để in lại.');
+            return of(null);
+          }
+
+          return this.orderService.getDataInvoiceToPrint(invoiceId);
+        }),
+        finalize(() => this.quickPrintLastInvoiceInProgress = false),
+      )
+      .subscribe(res => {
+        if (res) {
+          this.printInvoiceTemplate(res);
+        }
+      }, error => {
+        const msg = error?.error?.message || 'Không tải được hóa đơn vừa bán, vui lòng thử lại.';
+        this.notifySer.notify('error', msg);
+      });
   }
 
 
@@ -4480,4 +4517,3 @@ export class SaleMainComponent implements OnInit, DoCheck {
     this.orderService.setListInvoiceLocalStorageSilence(listInvoice);
   }
 }
-

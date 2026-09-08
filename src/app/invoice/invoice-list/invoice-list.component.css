@@ -10,6 +10,19 @@
   flex: 2 1 0%;
 }
 
+.mat-column-patient_name {
+  flex: 1.5 1 0%;
+}
+
+.link-button {
+  min-width: 0;
+  padding: 0;
+  color: #1565c0;
+  line-height: inherit;
+  white-space: normal;
+  text-align: left;
+}
+
 table {
   width: 100%;
 }
