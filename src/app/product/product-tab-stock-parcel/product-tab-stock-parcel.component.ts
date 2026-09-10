@@ -94,6 +94,10 @@ export class ProductTabStockParcelComponent extends ListComponentBase implements
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.product_id = this.product_id;
     filter.hasStock = 1;
+    // Hiện cả lô đã hết (tồn 0): lô vừa bán hết mà biến mất khỏi tab thì người dùng
+    // không còn chỗ bấm "Cập nhật tồn kho" để sửa lại khi đếm thực tế còn hàng.
+    // Lô tồn ÂM vẫn ẩn (BE lọc >= 0) vì đó là dấu hiệu dữ liệu hỏng.
+    filter.includeEmpty = 1;
     filter.expand = '';
     return filter;
   }
