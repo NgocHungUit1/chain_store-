@@ -49,6 +49,14 @@
             </button>
           </mat-radio-button>
 
+          <mat-radio-button class="radio-button-report-type" value="store-connect"
+                            *ngIf="canDo('Store.Update-Info') && canDo('Store.Get-Detail')">
+            Liên thông cửa hàng
+            <button mat-icon-button aria-label="store-connect">
+              <mat-icon>cloud_sync</mat-icon>
+            </button>
+          </mat-radio-button>
+
           <mat-radio-button class="radio-button-report-type" value="point" *ngIf="canDo('Option-Store.Update') || canDo('Option-Store.Create')">
             Tích điểm
             <button mat-icon-button aria-label="point">
@@ -350,8 +358,16 @@
                     </div>
                     <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
                       <mat-form-field>
-                        <input matInput type="password" placeholder="Mật khẩu CSDL Dược Quốc gia"
+                        <input matInput [type]="hideBranchConnectPassword ? 'password' : 'text'"
+                               placeholder="Mật khẩu CSDL Dược Quốc gia"
                                [formControl]="connectForm.controls['national_pharmacy_v2_login_password']">
+                        <!-- type="button" để bấm xem mật khẩu không submit form -->
+                        <button mat-icon-button matSuffix type="button"
+                                (click)="hideBranchConnectPassword = !hideBranchConnectPassword"
+                                [attr.aria-label]="'Hiện mật khẩu'"
+                                [attr.aria-pressed]="!hideBranchConnectPassword">
+                          <mat-icon>{{ hideBranchConnectPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                        </button>
                       </mat-form-field>
                     </div>
 
@@ -377,6 +393,71 @@
               <div class="m-t-20">
                 <button mat-raised-button color="primary" type="submit"
                         [disabled]="!connectForm.valid">
+                  <mat-icon>save</mat-icon>
+                  Lưu cấu hình liên thông
+                </button>
+              </div>
+            </form>
+
+            <!-- Tài khoản liên thông cấp cửa hàng: mọi chi nhánh không bật tài khoản riêng
+                 đều đẩy dữ liệu bằng tài khoản này. Chỉ hệ thống mới (CSDL Dược Quốc gia);
+                 tài khoản hệ thống cũ vẫn xem/sửa ở màn "Thông tin cửa hàng". -->
+            <form *ngIf=" settingsType === 'store-connect' "
+                  [formGroup]="storeConnectForm" (ngSubmit)="saveStoreConnect()">
+
+              <mat-card>
+                <mat-card-header>
+                  <mat-card-title>Liên thông CSDL Dược Quốc gia &mdash; hệ thống mới</mat-card-title>
+                  <mat-card-subtitle>
+                    Theo Quyết định 232/QĐ-TTYQG ngày 17/7/2026. Tài khoản do Trung tâm Thông tin
+                    Y tế Quốc gia cấp, <b>khác với tài khoản liên thông cũ</b>.
+                  </mat-card-subtitle>
+                </mat-card-header>
+
+                <mat-card-content>
+                  <div fxLayout="row wrap">
+                    <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                      <mat-form-field>
+                        <input matInput placeholder="Tài khoản CSDL Dược Quốc gia"
+                               [formControl]="storeConnectForm.controls['national_pharmacy_v2_login_username']">
+                      </mat-form-field>
+                    </div>
+                    <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                      <mat-form-field>
+                        <input matInput [type]="hideStoreConnectPassword ? 'password' : 'text'"
+                               placeholder="Mật khẩu CSDL Dược Quốc gia"
+                               [formControl]="storeConnectForm.controls['national_pharmacy_v2_login_password']">
+                        <!-- type="button" để bấm xem mật khẩu không submit form -->
+                        <button mat-icon-button matSuffix type="button"
+                                (click)="hideStoreConnectPassword = !hideStoreConnectPassword"
+                                [attr.aria-label]="'Hiện mật khẩu'"
+                                [attr.aria-pressed]="!hideStoreConnectPassword">
+                          <mat-icon>{{ hideStoreConnectPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                        </button>
+                      </mat-form-field>
+                    </div>
+
+                    <!-- Kiểm tra tài khoản ngay, không phải chờ tới lúc đẩy phiếu mới biết sai -->
+                    <div fxFlex="100" *ngIf="canDo('Branch.Test-Connection-V2')">
+                      <button mat-stroked-button color="accent" type="button"
+                              (click)="testStoreConnectionV2()" [disabled]="testingStoreConnectionV2">
+                        <mat-icon>wifi_tethering</mat-icon>
+                        {{ testingStoreConnectionV2 ? 'Đang kiểm tra...' : 'Kiểm tra kết nối' }}
+                      </button>
+
+                      <span class="m-l-10" *ngIf="testStoreConnectionV2Result"
+                            [ngClass]="testStoreConnectionV2Result.success ? 'np-test-ok' : 'np-test-fail'">
+                        {{ testStoreConnectionV2Result.success ? '✓' : '✗' }}
+                        {{ testStoreConnectionV2Result.message }}
+                      </span>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <div class="m-t-20">
+                <button mat-raised-button color="primary" type="submit"
+                        [disabled]="!storeConnectForm.valid">
                   <mat-icon>save</mat-icon>
                   Lưu cấu hình liên thông
                 </button>
