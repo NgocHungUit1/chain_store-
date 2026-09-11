@@ -2894,6 +2894,51 @@ export class SaleMainComponent implements OnInit, DoCheck {
         }
       }
     });
+
+    /**
+     * Kiểm cộng dồn theo đơn vị cơ bản cho sản phẩm có nhiều dòng (dòng mua + dòng tặng /
+     * tách lô). Vòng trên chỉ xét từng dòng riêng nên tồn 10 viên mà mua 8 + tặng 5 vẫn lọt,
+     * và backend chỉ kẹp tồn về 0 chứ không báo lỗi.
+     *
+     * Chỉ áp khi tạo hoá đơn mới: lúc sửa hoá đơn cũ, số lượng cũ lưu theo đơn vị tại thời
+     * điểm đó, cộng ngược lại để ra tồn khả dụng dễ sai — giữ nguyên cách kiểm từng dòng.
+     */
+    const isNewInvoice = !(mItemInvoice.invoice_id && mItemInvoice.invoice_id > 0);
+    if (!this.canNegativeStock && isNewInvoice) {
+      const totals = {};
+      list.forEach(element => {
+        const unit = (element.product.productUnits || []).find(u => u.id === element.product_unit_id);
+        const unitValue = (unit && Number(unit.value) > 0) ? Number(unit.value) : 1;
+        const key = element.product_id;
+        if (!totals[key]) {
+          const rawStock = element.product.quantity_of_stock;
+          totals[key] = {
+            name: element.product.product_name,
+            baseUnit: element.product.base_unit || '',
+            // product.quantity_of_stock là tồn theo đơn vị cơ bản (cart chia cho unit.value
+            // để ra tồn từng đơn vị). Không có số thì không kiểm — thà bỏ qua còn hơn chặn nhầm.
+            stockKnown: rawStock !== undefined && rawStock !== null && !isNaN(Number(rawStock)),
+            stock: Number(rawStock) || 0,
+            need: 0,
+            lines: 0,
+          };
+        }
+        totals[key].need += (Number(element.amount) || 0) * unitValue;
+        totals[key].lines += 1;
+      });
+      Object.keys(totals).forEach(key => {
+        const t = totals[key];
+        // Một dòng thì vòng trên đã kiểm rồi, chỉ xét sản phẩm có từ hai dòng trở lên
+        if (t.lines > 1 && t.stockKnown && t.need > t.stock) {
+          this.notifySer.notify(
+            'warning',
+            `Không đủ tồn kho ${t.name}: cả hoá đơn cần ${t.need} ${t.baseUnit} (gồm hàng tặng), tồn ${t.stock} ${t.baseUnit}`,
+          );
+          needReturn = 1;
+        }
+      });
+    }
+
     if (needReturn === 1) {
       this.submitted = false;
       return;
@@ -3293,22 +3338,13 @@ export class SaleMainComponent implements OnInit, DoCheck {
     curListProduct[i]['product']['product_no'] = item['no'];
     curListProduct[i]['common_price'] = item['price'];
 
-    // Apply same unit change to related rows (same master product)
-    const cp = curListProduct[i]['product'];
-    const masterId = cp.is_sub_item ? cp.master_product_id : cp.id;
-    curListProduct.forEach((row, idx) => {
-      if (idx === i) { return; }
-      const rp = row['product'];
-      if ((rp.is_sub_item ? rp.master_product_id : rp.id) === masterId) {
-        row['amount'] = Math.floor((row['amount'] * oldUnitValue) / newUnitValue) || 1;
-        row['product_unit_id'] = item['id'];
-        row['product_unit_value'] = newUnitValue;
-        row['product']['sell_price'] = item['sell_price'];
-        row['product']['end_price'] = item['sell_price'];
-        row['product']['product_no'] = item['no'];
-        row['common_price'] = item['price'];
-      }
-    });
+    /**
+     * Chỉ đổi đơn vị của ĐÚNG dòng này. Trước đây đổi một dòng là ép mọi dòng cùng sản
+     * phẩm (dòng chính + dòng phụ) về chung đơn vị — hợp với việc tách lô, nhưng chặn
+     * luôn nhu cầu tặng hàng khác đơn vị (mua 1 hộp, tặng 2 viên). Mỗi dòng giờ độc lập;
+     * backend vốn trừ tồn theo product_unit_id riêng của từng dòng nên không ảnh hưởng.
+     * Tồn kho tổng được kiểm lại trước khi thanh toán, quy về đơn vị cơ bản.
+     */
 
     this.listProduct = curListProduct;
     const listInvoice = this.orderService.getListInvoiceLocalStorage();

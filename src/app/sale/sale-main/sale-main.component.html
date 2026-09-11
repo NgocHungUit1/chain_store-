@@ -366,6 +366,20 @@
                   </div>
                 </div>
                 <div fxFlex="11" class="row-product-base-unit">
+                  <!-- Dòng phụ (hàng tặng, tách lô) được chọn đơn vị riêng, không buộc theo dòng chính -->
+                  <div fxLayout="row wrap">
+                    <mat-form-field appearance="fill">
+                      <mat-select [(value)]="subItem.product_unit_id" style="
+                          position: relative;
+                          top: -3px;"
+                                  (selectionChange)="onChangeProductUnit($event, subItem, getProductIndex(subItem))">
+                        <mat-option *ngFor="let unit of subItem.product?.productUnits" [value]="unit.id"
+                                    [disabled]="localItemInvoice?.is_return == true">
+                          {{ unit.name }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
                 </div>
                 <div fxFlex="10" class="row-amount">
                   <div *ngIf="localItemInvoice?.is_return !== true; else changeAmountSub">
