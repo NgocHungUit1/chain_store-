@@ -267,6 +267,11 @@
             <form *ngIf=" settingsType === 'branch-connect' "
                   [formGroup]="connectForm" (ngSubmit)="saveConnect()">
 
+              <!-- ẨN liên thông hệ thống cũ: chỉ còn dùng liên thông mới (v1.1).
+                   Mã cơ sở đã chuyển sang khung liên thông mới vì dùng chung cho cả hai hệ.
+                   Mở lại thì bỏ ng-container *ngIf="false", và thêm lại Validators.required
+                   cho 2 ô tài khoản/mật khẩu cũ trong connectForm (settings-main.component.ts). -->
+              <ng-container *ngIf="false">
               <mat-card class="m-b-20">
                 <mat-card-header>
                   <mat-card-title>Liên thông Dược Quốc gia &mdash; hệ thống cũ</mat-card-title>
@@ -293,16 +298,6 @@
                   <div fxLayout="row wrap">
                     <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
                       <mat-form-field>
-                        <input matInput placeholder="Mã cơ sở"
-                               [formControl]="connectForm.controls['national_pharmacy_registration_no']">
-                      </mat-form-field>
-                      <small
-                        *ngIf="connectForm.controls['national_pharmacy_registration_no'].hasError('required') && connectForm.controls['national_pharmacy_registration_no'].touched"
-                        class="text-danger support-text">Vui lòng điền mã cơ sở.
-                      </small>
-                    </div>
-                    <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
-                      <mat-form-field>
                         <input matInput placeholder="Tài khoản kết nối"
                                [formControl]="connectForm.controls['national_pharmacy_login_username']">
                       </mat-form-field>
@@ -324,13 +319,14 @@
                   </div>
                 </mat-card-content>
               </mat-card>
+              </ng-container>
 
               <mat-card>
                 <mat-card-header>
-                  <mat-card-title>Liên thông CSDL Dược Quốc gia &mdash; hệ thống mới</mat-card-title>
+                  <mat-card-title>Liên thông Dược Quốc gia</mat-card-title>
                   <mat-card-subtitle>
                     Theo Quyết định 232/QĐ-TTYQG ngày 17/7/2026. Tài khoản do Trung tâm Thông tin
-                    Y tế Quốc gia cấp, <b>khác với tài khoản hệ thống cũ</b> ở trên.
+                    Y tế Quốc gia cấp.
                   </mat-card-subtitle>
                 </mat-card-header>
 
@@ -350,16 +346,28 @@
                   </div>
 
                   <div fxLayout="row wrap">
+                    <!-- Mã cơ sở dùng chung cho cả liên thông cũ lẫn mới; liên thông mới đọc mã
+                         cơ sở của chi nhánh khi bật tài khoản riêng (NationalPharmacyV2Credential) -->
                     <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
                       <mat-form-field>
-                        <input matInput placeholder="Tài khoản CSDL Dược Quốc gia"
+                        <input matInput placeholder="Mã cơ sở"
+                               [formControl]="connectForm.controls['national_pharmacy_registration_no']">
+                      </mat-form-field>
+                      <small
+                        *ngIf="connectForm.controls['national_pharmacy_registration_no'].hasError('required') && connectForm.controls['national_pharmacy_registration_no'].touched"
+                        class="text-danger support-text">Vui lòng điền mã cơ sở.
+                      </small>
+                    </div>
+                    <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
+                      <mat-form-field>
+                        <input matInput placeholder="Tài khoản liên thông Dược Quốc gia"
                                [formControl]="connectForm.controls['national_pharmacy_v2_login_username']">
                       </mat-form-field>
                     </div>
                     <div fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100">
                       <mat-form-field>
                         <input matInput [type]="hideBranchConnectPassword ? 'password' : 'text'"
-                               placeholder="Mật khẩu CSDL Dược Quốc gia"
+                               placeholder="Mật khẩu liên thông Dược Quốc gia"
                                [formControl]="connectForm.controls['national_pharmacy_v2_login_password']">
                         <!-- type="button" để bấm xem mật khẩu không submit form -->
                         <button mat-icon-button matSuffix type="button"
@@ -401,13 +409,13 @@
 
             <!-- Tài khoản liên thông cấp cửa hàng: mọi chi nhánh không bật tài khoản riêng
                  đều đẩy dữ liệu bằng tài khoản này. Chỉ hệ thống mới (CSDL Dược Quốc gia);
-                 tài khoản hệ thống cũ vẫn xem/sửa ở màn "Thông tin cửa hàng". -->
+                 liên thông hệ thống cũ đã đóng và đã ẩn khỏi giao diện (11/09/2026). -->
             <form *ngIf=" settingsType === 'store-connect' "
                   [formGroup]="storeConnectForm" (ngSubmit)="saveStoreConnect()">
 
               <mat-card>
                 <mat-card-header>
-                  <mat-card-title>Liên thông CSDL Dược Quốc gia &mdash; hệ thống mới</mat-card-title>
+                  <mat-card-title>Liên thông Dược Quốc gia</mat-card-title>
                   <mat-card-subtitle>
                     Theo Quyết định 232/QĐ-TTYQG ngày 17/7/2026. Tài khoản do Trung tâm Thông tin
                     Y tế Quốc gia cấp, <b>khác với tài khoản liên thông cũ</b>.

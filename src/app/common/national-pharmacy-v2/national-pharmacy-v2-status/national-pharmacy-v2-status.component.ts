@@ -21,7 +21,7 @@ export class NationalPharmacyV2StatusComponent {
   @Input() transaction: NationalPharmacyV2Transaction | null = null;
 
   /** Nhãn đứng trước chip trạng thái */
-  @Input() label = 'Liên thông CSDL Dược:';
+  @Input() label = 'Liên thông Dược Quốc gia:';
 
   /** Ẩn phần mã giao dịch / thời gian khi chỗ hiển thị quá hẹp */
   @Input() compact = false;

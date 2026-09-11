@@ -48,7 +48,7 @@
 <div align="end" class="m-t-10" *ngIf="model">
   <button mat-raised-button color="accent" (click)="connectV2()" [disabled]="npV2DialogOpen">
     <mat-icon>cloud_upload</mat-icon>
-    {{ npV2Service.hasTransaction(model.nationalPharmacyV2) ? 'Cập nhật liên thông CSDL Dược' : 'Liên thông CSDL Dược Quốc gia' }}
+    {{ npV2Service.hasTransaction(model.nationalPharmacyV2) ? 'Cập nhật liên thông' : 'Liên thông Dược Quốc gia' }}
   </button>
 </div>
 <div layout="row" layout-margin style="height: 30px;">

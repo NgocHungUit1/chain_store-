@@ -221,21 +221,25 @@
           <mat-icon>check</mat-icon>
           Hoàn thành
         </button>
-        <button class="m-r-10" mat-raised-button color="accent" (click)="connect(model)"
-                *ngIf="model.status === 10 && model.national_pharmacy_no === null">
-          <mat-icon>open_in_full</mat-icon>
-          Liên thông (hệ thống cũ)
-        </button>
-        <button class="m-r-10" mat-raised-button color="accent" (click)="reconnect(model)"
-                *ngIf="model.national_pharmacy_no !== null">
-          <mat-icon>sync</mat-icon>
-          Cập nhật liên thông (hệ thống cũ)
-        </button>
-        <button class="m-r-10" mat-raised-button color="warn" (click)="disconnect(model)"
-                *ngIf="model.national_pharmacy_no !== null">
-          <mat-icon>close_fullscreen</mat-icon>
-          Gỡ liên thông (hệ thống cũ)
-        </button>
+        <!-- ẨN liên thông hệ thống cũ: chỉ còn dùng liên thông mới (v1.1).
+             Mã nguồn giữ nguyên, mở lại thì bỏ khối ng-container *ngIf="false" này. -->
+        <ng-container *ngIf="false">
+          <button class="m-r-10" mat-raised-button color="accent" (click)="connect(model)"
+                  *ngIf="model.status === 10 && model.national_pharmacy_no === null">
+            <mat-icon>open_in_full</mat-icon>
+            Liên thông (hệ thống cũ)
+          </button>
+          <button class="m-r-10" mat-raised-button color="accent" (click)="reconnect(model)"
+                  *ngIf="model.national_pharmacy_no !== null">
+            <mat-icon>sync</mat-icon>
+            Cập nhật liên thông (hệ thống cũ)
+          </button>
+          <button class="m-r-10" mat-raised-button color="warn" (click)="disconnect(model)"
+                  *ngIf="model.national_pharmacy_no !== null">
+            <mat-icon>close_fullscreen</mat-icon>
+            Gỡ liên thông (hệ thống cũ)
+          </button>
+        </ng-container>
 
         <!-- Liên thông CSDL Dược quốc gia v1.1: trạng thái nằm ở nationalPharmacyV2,
              không dùng cột national_pharmacy_no của liên thông v1 -->
@@ -243,7 +247,7 @@
                 [disabled]="checkPermissionDisable('Warehouse.Connect-V2') || npV2DialogOpen"
                 *ngIf="model.status === 10">
           <mat-icon>cloud_upload</mat-icon>
-          {{ npV2Service.hasTransaction(model.nationalPharmacyV2) ? 'Cập nhật liên thông CSDL Dược' : 'Liên thông CSDL Dược Quốc gia' }}
+          {{ npV2Service.hasTransaction(model.nationalPharmacyV2) ? 'Cập nhật liên thông' : 'Liên thông Dược Quốc gia' }}
         </button>
         <!--<button class="m-r-10" mat-raised-button color="accent" >-->
         <!--<mat-icon>file_copy</mat-icon>-->

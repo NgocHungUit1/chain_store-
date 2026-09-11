@@ -61,13 +61,15 @@
                             matTooltip="Chỉ bộ phận hỗ trợ được đổi mã cơ sở">lock</mat-icon>
                 </mat-form-field>
               </div>
-              <div fxFlex.gt-sm="33.33" fxFlex="100">
+              <!-- ẨN 2 ô liên thông hệ thống cũ (tài khoản + mật khẩu). Giá trị vẫn nằm trong
+                   storeForm nên lưu lại không làm mất dữ liệu cũ. Mở lại thì bỏ *ngIf="false". -->
+              <div fxFlex.gt-sm="33.33" fxFlex="100" *ngIf="false">
                 <mat-form-field>
                   <mat-label>Tài khoản kết nối (hệ thống cũ)</mat-label>
                   <input matInput tabindex="1" formControlName="nation_username" autocomplete="off">
                 </mat-form-field>
               </div>
-              <div fxFlex.gt-sm="33.33" fxFlex="100">
+              <div fxFlex.gt-sm="33.33" fxFlex="100" *ngIf="false">
                 <mat-form-field>
                   <mat-label>Mật khẩu kết nối (hệ thống cũ)</mat-label>
                   <input matInput tabindex="2" formControlName="nation_password" autocomplete="new-password"
@@ -80,18 +82,18 @@
               </div>
               <div fxFlex.gt-sm="33.33" fxFlex="100">
                 <mat-form-field>
-                  <mat-label>Tài khoản CSDL Dược Quốc gia (hệ thống mới)</mat-label>
+                  <mat-label>Tài khoản liên thông Dược Quốc gia</mat-label>
                   <input matInput formControlName="nation_v2_username" autocomplete="off">
                   <mat-icon matSuffix class="lock-icon"
-                            matTooltip="Chỉ bộ phận hỗ trợ được đổi tài khoản hệ thống mới">lock</mat-icon>
+                            matTooltip="Chỉ bộ phận hỗ trợ được đổi tài khoản liên thông">lock</mat-icon>
                 </mat-form-field>
               </div>
               <div fxFlex.gt-sm="33.33" fxFlex="100">
                 <mat-form-field>
-                  <mat-label>Mật khẩu CSDL Dược Quốc gia (hệ thống mới)</mat-label>
+                  <mat-label>Mật khẩu liên thông Dược Quốc gia</mat-label>
                   <input matInput type="password" formControlName="nation_v2_password" autocomplete="new-password">
                   <mat-icon matSuffix class="lock-icon"
-                            matTooltip="Chỉ bộ phận hỗ trợ được đổi mật khẩu hệ thống mới">lock</mat-icon>
+                            matTooltip="Chỉ bộ phận hỗ trợ được đổi mật khẩu liên thông">lock</mat-icon>
                 </mat-form-field>
               </div>
             </div>

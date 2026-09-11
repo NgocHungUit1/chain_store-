@@ -106,9 +106,15 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     }
 
     this.connectForm = this.fb.group({
+      // Mã cơ sở dùng CHUNG cho cả liên thông cũ lẫn mới, nay nằm ở khung liên thông mới và
+      // mở theo nút gạt mới (onConnectV2Change). Disabled thì Angular không kiểm required.
       national_pharmacy_registration_no: [{value: null, disabled: true}, Validators.compose([Validators.required])],
-      national_pharmacy_login_username: [{value: null, disabled: true}, Validators.compose([Validators.required])],
-      national_pharmacy_login_password: [{value: null, disabled: true}, Validators.compose([Validators.required])],
+      // Hai ô tài khoản/mật khẩu HỆ THỐNG CŨ: giao diện đã ẩn nên không bắt buộc nữa. Để required
+      // thì chi nhánh từng bật "dùng tài khoản riêng" mà thiếu một ô sẽ không lưu được tài khoản
+      // liên thông MỚI (cùng một form), và người dùng không thấy lý do vì phần cũ đã bị ẩn.
+      // Giá trị cũ vẫn được giữ: saveConnect() gửi getRawValue().
+      national_pharmacy_login_username: [{value: null, disabled: true}],
+      national_pharmacy_login_password: [{value: null, disabled: true}],
       use_branch_national_connect: [false, Validators.compose([Validators.required])],
       // Liên thông CSDL Dược quốc gia dùng tài khoản do TTYQG cấp riêng, không dùng
       // chung với tài khoản liên thông cũ ở trên.
@@ -118,7 +124,7 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     });
 
     // Tài khoản CSDL Dược quốc gia (hệ thống mới) của cửa hàng, dùng chung cho mọi chi
-    // nhánh không bật tài khoản riêng. Tài khoản hệ thống cũ vẫn nằm ở màn Thông tin cửa hàng.
+    // nhánh không bật tài khoản riêng. Liên thông hệ thống cũ đã đóng và đã ẩn khỏi giao diện.
     this.storeConnectForm = this.fb.group({
       national_pharmacy_v2_login_username: [null],
       national_pharmacy_v2_login_password: [null],
@@ -259,12 +265,11 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
   }
 
   onConnectChange() {
+    // Mã cơ sở KHÔNG còn gắn với nút gạt hệ thống cũ — xem onConnectV2Change().
     if (this.connectForm.controls['use_branch_national_connect'].value) {
-      this.connectForm.controls['national_pharmacy_registration_no'].enable();
       this.connectForm.controls['national_pharmacy_login_username'].enable();
       this.connectForm.controls['national_pharmacy_login_password'].enable();
     } else {
-      this.connectForm.controls['national_pharmacy_registration_no'].disable();
       this.connectForm.controls['national_pharmacy_login_username'].disable();
       this.connectForm.controls['national_pharmacy_login_password'].disable();
     }
@@ -310,11 +315,19 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     });
   }
 
+  /**
+   * Mã cơ sở của chi nhánh mở theo nút gạt liên thông MỚI: backend
+   * (NationalPharmacyV2Credential) lấy branch.national_pharmacy_registration_no đúng khi
+   * use_branch_national_v2_connect bật. Trước đây ô này lại mở theo nút gạt hệ thống cũ,
+   * nên chi nhánh chỉ bật liên thông mới thì không nhập được mã cơ sở của mình.
+   */
   onConnectV2Change() {
     if (this.connectForm.controls['use_branch_national_v2_connect'].value) {
+      this.connectForm.controls['national_pharmacy_registration_no'].enable();
       this.connectForm.controls['national_pharmacy_v2_login_username'].enable();
       this.connectForm.controls['national_pharmacy_v2_login_password'].enable();
     } else {
+      this.connectForm.controls['national_pharmacy_registration_no'].disable();
       this.connectForm.controls['national_pharmacy_v2_login_username'].disable();
       this.connectForm.controls['national_pharmacy_v2_login_password'].disable();
     }

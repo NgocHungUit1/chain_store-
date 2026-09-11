@@ -240,7 +240,8 @@
     <div fxLayout="row">
 
       <div fxLayout="row wrap">
-        <div fxFlex="100">
+        <!-- ẨN liên thông hệ thống cũ: chỉ còn dùng liên thông mới (v1.1). Mở lại thì bỏ *ngIf="false". -->
+        <div fxFlex="100" *ngIf="false">
           <mat-divider></mat-divider>
           <h3>
             Tài khoản liên thông Dược Quốc gia &mdash; hệ thống cũ
@@ -268,11 +269,11 @@
           </div>
         </div>
 
-        <!-- Tài khoản liên thông CSDL Dược quốc gia: cấp riêng, khác tài khoản trên -->
+        <!-- Tài khoản liên thông CSDL Dược quốc gia v1.1 -->
         <div fxFlex="100">
           <mat-divider></mat-divider>
           <h3>
-            Tài khoản liên thông CSDL Dược Quốc gia &mdash; hệ thống mới
+            Tài khoản liên thông Dược Quốc gia
             <small *ngIf="!useBranchNationalV2Connect"> (đang dùng chung tài khoản của cửa hàng)</small>
           </h3>
           <div fxLayout="row wrap">

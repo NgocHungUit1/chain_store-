@@ -90,8 +90,8 @@ export class NationalPharmacyV2ConnectDialogComponent implements OnInit {
       'returns': 'Phiếu khách trả hàng',
     };
 
-    // Ghi rõ đích đến để không lẫn với liên thông hệ thống cũ
-    return (titles[this.data.source] ? titles[this.data.source] + ' — ' : '') + 'Liên thông CSDL Dược Quốc gia';
+    // Hệ thống cũ đã ẩn khỏi giao diện nên không cần ghi dài để phân biệt nữa
+    return (titles[this.data.source] ? titles[this.data.source] + ' — ' : '') + 'Liên thông Dược Quốc gia';
   }
 
   get isConnected(): boolean {
