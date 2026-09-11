@@ -50,6 +50,7 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     'edit-print': 'Chỉnh sửa mẫu in',
     'logo': 'Logo cửa hàng',
     'branch-connect': 'Liên thông theo chi nhánh',
+    'store-connect': 'Liên thông cửa hàng',
     'score': 'Tích điểm',
     'einvoice': 'Hóa đơn điện tử'
   };
@@ -57,6 +58,11 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
   isLoadingResults = true;
   isRateLimitReached = false;
   public connectForm: FormGroup;
+  /** Ẩn/hiện mật khẩu CSDL Dược quốc gia của chi nhánh */
+  hideBranchConnectPassword = true;
+  public storeConnectForm: FormGroup;
+  /** Ẩn/hiện mật khẩu CSDL Dược quốc gia của cửa hàng */
+  hideStoreConnectPassword = true;
   public storeForm: FormGroup;
   public commForm: FormGroup;
   public pointSettingsForm: FormGroup;
@@ -111,6 +117,13 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
       use_branch_national_v2_connect: [false]
     });
 
+    // Tài khoản CSDL Dược quốc gia (hệ thống mới) của cửa hàng, dùng chung cho mọi chi
+    // nhánh không bật tài khoản riêng. Tài khoản hệ thống cũ vẫn nằm ở màn Thông tin cửa hàng.
+    this.storeConnectForm = this.fb.group({
+      national_pharmacy_v2_login_username: [null],
+      national_pharmacy_v2_login_password: [null],
+    });
+
     this.storeForm = this.fb.group({
       description: [''],
       can_change_completed: [false],
@@ -159,6 +172,11 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
           description: res['description'],
           can_change_completed: res['can_change_completed'],
           require_payment_before_print: !!res['require_payment_before_print'],
+        });
+
+        this.storeConnectForm.patchValue({
+          national_pharmacy_v2_login_username: res['national_pharmacy_v2_login_username'],
+          national_pharmacy_v2_login_password: res['national_pharmacy_v2_login_password'],
         });
 
         this.storeFeatures = res['features'];
@@ -491,6 +509,58 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
           this.notifySer.notify('success', 'Lưu thành công!');
         }
       });
+  }
+
+  /** Đang gọi API kiểm tra kết nối cho tài khoản cấp cửa hàng */
+  testingStoreConnectionV2 = false;
+
+  testStoreConnectionV2Result: { success: boolean; message: string } = null;
+
+  /**
+   * Kiểm tra tài khoản CSDL Dược quốc gia của cửa hàng, dùng giá trị đang nhập trên
+   * form nên phát hiện sai tài khoản trước khi lưu.
+   */
+  testStoreConnectionV2() {
+    if (this.testingStoreConnectionV2) {
+      return;
+    }
+
+    const username = this.storeConnectForm.getRawValue()['national_pharmacy_v2_login_username'];
+    const password = this.storeConnectForm.getRawValue()['national_pharmacy_v2_login_password'];
+
+    this.testingStoreConnectionV2 = true;
+    this.testStoreConnectionV2Result = null;
+
+    this.branchSer.testConnectionV2(username, password).subscribe(res => {
+      this.testingStoreConnectionV2 = false;
+      this.testStoreConnectionV2Result = res;
+      this.notifySer.notify(res.success ? 'success' : 'error', res.message);
+    }, error => {
+      this.testingStoreConnectionV2 = false;
+      const message = error?.error?.message || 'Không gọi được API kiểm tra kết nối.';
+      this.testStoreConnectionV2Result = {success: false, message};
+      this.notifySer.notify('error', message);
+    });
+  }
+
+  saveStoreConnect() {
+    this.storeConnectForm.markAllAsTouched();
+    if (!this.storeConnectForm.valid) {
+      return;
+    }
+
+    const data = this.storeConnectForm.value;
+
+    this.storeSer.updateInfo(data).subscribe(res => {
+      if (res['success'] === false) {
+        this.notifySer.notify('warning', 'Không có thay đổi nào để lưu');
+      } else {
+        this.notifySer.notify('success', 'Lưu thành công!');
+      }
+    }, error => {
+      const message = error && error.error ? error.error['message'] : null;
+      this.notifySer.notify('error', message || 'Lưu không thành công!');
+    });
   }
 
   saveStore() {
