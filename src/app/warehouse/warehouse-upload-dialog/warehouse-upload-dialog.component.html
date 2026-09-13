@@ -36,11 +36,13 @@
   <p>- Các sản phẩm có cùng tên nhà cung cấp sẽ được gộp thành 1 đơn nhập hàng.</p>
   <p>- 1 file có nhiều nhà cung cấp sẽ được tách thành nhiều đơn nhập hàng.</p>
   <p>- 1 đơn nhập hàng có tối đa 100 sản phẩm.</p>
-  <p>- Có 1 số thay đổi trong file mẫu(vui lòng tải file mẫu mới nhất để kiểm tra):</p>
-  <p>&nbsp; + Các cột chữ màu đỏ là cột <span style="color: red;">bắt buộc</span> cho hệ thống</p>
-  <p>&nbsp; + Các cột chữ màu cam là cột <span style="color: red;">bắt buộc</span> để liên thông</p>
-  <p>&nbsp; + Các cột chữ màu đen là cột không bắt buộc</p>
-  <p>&nbsp; + Cột giá bán nếu không điền thì: gián bán = giá vốn * 1.1</p>
+  <p>- File mẫu đã đổi cách trình bày (vui lòng tải file mẫu mới nhất):</p>
+  <p>&nbsp; + Cột nền <b>vàng</b> là <span style="color: red;">bắt buộc</span> cho hệ thống, đã dồn lên đầu file</p>
+  <p>&nbsp; + Cột nền <b>xanh</b> cần cho liên thông Dược Quốc Gia (thuốc theo lô phải có Số lô, Hạn sử dụng)</p>
+  <p>&nbsp; + Cột nền <b>xám</b> là không bắt buộc</p>
+  <p>&nbsp; + Điền vào sheet <b>Data nhap hang</b>; các dòng ví dụ nằm riêng ở sheet <b>Vi du</b></p>
+  <p>&nbsp; + Cột giá bán nếu không điền thì: giá bán = giá vốn * 1.1</p>
+  <p>- File mẫu cũ vẫn nạp được bình thường, không cần làm lại file đang dùng.</p>
   <mat-dialog-actions align="end">
 
     <button mat-raised-button color="primary" [disabled]="submitted || selectedFile === null || !branchId"
