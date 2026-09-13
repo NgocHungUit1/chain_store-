@@ -1701,23 +1701,33 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
    * @param index
    * @param select
    */
+  /**
+   * Chỉ đổi đơn vị của ĐÚNG dòng này. Trước đây đổi một dòng là ép mọi dòng cùng sản
+   * phẩm (dòng chính + dòng tặng) về chung đơn vị, nên nhập 1 hộp tặng 5 viên phải tự
+   * quy đổi. Backend đã xử lý từng dòng theo product_unit_id riêng: cộng tồn
+   * (Warehouse::afterSave), quy đổi lô, và giá vốn bình quân
+   * (PriceUtils::calculateOriginalProductPrice) — nên mỗi dòng một đơn vị không làm sai tồn
+   * hay giá vốn. Giá vốn sản phẩm vẫn chỉ lấy từ dòng chính như trước.
+   */
   onUnitChange(index, select) {
-    const product_id = this.data[index].product_id
-    this.data.forEach((product, index) => {
-      if(product.product_id == product_id || product.master_product_id == product_id) {
-        const unit = product['productUnits'].find(element => element['id'] === select.value);
-        const unitBase = product['productUnits'].find(element => element['is_base'] === 1);
-        product['price'] = unitBase['original_price'] * unit['value'];
-        product['sell_price'] = unit['sell_price'];
-        product['inventory_quantity'] = unit['quantity_of_stock'];
-        // this.data[index]['price'] = (unit['original_price'] !== 0) ? unit['original_price'] : unit['sell_price']; //unit['original_price'];
-        product['amount'] = (product['price'] - product['discount']) * product['quantity'];
-        if (this.data[index]['product_parcels'].length === 1) {
-          this.data[index]['product_parcels'][0]['quantity'] = this.data[index]['quantity'];
-        }
-        this.recalculateWarehouse();
-      }
-    });
+    const product = this.data[index];
+    if (!product) { return; }
+    const unit = product['productUnits'].find(element => element['id'] === select.value);
+    const unitBase = product['productUnits'].find(element => element['is_base'] === 1);
+    if (!unit) { return; }
+
+    // Dòng tặng đã để giá 0 thì đổi đơn vị vẫn giữ 0, không đặt lại thành giá vốn
+    const keepFreeGiftPrice = Number(product['is_sub_item']) === 1 && Number(product['price']) === 0;
+    if (!keepFreeGiftPrice && unitBase) {
+      product['price'] = unitBase['original_price'] * unit['value'];
+    }
+    product['sell_price'] = unit['sell_price'];
+    product['inventory_quantity'] = unit['quantity_of_stock'];
+    product['amount'] = (product['price'] - product['discount']) * product['quantity'];
+    if (product['product_parcels']?.length === 1) {
+      product['product_parcels'][0]['quantity'] = product['quantity'];
+    }
+    this.recalculateWarehouse();
     this.localStorageService.setItem(this.WAREHOUSEPRODUCTKEY, this.data);
 
     // if (this.data[index] !== undefined) {

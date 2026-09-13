@@ -427,13 +427,16 @@
              <ng-container matColumnDef="product_unit_id">
                 <th mat-header-cell *matHeaderCellDef style="min-width:80px; text-align: right;"> {{columnsHeader['product_unit_id']}}</th>
                 <td mat-cell style='vertical-align: top; padding: 1rem 0.5rem 0 0; min-width:80px;' *matCellDef="let element; let i = index" class="center-td">
-                  <div style='display: flex;flex-direction: row;flex-wrap: nowrap;justify-content: center;padding-left:0.5rem; max-width: 150px !important;' *ngIf="element?.is_sub_item==0">
+                  <!-- Dòng phụ (hàng tặng, tách lô) cũng chọn được đơn vị riêng, giống màn bán hàng.
+                       Nút tạo đơn vị mới chỉ để ở dòng chính cho gọn. -->
+                  <div style='display: flex;flex-direction: row;flex-wrap: nowrap;justify-content: center;padding-left:0.5rem; max-width: 150px !important;'>
                     <mat-form-field *ngIf="element.productUnits.length">
                       <mat-select matInput [(ngModel)]="data[i]['product_unit_id']"
                                   (selectionChange)="onUnitChange(i, $event)">
                         <mat-option *ngFor="let unit of element.productUnits" [value]="unit.id">{{unit.name}}</mat-option>
                       </mat-select>
-                      <button mat-icon-button matSuffix aria-label="add" (click)="$event.stopImmediatePropagation();openUnitCreateDialog(i, element);">
+                      <button mat-icon-button matSuffix aria-label="add" *ngIf="element?.is_sub_item==0"
+                              (click)="$event.stopImmediatePropagation();openUnitCreateDialog(i, element);">
                         <mat-icon style="margin-bottom: -10px; font-size: 1.5rem;">add</mat-icon>
                       </button>
                     </mat-form-field>
