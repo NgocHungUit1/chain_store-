@@ -100,5 +100,30 @@ export class StockTakeService {
     return this.http.post<resStockTakePrint>(url, {id: id});
   }
 
+  /** File mẫu trống (có vài dòng ví dụ). Không cần đăng nhập. */
+  getDownloadTemplateLink() {
+    return environment.apiUrl + '/stock-take/download-template';
+  }
+
+  /** File điền sẵn hàng đang tồn — link mở bằng thẻ <a> nên truyền token trên query string. */
+  getDownloadStockLink(groupIds: any[] = [], includeZero = false) {
+    let url = environment.apiUrl + '/stock-take/download-stock?token=' + this.auth.getToken();
+    (groupIds || []).forEach(id => url += '&group_id[]=' + encodeURIComponent(id));
+    if (includeZero) {
+      url += '&include_zero=1';
+    }
+    return url;
+  }
+
+  /** Đọc & kiểm tra file Excel, không lưu gì. */
+  upload(data: FormData) {
+    return this.http.post<any>(environment.apiUrl + '/stock-take/upload', data);
+  }
+
+  /** Các dòng có tồn hiện tại khác số đã chốt (gọi trước khi Hoàn thành). */
+  checkStockChange(items: any[]) {
+    return this.http.post<{ changes: any[] }>(environment.apiUrl + '/stock-take/check-stock-change', {items: items});
+  }
+
 
 }

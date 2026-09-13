@@ -14,6 +14,11 @@ export class StockTakeBalanceDialogComponent implements OnInit {
   content: string;
   local_data: any;
 
+  /** Dòng có tồn hiện tại khác số đã chốt: {product_no, product_name, parcel_no, unit_name, snapshot, current, actual_number} */
+  changes: any[] = [];
+  /** 'subtract' = cộng phần phát sinh vào số thực tế · 'keep' = giữ số đã đếm */
+  mode = 'subtract';
+
   constructor(
     public dialogRef: MatDialogRef<StockTakeBalanceDialogComponent>,
     public notifySer: NotifierService,
@@ -22,9 +27,15 @@ export class StockTakeBalanceDialogComponent implements OnInit {
     this.action = this.local_data.action;
     this.title = this.local_data.title;
     this.content = this.local_data.content;
+    this.changes = this.local_data.changes || [];
   }
 
   ngOnInit(): void {
+  }
+
+  /** Số thực tế sẽ lưu nếu chọn "trừ phần phát sinh". */
+  adjustedActual(change): number {
+    return Math.max(0, Number(change.actual_number) + (change.current - change.snapshot));
   }
 
   closeDialog() {
@@ -32,7 +43,7 @@ export class StockTakeBalanceDialogComponent implements OnInit {
   }
 
   submit() {
-    this.dialogRef.close({ event: 'accept' });
+    this.dialogRef.close({ event: 'accept', mode: this.mode });
   }
 
 }

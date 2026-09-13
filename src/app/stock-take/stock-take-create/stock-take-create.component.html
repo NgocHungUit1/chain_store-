@@ -39,6 +39,12 @@
       </div>
 
       <div  fxFlex="1 1 0%"></div>
+      <button mat-raised-button color="primary" class="m-r-5"
+              *ngIf="updateModelId === null || (model !== null && model['balance_status'] === 'draft')"
+              (click)="openUploadDialog()">
+        <mat-icon>cloud_upload</mat-icon>
+        Import Excel
+      </button>
       <div class='diva-column-select m-r-5'>
         <div style='position: relative'>
           <button mat-raised-button

@@ -17,6 +17,7 @@ import { StockTakeService } from '../stock-take.service';
 import { StockTake, StockTakeItem, StockTakeItemFilter } from '../stock-take.model';
 import { StockTakeItemService } from '../stock-take-item.service';
 import { StockTakeBalanceDialogComponent } from '../stock-take-balance-dialog/stock-take-balance-dialog.component';
+import { StockTakeUploadDialogComponent } from '../stock-take-upload-dialog/stock-take-upload-dialog.component';
 import { element } from 'protractor';
 import { SearchProductDialogComponent } from '../../common/search-product-dialog/search-product-dialog.component';
 import {
@@ -260,7 +261,8 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
       write(filter, attr, this.route.snapshot.queryParams['StockTakeItemSearch[' + attr + ']']);
     }
     filter.page = this.route.snapshot.queryParams['page'];
-    filter.pageSize = 50;
+    // Tải đủ mọi dòng: khi lưu, dòng không có trong danh sách gửi lên sẽ bị xoá.
+    filter.pageSize = 5000;
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.expand = 'product,productUnits';
     if (this.updateModelId !== null) {
@@ -328,7 +330,8 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
   }
 
   /**
-   * Thêm SP quản lý theo lô: 1 dòng/SP, có dropdown chọn lô + chọn đơn vị.
+   * Thêm SP quản lý theo lô: mỗi lô còn tồn một dòng (bỏ qua lô đã có trong lưới), để kiểm đủ
+   * cả kho chứ không chỉ lô hạn gần nhất. Mỗi dòng vẫn có dropdown lô + chọn đơn vị.
    * Tồn lô gốc lưu theo đơn vị cơ bản (lot_base_qty); hiển thị/nhập quy đổi theo đơn vị chọn.
    * Thêm lô mới phải qua Nhập hàng, kiểm kho chỉ điều chỉnh lô đã có.
    */
@@ -342,33 +345,92 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
         return;
       }
 
-      // FEFO: hạn sớm trước, lấy lô đầu làm mặc định
+      // FEFO: hạn sớm trước
       lots = [...lots].sort((a, b) =>
         new Date(a['expiration_date']).getTime() - new Date(b['expiration_date']).getTime());
 
       // units đã sort tăng dần theo value ⇒ phần tử đầu là đơn vị cơ bản (value = 1)
       const baseUnit = units[0];
       const baseVal = Number(baseUnit['value']) || 1;
-      const first = lots[0];
-      const item = new StockTakeItem();
-      item.product_id = res['id'];
-      item.product = res;
-      item.productUnits = units;
-      item.product_unit_id = baseUnit['id'];
-      item.lots = lots;
-      item.parcel_no = first['parcel_no'];
-      item.expiration_date = first['expiration_date'];
-      item.lot_base_qty = Number(first['quantity_of_stock']) || 0; // tồn lô theo đơn vị cơ bản (viên)
-      item.view_quantity_of_stock = item.lot_base_qty / baseVal;   // quy đổi theo đơn vị mặc định
-      item.actual_number = item.view_quantity_of_stock;            // mặc định = tồn lô (lệch 0)
-      item.price = Number(baseUnit['original_price']) || 0;
-      item.deviation_number = 0;
-      item.deviation_price = 0;
+      const newItems = [];
+      lots.forEach(lot => {
+        if (this.findRowIndex(res['id'], lot['parcel_no'], lot['expiration_date']) !== -1) {
+          return;
+        }
+        const item = new StockTakeItem();
+        item.product_id = res['id'];
+        item.product = res;
+        // mỗi dòng một bản sao đơn vị để đổi đơn vị dòng này không ảnh hưởng dòng khác
+        item.productUnits = units.map(u => ({...u}));
+        item.product_unit_id = baseUnit['id'];
+        item.lots = lots;
+        item.parcel_no = lot['parcel_no'];
+        item.expiration_date = lot['expiration_date'];
+        item.lot_base_qty = Number(lot['quantity_of_stock']) || 0; // tồn lô theo đơn vị cơ bản (viên)
+        item.view_quantity_of_stock = item.lot_base_qty / baseVal;  // quy đổi theo đơn vị mặc định
+        item.actual_number = item.view_quantity_of_stock;           // mặc định = tồn lô (lệch 0)
+        item.price = Number(baseUnit['original_price']) || 0;
+        item.deviation_number = 0;
+        item.deviation_price = 0;
+        newItems.push(item);
+      });
 
-      this.data = this.data.concat([item]);
+      if (newItems.length === 0) {
+        this.notifySer.notify('info', 'Các lô còn tồn của "' + res['product_name'] + '" đã có trong phiếu.');
+        this.selectProduct.patchValue(null);
+        return;
+      }
+
+      this.data = this.data.concat(newItems);
       this.productDataSource = new MatTableDataSource<StockTakeItem>(this.data);
       this.recalculateStockTake();
       this.selectProduct.patchValue(null);
+    });
+  }
+
+  /** Vị trí dòng cùng hàng + lô trong lưới, -1 nếu chưa có. Hàng không lô: parcel_no rỗng. */
+  findRowIndex(productId, parcelNo, expirationDate = null): number {
+    const lot = parcelNo || '';
+    return this.data.findIndex(row =>
+      String(row.product_id) === String(productId)
+      && String(row.parcel_no || '').toLowerCase() === String(lot).toLowerCase()
+      && (!lot || !expirationDate || !row.expiration_date || row.expiration_date === expirationDate));
+  }
+
+  /**
+   * Hộp thoại Import Excel. Dòng trùng hàng + lô đã có trong lưới thì cập nhật theo file
+   * (số chốt, thực tế, về đơn vị cơ bản), không nhân đôi; dòng mới thêm vào cuối.
+   */
+  openUploadDialog() {
+    const dialogRef = this.dialog.open(StockTakeUploadDialogComponent, {
+      data: {},
+      width: '75%',
+      minWidth: '900px',
+      maxHeight: '90vh',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result || !result.items || !result.items.length) {
+        return;
+      }
+      let added = 0;
+      let updated = 0;
+      result.items.forEach(row => {
+        const index = this.findRowIndex(row.product_id, row.parcel_no, row.expiration_date);
+        if (index === -1) {
+          this.data.push(Object.assign(new StockTakeItem(), row));
+          added++;
+        } else {
+          const id = this.data[index].id;
+          this.data[index] = Object.assign(new StockTakeItem(), row, {id: id});
+          updated++;
+        }
+      });
+      this.data = this.data.slice();
+      this.productDataSource = new MatTableDataSource<StockTakeItem>(this.data);
+      this.recalculateStockTake();
+      this.notifySer.notify('success', 'Đã nạp ' + added + ' dòng mới'
+        + (updated ? ', cập nhật ' + updated + ' dòng đã có' : '') + ' vào phiếu.');
     });
   }
 
@@ -478,22 +540,84 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
       return;
     }
 
+    // Cân bằng đặt THẲNG tồn = thực tế. Hàng bán/nhập từ lúc thêm dòng (hoặc tải file) tới giờ
+    // sẽ bị ghi đè, nên hỏi trước những dòng có tồn đã đổi.
+    this.stockTakeService.checkStockChange(this.itemsPayload()).subscribe(res => {
+      const changes = (res && res.changes || []).map(change => {
+        const row = this.data[change.index];
+        const unit = row && (row.productUnits || []).find(u => u['id'] === row.product_unit_id);
+        return {
+          ...change,
+          product_no: row && row.product ? row.product['product_no'] : '',
+          product_name: row && row.product ? row.product['product_name'] : '',
+          unit_name: unit ? unit['name'] : '',
+          actual_number: row ? row.actual_number : 0,
+        };
+      });
+      this.openBalanceDialog(changes);
+    });
+  }
+
+  openBalanceDialog(changes: any[]) {
     const obj = {
       action: 'Delete',
       title: 'Cân bằng kho',
       content: 'Cân bằng kho sẽ thay đổi tồn kho hiện tại của hàng hóa trong phiếu kiểm kho.<br> Bạn có chắc chắn muốn Cân bằng kho?',
+      changes: changes,
     };
 
     const dialogRef = this.dialog.open(StockTakeBalanceDialogComponent, {
       data: obj,
-      width: '40%',
-      minHeight: '80%',
+      width: changes.length ? '75%' : '40%',
+      minWidth: changes.length ? '900px' : undefined,
+      maxHeight: '90vh',
     });
     dialogRef.afterClosed().subscribe(result => {
-      if (result.event === 'accept') {
-        this.saveStockTake(balance_status);
+      if (result && result.event === 'accept') {
+        this.applyStockChanges(changes, result.mode);
+        this.saveStockTake('done');
       }
     });
+  }
+
+  /**
+   * Cập nhật số chốt về tồn hiện tại cho các dòng đã đổi, để số lệch/thẻ kho đúng.
+   * mode 'subtract': số thực tế cộng thêm phần phát sinh (đếm 100, trong lúc đó bán 5 → còn 95).
+   * mode 'keep': giữ nguyên số đã đếm (người dùng đếm lại sau khi bán rồi).
+   */
+  applyStockChanges(changes: any[], mode: string) {
+    changes.forEach(change => {
+      const row = this.data[change.index];
+      if (!row) {
+        return;
+      }
+      const unit = (row.productUnits || []).find(u => u['id'] === row.product_unit_id);
+      const value = Number(unit && unit['value']) || 1;
+      if (mode === 'subtract') {
+        row.actual_number = Math.max(0, Number(row.actual_number) + (change.current - change.snapshot));
+      }
+      row.view_quantity_of_stock = change.current;
+      if (row.parcel_no) {
+        row.lot_base_qty = change.current * value;
+      }
+      this.recalculateItem(change.index);
+    });
+  }
+
+  /** Chỉ gửi các trường server cần — product/productUnits/lots mỗi dòng rất nặng với phiếu vài nghìn dòng. */
+  itemsPayload() {
+    return this.data.map(row => ({
+      id: row.id,
+      product_id: row.product_id,
+      product_unit_id: row.product_unit_id,
+      parcel_no: row.parcel_no,
+      expiration_date: row.expiration_date,
+      price: row.price,
+      view_quantity_of_stock: row.view_quantity_of_stock,
+      actual_number: row.actual_number,
+      deviation_number: row.deviation_number,
+      deviation_price: row.deviation_price,
+    }));
   }
 
   saveStockTake(balance_status: string = 'draft') {
@@ -521,7 +645,7 @@ export class StockTakeCreateComponent extends ListComponentBase implements OnIni
         const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
         data['date'] = effDate.toISOString().split('T')[0];
       }
-      data['items'] = this.data;
+      data['items'] = this.itemsPayload();
 
       if (this.updateModelId !== null) {
         delete data['date'];

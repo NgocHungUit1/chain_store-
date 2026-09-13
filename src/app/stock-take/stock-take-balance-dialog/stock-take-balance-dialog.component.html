@@ -1,5 +1,54 @@
 <h2 mat-dialog-title><strong>{{title}}</strong></h2>
 <h5 [innerHTML]="content"></h5>
+
+<div *ngIf="changes.length" class="stock-change">
+  <div class="stock-change-note">
+    <mat-icon>warning</mat-icon>
+    <span>
+      <b>{{ changes.length }} dòng</b> có tồn kho đã thay đổi từ lúc thêm vào phiếu (có bán hoặc nhập trong lúc kiểm).
+      Cân bằng sẽ đặt tồn = số thực tế, nên cần chọn cách tính:
+    </span>
+  </div>
+
+  <div class="stock-change-table">
+    <table>
+      <thead>
+      <tr>
+        <th>Mã hàng</th>
+        <th>Tên hàng</th>
+        <th>Lô</th>
+        <th>Đơn vị</th>
+        <th class="text-right">Tồn lúc chốt</th>
+        <th class="text-right">Tồn hiện tại</th>
+        <th class="text-right">Thực tế đã đếm</th>
+        <th class="text-right">Thực tế sẽ lưu</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let change of changes">
+        <td>{{ change.product_no }}</td>
+        <td>{{ change.product_name }}</td>
+        <td>{{ change.parcel_no || '—' }}</td>
+        <td>{{ change.unit_name }}</td>
+        <td class="text-right">{{ change.snapshot | number }}</td>
+        <td class="text-right">{{ change.current | number }}</td>
+        <td class="text-right">{{ change.actual_number | number }}</td>
+        <td class="text-right"><b>{{ (mode === 'subtract' ? adjustedActual(change) : change.actual_number) | number }}</b></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <mat-radio-group [(ngModel)]="mode" class="stock-change-mode">
+    <mat-radio-button color="primary" value="subtract">
+      Tính cả phần bán/nhập phát sinh vào số thực tế <i>(đếm xong rồi mới bán — thường gặp)</i>
+    </mat-radio-button>
+    <mat-radio-button color="primary" value="keep">
+      Giữ nguyên số đã đếm <i>(đã đếm lại sau khi bán/nhập)</i>
+    </mat-radio-button>
+  </mat-radio-group>
+</div>
+
 <button class="m-r-10" mat-stroked-button color="primary" (click)="submit()">
   <mat-icon>done</mat-icon> Đồng ý
 </button>

@@ -1,0 +1,156 @@
+<h1 mat-dialog-title>Import kiểm kho từ Excel</h1>
+
+<mat-dialog-content>
+
+  <!-- Thanh bước -->
+  <div class="stepper">
+    <div class="stepper-item" *ngFor="let item of steps"
+         [class.active]="step === item.index"
+         [class.done]="step > item.index">
+      <span class="stepper-index">{{ item.index }}.</span> {{ item.label }}
+    </div>
+  </div>
+
+  <mat-progress-bar mode="indeterminate" *ngIf="submitted"></mat-progress-bar>
+
+  <!-- ===== Bước 2: tải file & chọn file ===== -->
+  <div *ngIf="step === 2">
+    <div class="download-box">
+      <div class="download-card">
+        <div class="download-card-title">Danh sách hàng đang tồn</div>
+        <div>Điền sẵn mã hàng, số lô, tồn hệ thống — chỉ cần điền cột <b>Thực tế</b>.</div>
+        <mat-form-field>
+          <mat-label>Nhóm hàng (để trống = tất cả)</mat-label>
+          <mat-select multiple [(ngModel)]="groupIds" [ngModelOptions]="{standalone: true}">
+            <mat-option *ngFor="let group of groups" [value]="group.id">{{ group.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-checkbox color="primary" [(ngModel)]="includeZero" [ngModelOptions]="{standalone: true}">
+          Gồm cả hàng đã hết tồn
+        </mat-checkbox>
+        <div>
+          <a href="javascript:void(0)" (click)="downloadStock()">
+            <mat-icon>file_download</mat-icon> Tải danh sách hàng đang tồn
+          </a>
+        </div>
+      </div>
+
+      <div class="download-card">
+        <div class="download-card-title">File mẫu trống</div>
+        <div>Tự điền mã hàng cần kiểm. File có vài dòng ví dụ (mã VD-...), hệ thống tự bỏ qua.</div>
+        <a [href]="templateLink" download>
+          <mat-icon>file_download</mat-icon> Tải file mẫu
+        </a>
+      </div>
+    </div>
+
+    <div class="file-picker">
+      <input class="hide" #fileInput type="file" (change)="inputChange($event)" accept=".xls,.xlsx"/>
+      <button mat-raised-button type="button" [disabled]="selectedFile !== null" (click)="fileInput.click()">
+        <mat-icon>cloud_upload</mat-icon>
+        Chọn file
+      </button>
+
+      <div *ngIf="selectedFile !== null" class="selected-file">
+        <span>{{ selectedFile.name }}</span>
+        <button (click)="removeSelectedFile(fileInput)" mat-icon-button>
+          <mat-icon>delete_forever</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <p><b>Lưu ý</b></p>
+      <ul>
+        <li>Đếm theo <b>đơn vị cơ bản</b> (viên, gói, cái...).</li>
+        <li>Để trống cột <b>Thực tế</b> = không kiểm dòng đó. Hàng không có trong file giữ nguyên tồn.</li>
+        <li>Hàng quản lý theo lô ghi rõ <b>Số lô</b>; còn đúng 1 lô tồn thì được bỏ trống. Kiểm kho không tạo lô mới.</li>
+        <li>Tối đa <b>3.000 dòng</b> điền Thực tế mỗi lần nạp, dung lượng tối đa 5 MB.</li>
+        <li>Hệ thống chỉ kiểm tra và nạp vào lưới — phiếu chỉ được lưu khi bạn bấm Lưu tạm hoặc Hoàn thành.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== Bước 3: kết quả kiểm tra ===== -->
+  <div *ngIf="step === 3 && summary">
+    <div class="summary-cards">
+      <div class="card card-ok">
+        <div class="card-value">{{ summary.valid }}</div>
+        <div class="card-label">Dòng hợp lệ</div>
+      </div>
+      <div class="card card-warn">
+        <div class="card-value">{{ summary.warning }}</div>
+        <div class="card-label">Dòng cảnh báo</div>
+      </div>
+      <div class="card card-err">
+        <div class="card-value">{{ summary.error }}</div>
+        <div class="card-label">Dòng lỗi</div>
+      </div>
+      <div class="card card-total">
+        <div class="card-value">{{ summary.skipped }}</div>
+        <div class="card-label">Bỏ qua (trống Thực tế)</div>
+      </div>
+    </div>
+
+    <div class="inline-note warn" *ngIf="summary.error > 0">
+      <mat-icon>warning</mat-icon>
+      <span>{{ summary.error }} dòng lỗi sẽ <b>không</b> được nạp. Tải file lỗi, sửa rồi nạp lại.</span>
+    </div>
+
+    <div class="result-table">
+      <table class="table">
+        <thead>
+        <tr>
+          <th>Dòng</th>
+          <th>Mã hàng</th>
+          <th>Tên hàng</th>
+          <th>Lô</th>
+          <th>HSD</th>
+          <th class="text-right">Tồn hệ thống</th>
+          <th class="text-right">Thực tế</th>
+          <th>Kết quả</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let row of rows" [class.row-error]="row.status === 'error'"
+            [class.row-warning]="row.status === 'warning'">
+          <td>{{ row.row }}</td>
+          <td>{{ row.product_no }}</td>
+          <td>{{ row.product_name }}</td>
+          <td>{{ row.parcel_no || '—' }}</td>
+          <td>{{ row.expiration_date || '—' }}</td>
+          <td class="text-right">{{ row.system_stock }}</td>
+          <td class="text-right">{{ row.actual }}</td>
+          <td>
+            <span class="badge badge-{{ row.status }}">{{ statusLabel(row.status) }}</span>
+            <span class="badge-message">{{ messageText(row) }}</span>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <button mat-raised-button color="warn" *ngIf="summary.error > 0" (click)="downloadErrorFile()">
+      <mat-icon>file_download</mat-icon>
+      Tải file lỗi ({{ summary.error }} dòng)
+    </button>
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Đóng</button>
+
+  <button mat-button *ngIf="step === 3" (click)="back()">Quay lại</button>
+
+  <button mat-raised-button color="primary" *ngIf="step === 2"
+          [disabled]="submitted || !selectedFile" (click)="submit()">
+    <mat-icon>cloud_upload</mat-icon>
+    Kiểm tra dữ liệu
+  </button>
+
+  <button mat-raised-button color="primary" *ngIf="step === 3"
+          [disabled]="loadableCount === 0" (click)="loadIntoForm()">
+    Nạp {{ loadableCount }} dòng vào phiếu
+  </button>
+</mat-dialog-actions>

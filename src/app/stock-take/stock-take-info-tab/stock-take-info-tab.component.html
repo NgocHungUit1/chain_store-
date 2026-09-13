@@ -5,7 +5,7 @@
 
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Mã nhập hàng:</span>
+            <span class="product-field-label">Mã kiểm kho:</span>
             <strong>{{stockTake.no}}</strong>
           </div>
           <div fxFlex="4"></div>
@@ -20,24 +20,24 @@
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
             <span class="product-field-label">Thời gian: </span>
-            <span>{{ stockTake.created_at }}</span>
+            <span>{{ stockTake.created_at ? (stockTake.created_at * 1000 | date:'dd/MM/yyyy HH:mm') : '—' }}</span>
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
             <span class="product-field-label">Người tạo: </span>
-            <span>{{ stockTake.user?.username }}</span>
+            <span>{{ stockTake.user?.employee?.name || stockTake.user?.username }}</span>
           </div>
         </div>
 
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
             <span class="product-field-label">Ngày cân bằng: </span>
-            <span>{{ stockTake.balance_at }}</span>
+            <span>{{ stockTake.balance_at ? (stockTake.balance_at * 1000 | date:'dd/MM/yyyy HH:mm') : '—' }}</span>
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
             <span class="product-field-label">Người cân bằng: </span>
-            <span>{{ stockTake.balanceBy?.username }}</span>
+            <span>{{ stockTake.balance_at ? (stockTake.balanceBy?.employee?.name || stockTake.balanceBy?.username) : '—' }}</span>
           </div>
         </div>
 
@@ -74,16 +74,32 @@
           <ng-container matColumnDef="product_no">
             <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_no']}}</th>
             <td mat-cell *matCellDef="let element">
-              <a routerLink="/store/product/{{ element.product.product_no }}">{{ element.product.product_no }}</a>
+              <a routerLink="/store/product/{{ element.product?.product_no }}">{{ element.product?.product_no }}</a>
             </td>
           </ng-container>
 
           <ng-container matColumnDef="product_name">
             <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_name']}}</th>
             <td mat-cell *matCellDef="let element">
-              <p>{{ element.product.product_name }}</p>
-              <p>Đơn vị : {{ element.productUnit.name }}</p>
+              <p>{{ element.product?.product_name }}</p>
             </td>
+          </ng-container>
+
+          <ng-container matColumnDef="parcel_no">
+            <th mat-header-cell *matHeaderCellDef> {{columnsHeader['parcel_no']}}</th>
+            <td mat-cell *matCellDef="let element"> {{ element.parcel_no || '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="expiration_date">
+            <th mat-header-cell *matHeaderCellDef> {{columnsHeader['expiration_date']}}</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.expiration_date ? (element.expiration_date | date:'dd/MM/yyyy') : '—' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="product_unit">
+            <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_unit']}}</th>
+            <td mat-cell *matCellDef="let element"> {{ element.productUnit?.name }}</td>
           </ng-container>
 
           <ng-container matColumnDef="quantity_of_stock">

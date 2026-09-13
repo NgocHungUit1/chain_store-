@@ -1,0 +1,53 @@
+.stock-change {
+  margin: 8px 0 16px;
+}
+
+.stock-change-note {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 8px 12px;
+  border-radius: 4px;
+  background: #fff6e5;
+  color: #7a4b06;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.stock-change-table {
+  max-height: 300px;
+  overflow: auto;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  margin-bottom: 12px;
+}
+
+.stock-change-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.stock-change-table th,
+.stock-change-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.stock-change-table thead th {
+  position: sticky;
+  top: 0;
+  background: #fafafa;
+  font-weight: 600;
+}
+
+.stock-change-table .text-right {
+  text-align: right;
+}
+
+.stock-change-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

@@ -29,6 +29,9 @@ export class StockTakeInfoTabComponent implements OnChanges {
     '#': '#',
     'product_no': 'Mã hàng',
     'product_name': 'Tên hàng',
+    'parcel_no': 'Số lô',
+    'expiration_date': 'Hạn dùng',
+    'product_unit': 'Đơn vị',
     'quantity_of_stock': 'Tồn kho',
     'actual_number': 'Thực tế',
     'deviation_number': 'Số lệch',
@@ -38,6 +41,9 @@ export class StockTakeInfoTabComponent implements OnChanges {
     '#',
     'product_no',
     'product_name',
+    'parcel_no',
+    'expiration_date',
+    'product_unit',
     'quantity_of_stock',
     'actual_number',
     'deviation_number',
@@ -121,7 +127,8 @@ export class StockTakeInfoTabComponent implements OnChanges {
 
     const filter = new StockTakeItemFilter();
     filter.page = this.route.snapshot.queryParams['page'];
-    filter.pageSize = 50;//this.route.snapshot.queryParams['pageSize'];
+    // Đủ mọi dòng: nút Hoàn thành ở đây kiểm tra tồn đổi trên toàn bộ dòng phiếu.
+    filter.pageSize = 5000;
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.stock_take_id = this.stockTake.id;
     filter.expand = 'product,productUnit,user';
@@ -152,24 +159,76 @@ export class StockTakeInfoTabComponent implements OnChanges {
       return;
     }
 
-    const obj = {
-      action: 'Delete',
-      title: 'Cân bằng kho',
-      content: 'Cân bằng kho sẽ thay đổi tồn kho hiện tại của hàng hóa trong phiếu kiểm kho.<br> Bạn có chắc chắn muốn Cân bằng kho?',
-    };
+    // Cân bằng đặt THẲNG tồn = thực tế — hỏi trước nếu tồn đã đổi từ lúc lập phiếu.
+    const items = (this.data || []).map(row => ({
+      id: row.id,
+      product_id: row.product_id,
+      product_unit_id: row.product_unit_id,
+      parcel_no: row.parcel_no,
+      expiration_date: row.expiration_date,
+      price: row.price,
+      view_quantity_of_stock: row.quantity_of_stock,
+      actual_number: row.actual_number,
+      deviation_number: row.deviation_number,
+      deviation_price: row.deviation_price,
+      unit_name: row['productUnit'] ? row['productUnit']['name'] : '',
+      unit_value: row['productUnit'] ? Number(row['productUnit']['value']) || 1 : 1,
+    }));
 
-    const dialogRef = this.dialog.open(StockTakeBalanceDialogComponent, {
-      data: obj,
-      width: '40%',
-      minHeight: '80%',
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result.event === 'accept') {
-        this.stockTakeSer.updateBalanceStatus(this.stockTake.id, balance_status).subscribe(res => {
-          this.notifySer.notify('success', 'Lưu thành công.');
+    this.stockTakeSer.checkStockChange(items).subscribe(res => {
+      const changes = (res && res.changes || []).map(change => ({
+        ...change,
+        product_no: this.data[change.index] && this.data[change.index].product ? this.data[change.index].product['product_no'] : '',
+        product_name: this.data[change.index] && this.data[change.index].product ? this.data[change.index].product['product_name'] : '',
+        unit_name: items[change.index].unit_name,
+        actual_number: items[change.index].actual_number,
+      }));
+
+      const obj = {
+        action: 'Delete',
+        title: 'Cân bằng kho',
+        content: 'Cân bằng kho sẽ thay đổi tồn kho hiện tại của hàng hóa trong phiếu kiểm kho.<br> Bạn có chắc chắn muốn Cân bằng kho?',
+        changes: changes,
+      };
+
+      const dialogRef = this.dialog.open(StockTakeBalanceDialogComponent, {
+        data: obj,
+        width: changes.length ? '75%' : '40%',
+        minWidth: changes.length ? '900px' : undefined,
+        maxHeight: '90vh',
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (!result || result.event !== 'accept') {
+          return;
+        }
+
+        if (changes.length === 0) {
+          this.stockTakeSer.updateBalanceStatus(this.stockTake.id, balance_status).subscribe(() => {
+            this.stockTake.balance_status = balance_status;
+            this.notifySer.notify('success', 'Lưu thành công.');
+            this.reload.emit();
+          });
+          return;
+        }
+
+        // Có dòng tồn đổi: cập nhật số chốt (và thực tế nếu chọn trừ phát sinh) rồi lưu kèm dòng.
+        changes.forEach(change => {
+          const item = items[change.index];
+          if (result.mode === 'subtract') {
+            item.actual_number = Math.max(0, Number(item.actual_number) + (change.current - change.snapshot));
+          }
+          item.view_quantity_of_stock = change.current;
+          item.deviation_number = item.actual_number - item.view_quantity_of_stock;
+          item.deviation_price = item.deviation_number * item.price;
         });
-        this.stockTake.balance_status = balance_status;
-      }
+        const payload = items.map(({unit_name, unit_value, ...rest}) => rest);
+
+        this.stockTakeSer.update(this.stockTake.id, {balance_status: balance_status, items: payload}).subscribe(() => {
+          this.stockTake.balance_status = balance_status;
+          this.notifySer.notify('success', 'Lưu thành công.');
+          this.reload.emit();
+        });
+      });
     });
   }
 
