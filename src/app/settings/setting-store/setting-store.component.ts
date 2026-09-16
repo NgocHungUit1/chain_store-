@@ -4,6 +4,8 @@ import {UserService} from '../../user/user.service';
 import {NotifierService} from 'angular-notifier';
 import { CustomValidators } from 'ng2-validation';
 import {StoreService} from '../../store/store.service';
+import {BranchService} from '../../branch/branch.service';
+import {AuthService} from '../../authentication/auth.service';
 import {date} from 'ng2-validation/dist/date';
 
 const password = new FormControl('');
@@ -32,6 +34,9 @@ export class SettingStoreComponent implements OnInit {
   form: FormGroup;
   loading = false;
   hidePassword = true;
+  hideV2Password = true;
+  testingConnection = false;
+  testConnectionResult: { success: boolean; message: string } = null;
   local_data: any;
   user_id: string;
   checkChangePassword = false;
@@ -41,6 +46,8 @@ export class SettingStoreComponent implements OnInit {
     public storeSer: StoreService,
     public notifySer: NotifierService,
     private fb: FormBuilder,
+    private branchSer: BranchService,
+    private authSer: AuthService,
   ) {
   }
 
@@ -63,10 +70,11 @@ export class SettingStoreComponent implements OnInit {
 
       nation_username: [null],
       nation_password: [null],
-      // Tài khoản liên thông CSDL Dược quốc gia (hệ thống mới) - chỉ xem, do quản trị
-      // viên khai báo ở trang quản trị
-      nation_v2_username: [{value: null, disabled: true}],
-      nation_v2_password: [{value: null, disabled: true}],
+      // Tài khoản CSDL Dược quốc gia (hệ thống mới) của cửa hàng. Nhà thuốc tự nhập: màn
+      // này thay cho mục "Liên thông cửa hàng" cũ ở Thiết lập, cùng lưu vào 2 cột
+      // store.national_pharmacy_v2_login_username / _password.
+      nation_v2_username: [null],
+      nation_v2_password: [null],
       owner_name: [null],
       phone: [null],
       email: [null, Validators.email],
@@ -112,6 +120,8 @@ export class SettingStoreComponent implements OnInit {
     this.storeSer.updateInfo({
       national_pharmacy_login_username: v.nation_username,
       national_pharmacy_login_password: v.nation_password,
+      national_pharmacy_v2_login_username: v.nation_v2_username,
+      national_pharmacy_v2_login_password: v.nation_v2_password,
       owner_name: v.owner_name,
       phone: v.phone,
       email: v.email,
@@ -130,6 +140,34 @@ export class SettingStoreComponent implements OnInit {
       this.loading = false;
       const message = error && error.error ? error.error['message'] : null;
       this.notifySer.notify('error', message || 'Cập nhật thất bại, vui lòng thử lại');
+    });
+  }
+
+  canDo(permissionName: string): boolean {
+    return this.authSer.getPermissionsFromLocalStorage().indexOf(permissionName) !== -1;
+  }
+
+  /**
+   * Thử đăng nhập CSDL Dược quốc gia bằng tài khoản ĐANG GÕ trên form (chưa cần Lưu),
+   * để nhà thuốc biết sai tài khoản ngay chứ không phải chờ tới lúc đẩy phiếu.
+   */
+  testConnectionV2() {
+    if (this.testingConnection) {
+      return;
+    }
+    const v = this.form.getRawValue();
+    this.testingConnection = true;
+    this.testConnectionResult = null;
+
+    this.branchSer.testConnectionV2(v.nation_v2_username, v.nation_v2_password).subscribe(res => {
+      this.testingConnection = false;
+      this.testConnectionResult = res;
+      this.notifySer.notify(res.success ? 'success' : 'error', res.message);
+    }, error => {
+      this.testingConnection = false;
+      const message = (error && error.error && error.error.message) || 'Không gọi được API kiểm tra kết nối.';
+      this.testConnectionResult = {success: false, message};
+      this.notifySer.notify('error', message);
     });
   }
 

@@ -51,9 +51,19 @@
             <div class="info-group-title">
               <mat-icon>vpn_key</mat-icon>
               <span>Kết nối Dược Quốc Gia</span>
+              <span class="title-spacer"></span>
+              <!-- Thử đăng nhập bằng giá trị đang gõ, chưa cần Lưu: sai tài khoản thì biết ngay -->
+              <button mat-stroked-button color="accent" type="button" class="btn-test-connection"
+                      *ngIf="canDo('Branch.Test-Connection-V2')"
+                      (click)="testConnectionV2()" [disabled]="testingConnection">
+                <mat-icon>wifi_tethering</mat-icon>
+                {{ testingConnection ? 'Đang kiểm tra...' : 'Kiểm tra kết nối' }}
+              </button>
             </div>
             <div fxLayout="row wrap" fxLayoutGap="16px grid">
-              <div fxFlex.gt-sm="33.33" fxFlex="100">
+              <!-- ẨN Mã cơ sở: nhà thuốc không cần thấy, chỉ admin đổi. Vẫn giữ trong form và
+                   KHÔNG gửi khi Lưu, liên thông mới vẫn đọc mã này ở phía backend. -->
+              <div fxFlex.gt-sm="33.33" fxFlex="100" *ngIf="false">
                 <mat-form-field>
                   <mat-label>Mã cơ sở</mat-label>
                   <input matInput formControlName="registration_no">
@@ -80,21 +90,26 @@
                   </button>
                 </mat-form-field>
               </div>
-              <div fxFlex.gt-sm="33.33" fxFlex="100">
+              <div fxFlex.gt-sm="50" fxFlex="100">
                 <mat-form-field>
                   <mat-label>Tài khoản liên thông Dược Quốc gia</mat-label>
                   <input matInput formControlName="nation_v2_username" autocomplete="off">
-                  <mat-icon matSuffix class="lock-icon"
-                            matTooltip="Chỉ bộ phận hỗ trợ được đổi tài khoản liên thông">lock</mat-icon>
                 </mat-form-field>
               </div>
-              <div fxFlex.gt-sm="33.33" fxFlex="100">
+              <div fxFlex.gt-sm="50" fxFlex="100">
                 <mat-form-field>
                   <mat-label>Mật khẩu liên thông Dược Quốc gia</mat-label>
-                  <input matInput type="password" formControlName="nation_v2_password" autocomplete="new-password">
-                  <mat-icon matSuffix class="lock-icon"
-                            matTooltip="Chỉ bộ phận hỗ trợ được đổi mật khẩu liên thông">lock</mat-icon>
+                  <input matInput formControlName="nation_v2_password" autocomplete="new-password"
+                         [type]="hideV2Password ? 'password' : 'text'">
+                  <button mat-icon-button matSuffix type="button" (click)="hideV2Password = !hideV2Password"
+                          [matTooltip]="hideV2Password ? 'Hiện mật khẩu' : 'Ẩn mật khẩu'">
+                    <mat-icon>{{ hideV2Password ? 'visibility_off' : 'visibility' }}</mat-icon>
+                  </button>
                 </mat-form-field>
+              </div>
+              <div fxFlex="100" class="test-result" *ngIf="testConnectionResult"
+                   [ngClass]="testConnectionResult.success ? 'np-test-ok' : 'np-test-fail'">
+                {{ testConnectionResult.success ? '✓' : '✗' }} {{ testConnectionResult.message }}
               </div>
             </div>
           </div>

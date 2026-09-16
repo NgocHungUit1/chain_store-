@@ -135,3 +135,33 @@
   .info-group { padding: 12px 12px 4px; }
   .info-group-title { font-size: 14px; }
 }
+
+/* Nút Kiểm tra kết nối nằm ngang hàng tiêu đề nhóm Kết nối Dược Quốc Gia */
+.info-group-title .title-spacer {
+  flex: 1 1 auto;
+}
+
+.info-group-title .btn-test-connection {
+  height: 32px;
+  line-height: 30px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.info-group-title .btn-test-connection .mat-icon {
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.test-result {
+  margin: -6px 0 10px;
+  font-size: 13px;
+}
+
+.np-test-ok {
+  color: #2e7d32;
+}
+
+.np-test-fail {
+  color: #c62828;
+}

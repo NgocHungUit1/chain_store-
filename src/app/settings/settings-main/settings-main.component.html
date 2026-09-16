@@ -49,8 +49,11 @@
             </button>
           </mat-radio-button>
 
+          <!-- ẨN: tài khoản liên thông cấp cửa hàng đã chuyển sang màn Thông tin cửa hàng
+               (/setting/store), cùng lưu vào 2 cột store.national_pharmacy_v2_login_*.
+               Giữ code để mở lại thì bỏ "false &&". -->
           <mat-radio-button class="radio-button-report-type" value="store-connect"
-                            *ngIf="canDo('Store.Update-Info') && canDo('Store.Get-Detail')">
+                            *ngIf="false && canDo('Store.Update-Info') && canDo('Store.Get-Detail')">
             Liên thông cửa hàng
             <button mat-icon-button aria-label="store-connect">
               <mat-icon>cloud_sync</mat-icon>
