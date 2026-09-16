@@ -732,7 +732,12 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit,
 
   openUploadDialog() {
     const dialogRef = this.dialog.open(WarehouseUploadDialogComponent, {
-      width: '40%',
+      // Rộng cố định thay cho 40%: màn nhỏ thì 40% quá hẹp, chữ Lưu ý xuống dòng
+      // liên tục làm hộp thoại cao thêm. maxHeight để hộp thoại không vượt màn hình,
+      // phần Lưu ý nằm trong mat-dialog-content nên tự cuộn, nút Tải lên luôn thấy.
+      width: '640px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {

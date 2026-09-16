@@ -31,7 +31,6 @@
       </div>
 
     </div>
-  </mat-dialog-content>
   <p style="color:red; font-weight: 600;">Lưu ý :</p>
   <p>- Các sản phẩm có cùng tên nhà cung cấp sẽ được gộp thành 1 đơn nhập hàng.</p>
   <p>- 1 file có nhiều nhà cung cấp sẽ được tách thành nhiều đơn nhập hàng.</p>
@@ -43,6 +42,7 @@
   <p>&nbsp; + Điền vào sheet <b>Data nhap hang</b>; các dòng ví dụ nằm riêng ở sheet <b>Vi du</b></p>
   <p>&nbsp; + Cột giá bán nếu không điền thì: giá bán = giá vốn * 1.1</p>
   <p>- File mẫu cũ vẫn nạp được bình thường, không cần làm lại file đang dùng.</p>
+  </mat-dialog-content>
   <mat-dialog-actions align="end">
 
     <button mat-raised-button color="primary" [disabled]="submitted || selectedFile === null || !branchId"
