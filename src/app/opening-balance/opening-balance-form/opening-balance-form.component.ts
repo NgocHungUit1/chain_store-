@@ -143,7 +143,8 @@ export class OpeningBalanceFormComponent implements OnInit {
 
   loadDetail() {
     this.isLoading = true;
-    const expand = 'warehouseProducts.product,warehouseProducts.productUnits,warehouseProducts.productParcels';
+    const expand = 'warehouseProducts.product,warehouseProducts.productUnits,warehouseProducts.productParcels,'
+      + 'warehouseProducts.product.nationalPharmacyCheck';
 
     this.service.getDetail(this.updateModelId, expand).subscribe(res => {
       this.readonly = Number(res['status']) === OPENING_BALANCE_STATUS.DONE;
@@ -193,6 +194,7 @@ export class OpeningBalanceFormComponent implements OnInit {
     item.amount = Number(wp.amount) || 0;
     item.sell_price = wp.sell_price || null;
     item.note = wp.note || null;
+    item.dqg = product.nationalPharmacyCheck || null;
 
     return item;
   }
@@ -229,7 +231,7 @@ export class OpeningBalanceFormComponent implements OnInit {
   }
 
   addProduct(productId) {
-    this.productSer.getDetail(String(productId), 'productUnits').subscribe(res => {
+    this.productSer.getDetail(String(productId), 'productUnits,nationalPharmacyCheck').subscribe(res => {
       const units = (res['productUnits'] || []).slice().sort((a, b) => Number(a.value) - Number(b.value));
 
       if (units.length === 0) {
@@ -252,6 +254,7 @@ export class OpeningBalanceFormComponent implements OnInit {
       item.price = Number(res['original_price']) || 0;
       item.sell_price = Number(res['sell_price']) || null;
       item.amount = item.quantity * item.price;
+      item.dqg = res['nationalPharmacyCheck'] || null;
 
       this.data = this.data.concat([item]);
       this.refreshTable();
@@ -337,12 +340,13 @@ export class OpeningBalanceFormComponent implements OnInit {
 
     // Danh sách đơn vị không có trong kết quả import; nạp bổ sung để dropdown đổi
     // đơn vị vẫn dùng được sau khi nạp.
-    this.productSer.getDetail(String(item.product_id), 'productUnits').subscribe(res => {
+    this.productSer.getDetail(String(item.product_id), 'productUnits,nationalPharmacyCheck').subscribe(res => {
       item.productUnits = (res['productUnits'] || []).slice().sort((a, b) => Number(a.value) - Number(b.value));
+      item.dqg = res['nationalPharmacyCheck'] || null;
       if (!item.require_parcel) {
         item.require_parcel = res['product_type'] === 'medicine' || !!res['batch_tracking_enabled'];
-        this.validate();
       }
+      this.validate();
     });
 
     return item;
@@ -447,6 +451,22 @@ export class OpeningBalanceFormComponent implements OnInit {
             message: 'Dòng ' + line + ': lô «' + item.parcel_no + '» sẽ hết hạn trong vòng 3 tháng.',
           });
           item.warnings.push('V09');
+        }
+      }
+
+      // Dược Quốc gia: chỉ cảnh báo, không chặn lưu — tồn kho trong RX20 vẫn phải ghi
+      // nhận dù dòng đó chưa nộp được lên cổng. Cùng bộ kiểm tra với file xuất nộp cổng.
+      if (item.dqg && item.dqg.status !== 'not_required') {
+        const reasons = (item.dqg.reasons || []).slice();
+        if (Number(item.price) <= 0) {
+          reasons.push('Chưa có đơn giá (giá vốn bằng 0).');
+        }
+        if (reasons.length > 0) {
+          messages.push({
+            code: 'DQG', level: 'warning',
+            message: 'Dòng ' + line + ' («' + name + '»): chưa khai được lên Dược Quốc gia — ' + reasons.join(' '),
+          });
+          item.warnings.push('DQG');
         }
       }
 

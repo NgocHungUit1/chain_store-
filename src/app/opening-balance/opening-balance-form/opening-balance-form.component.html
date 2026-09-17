@@ -100,6 +100,14 @@
             <td mat-cell *matCellDef="let element">
               <b>{{ element.product_name }}</b>
               <span class="chip-lot" *ngIf="element.require_parcel">Lô</span>
+              <span class="chip-dqg chip-dqg-blocked" *ngIf="element.warnings.indexOf('DQG') !== -1"
+                    [matTooltip]="element.dqg?.reasons?.join(' ') || 'Chưa có đơn giá (giá vốn bằng 0).'">
+                Chưa khai được DQG
+              </span>
+              <span class="chip-dqg chip-dqg-not-required" *ngIf="element.dqg?.status === 'not_required'"
+                    [matTooltip]="element.dqg.reasons?.join(' ')">
+                Không cần khai DQG
+              </span>
             </td>
           </ng-container>
 

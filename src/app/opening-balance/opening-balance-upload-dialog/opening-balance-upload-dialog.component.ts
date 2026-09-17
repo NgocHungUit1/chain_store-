@@ -127,6 +127,17 @@ export class OpeningBalanceUploadDialogComponent implements OnInit {
       .join(' · ');
   }
 
+  /** Nhãn kết quả kiểm tra Dược Quốc gia của một dòng (backend: dqg.status) */
+  dqgLabel(status: string): string {
+    if (status === 'ready') {
+      return 'Khai được';
+    }
+    if (status === 'not_required') {
+      return 'Không cần khai';
+    }
+    return 'Chưa khai được';
+  }
+
   statusLabel(status: string): string {
     if (status === 'error') {
       return 'Lỗi';

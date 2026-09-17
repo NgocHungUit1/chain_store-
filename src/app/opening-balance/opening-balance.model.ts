@@ -68,6 +68,12 @@ export class OpeningBalanceItem {
 
   /** Mã cảnh báo hiển thị ngay trên dòng (V08, V09...). */
   warnings: string[] = [];
+
+  /**
+   * Khai được lên Dược Quốc gia hay chưa (backend: product ?expand=nationalPharmacyCheck).
+   * null khi chưa tải xong.
+   */
+  dqg: { status: 'ready' | 'blocked' | 'not_required', reasons: string[] } = null;
 }
 
 /** Trạng thái phiếu — dùng đúng hai trạng thái sẵn có của phiếu nhập. */

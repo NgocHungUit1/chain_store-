@@ -47,7 +47,8 @@
     <div class="note-box">
       <p><b>Lưu ý</b></p>
       <ul>
-        <li>Dùng đúng file mẫu. Cột <b>Mã thuốc DQG</b> không bắt buộc, nhưng thiếu thì phiếu này sẽ không xuất được trong file gửi Cục Dược.</li>
+        <li>Dùng đúng file mẫu.</li>
+        <li>Hệ thống kiểm tra luôn từng thuốc có <b>khai được lên Dược Quốc gia</b> không (mã định danh, đơn vị tính, đơn giá) — giống hệt file xuất nộp cổng.</li>
         <li>Thuốc bắt buộc có <b>Số lô</b> và <b>Hạn sử dụng</b>.</li>
         <li>Tối đa <b>1.000 dòng</b> mỗi lần nạp, dung lượng tối đa 5 MB.</li>
         <li>Hệ thống chỉ kiểm tra và nạp vào lưới — phiếu chỉ được tạo khi bạn bấm Lưu tạm hoặc Hoàn thành.</li>
@@ -81,10 +82,17 @@
       <span>{{ summary.error }} dòng lỗi sẽ <b>không</b> được nạp. Tải file lỗi, sửa rồi nạp lại.</span>
     </div>
 
-    <div class="inline-note info" *ngIf="summary.missing_dqg > 0">
+    <!-- Kết quả Dược Quốc gia chấm riêng, không làm dòng thành lỗi: tồn kho trong RX20
+         vẫn phải ghi nhận dù dòng đó chưa nộp được lên cổng -->
+    <div class="inline-note warn" *ngIf="summary.missing_dqg > 0">
+      <mat-icon>cloud_off</mat-icon>
+      <span><b>{{ summary.missing_dqg }}</b> dòng thuốc <b>chưa khai được lên Dược Quốc gia</b> — vẫn nhập tồn đầu bình thường,
+        nhưng cần sửa theo lý do ở cột "Dược Quốc gia" trước khi nộp phiếu lên cổng.</span>
+    </div>
+
+    <div class="inline-note info" *ngIf="summary.dqg_not_required > 0">
       <mat-icon>info_outline</mat-icon>
-      <span>{{ summary.missing_dqg }} thuốc chưa có mã DQG — vẫn nhập tồn đầu bình thường,
-        nhưng sẽ không xuất được trong file gửi Cục Dược.</span>
+      <span>{{ summary.dqg_not_required }} dòng là hàng hoá, thực phẩm chức năng, mỹ phẩm hoặc vật tư y tế — không cần khai lên Dược Quốc gia.</span>
     </div>
 
     <div class="result-table">
@@ -99,6 +107,7 @@
           <th class="text-right">SL</th>
           <th class="text-right">Giá vốn</th>
           <th>Kết quả</th>
+          <th>Dược Quốc gia</th>
         </tr>
         </thead>
         <tbody>
@@ -114,6 +123,13 @@
           <td>
             <span class="badge badge-{{ row.status }}">{{ statusLabel(row.status) }}</span>
             <span class="badge-message">{{ messageText(row) }}</span>
+          </td>
+          <td>
+            <ng-container *ngIf="row.dqg">
+              <span class="badge badge-dqg-{{ row.dqg.status }}">{{ dqgLabel(row.dqg.status) }}</span>
+              <span class="badge-message">{{ row.dqg.reasons?.join(' · ') }}</span>
+            </ng-container>
+            <span *ngIf="!row.dqg">—</span>
           </td>
         </tr>
         </tbody>

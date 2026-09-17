@@ -207,6 +207,21 @@
   color: #8b1f1a;
 }
 
+.badge-dqg-ready {
+  background: #cfe9d9;
+  color: #17603a;
+}
+
+.badge-dqg-blocked {
+  background: #f8e2b8;
+  color: #7a4b06;
+}
+
+.badge-dqg-not_required {
+  background: #eef1f4;
+  color: #455a64;
+}
+
 .badge-message {
   margin-left: 6px;
   font-size: 12px;

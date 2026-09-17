@@ -145,6 +145,27 @@ th.mat-header-cell {
   color: #1565c0;
 }
 
+/* Khai được lên Dược Quốc gia hay chưa — chỉ cảnh báo, không chặn lưu phiếu */
+.chip-dqg {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 6px;
+  font-size: 10px;
+  line-height: 16px;
+  border-radius: 8px;
+  cursor: help;
+}
+
+.chip-dqg-blocked {
+  background: #fff3e0;
+  color: #9a5b00;
+}
+
+.chip-dqg-not-required {
+  background: #eceff1;
+  color: #546e7a;
+}
+
 /* ---- Khối cảnh báo ---- */
 .alert {
   display: flex;
