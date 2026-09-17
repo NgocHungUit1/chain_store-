@@ -163,7 +163,9 @@ export class NationalPharmacyV2ConnectDialogComponent implements OnInit {
       if (res.success) {
         this.changed = true;
         this.transaction = this.service.toTransaction(res, this.transaction);
-        this.notifySer.notify('success', 'Đã gửi phiếu lên CSDL Dược quốc gia.');
+        // Có sản phẩm bị bỏ qua thì báo dạng cảnh báo, chi tiết lý do hiện trong hộp thoại
+        this.notifySer.notify(res.skipped?.length ? 'warning' : 'success',
+          res.message || 'Đã gửi phiếu lên CSDL Dược quốc gia.');
         return;
       }
 

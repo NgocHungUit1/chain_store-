@@ -62,6 +62,15 @@
     </div>
   </div>
 
+  <!-- Sản phẩm khai là Thuốc nhưng số đăng ký là của TPCN / mỹ phẩm / TBYT: không gửi,
+       báo rõ lý do để người dùng biết vì sao dòng đó không có trên CSDL Dược quốc gia -->
+  <div class="np-v2-warning" *ngIf="result?.skipped?.length">
+    <div>Không gửi {{ result.skipped.length }} sản phẩm vì không phải thuốc:</div>
+    <ul>
+      <li *ngFor="let reason of result.skipped">{{ reason }}</li>
+    </ul>
+  </div>
+
   <!-- Lỗi dữ liệu chi tiết theo từng sản phẩm -->
   <div class="np-v2-error" *ngIf="result && !result.success && !result.already_synced">
     <div>{{ result.message }}</div>

@@ -28,7 +28,8 @@
   color: #b71c1c;
 }
 
-.np-v2-error ul {
+.np-v2-error ul,
+.np-v2-warning ul {
   margin: 6px 0 0;
   padding-left: 18px;
 }

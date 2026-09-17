@@ -66,6 +66,11 @@ export interface NationalPharmacyV2Result {
   message?: string;
   /** Danh sách lỗi dữ liệu chi tiết theo từng sản phẩm */
   errors?: string[];
+  /**
+   * Sản phẩm không gửi vì số đăng ký là của thực phẩm chức năng, mỹ phẩm hay trang
+   * thiết bị y tế — không thuộc CSDL Dược quốc gia. Có cả khi success = true.
+   */
+  skipped?: string[];
   /** Phiếu đã được tiếp nhận trước đó, cần xác nhận mới đẩy lại */
   already_synced?: boolean;
   /** Lượt gửi trước mất kết nối, chưa rõ CSDL Dược đã nhận hay chưa */
