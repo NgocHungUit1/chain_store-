@@ -124,13 +124,12 @@
           <mat-icon>check</mat-icon>
           Hoàn thành
         </button>
-        <button mat-raised-button color="accent" (click)="connectSelect()" class="m-r-5">
-          <mat-icon>sync</mat-icon>
-          Liên thông
-        </button>
-        <button mat-raised-button color="accent" (click)="disconnectSelect()" class="m-r-5">
-          <mat-icon>close_fullscreen</mat-icon>
-          Gỡ liên thông
+        <!-- Liên thông CSDL Dược quốc gia v1.1. Không còn "Gỡ liên thông": hệ thống cũ đã
+             đóng, còn hệ thống mới không có API xoá phiếu. -->
+        <button mat-raised-button color="accent" (click)="connectSelect()" class="m-r-5"
+                [disabled]="!canDo('Warehouse.Connect-V2')">
+          <mat-icon>cloud_upload</mat-icon>
+          Liên thông Dược Quốc gia
         </button>
         <button mat-raised-button color="warn" (click)="deleteSelect()" class="m-r-5">
           <mat-icon>delete</mat-icon>
@@ -352,7 +351,15 @@
 
               <ng-container matColumnDef="national_pharmacy_no">
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['national_pharmacy_no']}}</th>
-                <td mat-cell *matCellDef="let element"> {{element.national_pharmacy_no}}</td>
+                <!-- Trạng thái liên thông CSDL Dược quốc gia v1.1; phiếu chưa từng gửi lên hệ
+                     thống mới thì giữ số phiếu của hệ thống cũ (nếu có) -->
+                <td mat-cell *matCellDef="let element">
+                  <span *ngIf="npV2Service.hasTransaction(element.nationalPharmacyV2); else oldNationalNo"
+                        [matTooltip]="element.nationalPharmacyV2?.error_message || element.nationalPharmacyV2?.transaction_id">
+                    {{ npV2Service.statusLabel(element.nationalPharmacyV2?.status) }}
+                  </span>
+                  <ng-template #oldNationalNo>{{element.national_pharmacy_no}}</ng-template>
+                </td>
               </ng-container>
 
               <ng-container matColumnDef="date">

@@ -1,0 +1,82 @@
+<h2 mat-dialog-title><strong>Liên thông Dược Quốc gia hàng loạt</strong></h2>
+
+<mat-dialog-content>
+
+  <!-- Trước khi gửi: nói rõ gửi gì, bỏ qua gì, và không xoá được -->
+  <div class="np-bulk-note" *ngIf="stage === 'confirm'">
+    <div>
+      Sẽ gửi <b>{{ pendingRows.length }}</b> phiếu lên CSDL Dược quốc gia, lần lượt từng phiếu.
+      <span *ngIf="count('ineligible') > 0">Bỏ qua <b>{{ count('ineligible') }}</b> phiếu chưa đủ điều kiện (xem lý do bên dưới).</span>
+    </div>
+    <div class="np-bulk-hint">
+      Phiếu đã liên thông trước đó sẽ không gửi lại. CSDL Dược quốc gia <b>không có chức năng xoá phiếu</b>
+      — kiểm tra kỹ trước khi gửi.
+    </div>
+  </div>
+
+  <!-- Lý do nhập/xuất: chỉ phiếu kho, áp chung cho cả lượt -->
+  <div *ngIf="data.source === 'warehouse' && stage === 'confirm'" class="np-bulk-reason">
+    <mat-form-field appearance="outline" style="width: 100%;">
+      <mat-label>Lý do {{ data.warehouseType === 'return' ? 'xuất' : 'nhập' }} hàng (áp dụng cho tất cả phiếu)</mat-label>
+      <mat-select [(ngModel)]="reason" [disabled]="loadingReasons">
+        <mat-option *ngFor="let option of reasonOptions" [value]="option.value">{{ option.label }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div class="np-bulk-error" *ngIf="reasonError">{{ reasonError }}</div>
+  </div>
+
+  <!-- Tiến độ -->
+  <div *ngIf="stage !== 'confirm'" class="np-bulk-progress">
+    <mat-progress-bar mode="determinate" [value]="total ? processed * 100 / total : 0"></mat-progress-bar>
+    <div class="np-bulk-counts">
+      <span>{{ stage === 'running' ? 'Đang gửi' : 'Đã xử lý' }} {{ processed }}/{{ total }} phiếu</span>
+      <span class="np-bulk-badge np-bulk-sent">Đã gửi: {{ count('sent') }}</span>
+      <span class="np-bulk-badge np-bulk-already">Đã liên thông trước: {{ count('already') }}</span>
+      <span class="np-bulk-badge np-bulk-failed">Lỗi: {{ count('failed') }}</span>
+      <span class="np-bulk-badge np-bulk-pending" *ngIf="stage === 'done' && count('pending') > 0">
+        Chưa gửi (đã dừng): {{ count('pending') }}
+      </span>
+    </div>
+  </div>
+
+  <div class="np-bulk-table">
+    <table>
+      <thead>
+      <tr>
+        <th>Số phiếu</th>
+        <th>Kết quả</th>
+        <th>Chi tiết</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let row of rows" [ngClass]="'np-bulk-row-' + row.status">
+        <td class="np-bulk-ref">{{ row.referenceNumber }}</td>
+        <td><span class="np-bulk-badge" [ngClass]="'np-bulk-' + row.status">{{ statusLabel(row.status) }}</span></td>
+        <td>
+          <div>{{ row.message }}</div>
+          <ul *ngIf="row.skipped?.length" class="np-bulk-skipped">
+            <li *ngFor="let reason of row.skipped">{{ reason }}</li>
+          </ul>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" (click)="start()" *ngIf="stage === 'confirm'" [disabled]="!canStart">
+    <mat-icon>cloud_upload</mat-icon>
+    Liên thông {{ pendingRows.length }} phiếu
+  </button>
+
+  <button mat-stroked-button color="warn" (click)="stop()" *ngIf="stage === 'running'">
+    <mat-icon>stop</mat-icon>
+    Dừng sau phiếu đang gửi
+  </button>
+
+  <button mat-stroked-button (click)="close()" [disabled]="stage === 'running'">
+    <mat-icon>close</mat-icon>
+    Đóng
+  </button>
+</mat-dialog-actions>

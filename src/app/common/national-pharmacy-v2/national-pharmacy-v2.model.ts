@@ -108,3 +108,20 @@ export interface NationalPharmacyV2DialogData {
   /** Lần liên thông gần nhất, nếu đã có */
   transaction?: NationalPharmacyV2Transaction;
 }
+
+/** Một phiếu trong lượt liên thông hàng loạt */
+export interface NationalPharmacyV2BulkItem {
+  id: string | number;
+  /** Số phiếu, chỉ để hiển thị */
+  referenceNumber: string;
+  /** Có giá trị thì phiếu không đủ điều kiện gửi ngay từ đầu, hiện lý do và bỏ qua */
+  ineligibleReason?: string;
+}
+
+/** Dữ liệu truyền vào dialog liên thông hàng loạt */
+export interface NationalPharmacyV2BulkDialogData {
+  source: NationalPharmacyV2Source;
+  items: NationalPharmacyV2BulkItem[];
+  /** Bắt buộc khi source = 'warehouse' để lấy đúng danh sách lý do */
+  warehouseType?: WarehouseType;
+}

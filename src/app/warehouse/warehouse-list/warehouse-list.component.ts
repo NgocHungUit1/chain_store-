@@ -5,6 +5,9 @@ import {MatSort} from '@angular/material/sort';
 import {ListComponentBase} from '../../shared/base';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
+import { NationalPharmacyV2Service } from '../../common/national-pharmacy-v2/national-pharmacy-v2.service';
+import { NationalPharmacyV2BulkDialogComponent } from '../../common/national-pharmacy-v2/national-pharmacy-v2-bulk-dialog/national-pharmacy-v2-bulk-dialog.component';
+import { NationalPharmacyV2BulkDialogData, NationalPharmacyV2BulkItem } from '../../common/national-pharmacy-v2/national-pharmacy-v2.model';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {NotifierService} from 'angular-notifier';
 import {WarehouseService} from '../warehouse.service';
@@ -57,7 +60,8 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit,
     private supplierSer: SupplierService,
     private productSer: ProductService,
     private storeSer: StoreService,
-    public authSer: AuthService
+    public authSer: AuthService,
+    public npV2Service: NationalPharmacyV2Service
   ) {
     super();
   }
@@ -244,71 +248,31 @@ export class WarehouseListComponent extends ListComponentBase implements OnInit,
     this._connectSelect();
   }
 
+  /**
+   * Liên thông hàng loạt lên CSDL Dược quốc gia v1.1. Trước đây gọi API của hệ thống
+   * liên thông cũ (Cục Quản lý Dược) đã đóng nên luôn báo "đang bảo trì".
+   * Chỉ phiếu nhập đã hoàn thành mới gửi được — giống nút liên thông trên từng phiếu.
+   */
   _connectSelect() {
-    const obj = {
-      action: 'Connect',
-      title: 'Xác nhận liên thông danh sách đã chọn .',
-      content: '',
-    };
+    const items: NationalPharmacyV2BulkItem[] = this.selection.selected.map(item => ({
+      id: item.id,
+      referenceNumber: item.no,
+      ineligibleReason: Number(item.status) === 10 ? null : 'Phiếu nhập chưa hoàn thành.',
+    }));
 
-    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
-      data: obj,
-      width: '30%',
-      minHeight: '60%',
+    if (items.length === 0) {
+      this.notifyService.notify('warning', 'Chưa chọn phiếu nào.');
+      return;
+    }
+
+    const dialogRef = this.dialog.open(NationalPharmacyV2BulkDialogComponent, {
+      data: {source: 'warehouse', warehouseType: 'import', items} as NationalPharmacyV2BulkDialogData,
+      width: '70%',
+      maxHeight: '90vh',
     });
     dialogRef.afterClosed().subscribe(result => {
-      if (result?.event === 'confirm') {
-        let itemsProcessed = 0;
-        this.selection.selected.forEach((item, index, array) => {
-          this.mainService.connect(item.id).subscribe(res => {
-            if (res?.success) {
-            } else {
-              this.notifyService.notify('warning', res?.message);
-            }
-            itemsProcessed++;
-            if (itemsProcessed === array.length) {
-              this.refreshData();
-            }
-          });
-
-        });
-      }
-    });
-  }
-
-  disconnectSelect() {
-    this._disconnectSelect();
-  }
-
-  _disconnectSelect() {
-    const obj = {
-      action: 'Connect',
-      title: 'Xác nhận gỡ liên thông danh sách đã chọn .',
-      content: '',
-    };
-
-    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
-      data: obj,
-      width: '30%',
-      minHeight: '60%',
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result?.event === 'confirm') {
-        let itemsProcessed = 0;
-        this.selection.selected.forEach((item, index, array) => {
-          setTimeout(() => {
-            this.mainService.disconnect(item.id).subscribe(res => {
-              // if (res?.success) {
-              // } else {
-              //   this.notifySer.notify('warning', res?.message);
-              // }
-              itemsProcessed++;
-              if (itemsProcessed === array.length) {
-                this.refreshData();
-              }
-            });
-          }, this.timeOutSelect);
-        });
+      if (result?.changed) {
+        this.refreshData();
       }
     });
   }

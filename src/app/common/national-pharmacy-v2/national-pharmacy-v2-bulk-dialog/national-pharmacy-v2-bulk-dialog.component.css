@@ -1,0 +1,110 @@
+.np-bulk-note {
+  padding: 10px 12px;
+  border-left: 3px solid #ff9800;
+  background: #fff4e5;
+  color: #6b3f00;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.np-bulk-hint {
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.np-bulk-reason {
+  margin-bottom: 4px;
+}
+
+.np-bulk-error {
+  color: #b71c1c;
+  font-size: 12px;
+}
+
+.np-bulk-progress {
+  margin-bottom: 12px;
+}
+
+.np-bulk-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.np-bulk-table {
+  max-height: 50vh;
+  overflow: auto;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.np-bulk-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.np-bulk-table th,
+.np-bulk-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  text-align: left;
+  vertical-align: top;
+}
+
+.np-bulk-table thead th {
+  position: sticky;
+  top: 0;
+  background: #fafafa;
+  font-weight: 600;
+  z-index: 1;
+}
+
+.np-bulk-ref {
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.np-bulk-badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  background: #eceff1;
+  color: #455a64;
+}
+
+.np-bulk-sent {
+  background: #cfe9d9;
+  color: #17603a;
+}
+
+.np-bulk-already {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.np-bulk-failed {
+  background: #f5c6c2;
+  color: #8b1f1a;
+}
+
+.np-bulk-running {
+  background: #fff3e0;
+  color: #9a5b00;
+}
+
+.np-bulk-row-failed {
+  background: #fdecea;
+}
+
+.np-bulk-skipped {
+  margin: 4px 0 0;
+  padding-left: 18px;
+  color: #7a4b06;
+  font-size: 12px;
+}

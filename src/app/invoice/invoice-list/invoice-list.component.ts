@@ -2,6 +2,9 @@ import {AfterViewInit, Component, OnInit, ViewChild, OnDestroy} from '@angular/c
 import {Router} from '@angular/router';
 import {ListComponentBase} from '../../shared/base';
 import {MatDialog} from '@angular/material/dialog';
+import { NationalPharmacyV2Service } from '../../common/national-pharmacy-v2/national-pharmacy-v2.service';
+import { NationalPharmacyV2BulkDialogComponent } from '../../common/national-pharmacy-v2/national-pharmacy-v2-bulk-dialog/national-pharmacy-v2-bulk-dialog.component';
+import { NationalPharmacyV2BulkDialogData, NationalPharmacyV2BulkItem } from '../../common/national-pharmacy-v2/national-pharmacy-v2.model';
 import {NotifierService} from 'angular-notifier';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {ActivatedRoute} from '@angular/router';
@@ -53,7 +56,8 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     private location: Location,
     private productSer: ProductService,
     private customerSer: CustomerService,
-    private storeSer: StoreService
+    private storeSer: StoreService,
+    public npV2Service: NationalPharmacyV2Service
   ) {
     super();
   }
@@ -239,40 +243,33 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
     this._connectSelect();
   }
 
+  /**
+   * Liên thông hàng loạt lên CSDL Dược quốc gia v1.1. Trước đây gọi API của hệ thống
+   * liên thông cũ (Cục Quản lý Dược) đã đóng nên luôn báo "đang bảo trì".
+   * Chỉ hoá đơn đã hoàn thành mới gửi được — giống nút liên thông trên từng phiếu.
+   */
   _connectSelect() {
-    const obj = {
-      action: 'Connect',
-      title: 'Xác nhận liên thông danh sách đã chọn .',
-      content: '',
-    };
+    const items: NationalPharmacyV2BulkItem[] = this.selection.selected.map(item => ({
+      id: item.id,
+      referenceNumber: item.invoice_no,
+      ineligibleReason: item.order_status === 'done' ? null : 'Hoá đơn chưa hoàn thành.',
+    }));
 
-    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
-      data: obj,
-      width: '30%',
-      minHeight: '60%',
+    if (items.length === 0) {
+      this.notifySer.notify('warning', 'Chưa chọn phiếu nào.');
+      return;
+    }
+
+    const dialogRef = this.dialog.open(NationalPharmacyV2BulkDialogComponent, {
+      data: {source: 'invoice', items} as NationalPharmacyV2BulkDialogData,
+      width: '70%',
+      maxHeight: '90vh',
     });
     dialogRef.afterClosed().subscribe(result => {
-      if (result?.event === 'confirm') {
-        let itemsProcessed = 0;
-        this.selection.selected.forEach((item, index, array) => {
-          this.service.connect(item.id).subscribe(res => {
-            if (res?.success) {
-            } else {
-              this.notifySer.notify('warning', res?.message);
-            }
-            itemsProcessed++;
-            if (itemsProcessed === array.length) {
-              this.refreshData();
-            }
-          });
-
-        });
+      if (result?.changed) {
+        this.refreshData();
       }
     });
-  }
-
-  disconnectSelect() {
-    this._disconnectSelect();
   }
 
   // ===== Xuất hoá đơn điện tử hàng loạt =====
@@ -386,40 +383,6 @@ export class InvoiceListComponent extends ListComponentBase implements OnInit, A
       const conLai = that.length > 5 ? ' ... và ' + (that.length - 5) + ' hóa đơn khác' : '';
       this.notifySer.notify('error', that.length + ' hóa đơn thất bại — ' + dau + conLai);
     }
-  }
-
-  _disconnectSelect() {
-    const obj = {
-      action: 'Connect',
-      title: 'Xác nhận gỡ liên thông danh sách đã chọn .',
-      content: '',
-    };
-
-    const dialogRef = this.dialog.open(PopupConfirmDialogComponent, {
-      data: obj,
-      width: '30%',
-      minHeight: '60%',
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result?.event === 'confirm') {
-        let itemsProcessed = 0;
-        this.selection.selected.forEach((item, index, array) => {
-          setTimeout(() => {
-            this.service.disconnect(item.id).subscribe(res => {
-              // if (res?.success) {
-              // } else {
-              //   this.notifySer.notify('warning', res?.message);
-              // }
-              itemsProcessed++;
-              if (itemsProcessed === array.length) {
-                this.refreshData();
-              }
-            });
-          }, this.timeOutSelect);
-
-        });
-      }
-    });
   }
 
   deleteSelect() {
