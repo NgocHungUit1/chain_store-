@@ -18,7 +18,6 @@ import { WarehouseService } from '../warehouse.service';
 import { IResponse } from '../../common/response.model';
 import { Product } from '../../product/product.model';
 import { ProductService } from '../../product/product.service';
-import { WarehouseParcelFormDialogComponent } from '../warehouse-parcel-form-dialog/warehouse-parcel-form-dialog.component';
 import { SupplierFormDialogComponent } from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
 import { UserService } from '../../user/user.service';
 import { MatDateProviders } from '../../shared/providers/mat-date.provider';
@@ -54,7 +53,20 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
   apiFilter: WarehouseProductFilter;
   updateModelId = null;
   model = null;
-  parcels: object[] = [];
+  /**
+   * Lô CÒN TỒN của từng sản phẩm, theo đơn vị cơ bản: product_id -> danh sách lô.
+   * Trước đây dùng MỘT danh sách chung cho cả phiếu, chỉ có dữ liệu khi mở lại phiếu cũ
+   * hoặc khi tự bấm "+" tạo lô, nên phiếu mới không gợi ý lô tồn và sản phẩm này hiện
+   * cả lô của sản phẩm khác. Trả hàng nhập thì lô phải đang có trong kho.
+   */
+  availableParcels: { [productId: string]: object[] } = {};
+
+  /**
+   * Phiếu ĐÃ HOÀN THÀNH đang mở để sửa: tồn lô lấy về đã bị trừ bởi chính phiếu này,
+   * nên phải cộng lại phần phiếu đã trả, không thì khách không sửa về được số cũ.
+   * Khoá: product_id|số lô|hạn dùng -> số lượng theo đơn vị cơ bản.
+   */
+  ownReturned: { [key: string]: { productId: string, parcel_no: string, expiration_date: string, quantity: number } } = {};
   branchList: any;
   allPermission: any;
   isAdminStore: boolean;
@@ -250,40 +262,58 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
     this.apiFilter = this.buildFilterFromParams();
     this.warehouseProductService.getList(this.apiFilter).subscribe(res => {
       const newData = [];
+      const isDone = this.model && Number(this.model['status']) === 10;
       res.body.forEach(item => {
-        const warehouseProduct = new WarehouseProduct();
-        if (this.updateModelId !== null) {
-          warehouseProduct.id = item.id;
-        }
-
         const productParcels = item.productParcels || [];
         let productUnit = null;
         if (item.productUnits && item.productUnits.length > 0) {
           productUnit = item.productUnits.find(obj => obj.id === item.product_unit_id);
         }
+        const unitValue = productUnit && Number(productUnit['value']) > 0 ? Number(productUnit['value']) : 1;
 
-        if (productUnit) {
-          productParcels.forEach(parcel => {
-            parcel['quantity'] =  parcel['quantity'] / productUnit['value'];
-          });
-        }
+        productParcels.forEach(parcel => {
+          if (isDone) {
+            const key = item.product_id + '|' + parcel['parcel_no'] + '|' + parcel['expiration_date'];
+            const own = this.ownReturned[key] || {
+              productId: String(item.product_id),
+              parcel_no: parcel['parcel_no'],
+              expiration_date: parcel['expiration_date'],
+              quantity: 0,
+            };
+            own.quantity += Number(parcel['quantity']) || 0; // đơn vị cơ bản
+            this.ownReturned[key] = own;
+          }
+          parcel['quantity'] = (Number(parcel['quantity']) || 0) / unitValue;
+        });
 
-        warehouseProduct.product_id = item.product_id;
-        warehouseProduct.product = item.product;
-        warehouseProduct.quantity = item.quantity;
-        warehouseProduct.price = item.price;
-        warehouseProduct.discount = item.discount;
-        warehouseProduct.amount = Number(item.amount);
+        // Mỗi dòng một lô (giống màn Kiểm kho). Phiếu lưu từ trước có thể dồn nhiều lô
+        // vào một dòng -> tách ra: dòng đầu giữ id (backend cập nhật), các dòng sau không
+        // có id (backend tạo mới); số lượng, đơn giá, thành tiền của phiếu không đổi.
+        const groups = productParcels.length > 1 ? productParcels.map(parcel => [parcel]) : [productParcels];
+        groups.forEach((parcels, k) => {
+          const warehouseProduct = new WarehouseProduct();
+          if (this.updateModelId !== null && k === 0) {
+            warehouseProduct.id = item.id;
+          }
+          const quantity = productParcels.length > 1 ? Number(parcels[0]['quantity']) : item.quantity;
 
-        warehouseProduct.product_unit_id = item.product_unit_id;
-        warehouseProduct.productUnits = item.productUnits !== undefined ? item.productUnits : [];
-        warehouseProduct.product_parcels = productParcels;
+          warehouseProduct.product_id = item.product_id;
+          warehouseProduct.product = item.product;
+          warehouseProduct.quantity = quantity;
+          warehouseProduct.price = item.price;
+          warehouseProduct.discount = item.discount;
+          warehouseProduct.amount = productParcels.length > 1
+            ? (Number(item.price) - Number(item.discount)) * quantity
+            : Number(item.amount);
 
-        if (productParcels.length > 0) {
-          this.parcels = this.parcels.concat(productParcels);
-        }
+          warehouseProduct.product_unit_id = item.product_unit_id;
+          warehouseProduct.productUnits = item.productUnits !== undefined ? item.productUnits : [];
+          warehouseProduct.product_parcels = parcels;
 
-        newData.push(warehouseProduct);
+          newData.push(warehouseProduct);
+        });
+
+        this.loadAvailableParcels(item.product_id);
       });
       this.data = newData;
       this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
@@ -315,6 +345,15 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
 
   submit(status: number) {
     if (this.isLoadingResults === true) {
+      return;
+    }
+    // Dòng đang báo lỗi số lượng (vượt tồn kho / vượt tồn lô): giá trị sai vẫn nằm trong
+    // data[i].quantity vì ô nhập gắn ngModel, gửi đi sẽ bị backend từ chối với câu khó
+    // hiểu "tổng các lô chưa khớp số lượng" — chặn ở đây và nói đúng lỗi.
+    if (this.invalidQuantityItems.size > 0 || this.invalidPriceItems.size > 0) {
+      const row = Array.from(this.invalidQuantityItems)[0] || Array.from(this.invalidPriceItems)[0];
+      const message = this.quantityErrors.get(row) || this.priceErrors.get(row) || 'Dữ liệu không hợp lệ';
+      this.notifySer.notify('error', 'Sản phẩm "' + (row?.['product']?.['product_name'] || '') + '": ' + message + '.');
       return;
     }
     this.isLoadingResults = true;
@@ -421,6 +460,15 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
       this.quantityErrors.set(item, `Số lượng không được vượt quá tồn kho (${inventory})`);
       return;
     }
+    if (item['product_parcels'].length === 1) {
+      const lotStock = this.parcelStockInRowUnit(i, item['product_parcels'][0]);
+      if (lotStock !== null && num > lotStock) {
+        this.invalidQuantityItems.add(item);
+        this.quantityErrors.set(item, `Lô ${item['product_parcels'][0]['parcel_no']} chỉ còn ${lotStock}`);
+        return;
+      }
+      item['product_parcels'][0]['quantity'] = num;
+    }
     this.invalidQuantityItems.delete(item);
     this.quantityErrors.delete(item);
     this.recalculateItem(i);
@@ -489,6 +537,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
       this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
       this.recalculateWarehouse();
       this.selectProduct.patchValue(null);
+      this.loadAvailableParcels(product.id);
     });
   }
 
@@ -531,24 +580,123 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
     this.productDataSource = new MatTableDataSource<WarehouseProduct>(this.data);
   }
 
-  openParcelFormDialog(index) {
-    const dialogRef = this.dialog.open(WarehouseParcelFormDialogComponent, {
-      width: '20%',
-      data: {parcels: this.parcels}
+  /** Nạp lô còn tồn của một sản phẩm (một lần cho mỗi sản phẩm). */
+  loadAvailableParcels(productId) {
+    const key = String(productId);
+    if (this.availableParcels[key] !== undefined) {
+      this.autoSelectSingleLot(key);
+      return;
+    }
+    this.availableParcels[key] = null; // đang tải
+    this.productSer.getParcelInStock(key).subscribe(res => {
+      const lots = ((res as object[]) || []).map(item => ({
+        parcel_no: item['parcel_no'],
+        expiration_date: item['expiration_date'],
+        quantity_of_stock: Number(item['quantity_of_stock']) || 0,
+      }));
+      // Lô mà chính phiếu (đã hoàn thành) này trả hết thì API không còn trả về, nhưng vẫn
+      // phải chọn lại được khi sửa phiếu.
+      Object.keys(this.ownReturned).forEach(ownKey => {
+        const own = this.ownReturned[ownKey];
+        if (own.productId === key && !lots.some(lot => this.lotKey(lot) === this.lotKey(own))) {
+          lots.push({parcel_no: own.parcel_no, expiration_date: own.expiration_date, quantity_of_stock: 0});
+        }
+      });
+      this.availableParcels[key] = lots;
+      this.autoSelectSingleLot(key);
+    }, () => {
+      delete this.availableParcels[key];
+      this.notifySer.notify('error', 'Không tải được danh sách lô tồn của sản phẩm.');
     });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result !== false && result !== undefined) {
-        this.parcels.push(result);
-        this.data[index]['product_parcels'].push(result);
-        let quantity = 0;
-        this.data[index]['product_parcels'].forEach(parcel => {
-          quantity = quantity + parcel['quantity'];
-        });
-        this.data[index]['quantity'] = quantity;
-        this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
-        this.recalculateWarehouse();
+  }
+
+  /** Sản phẩm chỉ còn đúng một lô tồn thì chọn sẵn cho các dòng chưa chọn lô. */
+  private autoSelectSingleLot(productId: string) {
+    const lots = this.availableParcels[productId];
+    if (!lots || lots.length !== 1) {
+      return;
+    }
+    this.data.forEach((row, index) => {
+      if (String(row['product_id']) === productId && (!row['product_parcels'] || row['product_parcels'].length === 0)) {
+        this.onLotChange(index, this.lotKey(lots[0]));
       }
     });
+  }
+
+  /** Khoá của một lô: tồn lô tính theo cặp (số lô, hạn dùng), không chỉ số lô. */
+  lotKey(lot): string {
+    return lot['parcel_no'] + '|' + lot['expiration_date'];
+  }
+
+  selectedLotKey(index): string | null {
+    const parcels = this.data[index]['product_parcels'] || [];
+    return parcels.length === 1 ? this.lotKey(parcels[0]) : null;
+  }
+
+  /** Lô đang chọn trên dòng nhưng không còn trong danh sách tồn (mở lại phiếu cũ). */
+  selectedLotMissing(index): boolean {
+    const key = this.selectedLotKey(index);
+    if (key === null) {
+      return false;
+    }
+    const lots = this.availableParcels[String(this.data[index]['product_id'])] || [];
+    return !lots.some(lot => this.lotKey(lot) === key);
+  }
+
+  /** Hệ số quy đổi của đơn vị đang chọn trên dòng (tồn lô tính theo đơn vị cơ bản). */
+  private unitValueOf(index): number {
+    const row = this.data[index];
+    const unit = (row['productUnits'] || []).find(u => u['id'] === row['product_unit_id']);
+    return unit && Number(unit['value']) > 0 ? Number(unit['value']) : 1;
+  }
+
+  /** Tồn của một lô quy theo đơn vị đang chọn trên dòng. */
+  lotStockInRowUnit(index, lot): number {
+    const own = this.ownReturned[this.data[index]['product_id'] + '|' + this.lotKey(lot)];
+    const stock = (Number(lot['quantity_of_stock']) || 0) + (own ? own.quantity : 0);
+    return Math.floor(stock / this.unitValueOf(index));
+  }
+
+  /** Tồn của lô đang chọn trên dòng, null nếu không tra được. */
+  private parcelStockInRowUnit(index, parcel): number | null {
+    const lots = this.availableParcels[String(this.data[index]['product_id'])] || [];
+    const lot = lots.find(l => this.lotKey(l) === this.lotKey(parcel));
+    return lot ? this.lotStockInRowUnit(index, lot) : null;
+  }
+
+  /**
+   * Chọn lô cho dòng — giống màn Kiểm kho: mỗi dòng một lô, số lượng trên dòng chính
+   * là số trả của lô đó. Trả từ nhiều lô thì thêm sản phẩm thêm một lần.
+   */
+  onLotChange(index, key) {
+    const row = this.data[index];
+    const lots = this.availableParcels[String(row['product_id'])] || [];
+    const lot = lots.find(l => this.lotKey(l) === key);
+    if (!lot) {
+      return;
+    }
+    row['product_parcels'] = [{
+      parcel_no: lot['parcel_no'],
+      expiration_date: lot['expiration_date'],
+      quantity: Number(row['quantity']) || 0,
+    }];
+    this.checkLotStock(index);
+  }
+
+  /** Báo lỗi ngay trên dòng nếu số lượng trả vượt tồn của lô đang chọn. */
+  private checkLotStock(index) {
+    const row = this.data[index];
+    if (!row['product_parcels'] || row['product_parcels'].length !== 1) {
+      return;
+    }
+    const stock = this.parcelStockInRowUnit(index, row['product_parcels'][0]);
+    if (stock !== null && Number(row['quantity']) > stock) {
+      this.invalidQuantityItems.add(row);
+      this.quantityErrors.set(row, `Lô ${row['product_parcels'][0]['parcel_no']} chỉ còn ${stock}`);
+    } else if ((this.quantityErrors.get(row) || '').startsWith('Lô ')) {
+      this.invalidQuantityItems.delete(row);
+      this.quantityErrors.delete(row);
+    }
   }
 
   changeQuantity(index, value) {
@@ -558,21 +706,18 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
       this.notifySer.notify('error', `Số lượng không được vượt quá tồn kho (${inventory})`);
       return;
     }
+    if (this.data[index]['product_parcels'].length === 1) {
+      const lotStock = this.parcelStockInRowUnit(index, this.data[index]['product_parcels'][0]);
+      if (Number(value) > 0 && lotStock !== null && newQty > lotStock) {
+        this.notifySer.notify('error', `Lô ${this.data[index]['product_parcels'][0]['parcel_no']} chỉ còn ${lotStock}`);
+        return;
+      }
+    }
     this.data[index]['quantity'] = newQty;
     if (this.data[index]['product_parcels'].length === 1) {
       this.data[index]['product_parcels'][0]['quantity'] = this.data[index]['quantity'];
     }
     this.recalculateItem(index);
-  }
-
-  onParcelSelectedChange(index, value) {
-    let quantity = 0;
-    this.data[index]['product_parcels'].forEach(parcel => {
-      quantity = quantity + parcel['quantity'];
-    });
-    this.data[index]['quantity'] = quantity;
-    this.data[index]['amount'] = (this.data[index]['price'] - this.data[index]['discount']) * this.data[index]['quantity'];
-    this.recalculateWarehouse();
   }
 
   openSupplierFormDialog() {
@@ -622,6 +767,8 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
 
       if (this.data[index]['product_parcels'].length === 1) {
         this.data[index]['product_parcels'][0]['quantity'] = this.data[index]['quantity'];
+        // Tồn lô quy theo đơn vị mới đã khác, kiểm lại
+        this.checkLotStock(index);
       }
       this.recalculateItem(index);
     }

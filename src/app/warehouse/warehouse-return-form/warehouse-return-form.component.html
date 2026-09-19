@@ -64,17 +64,23 @@
                     <p *ngIf="element.product.product_name.length <= 45">{{ element.product.product_name }}</p>
                   </b>
 
-                  <mat-form-field class="parcel-field">
-                    <mat-select multiple [(ngModel)]="data[i]['product_parcels']"
-                                (selectionChange)="onParcelSelectedChange(i, $event.value)">
-                      <mat-option *ngFor="let parcel of parcels" [value]="parcel">
-                        {{parcel['parcel_no']}} - {{parcel['expiration_date']}} - SL: {{parcel['quantity']}}
-                      </mat-option>
-                    </mat-select>
-                    <button mat-icon-button matSuffix aria-label="add" (click)="openParcelFormDialog(i);">
-                      <mat-icon>add</mat-icon>
-                    </button>
-                  </mat-form-field>
+                  <!-- Giống màn Kiểm kho: mỗi dòng một lô ĐANG TỒN của đúng sản phẩm, không tạo
+                       lô mới. Trả từ nhiều lô thì thêm sản phẩm thêm một lần. -->
+                    <mat-form-field class="parcel-field" *ngIf="availableParcels[element.product_id]?.length || selectedLotMissing(i)">
+                      <mat-label>Chọn lô</mat-label>
+                      <mat-select [ngModel]="selectedLotKey(i)" (selectionChange)="onLotChange(i, $event.value)">
+                        <mat-option *ngFor="let lot of availableParcels[element.product_id]" [value]="lotKey(lot)">
+                          {{ lot.parcel_no }} - HSD: {{ lot.expiration_date }} - Tồn: {{ lotStockInRowUnit(i, lot) }}
+                        </mat-option>
+                        <mat-option *ngIf="selectedLotMissing(i)" [value]="selectedLotKey(i)" disabled>
+                          {{ data[i]['product_parcels'][0]['parcel_no'] }} - HSD: {{ data[i]['product_parcels'][0]['expiration_date'] }} - Hết tồn
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <div class="parcel-empty" *ngIf="availableParcels[element.product_id]?.length === 0 && !selectedLotMissing(i)">
+                      Không còn lô tồn
+                    </div>
+                  
 
                 </td>
               </ng-container>

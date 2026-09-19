@@ -67,3 +67,24 @@
 .price-input, .discount-input {
   text-align: right;
 }
+
+/* Chọn lô trả hàng nhập — giống màn Kiểm kho */
+.parcel-field {
+  width: 260px;
+  margin-top: 4px;
+}
+
+
+
+.parcel-empty {
+  margin: 4px 0 6px;
+  font-size: 12px;
+  color: #9a5b00;
+}
+
+/* Dòng hàng bị dính sát tiêu đề bảng: căn trên và chừa khoảng như màn Kiểm kho */
+.warehouse-product-table td.mat-cell {
+  vertical-align: top;
+  padding-top: 1rem;
+  padding-bottom: 0.5rem;
+}

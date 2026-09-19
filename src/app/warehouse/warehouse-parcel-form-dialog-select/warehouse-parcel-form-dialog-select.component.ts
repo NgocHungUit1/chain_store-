@@ -83,7 +83,9 @@ export class WarehouseParcelFormDialogSelectComponent implements OnInit {
     }
   }
   onSave(): void {
-    const selectedParcels = this.filteredParcels
+    // Lấy từ toàn bộ danh sách chứ không phải danh sách đang lọc theo ô tìm kiếm,
+    // nếu không lô đã chọn mà đang bị ẩn bởi ô tìm sẽ bị mất khi bấm Ok.
+    const selectedParcels = this.availableParcels
       .filter(p => p['quantity'] > 0)
       .map(p => ({
         parcel_no: p['parcel_no'],

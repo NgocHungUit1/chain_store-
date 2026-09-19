@@ -251,6 +251,16 @@ export class ProductService {
   }
 
   // Dùng cho màn NHẬP HÀNG: liệt kê cả lô đã hết (tồn=0) để chọn nhập lại
+  /**
+   * Các lô CÒN TỒN của một sản phẩm (tồn theo đơn vị cơ bản), dùng cho trả hàng nhập.
+   * per-page=50 là mức tối đa API cho phép; mặc định chỉ trả 20 lô.
+   */
+  getParcelInStock(id: string) {
+    const url = environment.apiUrl + `/warehouse-product-parcel/group-by-product?WarehouseProductParcelSearch[product_id]=${id}`
+      + `&WarehouseProductParcelSearch[hasStock]=1&per-page=50`;
+    return this.http.get(url);
+  }
+
   getParcelForImport(id: string) {
     const url = environment.apiUrl + `/warehouse-product-parcel/group-by-product?WarehouseProductParcelSearch[product_id]=${id}&WarehouseProductParcelSearch[includeEmpty]=1`;
     return this.http.get(url);
