@@ -100,3 +100,9 @@ form .mat-card-content {
 .stock-number.stock-low {
   color: #ef6c00;
 }
+
+.national-check-blocked {
+  cursor: pointer;
+  text-decoration: underline dotted;
+  text-underline-offset: 2px;
+}

@@ -125,3 +125,39 @@ export interface NationalPharmacyV2BulkDialogData {
   /** Bắt buộc khi source = 'warehouse' để lấy đúng danh sách lý do */
   warehouseType?: WarehouseType;
 }
+
+/** Một thuốc trong danh mục thuốc CSDL Dược quốc gia */
+export interface NationalDrug {
+  national_drug_id: string;
+  medicine_name: string;
+  registration_no: string;
+  national_old_registration_no: string;
+  main_active_substance: string;
+  content: string;
+  manufacturer: string;
+  made_in: string;
+  drug_group: string;
+  routes: string;
+  expiry_date: string;
+  /** Tên các đơn vị tính CSDL Dược nhận cho thuốc này */
+  units: string[];
+}
+
+/** Dữ liệu truyền vào modal chọn thuốc từ danh mục quốc gia */
+export interface NationalDrugPickerData {
+  /** true = tick nhiều thuốc (nhập tồn đầu, nhập hàng); false = chỉ một thuốc */
+  multiple?: boolean;
+  /** Tiêu đề modal, mặc định "Danh mục thuốc Dược Quốc gia" */
+  title?: string;
+  /** Từ khoá điền sẵn và tìm luôn khi mở, thường là tên thuốc của nhà thuốc */
+  initialQuery?: string;
+  /** Mã thuốc quốc gia đang gắn, hiện nhãn "Đang khớp" */
+  currentDrugId?: string;
+  /** Nhãn nút xác nhận, mặc định "Chọn thuốc này" */
+  confirmLabel?: string;
+}
+
+/** Kết quả modal chọn thuốc trả về */
+export interface NationalDrugPickerResult {
+  drugs: NationalDrug[];
+}

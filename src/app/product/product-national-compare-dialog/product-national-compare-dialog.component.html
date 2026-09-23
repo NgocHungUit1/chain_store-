@@ -1,0 +1,139 @@
+<h2 mat-dialog-title>
+  <strong>So sánh với Dược Quốc gia</strong>
+  <span class="npc-title-product" *ngIf="product"> — {{ product.product_no }} · {{ product.product_name }}</span>
+</h2>
+
+<mat-dialog-content>
+  <mat-progress-bar mode="indeterminate" *ngIf="loading || saving"></mat-progress-bar>
+  <div class="npc-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <ng-container *ngIf="product && check">
+
+    <!-- Trạng thái hiện tại -->
+    <div class="npc-status npc-status-ok" *ngIf="check.status === 'ready'">
+      Thuốc này đang liên thông được.
+    </div>
+    <div class="npc-status npc-status-bad" *ngIf="check.status === 'blocked'">
+      <div *ngFor="let reason of check.reasons">{{ reason }}</div>
+    </div>
+    <div class="npc-status" *ngIf="check.status === 'not_required'">
+      <div *ngFor="let reason of check.reasons">{{ reason }}</div>
+    </div>
+
+    <!-- Hai cột so sánh -->
+    <div class="npc-compare">
+      <div class="npc-col">
+        <div class="npc-col-title">Sản phẩm của nhà thuốc</div>
+        <table class="npc-fields">
+          <tr><th>Tên</th><td>{{ product.product_name }}</td></tr>
+          <tr [class.npc-bad]="shown && !registrationOk" [class.npc-good]="shown && registrationOk">
+            <th>Số đăng ký</th><td>{{ product.medicine?.registration_no || 'Chưa có' }}</td>
+          </tr>
+          <tr><th>Hoạt chất</th><td>{{ product.medicine?.main_active_substance || '—' }}</td></tr>
+          <tr><th>Hàm lượng</th><td>{{ product.medicine?.content || '—' }}</td></tr>
+          <tr><th>Hãng SX</th><td>{{ product.medicine?.manufacturer || '—' }}</td></tr>
+          <tr><th>Nước SX</th><td>{{ product.medicine?.made_in || '—' }}</td></tr>
+          <tr [class.npc-bad]="baseUnitOk === false" [class.npc-good]="baseUnitOk === true">
+            <th>Đơn vị cơ bản</th><td><b>{{ product.base_unit }}</b></td>
+          </tr>
+          <tr *ngIf="product.units?.length > 1">
+            <th>Quy đổi</th>
+            <td>
+              <ng-container *ngFor="let unit of product.units; let last = last">
+                <span *ngIf="!unit.is_base">{{ unit.name }} = {{ unit.value }} {{ product.base_unit }}{{ last ? '' : '; ' }}</span>
+              </ng-container>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="npc-col" [class.npc-col-preview]="isPreview">
+        <div class="npc-col-title">
+          <ng-container *ngIf="isPreview">Thuốc Dược Quốc gia bạn vừa chọn <span class="npc-unsaved">(chưa lưu)</span></ng-container>
+          <ng-container *ngIf="!isPreview">Thuốc Dược Quốc gia đang khớp</ng-container>
+          <button mat-button color="warn" class="npc-link" *ngIf="isPreview" (click)="cancelPreview()">Bỏ chọn</button>
+        </div>
+
+        <div class="npc-empty" *ngIf="!shown">
+          Chưa khớp được thuốc quốc gia nào. Bấm nút dưới đây để tra danh mục và chọn đúng thuốc.
+        </div>
+
+        <button mat-raised-button color="accent" class="npc-pick-btn" (click)="openPicker()">
+          <mat-icon>menu_book</mat-icon>
+          {{ shown ? 'Chọn thuốc khác từ danh mục DQG' : 'Tra danh mục thuốc DQG' }}
+        </button>
+
+        <table class="npc-fields" *ngIf="shown">
+          <tr><th>Tên</th><td>{{ shown.medicine_name }}</td></tr>
+          <tr>
+            <th>Số đăng ký</th>
+            <td>
+              {{ shown.registration_no }}
+              <span class="npc-muted" *ngIf="shown.national_old_registration_no">(số cũ: {{ shown.national_old_registration_no }})</span>
+            </td>
+          </tr>
+          <tr><th>Hoạt chất</th><td>{{ shown.main_active_substance || '—' }}</td></tr>
+          <tr><th>Hàm lượng</th><td>{{ shown.content || '—' }}</td></tr>
+          <tr><th>Hãng SX</th><td>{{ shown.manufacturer || '—' }}</td></tr>
+          <tr><th>Nước SX</th><td>{{ shown.made_in || '—' }}</td></tr>
+          <tr>
+            <th>Đơn vị DQG nhận</th>
+            <td>
+              <b *ngIf="shown.units?.length">{{ shown.units.join(', ') }}</b>
+              <span class="npc-muted" *ngIf="!shown.units?.length">Chưa có thông tin quy cách</span>
+            </td>
+          </tr>
+          <tr *ngIf="shown.drug_group"><th>Nhóm thuốc</th><td>{{ shown.drug_group }}</td></tr>
+          <tr *ngIf="shown.expiry_date"><th>Hiệu lực SĐK đến</th><td>{{ shown.expiry_date }}</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Đơn vị cơ bản không nằm trong đơn vị DQG nhận -->
+    <div class="npc-unit-box" *ngIf="shown && baseUnitOk === false">
+      <div>
+        Đơn vị cơ bản <b>"{{ product.base_unit }}"</b> không nằm trong các đơn vị Dược Quốc gia nhận cho thuốc này
+        (<b>{{ shown.units.join(', ') }}</b>), phiếu có thuốc này sẽ bị từ chối.
+      </div>
+      <div class="npc-unit-case">
+        <b>Nếu chỉ khác cách viết</b> (ví dụ Tube / Tuýp, Lọ / Chai): đổi tên đơn vị cơ bản thành
+        <mat-form-field class="npc-unit-select">
+          <mat-select [(ngModel)]="renameUnit" placeholder="Chọn đơn vị" (selectionChange)="renameConfirmed = false">
+            <mat-option [value]="null">Không đổi</mat-option>
+            <mat-option *ngFor="let unit of shown.units" [value]="unit">{{ unit }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <div *ngIf="renameUnit">
+          <mat-checkbox [(ngModel)]="renameConfirmed" color="warn">
+            Tôi xác nhận "{{ product.base_unit }}" và "{{ renameUnit }}" là <b>cùng một đơn vị</b>.
+            Chỉ đổi tên, số tồn và giá giữ nguyên.
+          </mat-checkbox>
+        </div>
+      </div>
+      <div class="npc-unit-case">
+        <b>Nếu khác nhau thật</b> (ví dụ bạn bán theo Vỉ mà DQG chỉ nhận Viên, Hộp): <b>đừng đổi tên</b> —
+        1 vỉ sẽ bị khai thành 1 viên, sai số lượng trên cổng. Cần đổi đơn vị cơ bản sang đơn vị DQG nhận và
+        để đơn vị cũ thành đơn vị quy đổi.
+      </div>
+    </div>
+
+  </ng-container>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <span class="npc-apply-note" *ngIf="isPreview">
+    Sẽ ghi số đăng ký {{ preview.registration_no }}; hoạt chất, hàm lượng, hãng, nước SX chỉ điền nếu đang trống. Tên thuốc giữ nguyên.
+  </span>
+  <button mat-raised-button color="primary" (click)="apply()" [disabled]="!canApply">
+    <mat-icon>check</mat-icon>
+    {{ isPreview ? 'Dùng thuốc này' : 'Lưu đổi đơn vị' }}
+  </button>
+  <button mat-stroked-button (click)="openFullForm()" [disabled]="!product || saving">
+    <mat-icon>edit</mat-icon>
+    Sửa thông tin khác
+  </button>
+  <button mat-stroked-button (click)="close()" [disabled]="saving">
+    <mat-icon>close</mat-icon>
+    Đóng
+  </button>
+</mat-dialog-actions>

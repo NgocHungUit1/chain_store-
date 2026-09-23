@@ -1,0 +1,78 @@
+<h2 mat-dialog-title><strong>Quét liên thông Dược Quốc gia</strong></h2>
+
+<mat-dialog-content>
+
+  <div *ngIf="stage === 'running'" class="np-scan-running">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <div>Đang kiểm tra toàn bộ thuốc của cửa hàng, cửa hàng nhiều thuốc có thể mất vài phút...</div>
+  </div>
+
+  <div *ngIf="stage === 'error'" class="np-scan-error">{{ errorMessage }}</div>
+
+  <ng-container *ngIf="stage === 'done' && summary">
+    <div class="np-scan-counts">
+      <span>Đã quét <b>{{ summary.total }}</b> thuốc:</span>
+      <span class="np-scan-badge np-scan-ready">Liên thông được: {{ summary.ready }}</span>
+      <span class="np-scan-badge np-scan-blocked">Chưa liên thông: {{ summary.blocked }}</span>
+      <span class="np-scan-badge" *ngIf="summary.not_required > 0">Không cần khai: {{ summary.not_required }}</span>
+    </div>
+
+    <div class="np-scan-hint">
+      <span *ngIf="summary.linked > 0">Vừa gắn mã thuốc quốc gia cho <b>{{ summary.linked }}</b> thuốc theo số đăng ký. </span>
+      Quét chỉ kiểm tra và gắn mã trong RX20, không gửi gì lên CSDL Dược quốc gia.
+    </div>
+
+    <div *ngIf="blocked.length === 0" class="np-scan-ok">
+      Tất cả thuốc đều liên thông được. Hoá đơn và phiếu nhập sẽ không bị lỗi do thông tin thuốc.
+    </div>
+
+    <ng-container *ngIf="blocked.length > 0">
+      <div class="np-scan-title">
+        Thuốc chưa liên thông được (còn {{ remaining }}) — bấm <b>Sửa</b> để so sánh và chọn đúng thuốc trong danh mục
+        quốc gia:
+      </div>
+      <div class="np-scan-table">
+        <table>
+          <thead>
+          <tr>
+            <th></th>
+            <th>Mã hàng</th>
+            <th>Tên hàng</th>
+            <th>Số đăng ký</th>
+            <th>Đơn vị</th>
+            <th>Lý do</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let item of blocked" [class.np-scan-row-fixed]="item.fixed">
+            <td>
+              <button mat-stroked-button color="primary" class="np-scan-edit" (click)="edit(item)">Sửa</button>
+            </td>
+            <td class="np-scan-nowrap">{{ item.product_no }}</td>
+            <td>{{ item.product_name }}</td>
+            <td class="np-scan-nowrap">{{ item.registration_no || '—' }}</td>
+            <td class="np-scan-nowrap">{{ item.unit }}</td>
+            <td>
+              <span *ngIf="item.fixed" class="np-scan-badge np-scan-ready">Đã sửa, liên thông được</span>
+              <ng-container *ngIf="!item.fixed">
+                <div *ngFor="let reason of item.reasons">{{ reason }}</div>
+              </ng-container>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </ng-container>
+  </ng-container>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button color="primary" (click)="scan()" *ngIf="stage !== 'running'">
+    <mat-icon>refresh</mat-icon>
+    Quét lại
+  </button>
+  <button mat-stroked-button (click)="close()" [disabled]="stage === 'running'">
+    <mat-icon>close</mat-icon>
+    Đóng
+  </button>
+</mat-dialog-actions>

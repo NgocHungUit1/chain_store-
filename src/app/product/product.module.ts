@@ -37,6 +37,8 @@ import {
 import {
   ParcelNoChangeDialogComponent
 } from '../warehouse-product-parcel/parcel-no-change-dialog/parcel-no-change-dialog.component';
+import {ProductNationalScanDialogComponent} from './product-national-scan-dialog/product-national-scan-dialog.component';
+import {ProductNationalCompareDialogComponent} from './product-national-compare-dialog/product-national-compare-dialog.component';
 
 
 @NgModule({
@@ -59,7 +61,9 @@ import {
     ViewIdCodeFormDialogComponent,
     PrintMultipleProductDialogComponent,
     WarehouseProductParcelChangeStockFormDialogComponent,
-    ParcelNoChangeDialogComponent
+    ParcelNoChangeDialogComponent,
+    ProductNationalScanDialogComponent,
+    ProductNationalCompareDialogComponent
   ],
   imports: [
     CommonModule,
@@ -91,7 +95,9 @@ import {
     ProductUploadDialogComponent,
     PrintMultipleProductDialogComponent,
     WarehouseProductParcelChangeStockFormDialogComponent,
-    ParcelNoChangeDialogComponent
+    ParcelNoChangeDialogComponent,
+    ProductNationalScanDialogComponent,
+    ProductNationalCompareDialogComponent
   ]
 })
 export class ProductModule {

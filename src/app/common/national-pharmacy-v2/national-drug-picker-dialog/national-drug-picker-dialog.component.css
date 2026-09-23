@@ -1,0 +1,145 @@
+.ndp-hint {
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: #455a64;
+}
+
+.ndp-searchbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 4px 4px 12px;
+  background: #fff;
+  border: 2px solid #00897b;
+  border-radius: 6px;
+}
+
+.ndp-searchbar:focus-within {
+  box-shadow: 0 0 0 3px rgba(0, 137, 123, 0.2);
+}
+
+.ndp-searchbar-icon {
+  color: #00897b;
+}
+
+.ndp-searchbar-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  outline: none;
+  font-size: 17px;
+  padding: 8px 0;
+  background: transparent;
+}
+
+.ndp-searchbar-btn {
+  font-size: 16px;
+  min-width: 96px;
+  line-height: 40px;
+}
+
+.ndp-meta {
+  margin: 10px 0 6px;
+  font-size: 14px;
+  color: #455a64;
+}
+
+.ndp-fallback {
+  color: #e65100;
+}
+
+.ndp-selected {
+  color: #00695c;
+}
+
+.ndp-clear {
+  line-height: 26px;
+  font-size: 13px;
+}
+
+.ndp-empty {
+  padding: 24px 0;
+  text-align: center;
+  color: #666;
+  font-size: 15px;
+}
+
+.ndp-results {
+  max-height: 55vh;
+  overflow: auto;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #fff;
+}
+
+.ndp-results table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.ndp-results th,
+.ndp-results td {
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  text-align: left;
+  vertical-align: top;
+}
+
+.ndp-results thead th {
+  position: sticky;
+  top: 0;
+  background: #fafafa;
+  font-weight: 600;
+  z-index: 1;
+}
+
+.ndp-check-col {
+  width: 44px;
+}
+
+.ndp-row {
+  cursor: pointer;
+}
+
+.ndp-row:hover {
+  background: #f5f7f8;
+}
+
+.ndp-row-checked,
+.ndp-row-checked:hover {
+  background: #e3f2fd;
+}
+
+.ndp-tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  background: #cfe9d9;
+  color: #17603a;
+}
+
+.ndp-muted {
+  color: #888;
+  font-size: 13px;
+}
+
+.ndp-nowrap {
+  white-space: nowrap;
+}
+
+.ndp-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 15px;
+}
+
+mat-dialog-actions button {
+  font-size: 15px;
+}

@@ -59,6 +59,24 @@ export class ProductService {
     return this.http.get<HttpResponse<any>>(url, {observe: 'response'});
   }
 
+  /** Quét toàn bộ thuốc của cửa hàng xem liên thông được lên CSDL Dược quốc gia chưa */
+  nationalScan() {
+    const url = environment.apiUrl + '/product/national-scan';
+    return this.http.post<object>(url, {});
+  }
+
+  /** Thuốc của cửa hàng đặt cạnh thuốc quốc gia đang khớp, kèm lý do chưa liên thông */
+  nationalCompare(id) {
+    const url = environment.apiUrl + '/product/national-compare?id=' + id;
+    return this.http.get<object>(url);
+  }
+
+  /** Gắn thuốc quốc gia đã chọn cho sản phẩm, tuỳ chọn đổi tên đơn vị cơ bản */
+  nationalApply(id, body: { national_drug_id: string, base_unit_name?: string }) {
+    const url = environment.apiUrl + '/product/national-apply?id=' + id;
+    return this.http.post<object>(url, body);
+  }
+
   getDetail(id: string, expand: string = '') {
     const url = environment.apiUrl + '/product/' + id + '?expand=' + expand;
     return this.http.get<object>(url);

@@ -105,12 +105,15 @@
             Sao chép
           </button>
 
+          <!-- Liên thông cũ (Cục Quản lý Dược) đã đóng; nút này mở hộp thoại so sánh
+               với danh mục CSDL Dược quốc gia để gắn đúng thuốc -->
           <button class="m-r-5 padding-x-10" mat-raised-button color="accent"
-                  [disabled]="!canDo('Product.Connect')"
-                  *ngIf="this.product.product_type === 'medicine' && this.product?.medicine?.medicine_no === null"
-                  (click)="connectMedicine(this.product)">
-            <mat-icon>open_in_full</mat-icon>
-            Liên thông
+                  [disabled]="!canDo('Product.Update')"
+                  *ngIf="this.product.product_type === 'medicine'"
+                  matTooltip="Đối chiếu thuốc này với danh mục Dược Quốc gia để hoá đơn liên thông được"
+                  (click)="openNationalCompare()">
+            <mat-icon>compare_arrows</mat-icon>
+            Liên thông DQG
           </button>
 
           <!--            <button class="m-r-10" mat-raised-button color="warn"-->

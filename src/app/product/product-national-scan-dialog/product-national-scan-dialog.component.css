@@ -1,0 +1,103 @@
+.np-scan-running {
+  padding: 16px 0;
+}
+
+.np-scan-running mat-progress-bar {
+  margin-bottom: 12px;
+}
+
+.np-scan-error {
+  padding: 10px 12px;
+  border-left: 3px solid #e53935;
+  background: #fdecea;
+  color: #8b1f1a;
+}
+
+.np-scan-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  font-size: 14px;
+}
+
+.np-scan-hint {
+  margin: 8px 0 12px;
+  font-size: 12px;
+  color: #555;
+}
+
+.np-scan-ok {
+  padding: 10px 12px;
+  border-left: 3px solid #43a047;
+  background: #e8f5e9;
+  color: #1b5e20;
+}
+
+.np-scan-title {
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.np-scan-badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  background: #eceff1;
+  color: #455a64;
+}
+
+.np-scan-ready {
+  background: #cfe9d9;
+  color: #17603a;
+}
+
+.np-scan-blocked {
+  background: #f5c6c2;
+  color: #8b1f1a;
+}
+
+.np-scan-table {
+  max-height: 55vh;
+  overflow: auto;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.np-scan-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.np-scan-table th,
+.np-scan-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  text-align: left;
+  vertical-align: top;
+}
+
+.np-scan-table thead th {
+  position: sticky;
+  top: 0;
+  background: #fafafa;
+  font-weight: 600;
+  z-index: 1;
+}
+
+.np-scan-nowrap {
+  white-space: nowrap;
+}
+
+.np-scan-edit {
+  line-height: 28px;
+  min-width: 0;
+  padding: 0 10px;
+}
+
+.np-scan-row-fixed {
+  background: #f1f8f4;
+}

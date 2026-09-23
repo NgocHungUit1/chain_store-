@@ -104,6 +104,24 @@
         <mat-expansion-panel [expanded]='true'>
           <mat-expansion-panel-header>
             <mat-panel-title>
+              Liên thông DQG
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class='custom-filter-container__checkbox-container'>
+            <mat-checkbox *ngFor='let item of nationalCheckFilterList'
+                          color='primary'
+                          [checked]="productFilter.value['national_check'].includes(item.value)"
+                          (change)='checkBoxFilterChange($event, item.value, "national_check")'
+            >
+              {{ item.name }}
+            </mat-checkbox>
+          </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]='true'>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
               Quản lý theo lô
             </mat-panel-title>
           </mat-expansion-panel-header>
@@ -199,6 +217,15 @@
         </button>
       </mat-menu>
 
+      <button mat-raised-button
+              color='primary'
+              (click)='openNationalScanDialog()'
+              class='m-r-5 padding-x-10'
+              matTooltip='Kiểm tra toàn bộ thuốc xem liên thông được lên CSDL Dược quốc gia chưa'
+              [disabled]="!canDo('Product.Update')">
+        <mat-icon>fact_check</mat-icon>
+        Quét liên thông DQG
+      </button>
       <button mat-raised-button
               color='accent'
               (click)='openUploadDialog();'
@@ -410,6 +437,43 @@
                          class='label label-warning'>
                     Tắt
                   </label>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef='national_check'>
+                <th mat-header-cell
+                    class='column-number'
+                    *matHeaderCellDef> {{columnsHeader['national_check']}}</th>
+                <td mat-cell
+                    class='column-number'
+                    *matCellDef='let element'>
+                  <ng-container [ngSwitch]="element.national_check_status">
+                    <label *ngSwitchCase="'ready'"
+                           class='label label-success national-check-blocked'
+                           matTooltip='Bấm để xem thuốc quốc gia đang khớp'
+                           (click)='openNationalFix(element, $event)'>
+                      Đã liên thông
+                    </label>
+                    <label *ngSwitchCase="'blocked'"
+                           class='label label-danger national-check-blocked'
+                           matTooltipClass='tooltip-multiline'
+                           [matTooltip]="nationalReasons(element) + '\nBấm để so sánh và chọn thuốc quốc gia.'"
+                           (click)='openNationalFix(element, $event)'>
+                      Chưa liên thông
+                    </label>
+                    <label *ngSwitchCase="'not_required'"
+                           class='label label-default'
+                           matTooltipClass='tooltip-multiline'
+                           [matTooltip]='nationalReasons(element)'>
+                      Không cần
+                    </label>
+                    <label *ngSwitchDefault
+                           class='label label-default national-check-blocked'
+                           matTooltip='Chưa quét thuốc này. Bấm "Quét liên thông DQG" hoặc bấm vào đây để kiểm tra.'
+                           (click)='openNationalFix(element, $event)'>
+                      Chưa quét
+                    </label>
+                  </ng-container>
                 </td>
               </ng-container>
 

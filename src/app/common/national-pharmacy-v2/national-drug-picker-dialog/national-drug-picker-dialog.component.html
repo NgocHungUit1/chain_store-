@@ -1,0 +1,95 @@
+<h2 mat-dialog-title><strong>{{ title }}</strong></h2>
+
+<mat-dialog-content>
+  <div class="ndp-hint">
+    Gõ <b>tên thuốc</b>, <b>số đăng ký</b>, <b>hoạt chất</b> hoặc <b>hãng sản xuất</b>, rồi
+    <b>tick</b> vào thuốc cần chọn.
+  </div>
+
+  <div class="ndp-searchbar">
+    <mat-icon class="ndp-searchbar-icon">search</mat-icon>
+    <input class="ndp-searchbar-input"
+           [formControl]="searchControl"
+           (keydown.enter)="searchNow()"
+           placeholder="Ví dụ: A.T Zinc, 893110202224, Kẽm gluconat, An Thiên..."
+           autocomplete="off">
+    <button mat-raised-button color="primary" class="ndp-searchbar-btn" (click)="searchNow()" [disabled]="searching">
+      {{ searching ? 'Đang tìm...' : 'Tìm' }}
+    </button>
+  </div>
+
+  <div class="ndp-meta">
+    <span *ngIf="!searching">Tìm thấy <b>{{ total }}</b> thuốc</span>
+    <span class="ndp-fallback" *ngIf="fallbackNote"> · {{ fallbackNote }}</span>
+    <span class="ndp-selected" *ngIf="selected.length">
+      · Đã chọn <b>{{ selected.length }}</b> thuốc
+      <button mat-button color="warn" class="ndp-clear" (click)="clearSelection()">Bỏ chọn hết</button>
+    </span>
+  </div>
+
+  <mat-progress-bar mode="indeterminate" *ngIf="searching"></mat-progress-bar>
+
+  <div class="ndp-empty" *ngIf="!searching && results.length === 0">
+    Không tìm thấy thuốc nào. Thử gõ ngắn hơn, ví dụ chỉ tên hoạt chất.
+  </div>
+
+  <div class="ndp-results" *ngIf="results.length">
+    <table>
+      <thead>
+      <tr>
+        <th class="ndp-check-col"></th>
+        <th>Tên thuốc</th>
+        <th>Số đăng ký</th>
+        <th>Hoạt chất · Hàm lượng</th>
+        <th>Hãng SX</th>
+        <th>Đơn vị nhận</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of results"
+          class="ndp-row"
+          [class.ndp-row-checked]="isChecked(item)"
+          (click)="toggleRow(item)">
+        <td class="ndp-check-col">
+          <mat-checkbox color="primary"
+                        [checked]="isChecked(item)"
+                        (change)="toggle(item, $event.checked)"
+                        (click)="$event.stopPropagation()"></mat-checkbox>
+        </td>
+        <td>
+          {{ item.medicine_name }}
+          <span class="ndp-tag" *ngIf="isCurrent(item)">Đang khớp</span>
+        </td>
+        <td class="ndp-nowrap">
+          {{ item.registration_no }}
+          <div class="ndp-muted" *ngIf="item.national_old_registration_no">cũ: {{ item.national_old_registration_no }}</div>
+        </td>
+        <td>{{ item.main_active_substance }}<span *ngIf="item.content"> · {{ item.content }}</span></td>
+        <td>{{ item.manufacturer }}</td>
+        <td>{{ item.units?.join(', ') || '—' }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="ndp-pager" *ngIf="total > pageSize">
+    <button mat-button [disabled]="page <= 1 || searching" (click)="search(page - 1)">
+      <mat-icon>chevron_left</mat-icon> Trước
+    </button>
+    <span>Trang {{ page }}/{{ pageCount }}</span>
+    <button mat-button [disabled]="page >= pageCount || searching" (click)="search(page + 1)">
+      Sau <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" (click)="confirm()" [disabled]="selected.length === 0">
+    <mat-icon>check</mat-icon>
+    {{ confirmLabel }}
+  </button>
+  <button mat-stroked-button (click)="close()">
+    <mat-icon>close</mat-icon>
+    Đóng
+  </button>
+</mat-dialog-actions>

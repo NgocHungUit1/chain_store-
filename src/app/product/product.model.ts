@@ -57,6 +57,8 @@ export class Product {
   master_product_id: string; // use for subItem
   is_sub_item: number;
   batch_tracking_enabled: boolean;
+  national_check_status: string;
+  national_check_reason: string;
   vat_percent?: number;
 }
 
@@ -94,6 +96,7 @@ export class ProductFilter extends ApiFilterBase {
   stock = '';
   quota_stock = '';
   batch_tracking_enabled = '';
+  national_check = '';
 
   getModelSearch() {
     return 'ProductSearch';

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
+  NationalDrug,
   NationalPharmacyV2ReasonOptionsResult,
   NationalPharmacyV2Result,
   NationalPharmacyV2Source,
@@ -28,6 +29,18 @@ export class NationalPharmacyV2Service {
   static readonly EXPAND_FIELD = 'nationalPharmacyV2';
 
   constructor(private http: HttpClient) {
+  }
+
+  /**
+   * Tìm thuốc trong danh mục thuốc CSDL Dược quốc gia đã đồng bộ về RX20.
+   *
+   * Tìm theo tên, số đăng ký (cả số đăng ký cũ), hoạt chất, hãng sản xuất; gõ nhiều
+   * từ thì mỗi từ phải khớp ít nhất một trong các trường đó. Chỉ đọc danh mục trong
+   * RX20, không gọi sang CSDL Dược.
+   */
+  searchDrugs(q: string, page = 1): Observable<{ items: NationalDrug[], total: number, page: number, page_size: number }> {
+    const url = environment.apiUrl + '/product/national-search?q=' + encodeURIComponent(q || '') + '&page=' + page;
+    return this.http.get<{ items: NationalDrug[], total: number, page: number, page_size: number }>(url);
   }
 
   /**

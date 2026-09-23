@@ -1,0 +1,165 @@
+.npc-title-product {
+  font-weight: normal;
+  font-size: 17px;
+  color: #555;
+}
+
+.npc-error,
+.npc-status {
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  border-left: 3px solid #90a4ae;
+  background: #f5f7f8;
+  font-size: 15px;
+}
+
+.npc-error,
+.npc-status-bad {
+  border-left-color: #e53935;
+  background: #fdecea;
+  color: #8b1f1a;
+}
+
+.npc-status-ok {
+  border-left-color: #43a047;
+  background: #e8f5e9;
+  color: #1b5e20;
+}
+
+.npc-compare {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.npc-col {
+  flex: 1 1 0;
+  min-width: 0;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 8px 12px;
+}
+
+.npc-col-preview {
+  border-color: #1e88e5;
+  box-shadow: 0 0 0 1px #1e88e5;
+}
+
+.npc-col-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 6px;
+  min-height: 36px;
+}
+
+.npc-unsaved {
+  color: #1e88e5;
+  font-weight: normal;
+}
+
+.npc-link {
+  line-height: 28px;
+}
+
+.npc-empty {
+  padding: 16px 0;
+  color: #666;
+  font-size: 15px;
+}
+
+.npc-fields {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.npc-fields th,
+.npc-fields td {
+  padding: 6px 8px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.npc-fields th {
+  width: 140px;
+  font-weight: normal;
+  color: #666;
+  white-space: nowrap;
+}
+
+.npc-bad td {
+  background: #fdecea;
+  color: #b71c1c;
+}
+
+.npc-good td {
+  background: #eef7f1;
+}
+
+.npc-muted {
+  color: #888;
+  font-size: 13px;
+}
+
+.npc-unit-box {
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border-left: 3px solid #fb8c00;
+  background: #fff4e5;
+  font-size: 15px;
+}
+
+.npc-unit-case {
+  margin-top: 8px;
+}
+
+.npc-unit-select {
+  width: 160px;
+  margin-left: 8px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.npc-apply-note {
+  flex: 1 1 auto;
+  font-size: 14px;
+  color: #666;
+  margin-right: 8px;
+}
+
+.npc-unit-case mat-checkbox {
+  font-size: 15px;
+}
+
+mat-dialog-actions button {
+  font-size: 15px;
+}
+
+.npc-pick-btn {
+  margin-top: 10px;
+  width: 100%;
+  font-size: 15px;
+  line-height: 42px;
+}

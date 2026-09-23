@@ -2,6 +2,9 @@ import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges
 import {ProductService} from '../product.service';
 import {Product} from '../product.model';
 import {ProductMedicineDialogComponent} from '../product-medicine-dialog/product-medicine-dialog.component';
+import {
+  ProductNationalCompareDialogComponent
+} from '../product-national-compare-dialog/product-national-compare-dialog.component';
 import {ProductMerchandiseFormDialogComponent} from '../product-merchandise-form-dialog/product-merchandise-form-dialog.component';
 import {ProductPopupDeleteDialogComponent} from '../product-popup-delete-dialog/product-popup-delete-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
@@ -261,6 +264,20 @@ export class ProductTabInfoComponent extends BaseComponent implements OnChanges 
     this.productSer.activate(this.product.id).subscribe(x => {
       this.product.status = '10';
       this.notifySer.notify('success', 'Đã kích hoạt thành công!');
+    });
+  }
+
+  /** Đối chiếu sản phẩm với danh mục CSDL Dược quốc gia, gắn đúng thuốc */
+  openNationalCompare() {
+    const dialogRef = this.dialog.open(ProductNationalCompareDialogComponent, {
+      data: {product_id: this.product.id},
+      width: '90%',
+      maxWidth: '1500px',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.changed) {
+        this.loadProduct(this.product.id);
+      }
     });
   }
 

@@ -23,6 +23,8 @@ import {Warehouse} from '../../warehouse/warehouse.model';
 import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 import {PrintMultipleProductDialogComponent} from '../print-multiple-product-dialog/print-multiple-product-dialog.component';
 import {AuthService} from '../../authentication/auth.service';
+import {ProductNationalScanDialogComponent} from '../product-national-scan-dialog/product-national-scan-dialog.component';
+import {ProductNationalCompareDialogComponent} from '../product-national-compare-dialog/product-national-compare-dialog.component';
 
 
 @Component({
@@ -110,6 +112,25 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     },
   ];
 
+  nationalCheckFilterList = [
+    {
+      'value': 'ready',
+      'name': 'Đã liên thông',
+    },
+    {
+      'value': 'blocked',
+      'name': 'Chưa liên thông',
+    },
+    {
+      'value': 'not_required',
+      'name': 'Không cần',
+    },
+    {
+      'value': 'none',
+      'name': 'Chưa quét',
+    },
+  ];
+
   batchTrackingFilterList = [
     {
       'value': 1,
@@ -155,6 +176,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     'max_quantity': 'Tồn tối đa',
     'comm_percent': 'Hoa hồng',
     'batch_tracking_enabled': 'Quản lý theo lô',
+    'national_check': 'Liên thông DQG',
   };
 
   productTypeLable = {
@@ -162,8 +184,8 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     'merchandise': 'Hàng hóa',
   };
 
-  displayedColumns: string[] = ['select', '#', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'quantity', 'batch_tracking_enabled', 'status'];
-  columnsToDisplay: string[] = ['select', '#', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'quantity', 'batch_tracking_enabled', 'status'];
+  displayedColumns: string[] = ['select', '#', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'quantity', 'batch_tracking_enabled', 'national_check', 'status'];
+  columnsToDisplay: string[] = ['select', '#', 'product_no', 'product_name', 'base_unit', 'original_price', 'sell_price', 'quantity', 'batch_tracking_enabled', 'national_check', 'status'];
   dataSource: Product[] = [];
   selection = new SelectionModel<Product>(true, []);
   toggleMore = false;
@@ -342,6 +364,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
     filter.stock = this.productFilter.controls['stock'].value;
     filter.quota_stock = this.productFilter.controls['quota_stock'].value;
     filter.batch_tracking_enabled = this.productFilter.controls['batch_tracking'].value;
+    filter.national_check = this.productFilter.controls['national_check'].value;
     return filter;
   }
 
@@ -457,6 +480,7 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
       batch_tracking: [
         [1, 0]
       ],
+      national_check: [[]],
     });
 
     const queryString = window.location.search;
@@ -553,6 +577,39 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
         }
       }
     });
+  }
+
+  /** Quét toàn bộ thuốc xem liên thông được lên CSDL Dược quốc gia chưa */
+  openNationalScanDialog() {
+    const dialogRef = this.dialog.open(ProductNationalScanDialogComponent, {
+      width: '75%',
+      minWidth: '750px',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.changed) {
+        this.loadData();
+      }
+    });
+  }
+
+  /** Bấm nhãn liên thông ở một dòng: mở hộp thoại so sánh với thuốc quốc gia */
+  openNationalFix(element: Product, event: MouseEvent) {
+    event.stopPropagation();
+    const dialogRef = this.dialog.open(ProductNationalCompareDialogComponent, {
+      data: {product_id: element.id},
+      width: '90%',
+      maxWidth: '1500px',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.changed) {
+        this.loadData();
+      }
+    });
+  }
+
+  /** Lý do chưa liên thông được, đã lưu sẵn trên sản phẩm từ lần quét gần nhất */
+  nationalReasons(element: Product): string {
+    return element['national_check_reason'] || '';
   }
 
   openProductMerchandiseFormDialog(action, obj) {
