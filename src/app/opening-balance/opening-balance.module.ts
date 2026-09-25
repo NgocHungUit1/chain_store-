@@ -13,6 +13,7 @@ import { OpeningBalanceFormComponent } from './opening-balance-form/opening-bala
 import { OpeningBalanceUploadDialogComponent } from './opening-balance-upload-dialog/opening-balance-upload-dialog.component';
 import { DatetimeDefaultFilterDialogComponent } from './datetime-default-filter-dialog/datetime-default-filter-dialog.component';
 import { DatetimeChooseFilterDialogComponent } from './datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
+import { OpeningBalanceExportDialogComponent } from './opening-balance-export-dialog/opening-balance-export-dialog.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { DatetimeChooseFilterDialogComponent } from './datetime-choose-filter-di
     OpeningBalanceUploadDialogComponent,
     DatetimeDefaultFilterDialogComponent,
     DatetimeChooseFilterDialogComponent,
+    OpeningBalanceExportDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -36,6 +38,7 @@ import { DatetimeChooseFilterDialogComponent } from './datetime-choose-filter-di
     OpeningBalanceUploadDialogComponent,
     DatetimeDefaultFilterDialogComponent,
     DatetimeChooseFilterDialogComponent,
+    OpeningBalanceExportDialogComponent,
   ],
 })
 export class OpeningBalanceModule {
