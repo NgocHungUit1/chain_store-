@@ -37,6 +37,19 @@ export class ProductNationalCompareDialogComponent implements OnInit {
   /** Thuốc vừa chọn từ kết quả tìm, chưa lưu */
   preview: NationalDrug = null;
 
+  /** Hệ số đang khai lên DQG (1 = không quy đổi), và gợi ý đoán từ quy cách đóng gói */
+  unitFactor = 1;
+  unitSuggestion: { unit: string, factor: number } = null;
+
+  /** Ô khai quy đổi "1 Vỉ = [convFactor] [convUnit]" */
+  convUnit: string = null;
+  convFactor: number = null;
+  /** Hệ số đang lấy theo gợi ý, chưa ai sửa — tô màu để người dùng soát */
+  convFromSuggestion = false;
+  /** Đang khai quy đổi mà người dùng bấm "Sửa quy đổi" */
+  editingConversion = false;
+  savingConversion = false;
+
   /** Đổi tên đơn vị cơ bản sang đơn vị DQG nhận — chỉ đổi tên, không quy đổi */
   renameUnit: string = null;
   renameConfirmed = false;
@@ -73,6 +86,103 @@ export class ProductNationalCompareDialogComponent implements OnInit {
     this.check = res['check'];
     this.drug = res['drug'];
     this.unitAccepted = res['unit_accepted'];
+    this.unitFactor = res['unit_factor'] || 1;
+    this.unitSuggestion = res['unit_suggestion'] || null;
+    this.editingConversion = false;
+    this.initConversionForm();
+  }
+
+  /**
+   * Điền sẵn ô quy đổi: đã khai thì lấy giá trị đã khai, chưa thì lấy gợi ý đoán từ
+   * quy cách đóng gói. Đơn vị phải nằm trong đơn vị thuốc bên phải nhận.
+   */
+  private initConversionForm() {
+    const units = this.shown?.units || [];
+    const declared = this.product?.national_unit_name && this.product?.national_unit_factor > 0;
+
+    if (declared && units.indexOf(this.product.national_unit_name) !== -1) {
+      this.convUnit = this.product.national_unit_name;
+      this.convFactor = this.product.national_unit_factor;
+      this.convFromSuggestion = false;
+      return;
+    }
+
+    const suggestion = this.unitSuggestion;
+    if (suggestion && suggestion.unit && units.indexOf(suggestion.unit) !== -1) {
+      this.convUnit = suggestion.unit;
+      this.convFactor = suggestion.factor || null;
+      this.convFromSuggestion = !!suggestion.factor;
+      return;
+    }
+
+    // Không có gợi ý: ưu tiên Viên, không thì đơn vị đầu tiên thuốc nhận
+    const vien = units.find(unit => this.norm(unit) === 'vien');
+    this.convUnit = vien || (units.length ? units[0] : null);
+    this.convFactor = null;
+    this.convFromSuggestion = false;
+  }
+
+  /** Đang khai lên DQG theo quy đổi đã lưu (1 Vỉ = 10 Viên), và quy đổi đó hợp lệ */
+  get conversionActive(): boolean {
+    return !this.isPreview
+      && !!this.product?.national_unit_name
+      && this.product?.national_unit_factor > 0
+      && this.unitAccepted !== true
+      && this.check?.status === 'ready';
+  }
+
+  /** Hiện ô khai quy đổi: đơn vị cơ bản không được nhận và chưa có quy đổi hợp lệ */
+  get showConversionForm(): boolean {
+    return !!this.shown && this.baseUnitOk === false && (!this.conversionActive || this.editingConversion);
+  }
+
+  get canSaveConversion(): boolean {
+    return !this.isPreview && !this.savingConversion && !!this.convUnit && Number(this.convFactor) >= 1;
+  }
+
+  cancelEditConversion() {
+    this.editingConversion = false;
+    this.initConversionForm();
+  }
+
+  onConversionEdit() {
+    this.convFromSuggestion = false;
+  }
+
+  saveConversion() {
+    if (!this.canSaveConversion) {
+      return;
+    }
+    this.savingConversion = true;
+    this.productSer.nationalUnitsSave([{
+      id: this.product.id,
+      national_unit_name: this.convUnit,
+      national_unit_factor: Number(this.convFactor),
+    }]).subscribe(res => {
+      this.savingConversion = false;
+      const result = (res['results'] || [])[0];
+      if (!result?.success) {
+        this.notifySer.notify('error', result?.message || 'Không lưu được quy đổi.');
+        return;
+      }
+      this.changed = true;
+      this.notifySer.notify('success', 'Đã khai 1 ' + this.product.base_unit + ' = ' + this.convFactor + ' ' + this.convUnit + '.');
+      this.load();
+    }, error => {
+      this.savingConversion = false;
+      this.notifySer.notify('error', error?.error?.message || 'Không lưu được quy đổi.');
+    });
+  }
+
+  clearConversion() {
+    this.savingConversion = true;
+    this.productSer.nationalUnitsSave([{id: this.product.id, national_unit_name: '', national_unit_factor: 0}]).subscribe(res => {
+      this.savingConversion = false;
+      if ((res['results'] || [])[0]?.success) {
+        this.changed = true;
+        this.load();
+      }
+    }, () => this.savingConversion = false);
   }
 
   /**
@@ -98,12 +208,14 @@ export class ProductNationalCompareDialogComponent implements OnInit {
       }
       this.preview = drug;
       this.resetRename();
+      this.initConversionForm();
     });
   }
 
   cancelPreview() {
     this.preview = null;
     this.resetRename();
+    this.initConversionForm();
   }
 
   private resetRename() {
@@ -114,6 +226,11 @@ export class ProductNationalCompareDialogComponent implements OnInit {
   /** Thuốc hiện ở cột phải: thuốc vừa chọn, không có thì thuốc đang khớp */
   get shown(): NationalDrug {
     return this.preview || this.drug;
+  }
+
+  /** Có đơn vị quy đổi ngoài đơn vị cơ bản (Hộp = 10 Vỉ) để hiện dòng "Quy đổi" */
+  get hasOtherUnits(): boolean {
+    return (this.product?.units || []).some(unit => !Number(unit.is_base));
   }
 
   get isPreview(): boolean {

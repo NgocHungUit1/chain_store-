@@ -33,10 +33,15 @@
           <tr><th>Hàm lượng</th><td>{{ product.medicine?.content || '—' }}</td></tr>
           <tr><th>Hãng SX</th><td>{{ product.medicine?.manufacturer || '—' }}</td></tr>
           <tr><th>Nước SX</th><td>{{ product.medicine?.made_in || '—' }}</td></tr>
-          <tr [class.npc-bad]="baseUnitOk === false" [class.npc-good]="baseUnitOk === true">
+          <tr [class.npc-bad]="baseUnitOk === false && !conversionActive"
+              [class.npc-good]="baseUnitOk === true || conversionActive">
             <th>Đơn vị cơ bản</th><td><b>{{ product.base_unit }}</b></td>
           </tr>
-          <tr *ngIf="product.units?.length > 1">
+          <tr *ngIf="conversionActive" class="npc-good">
+            <th>Khai lên DQG</th>
+            <td><b>1 {{ product.base_unit }} = {{ product.national_unit_factor }} {{ product.national_unit_name }}</b></td>
+          </tr>
+          <tr *ngIf="hasOtherUnits">
             <th>Quy đổi</th>
             <td>
               <ng-container *ngFor="let unit of product.units; let last = last">
@@ -89,32 +94,76 @@
       </div>
     </div>
 
-    <!-- Đơn vị cơ bản không nằm trong đơn vị DQG nhận -->
-    <div class="npc-unit-box" *ngIf="shown && baseUnitOk === false">
+    <!-- Đang khai lên DQG theo quy đổi -->
+    <div class="npc-conv-active" *ngIf="conversionActive && !editingConversion">
       <div>
-        Đơn vị cơ bản <b>"{{ product.base_unit }}"</b> không nằm trong các đơn vị Dược Quốc gia nhận cho thuốc này
-        (<b>{{ shown.units.join(', ') }}</b>), phiếu có thuốc này sẽ bị từ chối.
+        Đang khai lên Dược Quốc gia: <b>1 {{ product.base_unit }} = {{ product.national_unit_factor }} {{ product.national_unit_name }}</b>.
+        Bán 1 {{ product.base_unit }} sẽ khai {{ product.national_unit_factor }} {{ product.national_unit_name }},
+        đơn giá chia {{ product.national_unit_factor }}. Tồn kho và giá bán trong RX20 không đổi.
       </div>
-      <div class="npc-unit-case">
-        <b>Nếu chỉ khác cách viết</b> (ví dụ Tube / Tuýp, Lọ / Chai): đổi tên đơn vị cơ bản thành
-        <mat-form-field class="npc-unit-select">
-          <mat-select [(ngModel)]="renameUnit" placeholder="Chọn đơn vị" (selectionChange)="renameConfirmed = false">
-            <mat-option [value]="null">Không đổi</mat-option>
-            <mat-option *ngFor="let unit of shown.units" [value]="unit">{{ unit }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <div *ngIf="renameUnit">
-          <mat-checkbox [(ngModel)]="renameConfirmed" color="warn">
-            Tôi xác nhận "{{ product.base_unit }}" và "{{ renameUnit }}" là <b>cùng một đơn vị</b>.
-            Chỉ đổi tên, số tồn và giá giữ nguyên.
-          </mat-checkbox>
+      <div class="npc-conv-actions">
+        <button mat-stroked-button color="primary" (click)="editingConversion = true">Sửa quy đổi</button>
+        <button mat-button color="warn" (click)="clearConversion()" [disabled]="savingConversion">Bỏ quy đổi</button>
+      </div>
+    </div>
+
+    <!-- Đơn vị cơ bản không nằm trong đơn vị DQG nhận -->
+    <div class="npc-unit-box" *ngIf="showConversionForm">
+      <div>
+        Bạn bán thuốc này theo <b>{{ product.base_unit }}</b>, Dược Quốc gia chỉ nhận
+        <b>{{ shown.units?.length ? shown.units.join(', ') : 'đơn vị khác' }}</b>. Khai quy đổi để phần mềm tự
+        nhân số lượng, chia đơn giá khi gửi phiếu. <b>Tồn kho và giá bán trong RX20 không đổi.</b>
+      </div>
+
+      <div class="npc-conv-form">
+        <span class="npc-conv-label">1 {{ product.base_unit }} =</span>
+        <input type="number" min="1" step="1"
+               class="npc-conv-factor"
+               [class.npc-conv-suggest]="convFromSuggestion"
+               [(ngModel)]="convFactor"
+               (ngModelChange)="onConversionEdit()"
+               placeholder="?">
+        <select class="npc-conv-unit" [(ngModel)]="convUnit" (ngModelChange)="onConversionEdit()">
+          <option *ngFor="let unit of shown.units" [ngValue]="unit">{{ unit }}</option>
+        </select>
+        <button mat-raised-button color="primary" (click)="saveConversion()" [disabled]="!canSaveConversion">
+          <mat-icon>swap_horiz</mat-icon>
+          Lưu quy đổi
+        </button>
+        <button mat-button *ngIf="editingConversion" (click)="cancelEditConversion()">Huỷ</button>
+      </div>
+
+      <div class="npc-conv-hint" *ngIf="convFromSuggestion">
+        Số tô cam là phần mềm đoán từ quy cách "{{ product.packing }}" — soát lại theo vỏ hộp trước khi lưu.
+      </div>
+      <div class="npc-conv-hint" *ngIf="!convFactor">
+        Nhập số {{ convUnit || 'viên' }} trong 1 {{ product.base_unit }}, xem trên vỏ hộp (ví dụ vỉ 10 viên thì nhập 10).
+      </div>
+      <div class="npc-conv-hint npc-conv-warn" *ngIf="isPreview">
+        Bạn đang xem thuốc vừa chọn. Bấm <b>Dùng thuốc này</b> trước, sau đó khai quy đổi.
+      </div>
+
+      <details class="npc-rename">
+        <summary>Chỉ khác cách viết, cùng một đơn vị? (ví dụ Lọ / Chai)</summary>
+        <div class="npc-unit-case">
+          Đổi tên đơn vị cơ bản thành
+          <mat-form-field class="npc-unit-select">
+            <mat-select [(ngModel)]="renameUnit" placeholder="Chọn đơn vị" (selectionChange)="renameConfirmed = false">
+              <mat-option [value]="null">Không đổi</mat-option>
+              <mat-option *ngFor="let unit of shown.units" [value]="unit">{{ unit }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div *ngIf="renameUnit">
+            <mat-checkbox [(ngModel)]="renameConfirmed" color="warn">
+              Tôi xác nhận "{{ product.base_unit }}" và "{{ renameUnit }}" là <b>cùng một đơn vị</b>.
+              Chỉ đổi tên, số tồn và giá giữ nguyên.
+            </mat-checkbox>
+          </div>
+          <div class="npc-conv-hint npc-conv-warn">
+            Vỉ và Viên là <b>khác nhau</b>, đừng đổi tên — dùng khai quy đổi ở trên.
+          </div>
         </div>
-      </div>
-      <div class="npc-unit-case">
-        <b>Nếu khác nhau thật</b> (ví dụ bạn bán theo Vỉ mà DQG chỉ nhận Viên, Hộp): <b>đừng đổi tên</b> —
-        1 vỉ sẽ bị khai thành 1 viên, sai số lượng trên cổng. Cần đổi đơn vị cơ bản sang đơn vị DQG nhận và
-        để đơn vị cũ thành đơn vị quy đổi.
-      </div>
+      </details>
     </div>
 
   </ng-container>
@@ -124,7 +173,7 @@
   <span class="npc-apply-note" *ngIf="isPreview">
     Sẽ ghi số đăng ký {{ preview.registration_no }}; hoạt chất, hàm lượng, hãng, nước SX chỉ điền nếu đang trống. Tên thuốc giữ nguyên.
   </span>
-  <button mat-raised-button color="primary" (click)="apply()" [disabled]="!canApply">
+  <button mat-raised-button color="primary" (click)="apply()" [disabled]="!canApply" *ngIf="isPreview || renameUnit">
     <mat-icon>check</mat-icon>
     {{ isPreview ? 'Dùng thuốc này' : 'Lưu đổi đơn vị' }}
   </button>

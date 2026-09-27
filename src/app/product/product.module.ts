@@ -39,6 +39,7 @@ import {
 } from '../warehouse-product-parcel/parcel-no-change-dialog/parcel-no-change-dialog.component';
 import {ProductNationalScanDialogComponent} from './product-national-scan-dialog/product-national-scan-dialog.component';
 import {ProductNationalCompareDialogComponent} from './product-national-compare-dialog/product-national-compare-dialog.component';
+import {ProductNationalUnitDialogComponent} from './product-national-unit-dialog/product-national-unit-dialog.component';
 
 
 @NgModule({
@@ -63,7 +64,8 @@ import {ProductNationalCompareDialogComponent} from './product-national-compare-
     WarehouseProductParcelChangeStockFormDialogComponent,
     ParcelNoChangeDialogComponent,
     ProductNationalScanDialogComponent,
-    ProductNationalCompareDialogComponent
+    ProductNationalCompareDialogComponent,
+    ProductNationalUnitDialogComponent
   ],
   imports: [
     CommonModule,
@@ -97,7 +99,8 @@ import {ProductNationalCompareDialogComponent} from './product-national-compare-
     WarehouseProductParcelChangeStockFormDialogComponent,
     ParcelNoChangeDialogComponent,
     ProductNationalScanDialogComponent,
-    ProductNationalCompareDialogComponent
+    ProductNationalCompareDialogComponent,
+    ProductNationalUnitDialogComponent
   ]
 })
 export class ProductModule {

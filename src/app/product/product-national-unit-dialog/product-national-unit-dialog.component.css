@@ -1,0 +1,181 @@
+.nu-intro {
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.nu-warn {
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  border-left: 3px solid #fb8c00;
+  background: #fff4e5;
+  font-size: 14px;
+}
+
+.nu-suggest-sample {
+  padding: 0 6px;
+  border-radius: 3px;
+  background: #ffe0b2;
+  font-weight: 600;
+}
+
+.nu-error {
+  padding: 8px 12px;
+  border-left: 3px solid #e53935;
+  background: #fdecea;
+  color: #8b1f1a;
+}
+
+.nu-empty {
+  padding: 24px 0;
+  text-align: center;
+  color: #2e7d32;
+  font-size: 15px;
+}
+
+.nu-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.nu-filter {
+  flex: 0 1 320px;
+  min-width: 0;
+  padding: 7px 10px;
+  font-size: 15px;
+  border: 1px solid #b0bec5;
+  border-radius: 4px;
+  outline: none;
+}
+
+.nu-filter:focus {
+  border-color: #00897b;
+}
+
+.nu-count {
+  color: #546e7a;
+}
+
+.nu-table {
+  max-height: 58vh;
+  overflow: auto;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.nu-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.nu-table th,
+.nu-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  text-align: left;
+  vertical-align: top;
+}
+
+.nu-table thead th {
+  position: sticky;
+  top: 0;
+  background: #fafafa;
+  font-weight: 600;
+  z-index: 1;
+}
+
+.nu-check {
+  width: 40px;
+}
+
+.nu-name {
+  font-weight: 500;
+}
+
+.nu-muted {
+  color: #78909c;
+  font-size: 12.5px;
+}
+
+.nu-packing {
+  max-width: 220px;
+  color: #455a64;
+}
+
+.nu-formula {
+  white-space: nowrap;
+}
+
+.nu-formula > span {
+  margin-right: 6px;
+}
+
+.nu-factor {
+  width: 70px;
+  padding: 5px 6px;
+  font-size: 15px;
+  border: 1px solid #b0bec5;
+  border-radius: 4px;
+  text-align: right;
+}
+
+.nu-from-suggestion {
+  background: #ffe0b2;
+  border-color: #fb8c00;
+  font-weight: 600;
+}
+
+.nu-unit {
+  margin-left: 6px;
+  padding: 5px 4px;
+  font-size: 15px;
+  border: 1px solid #b0bec5;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.nu-row-checked {
+  background: #f1f8f6;
+}
+
+.nu-row-error {
+  background: #fdecea;
+}
+
+.nu-row-message {
+  margin-top: 4px;
+  color: #b71c1c;
+  font-size: 13px;
+}
+
+.nu-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.nu-tag-ok {
+  background: #cfe9d9;
+  color: #17603a;
+}
+
+.nu-tag-bad {
+  background: #f5c6c2;
+  color: #8b1f1a;
+}
+
+.nu-clear {
+  display: block;
+  line-height: 26px;
+  padding: 0 4px;
+  font-size: 13px;
+}
+
+mat-dialog-actions button {
+  font-size: 15px;
+}

@@ -163,3 +163,78 @@ mat-dialog-actions button {
   font-size: 15px;
   line-height: 42px;
 }
+
+.npc-conv-active {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border-left: 3px solid #43a047;
+  background: #e8f5e9;
+  color: #1b5e20;
+  font-size: 15px;
+}
+
+.npc-conv-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.npc-conv-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 6px;
+}
+
+.npc-conv-label {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.npc-conv-factor {
+  width: 90px;
+  padding: 7px 8px;
+  font-size: 17px;
+  border: 2px solid #b0bec5;
+  border-radius: 4px;
+  text-align: right;
+}
+
+.npc-conv-suggest {
+  background: #ffe0b2;
+  border-color: #fb8c00;
+  font-weight: 600;
+}
+
+.npc-conv-unit {
+  padding: 7px 6px;
+  font-size: 17px;
+  border: 2px solid #b0bec5;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.npc-conv-hint {
+  font-size: 13.5px;
+  color: #6d4c00;
+  margin-top: 4px;
+}
+
+.npc-conv-warn {
+  color: #b71c1c;
+}
+
+.npc-rename {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.npc-rename summary {
+  cursor: pointer;
+  color: #455a64;
+}

@@ -77,6 +77,18 @@ export class ProductService {
     return this.http.post<object>(url, body);
   }
 
+  /** Thuốc bị chặn vì đơn vị tính, kèm quy đổi gợi ý (1 Vỉ = 10 Viên) */
+  nationalUnits() {
+    const url = environment.apiUrl + '/product/national-units';
+    return this.http.get<object>(url);
+  }
+
+  /** Lưu quy đổi đơn vị khai DQG cho nhiều thuốc; tên đơn vị rỗng = bỏ quy đổi */
+  nationalUnitsSave(items: { id: number, national_unit_name: string, national_unit_factor: number }[]) {
+    const url = environment.apiUrl + '/product/national-units-save';
+    return this.http.post<object>(url, {items});
+  }
+
   getDetail(id: string, expand: string = '') {
     const url = environment.apiUrl + '/product/' + id + '?expand=' + expand;
     return this.http.get<object>(url);

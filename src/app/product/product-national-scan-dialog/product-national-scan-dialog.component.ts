@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ProductService } from '../product.service';
 import { ProductNationalCompareDialogComponent } from '../product-national-compare-dialog/product-national-compare-dialog.component';
+import { ProductNationalUnitDialogComponent } from '../product-national-unit-dialog/product-national-unit-dialog.component';
 
 interface ScanSummary {
   total: number;
@@ -19,6 +20,8 @@ interface BlockedProduct {
   registration_no: string;
   unit: string;
   reasons: string[];
+  /** Chặn vì đơn vị tính: sửa bằng khai quy đổi (1 Vỉ = 10 Viên) */
+  unit_issue?: boolean;
   /** Đã sửa lại và kiểm tra lại: liên thông được */
   fixed?: boolean;
 }
@@ -100,6 +103,25 @@ export class ProductNationalScanDialogComponent implements OnInit {
       item.unit = product['base_unit'];
       item.reasons = check['reasons'] || [];
       item.fixed = check['status'] !== 'blocked';
+    });
+  }
+
+  /** Số thuốc còn vướng đơn vị tính, chưa sửa */
+  get unitIssueCount(): number {
+    return this.blocked.filter(item => item.unit_issue && !item.fixed).length;
+  }
+
+  /** Khai quy đổi đơn vị cho nhiều thuốc một lượt, xong thì quét lại */
+  openUnitDialog() {
+    const dialogRef = this.dialog.open(ProductNationalUnitDialogComponent, {
+      width: '95%',
+      maxWidth: '1400px',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.changed) {
+        this.changed = true;
+        this.scan();
+      }
     });
   }
 

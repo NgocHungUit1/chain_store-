@@ -67,6 +67,10 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="openUnitDialog()" *ngIf="stage === 'done' && unitIssueCount > 0">
+    <mat-icon>swap_horiz</mat-icon>
+    Khai quy đổi đơn vị ({{ unitIssueCount }} thuốc)
+  </button>
   <button mat-stroked-button color="primary" (click)="scan()" *ngIf="stage !== 'running'">
     <mat-icon>refresh</mat-icon>
     Quét lại

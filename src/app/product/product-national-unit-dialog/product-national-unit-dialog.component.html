@@ -1,0 +1,100 @@
+<h2 mat-dialog-title><strong>Khai quy đổi đơn vị Dược Quốc gia</strong></h2>
+
+<mat-dialog-content>
+  <div class="nu-intro">
+    Dược Quốc gia chỉ nhận số lượng theo đơn vị thuốc đã đăng ký (thường là <b>Viên</b>).
+    Thuốc bạn bán theo <b>Vỉ, Hộp, Chai</b> thì khai quy đổi, ví dụ <b>1 Vỉ = 10 Viên</b>:
+    khi gửi phiếu, phần mềm tự nhân số lượng và chia đơn giá. <b>Tồn kho và giá bán trong RX20 không đổi.</b>
+  </div>
+
+  <div class="nu-warn">
+    Hệ số tô <span class="nu-suggest-sample">màu cam</span> là phần mềm đoán từ quy cách đóng gói — soát lại
+    trước khi lưu. Hệ số sai thì số lượng khai lên cổng sai theo, và cổng không cho sửa phiếu đã gửi.
+  </div>
+
+  <mat-progress-bar mode="indeterminate" *ngIf="loading || saving"></mat-progress-bar>
+  <div class="nu-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <ng-container *ngIf="!loading && !errorMessage">
+    <div class="nu-empty" *ngIf="rows.length === 0">
+      Không có thuốc nào bị chặn vì đơn vị tính.
+    </div>
+
+    <ng-container *ngIf="rows.length > 0">
+      <div class="nu-toolbar">
+        <input class="nu-filter" [(ngModel)]="keyword" placeholder="Lọc theo tên hoặc mã hàng..." autocomplete="off">
+        <mat-checkbox color="primary" [(ngModel)]="onlyPending">
+          Chỉ thuốc chưa khai ({{ pendingCount }})
+        </mat-checkbox>
+        <span class="nu-count">Đang hiện {{ visibleRows.length }} / {{ rows.length }} thuốc · Đã tick <b>{{ checkedRows.length }}</b></span>
+      </div>
+
+      <div class="nu-table">
+        <table>
+          <thead>
+          <tr>
+            <th class="nu-check">
+              <mat-checkbox color="primary" [checked]="allVisibleChecked" (change)="toggleAll($event.checked)"></mat-checkbox>
+            </th>
+            <th>Thuốc</th>
+            <th>Quy cách đóng gói</th>
+            <th>Khai lên Dược Quốc gia</th>
+            <th>Trạng thái</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let row of visibleRows"
+              [class.nu-row-checked]="row.checked"
+              [class.nu-row-error]="row.error">
+            <td class="nu-check">
+              <mat-checkbox color="primary" [(ngModel)]="row.checked" [disabled]="!canCheck(row)"></mat-checkbox>
+            </td>
+            <td>
+              <div class="nu-name">{{ row.product_name }}</div>
+              <div class="nu-muted">{{ row.product_no }} · đơn vị cơ bản <b>{{ row.base_unit }}</b></div>
+            </td>
+            <td class="nu-packing">{{ row.packing || '—' }}</td>
+            <td class="nu-formula">
+              <span>1 {{ row.base_unit }} =</span>
+              <input type="number" min="1" step="1"
+                     class="nu-factor"
+                     [class.nu-from-suggestion]="row.fromSuggestion"
+                     [(ngModel)]="row.factor"
+                     (ngModelChange)="onEdit(row)"
+                     placeholder="?">
+              <select class="nu-unit" [(ngModel)]="row.unit" (ngModelChange)="onEdit(row)">
+                <option *ngFor="let unit of row.accepted_units" [ngValue]="unit">{{ unit }}</option>
+              </select>
+              <div class="nu-muted" *ngIf="!row.factor">Không đoán được, nhập theo vỏ hộp.</div>
+            </td>
+            <td class="nu-status">
+              <span class="nu-tag nu-tag-ok" *ngIf="row.saved">Đã lưu</span>
+              <ng-container *ngIf="!row.saved">
+                <span class="nu-tag nu-tag-ok" *ngIf="isDeclared(row) && row.status === 'ready'">
+                  Đang khai 1 {{ row.base_unit }} = {{ row.national_unit_factor }} {{ row.national_unit_name }}
+                </span>
+                <span class="nu-tag nu-tag-bad" *ngIf="!isDeclared(row)">Chưa khai</span>
+              </ng-container>
+              <div class="nu-row-message" *ngIf="row.error">{{ row.error }}</div>
+              <button mat-button color="warn" class="nu-clear" *ngIf="isDeclared(row)" (click)="clear(row)" [disabled]="saving">
+                Bỏ quy đổi
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </ng-container>
+  </ng-container>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" (click)="save()" [disabled]="saving || checkedRows.length === 0">
+    <mat-icon>save</mat-icon>
+    Lưu {{ checkedRows.length }} thuốc đã tick
+  </button>
+  <button mat-stroked-button (click)="close()" [disabled]="saving">
+    <mat-icon>close</mat-icon>
+    Đóng
+  </button>
+</mat-dialog-actions>
