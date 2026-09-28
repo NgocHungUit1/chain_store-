@@ -1,0 +1,24 @@
+<h1 mat-dialog-title>Xuất phiếu tồn đầu kỳ</h1>
+
+<mat-dialog-content>
+  <mat-form-field style="width: 100%">
+    <mat-label>Tồn kho cuối ngày</mat-label>
+    <input matInput [matDatepicker]="picker" [(ngModel)]="date" [max]="today" required>
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+  <p *ngIf="isToday()">Xuất theo số lượng tồn <b>hiện tại</b>.</p>
+  <p *ngIf="date && !isToday()">
+    Xuất số lượng tồn của từng lô tại thời điểm <b>cuối ngày {{ date | date:'dd/MM/yyyy' }}</b>
+    (tính theo thẻ kho).
+  </p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Huỷ</button>
+  <button mat-raised-button color="primary" [disabled]="!date" (click)="confirm()">
+    <mat-icon>cloud_download</mat-icon>
+    Xuất file
+  </button>
+</mat-dialog-actions>

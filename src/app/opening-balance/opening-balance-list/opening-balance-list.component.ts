@@ -15,6 +15,7 @@ import { DateFilter } from '../../invoice/invoice.model';
 import { OpeningBalanceService } from '../opening-balance.service';
 import { DatetimeDefaultFilterDialogComponent } from '../datetime-default-filter-dialog/datetime-default-filter-dialog.component';
 import { DatetimeChooseFilterDialogComponent } from '../datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
+import { OpeningBalanceExportDialogComponent } from '../opening-balance-export-dialog/opening-balance-export-dialog.component';
 import {
   OpeningBalance,
   OpeningBalanceFilter,
@@ -156,10 +157,23 @@ export class OpeningBalanceListComponent extends ListComponentBase implements On
    * Mặc định "Toàn thời gian": phiếu tồn đầu thường được lập một lần lúc khai
    * trương rồi không đụng nữa, mặc định theo tháng sẽ làm người dùng tưởng mất phiếu.
    */
-  /** Xuất phiếu tồn đầu kỳ để nộp lên cổng Dược Quốc Gia. */
+  /** Xuất phiếu tồn đầu kỳ để nộp lên cổng Dược Quốc Gia — hỏi ngày chốt trước. */
   exportNationalPharmacyOpeningStock() {
+    const dialogRef = this.dialog.open(OpeningBalanceExportDialogComponent, {
+      width: '400px',
+      autoFocus: false,
+    });
+
+    dialogRef.afterClosed().subscribe((date: string) => {
+      if (date) {
+        this.downloadNationalPharmacyOpeningStock(date);
+      }
+    });
+  }
+
+  downloadNationalPharmacyOpeningStock(date: string) {
     this.isLoadingResults = true;
-    this.service.exportNationalPharmacyOpeningStock().subscribe(
+    this.service.exportNationalPharmacyOpeningStock(date).subscribe(
       (response: any) => {
         const blob = new Blob([response.body], {
           type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -167,7 +181,7 @@ export class OpeningBalanceListComponent extends ListComponentBase implements On
         const a = document.createElement('a');
         const objectUrl = URL.createObjectURL(blob);
         a.href = objectUrl;
-        a.download = 'Phieu-nhap-ton-dau-ky.xlsx';
+        a.download = 'Phieu-nhap-ton-dau-ky-' + date.replace(/-/g, '') + '.xlsx';
         a.click();
         URL.revokeObjectURL(objectUrl);
         this.notifySer.notify('success', 'Xuất file thành công!');

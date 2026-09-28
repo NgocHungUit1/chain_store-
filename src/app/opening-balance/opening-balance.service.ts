@@ -61,9 +61,11 @@ export class OpeningBalanceService {
    * Dùng lại nguyên API đang nằm ở ProductController - chỉ dời NÚT sang màn này
    * cho đúng chỗ nghiệp vụ, không bê hàm sang controller khác để khỏi phát sinh
    * rủi ro. Không truyền bộ lọc: xuất trọn tồn đầu kỳ của chi nhánh.
+   *
+   * @param date 'YYYY-MM-DD' — xuất số tồn cuối ngày này; hôm nay = tồn hiện tại.
    */
-  exportNationalPharmacyOpeningStock() {
-    const url = environment.apiUrl + '/product/export-national-pharmacy-opening-stock';
+  exportNationalPharmacyOpeningStock(date: string) {
+    const url = environment.apiUrl + '/product/export-national-pharmacy-opening-stock?date=' + encodeURIComponent(date);
     return this.http.get(url, {
       observe: 'response',
       responseType: 'blob'
