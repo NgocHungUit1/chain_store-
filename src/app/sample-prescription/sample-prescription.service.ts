@@ -83,6 +83,15 @@ export class SamplePrescriptionService {
     return this.http.post<Product[]>(url, {id: id});
   }
 
+  /**
+   * Chép đơn thuốc mẫu của cửa hàng chuẩn về cửa hàng đang dùng, tự tạo sản phẩm còn thiếu.
+   * Trả về {created, skipped, created_products}.
+   */
+  syncStandard() {
+    const url = environment.apiUrl + '/sample-prescription/sync-standard';
+    return this.http.post<any>(url, {});
+  }
+
 
 }
 

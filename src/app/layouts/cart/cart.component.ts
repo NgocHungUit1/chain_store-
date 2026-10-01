@@ -37,6 +37,7 @@ import { SamplePrescriptionService } from '../../sample-prescription/sample-pres
 import { MatDialog } from '@angular/material/dialog';
 // tslint:disable-next-line:max-line-length
 import { SamplePrescriptionDoseDialogComponent } from '../../sale/sample-prescription-dose-dialog/sample-prescription-dose-dialog.component';
+import { SamplePrescriptionPickDialogComponent } from '../../sale/sample-prescription-pick-dialog/sample-prescription-pick-dialog.component';
 import { NationalPrescriptionService } from '../../national-prescription/national-prescription.service';
 
 
@@ -360,42 +361,7 @@ export class CartComponent implements OnInit, OnDestroy {
         /**
          * product.id  === sample.id
          */
-        this.samplePrescriptionService
-        .getDetailForCart(product.id)
-        .subscribe(res => {
-          const doseDialog = this.dialog.open(SamplePrescriptionDoseDialogComponent, {
-            width: '900px',
-            maxWidth: '95vw',
-            data: {
-              sample: res,
-              sampleName: product.name ? product.name : product.product_name,
-              initialDose: amountProduct,
-              canNegativeStock: this.canNegativeStock,
-            },
-          });
-
-          doseDialog.afterClosed().subscribe(doseCount => {
-            if (!doseCount || doseCount < 1) {
-              this.resetUserInput();
-              return;
-            }
-
-            /**
-             * Giá của đơn mẫu là giá trọn gói MỘT liều, phải nhân theo số liều.
-             * Thiếu chỗ nhân này thì xuất kho đủ N liều mà chỉ thu tiền 1 liều.
-             */
-            this.orderService.setOrderSumPrice(res['total_amount'] * doseCount);
-
-            // tslint:disable-next-line:no-shadowed-variable
-            res['items'].forEach(element => {
-              if (element.status === 10) {
-                element.amount *= doseCount;
-                this.handlePriceListProduct(element, product.id);
-              }
-            });
-            this.resetUserInput();
-          });
-        });
+        this.addSamplePrescription(product.id, product.name ? product.name : product.product_name, amountProduct);
         break;
       case 'nation':
         this.nationalPrescriptionService
@@ -410,6 +376,62 @@ export class CartComponent implements OnInit, OnDestroy {
         break;
       default:
     }
+  }
+
+  /**
+   * Hỏi số liều rồi đổ thuốc của đơn thuốc mẫu vào hoá đơn đang mở.
+   * Dùng chung cho ô tìm kiếm (chế độ đơn mẫu) và modal chọn đơn mẫu.
+   */
+  addSamplePrescription(sampleId, sampleName, initialDose = 1) {
+    this.samplePrescriptionService
+    .getDetailForCart(sampleId)
+    .subscribe(res => {
+      const doseDialog = this.dialog.open(SamplePrescriptionDoseDialogComponent, {
+        width: '900px',
+        maxWidth: '95vw',
+        data: {
+          sample: res,
+          sampleName: sampleName,
+          initialDose: initialDose,
+          canNegativeStock: this.canNegativeStock,
+        },
+      });
+
+      doseDialog.afterClosed().subscribe(doseCount => {
+        if (!doseCount || doseCount < 1) {
+          this.resetUserInput();
+          return;
+        }
+
+        /**
+         * Giá của đơn mẫu là giá trọn gói MỘT liều, phải nhân theo số liều.
+         * Thiếu chỗ nhân này thì xuất kho đủ N liều mà chỉ thu tiền 1 liều.
+         */
+        this.orderService.setOrderSumPrice(res['total_amount'] * doseCount);
+
+        // tslint:disable-next-line:no-shadowed-variable
+        res['items'].forEach(element => {
+          if (element.status === 10) {
+            element.amount *= doseCount;
+            this.handlePriceListProduct(element, sampleId);
+          }
+        });
+        this.resetUserInput();
+      });
+    });
+  }
+
+  /** Mở modal chọn đơn thuốc mẫu (icon cạnh nút Tìm kiếm nhanh) */
+  openSamplePrescriptionPicker() {
+    const dialogRef = this.dialog.open(SamplePrescriptionPickDialogComponent, {
+      width: '800px',
+      maxWidth: '95vw',
+    });
+    dialogRef.afterClosed().subscribe(sample => {
+      if (sample && sample.id) {
+        this.addSamplePrescription(sample.id, sample.name, 1);
+      }
+    });
   }
 
   handlePriceListProduct(product: Product, samplePrescriptionId = null) {

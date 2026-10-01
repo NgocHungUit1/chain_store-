@@ -12,6 +12,7 @@ import { FullComponent } from './layouts/full/full.component';
 import { CartComponent } from './layouts/cart/cart.component';
 // tslint:disable-next-line:max-line-length
 import { SamplePrescriptionDoseDialogComponent } from './sale/sample-prescription-dose-dialog/sample-prescription-dose-dialog.component';
+import { SamplePrescriptionPickDialogComponent } from './sale/sample-prescription-pick-dialog/sample-prescription-pick-dialog.component';
 import { AppHeaderCartComponent } from './layouts/cart/header/header-cart.component';
 
 
@@ -68,6 +69,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     FullComponent,
     CartComponent,
     SamplePrescriptionDoseDialogComponent,
+    SamplePrescriptionPickDialogComponent,
     AppHeaderComponent,
     SpinnerComponent,
     AppBlankComponent,

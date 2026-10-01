@@ -247,6 +247,16 @@
     <button
       mat-button
       mat-icon-button
+      (click)="$event.stopImmediatePropagation();openSamplePrescriptionPicker();"
+      style = "margin-left: 20px;"
+      matTooltip="Đơn thuốc mẫu"
+    >
+      <mat-icon>assignment</mat-icon>
+    </button>
+
+    <button
+      mat-button
+      mat-icon-button
       [ngStyle]="{ 'opacity': searchMode ? '1' : '0.5' }"
       (click)="$event.stopImmediatePropagation();focusInput();"
       style = "margin-left: 20px;"
