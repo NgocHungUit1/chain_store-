@@ -12,8 +12,8 @@
   <ng-container *ngIf="stage === 'done' && summary">
     <div class="np-scan-counts">
       <span>Đã quét <b>{{ summary.total }}</b> thuốc:</span>
-      <span class="np-scan-badge np-scan-ready">Liên thông được: {{ summary.ready }}</span>
-      <span class="np-scan-badge np-scan-blocked">Chưa liên thông: {{ summary.blocked }}</span>
+      <span class="np-scan-badge np-scan-ready">Đã khớp: {{ summary.ready }}</span>
+      <span class="np-scan-badge np-scan-blocked">Chưa khớp: {{ summary.blocked }}</span>
       <span class="np-scan-badge" *ngIf="summary.not_required > 0">Không cần khai: {{ summary.not_required }}</span>
     </div>
 
@@ -23,12 +23,12 @@
     </div>
 
     <div *ngIf="blocked.length === 0" class="np-scan-ok">
-      Tất cả thuốc đều liên thông được. Hoá đơn và phiếu nhập sẽ không bị lỗi do thông tin thuốc.
+      Tất cả thuốc đều đã khớp với Dược Quốc gia. Hoá đơn và phiếu nhập sẽ không bị lỗi do thông tin thuốc.
     </div>
 
     <ng-container *ngIf="blocked.length > 0">
       <div class="np-scan-title">
-        Thuốc chưa liên thông được (còn {{ remaining }}) — bấm <b>Sửa</b> để so sánh và chọn đúng thuốc trong danh mục
+        Thuốc chưa khớp (còn {{ remaining }}) — bấm <b>Sửa</b> để so sánh và chọn đúng thuốc trong danh mục
         quốc gia:
       </div>
       <div class="np-scan-table">
@@ -53,7 +53,7 @@
             <td class="np-scan-nowrap">{{ item.registration_no || '—' }}</td>
             <td class="np-scan-nowrap">{{ item.unit }}</td>
             <td>
-              <span *ngIf="item.fixed" class="np-scan-badge np-scan-ready">Đã sửa, liên thông được</span>
+              <span *ngIf="item.fixed" class="np-scan-badge np-scan-ready">Đã sửa, đã khớp</span>
               <ng-container *ngIf="!item.fixed">
                 <div *ngFor="let reason of item.reasons">{{ reason }}</div>
               </ng-container>

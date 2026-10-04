@@ -221,7 +221,7 @@
               color='primary'
               (click)='openNationalScanDialog()'
               class='m-r-5 padding-x-10'
-              matTooltip='Kiểm tra toàn bộ thuốc xem liên thông được lên CSDL Dược quốc gia chưa'
+              matTooltip='Kiểm tra toàn bộ thuốc đã khớp với danh mục Dược Quốc gia chưa'
               [disabled]="!canDo('Product.Update')">
         <mat-icon>fact_check</mat-icon>
         Quét liên thông DQG
@@ -452,14 +452,14 @@
                            class='label label-success national-check-blocked'
                            matTooltip='Bấm để xem thuốc quốc gia đang khớp'
                            (click)='openNationalFix(element, $event)'>
-                      Đã liên thông
+                      Đã khớp
                     </label>
                     <label *ngSwitchCase="'blocked'"
                            class='label label-danger national-check-blocked'
                            matTooltipClass='tooltip-multiline'
                            [matTooltip]="nationalReasons(element) + '\nBấm để so sánh và chọn thuốc quốc gia.'"
                            (click)='openNationalFix(element, $event)'>
-                      Chưa liên thông
+                      Chưa khớp
                     </label>
                     <label *ngSwitchCase="'not_required'"
                            class='label label-default'

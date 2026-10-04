@@ -1,0 +1,70 @@
+<h2 mat-dialog-title><strong>Thêm thuốc Dược Quốc gia vào phiếu</strong></h2>
+
+<mat-dialog-content>
+  <mat-progress-bar mode="indeterminate" *ngIf="loading || saving"></mat-progress-bar>
+  <div class="ndi-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <ng-container *ngIf="!loading && rows.length">
+    <div class="ndi-summary">
+      <span class="ndi-tag ndi-tag-ok">Đã có trong cửa hàng: {{ existingCount }}</span>
+      <span class="ndi-tag ndi-tag-new">Sẽ tạo sản phẩm mới: {{ newCount }}</span>
+    </div>
+    <div class="ndi-hint" *ngIf="newCount > 0">
+      Sản phẩm tạo mới lấy tên, số đăng ký, hoạt chất, hãng từ Dược Quốc gia và <b>khớp sẵn</b> để liên thông.
+      Bật sẵn quản lý theo lô. Giá để 0, nhập giá ngay trên phiếu. Muốn bán theo Hộp/Vỉ thì thêm đơn vị quy đổi sau.
+    </div>
+
+    <div class="ndi-table">
+      <table>
+        <thead>
+        <tr>
+          <th>Thuốc Dược Quốc gia</th>
+          <th>Dùng sản phẩm</th>
+          <th>Đơn vị cơ bản</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let row of rows" [class.ndi-row-error]="row.error">
+          <td>
+            <div class="ndi-name">{{ row.drug.medicine_name }}</div>
+            <div class="ndi-muted">
+              {{ row.drug.registration_no }}
+              <span *ngIf="row.drug.content"> · {{ row.drug.content }}</span>
+              <span *ngIf="row.drug.manufacturer"> · {{ row.drug.manufacturer }}</span>
+            </div>
+            <div class="ndi-row-message" *ngIf="row.error">{{ row.error }}</div>
+          </td>
+          <td>
+            <select class="ndi-select" [(ngModel)]="row.choice">
+              <option *ngFor="let product of row.existing" [ngValue]="product.id">
+                {{ product.product_name }} ({{ product.base_unit }}) — {{ matchLabel(product) }}{{ product.active ? '' : ', ngừng KD' }}
+              </option>
+              <option [ngValue]="'new'">+ Tạo sản phẩm mới</option>
+            </select>
+          </td>
+          <td>
+            <ng-container *ngIf="row.choice === 'new'">
+              <select class="ndi-select ndi-unit" [(ngModel)]="row.baseUnit" *ngIf="row.drug.units?.length > 1">
+                <option *ngFor="let unit of row.drug.units" [ngValue]="unit">{{ unit }}</option>
+              </select>
+              <b *ngIf="(row.drug.units?.length || 0) <= 1">{{ row.baseUnit || '—' }}</b>
+            </ng-container>
+            <span class="ndi-muted" *ngIf="row.choice !== 'new'">theo sản phẩm có sẵn</span>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" (click)="confirm()" [disabled]="loading || saving || rows.length === 0">
+    <mat-icon>playlist_add</mat-icon>
+    {{ data.confirmLabel || 'Thêm vào phiếu' }} ({{ rows.length }} thuốc)
+  </button>
+  <button mat-stroked-button (click)="close()" [disabled]="saving">
+    <mat-icon>close</mat-icon>
+    Đóng
+  </button>
+</mat-dialog-actions>

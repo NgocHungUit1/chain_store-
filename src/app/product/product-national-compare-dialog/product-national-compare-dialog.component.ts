@@ -308,9 +308,9 @@ export class ProductNationalCompareDialogComponent implements OnInit {
       this.resetRename();
 
       if (this.check.status === 'ready') {
-        this.notifySer.notify('success', 'Đã gắn thuốc quốc gia, thuốc liên thông được.');
+        this.notifySer.notify('success', 'Đã gắn thuốc quốc gia, thuốc đã khớp.');
       } else {
-        this.notifySer.notify('warning', 'Đã gắn thuốc quốc gia nhưng vẫn chưa liên thông được, xem lý do phía trên.');
+        this.notifySer.notify('warning', 'Đã gắn thuốc quốc gia nhưng vẫn chưa khớp, xem lý do phía trên.');
       }
     }, error => {
       this.saving = false;

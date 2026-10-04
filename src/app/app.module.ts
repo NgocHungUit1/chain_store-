@@ -53,6 +53,7 @@ import { EditInvoiceDialogComponent } from './settings/edit-invoice-dialog/edit-
 import { NationalPharmacyV2ConnectDialogComponent } from './common/national-pharmacy-v2/national-pharmacy-v2-connect-dialog/national-pharmacy-v2-connect-dialog.component';
 import { NationalPharmacyV2BulkDialogComponent } from './common/national-pharmacy-v2/national-pharmacy-v2-bulk-dialog/national-pharmacy-v2-bulk-dialog.component';
 import { NationalDrugPickerDialogComponent } from './common/national-pharmacy-v2/national-drug-picker-dialog/national-drug-picker-dialog.component';
+import { NationalDrugImportDialogComponent } from './common/national-pharmacy-v2/national-drug-import-dialog/national-drug-import-dialog.component';
 
 // Registering Syncfusion license key
 registerLicense('ORg4AjUWIQA/Gnt2V1hhQlJAfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hSn5UdkFjXXxccHNTRmZb');
@@ -88,6 +89,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     NationalPharmacyV2ConnectDialogComponent,
     NationalPharmacyV2BulkDialogComponent,
     NationalDrugPickerDialogComponent,
+    NationalDrugImportDialogComponent,
   ],
   imports: [
     BrowserModule,

@@ -62,6 +62,12 @@ import { DatePipe } from '@angular/common';
 import { LocalStorageService } from '../localStorageService';
 import { WarehouseConfirmLoadDataFormComponent } from '../warehouse-confirm-load-data-form/warehouse-confirm-load-data-form.component';
 import { IResponse } from '../../common/response.model';
+import {
+  NationalDrugPickerDialogComponent
+} from '../../common/national-pharmacy-v2/national-drug-picker-dialog/national-drug-picker-dialog.component';
+import {
+  NationalDrugImportDialogComponent
+} from '../../common/national-pharmacy-v2/national-drug-import-dialog/national-drug-import-dialog.component';
 
 
 ///////////// coding fake data
@@ -2072,6 +2078,38 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
           });
         }
       }
+    });
+  }
+
+  /**
+   * Chọn thuốc từ danh mục Dược Quốc gia: tick nhiều thuốc, xác nhận dùng sản phẩm có
+   * sẵn hay tạo mới, rồi thêm vào phiếu. Thuốc thêm kiểu này khớp sẵn để liên thông.
+   */
+  openNationalDrugPicker() {
+    const pickerRef = this.dialog.open(NationalDrugPickerDialogComponent, {
+      data: {
+        multiple: true,
+        title: 'Chọn thuốc từ danh mục Dược Quốc gia',
+        initialQuery: this.selectProduct.value && typeof this.selectProduct.value === 'string' ? this.selectProduct.value : '',
+      },
+      width: '90%',
+      maxWidth: '1400px',
+    });
+
+    pickerRef.afterClosed().subscribe(picked => {
+      if (!picked?.drugs?.length) {
+        return;
+      }
+
+      const importRef = this.dialog.open(NationalDrugImportDialogComponent, {
+        data: {drugs: picked.drugs, confirmLabel: 'Thêm vào phiếu nhập'},
+        width: '85%',
+        maxWidth: '1100px',
+      });
+
+      importRef.afterClosed().subscribe(result => {
+        (result?.product_ids || []).forEach(id => this.handleAddProductToList(id));
+      });
     });
   }
 

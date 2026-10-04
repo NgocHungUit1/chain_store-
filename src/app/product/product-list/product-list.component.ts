@@ -115,11 +115,11 @@ export class ProductListComponent extends ListComponentBase implements OnInit {
   nationalCheckFilterList = [
     {
       'value': 'ready',
-      'name': 'Đã liên thông',
+      'name': 'Đã khớp',
     },
     {
       'value': 'blocked',
-      'name': 'Chưa liên thông',
+      'name': 'Chưa khớp',
     },
     {
       'value': 'not_required',

@@ -89,6 +89,18 @@ export class ProductService {
     return this.http.post<object>(url, {items});
   }
 
+  /** Thuốc DQG đã chọn: cửa hàng đã có sản phẩm nào ứng với từng thuốc chưa */
+  nationalResolve(nationalDrugIds: string[]) {
+    const url = environment.apiUrl + '/product/national-resolve';
+    return this.http.post<object>(url, {national_drug_ids: nationalDrugIds});
+  }
+
+  /** Tạo sản phẩm thuốc từ thuốc DQG, khớp sẵn mã định danh */
+  nationalCreate(items: { national_drug_id: string, base_unit: string }[]) {
+    const url = environment.apiUrl + '/product/national-create';
+    return this.http.post<object>(url, {items});
+  }
+
   getDetail(id: string, expand: string = '') {
     const url = environment.apiUrl + '/product/' + id + '?expand=' + expand;
     return this.http.get<object>(url);

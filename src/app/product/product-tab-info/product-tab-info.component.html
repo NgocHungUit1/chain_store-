@@ -79,6 +79,14 @@
             <span class="product-field-label">Giá vốn bình quân:</span> {{ product.avg_original_price | number }}
           </div>
         </div>
+        <!-- Quy đổi chỉ dùng khi gửi lên CSDL Dược, không phải đơn vị bán hàng -->
+        <div fxLayout="row wrap" class="product-info-row" *ngIf="product.national_unit_name && product.national_unit_factor">
+          <div fxFlex="100" class="product-info-field">
+            <span class="product-field-label">Khai lên Dược Quốc gia:</span>
+            <b>1 {{ product.base_unit }} = {{ product.national_unit_factor }} {{ product.national_unit_name }}</b>
+            <span class="text-muted"> (chỉ dùng khi liên thông, không đổi đơn vị bán hàng)</span>
+          </div>
+        </div>
 
       </div>
 

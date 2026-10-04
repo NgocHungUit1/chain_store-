@@ -30,6 +30,9 @@
           <button mat-icon-button matSuffix [matTooltip]='"Thêm thuốc mới"' (click)="$event.stopImmediatePropagation();openProductMedicineDialog('Add', {});">
             <mat-icon>add_to_queue</mat-icon>
           </button>
+          <button mat-icon-button matSuffix color="primary" [matTooltip]='"Chọn thuốc từ danh mục Dược Quốc gia"' (click)="$event.stopImmediatePropagation();openNationalDrugPicker();">
+            <mat-icon>menu_book</mat-icon>
+          </button>
           <mat-autocomplete #chooseProduct="matAutocomplete" [displayWith]="displayProductFn" (optionSelected)="onSelectedProduct($event.option.value)">
             <mat-option [style.display]="'none'"></mat-option>
             <ng-container *ngIf="searchMode || !allow_multiple_select">

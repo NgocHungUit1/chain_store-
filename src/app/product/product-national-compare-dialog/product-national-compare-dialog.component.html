@@ -11,7 +11,7 @@
 
     <!-- Trạng thái hiện tại -->
     <div class="npc-status npc-status-ok" *ngIf="check.status === 'ready'">
-      Thuốc này đang liên thông được.
+      Thuốc này đã khớp với Dược Quốc gia.
     </div>
     <div class="npc-status npc-status-bad" *ngIf="check.status === 'blocked'">
       <div *ngFor="let reason of check.reasons">{{ reason }}</div>
