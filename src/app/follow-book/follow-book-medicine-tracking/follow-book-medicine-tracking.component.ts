@@ -134,7 +134,7 @@ export class FollowBookMedicineTrackingComponent extends ListComponentBase imple
               bs_name = invoice.prescription.doctor?.doctor_name || '';
               bn_name = invoice.prescription.name || invoice.customer?.name || '';
               address = invoice.prescription.address || invoice.customer?.address || '';
-              age = invoice.prescription.age || (invoice.customer?.dob ? this.calculateAge(invoice.customer.dob).toString() : '');
+              age = invoice.prescription.age_display || invoice.prescription.age || (invoice.customer?.dob ? this.calculateAge(invoice.customer.dob).toString() : '');
               diagnosis = invoice.prescription.note || '';
             } else if (invoice.customer) {
               bn_name = invoice.customer.name || '';

@@ -41,7 +41,6 @@ export class PrescriptionFormDialogComponent implements OnInit {
   filteredProducts: Observable<any[]>;
 
   loading = false;
-  ageDisplay = '';
 
   local_data: any;
   prescription_id: string;
@@ -214,7 +213,6 @@ export class PrescriptionFormDialogComponent implements OnInit {
         doctor_note: data['doctor_note'],
         doctor_advice: data['doctor_advice'],
       });
-      this.ageDisplay = data['age_display'] !== undefined ? data['age_display'] : data['age'] || '';
 
       // API trả null khi đơn thuốc không có thuốc quốc gia. Gán thẳng null vào đây
       // làm template đọc .length của null -> TypeError, dialog dựng hỏng giữa chừng
@@ -267,25 +265,25 @@ export class PrescriptionFormDialogComponent implements OnInit {
     });
   }
 
+  /**
+   * Chọn ngày sinh thì điền sẵn ô Tuổi (dược sĩ vẫn sửa tay được). Xoá ngày sinh thì giữ
+   * nguyên tuổi đang có — nhiều đơn không ghi ngày sinh, chỉ ghi tuổi.
+   */
   onDobChange(value: Date): void {
     const birthDate = moment(value);
     const today = moment();
 
     if (!value || !birthDate.isValid() || birthDate.isAfter(today, 'day')) {
-      this.ageDisplay = '';
       return;
     }
 
+    // Dưới 1 tuổi ghi tháng/ngày tuổi, không ghi "0 tuổi" (liều nhi tính theo tháng)
     const years = today.diff(birthDate, 'years');
-    if (years > 0) {
-      this.ageDisplay = `${years} tuổi`;
-      return;
-    }
-
     const months = today.diff(birthDate, 'months');
-    this.ageDisplay = months > 0
-      ? `${months} tháng tuổi`
-      : `${today.diff(birthDate, 'days')} ngày tuổi`;
+    const age = years > 0
+      ? `${years} tuổi`
+      : (months > 0 ? `${months} tháng tuổi` : `${today.diff(birthDate, 'days')} ngày tuổi`);
+    this.form.patchValue({age: age});
   }
 
   processFile(imageInput) {

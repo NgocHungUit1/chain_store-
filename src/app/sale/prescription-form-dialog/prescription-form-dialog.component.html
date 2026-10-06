@@ -157,7 +157,8 @@
 
           <div fxFlex="49" class="ml-2">
             <mat-form-field>
-              <input matInput tabindex="2" [value]="ageDisplay" placeholder="Tuổi" readonly>
+              <!-- Có ngày sinh thì tự tính; đơn không ghi ngày sinh thì dược sĩ gõ tay -->
+              <input matInput tabindex="2" formControlName="age" placeholder="Tuổi (tự tính hoặc tự nhập)" maxlength="50" autocomplete="off">
             </mat-form-field>
           </div>
 
