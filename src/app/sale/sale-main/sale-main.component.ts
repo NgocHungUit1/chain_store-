@@ -139,6 +139,26 @@ export class SaleMainComponent implements OnInit, DoCheck {
     });
   }
 
+  /**
+   * VAT nằm sẵn trong giá bán (giá bán là giá đã gồm VAT), chỉ để hiển thị.
+   * Không cộng vào tổng tiền: HĐĐT Bkav cũng tách ngược VAT từ giá này.
+   */
+  get includedVat(): number {
+    return (this.listProduct || []).reduce((sum, item) => {
+      const percent = Number(item?.product?.vat_included_percent) || 0;
+      if (!percent || item?.sample_prescription_id) {
+        return sum;
+      }
+      const unitPrice = item?.product?.end_price !== undefined ? item.product.end_price : item?.common_price;
+      const line = (Number(unitPrice) || 0) * (Number(item?.amount) || 0);
+      return sum + Math.round(line - line / (1 + percent / 100));
+    }, 0);
+  }
+
+  get includedVatText(): string {
+    return numeral(this.includedVat).format('0,0');
+  }
+
   get total(): number {
     const vat = this.useEinvoice ? this.sumVat : 0;
 
@@ -2380,7 +2400,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       total: (item.common_price || item.product.sell_price || item.product.end_price || 0) * (item.amount || 0),
       so_lo: item?.product_parcels && item?.product_parcels.length > 0 ? `SL: ${item.product_parcels[0].parcel_no}-HD: ${item.product_parcels[0].expiration_date}` : '',
       note: item?.note || '',
-      vat_percent: item?.product?.vat_percent || 0,
+      vat_percent: item?.product?.vat_percent || item?.product?.vat_included_percent || 0,
     }));
     const totalPrice = this.useEinvoice ? this.sumPrice + this.sumVat : this.sumPrice;
 
@@ -2758,6 +2778,16 @@ export class SaleMainComponent implements OnInit, DoCheck {
         customer_info += `<p>SĐT: ${customer_phone}</p>`;
       }
     }
+    // Giá bán đã gồm VAT (total_vat = 0): tách ngược VAT từ thành tiền từng dòng để bill ghi
+    // đúng "Tổng tiền hàng (chưa VAT)" và "VAT" như HĐĐT. Hoá đơn cũ có cộng thêm VAT thì giữ nguyên.
+    const savedVat = numeral(preInvoiceData?.total_vat).value() || 0;
+    const totalPrice = numeral(preInvoiceData?.total_price || 0).value() || 0;
+    const billVat = savedVat > 0 ? savedVat : (preInvoiceData?.detail || []).reduce((sum, item) => {
+      const percent = Number(item?.vat_percent) || 0;
+      const line = numeral(item?.total || 0).value() || 0;
+      return percent > 0 ? sum + Math.round(line - line / (1 + percent / 100)) : sum;
+    }, 0);
+    const billBeforeVat = savedVat > 0 ? totalPrice : totalPrice - billVat;
     const dataToPrint: Partial<InvoiceData> = {
       Logo: this.logo? `<img src="${this.logo}" style="max-width: 60px;">` :
     `<img src="assets/images/Rx20_16x16_op1-1207.png" style="max-width: 60px;">`,
@@ -2801,8 +2831,8 @@ export class SaleMainComponent implements OnInit, DoCheck {
       Con_Lai: numeral(preInvoiceData?.debt || 0).format('0,0'),
       Thong_Tin_Khach_Hang: customer_info,
       Ghi_Chu_Don_Hang: preInvoiceData?.note,
-      VAT_Tong: numeral(preInvoiceData?.total_vat).format('0,0'),
-      Tong_Tien_Hang_Chua_VAT: numeral(preInvoiceData?.total_price).format('0,0'),
+      VAT_Tong: numeral(billVat).format('0,0'),
+      Tong_Tien_Hang_Chua_VAT: numeral(billBeforeVat).format('0,0'),
       Loi_Chao_Cuoi: this.description,
     }
     const QrCode = this.form.get('selectedMethod').value === 'Chuyển khoản' ? this.getQrCode(this.selectedBankAccount) : of(null);

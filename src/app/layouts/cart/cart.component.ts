@@ -440,7 +440,9 @@ export class CartComponent implements OnInit, OnDestroy {
       product.amount = 1;
     }
 
-    // Default vat
+    // Giá bán là giá ĐÃ GỒM VAT: không cộng thêm VAT vào giỏ (vat_percent = 0), chỉ giữ
+    // lại % VAT gốc để màn bán hàng hiện "trong đó VAT" cho khách hiểu
+    product['vat_included_percent'] = product.vat_percent || 0;
     product.vat_percent = 0;
 
     const units = product.productUnits;

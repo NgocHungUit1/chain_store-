@@ -783,7 +783,7 @@
                       <span
                         matBadge="{{ countProduct }}"
                         matBadgeOverlap="false"
-                      >Tiền hàng <span *ngIf="useEinvoice">(chưa VAT)</span>
+                      >Tiền hàng <span *ngIf="useEinvoice">(đã gồm VAT)</span>
                       </span>
                     </div>
                     <ng-template #tongTienHang>
@@ -815,7 +815,7 @@
               <div class="order-vat" *ngIf="useEinvoice">
                 <div fxLayout="row wrap" class="price-vat-product">
                   <div fxFlex="50" class="price-vat-text">
-                    <span>Thuế VAT</span>
+                    <span>Trong đó VAT</span>
                   </div>
                   <div fxFlex="50" class="customer-pay-number">
                     <mat-form-field
@@ -826,7 +826,7 @@
                         type="text"
                         [readonly]="true"
                         style="color: black"
-                        formControlName="total_vat"
+                        [value]="includedVatText"
                       />
                     </mat-form-field>
                   </div>
