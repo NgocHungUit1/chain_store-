@@ -67,7 +67,7 @@ export class CartComponent implements OnInit, OnDestroy {
   danger = false;
   showHide: boolean;
   sidebarOpened;
-  placeholderSearch = 'Tìm sản phẩm (F3)';
+  placeholderSearch = 'Tìm tên, mã, hoạt chất (F3)';
   iconChangeType = 'cached';
   barcode: string;
   isAnimating = false;
@@ -485,7 +485,7 @@ export class CartComponent implements OnInit, OnDestroy {
         break;
       case 'nation':
         this.selectProduct.patchValue(null);
-        this.placeholderSearch = 'Tìm sản phẩm';
+        this.placeholderSearch = 'Tìm tên, mã, hoạt chất';
         this.iconChangeType = 'cached';
         this.notifySer.notify('success', 'Tìm kiếm theo sản phẩm.');
         break;
