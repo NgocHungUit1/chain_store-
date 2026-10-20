@@ -213,6 +213,25 @@
                 </div>
 
                 <div fxLayout="row wrap" class="line-option" style="margin-top: 16px;">
+                  <div fxFlex="auto">
+                    <b>Lý do trả hàng</b>
+                    <br>
+                    <span>Thu ngân bắt buộc chọn một lý do khi trả hàng. Lý do có biểu tượng khoá là lý do dùng chung, không xoá được.</span>
+                    <mat-chip-list style="margin: 8px 0; display: block;">
+                      <mat-chip *ngFor="let reason of returnReasons" [removable]="!reason.is_shared" (removed)="deleteReturnReason(reason)">
+                        {{ reason.name }}
+                        <mat-icon matChipRemove *ngIf="!reason.is_shared">cancel</mat-icon>
+                        <mat-icon *ngIf="reason.is_shared" style="font-size: 14px; height: 14px; width: 14px; margin-left: 4px;">lock</mat-icon>
+                      </mat-chip>
+                    </mat-chip-list>
+                    <mat-form-field appearance="outline" style="width: 260px; margin-right: 12px;">
+                      <input matInput [(ngModel)]="newReturnReason" placeholder="Thêm lý do mới" (keyup.enter)="addReturnReason()">
+                    </mat-form-field>
+                    <button mat-stroked-button color="primary" (click)="addReturnReason()">Thêm</button>
+                  </div>
+                </div>
+
+                <div fxLayout="row wrap" class="line-option" style="margin-top: 16px;">
                   <div fxFlex="60px" class="custom-toggle">
                     <mat-slide-toggle
                       [(ngModel)]="allowPastExpiration"

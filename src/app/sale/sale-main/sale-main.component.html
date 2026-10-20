@@ -1075,6 +1075,14 @@
                   </div>
                   <ng-template #is_return_tienThuaTraKhach> </ng-template>
                 </div>
+                <div class="order-note" *ngIf="localItemInvoice?.is_return == true">
+                  <mat-form-field class="example-full-width">
+                    <mat-label>Lý do trả hàng *</mat-label>
+                    <mat-select [(ngModel)]="returnReasonId" [ngModelOptions]="{standalone: true}">
+                      <mat-option *ngFor="let reason of returnReasons" [value]="reason.id">{{ reason.name }}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
                 <div class="order-note">
                   <mat-form-field class="example-full-width">
                     <mat-label>Ghi chú</mat-label>
