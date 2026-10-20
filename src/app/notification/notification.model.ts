@@ -23,6 +23,7 @@ export class Notification {
   title: string;
   description: string;
   detail: string;
+  obj_detail: string; // JSON, vd cảnh báo hạn dùng: {"days":30,"count":2,"time_select":"next_30_day"}
   status: string;
   created_at: number;
 }

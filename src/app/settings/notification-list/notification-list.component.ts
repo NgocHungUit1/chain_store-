@@ -7,6 +7,7 @@ import {AuthService} from '../../authentication/auth.service';
 import {NotificationUserFilter} from '../../notification/notification-user.model';
 import {NotificationUserService} from '../../notification/notification-user.service';
 import {PriceListProductFilter} from '../../price-book/price-list-product.model';
+import {notificationLink} from '../../notification/notification-link';
 
 @Component({
   selector: 'app-notification-list',
@@ -99,10 +100,9 @@ export class NotificationListComponent extends ListComponentBase implements OnIn
         item.is_read = 1;
         this.sidenav.loadNotification();
 
-        if (view) {
-          if (item.notification.notification_type === 'lower_stock') {
-            this.router.navigateByUrl('/store/product?quota_stock=lower');
-          }
+        const link = view ? notificationLink(item.notification) : null;
+        if (link) {
+          this.router.navigateByUrl(link);
         }
       }
     });
