@@ -77,6 +77,8 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
   optionStore_batch_tracking_self_manage: OptionStore;
   batchTrackingSelfManage = false;
   lotSelectionOrder = 'fefo'; // 'fefo' (mặc định) | 'fifo'
+  optionStore_expiry_alert_days: OptionStore;
+  expiryAlertDays = '30,60,90'; // các mốc cảnh báo hạn dùng tự động, ngày
   optionStore_print_type: OptionStore; // print_type
   point_enabled: OptionStore;
   point_cash_to_point_rate: OptionStore;
@@ -196,6 +198,11 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     this.optionStoreService.getValue('lot_selection_order').subscribe(res => {
       this.optionStore_lot_selection_order = res;
       this.lotSelectionOrder = (res && res.value === 'fifo') ? 'fifo' : 'fefo';
+    });
+
+    this.optionStoreService.getValue('expiry_alert_days').subscribe(res => {
+      this.optionStore_expiry_alert_days = res;
+      this.expiryAlertDays = res?.value || '30,60,90';
     });
 
     this.optionStoreService.getValue('allow_past_expiration').subscribe(res => {
@@ -364,6 +371,20 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     }
     this.optionStore_lot_selection_order.value = this.lotSelectionOrder;
     this.optionStoreService.update(this.optionStore_lot_selection_order.id, this.optionStore_lot_selection_order).subscribe(res => {
+    });
+  }
+
+  saveExpiryAlertDays() {
+    if (!this.optionStore_expiry_alert_days) {
+      return;
+    }
+    this.optionStore_expiry_alert_days.value = this.expiryAlertDays;
+    // Backend chuẩn hoá (1..365 ngày, tăng dần, tối đa 5 mốc) rồi trả lại giá trị đã lưu
+    this.optionStoreService.update(this.optionStore_expiry_alert_days.id, this.optionStore_expiry_alert_days).subscribe((res: any) => {
+      if (res?.value) {
+        this.expiryAlertDays = res.value;
+      }
+      this.notifySer.notify('success', 'Đã lưu mốc cảnh báo hạn dùng');
     });
   }
 
