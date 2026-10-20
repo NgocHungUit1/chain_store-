@@ -70,8 +70,18 @@ export class NotificationUserService {
     const url = environment.apiUrl + '/notification-user/' + id;
     return this.http.delete(url);
   }
+
+  /** Số thông báo chưa đọc / đã đọc của user đang đăng nhập */
+  countSummary() {
+    return this.http.get<{unread: number, read: number}>(environment.apiUrl + '/notification-user/count-summary');
+  }
+
+  /** Đánh dấu 1 thông báo của mình là đã đọc */
+  markRead(id) {
+    return this.http.post<any>(environment.apiUrl + '/notification-user/read?id=' + id, {});
+  }
+
+  markAllRead() {
+    return this.http.post<{updated: number}>(environment.apiUrl + '/notification-user/mark-all-read', {});
+  }
 }
-
-
-
-

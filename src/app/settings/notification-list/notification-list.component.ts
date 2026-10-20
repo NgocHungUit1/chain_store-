@@ -94,7 +94,7 @@ export class NotificationListComponent extends ListComponentBase implements OnIn
   }
 
   makeAsRead(item, view = false) {
-    this.mainSer.update(item.id, {is_read: 1}).subscribe(x => {
+    this.mainSer.markRead(item.id).subscribe(x => {
       if (x) {
         // this.notifier.notify('success', 'Đã xem thông báo!');
         item.is_read = 1;

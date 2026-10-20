@@ -29,6 +29,7 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
   notifications: NotificationUser[] = [
   ];
   countUnread = 0;
+  countRead = 0;
   notiClass = NOTIFICATION_CLASS;
   notiIcon = NOTIFICATION_ICON;
   // Cảnh báo tồn thấp/hạn dùng do worker tạo trong ngày: hỏi lại số chưa đọc mỗi 2 phút
@@ -59,8 +60,8 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
 
   /** Chỉ tải lại danh sách khi số chưa đọc thay đổi, đỡ gọi API thừa */
   refreshUnread() {
-    this.notiUserService.countUnread().subscribe(res => {
-      if (res !== this.countUnread) {
+    this.notiUserService.countSummary().subscribe(res => {
+      if (res.unread !== this.countUnread || res.read !== this.countRead) {
         this.loadNotification();
       }
     });
@@ -114,13 +115,24 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
     this.notiUserService.getList(notiUserFilter).subscribe(res => {
       this.notifications = res.body;
     });
-    this.notiUserService.countUnread().subscribe(res => {
-      this.countUnread = res;
+    this.notiUserService.countSummary().subscribe(res => {
+      this.countUnread = res.unread;
+      this.countRead = res.read;
     });
   }
 
+  /** Đánh dấu tất cả đã đọc, giữ menu mở */
+  markAllRead(event: MouseEvent) {
+    event.stopPropagation();
+    if (this.countUnread === 0) {
+      return;
+    }
+    this.notiUserService.markAllRead().subscribe(() => this.loadNotification());
+  }
+
   makeAsRead(item, view = false) {
-    this.notiUserService.update(item.id, {is_read: 1}).subscribe(x => {
+    // Bấm vào = đã đọc (API chỉ cho đánh dấu thông báo của chính mình)
+    this.notiUserService.markRead(item.id).subscribe(x => {
       if (x) {
         // this.notifyService.notify('success', 'Đã xem thông báo!');
         item.is_read = 1;
