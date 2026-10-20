@@ -22,8 +22,11 @@
 2. Viết/cập nhật kịch bản Playwright trong `chain_store/e2e-playwright/tests/` cho màn vừa sửa:
    mở màn, thao tác đúng luồng, `expect` thấy kết quả; dùng `watchErrors()` để fail khi có lỗi
    console hoặc API >= 400.
-3. Chạy `cd e2e-playwright && npx playwright test` (thư mục trong repo chain_store) (cả bộ, không chỉ test mới) —
-   phải xanh hết. Lỗi có sẵn từ RX20 mà chưa sửa thì đưa vào `KNOWN_ERRORS` kèm ghi chú.
+3. Trong lúc làm chỉ chạy test của màn vừa sửa (`npx playwright test <file> -g "<tên>"`).
+   Trước khi báo xong chạy cả bộ `npx playwright test` (thư mục `chain_store/e2e-playwright`) — phải
+   xanh hết. Ca chậm gắn tag `@slow` (vd chuông chờ polling 2 phút) mặc định bị bỏ qua; chỉ chạy
+   `npm run test:all` khi sửa đúng phần đó. Lỗi có sẵn từ RX20 chưa sửa thì đưa vào `KNOWN_ERRORS`
+   kèm ghi chú.
 4. Mở ảnh `test-results/screens/*.png` của màn vừa sửa để tự xem: chữ đúng tiếng Việt, không vỡ
    bố cục, nhãn đúng ngữ cảnh.
 5. `free -m` trước khi chạy; dưới 4GB thì tạm dừng `chain-admin` khi chạy test rồi bật lại.

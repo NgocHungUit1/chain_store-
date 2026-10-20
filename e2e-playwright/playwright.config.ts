@@ -5,9 +5,12 @@ import {defineConfig} from '@playwright/test';
  * Đăng nhập 1 lần ở global-setup, các test dùng lại phiên (storageState).
  *   cd e2e-playwright && npx playwright test                 # chạy hết
  *   npx playwright test tests/giai-doan-1.spec.ts -g "Xuất huỷ"
+ *   npm run test:all                                          # gồm cả ca @slow
  */
 export default defineConfig({
   testDir: './tests',
+  // Ca có tag @slow (chờ polling 2 phút...) chỉ chạy khi gọi `npm run test:all` hoặc -g @slow
+  grepInvert: process.env.E2E_ALL ? undefined : /@slow/,
   timeout: 90_000,
   expect: {timeout: 15_000},
   workers: 1, // máy ít RAM: chạy tuần tự, 1 trình duyệt
