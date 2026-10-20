@@ -8,6 +8,7 @@ import { ConfirmDialogComponent } from '../components/confirm-dialog/confirm-dia
 import { DatetimeDefaultFilterDialogComponent } from '../components/datetime-default-filter-dialog/datetime-default-filter-dialog.component';
 import { DatetimeChooseFilterDialogComponent } from '../components/datetime-choose-filter-dialog/datetime-choose-filter-dialog.component';
 import { MedicineRecallFormDialogComponent } from './medicine-recall-form-dialog/medicine-recall-form-dialog.component';
+import { LotTraceDialogComponent } from './lot-trace-dialog/lot-trace-dialog.component';
 import { debounceTime } from 'rxjs/operators';
 import { NotifierService } from 'angular-notifier';
 import { ListComponentBase } from '../../shared/base';
@@ -226,6 +227,18 @@ export class FollowBookMedicineRecallComponent extends ListComponentBase impleme
     this.pageSize = event.pageSize;
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
+  }
+
+  openLotTrace(): void {
+    const dialogRef = this.dialog.open(LotTraceDialogComponent, {
+      width: '1000px',
+      maxHeight: '90vh',
+    });
+    dialogRef.afterClosed().subscribe(saved => {
+      if (saved) {
+        this.loadData();
+      }
+    });
   }
 
   openCreateModal(): void {

@@ -71,4 +71,21 @@ export class MedicineRecallService {
       responseType: 'blob'
     });
   }
+
+  /** Các số lô của sản phẩm (để chọn khi tra cứu thu hồi) */
+  getTraceLots(productId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/trace-lots`, {params: {product_id: String(productId)}});
+  }
+
+  /** Lô còn tồn ở chi nhánh nào, đã bán theo hoá đơn nào, cho ai */
+  trace(productId: number, parcelNo: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/trace`, {params: {product_id: String(productId), parcel_no: parcelNo}});
+  }
+
+  traceExport(productId: number, parcelNo: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/trace-export`, {
+      params: {product_id: String(productId), parcel_no: parcelNo},
+      responseType: 'blob'
+    });
+  }
 }
