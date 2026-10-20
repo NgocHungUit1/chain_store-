@@ -1,10 +1,10 @@
 <div fxLayout="row">
   <div fxFlex="75">
     <mat-toolbar class="dv-header">
-      <button mat-icon-button routerLink="/transaction/warehouse-return">
+      <button mat-icon-button [routerLink]="basePath">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <label class="font-18">Trả hàng</label>
+      <label class="font-18">{{ isDestroy ? 'Phiếu xuất huỷ' : 'Trả hàng' }}</label>
       <div class="select-product">
         <mat-form-field>
           <input type="text" [formControl]="selectProduct" matInput [matAutocomplete]="chooseProduct"
@@ -230,11 +230,19 @@
             </div>
             <div fxFlex="100">
               <mat-form-field>
-                <mat-label>Mã phiếu trả</mat-label>
+                <mat-label>{{ isDestroy ? 'Mã phiếu huỷ' : 'Mã phiếu trả' }}</mat-label>
                 <input matInput tabindex="2" formControlName="no">
               </mat-form-field>
             </div>
-            <div fxFlex="90">
+            <div fxFlex="100" *ngIf="isDestroy">
+              <mat-form-field>
+                <mat-label>Lý do huỷ *</mat-label>
+                <mat-select [formControl]="form.controls['destroy_reason']">
+                  <mat-option *ngFor="let r of destroyReasonOptions" [value]="r.id">{{ r.name }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div fxFlex="90" *ngIf="!isDestroy">
               <mat-form-field>
                 <input type="text" matInput [formControl]="form.controls['supplier']" placeholder="Nhà cung cấp"
                        [matAutocomplete]="auto">
@@ -252,7 +260,7 @@
                 </mat-autocomplete>
               </mat-form-field>
             </div>
-            <div fxFlex="10">
+            <div fxFlex="10" *ngIf="!isDestroy">
               <button mat-button aria-label="add" (click)="openSupplierFormDialog()">
                 <mat-icon>add</mat-icon>
               </button>
@@ -272,26 +280,26 @@
                        readonly="readonly">
               </mat-form-field>
             </div>
-            <div fxFlex="100">
+            <div fxFlex="100" *ngIf="!isDestroy">
               <mat-form-field>
                 <mat-label>Tổng tiền hàng cần thu</mat-label>
                 <input matInput tabindex="5" formControlName="total_price"
                        value="{{ form.get('total_price').value | number}}" readonly>
               </mat-form-field>
             </div>
-            <div fxFlex="100">
+            <div fxFlex="100" *ngIf="!isDestroy">
               <mat-form-field>
                 <mat-label>Giảm giá</mat-label>
                 <input matInput  tabindex="6" formControlName="discount_amount" (change)="recalculateWarehouse();">
               </mat-form-field>
             </div>
-            <div fxFlex="100">
+            <div fxFlex="100" *ngIf="!isDestroy">
               <mat-form-field>
                 <mat-label>NCC đã trả</mat-label>
                 <input matInput tabindex="7" formControlName="paid_amount" (change)="recalculateWarehouse();">
               </mat-form-field>
             </div>
-            <div fxFlex="100">
+            <div fxFlex="100" *ngIf="!isDestroy">
               <mat-form-field>
                 <mat-label>Tính vào công nợ</mat-label>
                 <input matInput tabindex="8" formControlName="remain_amount" readonly>
@@ -321,7 +329,8 @@
                 Lưu
               </button>
             </div>
-            <p>Sau khi hoàn thành sẽ trừ số lượng vào tồn kho.</p>
+            <p *ngIf="!isDestroy">Sau khi hoàn thành sẽ trừ số lượng vào tồn kho.</p>
+            <p *ngIf="isDestroy">Mỗi dòng phải chọn lô cần huỷ. Lưu tạm để chờ duyệt; người có quyền duyệt bấm Hoàn thành thì mới trừ tồn. Phiếu đã hoàn thành không sửa được, xoá phiếu để hoàn tác.</p>
 
           </div>
         </form>

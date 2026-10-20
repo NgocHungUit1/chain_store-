@@ -39,6 +39,22 @@ export const WarehouseRoutes: Routes = [
         path: 'warehouse-return/update/:id',
         component: WarehouseReturnFormComponent
       },
+      // Phiếu xuất huỷ dùng chung màn trả hàng nhập, chế độ 'destroy'
+      {
+        path: 'warehouse-destroy',
+        component: WarehouseReturnListComponent,
+        data: {mode: 'destroy'}
+      },
+      {
+        path: 'warehouse-destroy/create',
+        component: WarehouseReturnFormComponent,
+        data: {mode: 'destroy'}
+      },
+      {
+        path: 'warehouse-destroy/update/:id',
+        component: WarehouseReturnFormComponent,
+        data: {mode: 'destroy'}
+      },
       {
         path: 'invoice',
         component: InvoiceListComponent

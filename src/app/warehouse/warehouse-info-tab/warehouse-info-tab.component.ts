@@ -124,7 +124,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
       this.mainService.update(this.model.id, {status: 10}).subscribe((res: IResponse<Warehouse>) => {
         if (res && res.success) {
           const warehouse: Warehouse = res.data;
-          const typeStr = warehouse.type === 'import' ? 'nhập' : 'trả';
+          const typeStr = warehouse.type === 'import' ? 'nhập' : (warehouse.type === 'destroy' ? 'huỷ' : 'trả');
           this.isLoadingResults = false;
           this.model.status = warehouse.status;
           this.notifySer.notify('success', 'Hoàn thành đơn ' + typeStr + ' hàng');
@@ -138,7 +138,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
   }
 
   reopen() {
-    const routeStr = this.model.type === 'import' ? 'warehouse' : 'warehouse-return';
+    const routeStr = this.model.type === 'import' ? 'warehouse' : (this.model.type === 'destroy' ? 'warehouse-destroy' : 'warehouse-return');
     this.router.navigate(['/transaction/' + routeStr + '/update/' + this.model.id]);
   }
 

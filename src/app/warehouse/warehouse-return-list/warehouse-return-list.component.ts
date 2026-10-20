@@ -38,6 +38,10 @@ export class WarehouseReturnListComponent extends ListComponentBase implements O
   @ViewChild(MatTable, { static: true }) table: MatTable<any>;
 
   apiFilter: WarehouseFilter;
+  /** Màn dùng chung cho Trả hàng nhập và Xuất huỷ (route data mode = 'destroy') */
+  isDestroy = this.route.snapshot.data?.mode === 'destroy';
+  basePath = this.isDestroy ? '/transaction/warehouse-destroy' : '/transaction/warehouse-return';
+  destroyReasons = {expired: 'Hết hạn dùng', damaged: 'Hư hỏng, vỡ, biến chất', recall: 'Thu hồi theo quyết định', other: 'Lý do khác'};
 
   columnsHeader = {
     '#': '#',
@@ -90,7 +94,7 @@ export class WarehouseReturnListComponent extends ListComponentBase implements O
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
     filter.expand = 'supplier,created_user,product_count,total_quantity,nationalPharmacyV2';
-    filter.type = 'return';
+    filter.type = this.isDestroy ? 'destroy' : 'return';
     return filter;
   }
 
@@ -105,6 +109,11 @@ export class WarehouseReturnListComponent extends ListComponentBase implements O
   }
 
   ngOnInit() {
+    if (this.isDestroy) {
+      this.columnsHeader['date'] = 'Ngày huỷ';
+      this.columnsHeader['destroy_reason'] = 'Lý do huỷ';
+      this.columnsToDisplay = ['#', 'date', 'destroy_reason', 'status'];
+    }
     this.apiFilter = this.buildFilterFromParams();
     this.loadData();
 

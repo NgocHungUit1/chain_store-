@@ -84,6 +84,7 @@ const MENUITEMS = [
       {state: 'warehouse', name: 'Hóa đơn nhập', type: 'link', icon: 'local_grocery_store', permissions: ['Warehouse.List']},
       {state: 'returns', name: 'Trả hàng', type: 'link', icon: 'keyboard_return', permissions: ['Returns.List']},
       {state: 'warehouse-return', name: 'Trả hàng nhập', type: 'link', 'icon': 'assignment_return', permissions: ['Warehouse.List']},
+      {state: 'warehouse-destroy', name: 'Xuất huỷ', type: 'link', icon: 'delete_sweep', permissions: ['Warehouse.List']},
       {state: 'move', name: 'Chuyển hàng', type: 'link', icon: 'local_shipping', permissions: ['Move.List']},
       {state: 'e-invoice', name: 'Hóa đơn đầu vào (Chức năng mới)', type: 'link', icon: 'description', permissions: ['Warehouse.List']},
     ]
