@@ -7,51 +7,41 @@
   <mat-icon>phone</mat-icon>
 </a>
 
-<button [matMenuTriggerFor]="notification" mat-icon-button class="m-r-10 notification-button">
+<button [matMenuTriggerFor]="notification" mat-icon-button class="m-r-10 notification-button"
+        [matBadge]="countUnread > 99 ? '99+' : countUnread" [matBadgeHidden]="countUnread === 0"
+        matBadgeColor="warn" matBadgeSize="small" matTooltip="Thông báo">
   <mat-icon *ngIf="countUnread == 0">notifications_none</mat-icon>
   <mat-icon *ngIf="countUnread > 0">notifications_active</mat-icon>
-  <div class="notify" *ngIf="countUnread > 0">
-    <span class="heartbit"></span>
-    <span class="point"></span>
-  </div>
 </button>
-<mat-menu #notification="matMenu" class="mymegamenu">
-  <div class="mailbox">
-    <ul>
-      <li>
-        <div class="drop-title">Có <span class="message-count">{{countUnread}}</span> thông báo mới</div>
-      </li>
-      <li>
-        <div class="message-center">
-          <perfect-scrollbar [config]="config">
-            <!-- Message -->
-            <a (click)="makeAsRead(notiUser, true)" *ngFor="let notiUser of notifications"
-               [class.read-message]="notiUser.is_read">
-              <div class="round {{notiClass[notiUser.notification.notification_type]}}">
-                <mat-icon>{{notiIcon[notiUser.notification.notification_type]}}</mat-icon>
-              </div>
-              <div class="notify" *ngIf="!notiUser.is_read">
-                <span class="heartbit"></span>
-                <span class="point"></span>
-              </div>
-              <div class="mail-content">
-                <h5>{{notiUser.notification.title}}</h5>
-                <span class="mail-desc">{{notiUser.notification.description}}</span>
-                <span class="time">{{notiUser.notification.created_at * 1000 | date:'dd/MM/yyyy'}}</span>
-              </div>
-            </a>
-
-          </perfect-scrollbar>
+<mat-menu #notification="matMenu" class="noti-menu" xPosition="before">
+  <div class="noti-panel">
+    <div class="noti-head">
+      <div>
+        <div class="noti-title">Thông báo</div>
+        <div class="noti-summary">
+          <span class="unread-count"><b class="message-count">{{ countUnread }}</b> chưa đọc</span>
+          <span class="sep">·</span>
+          <span>{{ countRead }} đã đọc</span>
         </div>
-      </li>
-      <li>
-        <div class="drop-bottom">
-          <a mat-button routerLink="/setting/notification">
-            <mat-icon>read_more</mat-icon>
-            Xem tất cả thông báo</a>
+      </div>
+      <a class="noti-mark-all" [class.disabled]="countUnread === 0" (click)="markAllRead($event)">Đánh dấu đã đọc</a>
+    </div>
+    <div class="noti-list">
+      <div *ngIf="!notifications?.length" class="noti-empty">Chưa có thông báo</div>
+      <a class="noti-item" *ngFor="let notiUser of notifications" (click)="makeAsRead(notiUser, true)"
+         [class.unread]="!notiUser.is_read">
+        <div class="round {{notiClass[notiUser.notification?.notification_type]}}">
+          <mat-icon>{{notiIcon[notiUser.notification?.notification_type] || 'notifications'}}</mat-icon>
         </div>
-      </li>
-    </ul>
+        <div class="noti-body">
+          <div class="noti-item-title">{{ notiUser.notification?.title }}</div>
+          <div class="noti-item-desc">{{ notiUser.notification?.description }}</div>
+          <div class="noti-item-time">{{ notiUser.notification?.created_at * 1000 | date:'dd/MM/yyyy HH:mm' }}</div>
+        </div>
+        <span class="noti-dot" *ngIf="!notiUser.is_read"></span>
+      </a>
+    </div>
+    <a class="noti-footer" routerLink="/setting/notification">Xem tất cả thông báo</a>
   </div>
 </mat-menu>
 

@@ -23,3 +23,56 @@
 .message-center .mail-content:hover {
   cursor: pointer;
 }
+
+/* ===== Khung thông báo (chuông) — rộng, hiện đủ nội dung, phân biệt đã đọc/chưa đọc ===== */
+::ng-deep .noti-menu.mat-menu-panel {
+  width: 440px;
+  max-width: calc(100vw - 24px);
+  max-height: 80vh;
+  border-radius: 12px;
+  padding: 0;
+}
+::ng-deep .noti-menu .mat-menu-content {
+  padding: 0 !important;
+}
+.noti-panel { display: flex; flex-direction: column; max-height: 78vh; }
+.noti-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 18px 10px; border-bottom: 1px solid #e5e7eb;
+}
+.noti-title { font-size: 17px; font-weight: 700; color: #111827; }
+.noti-summary { font-size: 13px; color: #6b7280; margin-top: 2px; }
+.noti-summary .unread-count b { color: #009688; font-size: 14px; }
+.noti-summary .sep { margin: 0 6px; }
+.noti-mark-all { color: #1e88e5; font-size: 13px; cursor: pointer; white-space: nowrap; }
+.noti-mark-all.disabled { color: #9ca3af; cursor: default; }
+.noti-list { overflow-y: auto; flex: 1 1 auto; }
+.noti-empty { padding: 24px; text-align: center; color: #9ca3af; }
+.noti-item {
+  position: relative; display: flex; gap: 12px; align-items: flex-start;
+  padding: 12px 34px 12px 18px; border-bottom: 1px solid #f1f5f9; cursor: pointer;
+  text-decoration: none; color: inherit;
+}
+.noti-item:hover { background: #f8fafc; }
+.noti-item.unread { background: #f0fdfa; }
+.noti-item .round {
+  flex: 0 0 40px; width: 40px; height: 40px; line-height: 40px; border-radius: 50%;
+  text-align: center; color: #fff;
+}
+.noti-item .round .mat-icon { margin-top: 8px; }
+.noti-body { flex: 1 1 auto; min-width: 0; }
+.noti-item-title { font-size: 14px; font-weight: 500; color: #374151; white-space: normal; }
+.noti-item.unread .noti-item-title { font-weight: 700; color: #111827; }
+.noti-item-desc {
+  font-size: 13px; color: #4b5563; margin-top: 3px; line-height: 1.45;
+  white-space: normal; word-break: break-word;
+}
+.noti-item-time { font-size: 12px; color: #9ca3af; margin-top: 4px; }
+.noti-dot {
+  position: absolute; right: 14px; top: 18px; width: 9px; height: 9px;
+  border-radius: 50%; background: #ef4444;
+}
+.noti-footer {
+  display: block; text-align: center; padding: 10px; border-top: 1px solid #e5e7eb;
+  color: #1e88e5; font-size: 13px; cursor: pointer;
+}
