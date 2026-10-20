@@ -703,6 +703,9 @@
                     class="customer-point"
                   >
                     <span>Điểm: </span><span class="green">{{ customer.total_point | number }}</span>
+                    <span *ngIf="customer.memberTier" class="customer-tier">
+                      · Hạng {{ customer.memberTier.name }}<span *ngIf="customer.memberTier.point_multiplier != 1"> (x{{ customer.memberTier.point_multiplier | number:'1.0-2' }} điểm)</span>
+                    </span>
                   </div>
                   <div
                     *ngIf="customer && customer.total_debt > 0"

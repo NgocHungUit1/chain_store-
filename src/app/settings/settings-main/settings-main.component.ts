@@ -12,6 +12,7 @@ import {BaseComponent} from '../../shared/base';
 import {AuthService} from '../../authentication/auth.service';
 import {ConfirmationDialogComponent} from '../../shared/confirmation-dialog/confirmation-dialog.component';
 import { ReturnReason, ReturnReasonService } from '../../returns/return-reason.service';
+import { MemberTier, MemberTierService } from '../../customer/member-tier.service';
 
 class ImageSnippet {
   constructor(public src: string, public file: File, public id: string) {
@@ -29,6 +30,7 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     private dialog: MatDialog,
     private notifySer: NotifierService,
     private returnReasonService: ReturnReasonService,
+    private memberTierService: MemberTierService,
     private fb: FormBuilder,
     public storeSer: StoreService,
     public branchSer: BranchService,
@@ -81,6 +83,8 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
   lotSelectionOrder = 'fefo'; // 'fefo' (mặc định) | 'fifo'
   optionStore_expiry_alert_days: OptionStore;
   returnReasons: ReturnReason[] = [];
+  memberTiers: MemberTier[] = [];
+  newTier = {name: '', min_spend: null, point_multiplier: 1};
   newReturnReason = '';
   expiryAlertDays = '30,60,90'; // các mốc cảnh báo hạn dùng tự động, ngày
   optionStore_print_type: OptionStore; // print_type
@@ -205,6 +209,7 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     });
 
     this.loadReturnReasons();
+    this.loadMemberTiers();
 
     this.optionStoreService.getValue('expiry_alert_days').subscribe(res => {
       this.optionStore_expiry_alert_days = res;
@@ -378,6 +383,47 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     this.optionStore_lot_selection_order.value = this.lotSelectionOrder;
     this.optionStoreService.update(this.optionStore_lot_selection_order.id, this.optionStore_lot_selection_order).subscribe(res => {
     });
+  }
+
+  loadMemberTiers() {
+    this.memberTierService.getList().subscribe(res => this.memberTiers = res || [], () => this.memberTiers = []);
+  }
+
+  addMemberTier() {
+    if (!this.newTier.name || this.newTier.min_spend === null || this.newTier.min_spend === '' as any) {
+      this.notifySer.notify('warning', 'Nhập tên hạng và mức chi tiêu');
+      return;
+    }
+    this.memberTierService.create(this.newTier).subscribe(() => {
+      this.newTier = {name: '', min_spend: null, point_multiplier: 1};
+      this.loadMemberTiers();
+      this.notifySer.notify('success', 'Đã thêm hạng, khách được xếp lại hạng');
+    }, err => this.notifySer.notify('error', this.firstError(err) || 'Không thêm được hạng'));
+  }
+
+  saveMemberTier(tier: MemberTier) {
+    this.memberTierService.update(tier.id, tier).subscribe(() => {
+      this.notifySer.notify('success', 'Đã lưu hạng ' + tier.name);
+      this.loadMemberTiers();
+    }, err => this.notifySer.notify('error', this.firstError(err) || 'Không lưu được hạng'));
+  }
+
+  deleteMemberTier(tier: MemberTier) {
+    this.memberTierService.delete(tier.id).subscribe(() => this.loadMemberTiers(),
+      err => this.notifySer.notify('error', err?.error?.message || 'Không xoá được hạng'));
+  }
+
+  /** Lỗi validate của Yii trả dạng {field: [msg]} */
+  private firstError(err): string {
+    const body = err?.error;
+    if (body?.message) {
+      return body.message;
+    }
+    if (body && typeof body === 'object') {
+      const first = Object.values(body)[0];
+      return Array.isArray(first) ? first[0] : null;
+    }
+    return null;
   }
 
   loadReturnReasons() {

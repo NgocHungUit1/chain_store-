@@ -15,6 +15,9 @@ export class Customer {
   note: string;
   drug_allergy: string; // Dị ứng thuốc, phân cách ;
   medical_history: string; // Bệnh nền, phân cách ;
+  member_tier_id: number;
+  total_spend: number; // tổng chi tiêu ròng, hệ thống tự tính
+  memberTier: {id: number, name: string, point_multiplier: number, min_spend: number};
   status: string;
   address: string;
   province: Location;
