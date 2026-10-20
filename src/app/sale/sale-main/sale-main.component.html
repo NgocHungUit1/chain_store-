@@ -710,6 +710,15 @@
                   >
                     <span>Nợ: </span><span class="green">{{ customer.total_debt | number }}</span>
                   </div>
+                  <div
+                    *ngIf="customer?.drug_allergy || customer?.medical_history"
+                    class="customer-health-warning"
+                    fxFlex="100"
+                  >
+                    <mat-icon inline>warning</mat-icon>
+                    <span *ngIf="customer?.drug_allergy"><b>Dị ứng:</b> {{ customer.drug_allergy }}</span>
+                    <span *ngIf="customer?.medical_history"><b>Bệnh nền:</b> {{ customer.medical_history }}</span>
+                  </div>
                 </div>
               </div>
 
@@ -1065,6 +1074,14 @@
                     </div>
                   </div>
                   <ng-template #is_return_tienThuaTraKhach> </ng-template>
+                </div>
+                <div class="order-note" *ngIf="localItemInvoice?.is_return == true">
+                  <mat-form-field class="example-full-width">
+                    <mat-label>Lý do trả hàng *</mat-label>
+                    <mat-select [(ngModel)]="returnReasonId" [ngModelOptions]="{standalone: true}">
+                      <mat-option *ngFor="let reason of returnReasons" [value]="reason.id">{{ reason.name }}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
                 </div>
                 <div class="order-note">
                   <mat-form-field class="example-full-width">

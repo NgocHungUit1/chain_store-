@@ -120,6 +120,8 @@ export class SaleCustomerFormDialogComponent implements OnInit {
       ward: [null],
       province: [null],
       note: [null],
+      drug_allergy: [null],
+      medical_history: [null],
       facebook: [null, Validators.compose([
         Validators.maxLength(100)
       ])],
@@ -175,6 +177,8 @@ export class SaleCustomerFormDialogComponent implements OnInit {
         ward: customer['ward'],
         province: customer['province'],
         note: customer['note'],
+        drug_allergy: customer['drug_allergy'],
+        medical_history: customer['medical_history'],
         facebook: customer['facebook'],
         dob: dobStr,
         sex: customer['sex']

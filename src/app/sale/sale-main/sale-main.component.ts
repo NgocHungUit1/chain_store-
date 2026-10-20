@@ -48,6 +48,8 @@ import { InvoiceData, PreviewService } from '../../shared/invoice-handle/preview
 import { InvoiceTemplate, InvoiceTemplateService } from '../../shared/invoice-handle/invoice-template.service';
 import { PrintService } from '../../shared/invoice-handle/print.service';
 import { LocationService } from '../../location/location.service';
+import { ReturnReason, ReturnReasonService } from '../../returns/return-reason.service';
+import { ConsultPrintService } from '../../shared/invoice-handle/consult-print.service';
 export const MY_FORMATS = {
   parse: {
     dateInput: 'DD/MM/YYYY',
@@ -81,7 +83,12 @@ interface BankAccount {
   ],
 })
 export class SaleMainComponent implements OnInit, DoCheck {
+  returnReasons: ReturnReason[] = [];
+  returnReasonId: number = null; // lý do của phiếu trả đang lập (bắt buộc)
+
   constructor(
+    private returnReasonService: ReturnReasonService,
+    private consultPrintService: ConsultPrintService,
     public dp: DatePipe,
     private fb: FormBuilder,
     private dialog: MatDialog,
@@ -1003,6 +1010,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
    * Init Component
    */
   ngOnInit(): void {
+    this.returnReasonService.getList().subscribe(res => this.returnReasons = res || [], () => this.returnReasons = []);
 
     // 1) Subscribe so that *any* change to the visibility map causes us to recompute displayedColumns
     this.saleColumnVisibilityService.visibility$.subscribe((map: ColumnVisibilityMap) => {
@@ -1056,6 +1064,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
     this.orderService.subscribeObjectListInvoice.subscribe(ListInvoice => {
       this.loadData().then(r => {
       });
+    });
+    this.sharedDataSer.quickPrintLastConsult$.subscribe(() => {
+      this.quickPrintLastConsultHandler();
     });
     this.sharedDataSer.quickPrintLastInvoice$.subscribe(() => {
       this.quickPrintLastInvoiceHandler();
@@ -1278,6 +1289,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     this.orderService.setListInvoiceLocalStorage(listInvoice);
     this.selectCustomer.patchValue(customer.name);
     this.isSelectedCustomer = true;
+    this.customer = customer; // để hiện ngay cảnh báo dị ứng/bệnh nền
   }
 
   removeCustomer() {
@@ -1638,6 +1650,28 @@ export class SaleMainComponent implements OnInit, DoCheck {
         this.printInvoiceTemplate(res);
       }
     });
+  }
+
+  /** In phiếu tư vấn dùng thuốc cho hoá đơn hoàn thành gần nhất của người đang đăng nhập */
+  quickPrintLastConsultHandler() {
+    this.orderService.getLatestSaleInvoiceForQuickPrint(this.user?.id)
+      .pipe(
+        switchMap(res => {
+          const list = Array.isArray(res) ? res : [];
+          const latestInvoice = list.find(invoice => invoice?.order_status === 'done');
+          const invoiceId = Number(latestInvoice?.id || latestInvoice?.invoice_id || 0);
+          if (invoiceId <= 0) {
+            this.notifySer.notify('warning', 'Chưa có hóa đơn vừa bán để in phiếu tư vấn.');
+            return of(null);
+          }
+          return this.consultPrintService.print(invoiceId, this.user?.username);
+        }),
+      )
+      .subscribe(ok => {
+        if (ok === false) {
+          this.notifySer.notify('warning', 'Chưa có mẫu phiếu tư vấn dùng thuốc.');
+        }
+      }, error => this.notifySer.notify('error', error?.error?.message || 'Không tải được phiếu tư vấn.'));
   }
 
   quickPrintLastInvoiceHandler() {
@@ -3224,8 +3258,14 @@ export class SaleMainComponent implements OnInit, DoCheck {
     /**
      * Gang du lieu data
      */
+    if (!this.returnReasonId) {
+      this.notifySer.notify('warning', 'Chưa chọn lý do trả hàng !');
+      return;
+    }
+
     const dataReturn = {
       Returns: {
+        return_reason_id: this.returnReasonId,
         invoice_id: mItemInvoice.invoice_id,
         customer_id: customer?.id,
         total_price: this.sumPrice, // tong tien hang
@@ -3249,6 +3289,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
           // console.warn(res);
           // return;
         }
+        this.returnReasonId = null;
         this.resetDataSiderBar();
         this.notifySer.notify('success', 'Trả hàng thành công !');
       } else {
@@ -3258,6 +3299,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
       this.orderService.setLoadProduct(false);
       this.orderService.setLoadDetailPage(true);
+    }, error => {
+      this.isLoadingResults = false;
+      this.notifySer.notify('error', error?.error?.message || 'Thất bại !');
     });
   }
 

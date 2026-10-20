@@ -56,6 +56,9 @@ export class Returns {
   created_at: string;
   /** Lần liên thông CSDL Dược quốc gia v1.1 gần nhất (?expand=nationalPharmacyV2) */
   nationalPharmacyV2: NationalPharmacyV2Transaction;
+  return_reason_id: number;
+  /** ?expand=returnReason */
+  returnReason: {id: number, name: string};
 }
 
 export class ReturnsFilter extends ApiFilterBase {
@@ -76,6 +79,7 @@ export class ReturnsFilter extends ApiFilterBase {
   medicine_code = '';
   national_pharmacy_no = '';
   keyword = '';
+  return_reason_id = '';
 
   getModelSearch() {
     return 'ReturnsSearch';

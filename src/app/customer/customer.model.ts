@@ -13,6 +13,8 @@ export class Customer {
   id_card: string;
   facebook: string;
   note: string;
+  drug_allergy: string; // Dị ứng thuốc, phân cách ;
+  medical_history: string; // Bệnh nền, phân cách ;
   status: string;
   address: string;
   province: Location;

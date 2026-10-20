@@ -11,6 +11,7 @@ import {Location} from '@angular/common';
 import {BaseComponent} from '../../shared/base';
 import {AuthService} from '../../authentication/auth.service';
 import {ConfirmationDialogComponent} from '../../shared/confirmation-dialog/confirmation-dialog.component';
+import { ReturnReason, ReturnReasonService } from '../../returns/return-reason.service';
 
 class ImageSnippet {
   constructor(public src: string, public file: File, public id: string) {
@@ -27,6 +28,7 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private notifySer: NotifierService,
+    private returnReasonService: ReturnReasonService,
     private fb: FormBuilder,
     public storeSer: StoreService,
     public branchSer: BranchService,
@@ -78,6 +80,8 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
   batchTrackingSelfManage = false;
   lotSelectionOrder = 'fefo'; // 'fefo' (mặc định) | 'fifo'
   optionStore_expiry_alert_days: OptionStore;
+  returnReasons: ReturnReason[] = [];
+  newReturnReason = '';
   expiryAlertDays = '30,60,90'; // các mốc cảnh báo hạn dùng tự động, ngày
   optionStore_print_type: OptionStore; // print_type
   point_enabled: OptionStore;
@@ -199,6 +203,8 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
       this.optionStore_lot_selection_order = res;
       this.lotSelectionOrder = (res && res.value === 'fifo') ? 'fifo' : 'fefo';
     });
+
+    this.loadReturnReasons();
 
     this.optionStoreService.getValue('expiry_alert_days').subscribe(res => {
       this.optionStore_expiry_alert_days = res;
@@ -372,6 +378,26 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
     this.optionStore_lot_selection_order.value = this.lotSelectionOrder;
     this.optionStoreService.update(this.optionStore_lot_selection_order.id, this.optionStore_lot_selection_order).subscribe(res => {
     });
+  }
+
+  loadReturnReasons() {
+    this.returnReasonService.getList().subscribe(res => this.returnReasons = res || [], () => this.returnReasons = []);
+  }
+
+  addReturnReason() {
+    const name = (this.newReturnReason || '').trim();
+    if (!name) {
+      return;
+    }
+    this.returnReasonService.create(name).subscribe(() => {
+      this.newReturnReason = '';
+      this.loadReturnReasons();
+    }, err => this.notifySer.notify('error', err?.error?.message || 'Không thêm được lý do'));
+  }
+
+  deleteReturnReason(reason: ReturnReason) {
+    this.returnReasonService.delete(reason.id).subscribe(() => this.loadReturnReasons(),
+      err => this.notifySer.notify('error', err?.error?.message || 'Không xoá được lý do'));
   }
 
   saveExpiryAlertDays() {

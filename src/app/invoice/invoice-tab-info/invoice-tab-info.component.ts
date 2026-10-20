@@ -16,6 +16,7 @@ import {Store} from '../../store/store.model';
 import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 import { NationalPharmacyV2ConnectDialogComponent } from '../../common/national-pharmacy-v2/national-pharmacy-v2-connect-dialog/national-pharmacy-v2-connect-dialog.component';
 import { NationalPharmacyV2Service } from '../../common/national-pharmacy-v2/national-pharmacy-v2.service';
+import {ConsultPrintService} from '../../shared/invoice-handle/consult-print.service';
 
 @Component({
   selector: 'app-invoice-tab-info',
@@ -85,6 +86,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
   einvoiceLoading = false;
 
   constructor(
+    private consultPrintService: ConsultPrintService,
     private dialog: MatDialog,
     public notifySer: NotifierService,
     public invoiceService: InvoiceService,
@@ -370,6 +372,14 @@ export class InvoiceTabInfoComponent implements OnChanges {
 
   actionPrintInvoice(invoice) {
     this.printInvoice(invoice.id);
+  }
+
+  actionPrintConsult(invoice) {
+    this.consultPrintService.print(invoice.id).subscribe(ok => {
+      if (!ok) {
+        this.notifySer.notify('warning', 'Chưa có mẫu phiếu tư vấn dùng thuốc.');
+      }
+    }, () => this.notifySer.notify('error', 'Không tải được dữ liệu phiếu tư vấn.'));
   }
 
   /**

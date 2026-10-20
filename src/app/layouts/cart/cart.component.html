@@ -104,6 +104,7 @@
               class="m-l-10"
               *ngIf="product.base_unit !== null && iconChangeType === 'cached'">
               <b style="font-size: 12px">{{ product.product_name }}</b>
+              <i *ngIf="product.main_active_substance" style="color: #6b7280;"> · {{ product.main_active_substance }}</i>
               <br />
               {{ product.product_no }} &nbsp;Giá:
               {{ product.sell_price | number }} {{ product.base_unit }} -Tồn:{{
@@ -117,6 +118,7 @@
               class="m-l-10"
               *ngIf="product.base_unit === null && iconChangeType === 'cached'">
               <b style="font-size: 12px">{{ product.product_name }}</b>
+              <i *ngIf="product.main_active_substance" style="color: #6b7280;"> · {{ product.main_active_substance }}</i>
               <br />
               {{ product.product_no }} &nbsp;Giá:
               {{ product.sell_price | number }}
@@ -184,6 +186,7 @@
               class="m-l-10"
               *ngIf="product.base_unit !== null && iconChangeType === 'cached'">
               <b style="font-size: 12px">{{ product.product_name }}</b>
+              <i *ngIf="product.main_active_substance" style="color: #6b7280;"> · {{ product.main_active_substance }}</i>
               <br />
               {{ product.product_no }} &nbsp;Giá:
               {{ product.sell_price | number }} {{ product.base_unit }} -Tồn:{{
@@ -197,6 +200,7 @@
               class="m-l-10"
               *ngIf="product.base_unit == null && iconChangeType === 'cached'">
               <b style="font-size: 12px">{{ product.product_name }}</b>
+              <i *ngIf="product.main_active_substance" style="color: #6b7280;"> · {{ product.main_active_substance }}</i>
               <br />
               {{ product.product_no }} &nbsp;Giá:
               {{ product.sell_price | number }}

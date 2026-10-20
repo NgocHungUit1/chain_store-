@@ -21,6 +21,7 @@ import { Observable, of } from 'rxjs';
 import { CustomerService } from '../../customer/customer.service';
 import { Product } from '../../product/product.model';
 import { ProductService } from '../../product/product.service';
+import {ReturnReason, ReturnReasonService} from '../return-reason.service';
 
 @Component({
   selector: 'app-returns-list',
@@ -46,7 +47,8 @@ export class ReturnsListComponent extends ListComponentBase implements OnInit {
     private router: Router,
     private dateFilterService: InvoiceService,
     private customerSer: CustomerService,
-    private productSer: ProductService
+    private productSer: ProductService,
+    private returnReasonService: ReturnReasonService,
   ) {
     super();
    }
@@ -77,17 +79,26 @@ export class ReturnsListComponent extends ListComponentBase implements OnInit {
 
   searchForm = new FormControl();
 
+  returnReasons: ReturnReason[] = [];
+
+  onReasonFilterChange(reasonId) {
+    this.apiFilter.return_reason_id = reasonId || '';
+    this.apiFilter.page = 1;
+    this.loadData();
+  }
+
   columnsHeader = {
     '#': '#',
     'return_no': 'Mã trả hàng',
     'created_at': 'Thời gian',
     'customer': 'Khách hàng',
     'total_price': 'Tổng tiền hàng',
+    'return_reason': 'Lý do trả',
     // 'discount': 'Giảm giá',
   };
 
-  displayedColumns: string[] = ['#', 'return_no', 'created_at', 'customer', 'total_price'];
-  columnsToDisplay: string[] = ['#', 'return_no', 'created_at', 'customer', 'total_price'];
+  displayedColumns: string[] = ['#', 'return_no', 'created_at', 'customer', 'total_price', 'return_reason'];
+  columnsToDisplay: string[] = ['#', 'return_no', 'created_at', 'customer', 'total_price', 'return_reason'];
   dataSource: Returns[] = [];
 
   buildFilterFromParams(): ReturnsFilter {
@@ -105,7 +116,7 @@ export class ReturnsListComponent extends ListComponentBase implements OnInit {
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'customer,priceBook,store,user,detailInfo,nationalPharmacyV2';
+    filter.expand = 'customer,priceBook,store,user,detailInfo,nationalPharmacyV2,returnReason';
     if (objDateFilter) {
       filter.date_from = objDateFilter.date_from;
       filter.date_to = objDateFilter.date_to;
@@ -208,6 +219,7 @@ export class ReturnsListComponent extends ListComponentBase implements OnInit {
   ngOnInit(): void {
     this.initDateFilter();
     this.apiFilter = this.buildFilterFromParams();
+    this.returnReasonService.getList().subscribe(res => this.returnReasons = res || []);
     this.timeFilter = this.fb.group({
       typeTime: ['default']
     });

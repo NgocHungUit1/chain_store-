@@ -422,6 +422,11 @@
         In
       </button>
 
+      <button class="m-r-10" mat-stroked-button color="primary" (click)="actionPrintConsult(invoice)">
+        <mat-icon>medication</mat-icon>
+        In phiếu tư vấn
+      </button>
+
       <button class="m-r-10" mat-raised-button color="primary" *ngIf="!invoice?.isFullyReturned" (click)="returnInvoice(invoice)">
         <mat-icon>arrow_back</mat-icon>
         Trả hàng

@@ -8,10 +8,13 @@ export class SharedDataService {
   // Subject with initial value 'false'
   private inSoLo = new Subject<boolean>();
   private quickPrintLastInvoice = new Subject<void>();
+  private quickPrintLastConsult = new Subject<void>();
   
   // Observable that components can subscribe to
   isInSoLo$: Observable<boolean> = this.inSoLo.asObservable();
   quickPrintLastInvoice$: Observable<void> = this.quickPrintLastInvoice.asObservable();
+  /** In phiếu tư vấn dùng thuốc của hoá đơn vừa bán */
+  quickPrintLastConsult$: Observable<void> = this.quickPrintLastConsult.asObservable();
 
   // Method to update the value
   setInSoLo(isEnabled: boolean): void {
@@ -20,5 +23,9 @@ export class SharedDataService {
 
   requestQuickPrintLastInvoice(): void {
     this.quickPrintLastInvoice.next();
+  }
+
+  requestQuickPrintLastConsult(): void {
+    this.quickPrintLastConsult.next();
   }
 }
