@@ -9,6 +9,8 @@ import { Router } from '@angular/router';
 import moment from 'moment';
 import { MatDialog } from '@angular/material/dialog';
 import { EInvoiceModalComponent } from '../components/e-invoice-modal/e-invoice-modal.component';
+import { ProductService } from '../../product/product.service';
+import { ProductFilter } from '../../product/product.model';
 @Component({
   selector: 'app-dashboard3',
   templateUrl: './dashboard3.component.html',
@@ -61,6 +63,7 @@ export class Dashboard3Component implements OnInit {
   dqgGuideUrl = 'assets/document/huong-dan-dang-ky-duoc-quoc-gia-2026-v2.pdf';
 
   alertExpiredCount = 100;
+  lowStockCount = 0; // số mặt hàng dưới định mức tồn (Product.min_quantity) ở chi nhánh đang đăng nhập
   timeSelected = 'next_3_month';
   timeSelects = [
     {
@@ -123,6 +126,7 @@ export class Dashboard3Component implements OnInit {
   constructor(private dashboardService: DashboardService,
               private fb: FormBuilder,
               private parcelSer: WarehouseProductParcelService,
+              private productSer: ProductService,
               private router: Router,
               private dialog: MatDialog,
               ) {
@@ -144,6 +148,7 @@ export class Dashboard3Component implements OnInit {
     });
 
     this.onTimeChange();
+    this.loadLowStockCount();
 
     this.getRevenueData({
       ...this.convertTimeOptionToDates('today'),
@@ -347,6 +352,21 @@ export class Dashboard3Component implements OnInit {
     }
   }
 
+
+  loadLowStockCount() {
+    const filter = new ProductFilter();
+    filter.quota_stock = 'lower';
+    filter.pageSize = 1;
+    this.productSer.getList(filter).subscribe(res => {
+      this.lowStockCount = Number(res.headers.get('X-Pagination-Total-Count')) || 0;
+    });
+  }
+
+  goToLowStock() {
+    if (this.lowStockCount > 0) {
+      this.router.navigateByUrl('/store/product?quota_stock=lower');
+    }
+  }
 
   onTimeChange() {
     const apiFilter = new WarehouseProductParcelFilter();
