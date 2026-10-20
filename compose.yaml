@@ -1,12 +1,13 @@
-name: rx20
+name: chain
 services:
   web:
-    container_name: rx20-store
+    container_name: chain-store
     build:
       context: .
       target: builder
     ports:
-      - 4201:4201
+      - 4203:4201
     volumes:
-      - ../pharma_store:/project
+      - ../chain_store:/project
       - /project/node_modules
+

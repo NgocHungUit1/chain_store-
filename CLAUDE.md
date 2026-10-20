@@ -1,5 +1,15 @@
 # Pharma Store (RX20) - Claude Code Instructions
 
+> ⚠️ **SOURCE NÀY LÀ DỰ ÁN CHUỖI NHÀ THUỐC** (`chain_store`), tách từ `pharma_store`
+> của RX20 ngày 20/10/2026 tại commit `6f47446e`. KHÔNG deploy lên production RX20
+> (store.rx20.vn, api.rx20.vn), `/deploy-fe` là của RX20.
+> Backend đi kèm: `../pharma_chain` (API local `http://localhost:33081/v1`).
+> Tài liệu dự án: `../pharma_chain/.claude/du-an/`.
+>
+> - `upstream` = Bitbucket `pharma_store` RX20, chỉ để lấy bản vá (đã chặn push)
+> - `origin` = GitHub `NgocHungUit1/chain_store-` (private)
+> - Chạy local: `docker compose up -d` → http://localhost:4203 (container `chain-store`)
+
 > File này được Claude tự động đọc khi bắt đầu làm việc với dự án
 
 ## Project Overview
