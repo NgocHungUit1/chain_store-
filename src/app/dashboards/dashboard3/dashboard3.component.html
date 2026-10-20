@@ -211,6 +211,15 @@
               </div>
             </li>
 
+            <li class='timeline-item'>
+              <span class='timeline-item-icon bg-warning text-white'>
+                <i class="fa fa-cubes"></i>
+              </span>
+              <div class='timeline-item-description expiration-alert'>
+                <p><label>Có <span class="expire-count" (click)="goToLowStock()">{{lowStockCount}} mặt hàng</span> dưới định mức tồn</label></p>
+              </div>
+            </li>
+
             <!-- API Chua ho tro -->
             <!--<li class='timeline-item'>
               <span class='timeline-item-icon bg-danger text-white'>

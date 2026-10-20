@@ -1,4 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {interval, Subscription} from 'rxjs';
 import {PerfectScrollbarConfigInterface} from 'ngx-perfect-scrollbar';
 import {Router} from '@angular/router';
 import {AuthService} from '../../../authentication/auth.service';
@@ -9,13 +10,14 @@ import {NotifierService} from 'angular-notifier';
 import {User} from '../../../user/user.model';
 import {NotificationUser, NotificationUserFilter} from '../../../notification/notification-user.model';
 import {NotificationUserService} from '../../../notification/notification-user.service';
+import {NOTIFICATION_CLASS, NOTIFICATION_ICON, notificationLink} from '../../../notification/notification-link';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class AppHeaderComponent implements OnInit{
+export class AppHeaderComponent implements OnInit, OnDestroy {
   @Input() user: User;
 
   public config: PerfectScrollbarConfigInterface = {};
@@ -27,14 +29,10 @@ export class AppHeaderComponent implements OnInit{
   notifications: NotificationUser[] = [
   ];
   countUnread = 0;
-  notiClass = {
-    'contract_expired_alert': 'round-danger',
-    'contract_nearly_alert': 'round-warning',
-  };
-  notiIcon = {
-    'contract_expired_alert': 'priority_high',
-    'contract_nearly_alert': 'running_with_errors',
-  };
+  notiClass = NOTIFICATION_CLASS;
+  notiIcon = NOTIFICATION_ICON;
+  // Cảnh báo tồn thấp/hạn dùng do worker tạo trong ngày: hỏi lại số chưa đọc mỗi 2 phút
+  private pollSub: Subscription;
 
   constructor(
     private dialog: MatDialog,
@@ -52,6 +50,20 @@ export class AppHeaderComponent implements OnInit{
       this.userLogin = res;
     });
     this.loadNotification();
+    this.pollSub = interval(2 * 60 * 1000).subscribe(() => this.refreshUnread());
+  }
+
+  ngOnDestroy() {
+    this.pollSub?.unsubscribe();
+  }
+
+  /** Chỉ tải lại danh sách khi số chưa đọc thay đổi, đỡ gọi API thừa */
+  refreshUnread() {
+    this.notiUserService.countUnread().subscribe(res => {
+      if (res !== this.countUnread) {
+        this.loadNotification();
+      }
+    });
   }
 
   loadUser(id) {
@@ -114,10 +126,9 @@ export class AppHeaderComponent implements OnInit{
         item.is_read = 1;
         this.loadNotification();
 
-        if (view) {
-          if (item.notification.notification_type === 'lower_stock') {
-            this.router.navigateByUrl('/store/product?quota_stock=lower');
-          }
+        const link = view ? notificationLink(item.notification) : null;
+        if (link) {
+          this.router.navigateByUrl(link);
         }
       }
     });

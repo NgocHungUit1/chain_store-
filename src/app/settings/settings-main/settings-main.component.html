@@ -200,6 +200,19 @@
                 </div>
 
                 <div fxLayout="row wrap" class="line-option" style="margin-top: 16px;">
+                  <div fxFlex="auto">
+                    <b>Mốc cảnh báo hạn dùng</b>
+                    <br>
+                    <mat-form-field appearance="outline" style="width: 160px; margin-right: 12px;">
+                      <input matInput [(ngModel)]="expiryAlertDays" placeholder="30,60,90">
+                    </mat-form-field>
+                    <button mat-stroked-button color="primary" (click)="saveExpiryAlertDays()">Lưu</button>
+                    <br>
+                    <span>Mỗi sáng hệ thống gửi thông báo khi lô còn tồn chạm từng mốc (số ngày, cách nhau bằng dấu phẩy, tối đa 5 mốc) và khi lô đã hết hạn mà vẫn còn tồn.</span>
+                  </div>
+                </div>
+
+                <div fxLayout="row wrap" class="line-option" style="margin-top: 16px;">
                   <div fxFlex="60px" class="custom-toggle">
                     <mat-slide-toggle
                       [(ngModel)]="allowPastExpiration"
