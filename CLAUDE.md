@@ -45,10 +45,12 @@
 - TypeScript interfaces/classes trong `*.model.ts`
 - Filter classes extend `ApiFilterBase`
 
-### SAU khi code
+### SAU khi code — BẮT BUỘC tự kiểm tra trước khi báo xong
+Theo `.claude/rules/05-verify-rules.md`:
 ```bash
-npx tsc --noEmit                    # Check TypeScript errors
-npm run build -- --configuration=dev  # Build check
+docker logs --since 2m chain-store | grep -E "Compiled|error TS"   # biên dịch AOT không lỗi
+cd e2e-playwright && npx playwright test                          # cả bộ phải xanh
+# rồi tự mở ảnh e2e-playwright/test-results/screens/*.png của màn vừa sửa
 ```
 
 ## Slash Commands (gõ / để dùng)

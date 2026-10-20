@@ -50,6 +50,7 @@ import { PrintService } from '../../shared/invoice-handle/print.service';
 import { LocationService } from '../../location/location.service';
 import { ReturnReason, ReturnReasonService } from '../../returns/return-reason.service';
 import { ConsultPrintService } from '../../shared/invoice-handle/consult-print.service';
+import {getAllPermissions} from '../../shared/permission-storage';
 export const MY_FORMATS = {
   parse: {
     dateInput: 'DD/MM/YYYY',
@@ -1029,7 +1030,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
     // this.optionStore_transaction_expenses_order.value = 'no';
     this.isLoadingResults = true;
-    this.allPermission = sessionStorage.getItem('allPermission')?.split(',');
+    this.allPermission = getAllPermissions();
     this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
     this.initFormSiderBar();
     // this.form.controls.today.valueChanges.subscribe(x => {

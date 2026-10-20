@@ -68,6 +68,7 @@ import {
 import {
   NationalDrugImportDialogComponent
 } from '../../common/national-pharmacy-v2/national-drug-import-dialog/national-drug-import-dialog.component';
+import {getAllPermissions} from '../../shared/permission-storage';
 
 
 ///////////// coding fake data
@@ -693,7 +694,7 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
     });
 
     optionStorePromise.then(() => {
-      this.allPermission = sessionStorage.getItem('allPermission').split(',');
+      this.allPermission = getAllPermissions();
       this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
 
       this.userService.getStoreBranchList().subscribe(res => {

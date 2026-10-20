@@ -1,0 +1,13 @@
+{
+  "name": "chain-store-e2e",
+  "private": true,
+  "description": "Kiểm thử giao diện chain_store bằng Playwright (chạy trên máy, trỏ vào localhost:4203)",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1"
+  }
+}

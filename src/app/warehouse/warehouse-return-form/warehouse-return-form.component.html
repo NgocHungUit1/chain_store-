@@ -213,7 +213,7 @@
             <div fxFlex="60">
               <mat-form-field>
                 <input matInput [matDatepicker]="date_picker" [formControl]="form.controls['date']"
-                       placeholder="Ngày trả">
+                       [placeholder]="isDestroy ? 'Ngày huỷ' : 'Ngày trả'">
                 <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>
                 <mat-datepicker #date_picker></mat-datepicker>
               </mat-form-field>

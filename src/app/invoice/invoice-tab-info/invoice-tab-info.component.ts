@@ -17,6 +17,7 @@ import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/pop
 import { NationalPharmacyV2ConnectDialogComponent } from '../../common/national-pharmacy-v2/national-pharmacy-v2-connect-dialog/national-pharmacy-v2-connect-dialog.component';
 import { NationalPharmacyV2Service } from '../../common/national-pharmacy-v2/national-pharmacy-v2.service';
 import {ConsultPrintService} from '../../shared/invoice-handle/consult-print.service';
+import {getAllPermissions} from '../../shared/permission-storage';
 
 @Component({
   selector: 'app-invoice-tab-info',
@@ -104,7 +105,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
     if (this.expandedElement) {
       this.loadData();
     }
-    this.allPermission = sessionStorage.getItem('allPermission').split(',');
+    this.allPermission = getAllPermissions();
     this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
   }
 
@@ -179,7 +180,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
       });
     }
 
-    this.allPermission = sessionStorage.getItem('allPermission').split(',');
+    this.allPermission = getAllPermissions();
     this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
   }
 

@@ -14,6 +14,7 @@ import {PrintMultipleProductDialogComponent} from '../../product/print-multiple-
 import { NationalPharmacyV2ConnectDialogComponent } from '../../common/national-pharmacy-v2/national-pharmacy-v2-connect-dialog/national-pharmacy-v2-connect-dialog.component';
 import { NationalPharmacyV2Service } from '../../common/national-pharmacy-v2/national-pharmacy-v2.service';
 import { WarehouseType } from '../../common/national-pharmacy-v2/national-pharmacy-v2.model';
+import {getAllPermissions} from '../../shared/permission-storage';
 
 @Component({
   selector: 'app-warehouse-info-tab',
@@ -74,7 +75,7 @@ export class WarehouseInfoTabComponent implements OnChanges {
       this.apiFilter = this.buildFilterFromParams();
       this.loadData();
     }
-    this.allPermission = sessionStorage.getItem('allPermission').split(',');
+    this.allPermission = getAllPermissions();
     this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
   }
 
