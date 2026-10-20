@@ -69,8 +69,8 @@ test('Thông báo: khung rộng, đếm chưa đọc/đã đọc, bấm là đã
   const panel = page.locator('.noti-panel');
   await expect(panel).toBeVisible();
   // Khung rộng như gohost, mô tả hiện đủ (không cắt …)
-  const box = await page.locator('.noti-menu').boundingBox();
-  expect(box?.width).toBeGreaterThanOrEqual(420);
+  // Đo sau khi hiệu ứng mở menu (phóng to) chạy xong
+  await expect.poll(async () => (await page.locator('.noti-menu').boundingBox())?.width || 0).toBeGreaterThanOrEqual(420);
   const desc = page.locator('.noti-item.unread .noti-item-desc').first();
   await expect(desc).toContainText('vui lòng nhập thêm hàng');
   await expect(page.locator('.noti-summary')).toContainText('đã đọc');
