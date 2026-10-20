@@ -2835,7 +2835,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       Tong_Tien_Hang_Chua_VAT: numeral(billBeforeVat).format('0,0'),
       Loi_Chao_Cuoi: this.description,
     }
-    const QrCode = this.form.get('selectedMethod').value === 'Chuyển khoản' ? this.getQrCode(this.selectedBankAccount) : of(null);
+    const QrCode = this.form.get('selectedMethod').value === 'Chuyển khoản' ? this.getQrCode(this.selectedBankAccount, preInvoiceData?.transfer_note) : of(null);
     QrCode.subscribe((qrCode) => {
       if (qrCode) {
         dataToPrint['Ma_QR'] = `<img src="${qrCode}" style="width: 80px; height: 80px;" onload="onQrLoaded()" alt="">`;
@@ -2878,6 +2878,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       } else {
         this.notifySer.notify('warning', 'Vui lòng chọn tài khoản ngân hàng thanh toán!');
         this.submitted = false;
+        return;
       }
     } else if (selectedPaymentMethod === 'Tiền mặt') {
       paymentMethodValue = 'cash';
@@ -3060,6 +3061,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
       InvoiceDetail: invoiceDetail,
       PaymentMethod: paymentMethodValue,
       BankAccountId: bankAccountId,
+      TransferNote: paymentMethodValue === 'bank_transfer' ? this.getTransferNote() : null,
       PaymentPrice: this.sumPrice + (this.useEinvoice ? this.sumVat : 0) -
         this.numberDiscount - this.numberPointDiscount + this.expenseOrder, // tien thanh toan
       usedPoint: this.isUsePoint ? this.pointCanUse : 0,
@@ -4308,32 +4310,43 @@ export class SaleMainComponent implements OnInit, DoCheck {
     }
   }
 
-  getQrCode(bankAccount: BankAccount): Observable<string> {
+  /**
+   * Nội dung chuyển khoản của hoá đơn đang mở. Sinh 1 lần và lưu theo hoá đơn (localStorage)
+   * để QR hiện cho khách trước khi lưu, phiếu thanh toán và bill in sau đó dùng cùng một mã.
+   */
+  getTransferNote(): string {
+    const listInvoice = this.orderService.getListInvoiceLocalStorage();
+    const active = listInvoice?.itemInvoice?.find(e => e.active === true);
+    if (!active) {
+      return '';
+    }
+    if (!active.transferNote) {
+      active.transferNote = 'TT' + Date.now().toString(36).toUpperCase();
+      this.orderService.setListInvoiceLocalStorageSilence(listInvoice);
+    }
+    return active.transferNote;
+  }
+
+  getQrCode(bankAccount: BankAccount, transferNote?: string): Observable<string> {
     if (!bankAccount) {
       // fallback image
       return of(`assets/images/default/qr-code.png`);
     }
 
     const template = 'qr_only'; // or 'compact2' | 'compact' | 'print'
-    const namePart = bankAccount.account_name
-      ? `&accountName=${encodeURIComponent(bankAccount.account_name)}`
-      : '';
-
-    // A short payment memo or description (up to 25 chars).
-    const info = '';
-
-    const infoPart = info
-      ? `&addInfo=${encodeURIComponent(info)}`
-      : '';
-
-    const amountPart = this.total;
+    const params = new URLSearchParams();
+    params.set('amount', String(Math.round(this.total || 0)));
+    if (bankAccount.account_name) {
+      params.set('accountName', bankAccount.account_name);
+    }
+    // VietQR giới hạn nội dung ~25 ký tự
+    const info = (transferNote || this.getTransferNote()).substring(0, 25);
+    if (info) {
+      params.set('addInfo', info);
+    }
 
     // Use acqId (6‑digit BIN) as BANK_ID; adjust if you have a text code instead
-    const url = [
-      `https://img.vietqr.io/image/`,
-      `${bankAccount.bank_code}-${bankAccount.account_number}-${template}.png`,
-      `?amount=${amountPart}&accountName=${namePart}&addInfo${infoPart}`,
-    ].join('');
+    const url = `https://img.vietqr.io/image/${bankAccount.bank_code}-${bankAccount.account_number}-${template}.png?${params.toString()}`;
 
     return of(url);
   }
