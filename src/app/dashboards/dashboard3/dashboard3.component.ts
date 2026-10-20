@@ -43,6 +43,22 @@ export class Dashboard3Component implements OnInit {
       value: 'last_month',
       label: 'THÁNG TRƯỚC'
     },
+    {
+      value: 'this_quarter',
+      label: 'QUÝ NÀY'
+    },
+    {
+      value: 'last_quarter',
+      label: 'QUÝ TRƯỚC'
+    },
+    {
+      value: 'this_year',
+      label: 'NĂM NAY'
+    },
+    {
+      value: 'last_year',
+      label: 'NĂM TRƯỚC'
+    },
   ];
   timePeriodOptionsMap = this.timePeriodOptions.reduce((acc, cur) => ({...acc, [cur.value]: cur.label}), {});
 
@@ -145,6 +161,7 @@ export class Dashboard3Component implements OnInit {
     this.revenueFilter = this.fb.group({
       period: this.fb.control('today'),
       groupBy:  this.fb.control('day'),
+      compare: this.fb.control(false), // so cùng kỳ năm trước
     });
 
     this.onTimeChange();
@@ -157,7 +174,8 @@ export class Dashboard3Component implements OnInit {
     this.revenueFilter.valueChanges.subscribe(res => {
       this.getRevenueData({
         ...this.convertTimeOptionToDates(res.period),
-        group: res['groupBy']
+        group: res['groupBy'],
+        ...(res['compare'] ? {compare: 'prev_year'} : {}),
       });
 
       this.getDashboardDetail(this.convertTimeOptionToDates(res.period));
@@ -218,7 +236,11 @@ export class Dashboard3Component implements OnInit {
           {
             name: 'Bán hàng',
             data: res?.sale || []
-          }
+          },
+          ...(res?.sale_prev_year ? [{
+            name: 'Bán hàng cùng kỳ năm trước',
+            data: res.sale_prev_year
+          }] : []),
         ],
         chart: {
           type: 'bar',
@@ -249,7 +271,7 @@ export class Dashboard3Component implements OnInit {
           show: true,
         },
         fill: {
-          colors: ['#1e88e5', '#009688'],
+          colors: ['#1e88e5', '#009688', '#f9a825'],
           opacity: 1
         },
         tooltip: {
@@ -334,6 +356,30 @@ export class Dashboard3Component implements OnInit {
         from.setDate(1);
         to.setDate(1);
         to.setDate(to.getDate() - 1);
+        from = format(from, this.DATE_FORMAT);
+        to = format(to, this.DATE_FORMAT);
+        break;
+      case 'this_quarter':
+        from = new Date(from.getFullYear(), Math.floor(from.getMonth() / 3) * 3, 1);
+        from = format(from, this.DATE_FORMAT);
+        to = format(to, this.DATE_FORMAT);
+        break;
+      case 'last_quarter': {
+        const startThisQuarter = new Date(from.getFullYear(), Math.floor(from.getMonth() / 3) * 3, 1);
+        from = new Date(startThisQuarter.getFullYear(), startThisQuarter.getMonth() - 3, 1);
+        to = new Date(startThisQuarter.getFullYear(), startThisQuarter.getMonth(), 0);
+        from = format(from, this.DATE_FORMAT);
+        to = format(to, this.DATE_FORMAT);
+        break;
+      }
+      case 'this_year':
+        from = new Date(from.getFullYear(), 0, 1);
+        from = format(from, this.DATE_FORMAT);
+        to = format(to, this.DATE_FORMAT);
+        break;
+      case 'last_year':
+        from = new Date(from.getFullYear() - 1, 0, 1);
+        to = new Date(to.getFullYear() - 1, 11, 31);
         from = format(from, this.DATE_FORMAT);
         to = format(to, this.DATE_FORMAT);
         break;

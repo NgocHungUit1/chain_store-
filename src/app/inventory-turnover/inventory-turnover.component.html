@@ -1,0 +1,71 @@
+<div class="turnover-page">
+  <mat-card>
+    <div class="toolbar">
+      <h3>Vòng quay hàng tồn kho</h3>
+      <mat-form-field appearance="outline">
+        <mat-label>Từ ngày</mat-label>
+        <input matInput type="date" [(ngModel)]="dateFrom">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Đến ngày</mat-label>
+        <input matInput type="date" [(ngModel)]="dateTo">
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="load()" [disabled]="loading">Xem</button>
+      <span class="spacer"></span>
+      <span class="dash-group-btn" [class.active]="by === 'product'" (click)="setBy('product')">Theo sản phẩm</span>
+      <span class="dash-group-btn" [class.active]="by === 'group'" (click)="setBy('group')">Theo nhóm hàng</span>
+    </div>
+
+    <div class="summary" *ngIf="summary">
+      <div><span>Giá vốn hàng bán</span><b>{{ summary.cogs | number }}</b></div>
+      <div><span>Tồn bình quân</span><b>{{ summary.avg_stock_value | number }}</b></div>
+      <div><span>Vòng quay</span><b>{{ summary.turnover !== null && summary.turnover !== undefined ? summary.turnover : '—' }}</b></div>
+      <div><span>Số ngày tồn</span><b>{{ summary.days_on_hand !== null && summary.days_on_hand !== undefined ? summary.days_on_hand : '—' }}</b></div>
+    </div>
+    <p class="hint">
+      Vòng quay = giá vốn hàng bán / giá trị tồn bình quân ((tồn đầu kỳ + tồn cuối kỳ) / 2 × giá vốn hiện tại).
+      Số ngày tồn = số ngày của kỳ / vòng quay. Hàng quay chậm xếp lên đầu.
+    </p>
+
+    <div class="table-wrap">
+      <table class="turnover-table">
+        <thead>
+        <tr *ngIf="by === 'product'">
+          <th>Mã hàng</th><th>Tên hàng</th><th>Nhóm</th>
+          <th class="num">Tồn đầu</th><th class="num">Tồn cuối</th>
+          <th class="num">Giá vốn hàng bán</th><th class="num">Tồn bình quân</th>
+          <th class="num">Vòng quay</th><th class="num">Số ngày tồn</th>
+        </tr>
+        <tr *ngIf="by === 'group'">
+          <th>Nhóm hàng</th><th class="num">Số mặt hàng</th>
+          <th class="num">Giá vốn hàng bán</th><th class="num">Tồn bình quân</th>
+          <th class="num">Vòng quay</th><th class="num">Số ngày tồn</th>
+        </tr>
+        </thead>
+        <tbody>
+        <ng-container *ngIf="by === 'product'">
+          <tr *ngFor="let row of items | slice:0:showCount">
+            <td>{{ row.product_no }}</td><td>{{ row.product_name }}</td><td>{{ row.group_name }}</td>
+            <td class="num">{{ row.open_qty | number }}</td><td class="num">{{ row.close_qty | number }}</td>
+            <td class="num">{{ row.cogs | number }}</td><td class="num">{{ row.avg_stock_value | number }}</td>
+            <td class="num" [class.slow]="row.turnover !== null && row.turnover < 1">{{ row.turnover !== null && row.turnover !== undefined ? row.turnover : '—' }}</td>
+            <td class="num">{{ row.days_on_hand !== null && row.days_on_hand !== undefined ? row.days_on_hand : '—' }}</td>
+          </tr>
+        </ng-container>
+        <ng-container *ngIf="by === 'group'">
+          <tr *ngFor="let row of items">
+            <td>{{ row.group_name }}</td><td class="num">{{ row.product_count }}</td>
+            <td class="num">{{ row.cogs | number }}</td><td class="num">{{ row.avg_stock_value | number }}</td>
+            <td class="num" [class.slow]="row.turnover !== null && row.turnover < 1">{{ row.turnover !== null && row.turnover !== undefined ? row.turnover : '—' }}</td>
+            <td class="num">{{ row.days_on_hand !== null && row.days_on_hand !== undefined ? row.days_on_hand : '—' }}</td>
+          </tr>
+        </ng-container>
+        <tr *ngIf="!loading && !items.length"><td colspan="9">Không có dữ liệu trong kỳ</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="more" *ngIf="by === 'product' && items.length > showCount">
+      <button mat-button color="primary" (click)="showCount = showCount + 200">Hiện thêm ({{ items.length - showCount }} dòng)</button>
+    </div>
+  </mat-card>
+</div>
