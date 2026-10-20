@@ -173,7 +173,10 @@ export class PreviewService {
         'So_Lo',
         'Ghi_Chu',
         'VAT',
-        'Anh_San_Pham'
+        'Anh_San_Pham',
+        // Phiếu tư vấn dùng thuốc
+        'Hoat_Chat',
+        'Cach_Dung'
       ]
 
       // Generate rows for each item

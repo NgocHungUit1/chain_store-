@@ -49,6 +49,7 @@ import { InvoiceTemplate, InvoiceTemplateService } from '../../shared/invoice-ha
 import { PrintService } from '../../shared/invoice-handle/print.service';
 import { LocationService } from '../../location/location.service';
 import { ReturnReason, ReturnReasonService } from '../../returns/return-reason.service';
+import { ConsultPrintService } from '../../shared/invoice-handle/consult-print.service';
 export const MY_FORMATS = {
   parse: {
     dateInput: 'DD/MM/YYYY',
@@ -87,6 +88,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
   constructor(
     private returnReasonService: ReturnReasonService,
+    private consultPrintService: ConsultPrintService,
     public dp: DatePipe,
     private fb: FormBuilder,
     private dialog: MatDialog,
@@ -1063,6 +1065,9 @@ export class SaleMainComponent implements OnInit, DoCheck {
       this.loadData().then(r => {
       });
     });
+    this.sharedDataSer.quickPrintLastConsult$.subscribe(() => {
+      this.quickPrintLastConsultHandler();
+    });
     this.sharedDataSer.quickPrintLastInvoice$.subscribe(() => {
       this.quickPrintLastInvoiceHandler();
     });
@@ -1645,6 +1650,28 @@ export class SaleMainComponent implements OnInit, DoCheck {
         this.printInvoiceTemplate(res);
       }
     });
+  }
+
+  /** In phiếu tư vấn dùng thuốc cho hoá đơn hoàn thành gần nhất của người đang đăng nhập */
+  quickPrintLastConsultHandler() {
+    this.orderService.getLatestSaleInvoiceForQuickPrint(this.user?.id)
+      .pipe(
+        switchMap(res => {
+          const list = Array.isArray(res) ? res : [];
+          const latestInvoice = list.find(invoice => invoice?.order_status === 'done');
+          const invoiceId = Number(latestInvoice?.id || latestInvoice?.invoice_id || 0);
+          if (invoiceId <= 0) {
+            this.notifySer.notify('warning', 'Chưa có hóa đơn vừa bán để in phiếu tư vấn.');
+            return of(null);
+          }
+          return this.consultPrintService.print(invoiceId, this.user?.username);
+        }),
+      )
+      .subscribe(ok => {
+        if (ok === false) {
+          this.notifySer.notify('warning', 'Chưa có mẫu phiếu tư vấn dùng thuốc.');
+        }
+      }, error => this.notifySer.notify('error', error?.error?.message || 'Không tải được phiếu tư vấn.'));
   }
 
   quickPrintLastInvoiceHandler() {
