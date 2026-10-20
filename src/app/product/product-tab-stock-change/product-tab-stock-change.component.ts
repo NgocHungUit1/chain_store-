@@ -56,6 +56,8 @@ export class ProductTabStockChangeComponent extends ListComponentBase implements
     'delete-import': 'Xóa đơn nhập hàng',
     'return': 'Trả hàng nhập',
     'delete-return': 'Xoá đơn trả hàng nhập',
+    'destroy': 'Xuất huỷ',
+    'delete-destroy': 'Xoá phiếu xuất huỷ',
     'stock-take': 'Kiểm kho',
     'sale': 'Bán hàng',
     'delete-sale': 'Hủy bỏ phiếu bán hàng',

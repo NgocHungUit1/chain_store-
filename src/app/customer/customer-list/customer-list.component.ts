@@ -51,6 +51,7 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
     '#': '#',
     'name': 'Khách hàng',
     'phone': 'Số điện thoại',
+    'member_tier': 'Hạng',
     'email': 'Email',
     'company_name': 'Tên công ty',
     'tax_code': 'Mã số thuế',
@@ -63,6 +64,7 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
     '#',
     'name',
     'phone',
+    'member_tier',
     'email',
     // 'tax_code',
     // 'company_name',
@@ -75,6 +77,7 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
     'name',
     'company_name',
     'phone',
+    'member_tier',
     'email',
     'tax_code',
     'status'

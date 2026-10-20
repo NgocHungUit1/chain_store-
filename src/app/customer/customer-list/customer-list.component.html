@@ -152,6 +152,11 @@
                 <td mat-cell *matCellDef="let element"> {{ element.phone }}</td>
               </ng-container>
 
+              <ng-container matColumnDef="member_tier">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['member_tier'] }}</th>
+                <td mat-cell *matCellDef="let element"> {{ element.memberTier?.name }}</td>
+              </ng-container>
+
               <ng-container matColumnDef="email">
                 <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['email'] }}</th>
                 <td mat-cell *matCellDef="let element"> {{ element.email }}</td>

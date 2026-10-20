@@ -114,18 +114,31 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
   isRateLimitReached = false;
 
   form: FormGroup;
+  /** Dùng chung cho Trả hàng nhập và Xuất huỷ (route data mode = 'destroy') */
+  isDestroy = false;
+  basePath = '/transaction/warehouse-return';
+  destroyReasonOptions = [
+    {id: 'expired', name: 'Hết hạn dùng'},
+    {id: 'damaged', name: 'Hư hỏng, vỡ, biến chất'},
+    {id: 'recall', name: 'Thu hồi theo quyết định'},
+    {id: 'other', name: 'Lý do khác'},
+  ];
 
   filteredSuppliers: Observable<Supplier[]>;
   filteredProducts: Observable<Product[]>;
 
   ngOnInit() {
+    this.isDestroy = this.route.snapshot.data?.mode === 'destroy';
+    this.basePath = this.isDestroy ? '/transaction/warehouse-destroy' : '/transaction/warehouse-return';
     const date = new FormControl(new Date());
     this.form = this.fb.group({
       date: date,
       no: [null],
-      supplier: [null, Validators.required],
+      // Phiếu huỷ không có nhà cung cấp, bắt buộc lý do huỷ
+      supplier: [null, this.isDestroy ? [] : Validators.required],
+      destroy_reason: [null, this.isDestroy ? Validators.required : []],
       status: [null],
-      type: ['return'],
+      type: [this.isDestroy ? 'destroy' : 'return'],
       quantity: [null],
       total_price: [null],
       total_amount: [null],
@@ -189,6 +202,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
           date: dateStr,
           no: res['no'],
           supplier: res['supplier'],
+          destroy_reason: res['destroy_reason'],
           status: res['status'] + '',
           quantity: res['total_quantity'],
           total_price: res['total_price'],
@@ -222,7 +236,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
 
       this.mainService.getRenderWarehouseNo().subscribe(res => {
         this.form.patchValue({
-          no: 'PT0' + res,
+          no: (this.isDestroy ? 'XH0' : 'PT0') + res,
           total_price: 0,
           discount_amount: 0,
           discount_type: 'price'
@@ -375,7 +389,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
         return;
       }
 
-      data['supplier_id'] = data['supplier']['id'];
+      data['supplier_id'] = data['supplier']?.id || null;
       if (this.form.controls['date'].value !== null && typeof this.form.controls['date'].value === 'object') {
         const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
 
@@ -400,9 +414,9 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
               this.notifySer.notify('success', 'Lưu thành công.');
               if (status === 9) {
                 this.model = res.data;
-                this.router.navigate(['/transaction/warehouse-return/update/' + res.data.id]);
+                this.router.navigate([this.basePath + '/update/' + res.data.id]);
               } else {
-                this.router.navigate(['/transaction/warehouse-return/']);
+                this.router.navigate([this.basePath + '/']);
               }
             } else {
               this.isLoadingResults = false;
@@ -411,7 +425,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
           },
           error: (err) => {
             this.isLoadingResults = false;
-            this.notifySer.notify('error', 'Có lỗi xảy ra, vui lòng thử lại.');
+            this.notifySer.notify('error', err?.error?.message || 'Có lỗi xảy ra, vui lòng thử lại.');
           }
         });
       } else {
@@ -422,9 +436,9 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
               this.notifySer.notify('success', 'Lưu thành công.');
               if (status === 9) {
                 this.model = res.data;
-                this.router.navigate(['/transaction/warehouse-return/update/' + res.data.id]);
+                this.router.navigate([this.basePath + '/update/' + res.data.id]);
               } else {
-                this.router.navigate(['/transaction/warehouse-return/']);
+                this.router.navigate([this.basePath + '/']);
               }
             } else {
               this.isLoadingResults = false;
@@ -433,7 +447,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
           },
           error: (err) => {
             this.isLoadingResults = false;
-            this.notifySer.notify('error', 'Có lỗi xảy ra, vui lòng thử lại.');
+            this.notifySer.notify('error', err?.error?.message || 'Có lỗi xảy ra, vui lòng thử lại.');
           }
         });
       }

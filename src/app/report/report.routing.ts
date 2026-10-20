@@ -26,6 +26,10 @@ export const ReportRoutes: Routes = [
         loadChildren: () => import('../employee-report/employee-report.module').then(m => m.EmployeeReportModule)
       },
       {
+        path: 'inventory-turnover',
+        loadChildren: () => import('../inventory-turnover/inventory-turnover.module').then(m => m.InventoryTurnoverModule)
+      },
+      {
         path: 'stock-report',
         component: StockReportComponent,
       },

@@ -1,0 +1,19 @@
+.trace-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.product-field { flex: 1 1 320px; }
+.lot-field { flex: 0 1 280px; }
+.summary { margin: 4px 0; }
+.hint { color: #6b7280; font-size: 12px; margin: 2px 0 8px; }
+.trace-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 12px;
+  font-size: 13px;
+  th, td { border-bottom: 1px solid #e5e7eb; padding: 4px 6px; text-align: left; }
+  th { background: #f3f4f6; }
+  .num { text-align: right; }
+}

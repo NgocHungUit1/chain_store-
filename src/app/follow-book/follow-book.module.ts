@@ -57,6 +57,7 @@ import { FollowBookDrugReactionComponent } from './follow-book-drug-reaction/fol
 import { DrugReactionFormDialogComponent } from './follow-book-drug-reaction/drug-reaction-form-dialog/drug-reaction-form-dialog.component';
 import { FollowBookInvalidPrescriptionComponent } from './follow-book-invalid-prescription/follow-book-invalid-prescription.component';
 import { InvalidPrescriptionFormDialogComponent } from './follow-book-invalid-prescription/invalid-prescription-form-dialog/invalid-prescription-form-dialog.component';
+import { LotTraceDialogComponent } from './follow-book-medicine-recall/lot-trace-dialog/lot-trace-dialog.component';
 @NgModule({
   declarations: [
     FollowBookQualityControlComponent,
@@ -79,6 +80,7 @@ import { InvalidPrescriptionFormDialogComponent } from './follow-book-invalid-pr
     HygieneLogbookDetailModalComponent,
     FollowBookMedicineRecallComponent,
     MedicineRecallFormDialogComponent,
+    LotTraceDialogComponent,
     FollowBookDrugReactionComponent,
     DrugReactionFormDialogComponent,
     FollowBookInvalidPrescriptionComponent,

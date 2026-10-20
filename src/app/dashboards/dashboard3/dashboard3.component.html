@@ -79,6 +79,16 @@
           <span class='dash-group-btn'
                 [class.active]='revenueFilter.value["groupBy"] == "weekDay"'
                 (click)='revenueFilter.patchValue({groupBy: "weekDay"})'>Theo thứ</span>
+          <span class='dash-group-btn'
+                [class.active]='revenueFilter.value["groupBy"] == "week"'
+                (click)='revenueFilter.patchValue({groupBy: "week"})'>Theo tuần</span>
+          <span class='dash-group-btn'
+                [class.active]='revenueFilter.value["groupBy"] == "month"'
+                (click)='revenueFilter.patchValue({groupBy: "month"})'>Theo tháng</span>
+          <span class='dash-group-btn'
+                [class.active]='revenueFilter.value["groupBy"] == "quarter"'
+                (click)='revenueFilter.patchValue({groupBy: "quarter"})'>Theo quý</span>
+          <mat-checkbox formControlName="compare" color="primary" style="margin-left: 8px">So cùng kỳ năm trước</mat-checkbox>
         </div>
 
         <div *ngIf="revenueChartOption !== null">

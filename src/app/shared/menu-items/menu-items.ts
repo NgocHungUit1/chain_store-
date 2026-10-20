@@ -84,6 +84,7 @@ const MENUITEMS = [
       {state: 'warehouse', name: 'Hóa đơn nhập', type: 'link', icon: 'local_grocery_store', permissions: ['Warehouse.List']},
       {state: 'returns', name: 'Trả hàng', type: 'link', icon: 'keyboard_return', permissions: ['Returns.List']},
       {state: 'warehouse-return', name: 'Trả hàng nhập', type: 'link', 'icon': 'assignment_return', permissions: ['Warehouse.List']},
+      {state: 'warehouse-destroy', name: 'Xuất huỷ', type: 'link', icon: 'delete_sweep', permissions: ['Warehouse.List']},
       {state: 'move', name: 'Chuyển hàng', type: 'link', icon: 'local_shipping', permissions: ['Move.List']},
       {state: 'e-invoice', name: 'Hóa đơn đầu vào (Chức năng mới)', type: 'link', icon: 'description', permissions: ['Warehouse.List']},
     ]
@@ -180,6 +181,7 @@ const MENUITEMS = [
         ]},
       //{state: 'stock-report', name: 'Tồn kho', type: 'link', icon: 'store', roles: ['ADMIN']},
       {state: 'group-report', name: 'Nhóm hàng', type: 'link', icon: 'category', permissions: ['Group.Report']},
+      {state: 'inventory-turnover', name: 'Vòng quay tồn kho', type: 'link', icon: 'autorenew', permissions: ['Report.Inventory-Turnover']},
       {state: 'employee', name: 'Nhân viên', type: 'extLink', icon: 'account_box', permissions: ['Employee-Report.Revenue', 'Employee-Report.Profit', 'Employee-Report.Commission']},
       //{state: 'sale-report', name: 'Bán hàng', type: 'link', icon: 'table_chart', roles: ['ADMIN']},
       // {state: 'debt-report', name: 'Công nợ', type: 'link', icon: 'money', roles: ['ADMIN']},
