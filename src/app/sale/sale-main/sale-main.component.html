@@ -710,6 +710,15 @@
                   >
                     <span>Nợ: </span><span class="green">{{ customer.total_debt | number }}</span>
                   </div>
+                  <div
+                    *ngIf="customer?.drug_allergy || customer?.medical_history"
+                    class="customer-health-warning"
+                    fxFlex="100"
+                  >
+                    <mat-icon inline>warning</mat-icon>
+                    <span *ngIf="customer?.drug_allergy"><b>Dị ứng:</b> {{ customer.drug_allergy }}</span>
+                    <span *ngIf="customer?.medical_history"><b>Bệnh nền:</b> {{ customer.medical_history }}</span>
+                  </div>
                 </div>
               </div>
 

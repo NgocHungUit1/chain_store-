@@ -1278,6 +1278,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     this.orderService.setListInvoiceLocalStorage(listInvoice);
     this.selectCustomer.patchValue(customer.name);
     this.isSelectedCustomer = true;
+    this.customer = customer; // để hiện ngay cảnh báo dị ứng/bệnh nền
   }
 
   removeCustomer() {

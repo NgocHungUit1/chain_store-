@@ -1070,3 +1070,17 @@ Popup parcel list
 .disable {
   background-color: #a6aba6 !important;
 }
+
+/* Cảnh báo dị ứng thuốc / bệnh nền của khách đang chọn */
+.customer-health-warning {
+  margin-top: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: #fdecea;
+  color: #b71c1c;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.customer-health-warning span {
+  margin-right: 12px;
+}
