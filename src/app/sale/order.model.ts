@@ -86,6 +86,7 @@ export class ItemInvoice {
   use_einvoice: boolean;
   hasChangedCustomerPay: boolean;
   selectedBankAccountId: string; // Lưu bank account id theo từng hoá đơn
+  transferNote: string; // Nội dung chuyển khoản trên QR, sinh 1 lần cho mỗi hoá đơn
 }
 
 export class ListInvoice {
