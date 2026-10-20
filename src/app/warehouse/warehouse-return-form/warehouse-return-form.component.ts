@@ -21,6 +21,7 @@ import { ProductService } from '../../product/product.service';
 import { SupplierFormDialogComponent } from '../../supplier/supplier-form-dialog/supplier-form-dialog.component';
 import { UserService } from '../../user/user.service';
 import { MatDateProviders } from '../../shared/providers/mat-date.provider';
+import {getAllPermissions} from '../../shared/permission-storage';
 
 @Component({
   selector: 'app-warehouse-return-form',
@@ -153,7 +154,7 @@ export class WarehouseReturnFormComponent extends ListComponentBase implements O
       this.branchList = res.body;
     });
 
-    this.allPermission = sessionStorage.getItem('allPermission').split(',');
+    this.allPermission = getAllPermissions();
     this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
 
     this.displayedColumns = this.columnsToDisplay;

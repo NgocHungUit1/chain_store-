@@ -15,6 +15,7 @@ import {Router} from '@angular/router';
 import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/popup-confirm-dialog.component';
 import {BaseComponent} from '../../shared/base';
 import {AuthService} from '../../authentication/auth.service';
+import {getAllPermissions} from '../../shared/permission-storage';
 
 const JsBarcode = require('jsbarcode');
 
@@ -68,7 +69,7 @@ export class ProductTabInfoComponent extends BaseComponent implements OnChanges 
       });
 
     }
-    this.allPermission = sessionStorage.getItem('allPermission').split(',');
+    this.allPermission = getAllPermissions();
     this.isAdminStore = sessionStorage.getItem('isAdminStore') === 'true';
   }
 
