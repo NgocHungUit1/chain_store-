@@ -1,166 +1,190 @@
-<h1 mat-dialog-title *ngIf="!(this.customer_id !== null && this.customer_id !== undefined)" >Thêm khách hàng</h1>
-<h1 mat-dialog-title *ngIf="this.customer_id !== null && this.customer_id !== undefined">Cập nhật khách hàng</h1>
-<div mat-dialog-content>
+<div class="cf-header" mat-dialog-title>
+  <mat-icon class="cf-header-icon">{{ isEdit ? 'manage_accounts' : 'person_add' }}</mat-icon>
+  <div>
+    <h2>{{ isEdit ? 'Cập nhật khách hàng' : 'Thêm khách hàng' }}</h2>
+    <p>Trường có dấu * là bắt buộc</p>
+  </div>
+</div>
+
+<div mat-dialog-content class="cf-content">
   <form [formGroup]="form">
-    <div fxLayout="row wrap">
-      <div fxFlex="50">
-        <div fxLayout="row wrap">
 
-          <div fxFlex="100">
-            <mat-form-field>
-              <mat-label>Tên khách hàng</mat-label>
-              <input matInput tabindex="1" formControlName="name" required>
-            </mat-form-field>
+    <!-- Thông tin cá nhân -->
+    <section class="cf-section">
+      <h3 class="cf-title"><mat-icon>badge</mat-icon>Thông tin cá nhân</h3>
+      <div class="cf-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Tên khách hàng</mat-label>
+          <input matInput tabindex="1" formControlName="name" required cdkFocusInitial>
+          <mat-error *ngIf="form.controls['name'].hasError('required')">Nhập tên khách hàng</mat-error>
+          <mat-error *ngIf="form.controls['name'].hasError('maxlength')">Tối đa 32 ký tự</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Điện thoại</mat-label>
+          <input matInput tabindex="2" formControlName="phone" required inputmode="tel">
+          <mat-icon matSuffix class="cf-muted">call</mat-icon>
+          <mat-error *ngIf="form.controls['phone'].hasError('required')">Nhập số điện thoại</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Ngày sinh</mat-label>
+          <input matInput tabindex="3" [matDatepicker]="dob" formControlName="dob">
+          <mat-datepicker-toggle matSuffix [for]="dob"></mat-datepicker-toggle>
+          <mat-datepicker #dob></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>CCCD/CMND</mat-label>
+          <input matInput tabindex="4" formControlName="id_card" maxlength="20">
+        </mat-form-field>
+
+        <div class="cf-radio cf-span-2">
+          <span class="cf-radio-label">Giới tính</span>
+          <mat-radio-group tabindex="5" formControlName="sex">
+            <mat-radio-button *ngFor="let sexItem of sexItems" [value]="sexItem.id" color="primary">
+              {{sexItem.title}}
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sức khoẻ -->
+    <section class="cf-section cf-health">
+      <h3 class="cf-title"><mat-icon>health_and_safety</mat-icon>Sức khoẻ</h3>
+      <p class="cf-desc">Hiện cảnh báo ở màn bán hàng khi chọn khách. Gõ rồi nhấn Enter hoặc dấu ; để thêm từng mục.</p>
+
+      <div class="cf-health-grid">
+        <div class="cf-chip-block">
+          <mat-form-field appearance="outline" class="cf-chip-field">
+            <mat-label>Dị ứng thuốc</mat-label>
+            <mat-chip-list #allergyChips aria-label="Dị ứng thuốc">
+              <mat-chip *ngFor="let item of allergyList" class="cf-chip-danger" [removable]="true"
+                        (removed)="removeItem('drug_allergy', item)">
+                {{item}}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip>
+              <input tabindex="6" placeholder="VD: Penicillin"
+                     [matChipInputFor]="allergyChips"
+                     [matChipInputSeparatorKeyCodes]="separatorKeys"
+                     [matChipInputAddOnBlur]="true"
+                     (matChipInputTokenEnd)="addItem('drug_allergy', $event)">
+            </mat-chip-list>
+          </mat-form-field>
+          <div class="cf-suggest">
+            <span>Gợi ý:</span>
+            <button type="button" *ngFor="let s of allergySuggestions" class="cf-suggest-btn" (mousedown)="$event.preventDefault()"
+                    [disabled]="allergyList.indexOf(s) >= 0" (click)="pushItem('drug_allergy', s)">+ {{s}}</button>
           </div>
+        </div>
 
-          <div fxFlex="100">
-            <mat-form-field>
-              <mat-label>Điện thoại</mat-label>
-              <input matInput tabindex="2" formControlName="phone" required>
-            </mat-form-field>
-          </div>
-
-          <div fxFlex="100">
-            <mat-form-field>
-              <mat-label>Ngày sinh</mat-label>
-              <input matInput tabindex="3" [matDatepicker]="dob" formControlName="dob">
-              <mat-datepicker-toggle matSuffix [for]="dob"></mat-datepicker-toggle>
-              <mat-datepicker #dob></mat-datepicker>
-            </mat-form-field>
-          </div>
-
-          <div fxFlex="100">
-            <mat-form-field>
-              <mat-label>Công ty</mat-label>
-              <input matInput tabindex="5" formControlName="company_name">
-            </mat-form-field>
-          </div>
-
-          <div fxFlex="100">
-            <mat-form-field>
-              <mat-label>Địa chỉ</mat-label>
-              <textarea matInput tabindex="4" formControlName="address" rows="2"></textarea>
-            </mat-form-field>
-          </div>
-
-          <div fxFlex="100">
-            <mat-form-field>
-              <input matInput placeholder="Tỉnh/Thành phố" tabindex="6" aria-label="Tỉnh/Thành phố"
-                [matAutocomplete]="province" formControlName="province">
-              <button mat-icon-button matPrefix>
-                <mat-icon>search</mat-icon>
-              </button>
-              <button mat-icon-button matSuffix (click)="onProvinceChange(null);"
-                      *ngIf="this.form.controls['province'].value">
-                <mat-icon>delete</mat-icon>
-              </button>
-              <mat-autocomplete #province="matAutocomplete" [displayWith]="displayLocation"
-                (optionSelected)='onProvinceChange($event.option.value)'>
-                <mat-option *ngFor="let province of filteredProvinces | async" [value]="province">
-                  <span>{{province.name}}</span>
-                </mat-option>
-              </mat-autocomplete>
-            </mat-form-field>
-          </div>
-
-          <div fxFlex="100">
-            <mat-form-field>
-              <input matInput placeholder="Phường/Xã" tabindex="8" aria-label="Phường/Xã" [matAutocomplete]="ward"
-                formControlName="ward">
-              <button mat-icon-button matPrefix>
-                <mat-icon>search</mat-icon>
-              </button>
-              <button mat-icon-button matSuffix (click)="this.form.patchValue({ward: null});"
-                      *ngIf="this.form.controls['ward'].value">
-                <mat-icon>delete</mat-icon>
-              </button>
-              <mat-autocomplete #ward="matAutocomplete" [displayWith]="displayLocation">
-                <mat-option *ngFor="let ward of filteredWards | async" [value]="ward">
-                  <span>{{ward.name}}</span>
-                </mat-option>
-              </mat-autocomplete>
-            </mat-form-field>
+        <div class="cf-chip-block">
+          <mat-form-field appearance="outline" class="cf-chip-field">
+            <mat-label>Bệnh nền</mat-label>
+            <mat-chip-list #historyChips aria-label="Bệnh nền">
+              <mat-chip *ngFor="let item of historyList" class="cf-chip-warn" [removable]="true"
+                        (removed)="removeItem('medical_history', item)">
+                {{item}}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip>
+              <input tabindex="7" placeholder="VD: Tăng huyết áp"
+                     [matChipInputFor]="historyChips"
+                     [matChipInputSeparatorKeyCodes]="separatorKeys"
+                     [matChipInputAddOnBlur]="true"
+                     (matChipInputTokenEnd)="addItem('medical_history', $event)">
+            </mat-chip-list>
+          </mat-form-field>
+          <div class="cf-suggest">
+            <span>Gợi ý:</span>
+            <button type="button" *ngFor="let s of historySuggestions" class="cf-suggest-btn" (mousedown)="$event.preventDefault()"
+                    [disabled]="historyList.indexOf(s) >= 0" (click)="pushItem('medical_history', s)">+ {{s}}</button>
           </div>
         </div>
       </div>
+    </section>
 
-      <div fxFlex="2"></div>
+    <!-- Liên hệ & địa chỉ -->
+    <section class="cf-section">
+      <h3 class="cf-title"><mat-icon>home</mat-icon>Liên hệ & địa chỉ</h3>
+      <div class="cf-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Tỉnh/Thành phố</mat-label>
+          <input matInput tabindex="8" aria-label="Tỉnh/Thành phố"
+                 [matAutocomplete]="province" formControlName="province">
+          <button mat-icon-button matSuffix type="button" (click)="onProvinceChange(null);"
+                  *ngIf="form.controls['province'].value" aria-label="Xoá tỉnh/thành">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-icon matSuffix class="cf-muted" *ngIf="!form.controls['province'].value">search</mat-icon>
+          <mat-autocomplete #province="matAutocomplete" [displayWith]="displayLocation"
+                            (optionSelected)='onProvinceChange($event.option.value)'>
+            <mat-option *ngFor="let province of filteredProvinces | async" [value]="province">
+              <span>{{province.name}}</span>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
 
-      <div fxFlex="48">
-        <div fxLayout="row wrap">
+        <mat-form-field appearance="outline">
+          <mat-label>Phường/Xã</mat-label>
+          <input matInput tabindex="9" aria-label="Phường/Xã" [matAutocomplete]="ward" formControlName="ward">
+          <button mat-icon-button matSuffix type="button" (click)="form.patchValue({ward: null});"
+                  *ngIf="form.controls['ward'].value" aria-label="Xoá phường/xã">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-icon matSuffix class="cf-muted" *ngIf="!form.controls['ward'].value">search</mat-icon>
+          <mat-autocomplete #ward="matAutocomplete" [displayWith]="displayLocation">
+            <mat-option *ngFor="let ward of filteredWards | async" [value]="ward">
+              <span>{{ward.name}}</span>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
 
-          <div fxFlex="100">
-            <mat-form-field>
-              <mat-label>Mã số thuế</mat-label>
-              <input matInput tabindex="9" formControlName="tax_code">
-            </mat-form-field>
-          </div>
+        <mat-form-field appearance="outline" class="cf-span-2">
+          <mat-label>Địa chỉ</mat-label>
+          <input matInput tabindex="10" formControlName="address" placeholder="Số nhà, đường">
+        </mat-form-field>
 
-          <div fxFlex="100">
-            <mat-form-field>
-              <mat-label>CCCD/CMND</mat-label>
-              <input matInput tabindex="9" formControlName="id_card" maxlength="20">
-            </mat-form-field>
-          </div>
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput tabindex="11" formControlName="email" type="email">
+        </mat-form-field>
 
-          <div fxFlex="100" class="form-radio-field">
-            <mat-label>Giới tính</mat-label>
-            <mat-radio-group tabindex="10" formControlName="sex">
-              <mat-radio-button *ngFor="let sexItem of sexItems" [value]="sexItem.id">
-                {{sexItem.title}}
-              </mat-radio-button>
-            </mat-radio-group>
-          </div>
-
-          <div fxFlex="100">
-            <mat-form-field>
-              <mat-label>Email </mat-label>
-              <input matInput tabindex="11" formControlName="email">
-            </mat-form-field>
-          </div>
-
-          <div fxFlex="100">
-            <mat-form-field>
-              <mat-label>Facebook</mat-label>
-              <input matInput tabindex="12" formControlName="facebook">
-            </mat-form-field>
-          </div>
-
-          <div fxFlex="100">
-            <mat-form-field>
-              <mat-label>Ghi chú</mat-label>
-              <textarea matInput tabindex="13" formControlName="note" rows="2"></textarea>
-            </mat-form-field>
-          </div>
-
-          <div fxFlex="100">
-            <mat-form-field>
-              <mat-label>Dị ứng thuốc</mat-label>
-              <input matInput formControlName="drug_allergy" placeholder="VD: Penicillin; Aspirin">
-              <mat-hint>Nhiều mục cách nhau bằng dấu ;</mat-hint>
-            </mat-form-field>
-          </div>
-
-          <div fxFlex="100">
-            <mat-form-field>
-              <mat-label>Bệnh nền</mat-label>
-              <input matInput formControlName="medical_history" placeholder="VD: Tăng huyết áp; Đái tháo đường">
-              <mat-hint>Nhiều mục cách nhau bằng dấu ;</mat-hint>
-            </mat-form-field>
-          </div>
-        </div>
+        <mat-form-field appearance="outline">
+          <mat-label>Facebook</mat-label>
+          <input matInput tabindex="12" formControlName="facebook">
+        </mat-form-field>
       </div>
-    </div>
+    </section>
+
+    <!-- Doanh nghiệp & ghi chú -->
+    <section class="cf-section">
+      <h3 class="cf-title"><mat-icon>business</mat-icon>Doanh nghiệp & ghi chú</h3>
+      <div class="cf-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Công ty</mat-label>
+          <input matInput tabindex="13" formControlName="company_name">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Mã số thuế</mat-label>
+          <input matInput tabindex="14" formControlName="tax_code">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="cf-span-2">
+          <mat-label>Ghi chú</mat-label>
+          <textarea matInput tabindex="15" formControlName="note" rows="2"></textarea>
+        </mat-form-field>
+      </div>
+    </section>
 
   </form>
 </div>
-<div mat-dialog-actions align="end">
-  <button mat-raised-button color="primary" [disabled]="this.form.invalid" tabindex="14" (click)="submit()">
+
+<div mat-dialog-actions class="cf-actions">
+  <button mat-button type="button" (click)="onNoClick()" tabindex="-1">Bỏ qua</button>
+  <button mat-raised-button color="primary" type="button" [disabled]="form.invalid" tabindex="16" (click)="submit()">
     <mat-icon>save</mat-icon>
-    Lưu
-  </button>
-  <button mat-button (click)="onNoClick()" tabindex="-1">
-    <mat-icon>cancel</mat-icon>
-    Bỏ qua
+    {{ isEdit ? 'Lưu thay đổi' : 'Thêm khách hàng' }}
   </button>
 </div>

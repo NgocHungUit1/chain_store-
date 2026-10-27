@@ -1,6 +1,175 @@
-.mat-radio-button {
-  margin: 0 12px;
+/* Header */
+.cf-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
 }
-.form-radio-field {
-  margin: 16px 0;
+.cf-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+.cf-header p {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.54);
+  line-height: 1.4;
+}
+.cf-header-icon {
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
+  line-height: 40px;
+  text-align: center;
+  border-radius: 50%;
+  color: #00897b;
+  background: #e0f2f1;
+  flex-shrink: 0;
+}
+
+.cf-content {
+  max-height: 70vh;
+  padding-top: 4px !important;
+}
+
+/* Nhóm trường */
+.cf-section {
+  padding: 14px 0 2px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+.cf-section:first-child {
+  border-top: 0;
+  padding-top: 4px;
+}
+.cf-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #00796b;
+}
+.cf-title mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+.cf-desc {
+  margin: -4px 0 10px;
+  font-size: 12.5px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.cf-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 16px;
+}
+.cf-grid mat-form-field,
+.cf-chip-field {
+  width: 100%;
+}
+.cf-span-2 {
+  grid-column: 1 / -1;
+}
+
+.cf-radio {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 16px;
+}
+.cf-radio-label {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+}
+.cf-radio .mat-radio-button {
+  margin-right: 20px;
+}
+
+.cf-muted {
+  color: rgba(0, 0, 0, 0.38);
+}
+
+/* Sức khoẻ: khung nổi bật để dược sĩ không bỏ sót */
+.cf-health {
+  margin: 6px 0 10px;
+  padding: 14px 16px 6px;
+  border: 1px solid #ffe0b2;
+  border-radius: 8px;
+  background: #fff8f0;
+}
+.cf-health .cf-title {
+  color: #d84315;
+}
+.cf-health-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 16px;
+}
+.cf-chip-block {
+  min-width: 0;
+  margin-bottom: 8px;
+}
+.cf-chip-danger.mat-standard-chip {
+  background: #ffebee;
+  color: #c62828;
+}
+.cf-chip-warn.mat-standard-chip {
+  background: #fff3e0;
+  color: #e65100;
+}
+.cf-chip-danger .mat-chip-remove,
+.cf-chip-warn .mat-chip-remove {
+  color: inherit;
+  opacity: 0.6;
+}
+
+.cf-suggest {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: -8px;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.54);
+}
+.cf-suggest-btn {
+  border: 1px dashed rgba(0, 0, 0, 0.25);
+  background: #fff;
+  border-radius: 12px;
+  padding: 2px 9px;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+  font-family: inherit;
+}
+.cf-suggest-btn:hover:not([disabled]) {
+  border-color: #00897b;
+  color: #00796b;
+}
+.cf-suggest-btn[disabled] {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* Nút */
+.cf-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 0 4px !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 700px) {
+  .cf-grid,
+  .cf-health-grid {
+    grid-template-columns: 1fr;
+  }
 }

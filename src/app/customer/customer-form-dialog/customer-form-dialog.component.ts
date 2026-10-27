@@ -9,6 +9,8 @@ import { LocationService } from '../../location/location.service';
 import { Location } from '../../location/location.model';
 import * as moment from 'moment';
 import { MatDateProviders } from '../../shared/providers/mat-date.provider';
+import { ENTER, SEMICOLON } from '@angular/cdk/keycodes';
+import { MatChipInputEvent } from '@angular/material/chips';
 
 @Component({
   selector: 'app-customer-form-dialog',
@@ -37,6 +39,17 @@ export class CustomerFormDialogComponent implements OnInit {
       'title': 'Nữ'
     }
   ];
+
+  // Dị ứng / bệnh nền nhập dạng thẻ; lưu xuống vẫn là chuỗi phân cách ";"
+  readonly separatorKeys = [ENTER, SEMICOLON, 59]; // 59: phím ; trên Firefox
+  allergyList: string[] = [];
+  historyList: string[] = [];
+  allergySuggestions = ['Penicillin', 'Aspirin', 'Sulfamid', 'NSAID', 'Cephalosporin'];
+  historySuggestions = ['Tăng huyết áp', 'Đái tháo đường', 'Hen phế quản', 'Suy thận', 'Viêm dạ dày'];
+
+  get isEdit(): boolean {
+    return this.customer_id !== null && this.customer_id !== undefined;
+  }
 
 
   constructor(
@@ -145,6 +158,8 @@ export class CustomerFormDialogComponent implements OnInit {
         dob: dobStr,
         sex: customer['sex']
       });
+      this.allergyList = this.splitList(customer['drug_allergy']);
+      this.historyList = this.splitList(customer['medical_history']);
 
       if (customer['province_id'] !== null) {
         this.locationSer.autocomplete('', 'ward', customer['province_id']).subscribe(locations => {
@@ -203,6 +218,51 @@ export class CustomerFormDialogComponent implements OnInit {
         });
       }
     }
+  }
+
+  splitList(value: string): string[] {
+    if (!value) {
+      return [];
+    }
+    return value.split(';').map(s => s.trim()).filter(s => s.length > 0);
+  }
+
+  private listOf(field: string): string[] {
+    return field === 'drug_allergy' ? this.allergyList : this.historyList;
+  }
+
+  private syncList(field: string) {
+    const list = this.listOf(field);
+    this.form.controls[field].setValue(list.length ? list.join('; ') : null);
+    this.form.controls[field].markAsDirty();
+  }
+
+  addItem(field: string, event: MatChipInputEvent) {
+    (event.value || '').split(';').forEach(v => this.pushItem(field, v, false));
+    this.syncList(field);
+    if (event.input) {
+      event.input.value = '';
+    }
+  }
+
+  pushItem(field: string, value: string, sync = true) {
+    const item = (value || '').trim();
+    const list = this.listOf(field);
+    if (item && !list.some(x => x.toLowerCase() === item.toLowerCase())) {
+      list.push(item);
+    }
+    if (sync) {
+      this.syncList(field);
+    }
+  }
+
+  removeItem(field: string, item: string) {
+    const list = this.listOf(field);
+    const i = list.indexOf(item);
+    if (i >= 0) {
+      list.splice(i, 1);
+    }
+    this.syncList(field);
   }
 
   onProvinceChange(province) {

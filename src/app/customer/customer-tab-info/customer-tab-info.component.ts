@@ -53,8 +53,8 @@ export class CustomerTabInfoComponent extends BaseComponent implements OnInit {
 
     const dialogRef = this.dialog.open(CustomerFormDialogComponent, {
       data: obj,
-      width: '60%',
-      minHeight: '80%',
+      width: '760px',
+      maxWidth: '95vw',
     });
 
     dialogRef.afterClosed().subscribe(result => {

@@ -223,8 +223,8 @@ export class CustomerListComponent extends ListComponentBase implements OnInit {
 
   openCustomerFormDialog() {
     const dialogRef = this.dialog.open(CustomerFormDialogComponent, {
-      width: '50%',
-      minHeight: '80%',
+      width: '760px',
+      maxWidth: '95vw',
     });
 
     dialogRef.afterClosed().subscribe(result => {
