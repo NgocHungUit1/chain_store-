@@ -133,172 +133,230 @@
 
           <div class=" table-responsive">
 
-            <mat-card *ngIf=" settingsType === 'transaction' ">
-              <mat-card-content>
-                <div fxLayout="row wrap" class="line-option">
-                  <div fxFlex="60px" class="custom-toggle">
-                    <mat-slide-toggle
-                      [checked]="optionStore_transaction_expenses_order?.value === 'yes' "
-                      (change)="changeSlideToggle('transaction_expenses_order')"
-                    ></mat-slide-toggle>
-                  </div>
-                  <div fxFlex="auto">
-                    <b><a [routerLink]="optionStore_transaction_expenses_order?.value === 'yes' ? '/setting/expenses-order': '#'">Thu khác khi bán hàng >> </a></b>
-                    <br>
-                    <span> Cho phép tạo và quản lý các khoản thu khác khi bán hàng như: phí giao hàng, phí dịch vụ, VAT...Phí thu khác được tính bằng số tiền VNĐ hoặc % giá trị đơn hàng.
-                    </span>
-                  </div>
+            <div class="st-page" *ngIf=" settingsType === 'transaction' ">
 
+              <!-- Bán hàng & nhập hàng -->
+              <section class="st-card st-c-sale" [class.st-closed]="stCollapsed['sale']">
+                <header class="st-card-head" role="button" tabindex="0"
+                        [attr.aria-expanded]="!stCollapsed['sale']"
+                        (click)="toggleStSection('sale')" (keydown.enter)="toggleStSection('sale')" (keydown.space)="$event.preventDefault(); toggleStSection('sale')">
+                  <span class="st-ico"><mat-icon>point_of_sale</mat-icon></span>
+                  <div class="st-head-text">
+                    <h3>Bán hàng & nhập hàng</h3>
+                    <p *ngIf="!stCollapsed['sale']">Các khoản thu, chi đi kèm hoá đơn và quy tắc tồn kho khi bán.</p>
+                    <p *ngIf="stCollapsed['sale']" class="st-summary">{{ stSummarySale }}</p>
+                  </div>
+                  <mat-icon class="st-chevron">expand_more</mat-icon>
+                </header>
+                <div class="st-body" *ngIf="!stCollapsed['sale']">
+
+                <div class="st-row">
+                  <div class="st-row-text">
+                    <div class="st-row-title">Thu khác khi bán hàng</div>
+                    <div class="st-row-desc">Thêm phí giao hàng, phí dịch vụ, VAT… vào hoá đơn, tính bằng số tiền hoặc % giá trị đơn.</div>
+                  </div>
+                  <a mat-stroked-button class="st-config" routerLink="/setting/expenses-order"
+                     *ngIf="optionStore_transaction_expenses_order?.value === 'yes'">Cấu hình<mat-icon>chevron_right</mat-icon></a>
+                  <mat-slide-toggle color="primary"
+                    [checked]="optionStore_transaction_expenses_order?.value === 'yes' "
+                    (change)="changeSlideToggle('transaction_expenses_order')"
+                    aria-label="Thu khác khi bán hàng"></mat-slide-toggle>
                 </div>
 
-                <div fxLayout="row wrap" class="line-option">
-                  <div fxFlex="60px" class="custom-toggle">
-                    <mat-slide-toggle
-                      [checked]="optionStore_transaction_expenses_transaction?.value === 'yes' "
-                      (change)="changeSlideToggle('transaction_expenses_transaction')"
-                    ></mat-slide-toggle>
+                <div class="st-row">
+                  <div class="st-row-text">
+                    <div class="st-row-title">Chi phí nhập hàng</div>
+                    <div class="st-row-desc">Thêm phí dịch vụ, thuế hải quan… vào phiếu nhập, tính bằng số tiền hoặc % giá trị phiếu.</div>
                   </div>
-                  <div fxFlex="auto">
-                    <b><a [routerLink]="optionStore_transaction_expenses_transaction?.value === 'yes' ? '/setting/expenses-transaction': '#'">Hỗ trợ các khoản chi phí nhập hàng >> </a></b>
-                    <br>
-                    <span> Cho phép tạo và quản lý các khoản chi phí khi nhập hàng như: phí dịch vụ, thuế hải quan… được tính
-                    bằng số tiền VNĐ hoặc % giá trị phiếu nhập.
-                    </span>
+                  <a mat-stroked-button class="st-config" routerLink="/setting/expenses-transaction"
+                     *ngIf="optionStore_transaction_expenses_transaction?.value === 'yes'">Cấu hình<mat-icon>chevron_right</mat-icon></a>
+                  <mat-slide-toggle color="primary"
+                    [checked]="optionStore_transaction_expenses_transaction?.value === 'yes' "
+                    (change)="changeSlideToggle('transaction_expenses_transaction')"
+                    aria-label="Chi phí nhập hàng"></mat-slide-toggle>
+                </div>
+
+                <div class="st-row">
+                  <div class="st-row-text">
+                    <div class="st-row-title">Cho phép xuất âm</div>
+                    <div class="st-row-desc">Tìm, thêm vào giỏ và bán cả hàng có tồn kho bằng 0 hoặc âm.</div>
+                  </div>
+                  <a mat-stroked-button class="st-config" routerLink="/setting/negative-stock"
+                     *ngIf="optionStore_sale_negative_stock?.value === 'yes'">Cấu hình<mat-icon>chevron_right</mat-icon></a>
+                  <mat-slide-toggle color="primary"
+                    [checked]="optionStore_sale_negative_stock?.value === 'yes' "
+                    (change)="changeSlideToggle('sale_negative_stock')"
+                    aria-label="Cho phép xuất âm"></mat-slide-toggle>
+                </div>
+                </div>
+              </section>
+
+              <!-- Lô & hạn dùng -->
+              <section class="st-card st-c-lot" [class.st-closed]="stCollapsed['lot']">
+                <header class="st-card-head" role="button" tabindex="0"
+                        [attr.aria-expanded]="!stCollapsed['lot']"
+                        (click)="toggleStSection('lot')" (keydown.enter)="toggleStSection('lot')" (keydown.space)="$event.preventDefault(); toggleStSection('lot')">
+                  <span class="st-ico"><mat-icon>event_available</mat-icon></span>
+                  <div class="st-head-text">
+                    <h3>Lô & hạn dùng</h3>
+                    <p *ngIf="!stCollapsed['lot']">Cách chọn lô khi bán, cảnh báo cận date và quản lý theo lô.</p>
+                    <p *ngIf="stCollapsed['lot']" class="st-summary">{{ stSummaryLot }}</p>
+                  </div>
+                  <mat-icon class="st-chevron">expand_more</mat-icon>
+                </header>
+                <div class="st-body" *ngIf="!stCollapsed['lot']">
+
+                <div class="st-block">
+                  <div class="st-row-title">Thứ tự xuất lô khi bán</div>
+                  <div class="st-row-desc">Hệ thống tự chọn lô theo quy tắc này khi bán.</div>
+                  <mat-radio-group class="st-choices" [(ngModel)]="lotSelectionOrder" (change)="changeLotSelectionOrder()">
+                    <mat-radio-button value="fefo" color="primary" class="st-choice" [class.st-choice-on]="lotSelectionOrder === 'fefo'">
+                      <span class="st-choice-title">Hạn dùng gần nhất trước (FEFO)</span>
+                      <span class="st-choice-desc">Khuyến nghị cho thuốc · mặc định</span>
+                    </mat-radio-button>
+                    <mat-radio-button value="fifo" color="primary" class="st-choice" [class.st-choice-on]="lotSelectionOrder === 'fifo'">
+                      <span class="st-choice-title">Nhập trước xuất trước (FIFO)</span>
+                      <span class="st-choice-desc">Theo thứ tự ngày nhập</span>
+                    </mat-radio-button>
+                  </mat-radio-group>
+                </div>
+
+                <div class="st-block">
+                  <div class="st-row-title">Mốc cảnh báo hạn dùng</div>
+                  <div class="st-row-desc">Mỗi sáng gửi thông báo khi lô còn tồn chạm từng mốc, và khi lô đã hết hạn mà vẫn còn tồn. Nhập số ngày, cách nhau bằng dấu phẩy, tối đa 5 mốc.</div>
+                  <div class="st-inline">
+                    <label class="st-input-wrap st-input-sm">
+                      <input class="st-input" [(ngModel)]="expiryAlertDays" placeholder="30,60,90" aria-label="Mốc cảnh báo hạn dùng" (keyup.enter)="saveExpiryAlertDays()">
+                      <span class="st-suffix">ngày</span>
+                    </label>
+                    <button mat-flat-button color="primary" (click)="saveExpiryAlertDays()">Lưu</button>
+                    <div class="st-preview" *ngIf="expiryDaysPreview.length">
+                      <span class="st-preview-label">Sẽ báo trước:</span>
+                      <span class="st-pill" *ngFor="let d of expiryDaysPreview">{{ d }} ngày</span>
+                    </div>
                   </div>
                 </div>
 
-                <div fxLayout="row wrap" class="line-option">
-                  <div fxFlex="60px" class="custom-toggle">
-                    <mat-slide-toggle
-                      [checked]="optionStore_sale_negative_stock?.value === 'yes' "
-                      (change)="changeSlideToggle('sale_negative_stock')"
-                    ></mat-slide-toggle>
+                <div class="st-row">
+                  <div class="st-row-text">
+                    <div class="st-row-title">Cho phép nhập lô có hạn dùng quá khứ</div>
+                    <div class="st-row-desc">Dùng khi nhập bù hoặc lập báo cáo. Mặc định tắt.</div>
                   </div>
-                  <div fxFlex="auto">
-                    <b><a [routerLink]="optionStore_sale_negative_stock?.value === 'yes' ? '/setting/negative-stock': '#'">Cho phép xuất âm</a></b>
-                    <br>
-                    <span> Tìm kiếm, thêm vào và bán hàng với các sản phẩm tồn kho <= 0.
-                    </span>
-                  </div>
+                  <mat-slide-toggle color="primary"
+                    [(ngModel)]="allowPastExpiration"
+                    (change)="changeAllowPastExpiration()"
+                    aria-label="Cho phép nhập lô có hạn dùng quá khứ"></mat-slide-toggle>
                 </div>
 
-                <div fxLayout="row wrap" class="line-option" style="margin-top: 16px;">
-                  <div fxFlex="auto">
-                    <b>Thứ tự xuất lô khi bán</b>
-                    <br>
-                    <mat-radio-group [(ngModel)]="lotSelectionOrder" (change)="changeLotSelectionOrder()">
-                      <mat-radio-button value="fefo" style="margin-right: 24px;">
-                        Hạn dùng gần nhất trước (FEFO) <i>(mặc định)</i>
-                      </mat-radio-button>
-                      <mat-radio-button value="fifo">
-                        Nhập trước xuất trước (FIFO)
-                      </mat-radio-button>
-                    </mat-radio-group>
-                    <br>
-                    <span>Chọn cách hệ thống tự chọn lô khi bán: theo hạn dùng (khuyến nghị cho thuốc) hoặc theo thứ tự nhập.</span>
+                <div class="st-row st-row-top">
+                  <div class="st-row-text">
+                    <div class="st-row-title">Tự bật/tắt quản lý theo lô trên từng sản phẩm</div>
+                    <div class="st-row-desc">Cho phép tick / bỏ tick <b>"Quản lý theo lô"</b> ở màn cập nhật sản phẩm, kể cả hàng đã có tồn và giao dịch. Mặc định tắt.</div>
+                    <details class="st-risk">
+                      <summary><mat-icon>warning_amber</mat-icon>Cửa hàng tự chịu rủi ro khi bật — xem chi tiết</summary>
+                      <ul>
+                        <li>Sản phẩm sau khi tắt lô <b>không còn ghi số lô và hạn dùng</b> khi nhập và bán: không truy xuất được lô khi có sự cố, không cảnh báo được hàng cận date.</li>
+                        <li><b>Rủi ro pháp lý:</b> thanh tra dược yêu cầu truy xuất theo lô; dữ liệu phát sinh trong thời gian tắt lô không đáp ứng được.</li>
+                        <li>Báo cáo tồn theo lô, hạn dùng của sản phẩm đó <b>không còn chính xác</b>.</li>
+                        <li>Khi bật lô lại, phần tồn chưa có lô được gom vào <b>một lô "tồn cũ"</b> (hạn 31/12/2028) để bán tiếp; số lô và hạn dùng thật của phần đó <b>không khôi phục được</b>.</li>
+                      </ul>
+                    </details>
+                  </div>
+                  <mat-slide-toggle color="primary"
+                    [(ngModel)]="batchTrackingSelfManage"
+                    (change)="changeBatchTrackingSelfManage()"
+                    aria-label="Tự bật/tắt quản lý theo lô"></mat-slide-toggle>
+                </div>
+                </div>
+              </section>
+
+              <!-- Trả hàng -->
+              <section class="st-card st-c-return" [class.st-closed]="stCollapsed['return']">
+                <header class="st-card-head" role="button" tabindex="0"
+                        [attr.aria-expanded]="!stCollapsed['return']"
+                        (click)="toggleStSection('return')" (keydown.enter)="toggleStSection('return')" (keydown.space)="$event.preventDefault(); toggleStSection('return')">
+                  <span class="st-ico"><mat-icon>assignment_return</mat-icon></span>
+                  <div class="st-head-text">
+                    <h3>Trả hàng</h3>
+                    <p *ngIf="!stCollapsed['return']">Thu ngân bắt buộc chọn một lý do khi lập phiếu trả.</p>
+                    <p *ngIf="stCollapsed['return']" class="st-summary">{{ stSummaryReturn }}</p>
+                  </div>
+                  <mat-icon class="st-chevron">expand_more</mat-icon>
+                </header>
+                <div class="st-body" *ngIf="!stCollapsed['return']">
+
+                <div class="st-block">
+                  <div class="st-row-title">Lý do trả hàng</div>
+                  <div class="st-row-desc"><mat-icon class="st-inline-ico">lock</mat-icon> là lý do dùng chung của hệ thống, không xoá được.</div>
+                  <mat-chip-list class="st-chips" aria-label="Danh sách lý do trả hàng">
+                    <mat-chip *ngFor="let reason of returnReasons" [removable]="!reason.is_shared" (removed)="deleteReturnReason(reason)"
+                              [class.st-chip-shared]="reason.is_shared">
+                      {{ reason.name }}
+                      <mat-icon matChipRemove *ngIf="!reason.is_shared">cancel</mat-icon>
+                      <mat-icon *ngIf="reason.is_shared" class="st-chip-lock">lock</mat-icon>
+                    </mat-chip>
+                  </mat-chip-list>
+                  <div class="st-inline">
+                    <label class="st-input-wrap st-input-md">
+                      <input class="st-input" [(ngModel)]="newReturnReason" placeholder="Thêm lý do mới" (keyup.enter)="addReturnReason()" aria-label="Thêm lý do mới">
+                    </label>
+                    <button mat-stroked-button color="primary" (click)="addReturnReason()"><mat-icon>add</mat-icon>Thêm</button>
                   </div>
                 </div>
-
-                <div fxLayout="row wrap" class="line-option" style="margin-top: 16px;">
-                  <div fxFlex="auto">
-                    <b>Mốc cảnh báo hạn dùng</b>
-                    <br>
-                    <mat-form-field appearance="outline" style="width: 160px; margin-right: 12px;">
-                      <input matInput [(ngModel)]="expiryAlertDays" placeholder="30,60,90">
-                    </mat-form-field>
-                    <button mat-stroked-button color="primary" (click)="saveExpiryAlertDays()">Lưu</button>
-                    <br>
-                    <span>Mỗi sáng hệ thống gửi thông báo khi lô còn tồn chạm từng mốc (số ngày, cách nhau bằng dấu phẩy, tối đa 5 mốc) và khi lô đã hết hạn mà vẫn còn tồn.</span>
-                  </div>
                 </div>
+              </section>
 
-                <div fxLayout="row wrap" class="line-option" style="margin-top: 16px;">
-                  <div fxFlex="auto">
-                    <b>Lý do trả hàng</b>
-                    <br>
-                    <span>Thu ngân bắt buộc chọn một lý do khi trả hàng. Lý do có biểu tượng khoá là lý do dùng chung, không xoá được.</span>
-                    <mat-chip-list style="margin: 8px 0; display: block;">
-                      <mat-chip *ngFor="let reason of returnReasons" [removable]="!reason.is_shared" (removed)="deleteReturnReason(reason)">
-                        {{ reason.name }}
-                        <mat-icon matChipRemove *ngIf="!reason.is_shared">cancel</mat-icon>
-                        <mat-icon *ngIf="reason.is_shared" style="font-size: 14px; height: 14px; width: 14px; margin-left: 4px;">lock</mat-icon>
-                      </mat-chip>
-                    </mat-chip-list>
-                    <mat-form-field appearance="outline" style="width: 260px; margin-right: 12px;">
-                      <input matInput [(ngModel)]="newReturnReason" placeholder="Thêm lý do mới" (keyup.enter)="addReturnReason()">
-                    </mat-form-field>
-                    <button mat-stroked-button color="primary" (click)="addReturnReason()">Thêm</button>
+              <!-- Khách hàng thân thiết -->
+              <section class="st-card st-c-loyal" [class.st-closed]="stCollapsed['loyal']">
+                <header class="st-card-head" role="button" tabindex="0"
+                        [attr.aria-expanded]="!stCollapsed['loyal']"
+                        (click)="toggleStSection('loyal')" (keydown.enter)="toggleStSection('loyal')" (keydown.space)="$event.preventDefault(); toggleStSection('loyal')">
+                  <span class="st-ico"><mat-icon>workspace_premium</mat-icon></span>
+                  <div class="st-head-text">
+                    <h3>Khách hàng thân thiết</h3>
+                    <p *ngIf="!stCollapsed['loyal']">Xếp hạng theo tổng chi tiêu và nhân điểm tích luỹ.</p>
+                    <p *ngIf="stCollapsed['loyal']" class="st-summary">{{ stSummaryLoyal }}</p>
                   </div>
-                </div>
+                  <mat-icon class="st-chevron">expand_more</mat-icon>
+                </header>
+                <div class="st-body" *ngIf="!stCollapsed['loyal']">
 
-                <div fxLayout="row wrap" class="line-option" style="margin-top: 16px;">
-                  <div fxFlex="auto">
-                    <b>Hạng thành viên</b>
-                    <br>
-                    <span>Khách đạt tổng chi tiêu (đã trừ giảm giá và hàng trả) từ mức nào thì vào hạng đó; điểm tích mỗi hoá đơn nhân hệ số của hạng. Hạng được xếp lại khi bán, khi trả hàng và mỗi đêm.</span>
-                    <table class="tier-table" style="margin: 8px 0; border-collapse: collapse;">
-                      <tr><th style="text-align:left; padding: 4px 8px;">Tên hạng</th><th style="text-align:right; padding: 4px 8px;">Chi tiêu từ (đ)</th><th style="text-align:right; padding: 4px 8px;">Hệ số điểm</th><th></th></tr>
-                      <tr *ngFor="let tier of memberTiers">
-                        <td style="padding: 2px 8px;"><input matInput [(ngModel)]="tier.name" style="width: 140px;"></td>
-                        <td style="padding: 2px 8px;"><input matInput type="number" min="0" [(ngModel)]="tier.min_spend" style="width: 130px; text-align: right;"></td>
-                        <td style="padding: 2px 8px;"><input matInput type="number" min="0" step="0.1" [(ngModel)]="tier.point_multiplier" style="width: 70px; text-align: right;"></td>
-                        <td>
-                          <button mat-icon-button color="primary" (click)="saveMemberTier(tier)" matTooltip="Lưu"><mat-icon>save</mat-icon></button>
-                          <button mat-icon-button color="warn" (click)="deleteMemberTier(tier)" matTooltip="Xoá"><mat-icon>delete</mat-icon></button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="padding: 2px 8px;"><input matInput [(ngModel)]="newTier.name" placeholder="VD: Vàng" style="width: 140px;"></td>
-                        <td style="padding: 2px 8px;"><input matInput type="number" min="0" [(ngModel)]="newTier.min_spend" placeholder="5000000" style="width: 130px; text-align: right;"></td>
-                        <td style="padding: 2px 8px;"><input matInput type="number" min="0" step="0.1" [(ngModel)]="newTier.point_multiplier" style="width: 70px; text-align: right;"></td>
-                        <td><button mat-stroked-button color="primary" (click)="addMemberTier()">Thêm hạng</button></td>
-                      </tr>
+                <div class="st-block">
+                  <div class="st-row-title">Hạng thành viên</div>
+                  <div class="st-row-desc">Khách đạt tổng chi tiêu (đã trừ giảm giá và hàng trả) từ mức nào thì vào hạng đó; điểm mỗi hoá đơn nhân hệ số của hạng. Hạng được xếp lại khi bán, khi trả hàng và mỗi đêm.</div>
+                  <div class="st-table-wrap">
+                    <table class="tier-table st-table">
+                      <thead>
+                        <tr><th>Tên hạng</th><th class="num">Chi tiêu từ (đ)</th><th class="num">Hệ số điểm</th><th></th></tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let tier of memberTiers">
+                          <td><input class="st-cell" [(ngModel)]="tier.name" aria-label="Tên hạng"></td>
+                          <td class="num"><input class="st-cell num" type="number" min="0" [(ngModel)]="tier.min_spend" aria-label="Chi tiêu từ"></td>
+                          <td class="num"><input class="st-cell num st-cell-xs" type="number" min="0" step="0.1" [(ngModel)]="tier.point_multiplier" aria-label="Hệ số điểm"></td>
+                          <td class="st-actions">
+                            <button mat-icon-button color="primary" (click)="saveMemberTier(tier)" matTooltip="Lưu"><mat-icon>save</mat-icon></button>
+                            <button mat-icon-button color="warn" (click)="deleteMemberTier(tier)" matTooltip="Xoá"><mat-icon>delete_outline</mat-icon></button>
+                          </td>
+                        </tr>
+                        <tr *ngIf="!memberTiers.length">
+                          <td colspan="4" class="st-empty">Chưa có hạng nào. Thêm hạng đầu tiên ở dòng dưới, ví dụ "Thành viên" từ 0đ, hệ số 1.</td>
+                        </tr>
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td><input class="st-cell" [(ngModel)]="newTier.name" placeholder="VD: Vàng" aria-label="Tên hạng mới"></td>
+                          <td class="num"><input class="st-cell num" type="number" min="0" [(ngModel)]="newTier.min_spend" placeholder="5000000" aria-label="Chi tiêu từ của hạng mới"></td>
+                          <td class="num"><input class="st-cell num st-cell-xs" type="number" min="0" step="0.1" [(ngModel)]="newTier.point_multiplier" aria-label="Hệ số điểm của hạng mới"></td>
+                          <td class="st-actions"><button mat-flat-button color="primary" (click)="addMemberTier()"><mat-icon>add</mat-icon>Thêm hạng</button></td>
+                        </tr>
+                      </tfoot>
                     </table>
                   </div>
                 </div>
-
-                <div fxLayout="row wrap" class="line-option" style="margin-top: 16px;">
-                  <div fxFlex="60px" class="custom-toggle">
-                    <mat-slide-toggle
-                      [(ngModel)]="allowPastExpiration"
-                      (change)="changeAllowPastExpiration()"
-                    ></mat-slide-toggle>
-                  </div>
-                  <div fxFlex="auto">
-                    <b>Cho phép nhập lô có hạn dùng quá khứ</b>
-                    <br>
-                    <span>Khi bật, lúc nhập hàng có thể thêm lô với hạn sử dụng đã qua (phục vụ nhập bù/báo cáo). Mặc định tắt.</span>
-                  </div>
                 </div>
-
-                <div fxLayout="row wrap" class="line-option" style="margin-top: 16px;">
-                  <div fxFlex="60px" class="custom-toggle">
-                    <mat-slide-toggle
-                      [(ngModel)]="batchTrackingSelfManage"
-                      (change)="changeBatchTrackingSelfManage()"
-                    ></mat-slide-toggle>
-                  </div>
-                  <div fxFlex="auto">
-                    <b>Tự bật/tắt quản lý theo lô trên từng sản phẩm</b>
-                    <br>
-                    <span>Khi bật, tại màn hình Cập nhật sản phẩm cửa hàng được tự tick / bỏ tick ô
-                      <b>"Quản lý theo lô"</b>, kể cả sản phẩm đã có tồn kho và đã phát sinh giao dịch,
-                      không cần liên hệ bộ phận hỗ trợ. Mặc định tắt.</span>
-                    <br>
-                    <span style="color: #d32f2f;">
-                      <b>Cảnh báo rủi ro — cửa hàng tự chịu trách nhiệm khi bật:</b>
-                      <br>• Sản phẩm sau khi tắt lô sẽ <b>không còn ghi số lô và hạn dùng</b> khi nhập kho và khi bán
-                      → không truy xuất được lô khi có sự cố về thuốc, không cảnh báo được hàng cận date.
-                      <br>• <b>Rủi ro pháp lý</b>: thanh tra dược yêu cầu truy xuất nguồn gốc theo lô, phần dữ liệu
-                      phát sinh trong thời gian tắt lô sẽ không đáp ứng được.
-                      <br>• Báo cáo tồn kho theo lô, hạn dùng của sản phẩm đó sẽ <b>không còn chính xác</b>.
-                      <br>• Khi bật lô trở lại, phần tồn chưa có lô được hệ thống gom vào <b>một lô "tồn cũ"</b>
-                      (hạn 31/12/2028) để bán được tiếp — <b>số lô và hạn dùng thật của phần tồn đó không khôi phục được</b>.
-                    </span>
-                  </div>
-                </div>
-              </mat-card-content>
-            </mat-card>
+              </section>
+            </div>
 
             <!--            chon kho giay in-->
 <!--            <mat-card *ngIf=" settingsType === 'print' ">-->

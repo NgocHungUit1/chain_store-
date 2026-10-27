@@ -87,6 +87,58 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
   newTier = {name: '', min_spend: null, point_multiplier: 1};
   newReturnReason = '';
   expiryAlertDays = '30,60,90'; // các mốc cảnh báo hạn dùng tự động, ngày
+
+  /** Các mốc hợp lệ trong ô nhập, sắp tăng dần, để xem trước cạnh nút Lưu */
+  get expiryDaysPreview(): number[] {
+    const days = String(this.expiryAlertDays || '').split(',')
+      .map(s => parseInt(s.trim(), 10))
+      .filter(n => n > 0);
+    return days.filter((n, i) => days.indexOf(n) === i).sort((a, b) => a - b).slice(0, 5);
+  }
+
+  // Cài đặt › Giao dịch: nhóm thu gọn được, nhớ trạng thái trên máy
+  stCollapsed: {[key: string]: boolean} = this.loadStCollapsed();
+
+  private loadStCollapsed(): {[key: string]: boolean} {
+    try {
+      return JSON.parse(localStorage.getItem('setting_transaction_collapsed') || '{}') || {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  toggleStSection(key: string) {
+    this.stCollapsed = {...this.stCollapsed, [key]: !this.stCollapsed[key]};
+    try {
+      localStorage.setItem('setting_transaction_collapsed', JSON.stringify(this.stCollapsed));
+    } catch (e) {}
+  }
+
+  get stSummarySale(): string {
+    const on = [
+      [this.optionStore_transaction_expenses_order, 'Thu khác'],
+      [this.optionStore_transaction_expenses_transaction, 'Chi phí nhập'],
+      [this.optionStore_sale_negative_stock, 'Xuất âm'],
+    ].filter(([opt]) => opt && (opt as any).value === 'yes').map(([, label]) => label);
+    return on.length ? 'Đang bật: ' + on.join(', ') : 'Chưa bật tuỳ chọn nào';
+  }
+
+  get stSummaryLot(): string {
+    const days = this.expiryDaysPreview;
+    return (this.lotSelectionOrder === 'fifo' ? 'FIFO' : 'FEFO')
+      + (days.length ? ' · báo trước ' + days.join(', ') + ' ngày' : '')
+      + (this.batchTrackingSelfManage ? ' · tự quản lý lô' : '');
+  }
+
+  get stSummaryReturn(): string {
+    const n = (this.returnReasons || []).length;
+    return n ? n + ' lý do trả hàng' : 'Chưa có lý do';
+  }
+
+  get stSummaryLoyal(): string {
+    const tiers = this.memberTiers || [];
+    return tiers.length ? tiers.length + ' hạng: ' + tiers.map(t => t.name).join(', ') : 'Chưa có hạng thành viên';
+  }
   optionStore_print_type: OptionStore; // print_type
   point_enabled: OptionStore;
   point_cash_to_point_rate: OptionStore;
@@ -386,7 +438,11 @@ export class SettingsMainComponent extends BaseComponent implements OnInit {
   }
 
   loadMemberTiers() {
-    this.memberTierService.getList().subscribe(res => this.memberTiers = res || [], () => this.memberTiers = []);
+    // API trả decimal dạng chuỗi ("0.00") -> đổi sang số để ô nhập hiện gọn
+    this.memberTierService.getList().subscribe(
+      res => this.memberTiers = (res || []).map(t => ({...t, min_spend: +t.min_spend, point_multiplier: +t.point_multiplier})),
+      () => this.memberTiers = []
+    );
   }
 
   addMemberTier() {
