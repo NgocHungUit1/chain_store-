@@ -6,6 +6,7 @@ export const NOTIFICATION_CLASS = {
   'contract_nearly_alert': 'round-warning',
   'lower_stock': 'round-warning',
   'expired': 'round-danger',
+  'prescription_order': 'round-primary',
 };
 
 export const NOTIFICATION_ICON = {
@@ -13,6 +14,7 @@ export const NOTIFICATION_ICON = {
   'contract_nearly_alert': 'running_with_errors',
   'lower_stock': 'inventory_2',
   'expired': 'event_busy',
+  'prescription_order': 'medical_services',
 };
 
 /**
@@ -34,6 +36,16 @@ export function notificationLink(notification: Notification): string | null {
       } catch (e) {
       }
       return '/report/product-report/expiration-date?WarehouseProductParcelSearch[timeSelect]=' + timeSelect;
+    }
+    case 'prescription_order': {
+      try {
+        const detail = notification.obj_detail ? JSON.parse(notification.obj_detail) : null;
+        if (detail?.order_id) {
+          return '/transaction/prescription-order/' + detail.order_id;
+        }
+      } catch (e) {
+      }
+      return '/transaction/prescription-order';
     }
     default:
       return null;

@@ -1,0 +1,156 @@
+// Dùng chung cho màn Đơn đặt thuốc: cùng phong cách Cài đặt › Giao dịch, Vòng quay tồn kho (một tông xanh lá)
+$green: #00796b;
+$green-bg: #e8f5f3;
+$green-ico: #c8ebe6;
+$line: #dde5e3;
+$muted: rgba(0, 0, 0, 0.56);
+
+.po-page {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.po-card {
+  background: #fff;
+  border: 1px solid $line;
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(16, 40, 36, 0.05);
+}
+.po-head {
+  padding: 16px 20px;
+}
+.po-title {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  min-width: 0;
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: $green;
+    line-height: 1.35;
+  }
+  p {
+    margin: 2px 0 0;
+    font-size: 13px;
+    color: $muted;
+  }
+}
+.po-ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: $green-ico;
+  color: $green;
+  flex-shrink: 0;
+}
+.po-btn {
+  height: 36px;
+  line-height: 36px;
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    margin-right: 4px;
+    vertical-align: -4px;
+  }
+}
+.po-input {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid #cfd8d6;
+  border-radius: 4px;
+  background: #fff;
+  cursor: text;
+  box-sizing: border-box;
+  &:focus-within {
+    border-color: #00897b;
+    box-shadow: 0 0 0 2px rgba(0, 137, 123, 0.15);
+  }
+  input {
+    border: 0;
+    outline: none;
+    font: inherit;
+    font-size: 14px;
+    background: transparent;
+  }
+}
+.po-input-label {
+  font-size: 12px;
+  color: $muted;
+  white-space: nowrap;
+}
+
+.po-table-card {
+  overflow: hidden;
+}
+.po-loading {
+  height: 4px;
+}
+.table-wrap {
+  overflow-x: auto;
+}
+.po-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  th, td {
+    padding: 10px 14px;
+    text-align: left;
+    white-space: nowrap;
+    border-bottom: 1px solid #f0f3f2;
+    vertical-align: top;
+  }
+  th {
+    background: $green-bg;
+    color: $green;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    border-bottom: 1px solid #cfe7e2;
+  }
+  tbody tr:hover td {
+    background: #f6faf9;
+  }
+  .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .code {
+    font-weight: 600;
+    color: $green;
+  }
+  .name {
+    font-weight: 500;
+    white-space: normal;
+  }
+  .sub, .muted {
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 12.5px;
+  }
+}
+
+.po-chip {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  &.st-new { background: #fff3e0; color: #e65100; }
+  &.st-confirmed { background: #e3f2fd; color: #1565c0; }
+  &.st-preparing { background: #ede7f6; color: #5e35b1; }
+  &.st-delivering { background: #e0f7fa; color: #00838f; }
+  &.st-completed { background: #e8f5e9; color: #2e7d32; }
+  &.st-returned { background: #ffebee; color: #c62828; }
+  &.st-cancelled { background: #eceff1; color: #546e7a; }
+}

@@ -79,6 +79,10 @@ export const WarehouseRoutes: Routes = [
         path: 'move',
         loadChildren: () => import('../move/move.module').then(m => m.MoveModule)
       },
+      {
+        path: 'prescription-order',
+        loadChildren: () => import('../prescription-order/prescription-order.module').then(m => m.PrescriptionOrderModule)
+      },
     ]
   }
 ];

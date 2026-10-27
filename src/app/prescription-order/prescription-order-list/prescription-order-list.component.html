@@ -1,0 +1,86 @@
+<div class="po-page">
+  <section class="po-card po-head">
+    <div class="po-head-top">
+      <div class="po-title">
+        <span class="po-ico"><mat-icon>medical_services</mat-icon></span>
+        <div>
+          <h3>Đơn đặt thuốc</h3>
+          <p>Đơn phòng khám liên kết gửi tới chi nhánh đang làm việc. Nhận đơn, kiểm hàng, hoặc trả đơn kèm lý do.</p>
+        </div>
+      </div>
+      <button mat-stroked-button color="primary" class="po-btn" (click)="refresh()" [disabled]="loading">
+        <mat-icon>refresh</mat-icon>Làm mới
+      </button>
+    </div>
+
+    <div class="po-tabs" role="tablist" aria-label="Trạng thái đơn">
+      <button type="button" role="tab" *ngFor="let t of tabs" class="po-tab" [class.active]="status === t.status"
+              [attr.aria-selected]="status === t.status" (click)="selectTab(t.status)">
+        {{ t.label }}
+        <span class="po-tab-count" [class.hot]="t.status === 'new' && t.count > 0">{{ t.count }}</span>
+      </button>
+    </div>
+
+    <div class="po-filter">
+      <label class="po-input po-search">
+        <mat-icon>search</mat-icon>
+        <input type="text" [ngModel]="keyword" (ngModelChange)="onKeyword($event)"
+               placeholder="Mã đơn, bệnh nhân, SĐT, bác sĩ, phòng khám" aria-label="Tìm đơn đặt thuốc">
+      </label>
+      <label class="po-input">
+        <span class="po-input-label">Từ ngày</span>
+        <input type="date" [(ngModel)]="dateFrom" (change)="applyDates()" aria-label="Từ ngày">
+      </label>
+      <label class="po-input">
+        <span class="po-input-label">Đến ngày</span>
+        <input type="date" [(ngModel)]="dateTo" (change)="applyDates()" aria-label="Đến ngày">
+      </label>
+      <button mat-button type="button" class="po-btn" *ngIf="keyword || dateFrom || dateTo" (click)="clearFilters()">
+        Xoá lọc
+      </button>
+    </div>
+  </section>
+
+  <section class="po-card po-table-card">
+    <div class="po-loading" *ngIf="loading"><mat-progress-bar mode="indeterminate"></mat-progress-bar></div>
+    <div class="table-wrap">
+      <table class="po-table">
+        <thead>
+        <tr>
+          <th>Mã đơn</th>
+          <th>Thời gian</th>
+          <th>Phòng khám</th>
+          <th>Bệnh nhân</th>
+          <th>Bác sĩ</th>
+          <th class="num">Số thuốc</th>
+          <th class="num">Tạm tính</th>
+          <th>Trạng thái</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let r of rows" class="po-row" [class.clickable]="canView" (click)="open(r)" tabindex="0" (keydown.enter)="open(r)">
+          <td class="code">{{ r.code }}</td>
+          <td class="muted">{{ r.created_at * 1000 | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td class="name">{{ r.clinic_name }}</td>
+          <td>
+            <div class="name">{{ r.patient_name }}</div>
+            <div class="sub" *ngIf="r.patient_phone">{{ r.patient_phone }}</div>
+          </td>
+          <td>{{ r.doctor_name }}</td>
+          <td class="num">{{ r.item_count }}</td>
+          <td class="num">{{ r.total_quote | number }}</td>
+          <td><span class="po-chip" [ngClass]="statusClass[r.status]">{{ r.status_label }}</span></td>
+        </tr>
+        <tr *ngIf="!loading && !rows.length">
+          <td colspan="8" class="po-empty">
+            <mat-icon>inbox</mat-icon>
+            <div>Không có đơn đặt thuốc nào{{ status ? ' ở trạng thái này' : '' }}.</div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <mat-paginator *ngIf="total > perPage" [length]="total" [pageSize]="perPage" [pageIndex]="page - 1"
+                   [pageSizeOptions]="[20, 50, 100]" (page)="onPage($event)"></mat-paginator>
+  </section>
+</div>

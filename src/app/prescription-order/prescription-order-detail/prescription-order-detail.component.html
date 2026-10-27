@@ -1,0 +1,123 @@
+<div class="po-page">
+  <div class="po-loading" *ngIf="loading"><mat-progress-bar mode="indeterminate"></mat-progress-bar></div>
+
+  <section class="po-card po-head" *ngIf="notFound">
+    <div class="po-title">
+      <span class="po-ico"><mat-icon>search_off</mat-icon></span>
+      <div>
+        <h3>Không tìm thấy đơn đặt thuốc</h3>
+        <p>Đơn không tồn tại hoặc thuộc chi nhánh khác. Đổi sang đúng chi nhánh để xem.</p>
+      </div>
+    </div>
+    <button mat-stroked-button color="primary" class="po-btn dt-back-btn" (click)="back()"><mat-icon>arrow_back</mat-icon>Quay lại</button>
+  </section>
+
+  <ng-container *ngIf="order">
+    <section class="po-card po-head">
+      <div class="dt-top">
+        <button mat-icon-button (click)="back()" aria-label="Quay lại danh sách"><mat-icon>arrow_back</mat-icon></button>
+        <div class="dt-code">
+          <h3>Đơn {{ order.code }}</h3>
+          <p>Nhận lúc {{ order.created_at * 1000 | date:'HH:mm dd/MM/yyyy' }} · {{ order.items.length }} thuốc · tạm tính {{ order.total_quote | number }} đ</p>
+        </div>
+        <span class="po-chip dt-status" [ngClass]="statusClass[order.status]">{{ order.status_label }}</span>
+        <span class="dt-spacer"></span>
+        <div class="dt-actions">
+          <button mat-stroked-button color="warn" class="po-btn" *ngIf="canReturn" [disabled]="busy" (click)="openReturn()">
+            <mat-icon>assignment_return</mat-icon>Trả đơn
+          </button>
+          <button mat-flat-button color="primary" class="po-btn" *ngIf="canConfirm" [disabled]="busy" (click)="confirm()">
+            <mat-icon>check_circle</mat-icon>Xác nhận
+          </button>
+        </div>
+      </div>
+
+      <div class="dt-alert warn" *ngIf="!order.all_in_stock && (order.status === 'new' || order.status === 'confirmed')">
+        <mat-icon>warning_amber</mat-icon>
+        <div>Chi nhánh không đủ hàng cho {{ missingItems.length }} thuốc: <b>{{ missingItems.join(', ') }}</b>. Nhà thuốc không tự thay thuốc — trả đơn để bác sĩ sửa nếu không bổ sung được hàng.</div>
+      </div>
+      <div class="dt-alert danger" *ngIf="order.status === 'returned'">
+        <mat-icon>assignment_return</mat-icon>
+        <div>Đã trả đơn về phòng khám. Lý do: <b>{{ order.return_reason }}</b><span *ngIf="order.return_note"> · {{ order.return_note }}</span></div>
+      </div>
+      <div class="dt-alert muted" *ngIf="order.status === 'cancelled'">
+        <mat-icon>block</mat-icon>
+        <div>Phòng khám đã huỷ đơn<span *ngIf="order.cancel_reason">. Lý do: <b>{{ order.cancel_reason }}</b></span>.</div>
+      </div>
+    </section>
+
+    <div class="dt-grid">
+      <section class="po-card dt-info">
+        <h4><mat-icon>local_hospital</mat-icon>Phòng khám</h4>
+        <dl>
+          <dt>Phòng khám</dt><dd>{{ order.clinic?.name }}</dd>
+          <dt>Bác sĩ</dt><dd>{{ order.doctor.name || '—' }}<span class="sub" *ngIf="order.doctor.code"> · {{ order.doctor.code }}</span></dd>
+          <dt>Mã ĐTQG</dt><dd>{{ order.dtqg_code || '—' }}</dd>
+        </dl>
+      </section>
+      <section class="po-card dt-info">
+        <h4><mat-icon>person</mat-icon>Bệnh nhân</h4>
+        <dl>
+          <dt>Họ tên</dt><dd><b>{{ order.patient.name }}</b><span class="sub" *ngIf="order.patient.code"> · {{ order.patient.code }}</span></dd>
+          <dt>Tuổi / giới</dt><dd>{{ age !== null ? age + ' tuổi' : '—' }}<span *ngIf="genderLabel(order.patient.gender)"> · {{ genderLabel(order.patient.gender) }}</span></dd>
+          <dt>Điện thoại</dt><dd>{{ order.patient.phone || '—' }}</dd>
+        </dl>
+      </section>
+      <section class="po-card dt-info">
+        <h4><mat-icon>description</mat-icon>Chẩn đoán & lời dặn</h4>
+        <dl>
+          <dt>Chẩn đoán</dt><dd>{{ order.diagnosis || '—' }}</dd>
+          <dt>Ghi chú</dt><dd>{{ order.note || '—' }}</dd>
+        </dl>
+      </section>
+    </div>
+
+    <section class="po-card po-table-card">
+      <div class="dt-section-head"><mat-icon>medication</mat-icon>Thuốc trong đơn</div>
+      <div class="table-wrap">
+        <table class="po-table">
+          <thead>
+          <tr>
+            <th>#</th>
+            <th>Thuốc</th>
+            <th class="num">Số lượng</th>
+            <th>Cách dùng</th>
+            <th class="num">Giá tạm tính</th>
+            <th class="num">Tồn chi nhánh</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let it of order.items" [class.dt-short]="!it.enough_stock">
+            <td class="muted">{{ it.line_no }}</td>
+            <td>
+              <div class="name">{{ it.product_name }}</div>
+              <div class="sub">{{ it.product_no }}<span *ngIf="it.active_substance"> · {{ it.active_substance }}</span><span *ngIf="it.strength"> {{ it.strength }}</span></div>
+            </td>
+            <td class="num"><b>{{ it.quantity | number:'1.0-3' }}</b> {{ it.unit }}</td>
+            <td class="dt-usage">{{ it.usage || '—' }}</td>
+            <td class="num">{{ it.price_quote | number }}<div class="sub">= {{ it.price_quote * it.quantity | number:'1.0-0' }}</div></td>
+            <td class="num">
+              <span class="dt-stock" [class.short]="!it.enough_stock">{{ it.stock_in_unit | number:'1.0-3' }} {{ it.unit }}</span>
+              <div class="sub short" *ngIf="!it.enough_stock">Không đủ hàng</div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="po-card dt-history">
+      <div class="dt-section-head"><mat-icon>history</mat-icon>Lịch sử trạng thái</div>
+      <ol class="dt-timeline">
+        <li *ngFor="let h of order.history" [ngClass]="statusClass[h.to]">
+          <span class="dot"></span>
+          <div>
+            <div class="tl-title">{{ h.to_label }}</div>
+            <div class="tl-meta">{{ h.at * 1000 | date:'HH:mm dd/MM/yyyy' }} · {{ actorLabel(h.by) }}<span *ngIf="h.by_name"> ({{ h.by_name }})</span></div>
+            <div class="tl-note" *ngIf="h.note">{{ h.note }}</div>
+          </div>
+        </li>
+      </ol>
+    </section>
+  </ng-container>
+</div>

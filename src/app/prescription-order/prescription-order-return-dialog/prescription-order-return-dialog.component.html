@@ -1,0 +1,25 @@
+<div class="rd-head" mat-dialog-title>
+  <mat-icon class="rd-ico">assignment_return</mat-icon>
+  <div>
+    <h2>Trả đơn {{ data.code }}</h2>
+    <p>Đơn quay về phòng khám kèm lý do; bác sĩ sửa đơn và đặt lại.</p>
+  </div>
+</div>
+<div mat-dialog-content>
+  <div class="rd-label">Lý do trả đơn <span class="req">*</span></div>
+  <div class="rd-suggest">
+    <button type="button" class="rd-chip" *ngFor="let s of suggestions" [class.on]="reason === s" (click)="pick(s)">{{ s }}</button>
+  </div>
+  <label class="rd-input" [class.invalid]="touched && !reason.trim()">
+    <input id="po-return-reason" type="text" [(ngModel)]="reason" maxlength="255" placeholder="Nhập lý do" aria-label="Lý do trả đơn">
+  </label>
+  <div class="rd-error" *ngIf="touched && !reason.trim()">Nhập lý do trả đơn để bác sĩ biết cần sửa gì.</div>
+  <div class="rd-label">Ghi chú cho bác sĩ</div>
+  <textarea id="po-return-note" class="rd-textarea" rows="3" [(ngModel)]="note" placeholder="Vd: đề nghị đổi sang thuốc cùng hoạt chất còn hàng"></textarea>
+</div>
+<div mat-dialog-actions class="rd-actions">
+  <button mat-button type="button" mat-dialog-close>Bỏ qua</button>
+  <button mat-flat-button color="warn" type="button" (click)="submit()">
+    <mat-icon>assignment_return</mat-icon>Trả đơn
+  </button>
+</div>

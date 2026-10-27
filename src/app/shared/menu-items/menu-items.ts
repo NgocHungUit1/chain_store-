@@ -77,10 +77,11 @@ const MENUITEMS = [
     name: 'Giao dịch',
     type: 'sub',
     icon: 'sync_alt',
-    permissions: ['Invoice.List', 'Warehouse.List', 'Returns.List', 'Move.List'],
+    permissions: ['Invoice.List', 'Warehouse.List', 'Returns.List', 'Move.List', 'Prescription-Order.List'],
     // badge: [{type: 'red', value: '17'}],
     children: [
       {state: 'invoice', name: 'Hóa đơn bán', type: 'link', icon: 'receipt', permissions: ['Invoice.List']},
+      {state: 'prescription-order', name: 'Đơn đặt thuốc', type: 'link', icon: 'medical_services', permissions: ['Prescription-Order.List']},
       {state: 'warehouse', name: 'Hóa đơn nhập', type: 'link', icon: 'local_grocery_store', permissions: ['Warehouse.List']},
       {state: 'returns', name: 'Trả hàng', type: 'link', icon: 'keyboard_return', permissions: ['Returns.List']},
       {state: 'warehouse-return', name: 'Trả hàng nhập', type: 'link', 'icon': 'assignment_return', permissions: ['Warehouse.List']},
