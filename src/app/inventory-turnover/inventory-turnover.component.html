@@ -1,31 +1,80 @@
 <div class="turnover-page">
-  <mat-card>
-    <div class="toolbar">
-      <h3>Vòng quay hàng tồn kho</h3>
-      <mat-form-field appearance="outline">
-        <mat-label>Từ ngày</mat-label>
-        <input matInput type="date" [(ngModel)]="dateFrom">
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Đến ngày</mat-label>
-        <input matInput type="date" [(ngModel)]="dateTo">
-      </mat-form-field>
-      <button mat-raised-button color="primary" (click)="load()" [disabled]="loading">Xem</button>
-      <span class="spacer"></span>
-      <span class="dash-group-btn" [class.active]="by === 'product'" (click)="setBy('product')">Theo sản phẩm</span>
-      <span class="dash-group-btn" [class.active]="by === 'group'" (click)="setBy('group')">Theo nhóm hàng</span>
+
+  <!-- Đầu trang + bộ lọc -->
+  <section class="tv-card tv-head">
+    <div class="tv-head-top">
+      <div class="tv-title">
+        <span class="tv-ico"><mat-icon>autorenew</mat-icon></span>
+        <div>
+          <h3>Vòng quay hàng tồn kho</h3>
+          <p>Hàng bán chậm so với lượng tồn của chi nhánh đang làm việc. Hàng quay chậm xếp lên đầu.</p>
+        </div>
+      </div>
+      <div class="tv-seg" role="group" aria-label="Xem theo">
+        <button type="button" class="dash-group-btn" [class.active]="by === 'product'" (click)="setBy('product')">Theo sản phẩm</button>
+        <button type="button" class="dash-group-btn" [class.active]="by === 'group'" (click)="setBy('group')">Theo nhóm hàng</button>
+      </div>
     </div>
 
-    <div class="summary" *ngIf="summary">
-      <div><span>Giá vốn hàng bán</span><b>{{ summary.cogs | number }}</b></div>
-      <div><span>Tồn bình quân</span><b>{{ summary.avg_stock_value | number }}</b></div>
-      <div><span>Vòng quay</span><b>{{ summary.turnover !== null && summary.turnover !== undefined ? summary.turnover : '—' }}</b></div>
-      <div><span>Số ngày tồn</span><b>{{ summary.days_on_hand !== null && summary.days_on_hand !== undefined ? summary.days_on_hand : '—' }}</b></div>
+    <div class="tv-filter">
+      <label class="tv-input">
+        <span class="tv-input-label">Từ ngày</span>
+        <input type="date" [(ngModel)]="dateFrom" aria-label="Từ ngày">
+      </label>
+      <span class="tv-dash">–</span>
+      <label class="tv-input">
+        <span class="tv-input-label">Đến ngày</span>
+        <input type="date" [(ngModel)]="dateTo" aria-label="Đến ngày">
+      </label>
+      <button mat-flat-button color="primary" class="tv-btn" (click)="load()" [disabled]="loading">
+        <mat-icon>search</mat-icon>Xem
+      </button>
+      <div class="tv-presets">
+        <button type="button" (click)="setRange('month')">Tháng này</button>
+        <button type="button" (click)="setRange('3m')">3 tháng</button>
+        <button type="button" (click)="setRange('year')">Năm nay</button>
+      </div>
     </div>
-    <p class="hint">
-      Vòng quay = giá vốn hàng bán / giá trị tồn bình quân ((tồn đầu kỳ + tồn cuối kỳ) / 2 × giá vốn hiện tại).
-      Số ngày tồn = số ngày của kỳ / vòng quay. Hàng quay chậm xếp lên đầu.
-    </p>
+  </section>
+
+  <!-- Số tổng -->
+  <section class="tv-kpis" *ngIf="summary">
+    <div class="tv-kpi">
+      <span class="k-label">Giá vốn hàng bán</span>
+      <b class="k-value">{{ summary.cogs | number }}</b>
+      <span class="k-sub">đ · trong kỳ</span>
+    </div>
+    <div class="tv-kpi">
+      <span class="k-label">Tồn bình quân</span>
+      <b class="k-value">{{ summary.avg_stock_value | number }}</b>
+      <span class="k-sub">đ · theo giá vốn</span>
+    </div>
+    <div class="tv-kpi tv-kpi-main" [class.is-slow]="summary.turnover !== null && summary.turnover !== undefined && summary.turnover < 1">
+      <span class="k-label">Vòng quay</span>
+      <b class="k-value">{{ summary.turnover !== null && summary.turnover !== undefined ? summary.turnover : '—' }}</b>
+      <span class="k-sub">vòng / kỳ</span>
+    </div>
+    <div class="tv-kpi">
+      <span class="k-label">Số ngày tồn</span>
+      <b class="k-value">{{ summary.days_on_hand !== null && summary.days_on_hand !== undefined ? (summary.days_on_hand | number) : '—' }}</b>
+      <span class="k-sub">ngày để bán hết lượng tồn</span>
+    </div>
+  </section>
+
+  <!-- Bảng -->
+  <section class="tv-card tv-table-card">
+    <div class="tv-table-head">
+      <span class="tv-count">{{ items.length | number }} {{ by === 'product' ? 'mặt hàng' : 'nhóm hàng' }}</span>
+      <span class="tv-legend"><i class="dot slow"></i>Quay chậm (dưới 1 vòng)</span>
+      <span class="tv-legend"><i class="dot ok"></i>Bình thường</span>
+      <details class="tv-howto">
+        <summary><mat-icon>info_outline</mat-icon>Cách tính</summary>
+        <p>Vòng quay = giá vốn hàng bán / giá trị tồn bình quân, với tồn bình quân = (tồn đầu kỳ + tồn cuối kỳ) / 2 × giá vốn hiện tại.
+          Số ngày tồn = số ngày của kỳ / vòng quay. Không bán trong kỳ thì vòng quay bằng 0, số ngày tồn để trống.</p>
+      </details>
+    </div>
+
+    <div class="tv-loading" *ngIf="loading"><mat-progress-bar mode="indeterminate"></mat-progress-bar></div>
 
     <div class="table-wrap">
       <table class="turnover-table">
@@ -45,27 +94,43 @@
         <tbody>
         <ng-container *ngIf="by === 'product'">
           <tr *ngFor="let row of items | slice:0:showCount">
-            <td>{{ row.product_no }}</td><td>{{ row.product_name }}</td><td>{{ row.group_name }}</td>
-            <td class="num">{{ row.open_qty | number }}</td><td class="num">{{ row.close_qty | number }}</td>
-            <td class="num">{{ row.cogs | number }}</td><td class="num">{{ row.avg_stock_value | number }}</td>
-            <td class="num" [class.slow]="row.turnover !== null && row.turnover < 1">{{ row.turnover !== null && row.turnover !== undefined ? row.turnover : '—' }}</td>
-            <td class="num">{{ row.days_on_hand !== null && row.days_on_hand !== undefined ? row.days_on_hand : '—' }}</td>
+            <td class="code">{{ row.product_no }}</td>
+            <td class="name">{{ row.product_name }}</td>
+            <td class="muted">{{ row.group_name }}</td>
+            <td class="num">{{ row.open_qty | number }}</td>
+            <td class="num">{{ row.close_qty | number }}</td>
+            <td class="num">{{ row.cogs | number }}</td>
+            <td class="num">{{ row.avg_stock_value | number }}</td>
+            <td class="num">
+              <span class="pill" [class.slow]="row.turnover !== null && row.turnover !== undefined && row.turnover < 1"
+                    [class.ok]="row.turnover !== null && row.turnover !== undefined && row.turnover >= 1">
+                {{ row.turnover !== null && row.turnover !== undefined ? row.turnover : '—' }}
+              </span>
+            </td>
+            <td class="num" [class.muted]="row.days_on_hand === null || row.days_on_hand === undefined">{{ row.days_on_hand !== null && row.days_on_hand !== undefined ? (row.days_on_hand | number) : '—' }}</td>
           </tr>
         </ng-container>
         <ng-container *ngIf="by === 'group'">
           <tr *ngFor="let row of items">
-            <td>{{ row.group_name }}</td><td class="num">{{ row.product_count }}</td>
-            <td class="num">{{ row.cogs | number }}</td><td class="num">{{ row.avg_stock_value | number }}</td>
-            <td class="num" [class.slow]="row.turnover !== null && row.turnover < 1">{{ row.turnover !== null && row.turnover !== undefined ? row.turnover : '—' }}</td>
-            <td class="num">{{ row.days_on_hand !== null && row.days_on_hand !== undefined ? row.days_on_hand : '—' }}</td>
+            <td class="name">{{ row.group_name }}</td>
+            <td class="num">{{ row.product_count }}</td>
+            <td class="num">{{ row.cogs | number }}</td>
+            <td class="num">{{ row.avg_stock_value | number }}</td>
+            <td class="num">
+              <span class="pill" [class.slow]="row.turnover !== null && row.turnover !== undefined && row.turnover < 1"
+                    [class.ok]="row.turnover !== null && row.turnover !== undefined && row.turnover >= 1">
+                {{ row.turnover !== null && row.turnover !== undefined ? row.turnover : '—' }}
+              </span>
+            </td>
+            <td class="num" [class.muted]="row.days_on_hand === null || row.days_on_hand === undefined">{{ row.days_on_hand !== null && row.days_on_hand !== undefined ? (row.days_on_hand | number) : '—' }}</td>
           </tr>
         </ng-container>
-        <tr *ngIf="!loading && !items.length"><td colspan="9">Không có dữ liệu trong kỳ</td></tr>
+        <tr *ngIf="!loading && !items.length"><td colspan="9" class="tv-empty">Không có dữ liệu trong kỳ. Thử chọn khoảng thời gian dài hơn.</td></tr>
         </tbody>
       </table>
     </div>
     <div class="more" *ngIf="by === 'product' && items.length > showCount">
-      <button mat-button color="primary" (click)="showCount = showCount + 200">Hiện thêm ({{ items.length - showCount }} dòng)</button>
+      <button mat-stroked-button color="primary" (click)="showCount = showCount + 200">Hiện thêm ({{ items.length - showCount }} dòng)</button>
     </div>
-  </mat-card>
+  </section>
 </div>

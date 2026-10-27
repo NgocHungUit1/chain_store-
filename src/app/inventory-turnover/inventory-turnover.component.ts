@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {format, startOfMonth, subMonths} from 'date-fns';
+import {format, startOfMonth, startOfYear, subMonths} from 'date-fns';
 import {NotifierService} from 'angular-notifier';
 import {environment} from '../../environments/environment';
 
@@ -43,9 +43,21 @@ export class InventoryTurnoverComponent implements OnInit {
     });
   }
 
+  /** Chọn nhanh khoảng thời gian rồi xem luôn */
+  setRange(range: 'month' | '3m' | 'year') {
+    const today = new Date();
+    const from = range === 'month' ? startOfMonth(today)
+      : range === '3m' ? startOfMonth(subMonths(today, 2))
+        : startOfYear(today);
+    this.dateFrom = format(from, 'YYYY-MM-DD');
+    this.dateTo = format(today, 'YYYY-MM-DD');
+    this.load();
+  }
+
   setBy(by: 'product' | 'group') {
     if (this.by !== by) {
       this.by = by;
+      this.items = []; // bỏ dữ liệu của chế độ cũ, tránh bảng nhóm hiện tạm dòng sản phẩm trong lúc tải
       this.load();
     }
   }
