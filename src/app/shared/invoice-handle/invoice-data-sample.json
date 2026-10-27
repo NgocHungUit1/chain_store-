@@ -111,7 +111,6 @@
         "VAT": "3000",
         "Anh_San_Pham": "/assets/images/default-product.png"
       }
-
     ],
     "meaning": "Danh sách mặt hàng"
   },
@@ -134,6 +133,21 @@
     "name": "Tong_Cong",
     "sampleValue": "352,450",
     "meaning": "Tổng cộng cần thanh toán"
+  },
+  {
+    "name": "Thu_Khac",
+    "sampleValue": "20,000",
+    "meaning": "Tổng các khoản thu khác khi bán (phí dịch vụ, giao hàng...)"
+  },
+  {
+    "name": "Tong_Phai_Tra",
+    "sampleValue": "230,000",
+    "meaning": "Tổng phải trả của hoá đơn (sau chiết khấu) = đã trả + còn lại"
+  },
+  {
+    "name": "Tong_Phai_Tra_Bang_Chu",
+    "sampleValue": "Hai trăm ba mươi nghìn đồng chẵn",
+    "meaning": "Tổng phải trả viết bằng chữ"
   },
   {
     "name": "Khach_Thanh_Toan",

@@ -17,6 +17,7 @@ import {PopupConfirmDialogComponent} from '../../common/popup-confirm-dialog/pop
 import { NationalPharmacyV2ConnectDialogComponent } from '../../common/national-pharmacy-v2/national-pharmacy-v2-connect-dialog/national-pharmacy-v2-connect-dialog.component';
 import { NationalPharmacyV2Service } from '../../common/national-pharmacy-v2/national-pharmacy-v2.service';
 import {ConsultPrintService} from '../../shared/invoice-handle/consult-print.service';
+import {InvoicePrintService} from '../../shared/invoice-handle/invoice-print.service';
 import {getAllPermissions} from '../../shared/permission-storage';
 
 @Component({
@@ -88,6 +89,7 @@ export class InvoiceTabInfoComponent implements OnChanges {
 
   constructor(
     private consultPrintService: ConsultPrintService,
+    private invoicePrintService: InvoicePrintService,
     private dialog: MatDialog,
     public notifySer: NotifierService,
     public invoiceService: InvoiceService,
@@ -371,8 +373,14 @@ export class InvoiceTabInfoComponent implements OnChanges {
     this.autoPrintInSoLo = e.checked;
   }
 
+  /** In theo mẫu hoá đơn đang chọn (giống màn bán hàng); cửa hàng chưa có mẫu nào thì in kiểu cũ */
   actionPrintInvoice(invoice) {
-    this.printInvoice(invoice.id);
+    const logo = this.store && this.store['logo'] ? this.store['logo'] : '';
+    this.invoicePrintService.printInvoice(invoice.id, {logo, greeting: this.store?.description}).subscribe(ok => {
+      if (!ok) {
+        this.printInvoice(invoice.id);
+      }
+    }, () => this.notifySer.notify('error', 'Không tải được dữ liệu in hoá đơn.'));
   }
 
   actionPrintConsult(invoice) {

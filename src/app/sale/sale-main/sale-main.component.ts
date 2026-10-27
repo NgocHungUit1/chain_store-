@@ -45,6 +45,7 @@ import { BankAccountFilter } from '../../bank-account/bank-account.model';
 import { SearchProductDialogComponent } from '../../common/search-product-dialog/search-product-dialog.component';
 import { ColumnVisibilityMap, SaleColumnVisibilityService } from '../../shared/sale-column-visibility.service';
 import { InvoiceData, PreviewService } from '../../shared/invoice-handle/preview.service';
+import { InvoicePrintService } from '../../shared/invoice-handle/invoice-print.service';
 import { InvoiceTemplate, InvoiceTemplateService } from '../../shared/invoice-handle/invoice-template.service';
 import { PrintService } from '../../shared/invoice-handle/print.service';
 import { LocationService } from '../../location/location.service';
@@ -110,6 +111,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
     private previewService: PreviewService,
     private invoiceTemplateService: InvoiceTemplateService,
     private printService: PrintService,
+    private invoicePrintService: InvoicePrintService,
     public locationSer: LocationService,
   ) {
     this.optionStoreService.getValue('point_enabled').subscribe(res => {
@@ -2734,55 +2736,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
   }
 
   executePrint(dataToPrint: any) {
-    //const WindowPrt = window.open('', '', 'left=0,top=0,width=900,height=900,toolbar=0,scrollbars=0,status=0');
-    const content = this.previewService.fillTemplate(this.selectedTemplate.body, dataToPrint);
-    const styleMatch = content.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
-    const extractedStyle = styleMatch?.[1] || '';
-    const contentWithoutStyle = content.replace(styleMatch?.[0] || '', '');
-    // Replace all <style> tags with the extracted style
-    const printHtml = `
-        <!DOCTYPE html>
-        <html lang="vi">
-          <head>
-            <title>In hóa đơn</title>
-            <style>
-              @media print {
-               @page {
-                  margin: 0;
-                  size: auto;
-                }
-                ${extractedStyle}
-                table td {
-                  word-break: normal;
-                  overflow-wrap: break-word;
-                  white-space: pre-line;
-                }
-              }
-            </style>
-          </head>
-          <body>
-            ${contentWithoutStyle}
-            <script>
-               var qrLoaded = false;
-
-              function onQrLoaded() {
-                qrLoaded = true;
-                window.parent.postMessage({ action: 'PRINT_READY' }, '*');
-              }
-
-              window.onload = function () {
-                if (!qrLoaded) {
-                  window.parent.postMessage({ action: 'PRINT_READY' }, '*');
-                }
-              };
-            </script>
-          </body>
-        </html>
-      `;
-    this.printService.print(printHtml);
-    // WindowPrt.document.write(printHtml);
-    // WindowPrt.document.close();
-    // WindowPrt.focus();
+    this.invoicePrintService.print(this.selectedTemplate.body, dataToPrint);
   }
 
   /**
@@ -2790,86 +2744,11 @@ export class SaleMainComponent implements OnInit, DoCheck {
    * @param preInvoiceData Data to be printed in the invoice
    */
   printInvoiceTemplate(preInvoiceData: any) {
-
-    const { nationalPrescription } = preInvoiceData || {};
-    let customer_info='';
-    if (nationalPrescription) {
-      customer_info = `
-      <p>Mã đơn thuốc: <b>${nationalPrescription?.nationalPrescriptionId || ''}</b></p>
-      <p>Tên đơn vị: <b>${nationalPrescription?.medicalFacilityName || ''}</b></p>
-      <p>Họ tên: <b>${nationalPrescription?.patientName || ''}</b></p>
-      <p>SĐT: <b>${nationalPrescription?.patientPhoneNumber || ''}</b></p>
-      <p>Ngày sinh: <b>${nationalPrescription?.patientDOB || ''}</b>
-        Cân nặng: <b>${nationalPrescription?.patientWeight || ''}</b>
-        Giới tính: <b>${nationalPrescription?.patientSex || ''}</b></p>
-      <br>
-      <p><b>Chẩn đoán:</b> ${nationalPrescription?.diagnostics?.[0]?.conclusion || ''}</p>
-        `;
-    } else {
-      const customer_name = preInvoiceData?.customer?.name || preInvoiceData?.prescription?.name || 'Khách lẻ';
-      customer_info += `<p>Khách hàng: ${customer_name}</p>`;
-      const customer_phone = preInvoiceData?.customer?.phone || '';
-      if (customer_phone) {
-        customer_info += `<p>SĐT: ${customer_phone}</p>`;
-      }
-    }
-    // Giá bán đã gồm VAT (total_vat = 0): tách ngược VAT từ thành tiền từng dòng để bill ghi
-    // đúng "Tổng tiền hàng (chưa VAT)" và "VAT" như HĐĐT. Hoá đơn cũ có cộng thêm VAT thì giữ nguyên.
-    const savedVat = numeral(preInvoiceData?.total_vat).value() || 0;
-    const totalPrice = numeral(preInvoiceData?.total_price || 0).value() || 0;
-    const billVat = savedVat > 0 ? savedVat : (preInvoiceData?.detail || []).reduce((sum, item) => {
-      const percent = Number(item?.vat_percent) || 0;
-      const line = numeral(item?.total || 0).value() || 0;
-      return percent > 0 ? sum + Math.round(line - line / (1 + percent / 100)) : sum;
-    }, 0);
-    const billBeforeVat = savedVat > 0 ? totalPrice : totalPrice - billVat;
-    const dataToPrint: Partial<InvoiceData> = {
-      Logo: this.logo? `<img src="${this.logo}" style="max-width: 60px;">` :
-    `<img src="assets/images/Rx20_16x16_op1-1207.png" style="max-width: 60px;">`,
-      Ten_Cua_Hang: preInvoiceData?.store?.name || 'Chi nhánh trung tâm',
-      Dia_Chi_Cua_Hang: preInvoiceData?.store?.address || '',
-      So_Dien_Thoai_Cua_Hang: preInvoiceData?.created_user?.phone_number || '',
-      Tieu_De_In: preInvoiceData?.header|| 'HÓA ĐƠN BÁN HÀNG',
-      So_Hoa_Don: preInvoiceData?.invoice_no || '',
-      Ma_Don_Hang: preInvoiceData?.invoice_no || '',
-      Ngay: new Date(preInvoiceData?.created_at_iso).getDate().toString().padStart(2, '0'),
-      Thang: (new Date(preInvoiceData?.created_at_iso).getMonth() + 1).toString().padStart(2, '0'),
-      Nam: new Date(preInvoiceData?.created_at_iso).getFullYear().toString(),
-      Ngay_Ban: new Date(preInvoiceData?.created_at_iso).toLocaleDateString('vi-VN'),
-      Gio_Ban: new Date(preInvoiceData?.created_at_iso).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
-      Nhan_Vien: this.user?.username || '',
-      Khach_Hang: preInvoiceData?.customer?.name || 'Khách lẻ',
-      So_Dien_Thoai: preInvoiceData?.customer?.phone || '',
-      Dia_Chi_Khach_Hang: preInvoiceData?.customer?.address || '',
-      Phuong_Xa_Khach_Hang: preInvoiceData?.customer?.ward?.name ||'', // Not available in sample data
-      Khu_Vuc_Khach_Hang_QH_TP: preInvoiceData?.customer?.province?.name ||'', // Not available in sample data
-      Don_Vi_Co_Quan_Khach_Hang: preInvoiceData?.customer?.company_name ||'',
-      items: preInvoiceData.detail?.map((item, index) => ({
-        STT: index+1,
-        Ten_Hang_Hoa: item?.product?.product_name || '',
-        Don_Gia_Chiet_Khau: numeral(item?.price || 0).format('0,0'), // handle later if needed
-        So_Luong: (item.amount || 0).toString(),
-        Thanh_Tien: numeral(item?.total || 0).format('0,0'),
-        Don_Vi: item?.base_unit ,
-        Don_Gia: numeral(item?.price || 0).format('0,0'),
-        So_Lo: item?.so_lo || '',
-        Ghi_Chu: item?.note || '',
-        VAT: item?.vat_percent,
-        Anh_San_Pham: item?.product?.default_image||'/assets/images/default-product.png',
-      })) || [],
-      Tong_Tien_Hang: numeral(numeral(preInvoiceData?.total_price || 0).value() + numeral(preInvoiceData?.total_vat).value()).format('0,0'),
-      Tong_Cong: numeral(preInvoiceData?.sum_payment || 0).format('0,0'),
-      Tong_Tien_Hang_Bang_Chu: this.numberToVietnameseText(numeral(preInvoiceData?.sum_payment).value()),
-      Tong_So_Luong: preInvoiceData?.detail?.reduce((acc, item) => acc + (item?.amount || 0), 0).toString(),
-      Chiet_Khau: preInvoiceData?.discount || '0',
-      Khach_Thanh_Toan: numeral(preInvoiceData?.sum_payment || 0).format('0,0'),
-      Con_Lai: numeral(preInvoiceData?.debt || 0).format('0,0'),
-      Thong_Tin_Khach_Hang: customer_info,
-      Ghi_Chu_Don_Hang: preInvoiceData?.note,
-      VAT_Tong: numeral(billVat).format('0,0'),
-      Tong_Tien_Hang_Chua_VAT: numeral(billBeforeVat).format('0,0'),
-      Loi_Chao_Cuoi: this.description,
-    }
+    const dataToPrint: Partial<InvoiceData> = this.invoicePrintService.buildData(preInvoiceData, {
+      logo: this.logo,
+      staffName: this.user?.username || '',
+      greeting: this.description,
+    });
     const QrCode = this.form.get('selectedMethod').value === 'Chuyển khoản' ? this.getQrCode(this.selectedBankAccount, preInvoiceData?.transfer_note) : of(null);
     QrCode.subscribe((qrCode) => {
       if (qrCode) {
@@ -4407,121 +4286,7 @@ export class SaleMainComponent implements OnInit, DoCheck {
 
 
   numberToVietnameseText(number) {
-    // Handle invalid input
-    if (isNaN(number) || number < 0) {
-      return 'Invalid input';
-    }
-
-    // Format the number with commas
-    const formattedNumber = number.toLocaleString('vi-VN');
-
-    // Convert number to Vietnamese words
-    const vietnameseWords = this.convertNumberToVietnameseWords(number);
-
-    // Return the formatted string
-    return `${vietnameseWords} đồng chẵn`;
-  }
-
-  /**
-   * Converts a number to Vietnamese words
-   * @param {number} number - The number to convert
-   * @returns {string} Vietnamese words representation of the number
-   */
-  convertNumberToVietnameseWords(number: number) {
-    const units = ['', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
-    const teens = ['', 'mười một', 'mười hai', 'mười ba', 'mười bốn', 'mười lăm', 'mười sáu', 'mười bảy', 'mười tám', 'mười chín'];
-    const tens = ['', 'mười', 'hai mươi', 'ba mươi', 'bốn mươi', 'năm mươi', 'sáu mươi', 'bảy mươi', 'tám mươi', 'chín mươi'];
-    const scales = ['', 'nghìn', 'triệu', 'tỷ', 'nghìn tỷ', 'triệu tỷ'];
-
-    // Handle zero
-    if (number === 0) {
-      return 'Không';
-    }
-
-    // Convert to string and pad to handle groups of 3 digits
-    let numStr = number.toString();
-    // Ensure string length is multiple of 3 by padding with leading zeros
-    const remainder = numStr.length % 3;
-    if (remainder > 0) {
-      numStr = '0'.repeat(3 - remainder) + numStr;
-    }
-
-    // Split into groups of 3 digits
-    const groups = [];
-    for (let i = 0; i < numStr.length; i += 3) {
-      groups.push(numStr.substring(i, i + 3));
-    }
-
-    // Process each group
-    const results = [];
-    groups.forEach((group, index) => {
-      const groupIndex = groups.length - 1 - index;
-      const groupValue = parseInt(group);
-
-      if (groupValue > 0) {
-        const groupText = this.convertGroupToVietnamese(group);
-        const scaleText = groupIndex > 0 ? ' ' + scales[groupIndex] : '';
-        results.push(groupText + scaleText);
-      }
-    });
-
-    // Join groups and capitalize first letter
-    const result = results.join(' ');
-    return result.charAt(0).toUpperCase() + result.slice(1);
-  }
-
-  /**
-   * Converts a 3-digit group to Vietnamese words
-   * @param {string} group - 3-digit group as string
-   * @returns {string} Vietnamese words for the group
-   */
-  convertGroupToVietnamese(group) {
-    const units = ['', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
-    const digits = group.split('').map(d => parseInt(d));
-
-    let result = '';
-
-    // Handle hundreds
-    if (digits[0] > 0) {
-      result += units[digits[0]] + ' trăm';
-    }
-
-    // Handle tens and units
-    if (digits[1] > 0) {
-      // Add space if we already have hundreds
-      if (result !== '') {
-        result += ' ';
-      }
-
-      if (digits[1] === 1) {
-        // Special case for "mười"
-        result += 'mười';
-      } else {
-        result += units[digits[1]] + ' mươi';
-      }
-
-      // Handle units
-      if (digits[2] > 0) {
-        if (digits[2] === 1 && digits[1] !== 0) {
-          // Special case for "một" after a "mươi"
-          result += ' mốt';
-        } else if (digits[2] === 5 && digits[1] !== 0) {
-          // Special case for "năm" after a "mươi"
-          result += ' lăm';
-        } else {
-          result += ' ' + units[digits[2]];
-        }
-      }
-    } else if (digits[2] > 0) {
-      // Only units, no tens
-      // Add space if we already have hundreds
-      if (result !== '') {
-        result += ' lẻ ';
-      }
-      result += units[digits[2]];
-    }
-
-    return result;
+    return this.invoicePrintService.numberToVietnameseText(number);
   }
 
   public openSearchProductDialog(masterProduct: ProductInfo): void {

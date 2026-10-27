@@ -38,6 +38,9 @@ export interface InvoiceData {
   }>;
   Tong_Tien_Hang: string;
   Tong_Cong: string;
+  Thu_Khac?: string; // tổng phí thu khác khi bán
+  Tong_Phai_Tra?: string; // sau chiết khấu = đã trả + còn lại
+  Tong_Phai_Tra_Bang_Chu?: string;
   Khach_Thanh_Toan: string;
   Con_Lai: string;
   Tong_Tien_Hang_Bang_Chu: string;

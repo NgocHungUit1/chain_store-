@@ -45,9 +45,21 @@ export class ConsultPrintService {
 
   private buildData(data: any, staffName: string): any {
     const created = data?.created_at_iso ? new Date(data.created_at_iso) : new Date();
+    const customer = data?.customer || {};
+    const dob = customer.dob ? new Date(customer.dob) : null;
+    const sex = customer.sex === null || customer.sex === undefined || customer.sex === '' ? null : Number(customer.sex);
+    const items = data?.detail || [];
     return {
+      Logo: data?.store?.logo ? `<img src="${data.store.logo}" alt="Logo">` : '',
       Ten_Cua_Hang: data?.store?.name || '',
       Dia_Chi_Cua_Hang: data?.store?.address || '',
+      So_Dien_Thoai_Cua_Hang: data?.store?.phone || data?.created_user?.phone_number || '',
+      Nam_Sinh: dob && !isNaN(dob.getTime()) ? dob.toLocaleDateString('vi-VN') : '',
+      Gioi_Tinh: sex === 1 ? 'Nam' : (sex === 0 ? 'Nữ' : ''),
+      Dia_Chi_Khach_Hang: customer.address || '',
+      Gio_Ban: created.toLocaleTimeString('vi-VN', {hour: '2-digit', minute: '2-digit'}),
+      Tong_Khoan: items.length.toString(),
+      Loi_Dan: data?.note || 'Đọc kỹ hướng dẫn sử dụng trước khi dùng. Dùng đúng liều, đúng giờ.',
       So_Hoa_Don: data?.invoice_no || '',
       Ma_Don_Hang: data?.invoice_no || '',
       Ngay: created.getDate().toString().padStart(2, '0'),
@@ -59,13 +71,13 @@ export class ConsultPrintService {
       Nhan_Vien: staffName || data?.created_user?.username || '',
       Di_Ung_Thuoc: data?.customer?.drug_allergy || 'Không ghi nhận',
       Benh_Nen: data?.customer?.medical_history || 'Không ghi nhận',
-      items: (data?.detail || []).map((item, index) => ({
+      items: items.map((item, index) => ({
         STT: index + 1,
         Ten_Hang_Hoa: item?.product?.product_name || '',
         So_Luong: (item?.amount || 0).toString(),
         Don_Vi: item?.base_unit || '',
         Hoat_Chat: item?.hoat_chat || '',
-        Cach_Dung: item?.cach_dung || '',
+        Cach_Dung: item?.cach_dung || 'Theo hướng dẫn của dược sĩ',
         Ghi_Chu: item?.note || '',
       })),
     };
