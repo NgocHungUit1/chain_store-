@@ -90,13 +90,15 @@
         </mat-form-field>
       </div>
 
-      <mat-form-field appearance="outline" style="width: 200px; margin-left: 12px;">
-        <mat-select placeholder="Lý do trả" [value]="apiFilter?.return_reason_id ? +apiFilter.return_reason_id : ''"
-                    (selectionChange)="onReasonFilterChange($event.value)">
-          <mat-option value="">Tất cả lý do</mat-option>
-          <mat-option *ngFor="let reason of returnReasons" [value]="reason.id">{{ reason.name }}</mat-option>
-        </mat-select>
-      </mat-form-field>
+      <div class="reason-filter-container">
+        <mat-form-field appearance="outline" class="reason-filter">
+          <mat-select placeholder="Lý do trả" [value]="apiFilter?.return_reason_id ? +apiFilter.return_reason_id : ''"
+                      (selectionChange)="onReasonFilterChange($event.value)">
+            <mat-option value="">Tất cả lý do</mat-option>
+            <mat-option *ngFor="let reason of returnReasons" [value]="reason.id">{{ reason.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
 
 
       <span fxFlex="1 1 0%"></span>

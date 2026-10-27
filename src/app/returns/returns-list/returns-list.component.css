@@ -234,3 +234,34 @@ tr.mat-header-row:nth-child(1) {
   font-weight: 600;
   background: #f5f7fa;
 }
+
+/* Tổng tiền (căn phải) và Lý do trả (căn trái) đứng cạnh nhau -> cần khoảng cách */
+.mat-column-total_price {
+  padding-right: 32px !important;
+}
+.mat-column-return_reason {
+  min-width: 160px;
+}
+
+/* Ô lọc lý do: cùng kiểu, cùng chiều cao với ô tìm kiếm */
+.reason-filter-container {
+  margin-left: 12px;
+}
+.reason-filter {
+  width: 220px;
+
+  font-size: 1rem;
+}
+:host ::ng-deep .reason-filter .mat-form-field-infix {
+  border-top: 0;
+  padding: 1.2em 0 1em 0 !important;
+}
+:host ::ng-deep .reason-filter .mat-form-field-flex {
+  align-items: center;
+}
+:host ::ng-deep .reason-filter .mat-form-field-outline {
+  background: white;
+}
+:host ::ng-deep .reason-filter .mat-form-field-wrapper {
+  padding: 5px 0;
+}
