@@ -12,6 +12,9 @@ test('Đối soát phòng khám: số tổng khớp, sang tháng sau nợ thành
   const w = watchErrors(page);
   await open(page, '/report/clinic-reconciliation');
   await expect(page.getByRole('heading', {name: 'Đối soát phòng khám'})).toBeVisible();
+  // Chọn phòng khám ở dropdown
+  await page.locator('[data-test=clinic-select]').click();
+  await page.getByRole('option', {name: /Phòng khám Da liễu Dr Tuấn/}).click();
   const kpi = (label: string) => page.locator('.tv-kpi', {hasText: label}).locator('.k-value');
   await expect(kpi('Phát sinh trong tháng')).toBeVisible();
 
@@ -20,13 +23,16 @@ test('Đối soát phòng khám: số tổng khớp, sang tháng sau nợ thành
   const paid = num(await kpi('Đã thanh toán').innerText());
   const closing = num(await kpi('Còn nợ cuối').innerText());
   expect(opening + increase - paid).toBe(closing);
-  expect(num(await page.locator('table.rc-table:not(.rc-overview) tfoot td.num').first().innerText())).toBe(closing);
-  // Tổng các lần trả = Đã thanh toán (khi không có trả hàng)
-  const payCells = await page.locator('.tv-table-card', {hasText: 'Các lần phòng khám trả tiền'}).locator('tbody td.num').allInnerTexts();
+  expect(num(await page.locator('.rc-invoices tfoot td.num').first().innerText())).toBe(closing);
+  // Tab Lịch sử thanh toán: tổng các lần trả = Đã thanh toán (khi không có trả hàng)
+  await page.getByRole('tab', {name: /Lịch sử thanh toán/}).click();
+  const payCells = await page.locator('.rc-payments tbody td.num').allInnerTexts();
   expect(payCells.reduce((a, s) => a + num(s), 0)).toBe(paid);
   await shot(page, 'doi-soat-thang-nay');
 
   // Tháng sau: nợ cuối tháng này thành nợ đầu kỳ, hoá đơn còn nợ hiện nhãn "tháng trước"
+  await shot(page, 'doi-soat-lich-su-thanh-toan');
+  await page.getByRole('tab', {name: /Hoá đơn/}).click();
   await page.getByRole('button', {name: 'Tháng sau'}).click();
   await expect(kpi('Nợ đầu kỳ')).toHaveText(closing.toLocaleString('en-US'));
   if (closing > 0) {
@@ -49,7 +55,7 @@ test('Đối soát phòng khám: số tổng khớp, sang tháng sau nợ thành
   w.assertClean();
 });
 
-test('Đối soát: nhiều phòng khám có bảng tổng hợp; Thu nợ trừ vào hoá đơn cũ nhất, nợ giảm đúng', async ({page}) => {
+test('Đối soát: nhiều phòng khám có bảng tổng hợp; Thu nợ xem trước trừ hoá đơn cũ nhất, chặn nhập quá nợ', async ({page}) => {
   const w = watchErrors(page);
   await open(page, '/report/clinic-reconciliation');
   const overview = page.locator('.rc-overview');
@@ -62,7 +68,8 @@ test('Đối soát: nhiều phòng khám có bảng tổng hợp; Thu nợ trừ
   const first = rows.first();
   const name = (await first.locator('td').first().locator('b').innerText()).trim();
   await first.click();
-  await expect(page.locator('.rc-detail-title')).toHaveText(name);
+  await expect(page.locator('[data-test=clinic-select]')).toContainText(name);
+  await expect(overview).toHaveCount(0);
   const kpi = (label: string) => page.locator('.tv-kpi', {hasText: label}).locator('.k-value');
   const before = num(await kpi('Còn nợ cuối').innerText());
   test.skip(before < 10000, 'Phòng khám không còn đủ nợ để thử');
@@ -70,15 +77,23 @@ test('Đối soát: nhiều phòng khám có bảng tổng hợp; Thu nợ trừ
   await page.getByRole('button', {name: /Thu nợ/}).click();
   const dialog = page.locator('mat-dialog-container');
   await expect(dialog.locator('h2')).toHaveText('Thu nợ ' + name);
-  await expect(dialog.locator('input[name=collect_amount]')).toHaveValue(before.toLocaleString('en-US'));
+  // Mặc định trả hết số đang nợ (tính tới hôm nay)
+  const debtText = await dialog.locator('input[name=collect_amount]').inputValue();
+  expect(num(debtText)).toBeGreaterThan(0);
   await dialog.locator('input[name=collect_amount]').fill('10000');
   await dialog.locator('input[name=collect_amount]').press('End');
-  // Xem trước: dòng đầu (hoá đơn cũ nhất) nhận 10,000
+  // Xem trước: hoá đơn cũ nhất nhận 10,000, các hoá đơn sau 0
   await expect(dialog.locator('tbody tr').first().locator('td').nth(4)).toHaveText('10,000');
+  await expect(dialog.getByText(/Trả một phần, còn lại/)).toBeVisible();
+  // Nhập quá số nợ: báo lỗi, khoá nút lập phiếu
+  await dialog.locator('input[name=collect_amount]').fill(String(num(debtText) + 1000));
+  await dialog.locator('input[name=collect_amount]').press('End');
+  await expect(dialog.getByText(/Lớn hơn số đang nợ/)).toBeVisible();
+  await expect(dialog.getByRole('button', {name: /Lập phiếu thu/})).toBeDisabled();
   await shot(page, 'doi-soat-thu-no');
-  await dialog.getByRole('button', {name: /Lập phiếu thu/}).click();
+  // Không lập phiếu thật để khỏi đụng dữ liệu đang test tay (lập phiếu đã kiểm bằng API: thu đủ, thu một phần, chặn trả thừa)
+  await dialog.getByRole('button', {name: 'Bỏ qua'}).click();
   await expect(dialog).toHaveCount(0);
-  await expect(kpi('Còn nợ cuối')).toHaveText((before - 10000).toLocaleString('en-US'));
-  await expect(page.locator('.tv-table-card', {hasText: 'Các lần phòng khám trả tiền'}).locator('tbody')).toContainText('Thu nợ');
+  await expect(kpi('Còn nợ cuối')).toHaveText(before.toLocaleString('en-US'));
   w.assertClean();
 });

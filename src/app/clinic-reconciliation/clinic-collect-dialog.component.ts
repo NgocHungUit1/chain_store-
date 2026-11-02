@@ -103,6 +103,8 @@ export class ClinicCollectDialogComponent {
 
   private fail(err: any) {
     this.saving = false;
-    this.notify.notify('error', err?.error?.message || 'Không lập được phiếu thu');
+    // 422 trả mảng [{field, message}] (vd hoá đơn vừa được người khác thu)
+    const msg = err?.error?.message || (Array.isArray(err?.error) && err.error[0]?.message);
+    this.notify.notify('error', msg || 'Không lập được phiếu thu');
   }
 }

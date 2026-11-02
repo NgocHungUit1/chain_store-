@@ -6,27 +6,41 @@
         <span class="tv-ico"><mat-icon>fact_check</mat-icon></span>
         <div>
           <h3>Đối soát phòng khám</h3>
-          <p>Công nợ phòng khám liên kết theo tháng: hoá đơn bốc thuốc, tiền đã trả, còn nợ. Xuất Excel gửi phòng khám xác nhận.</p>
+          <p>Công nợ phòng khám liên kết theo tháng. Chọn một phòng khám để xem hoá đơn, lịch sử thanh toán, thu nợ, xuất Excel.</p>
         </div>
-      </div>
-      <div class="rc-actions">
-        <button mat-flat-button color="primary" class="tv-btn" type="button" *ngIf="canCollect" [disabled]="!detail" (click)="openCollect()">
-          <mat-icon>payments</mat-icon>Thu nợ
-        </button>
-        <button mat-stroked-button color="primary" class="tv-btn" type="button" [disabled]="!detail" (click)="exportExcel()">
-          <mat-icon>download</mat-icon>Xuất Excel
-        </button>
       </div>
     </div>
 
-    <div class="tv-filter">
-      <button mat-icon-button type="button" (click)="shiftMonth(-1)" aria-label="Tháng trước"><mat-icon>chevron_left</mat-icon></button>
-      <label class="tv-input">
-        <span class="tv-input-label">Tháng</span>
-        <input type="month" [(ngModel)]="month" (change)="changeMonth()" aria-label="Tháng đối soát" name="month">
-      </label>
-      <button mat-icon-button type="button" (click)="shiftMonth(1)" aria-label="Tháng sau"><mat-icon>chevron_right</mat-icon></button>
-      <span class="rc-one" *ngIf="clinics.length === 1"><mat-icon>local_hospital</mat-icon>{{ clinics[0].name }}<small *ngIf="clinics[0].branch"> · {{ clinics[0].branch }}</small></span>
+    <!-- Hàng điều khiển: tháng · phòng khám · thao tác -->
+    <div class="rc-toolbar">
+      <div class="rc-month">
+        <button mat-icon-button type="button" (click)="shiftMonth(-1)" aria-label="Tháng trước"><mat-icon>chevron_left</mat-icon></button>
+        <label class="tv-input">
+          <span class="tv-input-label">Tháng</span>
+          <input type="month" [(ngModel)]="month" (change)="changeMonth()" aria-label="Tháng đối soát" name="month">
+        </label>
+        <button mat-icon-button type="button" (click)="shiftMonth(1)" aria-label="Tháng sau"><mat-icon>chevron_right</mat-icon></button>
+      </div>
+
+      <mat-form-field appearance="outline" class="rc-clinic-select" *ngIf="clinics.length">
+        <mat-label>Phòng khám</mat-label>
+        <mat-select [value]="linkId || 0" (selectionChange)="selectClinic($event.value)" name="clinic" data-test="clinic-select">
+          <mat-option [value]="0" *ngIf="clinics.length > 1">
+            Tất cả phòng khám <span class="rc-opt-sub">· còn nợ {{ totals.closing | number }} đ</span>
+          </mat-option>
+          <mat-option *ngFor="let c of clinics" [value]="c.link_id">
+            {{ c.name }} <span class="rc-opt-sub" [class.rc-debt]="c.closing > 0">· còn nợ {{ c.closing | number }} đ</span>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <span class="rc-spacer"></span>
+      <button mat-flat-button color="primary" class="tv-btn" type="button" *ngIf="canCollect && detail" (click)="openCollect()">
+        <mat-icon>payments</mat-icon>Thu nợ
+      </button>
+      <button mat-stroked-button color="primary" class="tv-btn" type="button" *ngIf="detail" (click)="exportExcel()">
+        <mat-icon>download</mat-icon>Xuất Excel
+      </button>
     </div>
   </section>
 
@@ -37,8 +51,8 @@
     <p>Cửa hàng chưa có phòng khám liên kết. Tạo liên kết rồi phòng khám mới đặt thuốc được.</p>
   </section>
 
-  <!-- Nhiều phòng khám: bảng tổng hợp, bấm một dòng để xem chi tiết -->
-  <section class="tv-card tv-table-card" *ngIf="clinics.length > 1">
+  <!-- Tất cả phòng khám -->
+  <section class="tv-card tv-table-card" *ngIf="clinics.length > 1 && !linkId">
     <div class="tv-table-head">
       <b>Tất cả phòng khám</b>
       <span class="tv-count">{{ clinics.length }} phòng khám · {{ monthLabel }} · bấm một dòng để xem chi tiết</span>
@@ -57,7 +71,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let c of clinics" [class.rc-active]="c.link_id === linkId" (click)="selectClinic(c.link_id)">
+        <tr *ngFor="let c of clinics" (click)="selectClinic(c.link_id)">
           <td><b>{{ c.name }}</b><span class="rc-tag rc-off" *ngIf="!c.active">đã ngắt</span></td>
           <td>{{ c.branch || '—' }}</td>
           <td class="num">{{ c.order_count | number }}</td>
@@ -81,9 +95,8 @@
     </div>
   </section>
 
-  <ng-container *ngIf="detail">
-    <h4 class="rc-detail-title" *ngIf="clinics.length > 1">{{ detail.clinic.name }}</h4>
-    <!-- Số tổng -->
+  <!-- Một phòng khám -->
+  <ng-container *ngIf="detail && linkId">
     <section class="tv-kpis">
       <div class="tv-kpi">
         <span class="k-label">Nợ đầu kỳ</span>
@@ -107,82 +120,90 @@
       </div>
     </section>
 
-    <!-- Hoá đơn -->
-    <section class="tv-card tv-table-card">
-      <div class="tv-table-head">
-        <b>Hoá đơn</b>
-        <span class="tv-count">{{ detail.invoices.length }} hoá đơn trong {{ monthLabel }} và tháng trước còn nợ</span>
-      </div>
-      <div class="table-wrap">
-        <table class="turnover-table rc-table">
-          <thead>
-          <tr>
-            <th>Ngày</th>
-            <th>Hoá đơn</th>
-            <th>Đơn đặt thuốc</th>
-            <th>Bệnh nhân</th>
-            <th class="num">Phải thu</th>
-            <th class="num">Đã trả trước tháng</th>
-            <th class="num">Trả trong tháng</th>
-            <th class="num">Còn nợ</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let i of detail.invoices" [class.rc-carried]="i.carried">
-            <td>{{ i.date * 1000 | date:'dd/MM/yyyy' }}<span class="rc-tag" *ngIf="i.carried">tháng trước</span></td>
-            <td><a [routerLink]="['/transaction/invoice']" [queryParams]="{'InvoiceSearch[invoice_no]': i.invoice_no}">{{ i.invoice_no }}</a></td>
-            <td>
-              <a *ngIf="i.order_id" [routerLink]="['/transaction/prescription-order', i.order_id]">{{ i.order_code }}</a>
-              <span *ngIf="!i.order_id" class="rc-muted">Bán tại quầy</span>
-              <div class="rc-sub" *ngIf="i.order_status_label">{{ i.order_status_label }}</div>
-            </td>
-            <td>{{ i.patient_name || '—' }}</td>
-            <td class="num">{{ i.receivable | number }}</td>
-            <td class="num rc-muted">{{ i.paid_before | number }}</td>
-            <td class="num">{{ i.paid_in | number }}</td>
-            <td class="num"><b [class.rc-debt]="i.remaining > 0">{{ i.remaining | number }}</b></td>
-          </tr>
-          <tr *ngIf="!detail.invoices.length"><td colspan="8" class="rc-none">Không có hoá đơn nào trong tháng.</td></tr>
-          </tbody>
-          <tfoot *ngIf="detail.invoices.length">
-          <tr>
-            <td colspan="7">Cộng còn nợ</td>
-            <td class="num"><b>{{ detail.summary.closing | number }}</b></td>
-          </tr>
-          </tfoot>
-        </table>
-      </div>
-    </section>
+    <section class="tv-card rc-tabs-card">
+      <mat-tab-group [(selectedIndex)]="tab" animationDuration="0ms" class="rc-tabs">
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="rc-tab-ico">receipt_long</mat-icon>Hoá đơn<span class="rc-badge">{{ detail.invoices.length }}</span>
+          </ng-template>
+          <p class="rc-hint">Hoá đơn lập trong {{ monthLabel }} và hoá đơn tháng trước còn nợ (nhãn cam).</p>
+          <div class="table-wrap">
+            <table class="turnover-table rc-table rc-invoices">
+              <thead>
+              <tr>
+                <th>Ngày</th>
+                <th>Hoá đơn</th>
+                <th>Đơn đặt thuốc</th>
+                <th>Bệnh nhân</th>
+                <th class="num">Phải thu</th>
+                <th class="num">Đã trả trước tháng</th>
+                <th class="num">Trả trong tháng</th>
+                <th class="num">Còn nợ</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let i of detail.invoices" [class.rc-carried]="i.carried">
+                <td>{{ i.date * 1000 | date:'dd/MM/yyyy' }}<span class="rc-tag" *ngIf="i.carried">tháng trước</span></td>
+                <td><a [routerLink]="['/transaction/invoice']" [queryParams]="{'InvoiceSearch[invoice_no]': i.invoice_no}">{{ i.invoice_no }}</a></td>
+                <td>
+                  <a *ngIf="i.order_id" [routerLink]="['/transaction/prescription-order', i.order_id]">{{ i.order_code }}</a>
+                  <span *ngIf="!i.order_id" class="rc-muted">Bán tại quầy</span>
+                  <div class="rc-sub" *ngIf="i.order_status_label">{{ i.order_status_label }}</div>
+                </td>
+                <td>{{ i.patient_name || '—' }}</td>
+                <td class="num">{{ i.receivable | number }}</td>
+                <td class="num rc-muted">{{ i.paid_before | number }}</td>
+                <td class="num">{{ i.paid_in | number }}</td>
+                <td class="num"><b [class.rc-debt]="i.remaining > 0">{{ i.remaining | number }}</b></td>
+              </tr>
+              <tr *ngIf="!detail.invoices.length"><td colspan="8" class="rc-none">Không có hoá đơn nào trong tháng.</td></tr>
+              </tbody>
+              <tfoot *ngIf="detail.invoices.length">
+              <tr>
+                <td colspan="7">Cộng còn nợ</td>
+                <td class="num"><b>{{ detail.summary.closing | number }}</b></td>
+              </tr>
+              </tfoot>
+            </table>
+          </div>
+        </mat-tab>
 
-    <!-- Thanh toán -->
-    <section class="tv-card tv-table-card">
-      <div class="tv-table-head">
-        <b>Các lần phòng khám trả tiền</b>
-        <span class="tv-count">trong {{ monthLabel }} · thu nợ thêm ở Sổ quỹ › Lập phiếu thu › Thu nợ khách hàng</span>
-      </div>
-      <div class="table-wrap">
-        <table class="turnover-table rc-table">
-          <thead>
-          <tr>
-            <th>Thời gian</th>
-            <th>Phiếu thu</th>
-            <th>Hoá đơn</th>
-            <th>Hình thức</th>
-            <th class="num">Số tiền</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let p of detail.payments">
-            <td>{{ p.date * 1000 | date:'HH:mm dd/MM/yyyy' }}</td>
-            <td>{{ p.receipt_no || '—' }}</td>
-            <td>{{ p.invoice_no }}</td>
-            <td>{{ p.kind }}</td>
-            <td class="num"><b>{{ p.amount | number }}</b></td>
-          </tr>
-          <tr *ngIf="!detail.payments.length"><td colspan="5" class="rc-none">Chưa có lần trả tiền nào trong tháng.</td></tr>
-          </tbody>
-        </table>
-      </div>
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="rc-tab-ico">payments</mat-icon>Lịch sử thanh toán<span class="rc-badge">{{ detail.payments.length }}</span>
+          </ng-template>
+          <p class="rc-hint">Các lần phòng khám trả tiền trong {{ monthLabel }}: trả khi giao (Hoàn thành "Đã thu tiền") và thu nợ.</p>
+          <div class="table-wrap">
+            <table class="turnover-table rc-table rc-payments">
+              <thead>
+              <tr>
+                <th>Thời gian</th>
+                <th>Phiếu thu</th>
+                <th>Hoá đơn</th>
+                <th>Hình thức</th>
+                <th class="num">Số tiền</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let p of detail.payments">
+                <td>{{ p.date * 1000 | date:'HH:mm dd/MM/yyyy' }}</td>
+                <td>{{ p.receipt_no || '—' }}</td>
+                <td>{{ p.invoice_no }}</td>
+                <td><span class="rc-kind" [class.debt]="p.kind === 'Thu nợ'">{{ p.kind }}</span></td>
+                <td class="num"><b>{{ p.amount | number }}</b></td>
+              </tr>
+              <tr *ngIf="!detail.payments.length"><td colspan="5" class="rc-none">Chưa có lần trả tiền nào trong tháng.</td></tr>
+              </tbody>
+              <tfoot *ngIf="detail.payments.length">
+              <tr>
+                <td colspan="4">Cộng</td>
+                <td class="num"><b>{{ detail.summary.paid | number }}</b></td>
+              </tr>
+              </tfoot>
+            </table>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
     </section>
   </ng-container>
 </div>

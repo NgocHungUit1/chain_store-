@@ -25,6 +25,7 @@ export class ClinicReconciliationComponent implements OnInit {
   loading = false;
   clinics: any[] = [];
   detail: any = null;
+  tab = 0; // 0 = Hoá đơn, 1 = Lịch sử thanh toán
 
   constructor(
     private http: HttpClient,
@@ -81,8 +82,8 @@ export class ClinicReconciliationComponent implements OnInit {
       this.clinics = res?.clinics || [];
       this.detail = res?.detail || null;
       this.loading = false;
-      // Chưa chọn phòng khám: mở luôn phòng khám đầu danh sách (thường chỉ có một)
-      if (!this.linkId && this.clinics.length) {
+      // Chỉ có một phòng khám thì mở luôn chi tiết; nhiều phòng khám thì mặc định xem "Tất cả phòng khám"
+      if (!this.linkId && this.clinics.length === 1) {
         this.selectClinic(this.clinics[0].link_id);
       }
     }, err => {
@@ -91,8 +92,13 @@ export class ClinicReconciliationComponent implements OnInit {
     });
   }
 
+  /** Dropdown: 0 = Tất cả phòng khám */
   selectClinic(linkId: number) {
-    this.linkId = linkId;
+    this.linkId = linkId || null;
+    if (!this.linkId) {
+      this.detail = null;
+    }
+    this.tab = 0;
     this.syncUrl();
     this.load();
   }
@@ -109,8 +115,8 @@ export class ClinicReconciliationComponent implements OnInit {
   }
 
   /**
-   * Thu nợ: lấy các hoá đơn còn nợ tính tới hôm nay (đối soát tháng hiện tại liệt kê đủ: hoá đơn tháng này + tháng
-   * trước còn nợ), mở hộp thoại nhập số tiền; lưu xong tải lại.
+   * Thu nợ: luôn tải lại các hoá đơn còn nợ tính tới hôm nay (đối soát tháng hiện tại liệt kê đủ: hoá đơn tháng này
+   * + tháng trước còn nợ) — số trên màn có thể đã cũ nếu người khác vừa thu; mở hộp thoại nhập số tiền; lưu xong tải lại.
    */
   openCollect() {
     const current = format(new Date(), 'YYYY-MM');
@@ -129,10 +135,6 @@ export class ClinicReconciliationComponent implements OnInit {
         }
       });
     };
-    if (this.month === current && this.detail) {
-      open(this.detail);
-      return;
-    }
     this.http.get<any>(environment.apiUrl + '/report/clinic-reconciliation', {params: {month: current, link_id: String(this.linkId)}})
       .subscribe(res => open(res?.detail), err => this.notify.notify('error', err?.error?.message || 'Không tải được công nợ'));
   }

@@ -3,23 +3,6 @@
   display: flex;
   gap: 8px;
 }
-.rc-one {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-left: 8px;
-  font-weight: 500;
-  color: #00796b;
-  small {
-    color: rgba(0, 0, 0, 0.56);
-    font-weight: 400;
-  }
-  mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-  }
-}
 .rc-paid {
   color: #2e7d32;
 }
@@ -63,22 +46,83 @@
   text-align: center;
   color: rgba(0, 0, 0, 0.5);
 }
+/* Hàng điều khiển */
+.rc-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #dde5e3;
+}
+.rc-month {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.rc-clinic-select {
+  width: 340px;
+  max-width: 100%;
+  font-size: 14px;
+  ::ng-deep .mat-form-field-wrapper {
+    padding-bottom: 0;
+  }
+}
+.rc-opt-sub {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.5);
+}
+.rc-spacer {
+  flex: 1;
+}
+
+/* Tất cả phòng khám */
 .rc-overview tbody tr {
   cursor: pointer;
   &:hover td {
     background: #f3f7f6;
-  }
-  &.rc-active td {
-    background: #e8f5f3;
   }
 }
 .rc-off {
   background: #eceff1;
   color: #546e7a;
 }
-.rc-detail-title {
-  margin: 4px 2px -4px;
-  font-size: 16px;
-  font-weight: 600;
+
+/* Tab Hoá đơn / Lịch sử thanh toán */
+.rc-tabs-card {
+  padding: 0 0 6px;
+}
+.rc-tab-ico {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+}
+.rc-badge {
+  margin-left: 8px;
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: #e8f5f3;
   color: #00796b;
+  font-size: 12px;
+  line-height: 20px;
+  text-align: center;
+}
+.rc-hint {
+  margin: 12px 20px 4px;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.56);
+}
+.rc-kind {
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-size: 12px;
+  &.debt {
+    background: #fff3e0;
+    color: #e65100;
+  }
 }
