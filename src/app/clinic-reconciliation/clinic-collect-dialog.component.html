@@ -1,0 +1,62 @@
+<div class="cff-header" mat-dialog-title>
+  <mat-icon class="cff-header-icon in">south_west</mat-icon>
+  <div>
+    <h2>Thu nợ {{ data.clinic.name }}</h2>
+    <p>Đang nợ <b>{{ fmt(debt) }} đ</b> · {{ allocation.length }} hoá đơn. Trừ vào hoá đơn cũ nhất trước.</p>
+  </div>
+</div>
+
+<div mat-dialog-content class="cff-content">
+  <section class="cff-section cff-money in">
+    <h3 class="cff-title"><mat-icon>payments</mat-icon>Số tiền phòng khám trả</h3>
+    <div class="cff-grid">
+      <mat-form-field appearance="outline" class="cff-amount">
+        <mat-label>Số tiền</mat-label>
+        <input matInput name="collect_amount" [(ngModel)]="amount" (keyup)="formatInput()" inputmode="numeric" autocomplete="off" cdkFocusInitial>
+        <span matSuffix class="cff-muted">đ</span>
+        <mat-hint *ngIf="!error">{{ value === debt ? 'Trả hết nợ' : 'Trả một phần, còn lại ' + fmt(debt - value) + ' đ' }}</mat-hint>
+      </mat-form-field>
+      <div class="cff-radio">
+        <span class="cff-radio-label">Hình thức</span>
+        <mat-radio-group [(ngModel)]="typeMoney" name="collect_type_money">
+          <mat-radio-button value="money" color="primary">Tiền mặt</mat-radio-button>
+          <mat-radio-button value="bank" color="primary">Chuyển khoản</mat-radio-button>
+        </mat-radio-group>
+      </div>
+      <div class="cc-error cff-span-2" *ngIf="error">{{ error }}</div>
+      <div class="cff-span-2 cc-quick" *ngIf="value !== debt">
+        <button mat-stroked-button type="button" (click)="payAll()">Trả hết {{ fmt(debt) }} đ</button>
+      </div>
+      <mat-form-field appearance="outline" class="cff-span-2">
+        <mat-label>Ghi chú</mat-label>
+        <input matInput name="collect_note" [(ngModel)]="note" autocomplete="off">
+      </mat-form-field>
+    </div>
+  </section>
+
+  <section class="cff-section">
+    <h3 class="cff-title"><mat-icon>request_quote</mat-icon>Trừ vào hoá đơn</h3>
+    <table class="cff-table cc-table">
+      <thead>
+      <tr><th>Ngày</th><th>Hoá đơn</th><th>Đơn</th><th class="num">Đang nợ</th><th class="num">Trả lần này</th><th class="num">Còn lại</th></tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let a of allocation" [class.cc-zero]="a.pay === 0">
+        <td>{{ a.inv.date * 1000 | date:'dd/MM/yyyy' }}</td>
+        <td>{{ a.inv.invoice_no }}</td>
+        <td>{{ a.inv.order_code || '—' }}</td>
+        <td class="num">{{ fmt(a.inv.remaining) }}</td>
+        <td class="num"><b>{{ fmt(a.pay) }}</b></td>
+        <td class="num" [class.cc-left]="a.left > 0">{{ fmt(a.left) }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<div mat-dialog-actions class="cff-actions">
+  <button mat-button type="button" mat-dialog-close>Bỏ qua</button>
+  <button mat-raised-button color="primary" type="button" [disabled]="!!error || saving" (click)="save()">
+    <mat-icon>save</mat-icon>Lập phiếu thu {{ value ? fmt(value) + ' đ' : '' }}
+  </button>
+</div>

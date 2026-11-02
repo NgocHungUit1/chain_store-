@@ -10,6 +10,9 @@
         </div>
       </div>
       <div class="rc-actions">
+        <button mat-flat-button color="primary" class="tv-btn" type="button" *ngIf="canCollect" [disabled]="!detail" (click)="openCollect()">
+          <mat-icon>payments</mat-icon>Thu nợ
+        </button>
         <button mat-stroked-button color="primary" class="tv-btn" type="button" [disabled]="!detail" (click)="exportExcel()">
           <mat-icon>download</mat-icon>Xuất Excel
         </button>
@@ -23,12 +26,6 @@
         <input type="month" [(ngModel)]="month" (change)="changeMonth()" aria-label="Tháng đối soát" name="month">
       </label>
       <button mat-icon-button type="button" (click)="shiftMonth(1)" aria-label="Tháng sau"><mat-icon>chevron_right</mat-icon></button>
-      <div class="rc-clinics" *ngIf="clinics.length > 1">
-        <button type="button" *ngFor="let c of clinics" class="rc-clinic" [class.active]="c.link_id === linkId" (click)="selectClinic(c.link_id)">
-          <b>{{ c.name }}</b>
-          <span>còn nợ {{ c.closing | number }} đ</span>
-        </button>
-      </div>
       <span class="rc-one" *ngIf="clinics.length === 1"><mat-icon>local_hospital</mat-icon>{{ clinics[0].name }}<small *ngIf="clinics[0].branch"> · {{ clinics[0].branch }}</small></span>
     </div>
   </section>
@@ -40,7 +37,52 @@
     <p>Cửa hàng chưa có phòng khám liên kết. Tạo liên kết rồi phòng khám mới đặt thuốc được.</p>
   </section>
 
+  <!-- Nhiều phòng khám: bảng tổng hợp, bấm một dòng để xem chi tiết -->
+  <section class="tv-card tv-table-card" *ngIf="clinics.length > 1">
+    <div class="tv-table-head">
+      <b>Tất cả phòng khám</b>
+      <span class="tv-count">{{ clinics.length }} phòng khám · {{ monthLabel }} · bấm một dòng để xem chi tiết</span>
+    </div>
+    <div class="table-wrap">
+      <table class="turnover-table rc-table rc-overview">
+        <thead>
+        <tr>
+          <th>Phòng khám</th>
+          <th>Chi nhánh</th>
+          <th class="num">Số đơn</th>
+          <th class="num">Nợ đầu kỳ</th>
+          <th class="num">Phát sinh</th>
+          <th class="num">Đã trả</th>
+          <th class="num">Còn nợ</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let c of clinics" [class.rc-active]="c.link_id === linkId" (click)="selectClinic(c.link_id)">
+          <td><b>{{ c.name }}</b><span class="rc-tag rc-off" *ngIf="!c.active">đã ngắt</span></td>
+          <td>{{ c.branch || '—' }}</td>
+          <td class="num">{{ c.order_count | number }}</td>
+          <td class="num rc-muted">{{ c.opening | number }}</td>
+          <td class="num">{{ c.increase | number }}</td>
+          <td class="num">{{ c.paid | number }}</td>
+          <td class="num"><b [class.rc-debt]="c.closing > 0">{{ c.closing | number }}</b></td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+          <td colspan="2">Cộng</td>
+          <td class="num">{{ totals.order_count | number }}</td>
+          <td></td>
+          <td class="num">{{ totals.increase | number }}</td>
+          <td class="num">{{ totals.paid | number }}</td>
+          <td class="num"><b>{{ totals.closing | number }}</b></td>
+        </tr>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+
   <ng-container *ngIf="detail">
+    <h4 class="rc-detail-title" *ngIf="clinics.length > 1">{{ detail.clinic.name }}</h4>
     <!-- Số tổng -->
     <section class="tv-kpis">
       <div class="tv-kpi">

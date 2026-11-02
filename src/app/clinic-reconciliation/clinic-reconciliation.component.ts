@@ -3,6 +3,9 @@ import {HttpClient} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import {addMonths, format} from 'date-fns';
 import {NotifierService} from 'angular-notifier';
+import {MatDialog} from '@angular/material/dialog';
+import {ClinicCollectDialogComponent} from './clinic-collect-dialog.component';
+import {getAllPermissions} from '../shared/permission-storage';
 import {environment} from '../../environments/environment';
 import {AuthService} from '../authentication/auth.service';
 
@@ -29,6 +32,7 @@ export class ClinicReconciliationComponent implements OnInit {
     private auth: AuthService,
     private route: ActivatedRoute,
     private router: Router,
+    private dialog: MatDialog,
   ) {
   }
 
@@ -46,6 +50,17 @@ export class ClinicReconciliationComponent implements OnInit {
   get monthLabel(): string {
     const [y, m] = (this.month || '').split('-');
     return m && y ? `tháng ${m}/${y}` : '';
+  }
+
+  /** Lập phiếu thu cần quyền Sổ quỹ */
+  get canCollect(): boolean {
+    return getAllPermissions().indexOf('Cash-Flow.Create') >= 0;
+  }
+
+  get totals(): any {
+    return this.clinics.reduce((t, c) => ({
+      order_count: t.order_count + c.order_count, increase: t.increase + c.increase, paid: t.paid + c.paid, closing: t.closing + c.closing,
+    }), {order_count: 0, increase: 0, paid: 0, closing: 0});
   }
 
   get selected(): any {
@@ -91,6 +106,35 @@ export class ClinicReconciliationComponent implements OnInit {
   changeMonth() {
     this.syncUrl();
     this.load();
+  }
+
+  /**
+   * Thu nợ: lấy các hoá đơn còn nợ tính tới hôm nay (đối soát tháng hiện tại liệt kê đủ: hoá đơn tháng này + tháng
+   * trước còn nợ), mở hộp thoại nhập số tiền; lưu xong tải lại.
+   */
+  openCollect() {
+    const current = format(new Date(), 'YYYY-MM');
+    const open = (detail: any) => {
+      const invoices = (detail?.invoices || []).filter(i => i.remaining > 0);
+      if (!invoices.length) {
+        this.notify.notify('info', 'Phòng khám không còn nợ hoá đơn nào');
+        return;
+      }
+      this.dialog.open(ClinicCollectDialogComponent, {
+        width: '760px', maxWidth: '95vw',
+        data: {clinic: {name: detail.clinic.name, customer_id: detail.clinic.customer_id}, invoices},
+      }).afterClosed().subscribe(res => {
+        if (res && res.saved) {
+          this.load();
+        }
+      });
+    };
+    if (this.month === current && this.detail) {
+      open(this.detail);
+      return;
+    }
+    this.http.get<any>(environment.apiUrl + '/report/clinic-reconciliation', {params: {month: current, link_id: String(this.linkId)}})
+      .subscribe(res => open(res?.detail), err => this.notify.notify('error', err?.error?.message || 'Không tải được công nợ'));
   }
 
   exportExcel() {

@@ -1,0 +1,30 @@
+.cc-error {
+  margin: -8px 0 12px;
+  color: #c62828;
+  font-size: 13px;
+}
+.cc-quick {
+  margin: -6px 0 12px;
+}
+.cc-table {
+  border-collapse: collapse;
+  font-size: 13px;
+  th, td {
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    text-align: left;
+  }
+  th {
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.6);
+  }
+  .num {
+    text-align: right;
+  }
+}
+.cc-zero td {
+  color: rgba(0, 0, 0, 0.45);
+}
+.cc-left {
+  color: #c62828;
+}
