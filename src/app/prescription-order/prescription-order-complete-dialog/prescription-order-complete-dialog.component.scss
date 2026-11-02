@@ -1,0 +1,37 @@
+.rd-ico.ok {
+  color: #2e7d32;
+  background: #e8f5e9;
+}
+
+.cd-options {
+  display: grid;
+  gap: 8px;
+}
+
+.cd-option {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border: 1px solid #d6dde3;
+  border-radius: 8px;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+
+  span {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  small {
+    color: #607080;
+  }
+
+  &.on {
+    border-color: #1e88e5;
+    background: #e8f2fd;
+  }
+}

@@ -239,6 +239,57 @@ export class OrderService {
     this.setListInvoiceLocalStorage(listInvoice);
   }
 
+  /**
+   * Bốc thuốc: mở tab hoá đơn cho đơn đặt thuốc phòng khám (khách = phòng khám, bảng giá liên kết, đúng các dòng
+   * thuốc của đơn, ghi nợ cả hoá đơn). Đơn đã có tab thì chỉ chuyển sang tab đó, không tạo tab trùng.
+   * cart: dữ liệu POST prescription-order/{id}/pick (products cùng dạng giỏ Đơn thuốc quốc gia).
+   */
+  addPrescriptionOrderInvoice(cart: any) {
+    const data = this.getListInvoiceLocalStorage();
+    const existing = (data.itemInvoice || []).find(e => e.prescription_order_id === cart.prescription_order_id);
+    if (existing) {
+      data.itemInvoice.forEach(e => e.active = e === existing);
+      this.setListInvoiceLocalStorage(data);
+      return;
+    }
+    this.addNewInvoice();
+    const list = this.getListInvoiceLocalStorage();
+    const item: ItemInvoice = list.itemInvoice.find(e => e.active === true);
+    item.invoice_name = 'Bốc thuốc ' + cart.code;
+    item.prescription_order_id = cart.prescription_order_id;
+    item.prescription_order_code = cart.code;
+    item.customer = cart.customer;
+    if (cart.price_list_id) {
+      item.price_book_id = String(cart.price_list_id);
+    } else if (item.price_book_id === null) {
+      // Liên kết không có bảng giá riêng: để undefined thì màn bán hàng tự chọn bảng giá mặc định (cần để tính tổng);
+      // giá dòng vẫn là giá đã báo phòng khám (product.end_price)
+      delete item.price_book_id;
+    }
+    item.branch_id = cart.branch_id;
+    item.noteSiderBar = cart.note || '';
+    item.paymentSiderBar = {type: 'Tiền mặt', number: 0};
+    item.hasChangedCustomerPay = true; // khách trả 0 → nợ cả hoá đơn
+    item.listProduct = (cart.products || []).map(product => {
+      // Như giỏ Đơn thuốc quốc gia: giá bán đã gồm VAT, không cộng thêm VAT vào giỏ
+      product.vat_included_percent = product.vat_percent || 0;
+      product.vat_percent = 0;
+      (product.productUnits || []).forEach(unit => {
+        unit.quantity_of_stock = Math.floor(product.quantity_of_stock / unit.value);
+      });
+      const info = new ProductInfo();
+      info.product_id = product.id;
+      info.product = product;
+      info.product_unit_id = product.product_unit_id;
+      info.product_unit_value = product.product_unit_value;
+      info.base_unit = product.base_unit;
+      info.amount = product.amount;
+      info.note = product.note_detail_sale;
+      return info;
+    });
+    this.setListInvoiceLocalStorage(list);
+  }
+
   addProduct(object: Product, amountProduct = 1, samplePrescriptionId = null) {
     const listInvoice = this.getListInvoiceLocalStorage();
     const listItemInvoice = listInvoice.itemInvoice;

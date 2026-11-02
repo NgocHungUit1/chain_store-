@@ -146,6 +146,47 @@ test('Đặt thuốc: đơn mới tự báo trên chuông trong 30 giây, hiện
   w.assertClean();
 });
 
+test('Đặt thuốc: bốc thuốc → hoá đơn ghi nợ phòng khám → đang giao → hoàn thành', async ({page}) => {
+  test.setTimeout(180_000);
+  const w = watchErrors(page);
+  // Thuốc có lô hợp lệ đủ tồn ở Chi nhánh trung tâm (bán theo lô)
+  const code = await createOrder('Đỗ Văn Bốc Thuốc', [{product_id: 535320, unit_id: 622386, quantity: 2}]);
+  const row = await openFromList(page, code);
+  await row.click();
+  await expect(page).toHaveURL(/\/transaction\/prescription-order\/\d+$/);
+  const detailUrl = page.url();
+  await page.getByRole('button', {name: 'Xác nhận'}).click();
+  await expect(page.locator('.dt-status')).toHaveText('Đã xác nhận');
+
+  // Bốc thuốc: mở màn bán hàng, tab riêng của đơn, khách = phòng khám
+  await page.getByRole('button', {name: 'Bốc thuốc'}).click();
+  await expect(page).toHaveURL(/\/sale/, {timeout: 60_000});
+  await expect(page.locator('.po-pick-banner')).toContainText(code, {timeout: 60_000});
+  await expect(page.locator('input.input-search-customer')).toHaveValue(/Dr Tuấn/);
+  await expect(page.getByText('ZRPT report test').first()).toBeVisible();
+  await page.waitForTimeout(2_000); // chờ nạp lô + giá
+  await shot(page, 'dat-thuoc-boc-thuoc-ban-hang');
+  await page.getByRole('button', {name: 'Thanh toán (F7)'}).click();
+  await expect(page.locator('.notifier__notification', {hasText: /thành công/i}).first()).toBeVisible({timeout: 30_000});
+
+  // Quay lại đơn: đang soạn, đã có hoá đơn, phòng khám nợ cả hoá đơn
+  await page.goto(detailUrl);
+  await expect(page.locator('.dt-status')).toHaveText('Đang soạn thuốc');
+  const invoiceAlert = page.locator('.dt-alert.info', {hasText: 'Hoá đơn'});
+  await expect(invoiceAlert).toContainText('phòng khám còn nợ');
+  await page.getByRole('button', {name: 'Đang giao'}).click();
+  await expect(page.locator('.dt-status')).toHaveText('Đang giao');
+
+  await page.getByRole('button', {name: 'Hoàn thành'}).click();
+  await page.locator('#po-complete-debt').click();
+  await shot(page, 'dat-thuoc-hoan-thanh-dialog');
+  await page.locator('mat-dialog-container').getByRole('button', {name: 'Hoàn thành'}).click();
+  await expect(page.locator('.dt-status')).toHaveText('Hoàn thành');
+  await expect(invoiceAlert).toContainText('phòng khám còn nợ');
+  await shot(page, 'dat-thuoc-hoan-thanh');
+  w.assertClean();
+});
+
 test('Đặt thuốc: màn hẹp không vỡ bố cục, có menu', async ({page}) => {
   const w = watchErrors(page);
   await open(page, '/dashboard');

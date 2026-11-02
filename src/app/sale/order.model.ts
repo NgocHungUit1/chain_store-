@@ -87,6 +87,9 @@ export class ItemInvoice {
   hasChangedCustomerPay: boolean;
   selectedBankAccountId: string; // Lưu bank account id theo từng hoá đơn
   transferNote: string; // Nội dung chuyển khoản trên QR, sinh 1 lần cho mỗi hoá đơn
+  // Bốc thuốc cho đơn đặt thuốc phòng khám: gửi kèm khi lưu, hoá đơn ghi nợ cả cho phòng khám
+  prescription_order_id?: number;
+  prescription_order_code?: string;
 }
 
 export class ListInvoice {

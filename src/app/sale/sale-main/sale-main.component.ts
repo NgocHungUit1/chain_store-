@@ -2978,11 +2978,16 @@ export class SaleMainComponent implements OnInit, DoCheck {
       TransferNote: paymentMethodValue === 'bank_transfer' ? this.getTransferNote() : null,
       PaymentPrice: this.sumPrice + (this.useEinvoice ? this.sumVat : 0) -
         this.numberDiscount - this.numberPointDiscount + this.expenseOrder, // tien thanh toan
-      usedPoint: this.isUsePoint ? this.pointCanUse : 0,
+      usedPoint: this.isUsePoint && !mItemInvoice.prescription_order_id ? this.pointCanUse : 0,
       KhachNo: this.tienKhachNo,
+      // Bốc thuốc đơn phòng khám: máy chủ kiểm hoá đơn khớp đơn và ghi nợ cả hoá đơn cho phòng khám
+      prescription_order_id: mItemInvoice.prescription_order_id || null,
       ExpenseOrders: this.expenseOrders,
       date_created: date_created,
     };
+    if (dataInvoice.prescription_order_id) {
+      dataInvoice.KhachNo = dataInvoice.PaymentPrice;
+    }
     console.log(dataInvoice);
 
     /**

@@ -68,6 +68,7 @@ export interface PrescriptionOrderDetail {
   return_note: string;
   cancel_reason: string;
   invoice_id: number;
+  invoice: { id: number, invoice_no: string, total: number, paid: number, debt: number } | null;
   total_quote: number;
   all_in_stock: boolean;
   items: PrescriptionOrderItem[];
@@ -134,5 +135,22 @@ export class PrescriptionOrderService {
 
   returnOrder(id: number, reason: string, note: string): Observable<PrescriptionOrderDetail> {
     return this.http.post<PrescriptionOrderDetail>(this.url + '/' + id + '/return', {reason, note});
+  }
+
+  /** Bốc thuốc: chuyển sang Đang soạn thuốc, trả dữ liệu dựng hoá đơn (cart) */
+  pick(id: number): Observable<{ order: PrescriptionOrderDetail, cart: any }> {
+    return this.http.post<{ order: PrescriptionOrderDetail, cart: any }>(this.url + '/' + id + '/pick', {});
+  }
+
+  unpick(id: number): Observable<PrescriptionOrderDetail> {
+    return this.http.post<PrescriptionOrderDetail>(this.url + '/' + id + '/unpick', {});
+  }
+
+  deliver(id: number): Observable<PrescriptionOrderDetail> {
+    return this.http.post<PrescriptionOrderDetail>(this.url + '/' + id + '/deliver', {});
+  }
+
+  complete(id: number, paid: boolean): Observable<PrescriptionOrderDetail> {
+    return this.http.post<PrescriptionOrderDetail>(this.url + '/' + id + '/complete', {paid});
   }
 }

@@ -29,6 +29,18 @@
           <button mat-flat-button color="primary" class="po-btn" *ngIf="canConfirm" [disabled]="busy" (click)="confirm()">
             <mat-icon>check_circle</mat-icon>Xác nhận
           </button>
+          <button mat-stroked-button class="po-btn" *ngIf="canUnpick" [disabled]="busy" (click)="unpick()">
+            <mat-icon>undo</mat-icon>Huỷ soạn
+          </button>
+          <button mat-flat-button color="primary" class="po-btn" *ngIf="canPick" [disabled]="busy" (click)="pick()">
+            <mat-icon>shopping_cart_checkout</mat-icon>{{ order.status === 'preparing' ? 'Mở lại màn bán hàng' : 'Bốc thuốc' }}
+          </button>
+          <button mat-flat-button color="primary" class="po-btn" *ngIf="canDeliver" [disabled]="busy" (click)="deliver()">
+            <mat-icon>local_shipping</mat-icon>Đang giao
+          </button>
+          <button mat-flat-button color="primary" class="po-btn" *ngIf="canComplete" [disabled]="busy" (click)="openComplete()">
+            <mat-icon>task_alt</mat-icon>Hoàn thành
+          </button>
         </div>
       </div>
 
@@ -39,6 +51,16 @@
       <div class="dt-alert danger" *ngIf="order.status === 'returned'">
         <mat-icon>assignment_return</mat-icon>
         <div>Đã trả đơn về phòng khám. Lý do: <b>{{ order.return_reason }}</b><span *ngIf="order.return_note"> · {{ order.return_note }}</span></div>
+      </div>
+      <div class="dt-alert info" *ngIf="order.status === 'preparing' && !order.invoice_id">
+        <mat-icon>shopping_cart_checkout</mat-icon>
+        <div>Đang soạn thuốc: lập hoá đơn ở màn bán hàng (tab "Bốc thuốc {{ order.code }}"), chọn lô rồi lưu. Không lập được thì bấm Huỷ soạn hoặc Trả đơn.</div>
+      </div>
+      <div class="dt-alert info" *ngIf="order.invoice">
+        <mat-icon>receipt_long</mat-icon>
+        <div>Hoá đơn <b>{{ order.invoice.invoice_no }}</b> · {{ order.invoice.total | number }} đ ·
+          <span *ngIf="order.invoice.debt > 0">phòng khám còn nợ <b>{{ order.invoice.debt | number }} đ</b></span>
+          <span *ngIf="order.invoice.debt <= 0">đã trả đủ</span></div>
       </div>
       <div class="dt-alert muted" *ngIf="order.status === 'cancelled'">
         <mat-icon>block</mat-icon>

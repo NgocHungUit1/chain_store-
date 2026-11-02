@@ -1,0 +1,26 @@
+<div class="rd-head" mat-dialog-title>
+  <mat-icon class="rd-ico ok">task_alt</mat-icon>
+  <div>
+    <h2>Hoàn thành đơn {{ data.code }}</h2>
+    <p>Phòng khám đã nhận thuốc. Hoá đơn {{ data.invoiceNo }} còn nợ <b>{{ data.debt | number }} đ</b>.</p>
+  </div>
+</div>
+<div mat-dialog-content>
+  <div class="rd-label">{{ data.clinic }} đã trả tiền chưa? <span class="req">*</span></div>
+  <div class="cd-options">
+    <button type="button" class="cd-option" id="po-complete-paid" [class.on]="paid === true" (click)="paid = true">
+      <mat-icon>payments</mat-icon>
+      <span><b>Đã thu tiền</b><small>Ghi phiếu trả nợ {{ data.debt | number }} đ (tiền mặt), hoá đơn hết nợ</small></span>
+    </button>
+    <button type="button" class="cd-option" id="po-complete-debt" [class.on]="paid === false" (click)="paid = false">
+      <mat-icon>request_quote</mat-icon>
+      <span><b>Ghi nợ</b><small>Để nợ phòng khám, đối soát cuối tháng</small></span>
+    </button>
+  </div>
+</div>
+<div mat-dialog-actions class="rd-actions">
+  <button mat-button type="button" mat-dialog-close>Bỏ qua</button>
+  <button mat-flat-button color="primary" type="button" [disabled]="paid === null" (click)="submit()">
+    <mat-icon>task_alt</mat-icon>Hoàn thành
+  </button>
+</div>

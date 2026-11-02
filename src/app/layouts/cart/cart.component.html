@@ -216,7 +216,7 @@
           <ng-template  mat-tab-label>
             <button mat-button [ngClass]="(mItemInvoice?.active === true)?'invoice-label-active':'invoice-label'"
               *ngIf="mItemInvoice?.invoice_id < 0" (click)="activeInvoice(mItemInvoice?.invoice_id)">
-              {{ mItemInvoice?.invoice_name +' '+ (mItemInvoice?.invoice_id*-1) }}
+              {{ mItemInvoice?.prescription_order_id ? mItemInvoice?.invoice_name : mItemInvoice?.invoice_name +' '+ (mItemInvoice?.invoice_id*-1) }}
             </button>
             <button mat-button [ngClass]="(mItemInvoice?.active === true)?'invoice-label-active':'invoice-label'"
               *ngIf="mItemInvoice?.invoice_id > 0" (click)="activeInvoice(mItemInvoice?.invoice_id)">
@@ -281,7 +281,7 @@
           mItemInvoice.invoice_name
         }}</span>
         <span *ngIf="mItemInvoice?.invoice_id < 0">{{
-          mItemInvoice.invoice_name + ' ' + mItemInvoice?.invoice_id * -1
+          mItemInvoice.prescription_order_id ? mItemInvoice.invoice_name : mItemInvoice.invoice_name + ' ' + mItemInvoice?.invoice_id * -1
         }}</span>
         <button
           mat-icon-button

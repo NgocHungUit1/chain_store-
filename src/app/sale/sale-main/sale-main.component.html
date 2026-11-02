@@ -624,6 +624,13 @@
                 </div>
               </div>
 
+              <div class="po-pick-banner" *ngIf="localItemInvoice?.prescription_order_id">
+                <mat-icon>medical_services</mat-icon>
+                <div>
+                  Bốc thuốc cho đơn <b>{{ localItemInvoice.prescription_order_code }}</b> của phòng khám.
+                  Hoá đơn ghi nợ cả cho phòng khám; thuốc và số lượng phải đúng đơn (chỉ chọn lô).
+                </div>
+              </div>
               <div class="customer-action">
                 <div fxLayout="row wrap">
                   <div fxFlex="58">

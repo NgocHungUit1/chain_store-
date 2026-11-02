@@ -1,11 +1,13 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Location} from '@angular/common';
 import {MatDialog} from '@angular/material/dialog';
 import {Subscription} from 'rxjs';
 import {NotifierService} from 'angular-notifier';
 import {ORDER_STATUS_CLASS, PrescriptionOrderDetail, PrescriptionOrderService} from '../prescription-order.service';
 import {PrescriptionOrderReturnDialogComponent} from '../prescription-order-return-dialog/prescription-order-return-dialog.component';
+import {PrescriptionOrderCompleteDialogComponent} from '../prescription-order-complete-dialog/prescription-order-complete-dialog.component';
+import {OrderService} from '../../sale/order.service';
 import {getAllPermissions} from '../../shared/permission-storage';
 
 @Component({
@@ -28,6 +30,8 @@ export class PrescriptionOrderDetailComponent implements OnInit, OnDestroy {
     private orderSer: PrescriptionOrderService,
     private dialog: MatDialog,
     private notify: NotifierService,
+    private router: Router,
+    private saleOrderSer: OrderService,
   ) {
   }
 
@@ -64,8 +68,31 @@ export class PrescriptionOrderDetailComponent implements OnInit, OnDestroy {
   }
 
   get canReturn(): boolean {
-    return this.order && ['new', 'confirmed'].indexOf(this.order.status) >= 0
+    return this.order && (['new', 'confirmed'].indexOf(this.order.status) >= 0 || this.preparingNoInvoice)
       && this.permissions.indexOf('Prescription-Order.Return') >= 0;
+  }
+
+  private get preparingNoInvoice(): boolean {
+    return this.order && this.order.status === 'preparing' && !this.order.invoice_id;
+  }
+
+  /** Bốc thuốc: đơn đã xác nhận, hoặc đang soạn mà chưa lưu hoá đơn (mở lại màn bán hàng) */
+  get canPick(): boolean {
+    return this.order && (this.order.status === 'confirmed' || this.preparingNoInvoice)
+      && this.permissions.indexOf('Prescription-Order.Pick') >= 0;
+  }
+
+  get canUnpick(): boolean {
+    return this.preparingNoInvoice && this.permissions.indexOf('Prescription-Order.Unpick') >= 0;
+  }
+
+  get canDeliver(): boolean {
+    return this.order && this.order.status === 'preparing' && !!this.order.invoice_id
+      && this.permissions.indexOf('Prescription-Order.Deliver') >= 0;
+  }
+
+  get canComplete(): boolean {
+    return this.order && this.order.status === 'delivering' && this.permissions.indexOf('Prescription-Order.Complete') >= 0;
   }
 
   get missingItems(): string[] {
@@ -134,6 +161,62 @@ export class PrescriptionOrderDetailComponent implements OnInit, OnDestroy {
         this.showError(err, 'Không trả được đơn.');
         this.load(this.order.id);
       });
+    });
+  }
+
+  /** Mở màn bán hàng với tab hoá đơn dựng sẵn từ đơn (khách = phòng khám, đúng thuốc, ghi nợ) */
+  pick() {
+    if (!this.order.all_in_stock && !confirm('Chi nhánh không đủ hàng cho ' + this.missingItems.join(', ')
+      + '. Vẫn mở màn bán hàng? (Thiếu hàng thì nên trả đơn để bác sĩ sửa.)')) {
+      return;
+    }
+    this.busy = true;
+    this.orderSer.pick(this.order.id).subscribe(res => {
+      this.busy = false;
+      this.order = res.order;
+      this.saleOrderSer.addPrescriptionOrderInvoice(res.cart);
+      this.router.navigate(['/sale']);
+    }, err => {
+      this.busy = false;
+      this.showError(err, 'Không bốc thuốc được.');
+      this.load(this.order.id);
+    });
+  }
+
+  unpick() {
+    this.runAction(this.orderSer.unpick(this.order.id), 'Đã huỷ soạn, đơn về Đã xác nhận.', 'Không huỷ soạn được.');
+  }
+
+  deliver() {
+    this.runAction(this.orderSer.deliver(this.order.id), 'Đơn đang giao.', 'Không chuyển sang đang giao được.');
+  }
+
+  openComplete() {
+    const ref = this.dialog.open(PrescriptionOrderCompleteDialogComponent, {
+      width: '520px',
+      maxWidth: '95vw',
+      data: {code: this.order.code, clinic: this.order.clinic?.name || 'Phòng khám',
+        invoiceNo: this.order.invoice?.invoice_no, debt: this.order.invoice?.debt || 0},
+    });
+    ref.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
+      this.runAction(this.orderSer.complete(this.order.id, result.paid),
+        result.paid ? 'Đã hoàn thành đơn và ghi phiếu trả nợ.' : 'Đã hoàn thành đơn, ghi nợ phòng khám.', 'Không hoàn thành được đơn.');
+    });
+  }
+
+  private runAction(req, okMessage: string, fallback: string) {
+    this.busy = true;
+    req.subscribe(res => {
+      this.order = res;
+      this.busy = false;
+      this.notify.notify('success', okMessage);
+    }, err => {
+      this.busy = false;
+      this.showError(err, fallback);
+      this.load(this.order.id);
     });
   }
 

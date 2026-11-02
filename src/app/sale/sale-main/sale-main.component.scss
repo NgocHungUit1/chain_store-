@@ -1091,3 +1091,24 @@ Popup parcel list
   color: #b8860b;
   font-weight: 600;
 }
+
+// Tab bốc thuốc cho đơn đặt thuốc phòng khám
+.po-pick-banner {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin: 0 0 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: #e8f4fd;
+  color: #0b4a6f;
+  font-size: 13px;
+  line-height: 1.4;
+
+  mat-icon {
+    flex-shrink: 0;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
