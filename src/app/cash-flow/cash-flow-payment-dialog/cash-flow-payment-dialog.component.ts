@@ -17,7 +17,7 @@ import { MatDateProviders } from '../../shared/providers/mat-date.provider';
 @Component({
   selector: 'app-cash-flow-payment-dialog',
   templateUrl: './cash-flow-payment-dialog.component.html',
-  styleUrls: ['./cash-flow-payment-dialog.component.css'],
+  styleUrls: ['../cash-flow-form.css', './cash-flow-payment-dialog.component.css'],
   providers: [...MatDateProviders]
 })
 export class CashFlowPaymentDialogComponent implements OnInit {
@@ -25,6 +25,8 @@ export class CashFlowPaymentDialogComponent implements OnInit {
   form: FormGroup;
   loading = false;
   isLoadingResults = false;
+  // Mã chứng từ gốc của phiếu sinh tự động (hoá đơn / phiếu nhập)
+  parentCode: string = null;
   isSelectedSupplier = false;
   local_data: any;
   cash_flow_id: string = null;
@@ -84,6 +86,11 @@ export class CashFlowPaymentDialogComponent implements OnInit {
     this.cash_flow_id = this.local_data.id;
   }
 
+
+  /** Phiếu sinh tự động khi thanh toán chứng từ: chỉ xem, sửa ở chứng từ gốc */
+  get isAuto(): boolean {
+    return !!this.form && !!this.form.controls['parent_table'].value;
+  }
 
   onNoClick(): void {
     this.dialogRef.close();
@@ -147,7 +154,7 @@ export class CashFlowPaymentDialogComponent implements OnInit {
   }
 
   loadCashFlow(id) {
-    this.cashFlowService.getDetail(id, 'items').subscribe(cashFlow => {
+    this.cashFlowService.getDetail(id, 'items,code').subscribe(cashFlow => {
       // @ts-ignore
       const today = new Date(1000 * cashFlow['created_at']);
       const time = ('0' + today.getHours()).slice(-2) + ':' + ('0' + today.getMinutes()).slice(-2);
@@ -165,6 +172,7 @@ export class CashFlowPaymentDialogComponent implements OnInit {
         time: time,
         parent_table: cashFlow['parent_table']
       });
+      this.parentCode = cashFlow['code'] || null;
 
       let ids = [];
       let itemsData = {};
@@ -183,7 +191,8 @@ export class CashFlowPaymentDialogComponent implements OnInit {
       this.warehouseService.getList(filter).subscribe(res => {
         this.isLoadingResults = false;
 
-        res.body.forEach( (item, index) => {
+        // API danh sách không lọc được nhiều id (id=1,2): chỉ giữ chứng từ của phiếu này
+        res.body.filter(item => itemsData[item.id]).forEach( (item, index) => {
           let newItem = item;
           newItem.need_to_pay_amount = itemsData[item.id]['need_to_process_amount'];
           data.push(newItem);
