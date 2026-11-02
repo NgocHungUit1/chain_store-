@@ -1,13 +1,23 @@
 import {test, expect, Page} from '@playwright/test';
 import {execSync} from 'child_process';
+import {resolve} from 'path';
 import {open, watchErrors} from './helpers';
 
 /**
  * Chuông thông báo: mở đúng trang và tự cập nhật số chưa đọc (polling 2 phút) mà không tải lại trang.
  * Dùng lệnh console có --force để sinh thông báo mới ngay (bỏ qua chống trùng trong ngày).
  */
-const runConsole = (cmd: string) =>
-  execSync(`docker exec chain-api php /app/yii ${cmd}`, {encoding: 'utf8'}).trim();
+// Máy chạy docker (chain-api) thì gọi trong container; máy Mac chạy PHP trực tiếp thì gọi yii của repo pharma_chain cạnh bên.
+// Đặt CHAIN_YII để chỉ định lệnh khác.
+const YII = process.env.CHAIN_YII || (() => {
+  try {
+    execSync('docker inspect chain-api', {stdio: 'ignore'});
+    return 'docker exec chain-api php /app/yii';
+  } catch (e) {
+    return `php ${resolve(__dirname, '../../../pharma_chain/yii')}`;
+  }
+})();
+const runConsole = (cmd: string) => execSync(`${YII} ${cmd}`, {encoding: 'utf8'}).trim();
 
 /** Mở menu chuông, đọc số "Có N thông báo mới", đóng menu hẳn rồi mới trả về */
 async function unreadCount(page: Page): Promise<number> {
@@ -41,7 +51,7 @@ test('Thông báo: bấm vào mở đúng trang', async ({page}) => {
 });
 
 test('Thông báo: chuông tự cập nhật không cần tải lại trang @slow', async ({page}) => {
-  test.slow(); // phải chờ chu kỳ hỏi lại 2 phút
+  test.slow(); // chờ chu kỳ hỏi lại (30 giây) + worker sinh thông báo
   test.setTimeout(240_000);
   const w = watchErrors(page);
   await open(page, '/dashboard');

@@ -1,6 +1,7 @@
 import {test, expect, Page, request as pwRequest} from '@playwright/test';
 import {randomUUID} from 'crypto';
 import {readFileSync} from 'fs';
+import {resolve} from 'path';
 import {open, watchErrors} from './helpers';
 
 /**
@@ -8,8 +9,9 @@ import {open, watchErrors} from './helpers';
  * Khoá lấy từ env CLINIC_KEY hoặc dòng "ck_..." trong file CLINIC_KEY_FILE (khoá chỉ hiện 1 lần lúc tạo liên kết).
  */
 const API = process.env.E2E_API_URL || 'http://127.0.0.1:33081/v1';
+// Mặc định: file khoá của script giả lập trong repo pharma_chain (đã gitignore), xem pharma_chain/.claude/du-an/00-dang-lam.md
 const KEY_FILE = process.env.CLINIC_KEY_FILE
-  || '/private/tmp/claude-501/-Users-dev-Projects-pharma-chain/403b2ac2-4e05-4ba3-b9a5-9fa3eadbbfd9/scratchpad/clinic-key-pkdrtuan.txt';
+  || resolve(__dirname, '../../../pharma_chain/tools/dat-thuoc/.clinic-key');
 const IN_STOCK = {product_id: 535312, unit_id: 622378};
 const OUT_OF_STOCK = {product_id: 535239, unit_id: 622305};
 
@@ -126,6 +128,21 @@ test('Đặt thuốc: bấm thông báo đơn mới mở đúng chi tiết', asy
   await expect(page).toHaveURL(/\/transaction\/prescription-order\/\d+$/);
   await expect(page.locator('.dt-code h3')).toHaveText(`Đơn ${code}`);
   await expect(page.locator('.dt-info')).toContainText(['Lê Thị E2E Ba']);
+  w.assertClean();
+});
+
+test('Đặt thuốc: đơn mới tự báo trên chuông trong 30 giây, hiện thông báo góc màn hình', async ({page}) => {
+  test.setTimeout(90_000);
+  const w = watchErrors(page);
+  await open(page, '/dashboard');
+  await page.waitForTimeout(3_000); // lần tải đầu chỉ ghi nhận mốc, không báo đơn cũ
+  const code = await createOrder('Phan Văn Chuông', [{...IN_STOCK, quantity: 1}]);
+  // Không tải lại trang: chuông hỏi lại mỗi 30 giây
+  const toast = page.locator('.notifier__notification', {hasText: `Đơn đặt thuốc mới ${code}`});
+  await expect(toast).toBeVisible({timeout: 45_000});
+  await shot(page, 'dat-thuoc-chuong-30s');
+  await page.locator('button.notification-button').click();
+  await expect(page.locator('.noti-item', {hasText: `Đơn đặt thuốc mới ${code}`}).first()).toBeVisible();
   w.assertClean();
 });
 

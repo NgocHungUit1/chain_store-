@@ -32,8 +32,10 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
   countRead = 0;
   notiClass = NOTIFICATION_CLASS;
   notiIcon = NOTIFICATION_ICON;
-  // Cảnh báo tồn thấp/hạn dùng do worker tạo trong ngày: hỏi lại số chưa đọc mỗi 2 phút
+  // Hỏi lại số chưa đọc mỗi 30 giây: đơn đặt thuốc từ phòng khám cần nhà thuốc thấy sớm (chốt 02/11/2026)
   private pollSub: Subscription;
+  // Id thông báo đơn đặt thuốc mới nhất đã thấy (null = chưa tải lần nào), để chỉ báo đơn mới đến sau
+  private orderNotiBaseline: number = null;
 
   constructor(
     private dialog: MatDialog,
@@ -51,7 +53,7 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
       this.userLogin = res;
     });
     this.loadNotification();
-    this.pollSub = interval(2 * 60 * 1000).subscribe(() => this.refreshUnread());
+    this.pollSub = interval(30 * 1000).subscribe(() => this.refreshUnread());
   }
 
   ngOnDestroy() {
@@ -62,7 +64,7 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
   refreshUnread() {
     this.notiUserService.countSummary().subscribe(res => {
       if (res.unread !== this.countUnread || res.read !== this.countRead) {
-        this.loadNotification();
+        this.loadNotification(res.unread > this.countUnread);
       }
     });
   }
@@ -108,17 +110,62 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
     });
   }
 
-  loadNotification() {
+  loadNotification(alertNewOrders = false) {
     const notiUserFilter = new NotificationUserFilter();
     notiUserFilter.expand = 'notification,agentCount';
     notiUserFilter.sort = '-created_at';
     this.notiUserService.getList(notiUserFilter).subscribe(res => {
       this.notifications = res.body;
+      this.alertNewPrescriptionOrders(alertNewOrders);
     });
     this.notiUserService.countSummary().subscribe(res => {
       this.countUnread = res.unread;
       this.countRead = res.read;
     });
+  }
+
+  /**
+   * Có đơn đặt thuốc mới chưa đọc: hiện thông báo góc màn hình + kêu một tiếng.
+   * Lần tải đầu chỉ ghi nhận mốc, không kêu cho các đơn cũ.
+   */
+  private alertNewPrescriptionOrders(alert: boolean) {
+    const orders = (this.notifications || []).filter(n => !n.is_read && n.notification?.notification_type === 'prescription_order');
+    const newest = orders.reduce((max, n) => Math.max(max, Number(n.id) || 0), 0);
+    if (this.orderNotiBaseline === null) {
+      this.orderNotiBaseline = newest;
+      return;
+    }
+    const fresh = orders.filter(n => Number(n.id) > this.orderNotiBaseline);
+    if (alert && fresh.length) {
+      fresh.slice(0, 3).forEach(n => this.notifyService.notify('info', n.notification?.title || 'Có đơn đặt thuốc mới'));
+      this.playBeep();
+    }
+    this.orderNotiBaseline = Math.max(this.orderNotiBaseline, newest);
+  }
+
+  /** Âm báo ngắn bằng Web Audio (không cần file âm thanh); trình duyệt chặn khi chưa tương tác thì bỏ qua */
+  private playBeep() {
+    try {
+      const Ctx = (window as any).AudioContext || (window as any).webkitAudioContext;
+      if (!Ctx) {
+        return;
+      }
+      const ctx = new Ctx();
+      [0, 0.25].forEach(offset => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = 880;
+        gain.gain.setValueAtTime(0.0001, ctx.currentTime + offset);
+        gain.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + offset + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + offset + 0.2);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(ctx.currentTime + offset);
+        osc.stop(ctx.currentTime + offset + 0.22);
+      });
+      setTimeout(() => ctx.close(), 1000);
+    } catch (e) {
+    }
   }
 
   /** Đánh dấu tất cả đã đọc, giữ menu mở */
