@@ -65,3 +65,12 @@ test('Sổ quỹ: phiếu thu tự động gắn hoá đơn chỉ xem; phiếu t
   expect(await rows.count()).toBeGreaterThan(0);
   w.assertClean();
 });
+
+test('Báo cáo công nợ thu: mở không lỗi, có công nợ phòng khám', async ({page}) => {
+  const w = watchErrors(page);
+  await open(page, '/report/debt-customers');
+  const row = page.locator('tr', {hasText: 'Phòng khám Da liễu Dr Tuấn'}).first();
+  await expect(row).toBeVisible();
+  await shot(page, 'cong-no-thu');
+  w.assertClean();
+});
