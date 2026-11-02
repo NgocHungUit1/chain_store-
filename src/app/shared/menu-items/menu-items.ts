@@ -187,6 +187,7 @@ const MENUITEMS = [
       //{state: 'sale-report', name: 'Bán hàng', type: 'link', icon: 'table_chart', roles: ['ADMIN']},
       // {state: 'debt-report', name: 'Công nợ', type: 'link', icon: 'money', roles: ['ADMIN']},
       {state: 'debt-customers', name: 'Công nợ thu', type: 'link', icon: 'price_check', permissions: ['Report.Customers-Debt']},
+      {state: 'clinic-reconciliation', name: 'Đối soát phòng khám', type: 'link', icon: 'fact_check', permissions: ['Report.Clinic-Reconciliation']},
       {state: 'debt-suppliers', name: 'Công nợ trả', type: 'link', icon: 'money_off', permissions: ['Report.Supplier-Debt']},
     ]
   },

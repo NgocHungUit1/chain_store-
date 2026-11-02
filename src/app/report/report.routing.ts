@@ -42,6 +42,10 @@ export const ReportRoutes: Routes = [
         loadChildren: () => import('../debt-report/debt-report.module').then(m => m.DebtReportModule)
       },*/
       {
+        path: 'clinic-reconciliation',
+        loadChildren: () => import('../clinic-reconciliation/clinic-reconciliation.module').then(m => m.ClinicReconciliationModule)
+      },
+      {
         path: 'debt-customers',
         loadChildren: () => import('../debt-customers/debt-customers.module').then(m => DebtCustomersModule)
       },
