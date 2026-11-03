@@ -40,7 +40,11 @@ export class AppSidebarComponent implements OnInit, OnDestroy {
     this.mobileQuery = media.matchMedia('(min-width: 768px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
-    this.menus = this.menuItems.getMenuitem();
+    // Mỗi menu mở / tô theo đường dẫn các mục của nó (mục con có thể nằm ở module khác)
+    this.menus = this.menuItems.getMenuitem().map(m => ({
+      ...m,
+      paths: m.children ? m.children.map(c => (c.link || ['/', m.state, c.state]).join('/').replace(/^\/+/, '/')) : ['/' + m.state],
+    }));
   }
 
   checkMatchPermission(menuPermissions = []) {
@@ -101,7 +105,7 @@ export class AppSidebarComponent implements OnInit, OnDestroy {
 
   styleNotBackground(state) {
     if (this.router.url === '/transaction/warehouse/create') {
-      if (state === 'transaction') {
+      if (state === 'purchase') {
         return 'background: #ffffff; color: #67757c;';
       }
     }
@@ -110,7 +114,7 @@ export class AppSidebarComponent implements OnInit, OnDestroy {
 
   styleIconNotBackground(state) {
     if (this.router.url === '/transaction/warehouse/create') {
-      if (state === 'transaction') {
+      if (state === 'purchase') {
         return 'color: #67757c;';
       }
     }
@@ -119,7 +123,7 @@ export class AppSidebarComponent implements OnInit, OnDestroy {
 
   styleNotBackgroundSubItem(state, subState, isIcon = false) {
     if (this.router.url === '/transaction/warehouse/create') {
-      if (state === 'transaction' && subState === 'warehouse') {
+      if (state === 'purchase' && subState === 'warehouse') {
         if (isIcon) {
           return 'color: #99abb4;';
         }

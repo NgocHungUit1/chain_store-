@@ -152,6 +152,41 @@ Main sidebar
         //right: 0px;
       }
     }
+    // Thanh menu một hàng; hai nút thao tác (Nhập hàng, Quầy bán) dồn về bên phải.
+    // Màu xanh của giao diện đang dùng (colors/green.scss); biến $themecolor ở file này là màu mặc định xanh dương
+    .mat-nav-list.main-menu {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      > .mat-list-item.menu-action-outline {
+        margin-left: auto;
+      }
+      > .mat-list-item.menu-action > .mat-list-item-content > a {
+        height: 36px;
+        padding: 0 14px;
+        border-radius: $radius;
+        font-weight: 500;
+        border: 1px solid #009688;
+        color: #009688;
+        mat-icon {
+          color: #009688;
+        }
+      }
+      > .mat-list-item.menu-action-primary {
+        margin-left: 8px;
+        > .mat-list-item-content > a {
+          background: #009688;
+          color: $white;
+          mat-icon {
+            color: $white;
+          }
+          &:hover {
+            color: $white;
+            filter: brightness(1.08);
+          }
+        }
+      }
+    }
   }
 
   [dir='rtl'].main-container #snav .mat-list-item:last-child .sub-item {

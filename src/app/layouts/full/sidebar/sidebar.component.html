@@ -1,9 +1,9 @@
 <!-- ============================================================== -->
 <!-- sidebar -->
 <!-- ============================================================== -->
-<mat-nav-list appAccordion *ngIf="this.router.url !== '/sale'">
+<mat-nav-list appAccordion class="main-menu" *ngIf="this.router.url !== '/sale'">
     <mat-list-item appAccordionLink *ngFor="let menuitem of menus" routerLinkActive="selected"
-        group="{{menuitem.state}}">
+        [group]="menuitem.paths" [ngClass]="menuitem.action ? 'menu-action menu-action-' + menuitem.action : ''">
         <a class="" appAccordionToggle [routerLink]="['/', menuitem.state]" *ngIf="menuitem.type === 'link' && checkMatchPermission(menuitem.permissions) && checkOptionEnabled(menuitem.optionKeys)">
             <mat-icon>{{ menuitem.icon }}</mat-icon>
             <span>{{ menuitem.name }}</span>
@@ -33,7 +33,7 @@
         <mat-nav-list class="sub-item" *ngIf="menuitem.type === 'sub' && checkMatchPermission(menuitem.permissions) && checkOptionEnabled(menuitem.optionKeys)">
           <div *ngFor="let childitem of menuitem.children">
             <mat-list-item  *ngIf="checkMatchPermission(childitem.permissions) && checkOptionEnabled(childitem.optionKeys)" routerLinkActive="selected">
-                <a [style]="styleNotBackgroundSubItem(menuitem.state, childitem.state)" [routerLink]="['/', menuitem.state, childitem.state ]" class="relative" routerLinkActive="selected">
+                <a [style]="styleNotBackgroundSubItem(menuitem.state, childitem.state)" [routerLink]="childitem.link || ['/', menuitem.state, childitem.state]" class="relative" routerLinkActive="selected">
                     <mat-icon [style]="styleNotBackgroundSubItem(menuitem.state, childitem.state, true)">{{ childitem.icon }}</mat-icon>
                     {{childitem.name}}
                 </a>

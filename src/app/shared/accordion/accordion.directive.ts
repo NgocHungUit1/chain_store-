@@ -36,7 +36,14 @@ export class AccordionDirective implements AfterContentChecked {
 
   checkOpenLinks() {
     this.navlinks.forEach((link: AccordionLinkDirective) => {
-      if (link.group) {
+      if (Array.isArray(link.group)) {
+        // Danh sách đường dẫn các mục trong menu: menu gom màn từ nhiều module nên so cả đường dẫn, không so tên nhóm
+        const path = this.router.url.split('?')[0];
+        if (link.group.some(g => path === g || path.startsWith(g + '/'))) {
+          link.selected = true;
+          this.closeOtherLinks(link);
+        }
+      } else if (link.group) {
         const routeUrl = this.router.url;
         const currentUrl = routeUrl.split('/');
         if (currentUrl.indexOf(link.group) > 0) {

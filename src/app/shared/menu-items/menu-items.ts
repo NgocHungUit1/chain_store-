@@ -17,6 +17,8 @@ export interface Saperator {
 export interface ChildrenItems {
   state: string;
   name: string;
+  /** Đường dẫn đầy đủ khi màn nằm ở module khác menu cha (giữ URL cũ), vd ['/transaction', 'invoice'] */
+  link?: string[];
   type?: string;
   icon?: string;
   roles?: string[];
@@ -35,177 +37,102 @@ export interface Menu {
   roles?: string[];
   permissions?: string[];
   optionKeys?: string[];
+  /** Nút hành động ở cuối thanh menu (không phải menu): 'primary' tô màu, 'outline' viền */
+  action?: 'primary' | 'outline';
+  /** Ẩn tạm khỏi menu, giữ định nghĩa để bật lại; màn vẫn mở được bằng đường dẫn */
+  hidden?: boolean;
 }
 
-const MENUITEMS = [
-  {
-    state: '',
-    name: 'Personal',
-    type: 'saperator',
-    icon: 'av_timer'
-  },
+/** Quyền của menu cha = gộp quyền các mục con: có quyền mục nào thì thấy menu cha */
+function childPermissions(children: ChildrenItems[]): string[] {
+  return Array.from(new Set([].concat(...children.map(c => c.permissions || []))));
+}
+
+/*
+ * Menu nhà thuốc sắp xếp lại 03/11/2026 (pharma_chain/tools/de-xuat/sap-xep-menu.html, người dùng đã chốt):
+ * gom theo việc người dùng làm; đường dẫn các màn giữ nguyên (link trong thông báo, link đã lưu vẫn chạy) nên mục con
+ * nằm ở module khác ghi `link`. Sổ sách GPP và Sổ kế toán HKD ẩn tạm (PRD không có), giữ định nghĩa ở cuối.
+ */
+const SALES_CHILDREN: ChildrenItems[] = [
+  {state: 'invoice', link: ['/transaction', 'invoice'], name: 'Hóa đơn bán', icon: 'receipt', permissions: ['Invoice.List']},
+  {state: 'returns', link: ['/transaction', 'returns'], name: 'Trả hàng', icon: 'keyboard_return', permissions: ['Returns.List']},
+  {state: 'prescription-order', link: ['/transaction', 'prescription-order'], name: 'Đơn đặt thuốc', icon: 'medical_services', permissions: ['Prescription-Order.List']},
+  {state: 'customer', link: ['/partner', 'customer'], name: 'Khách hàng', icon: 'person', permissions: ['Customer.List']},
+  {state: 'doctor', link: ['/partner', 'doctor'], name: 'Bác sĩ', icon: 'local_hospital', permissions: ['Doctor.List']},
+  {state: 'sample-prescription', link: ['/store', 'sample-prescription'], name: 'Đơn thuốc mẫu', icon: 'list_alt', permissions: ['Sample-Prescription.List']},
+];
+const STOCK_CHILDREN: ChildrenItems[] = [
+  {state: 'product', name: 'Sản phẩm', icon: 'local_pharmacy', permissions: ['Product.List']},
+  {state: 'group', name: 'Nhóm hàng', icon: 'category', permissions: ['Group.List']},
+  {state: 'price-book', name: 'Thiết lập giá', icon: 'loyalty', permissions: ['Price-List.List']},
+  {state: 'stock-take', name: 'Kiểm kho', icon: 'check_circle_outline', permissions: ['Stock-Take.List']},
+  {state: 'warehouse-destroy', link: ['/transaction', 'warehouse-destroy'], name: 'Xuất huỷ', icon: 'delete_sweep', permissions: ['Warehouse.List']},
+  {state: 'move', link: ['/transaction', 'move'], name: 'Chuyển hàng', icon: 'local_shipping', permissions: ['Move.List']},
+  {state: 'opening-balance', name: 'Nhập tồn đầu', icon: 'inventory', permissions: ['Opening-Balance.List']},
+  // PRD: tra cứu lô bị thu hồi, nhà thuốc nào đang giữ, đã bán cho ai (màn nằm ở module Sổ sách)
+  {state: 'medicine-recall', link: ['/follow-book', 'medicine-recall'], name: 'Thu hồi thuốc', icon: 'report', permissions: ['Medicine-Recall.List']},
+];
+const PURCHASE_CHILDREN: ChildrenItems[] = [
+  {state: 'warehouse', link: ['/transaction', 'warehouse'], name: 'Hóa đơn nhập', icon: 'local_grocery_store', permissions: ['Warehouse.List']},
+  {state: 'warehouse-return', link: ['/transaction', 'warehouse-return'], name: 'Trả hàng nhập', icon: 'assignment_return', permissions: ['Warehouse.List']},
+  {state: 'e-invoice', link: ['/transaction', 'e-invoice'], name: 'Hóa đơn đầu vào', icon: 'description', permissions: ['Warehouse.List']},
+  {state: 'supplier', link: ['/partner', 'supplier'], name: 'Nhà cung cấp', icon: 'people', permissions: ['Supplier.List']},
+];
+const FINANCE_CHILDREN: ChildrenItems[] = [
+  {state: 'cash-flow', link: ['/cash-flow'], name: 'Sổ quỹ', icon: 'currency_exchange', permissions: ['Cash-Flow.List']},
+  {state: 'debt-customers', link: ['/report', 'debt-customers'], name: 'Công nợ khách hàng', icon: 'price_check', permissions: ['Report.Customers-Debt']},
+  {state: 'debt-suppliers', link: ['/report', 'debt-suppliers'], name: 'Công nợ nhà cung cấp', icon: 'money_off', permissions: ['Report.Suppliers-Debt']},
+  {state: 'bank-account', link: ['/setting', 'bank-account'], name: 'Tài khoản ngân hàng', icon: 'account_balance_wallet', permissions: ['Bank-Account.List']},
+];
+const CHAIN_CHILDREN: ChildrenItems[] = [
+  {state: 'clinic-partner', name: 'Phòng khám đối tác', icon: 'handshake', permissions: ['Clinic-Partner.List']},
+  {state: 'clinic-reconciliation', name: 'Đối soát phòng khám', icon: 'fact_check', permissions: ['Report.Clinic-Reconciliation']},
+];
+const REPORT_CHILDREN: ChildrenItems[] = [
+  {state: 'day-report', name: 'Cuối ngày', icon: 'pie_chart', permissions: ['Invoice.End-Day-Report']},
+  {state: 'product-report', name: 'Hàng hóa', icon: 'inventory',
+    permissions: ['Report.Product-Sale', 'Report.Stock', 'Warehouse-Product-Parcel.Expiration', 'Report.Export-Import-Detail', 'Report.Supplier']},
+  {state: 'group-report', name: 'Nhóm hàng', icon: 'category', permissions: ['Group.Report']},
+  {state: 'inventory-turnover', name: 'Vòng quay tồn kho', icon: 'autorenew', permissions: ['Report.Inventory-Turnover']},
+  {state: 'employee', name: 'Nhân viên', icon: 'account_box', permissions: ['Employee-Report.Revenue', 'Employee-Report.Profit', 'Employee-Report.Commission']},
+];
+const SETTING_CHILDREN: ChildrenItems[] = [
+  {state: 'common', name: 'Thiết lập chung', icon: 'settings',
+    permissions: ['Option-Store.Update', 'Store.Upload-Logo', 'Branch.Update-Connect', 'Store.Update-Info']},
+  {state: 'branch', name: 'Chi nhánh', icon: 'business', permissions: ['Branch.List']},
+  {state: 'user', name: 'Tài khoản & phân quyền', icon: 'manage_accounts', permissions: ['User.List']},
+  {state: 'expenses-order', name: 'Khoản thu khác khi bán', icon: 'price_change', permissions: ['Expenses-Order.List'],
+    optionKeys: ['transaction_expenses_order']},
+  {state: 'expenses-transaction', name: 'Khoản chi phí khi nhập', icon: 'paid', permissions: ['Expenses-Transaction.List'],
+    optionKeys: ['transaction_expenses_transaction']},
+  {state: 'employee', name: 'Nhân viên', icon: 'assignment_ind', permissions: ['Employee.List']},
+  {state: 'timesheet', name: 'Chấm công', icon: 'calendar_today', permissions: ['Timesheet.List']},
+  {state: 'pay-sheet', name: 'Bảng tính lương', icon: 'assessment', permissions: ['Pay-Sheet.List']},
+];
+
+const MENUITEMS: Menu[] = [
   {
     state: 'dashboard',
     name: 'Tổng quan',
     type: 'link',
-    icon: 'av_timer',
+    icon: 'dashboard',
     permissions: ['Report.Dash-Board', 'Report.Data-Bar-Chart', 'Warehouse-Product-Parcel.Summary-Expiration'],
-    // children: [
-    //     { state: 'dashboard1', name: 'Dashboard 1', type: 'link' },
-    //     { state: 'dashboard2', name: 'Dashboard 2', type: 'link' }
-    // ]
   },
-  {
-    state: 'store',
-    name: 'Hàng hóa',
-    type: 'sub',
-    icon: 'web_asset',
-    permissions: ['Product.List', 'Group.List', 'Sample-Prescription.List', 'Price-List.List', 'Stock-Take.List', 'Opening-Balance.List'],
-    // badge: [{type: 'red', value: '17'}],
-    children: [
-      // {state: 'medicine', name: 'Danh mục thuốc', type: 'link', icon: 'list', roles: ['ADMIN', 'WAREHOUSE', 'SALE']},
-      {state: 'product', name: 'Sản phẩm', type: 'link', icon: 'local_pharmacy', permissions: ['Product.List']},
-      {state: 'group', name: 'Nhóm hàng', type: 'link', icon: 'local_pharmacy', permissions: ['Group.List']},
-      {state: 'sample-prescription', name: 'Đơn thuốc mẫu', type: 'link', icon: 'list_alt', permissions: ['Sample-Prescription.List']},
-      {state: 'price-book', name: 'Thiết lập giá', type: 'link', icon: 'loyalty', permissions: ['Price-List.List']},
-      {state: 'stock-take', name: 'Kiểm kho', type: 'link', icon: 'check_circle_outline', permissions: ['Stock-Take.List']},
-      {state: 'opening-balance', name: 'Nhập tồn đầu', type: 'link', icon: 'inventory', permissions: ['Opening-Balance.List']},
-    ]
-  },
-  {
-    state: 'transaction',
-    name: 'Giao dịch',
-    type: 'sub',
-    icon: 'sync_alt',
-    permissions: ['Invoice.List', 'Warehouse.List', 'Returns.List', 'Move.List', 'Prescription-Order.List'],
-    // badge: [{type: 'red', value: '17'}],
-    children: [
-      {state: 'invoice', name: 'Hóa đơn bán', type: 'link', icon: 'receipt', permissions: ['Invoice.List']},
-      {state: 'prescription-order', name: 'Đơn đặt thuốc', type: 'link', icon: 'medical_services', permissions: ['Prescription-Order.List']},
-      {state: 'warehouse', name: 'Hóa đơn nhập', type: 'link', icon: 'local_grocery_store', permissions: ['Warehouse.List']},
-      {state: 'returns', name: 'Trả hàng', type: 'link', icon: 'keyboard_return', permissions: ['Returns.List']},
-      {state: 'warehouse-return', name: 'Trả hàng nhập', type: 'link', 'icon': 'assignment_return', permissions: ['Warehouse.List']},
-      {state: 'warehouse-destroy', name: 'Xuất huỷ', type: 'link', icon: 'delete_sweep', permissions: ['Warehouse.List']},
-      {state: 'move', name: 'Chuyển hàng', type: 'link', icon: 'local_shipping', permissions: ['Move.List']},
-      {state: 'e-invoice', name: 'Hóa đơn đầu vào (Chức năng mới)', type: 'link', icon: 'description', permissions: ['Warehouse.List']},
-    ]
-  },
-  {
-    state: 'partner',
-    name: 'Đối tác',
-    type: 'sub',
-    icon: 'contacts',
-    permissions: ['Customer.List', 'Supplier.List', 'Doctor.List'],
-    // badge: [{type: 'red', value: '17'}],
-    children: [
-      {state: 'customer', name: 'Khách hàng', type: 'link', icon: 'person', permissions: ['Customer.List']},
-      {state: 'supplier', name: 'Nhà cung cấp', type: 'link', icon: 'people', permissions: ['Supplier.List']},
-      {state: 'doctor', name: 'Bác sĩ', type: 'link', icon: 'local_hospital', permissions: ['Doctor.List']},
-    ]
-  },
-  {
-    state: 'transaction/warehouse/create',
-    name: 'Nhập hàng',
-    type: 'extLink',
-    icon: 'local_grocery_store',
-    permissions: ['Warehouse.Create'],
-  },
-  {
-    state: 'sale',
-    name: 'Bán hàng',
-    type: 'link',
-    icon: 'shopping_basket',
-    permissions: ['Invoice.Create'],
-  },
-  {
-    state: 'setting',
-    name: 'Cửa hàng',
-    type: 'sub',
-    icon: 'assignment_ind',
-    permissions: ['User.List', 'Employee.List', 'Branch.List', 'Timesheet.List',
-      'Pay-Sheet.List', 'Option-Store.Update',
-      'Store.Upload-Logo', 'Branch.Update-Connect',
-      'Store.Update-Info'
-    ],
-    children: [
-      { state: 'user', name: 'Tài khoản', type: 'link', icon: 'person', permissions: ['User.List'] },
-      { state: 'employee', name: 'Nhân viên', type: 'link', icon: 'assignment_ind', permissions: ['Employee.List'] },
-      { state: 'branch', name: 'Chi nhánh', type: 'link', icon: 'business', permissions: ['Branch.List'] },
-      { state: 'timesheet', name: 'Chấm công', type: 'link', icon: 'calendar_today', permissions: ['Timesheet.List'] },
-      { state: 'pay-sheet', name: 'Bảng tính lương', type: 'link', icon: 'assessment', permissions: ['Pay-Sheet.List'] },
-      {state: 'bank-account', name: 'Tài khoản ngân hàng', type: 'link', icon: 'account_balance_wallet', permissions: ['Bank-Account.List']},
-      {
-        state: 'common', name: 'Thiết lập chung', type: 'link', icon: 'settings', permissions: [
-          'Option-Store.Update',
-          'Store.Upload-Logo', 'Branch.Update-Connect',
-          'Store.Update-Info']},
-      {state: 'expenses-order', name: 'Thu khác Bán hàng', type: 'link',
-        icon: 'price_change',
-        permissions: ['Expenses-Order.List'],
-        optionKeys: ['transaction_expenses_order']
-      },
-      {state: 'expenses-transaction', name: 'Chi phí Nhập hàng',
-        type: 'link', icon: 'paid', permissions: ['Expenses-Transaction.List'],
-        optionKeys: ['transaction_expenses_transaction']
-      },
-    ]
-  },
-  {
-    state: 'cash-flow',
-    name: 'Sổ quỹ',
-    type: 'link',
-    icon: 'currency_exchange',
-    permissions: ['Cash-Flow.List'],
-  },
-  {
-    state: 'chain',
-    name: 'Chuỗi',
-    type: 'sub',
-    icon: 'hub',
-    permissions: ['Clinic-Partner.List', 'Report.Clinic-Reconciliation'],
-    children: [
-      {state: 'clinic-partner', name: 'Phòng khám đối tác', type: 'link', icon: 'handshake', permissions: ['Clinic-Partner.List']},
-      {state: 'clinic-reconciliation', name: 'Đối soát phòng khám', type: 'link', icon: 'fact_check', permissions: ['Report.Clinic-Reconciliation']},
-    ]
-  },
-  {
-    state: 'report',
-    name: 'Báo cáo',
-    type: 'sub',
-    icon: 'bar_chart',
-    permissions: ['Report.Stock', 'Report.Product-Sale',
-      'Warehouse-Product-Parcel.Expiration', 'Option-Store.Update',
-      'Store.Upload-Logo', 'Branch.Update-Connect',
-      'Store.Update-Info'
-      , 'Report.Export-Import-Detail'
-      , 'Group.Report'
-      , 'Report.Customers-Debt'
-      , 'Invoice.End-Day-Report'
-    ],
-    children: [
-      {state: 'day-report', name: 'Cuối ngày', type: 'link', icon: 'pie_chart', permissions: ['Invoice.End-Day-Report']},
-      {state: 'product-report', name: 'Hàng hóa', type: 'link', icon: 'inventory', permissions: [
-        'Report.Product-Sale',
-        'Report.Stock',
-        'Warehouse-Product-Parcel.Expiration',
-        'Report.Export-Import-Detail'
-          , 'Report.Supplier'
-        ]},
-      //{state: 'stock-report', name: 'Tồn kho', type: 'link', icon: 'store', roles: ['ADMIN']},
-      {state: 'group-report', name: 'Nhóm hàng', type: 'link', icon: 'category', permissions: ['Group.Report']},
-      {state: 'inventory-turnover', name: 'Vòng quay tồn kho', type: 'link', icon: 'autorenew', permissions: ['Report.Inventory-Turnover']},
-      {state: 'employee', name: 'Nhân viên', type: 'extLink', icon: 'account_box', permissions: ['Employee-Report.Revenue', 'Employee-Report.Profit', 'Employee-Report.Commission']},
-      //{state: 'sale-report', name: 'Bán hàng', type: 'link', icon: 'table_chart', roles: ['ADMIN']},
-      // {state: 'debt-report', name: 'Công nợ', type: 'link', icon: 'money', roles: ['ADMIN']},
-      {state: 'debt-customers', name: 'Công nợ thu', type: 'link', icon: 'price_check', permissions: ['Report.Customers-Debt']},
-      {state: 'clinic-reconciliation', name: 'Đối soát phòng khám', type: 'link', icon: 'fact_check', permissions: ['Report.Clinic-Reconciliation']},
-      {state: 'debt-suppliers', name: 'Công nợ trả', type: 'link', icon: 'money_off', permissions: ['Report.Supplier-Debt']},
-    ]
-  },
+  {state: 'sales', name: 'Bán hàng', type: 'sub', icon: 'receipt_long', permissions: childPermissions(SALES_CHILDREN), children: SALES_CHILDREN},
+  {state: 'store', name: 'Hàng hóa & kho', type: 'sub', icon: 'inventory_2', permissions: childPermissions(STOCK_CHILDREN), children: STOCK_CHILDREN},
+  {state: 'purchase', name: 'Mua hàng', type: 'sub', icon: 'local_shipping', permissions: childPermissions(PURCHASE_CHILDREN), children: PURCHASE_CHILDREN},
+  {state: 'finance', name: 'Tài chính', type: 'sub', icon: 'account_balance_wallet', permissions: childPermissions(FINANCE_CHILDREN), children: FINANCE_CHILDREN},
+  {state: 'chain', name: 'Chuỗi', type: 'sub', icon: 'hub', permissions: childPermissions(CHAIN_CHILDREN), children: CHAIN_CHILDREN},
+  {state: 'report', name: 'Báo cáo', type: 'sub', icon: 'bar_chart', permissions: childPermissions(REPORT_CHILDREN), children: REPORT_CHILDREN},
+  {state: 'setting', name: 'Thiết lập', type: 'sub', icon: 'settings', permissions: childPermissions(SETTING_CHILDREN), children: SETTING_CHILDREN},
+  // Hai nút thao tác dùng nhiều nhất, nằm cuối bên phải thanh menu
+  {state: 'transaction/warehouse/create', name: 'Nhập hàng', type: 'extLink', icon: 'add_shopping_cart', action: 'outline', permissions: ['Warehouse.Create']},
+  {state: 'sale', name: 'Quầy bán', type: 'link', icon: 'point_of_sale', action: 'primary', permissions: ['Invoice.Create']},
   {
     state: 'follow-book',
     name: 'Sổ sách',
     type: 'sub',
+    hidden: true, // PRD không có, ẩn tạm 03/11/2026; Thu hồi thuốc đã đưa sang Hàng hóa & kho
     icon: 'library_books',
     permissions: [
       'Quality-Check.All',
@@ -293,6 +220,7 @@ const MENUITEMS = [
     state: 'accounting-book',
     name: 'Sổ kế toán HKD',
     type: 'sub',
+    hidden: true, // PRD không có (chuỗi là công ty, kế toán qua phần mềm riêng ở GĐ4), ẩn tạm 03/11/2026
     icon: 'account_balance',
     permissions: ['Report.Stock', 'Warehouse-Product-Parcel.Tracking', 'Cash-Flow.List', 'Invoice.List'],
     children: [
@@ -521,6 +449,6 @@ export class MenuItems {
   // }
 
   getMenuitem(): Menu[] {
-    return MENUITEMS;
+    return MENUITEMS.filter(m => !m.hidden);
   }
 }
