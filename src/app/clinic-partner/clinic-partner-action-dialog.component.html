@@ -1,0 +1,40 @@
+<div class="cff-header" mat-dialog-title>
+  <mat-icon class="cff-header-icon cp-ico" [ngClass]="data.tone">{{ data.icon }}</mat-icon>
+  <div>
+    <h2>{{ data.title }}</h2>
+    <p>{{ data.subtitle }}</p>
+  </div>
+</div>
+<div mat-dialog-content class="cff-content">
+  <div class="cp-warn-box" *ngIf="data.warnings?.length">
+    <mat-icon>warning_amber</mat-icon>
+    <div>{{ data.warningTitle }}
+      <ul><li *ngFor="let w of data.warnings">{{ w }}</li></ul>
+    </div>
+  </div>
+  <ng-container *ngIf="data.field === 'text'">
+    <div class="rd-suggest" *ngIf="data.suggestions?.length">
+      <button type="button" class="rd-chip" *ngFor="let s of data.suggestions" [class.on]="text === s" (click)="text = s">{{ s }}</button>
+    </div>
+    <mat-form-field appearance="outline" class="cp-full">
+      <mat-label>{{ data.fieldLabel }}</mat-label>
+      <textarea matInput id="cpa-text" rows="2" [(ngModel)]="text" maxlength="500" [required]="data.required" [placeholder]="data.placeholder || ''"></textarea>
+    </mat-form-field>
+  </ng-container>
+  <mat-form-field appearance="outline" class="cp-full" *ngIf="data.field === 'branch'">
+    <mat-label>{{ data.fieldLabel }}</mat-label>
+    <mat-select id="cpa-branch" [(ngModel)]="branchId" required>
+      <mat-option *ngFor="let b of data.branches" [value]="b.id" [disabled]="b.id === data.currentBranchId">
+        {{ b.name }}{{ b.id === data.currentBranchId ? ' (đang nhận đơn)' : '' }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div class="cp-error" *ngIf="error" role="alert"><mat-icon>error_outline</mat-icon><div>{{ error }}</div></div>
+</div>
+<div mat-dialog-actions class="cp-actions">
+  <button mat-button type="button" mat-dialog-close>Bỏ qua</button>
+  <span class="cp-spacer"></span>
+  <button mat-flat-button type="button" id="cpa-confirm" [color]="data.danger ? 'warn' : 'primary'" (click)="confirm()">
+    <mat-icon>{{ data.icon }}</mat-icon>{{ data.confirmLabel }}
+  </button>
+</div>

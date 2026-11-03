@@ -1,0 +1,87 @@
+<div class="po-page">
+  <section class="po-card po-head">
+    <div class="po-head-top">
+      <div class="po-title">
+        <span class="po-ico"><mat-icon>handshake</mat-icon></span>
+        <div>
+          <h3>Phòng khám đối tác</h3>
+          <p>Kinh doanh đăng ký hồ sơ, công ty mẹ duyệt. Duyệt xong hệ thống tự tạo khách công ty, khoá kết nối và phòng khám trên DocSoft.</p>
+        </div>
+      </div>
+      <div class="cp-head-actions">
+        <button mat-stroked-button color="primary" class="po-btn" (click)="load()" [disabled]="loading">
+          <mat-icon>refresh</mat-icon>Làm mới
+        </button>
+        <button mat-flat-button color="primary" class="po-btn" *ngIf="canCreate" (click)="openCreate()">
+          <mat-icon>add_business</mat-icon>Đăng ký phòng khám
+        </button>
+      </div>
+    </div>
+
+    <div class="po-tabs" role="tablist" aria-label="Trạng thái hồ sơ">
+      <button type="button" role="tab" *ngFor="let t of tabs" class="po-tab" [class.active]="tab === t.key"
+              [attr.aria-selected]="tab === t.key" (click)="selectTab(t.key)">
+        {{ t.label }}
+        <span class="po-tab-count" [class.hot]="t.key === 'pending' && countOf(t) > 0">{{ countOf(t) }}</span>
+      </button>
+    </div>
+
+    <div class="po-filter">
+      <label class="po-input po-search">
+        <mat-icon>search</mat-icon>
+        <input type="text" [ngModel]="keyword" (ngModelChange)="onKeyword($event)"
+               placeholder="Mã, tên phòng khám, SĐT, người đại diện, mã DocSoft" aria-label="Tìm phòng khám đối tác">
+      </label>
+      <button mat-button type="button" class="po-btn" *ngIf="keyword" (click)="onKeyword('')">Xoá lọc</button>
+    </div>
+  </section>
+
+  <section class="po-card po-table-card">
+    <div class="po-loading" *ngIf="loading"><mat-progress-bar mode="indeterminate"></mat-progress-bar></div>
+    <div class="table-wrap">
+      <table class="po-table">
+        <thead>
+        <tr>
+          <th>Mã</th>
+          <th>Phòng khám</th>
+          <th>Người đại diện</th>
+          <th>Chi nhánh nhận đơn</th>
+          <th>DocSoft</th>
+          <th>Kinh doanh</th>
+          <th>Cập nhật</th>
+          <th>Trạng thái</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let r of rows" class="po-row clickable" (click)="open(r)" tabindex="0" (keydown.enter)="open(r)">
+          <td class="code">{{ r.code }}</td>
+          <td>
+            <div class="name">{{ r.name }}</div>
+            <div class="sub" *ngIf="r.phone">{{ r.phone }}</div>
+          </td>
+          <td>{{ r.representative_name || '—' }}</td>
+          <td>
+            <span *ngIf="r.branch">{{ r.branch }}</span>
+            <span class="sub" *ngIf="r.branch && !r.branch_id"> (đề xuất)</span>
+            <span class="sub" *ngIf="!r.branch">—</span>
+          </td>
+          <td>
+            <a *ngIf="r.docsoft_url" class="cp-link" [href]="r.docsoft_url" target="_blank" rel="noopener" (click)="$event.stopPropagation()">{{ r.docsoft_domain }}</a>
+            <span class="sub" *ngIf="!r.docsoft_url">{{ r.docsoft_tenant_id || '—' }}</span>
+          </td>
+          <td>{{ r.sales_user || '—' }}</td>
+          <td class="muted">{{ r.updated_at * 1000 | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td><span class="po-chip" [ngClass]="statusClass[r.status]">{{ r.status_label }}</span></td>
+        </tr>
+        <tr *ngIf="!loading && !rows.length">
+          <td colspan="8" class="po-empty">
+            <mat-icon>inbox</mat-icon>
+            <div *ngIf="!keyword">Chưa có phòng khám nào{{ tab ? ' ở trạng thái này' : '' }}.</div>
+            <div *ngIf="keyword">Không có phòng khám khớp "{{ keyword }}".</div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

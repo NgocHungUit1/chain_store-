@@ -40,6 +40,20 @@ export const AppRoutes: Routes = [
         loadChildren: () => import('./returns/returns.module').then(m => m.ReturnsModule)
       },
       {
+        // Chuỗi: việc của công ty mẹ với phòng khám đối tác; Đối soát phòng khám mở được ở cả Báo cáo
+        path: 'chain',
+        children: [
+          {
+            path: 'clinic-partner',
+            loadChildren: () => import('./clinic-partner/clinic-partner.module').then(m => m.ClinicPartnerModule)
+          },
+          {
+            path: 'clinic-reconciliation',
+            loadChildren: () => import('./clinic-reconciliation/clinic-reconciliation.module').then(m => m.ClinicReconciliationModule)
+          },
+        ]
+      },
+      {
         path: 'report',
         loadChildren: () => import('./report/report.module').then(m => m.ReportModule)
       },

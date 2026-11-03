@@ -158,6 +158,17 @@ const MENUITEMS = [
     permissions: ['Cash-Flow.List'],
   },
   {
+    state: 'chain',
+    name: 'Chuỗi',
+    type: 'sub',
+    icon: 'hub',
+    permissions: ['Clinic-Partner.List', 'Report.Clinic-Reconciliation'],
+    children: [
+      {state: 'clinic-partner', name: 'Phòng khám đối tác', type: 'link', icon: 'handshake', permissions: ['Clinic-Partner.List']},
+      {state: 'clinic-reconciliation', name: 'Đối soát phòng khám', type: 'link', icon: 'fact_check', permissions: ['Report.Clinic-Reconciliation']},
+    ]
+  },
+  {
     state: 'report',
     name: 'Báo cáo',
     type: 'sub',

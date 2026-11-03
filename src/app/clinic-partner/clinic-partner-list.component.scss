@@ -1,0 +1,10 @@
+.cp-head-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.cp-link {
+  color: #00796b;
+  text-decoration: none;
+  &:hover { text-decoration: underline; }
+}

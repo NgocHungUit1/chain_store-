@@ -1,0 +1,87 @@
+<div class="cff-header" mat-dialog-title>
+  <mat-icon class="cff-header-icon cp-ico">verified</mat-icon>
+  <div>
+    <h2>Duyệt {{ data.partner.code }} · {{ data.partner.name }}</h2>
+    <p>Chốt cách nhà thuốc phục vụ phòng khám; duyệt xong hệ thống kích hoạt luôn</p>
+  </div>
+</div>
+
+<div mat-dialog-content class="cff-content">
+  <div class="cp-error" *ngIf="error" role="alert"><mat-icon>error_outline</mat-icon><div>{{ error }}</div></div>
+
+  <section class="cff-section">
+    <h3 class="cff-title"><mat-icon>storefront</mat-icon>Nhà thuốc</h3>
+    <div class="cff-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Chi nhánh nhận đơn</mat-label>
+        <mat-select id="ap-branch" [(ngModel)]="form.branch_id" required>
+          <mat-option *ngFor="let b of options?.branches" [value]="b.id">{{ b.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Bảng giá</mat-label>
+        <mat-select id="ap-price" [(ngModel)]="form.price_list_id">
+          <mat-option [value]="0">Giá bán lẻ (không dùng bảng giá riêng)</mat-option>
+          <mat-option *ngFor="let p of options?.price_lists" [value]="p.id">{{ p.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <mat-checkbox class="cp-check" id="ap-special" [(ngModel)]="form.allow_special_control" color="primary">
+      Cho đặt thuốc kiểm soát đặc biệt (gây nghiện, hướng thần, tiền chất)
+    </mat-checkbox>
+  </section>
+
+  <section class="cff-section">
+    <h3 class="cff-title"><mat-icon>computer</mat-icon>Phòng khám trên DocSoft</h3>
+    <div class="cp-mode" role="radiogroup" aria-label="Cách nối DocSoft">
+      <button type="button" role="radio" class="cp-mode-opt" id="ap-mode-create" [class.on]="form.docsoft_mode === 'create'"
+              [attr.aria-checked]="form.docsoft_mode === 'create'" (click)="setMode('create')">
+        <mat-icon>add_circle</mat-icon>
+        <div><b>Tạo phòng khám mới</b><span>Phòng khám chưa dùng DocSoft. Hệ thống tạo tài khoản, gắn sẵn kết nối nhà thuốc.</span></div>
+      </button>
+      <button type="button" role="radio" class="cp-mode-opt" id="ap-mode-connect" [class.on]="form.docsoft_mode === 'connect'"
+              [attr.aria-checked]="form.docsoft_mode === 'connect'" (click)="setMode('connect')">
+        <mat-icon>link</mat-icon>
+        <div><b>Nối phòng khám có sẵn</b><span>Phòng khám đang dùng DocSoft. Chỉ gắn kết nối nhà thuốc, dữ liệu giữ nguyên.</span></div>
+      </button>
+    </div>
+    <div class="cff-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Mã phòng khám DocSoft</mat-label>
+        <input matInput id="ap-tenant" [(ngModel)]="form.docsoft_tenant_id" (ngModelChange)="onTenant()" maxlength="30" required>
+        <mat-hint *ngIf="form.docsoft_mode === 'create'">Địa chỉ đăng nhập: {{ (form.docsoft_tenant_id || '…') }}{{ domainHint }}</mat-hint>
+        <mat-hint *ngIf="form.docsoft_mode === 'connect'">Mã phòng khám đang dùng (phần đầu tên miền DocSoft)</mat-hint>
+      </mat-form-field>
+      <mat-form-field appearance="outline" *ngIf="form.docsoft_mode === 'create'">
+        <mat-label>Tên đăng nhập quản trị</mat-label>
+        <input matInput id="ap-admin" [(ngModel)]="form.docsoft_admin_username" (ngModelChange)="adminTouched = true" maxlength="50" required>
+        <mat-hint>Mật khẩu hệ thống tự tạo, hiện một lần sau khi duyệt</mat-hint>
+      </mat-form-field>
+    </div>
+  </section>
+
+  <div class="cp-warn-box" *ngIf="options && !options.docsoft_configured">
+    <mat-icon>warning_amber</mat-icon>
+    <div>Chưa cấu hình kết nối DocSoft: hệ thống chỉ tạo liên kết và khoá; khoá hiện sau khi duyệt để gửi phòng khám nhập tay.</div>
+  </div>
+  <div class="cff-auto">
+    <mat-icon>bolt</mat-icon>
+    <div>Bấm Duyệt, hệ thống sẽ:
+      <ol class="cp-steps">
+        <li>Tạo khách công ty "{{ data.partner.name }}" (đứng tên hoá đơn bốc thuốc, theo dõi công nợ).</li>
+        <li>Tạo liên kết với chi nhánh và khoá kết nối.</li>
+        <li *ngIf="form.docsoft_mode === 'create'">Tạo phòng khám trên DocSoft, gắn khoá, tắt "Phòng khám có tủ thuốc riêng".</li>
+        <li *ngIf="form.docsoft_mode === 'connect'">Gắn khoá vào phòng khám DocSoft có sẵn.</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-actions class="cp-actions">
+  <button mat-button type="button" mat-dialog-close [disabled]="busy">Huỷ</button>
+  <span class="cp-spacer"></span>
+  <mat-progress-spinner *ngIf="busy" diameter="20" mode="indeterminate"></mat-progress-spinner>
+  <button mat-flat-button color="primary" type="button" id="ap-submit" [disabled]="busy" (click)="submit()">
+    <mat-icon>verified</mat-icon>{{ busy ? 'Đang kích hoạt…' : 'Duyệt và kích hoạt' }}
+  </button>
+</div>

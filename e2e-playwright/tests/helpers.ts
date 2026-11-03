@@ -16,7 +16,9 @@ const KNOWN_ERRORS: RegExp[] = [
 export function watchErrors(page: Page, allowStatus: number[] = []) {
   const errors: string[] = [];
   page.on('console', msg => {
-    if (msg.type() === 'error' && !KNOWN_ERRORS.some(re => re.test(msg.text()))) {
+    // Lỗi tải tài nguyên với mã đã cho phép (vd 422 khi test cố ý gửi thiếu) trình duyệt cũng in ra console
+    const allowed = allowStatus.some(s => msg.text().includes('status of ' + s + ' '));
+    if (msg.type() === 'error' && !allowed && !KNOWN_ERRORS.some(re => re.test(msg.text()))) {
       errors.push('console: ' + msg.text().slice(0, 300));
     }
   });

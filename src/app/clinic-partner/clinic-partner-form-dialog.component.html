@@ -1,0 +1,109 @@
+<div class="cff-header" mat-dialog-title>
+  <mat-icon class="cff-header-icon cp-ico">add_business</mat-icon>
+  <div>
+    <h2>{{ data.partner ? 'Sửa hồ sơ ' + data.partner.code : 'Đăng ký phòng khám đối tác' }}</h2>
+    <p>Lưu nháp được khi mới có tên; gửi duyệt cần đủ các trường có dấu *</p>
+  </div>
+</div>
+
+<div mat-dialog-content class="cff-content">
+  <div class="cp-error" *ngIf="error" role="alert"><mat-icon>error_outline</mat-icon><div>{{ error }}</div></div>
+  <div class="cff-auto" *ngIf="data.partner?.status === 'rejected'">
+    <mat-icon>info</mat-icon>
+    <div>Bị từ chối: <b>{{ data.partner.reject_reason }}</b>. Sửa theo góp ý rồi bấm Gửi duyệt lại.</div>
+  </div>
+
+  <section class="cff-section">
+    <h3 class="cff-title"><mat-icon>local_hospital</mat-icon>Thông tin phòng khám</h3>
+    <div class="cff-grid">
+      <mat-form-field appearance="outline" class="cff-span-2">
+        <mat-label>Tên phòng khám</mat-label>
+        <input matInput id="cp-name" [(ngModel)]="form.name" maxlength="255" required>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Số giấy phép hoạt động</mat-label>
+        <input matInput id="cp-license" [(ngModel)]="form.license_no" maxlength="100" required>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Chuyên khoa</mat-label>
+        <input matInput id="cp-specialty" [(ngModel)]="form.specialty" maxlength="100" placeholder="Vd: Nhi, Da liễu, Đa khoa">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="cff-span-2">
+        <mat-label>Địa chỉ</mat-label>
+        <input matInput id="cp-address" [(ngModel)]="form.address" maxlength="500" required>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Điện thoại phòng khám</mat-label>
+        <input matInput id="cp-phone" [(ngModel)]="form.phone" maxlength="30" required>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput id="cp-email" type="email" [(ngModel)]="form.email" maxlength="150">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Mã số thuế</mat-label>
+        <input matInput id="cp-tax" [(ngModel)]="form.tax_code" maxlength="50">
+        <mat-hint>In trên hoá đơn bốc thuốc</mat-hint>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Số bác sĩ</mat-label>
+        <input matInput id="cp-doctors" type="number" min="0" [(ngModel)]="form.doctor_count">
+      </mat-form-field>
+    </div>
+  </section>
+
+  <section class="cff-section">
+    <h3 class="cff-title"><mat-icon>badge</mat-icon>Người đại diện</h3>
+    <div class="cff-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Họ tên</mat-label>
+        <input matInput id="cp-rep-name" [(ngModel)]="form.representative_name" maxlength="150" required>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Điện thoại</mat-label>
+        <input matInput id="cp-rep-phone" [(ngModel)]="form.representative_phone" maxlength="30" required>
+      </mat-form-field>
+    </div>
+  </section>
+
+  <section class="cff-section">
+    <h3 class="cff-title"><mat-icon>storefront</mat-icon>Đề xuất</h3>
+    <p class="cff-desc">Công ty mẹ chốt chi nhánh, bảng giá khi duyệt.</p>
+    <div class="cff-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Chi nhánh nhận đơn (đề xuất)</mat-label>
+        <mat-select id="cp-branch" [(ngModel)]="form.proposed_branch_id">
+          <mat-option [value]="null">— Chưa chọn —</mat-option>
+          <mat-option *ngFor="let b of options?.branches" [value]="b.id">{{ b.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Nhân viên kinh doanh</mat-label>
+        <mat-select id="cp-sales" [(ngModel)]="form.sales_user_id">
+          <mat-option *ngFor="let u of options?.users" [value]="u.id">{{ u.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="cff-span-2">
+        <mat-label>Ghi chú</mat-label>
+        <textarea matInput id="cp-note" rows="2" [(ngModel)]="form.note" maxlength="2000"
+                  placeholder="Vd: lượng đơn dự kiến, yêu cầu riêng của phòng khám"></textarea>
+      </mat-form-field>
+    </div>
+  </section>
+</div>
+
+<div mat-dialog-actions class="cp-actions">
+  <button mat-button type="button" mat-dialog-close [disabled]="busy">Huỷ</button>
+  <span class="cp-spacer"></span>
+  <ng-container *ngIf="data.partner?.status !== 'pending'">
+    <button mat-stroked-button color="primary" type="button" id="cp-save-draft" [disabled]="busy" (click)="save(false)">
+      <mat-icon>save</mat-icon>Lưu nháp
+    </button>
+    <button mat-flat-button color="primary" type="button" id="cp-submit" [disabled]="busy" (click)="save(true)">
+      <mat-icon>send</mat-icon>Gửi duyệt
+    </button>
+  </ng-container>
+  <button *ngIf="data.partner?.status === 'pending'" mat-flat-button color="primary" type="button" id="cp-save" [disabled]="busy" (click)="save(false)">
+    <mat-icon>save</mat-icon>Lưu
+  </button>
+</div>

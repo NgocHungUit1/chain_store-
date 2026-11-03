@@ -1,0 +1,165 @@
+<div class="po-page">
+  <div class="po-loading" *ngIf="loading"><mat-progress-bar mode="indeterminate"></mat-progress-bar></div>
+
+  <section class="po-card po-head" *ngIf="notFound">
+    <div class="po-title">
+      <span class="po-ico"><mat-icon>search_off</mat-icon></span>
+      <div>
+        <h3>Không tìm thấy hồ sơ phòng khám</h3>
+        <p>Hồ sơ không tồn tại, đã xoá, hoặc thuộc nhà thuốc khác.</p>
+      </div>
+    </div>
+    <button mat-stroked-button color="primary" class="po-btn dt-back-btn" (click)="back()"><mat-icon>arrow_back</mat-icon>Quay lại</button>
+  </section>
+
+  <ng-container *ngIf="p">
+    <section class="po-card po-head">
+      <div class="dt-top">
+        <button mat-icon-button (click)="back()" aria-label="Quay lại danh sách"><mat-icon>arrow_back</mat-icon></button>
+        <div class="dt-code">
+          <h3>{{ p.code }} · {{ p.name }}</h3>
+          <p>Đăng ký {{ p.created_at * 1000 | date:'dd/MM/yyyy' }}<span *ngIf="p.sales_user"> bởi {{ p.sales_user }}</span>
+            <span *ngIf="p.approved_at"> · duyệt {{ p.approved_at * 1000 | date:'dd/MM/yyyy' }}<span *ngIf="p.approved_by"> bởi {{ p.approved_by }}</span></span></p>
+        </div>
+        <span class="po-chip dt-status" [ngClass]="statusClass[p.status]">{{ p.status_label }}</span>
+        <span class="dt-spacer"></span>
+        <div class="dt-actions">
+          <button mat-button color="warn" class="po-btn" *ngIf="can('Delete') && in('draft', 'rejected')" [disabled]="busy" (click)="remove()">
+            <mat-icon>delete_outline</mat-icon>Xoá
+          </button>
+          <button mat-stroked-button class="po-btn" *ngIf="can('Update') && in('draft', 'rejected', 'pending')" [disabled]="busy" (click)="edit()">
+            <mat-icon>edit</mat-icon>Sửa hồ sơ
+          </button>
+          <button mat-flat-button color="primary" class="po-btn" *ngIf="can('Submit') && in('draft', 'rejected')" [disabled]="busy" (click)="simple('submit', 'Đã gửi hồ sơ chờ công ty mẹ duyệt.')">
+            <mat-icon>send</mat-icon>Gửi duyệt
+          </button>
+          <button mat-stroked-button color="warn" class="po-btn" *ngIf="can('Reject') && in('pending')" [disabled]="busy" (click)="reject()">
+            <mat-icon>block</mat-icon>Từ chối
+          </button>
+          <button mat-flat-button color="primary" class="po-btn" id="cp-approve" *ngIf="can('Approve') && in('pending')" [disabled]="busy" (click)="approve()">
+            <mat-icon>verified</mat-icon>Duyệt
+          </button>
+          <button mat-flat-button color="primary" class="po-btn" *ngIf="can('Activate') && in('activating')" [disabled]="busy" (click)="retry()">
+            <mat-icon>replay</mat-icon>Thử kích hoạt lại
+          </button>
+          <button mat-flat-button color="primary" class="po-btn" *ngIf="can('Resume') && in('suspended')" [disabled]="busy" (click)="simple('resume', 'Phòng khám gửi đơn lại được.')">
+            <mat-icon>play_circle</mat-icon>Hoạt động lại
+          </button>
+          <button mat-stroked-button class="po-btn" *ngIf="can('Suspend') && in('active')" [disabled]="busy" (click)="suspend()">
+            <mat-icon>pause_circle</mat-icon>Tạm ngưng
+          </button>
+          <button mat-stroked-button class="po-btn" *ngIf="can('Change-Branch') && in('active', 'suspended')" [disabled]="busy" (click)="changeBranch()">
+            <mat-icon>swap_horiz</mat-icon>Đổi chi nhánh
+          </button>
+          <button mat-stroked-button class="po-btn" *ngIf="can('Rotate-Key') && in('active', 'suspended')" [disabled]="busy" (click)="rotateKey()">
+            <mat-icon>key</mat-icon>Cấp lại khoá
+          </button>
+          <button mat-stroked-button color="warn" class="po-btn" *ngIf="can('Terminate') && in('active', 'suspended', 'activating')" [disabled]="busy" (click)="terminate()">
+            <mat-icon>link_off</mat-icon>Ngừng hợp tác
+          </button>
+          <button mat-flat-button color="primary" class="po-btn" *ngIf="can('Reopen') && in('terminated')" [disabled]="busy" (click)="reopen()">
+            <mat-icon>restart_alt</mat-icon>Mở lại hợp tác
+          </button>
+        </div>
+      </div>
+
+      <div class="dt-alert danger" *ngIf="p.status === 'rejected'">
+        <mat-icon>block</mat-icon>
+        <div>Công ty mẹ từ chối: <b>{{ p.reject_reason }}</b>. Sửa hồ sơ rồi gửi duyệt lại.</div>
+      </div>
+      <div class="dt-alert warn" *ngIf="p.status === 'pending' && missing.length">
+        <mat-icon>info</mat-icon>
+        <div>Hồ sơ còn thiếu: {{ missing.join(', ') }}.</div>
+      </div>
+      <div class="dt-alert danger" *ngIf="p.status === 'activating' && lastFailed">
+        <mat-icon>error_outline</mat-icon>
+        <div>Kích hoạt chưa xong: <b>{{ lastFailed.message }}</b>. Các bước đã xong được giữ lại; bấm "Thử kích hoạt lại".</div>
+      </div>
+      <div class="dt-alert warn" *ngIf="p.status === 'suspended'">
+        <mat-icon>pause_circle</mat-icon>
+        <div>Tạm ngưng từ {{ p.suspended_at * 1000 | date:'dd/MM/yyyy HH:mm' }}: phòng khám vẫn xem được danh mục và đơn cũ, <b>không gửi được đơn mới</b>
+          (DocSoft báo "Nhà thuốc đang tạm ngưng nhận đơn").</div>
+      </div>
+      <div class="dt-alert muted" *ngIf="p.status === 'terminated'">
+        <mat-icon>link_off</mat-icon>
+        <div>Ngừng hợp tác từ {{ p.terminated_at * 1000 | date:'dd/MM/yyyy HH:mm' }}: khoá kết nối đã thu hồi, DocSoft của phòng khám bị khoá. Dữ liệu và công nợ giữ nguyên; mở lại hợp tác thì dùng lại.</div>
+      </div>
+      <div class="dt-alert warn" *ngIf="warning">
+        <mat-icon>warning_amber</mat-icon>
+        <div>{{ warning }}</div>
+      </div>
+    </section>
+
+    <div class="dt-grid">
+      <section class="po-card dt-info">
+        <h4><mat-icon>local_hospital</mat-icon>Hồ sơ phòng khám</h4>
+        <dl>
+          <dt>Giấy phép</dt><dd>{{ p.license_no || '—' }}</dd>
+          <dt>Chuyên khoa</dt><dd>{{ p.specialty || '—' }}<span class="sub" *ngIf="p.doctor_count"> · {{ p.doctor_count }} bác sĩ</span></dd>
+          <dt>Địa chỉ</dt><dd>{{ p.address || '—' }}</dd>
+          <dt>Điện thoại</dt><dd>{{ p.phone || '—' }}</dd>
+          <dt>Email</dt><dd>{{ p.email || '—' }}</dd>
+          <dt>Mã số thuế</dt><dd>{{ p.tax_code || '—' }}</dd>
+          <dt>Đại diện</dt><dd>{{ p.representative_name || '—' }}<span class="sub" *ngIf="p.representative_phone"> · {{ p.representative_phone }}</span></dd>
+          <dt>Ghi chú</dt><dd class="pre">{{ p.note || '—' }}</dd>
+        </dl>
+      </section>
+
+      <section class="po-card dt-info">
+        <h4><mat-icon>storefront</mat-icon>Nhà thuốc phục vụ</h4>
+        <dl>
+          <dt>Chi nhánh</dt><dd>{{ p.branch || '—' }}<span class="sub" *ngIf="p.branch && !p.branch_id"> (đề xuất)</span></dd>
+          <dt>Bảng giá</dt><dd>{{ p.price_list || (p.branch_id ? 'Giá bán lẻ' : '—') }}</dd>
+          <dt>Thuốc KSĐB</dt><dd>{{ p.branch_id ? (p.allow_special_control ? 'Cho đặt' : 'Không') : '—' }}</dd>
+          <dt>Khách công ty</dt><dd>{{ p.customer_id ? '#' + p.customer_id + ' ' + p.name : '—' }}</dd>
+          <dt>Liên kết</dt>
+          <dd>
+            <ng-container *ngIf="p.link">#{{ p.link.id }} · khoá …{{ p.link.key_last4 }}
+              <span class="cp-link-st" [ngClass]="p.link.status">{{ linkLabel[p.link.status] }}</span></ng-container>
+            <span *ngIf="!p.link">—</span>
+          </dd>
+          <dt>Đơn đã gửi</dt><dd>{{ p.order_count | number }}</dd>
+        </dl>
+        <a class="cp-more" *ngIf="p.customer_id && canReconcile" [routerLink]="['/chain', 'clinic-reconciliation']">
+          <mat-icon>fact_check</mat-icon>Xem đối soát công nợ</a>
+      </section>
+
+      <section class="po-card dt-info">
+        <h4><mat-icon>computer</mat-icon>DocSoft</h4>
+        <dl>
+          <dt>Mã</dt><dd>{{ p.docsoft_tenant_id || '—' }}</dd>
+          <dt>Địa chỉ</dt><dd><a *ngIf="p.docsoft_url" [href]="p.docsoft_url" target="_blank" rel="noopener">{{ p.docsoft_domain }}</a><span *ngIf="!p.docsoft_url">—</span></dd>
+          <dt>Cách nối</dt><dd>{{ p.docsoft_tenant_id ? (p.docsoft_mode === 'connect' ? 'Nối phòng khám có sẵn' : 'Tạo mới khi duyệt') : '—' }}</dd>
+          <dt>Quản trị</dt><dd>{{ p.docsoft_admin_username || '—' }}</dd>
+        </dl>
+        <ul class="cp-activation" *ngIf="p.activation?.length">
+          <li *ngFor="let s of p.activation" [class.fail]="!s.ok">
+            <mat-icon>{{ s.ok ? 'check_circle' : 'error' }}</mat-icon>
+            <span>{{ s.message }}<span class="sub"> · {{ s.at * 1000 | date:'HH:mm dd/MM' }}</span></span>
+          </li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="po-card po-table-card">
+      <h4 class="cp-section-title"><mat-icon>history</mat-icon>Lịch sử</h4>
+      <div class="table-wrap">
+        <table class="po-table">
+          <thead><tr><th>Thời gian</th><th>Thao tác</th><th>Trạng thái</th><th>Người làm</th><th>Ghi chú</th></tr></thead>
+          <tbody>
+          <tr *ngFor="let l of p.logs">
+            <td class="muted">{{ l.created_at * 1000 | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td class="name">{{ l.label }}</td>
+            <td>
+              <span *ngIf="l.from_status !== l.to_status && l.to_status">
+                <span class="sub">{{ statusLabel(l.from_status) }}</span> → {{ statusLabel(l.to_status) }}</span>
+            </td>
+            <td>{{ l.user || 'Hệ thống' }}</td>
+            <td class="cp-note">{{ l.note }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </ng-container>
+</div>
