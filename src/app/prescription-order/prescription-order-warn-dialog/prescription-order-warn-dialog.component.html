@@ -1,0 +1,17 @@
+<div class="rd-head" mat-dialog-title>
+  <mat-icon class="rd-ico warn">warning_amber</mat-icon>
+  <div>
+    <h2>{{ data.title }}</h2>
+    <p>{{ data.subtitle }}</p>
+  </div>
+</div>
+<div mat-dialog-content>
+  <div class="wd-box" id="po-warn-message">{{ data.message }}</div>
+  <div class="wd-hint" *ngIf="data.hint">{{ data.hint }}</div>
+</div>
+<div mat-dialog-actions class="rd-actions">
+  <button mat-button type="button" mat-dialog-close>Bỏ qua</button>
+  <button mat-flat-button color="primary" type="button" id="po-warn-ok" [mat-dialog-close]="true">
+    <mat-icon>{{ data.icon }}</mat-icon>{{ data.confirmLabel }}
+  </button>
+</div>

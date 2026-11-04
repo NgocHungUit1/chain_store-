@@ -85,6 +85,18 @@ test('Đặt thuốc: đơn mới hiện ở "Mới nhận", báo thiếu hàng,
   await expect(page.getByRole('button', {name: 'Trả đơn'})).toBeVisible();
   await expect(page.locator('.dt-timeline li')).toHaveCount(2);
 
+  // Bốc thuốc khi thiếu hàng: hộp cảnh báo của ứng dụng, Bỏ qua thì vẫn ở đơn
+  await page.getByRole('button', {name: 'Bốc thuốc'}).click();
+  const warn = page.locator('mat-dialog-container');
+  await expect(warn.locator('h2')).toHaveText('Chi nhánh không đủ hàng');
+  await expect(warn.locator('#po-warn-message')).toContainText('Không đủ hàng cho');
+  await page.waitForTimeout(400); // hộp còn đang hiện dần
+  await shot(page, 'dat-thuoc-hop-thieu-hang');
+  await warn.getByRole('button', {name: 'Bỏ qua'}).click();
+  await expect(warn).toHaveCount(0);
+  await expect(page).toHaveURL(/\/transaction\/prescription-order\/\d+$/);
+  await expect(page.locator('.dt-status')).toHaveText('Đã xác nhận');
+
   const row = await openFromList(page, code, 'Đã xác nhận');
   await expect(row.locator('.po-chip')).toHaveText('Đã xác nhận');
   w.assertClean();

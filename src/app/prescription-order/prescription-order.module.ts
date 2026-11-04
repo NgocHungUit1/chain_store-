@@ -7,11 +7,12 @@ import {PrescriptionOrderListComponent} from './prescription-order-list/prescrip
 import {PrescriptionOrderDetailComponent} from './prescription-order-detail/prescription-order-detail.component';
 import {PrescriptionOrderReturnDialogComponent} from './prescription-order-return-dialog/prescription-order-return-dialog.component';
 import {PrescriptionOrderCompleteDialogComponent} from './prescription-order-complete-dialog/prescription-order-complete-dialog.component';
+import {PrescriptionOrderWarnDialogComponent} from './prescription-order-warn-dialog/prescription-order-warn-dialog.component';
 
 /** Màn "Đơn đặt thuốc": đơn phòng khám liên kết gửi tới nhà thuốc (GĐ2, xem pharma_chain/.claude/du-an/10-dat-thuoc.md) */
 @NgModule({
   declarations: [PrescriptionOrderListComponent, PrescriptionOrderDetailComponent, PrescriptionOrderReturnDialogComponent,
-    PrescriptionOrderCompleteDialogComponent],
+    PrescriptionOrderCompleteDialogComponent, PrescriptionOrderWarnDialogComponent],
   imports: [
     CommonModule,
     FormsModule,

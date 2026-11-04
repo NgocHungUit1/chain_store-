@@ -7,6 +7,7 @@ import {NotifierService} from 'angular-notifier';
 import {ORDER_STATUS_CLASS, PrescriptionOrderDetail, PrescriptionOrderService} from '../prescription-order.service';
 import {PrescriptionOrderReturnDialogComponent} from '../prescription-order-return-dialog/prescription-order-return-dialog.component';
 import {PrescriptionOrderCompleteDialogComponent} from '../prescription-order-complete-dialog/prescription-order-complete-dialog.component';
+import {PrescriptionOrderWarnDialogComponent} from '../prescription-order-warn-dialog/prescription-order-warn-dialog.component';
 import {OrderService} from '../../sale/order.service';
 import {getAllPermissions} from '../../shared/permission-storage';
 
@@ -130,10 +131,17 @@ export class PrescriptionOrderDetailComponent implements OnInit, OnDestroy {
 
   confirm() {
     // Vượt hạn mức nợ: chỉ cảnh báo, vẫn xác nhận được (chốt Q6, P3)
-    if (this.order.credit && this.order.credit.over_limit
-      && !confirm(this.order.credit.message + '\n\nVẫn xác nhận đơn ' + this.order.code + '?')) {
+    if (this.order.credit && this.order.credit.over_limit) {
+      this.warn({
+        title: 'Vượt hạn mức nợ', subtitle: (this.order.clinic?.name || 'Phòng khám') + ' · đơn ' + this.order.code,
+        message: this.order.credit.message, confirmLabel: 'Vẫn xác nhận', icon: 'check_circle',
+      }, () => this.doConfirm());
       return;
     }
+    this.doConfirm();
+  }
+
+  private doConfirm() {
     this.busy = true;
     this.orderSer.confirm(this.order.id).subscribe(res => {
       this.order = res;
@@ -171,10 +179,18 @@ export class PrescriptionOrderDetailComponent implements OnInit, OnDestroy {
 
   /** Mở màn bán hàng với tab hoá đơn dựng sẵn từ đơn (khách = phòng khám, đúng thuốc, ghi nợ) */
   pick() {
-    if (!this.order.all_in_stock && !confirm('Chi nhánh không đủ hàng cho ' + this.missingItems.join(', ')
-      + '. Vẫn mở màn bán hàng? (Thiếu hàng thì nên trả đơn để bác sĩ sửa.)')) {
+    if (!this.order.all_in_stock) {
+      this.warn({
+        title: 'Chi nhánh không đủ hàng', subtitle: 'Đơn ' + this.order.code,
+        message: 'Không đủ hàng cho ' + this.missingItems.join(', ') + '.',
+        hint: 'Thiếu hàng thì nên trả đơn để bác sĩ sửa. Vẫn mở màn bán hàng?', confirmLabel: 'Vẫn bốc thuốc', icon: 'shopping_cart',
+      }, () => this.doPick());
       return;
     }
+    this.doPick();
+  }
+
+  private doPick() {
     this.busy = true;
     this.orderSer.pick(this.order.id).subscribe(res => {
       this.busy = false;
@@ -210,6 +226,11 @@ export class PrescriptionOrderDetailComponent implements OnInit, OnDestroy {
       this.runAction(this.orderSer.complete(this.order.id, result.paid),
         result.paid ? 'Đã hoàn thành đơn và ghi phiếu trả nợ.' : 'Đã hoàn thành đơn, ghi nợ phòng khám.', 'Không hoàn thành được đơn.');
     });
+  }
+
+  private warn(data: { title: string, subtitle: string, message: string, hint?: string, confirmLabel: string, icon: string }, onOk: () => void) {
+    this.dialog.open(PrescriptionOrderWarnDialogComponent, {width: '480px', maxWidth: '95vw', data})
+      .afterClosed().subscribe(ok => ok && onOk());
   }
 
   private runAction(req, okMessage: string, fallback: string) {

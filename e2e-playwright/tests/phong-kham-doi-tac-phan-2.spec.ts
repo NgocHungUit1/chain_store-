@@ -124,14 +124,13 @@ test('Phòng khám đối tác Phần 2: chính sách, hợp đồng, bốc thu�
     await expect(page.locator('.dt-alert.info', {hasText: 'chiết khấu'})).toContainText('5%');
     await shot(page, 'pkdt2-don-canh-bao-han-muc');
     const detailUrl = page.url();
-    let asked = '';
-    page.once('dialog', d => {
-      asked = d.message();
-      d.accept();
-    });
     await page.getByRole('button', {name: 'Xác nhận'}).click();
+    const warn = page.locator('mat-dialog-container');
+    await expect(warn.locator('h2')).toHaveText('Vượt hạn mức nợ');
+    await expect(warn.locator('#po-warn-message')).toContainText('vượt hạn mức');
+    await shot(page, 'pkdt2-hop-canh-bao-han-muc');
+    await warn.locator('#po-warn-ok').click();
     await expect(page.locator('.dt-status')).toHaveText('Đã xác nhận');
-    expect(asked).toContain('vượt hạn mức');
 
     // 6. Bốc thuốc: tự áp 5%, ô giảm giá khoá, cảnh báo hạn mức; lưu được
     await page.getByRole('button', {name: 'Bốc thuốc'}).click();
