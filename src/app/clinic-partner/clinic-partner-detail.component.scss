@@ -55,3 +55,71 @@
   white-space: normal;
   min-width: 240px;
 }
+
+// Phần 2: tab, chính sách, hợp đồng, thống kê
+.cp-tabs {
+  margin-top: 16px;
+  .po-tab mat-icon { font-size: 17px; width: 17px; height: 17px; }
+}
+.dt-grid.cp-two { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); }
+@media (max-width: 960px) { .dt-grid.cp-two { grid-template-columns: minmax(0, 1fr); } }
+.dt-info h4 { flex-wrap: wrap; }
+.cp-h-btn { margin-left: auto; height: 30px; line-height: 30px; text-transform: none; letter-spacing: 0; }
+.cp-over { color: #c62828; font-weight: 600; }
+.cp-meter {
+  height: 6px;
+  margin-top: 6px;
+  max-width: 260px;
+  border-radius: 3px;
+  background: #e8eeed;
+  overflow: hidden;
+  i { display: block; height: 100%; background: #f9a825; border-radius: 3px; }
+  &.over i { background: #c62828; }
+}
+.cp-foot { margin: 10px 0 0; font-size: 12.5px; color: rgba(0, 0, 0, 0.55); }
+.cp-pad { padding: 0 18px 14px; }
+.cp-pad-alert { margin: 0 18px 10px; }
+.cp-ct-chip {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  vertical-align: 1px;
+  &.active { background: #e8f5e9; color: #2e7d32; }
+  &.expiring { background: #fff3e0; color: #e65100; }
+  &.expired { background: #ffebee; color: #c62828; }
+  &.upcoming { background: #e3f2fd; color: #1565c0; }
+  &.none { background: #eceff1; color: #546e7a; }
+}
+.cp-ct-table td { vertical-align: middle; }
+.cp-ct-act { width: 1%; white-space: nowrap; text-align: right; }
+.cp-file-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  color: #00796b;
+  cursor: pointer;
+  mat-icon { font-size: 18px; width: 18px; height: 18px; color: #c62828; }
+  &:hover { text-decoration: underline; }
+}
+.cp-doc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-right: 18px;
+  flex-wrap: wrap;
+}
+.cp-month { display: flex; align-items: center; gap: 2px; }
+.cp-month-label { min-width: 110px; text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; }
+.cp-ct-act .cp-more { margin-top: 0; }
+.po-table th.num, .po-table td.num { text-align: right; font-variant-numeric: tabular-nums; }

@@ -53,6 +53,18 @@ export interface PrescriptionOrderHistory {
   at: number;
 }
 
+export interface PartnerCredit {
+  partner_id: number;
+  partner_code: string;
+  discount_percent: number;
+  debt_limit: number | null;
+  debt_now: number;
+  pending: number;
+  debt_after: number;
+  over_limit: boolean;
+  message: string | null;
+}
+
 export interface PrescriptionOrderDetail {
   id: number;
   code: string;
@@ -70,6 +82,8 @@ export interface PrescriptionOrderDetail {
   invoice_id: number;
   invoice: { id: number, invoice_no: string, total: number, paid: number, debt: number } | null;
   total_quote: number;
+  /** Phòng khám đối tác: chiết khấu, công nợ, hạn mức (null nếu liên kết không có hồ sơ đối tác hoặc đơn đã xong) */
+  credit: PartnerCredit | null;
   all_in_stock: boolean;
   items: PrescriptionOrderItem[];
   history: PrescriptionOrderHistory[];

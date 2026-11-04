@@ -1,0 +1,37 @@
+<div class="cff-header" mat-dialog-title>
+  <mat-icon class="cff-header-icon cp-ico">percent</mat-icon>
+  <div>
+    <h2>Chính sách {{ data.partner.name }}</h2>
+    <p>Áp cho hoá đơn bốc thuốc lập sau khi lưu; hoá đơn cũ giữ nguyên</p>
+  </div>
+</div>
+<div mat-dialog-content class="cff-content">
+  <div class="cp-error" *ngIf="error" role="alert"><mat-icon>error_outline</mat-icon><div>{{ error }}</div></div>
+  <div class="cff-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Chiết khấu (%)</mat-label>
+      <input matInput id="pl-discount" type="number" min="0" max="100" step="0.5" [(ngModel)]="discount" placeholder="0">
+      <mat-hint>Trừ trên tiền hàng trước VAT. Để trống = không chiết khấu</mat-hint>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Hạn mức nợ (đ)</mat-label>
+      <input matInput id="pl-limit" type="number" min="0" step="1000000" [(ngModel)]="limit" placeholder="Không giới hạn">
+      <mat-hint>Để trống = không giới hạn</mat-hint>
+    </mat-form-field>
+  </div>
+  <mat-form-field appearance="outline" class="cp-full">
+    <mat-label>Ghi chú (ghi vào lịch sử)</mat-label>
+    <input matInput id="pl-note" [(ngModel)]="note" maxlength="300" placeholder="vd Theo phụ lục hợp đồng số 02">
+  </mat-form-field>
+  <div class="cff-auto">
+    <mat-icon>info</mat-icon>
+    <div>Hạn mức nợ chỉ để cảnh báo: khi phòng khám nợ quá hạn mức, nhà thuốc thấy cảnh báo lúc xác nhận đơn và lúc bốc thuốc, vẫn xử lý đơn được.</div>
+  </div>
+</div>
+<div mat-dialog-actions class="cp-actions">
+  <button mat-button type="button" mat-dialog-close [disabled]="busy">Huỷ</button>
+  <span class="cp-spacer"></span>
+  <button mat-flat-button color="primary" type="button" id="pl-submit" [disabled]="busy" (click)="submit()">
+    <mat-icon>save</mat-icon>Lưu chính sách
+  </button>
+</div>

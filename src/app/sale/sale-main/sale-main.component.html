@@ -629,6 +629,15 @@
                 <div>
                   Bốc thuốc cho đơn <b>{{ localItemInvoice.prescription_order_code }}</b> của phòng khám.
                   Hoá đơn ghi nợ cả cho phòng khám; thuốc và số lượng phải đúng đơn (chỉ chọn lô).
+                  <span *ngIf="localItemInvoice.partner_discount_percent">Chiết khấu phòng khám
+                    <b>{{ localItemInvoice.partner_discount_percent | number:'1.0-2' }}%</b> đã tự áp, không sửa được.</span>
+                </div>
+              </div>
+              <div class="po-pick-banner po-pick-warn" id="sale-credit-warn" *ngIf="partnerOverLimit">
+                <mat-icon>account_balance_wallet</mat-icon>
+                <div>
+                  Sau hoá đơn này phòng khám nợ <b>{{ partnerDebtAfter | number:'1.0-0' }} đ</b>, vượt hạn mức
+                  {{ localItemInvoice.partner_credit.debt_limit | number:'1.0-0' }} đ. Vẫn lập được hoá đơn; nên nhắc phòng khám thanh toán.
                 </div>
               </div>
               <div class="customer-action">

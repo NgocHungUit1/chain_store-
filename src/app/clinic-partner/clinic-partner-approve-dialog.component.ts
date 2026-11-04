@@ -14,7 +14,7 @@ export function suggestTenant(name: string): string {
   return ('pk' + words.slice(-2).join('')).substring(0, 30);
 }
 
-/** Công ty mẹ duyệt hồ sơ: chốt chi nhánh, bảng giá, cách nối DocSoft; server kích hoạt luôn */
+/** Công ty mẹ duyệt hồ sơ: chốt chi nhánh, bảng giá, chính sách (chiết khấu, hạn mức nợ), cách nối DocSoft; server kích hoạt luôn */
 @Component({
   selector: 'app-clinic-partner-approve-dialog',
   templateUrl: './clinic-partner-approve-dialog.component.html',
@@ -42,6 +42,8 @@ export class ClinicPartnerApproveDialogComponent implements OnInit {
       branch_id: p.branch_id || p.proposed_branch_id || null,
       price_list_id: p.price_list_id || 0, // 0 = giá bán lẻ
       allow_special_control: !!p.allow_special_control,
+      discount_percent: p.discount_percent || null,
+      debt_limit: p.debt_limit === undefined ? null : p.debt_limit,
       docsoft_mode: p.docsoft_mode || 'create',
       docsoft_tenant_id: tenant,
       docsoft_admin_username: p.docsoft_admin_username || tenant + '.admin',

@@ -9,11 +9,14 @@ import {ClinicPartnerFormDialogComponent} from './clinic-partner-form-dialog.com
 import {ClinicPartnerApproveDialogComponent} from './clinic-partner-approve-dialog.component';
 import {ClinicPartnerActionDialogComponent} from './clinic-partner-action-dialog.component';
 import {ClinicPartnerCredentialsDialogComponent} from './clinic-partner-credentials-dialog.component';
+import {ClinicPartnerPolicyDialogComponent} from './clinic-partner-policy-dialog.component';
+import {ClinicPartnerContractDialogComponent} from './clinic-partner-contract-dialog.component';
 
-/** Chuỗi › Phòng khám đối tác (pharma_chain/tools/de-xuat/phong-kham-doi-tac.html, Phần 1) */
+/** Chuỗi › Phòng khám đối tác (pharma_chain/tools/de-xuat/phong-kham-doi-tac.html Phần 1, phong-kham-doi-tac-phan-2.html Phần 2) */
 @NgModule({
   declarations: [ClinicPartnerListComponent, ClinicPartnerDetailComponent, ClinicPartnerFormDialogComponent,
-    ClinicPartnerApproveDialogComponent, ClinicPartnerActionDialogComponent, ClinicPartnerCredentialsDialogComponent],
+    ClinicPartnerApproveDialogComponent, ClinicPartnerActionDialogComponent, ClinicPartnerCredentialsDialogComponent,
+    ClinicPartnerPolicyDialogComponent, ClinicPartnerContractDialogComponent],
   imports: [
     CommonModule,
     FormsModule,

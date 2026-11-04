@@ -1,0 +1,43 @@
+<div class="cff-header" mat-dialog-title>
+  <mat-icon class="cff-header-icon cp-ico">description</mat-icon>
+  <div>
+    <h2>Thêm hợp đồng · {{ data.partner.name }}</h2>
+    <p>Ký mới hay gia hạn đều thêm một dòng; hợp đồng và file cũ giữ lại</p>
+  </div>
+</div>
+<div mat-dialog-content class="cff-content">
+  <div class="cp-error" *ngIf="error" role="alert"><mat-icon>error_outline</mat-icon><div>{{ error }}</div></div>
+  <div class="cff-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Số hợp đồng</mat-label>
+      <input matInput id="ct-no" [(ngModel)]="form.contract_no" maxlength="50" required placeholder="vd HD-2026/014">
+    </mat-form-field>
+    <span></span>
+    <mat-form-field appearance="outline">
+      <mat-label>Hiệu lực từ ngày</mat-label>
+      <input matInput id="ct-from" type="date" [(ngModel)]="form.date_from" required>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Đến ngày</mat-label>
+      <input matInput id="ct-to" type="date" [(ngModel)]="form.date_to">
+      <mat-hint>Để trống = không thời hạn. Nhắc trước 30 ngày khi sắp hết hạn</mat-hint>
+    </mat-form-field>
+  </div>
+  <mat-form-field appearance="outline" class="cp-full">
+    <mat-label>Ghi chú</mat-label>
+    <input matInput id="ct-note" [(ngModel)]="form.note" maxlength="500" placeholder="vd Gia hạn lần 1, giữ chiết khấu 5%">
+  </mat-form-field>
+  <label class="cp-file">
+    <mat-icon>attach_file</mat-icon>
+    <span>{{ file ? file.name : 'Chọn file hợp đồng (PDF, JPG, PNG — tối đa 10MB, không bắt buộc)' }}</span>
+    <input type="file" id="ct-file" accept=".pdf,.jpg,.jpeg,.png" (change)="onFile($event)">
+  </label>
+</div>
+<div mat-dialog-actions class="cp-actions">
+  <button mat-button type="button" mat-dialog-close [disabled]="busy">Huỷ</button>
+  <span class="cp-spacer"></span>
+  <mat-progress-spinner *ngIf="busy" diameter="20" mode="indeterminate"></mat-progress-spinner>
+  <button mat-flat-button color="primary" type="button" id="ct-submit" [disabled]="busy" (click)="submit()">
+    <mat-icon>save</mat-icon>Lưu hợp đồng
+  </button>
+</div>

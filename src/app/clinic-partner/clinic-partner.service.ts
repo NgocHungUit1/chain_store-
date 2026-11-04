@@ -20,6 +20,54 @@ export interface ClinicPartnerRow {
   clinic_link_id: number;
   created_at: number;
   updated_at: number;
+  /** Chỉ có ở danh sách */
+  debt?: number | null;
+  debt_limit?: number | null;
+  contract?: ContractState | null;
+}
+
+/** Tình trạng hợp đồng: none | active | expiring (≤ 30 ngày) | expired | upcoming */
+export interface ContractState {
+  state: 'none' | 'active' | 'expiring' | 'expired' | 'upcoming';
+  label: string;
+  date_to: string | null;
+  days_left: number | null;
+}
+
+export interface ClinicPartnerContract {
+  id: number;
+  contract_no: string;
+  date_from: string;
+  date_to: string | null;
+  note: string | null;
+  file_name: string | null;
+  file_size: number | null;
+  state: ContractState['state'];
+  created_by: string | null;
+  created_at: number;
+}
+
+export interface ClinicPartnerMonthStat {
+  month: string;
+  orders: number;
+  completed: number;
+  returned: number;
+  sales: number;
+  paid: number;
+  closing: number;
+}
+
+export interface ClinicPartnerDoctor {
+  code: string | null;
+  name: string;
+  phone: string | null;
+  active: boolean;
+  in_docsoft: boolean;
+  orders: number;
+  completed: number;
+  returned: number;
+  sales: number;
+  last_order_at: number | null;
 }
 
 export interface ClinicPartnerLogRow {
@@ -47,6 +95,11 @@ export interface ClinicPartnerDetail extends ClinicPartnerRow {
   price_list_id: number;
   price_list: string;
   allow_special_control: boolean;
+  discount_percent: number | null;
+  debt_limit: number | null;
+  debt: number | null;
+  contracts: ClinicPartnerContract[];
+  contract: ContractState;
   customer_id: number;
   docsoft_mode: 'create' | 'connect';
   docsoft_admin_username: string;
@@ -93,6 +146,8 @@ export interface ClinicPartnerApprove {
   branch_id: number;
   price_list_id: number;
   allow_special_control: boolean;
+  discount_percent: number | null;
+  debt_limit: number | null;
   docsoft_mode: 'create' | 'connect';
   docsoft_tenant_id: string;
   docsoft_admin_username: string;
@@ -150,8 +205,24 @@ export class ClinicPartnerService {
     return this.http.delete(this.url + '/' + id);
   }
 
-  /** Thao tác trên hồ sơ: submit, reject, approve, activate, suspend, resume, terminate, reopen, change-branch, rotate-key */
+  /**
+   * Thao tác trên hồ sơ: submit, reject, approve, activate, suspend, resume, terminate, reopen, change-branch, rotate-key,
+   * policy, contract-add (FormData), contract-delete
+   */
   act(id: number, action: string, body: any = {}): Observable<ClinicPartnerDetail> {
     return this.http.post<ClinicPartnerDetail>(this.url + '/' + id + '/' + action, body);
+  }
+
+  stats(id: number): Observable<{ months: ClinicPartnerMonthStat[] }> {
+    return this.http.get<{ months: ClinicPartnerMonthStat[] }>(this.url + '/' + id + '/stats');
+  }
+
+  doctors(id: number, month: string): Observable<{ month: string, doctors: ClinicPartnerDoctor[], warning: string | null }> {
+    return this.http.get<{ month: string, doctors: ClinicPartnerDoctor[], warning: string | null }>(this.url + '/' + id + '/doctors',
+      {params: new HttpParams().set('month', month)});
+  }
+
+  contractFile(id: number, contractId: number): Observable<Blob> {
+    return this.http.get(this.url + '/' + id + '/contract-file', {params: new HttpParams().set('contract_id', String(contractId)), responseType: 'blob'});
   }
 }

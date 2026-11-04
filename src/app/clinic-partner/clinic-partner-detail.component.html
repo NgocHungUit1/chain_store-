@@ -88,9 +88,24 @@
         <mat-icon>warning_amber</mat-icon>
         <div>{{ warning }}</div>
       </div>
+      <div class="dt-alert warn" *ngIf="overLimit">
+        <mat-icon>account_balance_wallet</mat-icon>
+        <div>Phòng khám đang nợ <b>{{ p.debt | number:'1.0-0' }} đ</b>, vượt hạn mức {{ p.debt_limit | number:'1.0-0' }} đ. Nên nhắc phòng khám thanh toán.</div>
+      </div>
+      <div class="dt-alert warn" *ngIf="contractAlert">
+        <mat-icon>event_busy</mat-icon>
+        <div>{{ contractAlert }}</div>
+      </div>
+
+      <div class="po-tabs cp-tabs" role="tablist" aria-label="Thông tin phòng khám">
+        <button type="button" role="tab" *ngFor="let t of tabs" class="po-tab" [id]="'cp-tab-' + t.key" [class.active]="tab === t.key"
+                [attr.aria-selected]="tab === t.key" (click)="selectTab(t.key)">
+          <mat-icon>{{ t.icon }}</mat-icon>{{ t.label }}
+        </button>
+      </div>
     </section>
 
-    <div class="dt-grid">
+    <div class="dt-grid" *ngIf="tab === 'overview'">
       <section class="po-card dt-info">
         <h4><mat-icon>local_hospital</mat-icon>Hồ sơ phòng khám</h4>
         <dl>
@@ -119,6 +134,11 @@
             <span *ngIf="!p.link">—</span>
           </dd>
           <dt>Đơn đã gửi</dt><dd>{{ p.order_count | number }}</dd>
+          <ng-container *ngIf="approved">
+            <dt>Chiết khấu</dt><dd>{{ p.discount_percent ? (p.discount_percent | number:'1.0-2') + '%' : 'Không' }}</dd>
+            <dt>Đang nợ</dt>
+            <dd [class.cp-over]="overLimit">{{ (p.debt || 0) | number:'1.0-0' }} đ<span class="sub"> · hạn mức {{ p.debt_limit === null ? 'không giới hạn' : (p.debt_limit | number:'1.0-0') + ' đ' }}</span></dd>
+          </ng-container>
         </dl>
         <a class="cp-more" *ngIf="p.customer_id && canReconcile" [routerLink]="['/chain', 'clinic-reconciliation']">
           <mat-icon>fact_check</mat-icon>Xem đối soát công nợ</a>
@@ -141,7 +161,131 @@
       </section>
     </div>
 
-    <section class="po-card po-table-card">
+    <!-- Chính sách & hợp đồng -->
+    <div class="dt-grid cp-two" *ngIf="tab === 'policy'">
+      <section class="po-card dt-info">
+        <h4><mat-icon>percent</mat-icon>Chính sách
+          <button mat-stroked-button color="primary" class="po-btn cp-h-btn" id="cp-edit-policy" *ngIf="can('Policy')" [disabled]="busy" (click)="editPolicy()">
+            <mat-icon>edit</mat-icon>Sửa chính sách</button>
+        </h4>
+        <dl>
+          <dt>Chiết khấu</dt>
+          <dd><b>{{ p.discount_percent ? (p.discount_percent | number:'1.0-2') + '%' : 'Không' }}</b>
+            <span class="sub" *ngIf="p.discount_percent"> trên tiền hàng mỗi hoá đơn bốc thuốc, tự trừ, dược sĩ không sửa</span></dd>
+          <dt>Hạn mức nợ</dt><dd>{{ p.debt_limit === null ? 'Không giới hạn' : (p.debt_limit | number:'1.0-0') + ' đ' }}</dd>
+          <dt>Đang nợ</dt>
+          <dd>
+            <span [class.cp-over]="overLimit">{{ (p.debt || 0) | number:'1.0-0' }} đ</span>
+            <span class="sub" *ngIf="p.debt_limit"> · {{ debtPercent }}% hạn mức</span>
+            <div class="cp-meter" *ngIf="p.debt_limit" [class.over]="overLimit"><i [style.width.%]="debtPercent > 100 ? 100 : debtPercent"></i></div>
+          </dd>
+          <dt>Bảng giá</dt><dd>{{ p.price_list || 'Giá bán lẻ' }}</dd>
+        </dl>
+        <p class="cp-foot" *ngIf="lastPolicyLog">Đổi lần cuối {{ lastPolicyLog.created_at * 1000 | date:'dd/MM/yyyy' }}<span *ngIf="lastPolicyLog.user"> ({{ lastPolicyLog.user }})</span>:
+          {{ lastPolicyLog.note }}</p>
+        <p class="cp-foot">Đổi chính sách chỉ áp cho hoá đơn lập sau khi đổi. Vượt hạn mức chỉ cảnh báo lúc xác nhận đơn và bốc thuốc.</p>
+      </section>
+
+      <section class="po-card dt-info">
+        <h4><mat-icon>description</mat-icon>Hợp đồng
+          <span class="cp-ct-chip" [ngClass]="p.contract?.state">{{ p.contract?.label }}</span>
+          <button mat-stroked-button color="primary" class="po-btn cp-h-btn" id="cp-add-contract" *ngIf="can('Contract-Add')" [disabled]="busy" (click)="addContract()">
+            <mat-icon>add</mat-icon>Thêm / gia hạn</button>
+        </h4>
+        <div class="table-wrap">
+          <table class="po-table cp-ct-table">
+            <thead><tr><th>Số</th><th>Hiệu lực</th><th>File</th><th></th></tr></thead>
+            <tbody>
+            <tr *ngFor="let c of p.contracts">
+              <td class="name">{{ c.contract_no }}<div class="sub" *ngIf="c.note">{{ c.note }}</div></td>
+              <td>
+                {{ c.date_from | date:'dd/MM/yyyy' }} – {{ c.date_to ? (c.date_to | date:'dd/MM/yyyy') : 'không thời hạn' }}
+                <span class="cp-ct-chip" [ngClass]="c.state">{{ contractLabels[c.state] }}</span>
+              </td>
+              <td>
+                <button type="button" class="cp-file-link" *ngIf="c.file_name" (click)="openFile(c)" [attr.aria-label]="'Mở file ' + c.file_name">
+                  <mat-icon>picture_as_pdf</mat-icon>{{ c.file_name }}</button>
+                <span class="sub" *ngIf="!c.file_name">—</span>
+              </td>
+              <td class="cp-ct-act">
+                <button mat-icon-button *ngIf="can('Contract-Delete')" [disabled]="busy" (click)="deleteContract(c)" [attr.aria-label]="'Xoá hợp đồng ' + c.contract_no">
+                  <mat-icon>delete_outline</mat-icon></button>
+              </td>
+            </tr>
+            <tr *ngIf="!p.contracts?.length"><td colspan="4" class="po-empty">Chưa có hợp đồng.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- Đơn & doanh số -->
+    <section class="po-card po-table-card" *ngIf="tab === 'orders'">
+      <h4 class="cp-section-title"><mat-icon>bar_chart</mat-icon>Đơn &amp; doanh số theo tháng</h4>
+      <div class="po-loading" *ngIf="statsLoading"><mat-progress-bar mode="indeterminate"></mat-progress-bar></div>
+      <div class="table-wrap">
+        <table class="po-table">
+          <thead><tr><th>Tháng</th><th class="num">Đơn gửi</th><th class="num">Hoàn thành</th><th class="num">Trả / huỷ</th>
+            <th class="num">Doanh số</th><th class="num">Đã thu</th><th class="num">Còn nợ cuối tháng</th><th></th></tr></thead>
+          <tbody>
+          <tr *ngFor="let m of months">
+            <td class="name">{{ monthLabel(m.month) }}</td>
+            <td class="num">{{ m.orders | number }}</td>
+            <td class="num">{{ m.completed | number }}</td>
+            <td class="num">{{ m.returned | number }}</td>
+            <td class="num">{{ m.sales | number:'1.0-0' }}</td>
+            <td class="num">{{ m.paid | number:'1.0-0' }}</td>
+            <td class="num" [class.cp-over]="m.closing > 0">{{ m.closing | number:'1.0-0' }}</td>
+            <td class="cp-ct-act"><a class="cp-more" *ngIf="canReconcile && p.clinic_link_id" [routerLink]="['/chain', 'clinic-reconciliation']"
+                   [queryParams]="{month: m.month, link_id: p.clinic_link_id}">Đối soát</a></td>
+          </tr>
+          <tr *ngIf="!statsLoading && !months.length"><td colspan="8" class="po-empty">Chưa có số liệu.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="cp-foot cp-pad">Đơn đếm theo ngày phòng khám gửi. Doanh số là tiền hoá đơn sau chiết khấu, đã thu và còn nợ tính như màn Đối soát phòng khám.</p>
+    </section>
+
+    <!-- Bác sĩ -->
+    <section class="po-card po-table-card" *ngIf="tab === 'doctors'">
+      <div class="cp-doc-head">
+        <h4 class="cp-section-title"><mat-icon>medical_services</mat-icon>Bác sĩ</h4>
+        <div class="cp-month">
+          <button mat-icon-button type="button" id="cp-doc-prev" (click)="shiftDoctorMonth(-1)" aria-label="Tháng trước"><mat-icon>chevron_left</mat-icon></button>
+          <span class="cp-month-label" id="cp-doc-month">Tháng {{ monthLabel(doctorMonth) }}</span>
+          <button mat-icon-button type="button" id="cp-doc-next" (click)="shiftDoctorMonth(1)" [disabled]="doctorMonth >= thisMonth"
+                  aria-label="Tháng sau"><mat-icon>chevron_right</mat-icon></button>
+        </div>
+      </div>
+      <div class="po-loading" *ngIf="doctorsLoading"><mat-progress-bar mode="indeterminate"></mat-progress-bar></div>
+      <div class="dt-alert warn cp-pad-alert" *ngIf="doctorWarning"><mat-icon>warning_amber</mat-icon><div>{{ doctorWarning }}</div></div>
+      <div class="table-wrap">
+        <table class="po-table">
+          <thead><tr><th>Bác sĩ</th><th>Điện thoại</th><th class="num">Đơn gửi</th><th class="num">Hoàn thành</th><th class="num">Trả / huỷ</th>
+            <th class="num">Doanh số</th><th>Đơn gần nhất</th></tr></thead>
+          <tbody>
+          <tr *ngFor="let d of doctors">
+            <td>
+              <div class="name">{{ d.name }}
+                <span class="cp-ct-chip expired" *ngIf="!d.active && d.in_docsoft">đã khoá</span>
+                <span class="cp-ct-chip none" *ngIf="!d.in_docsoft">không còn trên DocSoft</span></div>
+              <div class="sub" *ngIf="d.code && d.code !== d.name">{{ d.code }}</div>
+            </td>
+            <td>{{ d.phone || '—' }}</td>
+            <td class="num">{{ d.orders | number }}</td>
+            <td class="num">{{ d.completed | number }}</td>
+            <td class="num">{{ d.returned | number }}</td>
+            <td class="num">{{ d.sales | number:'1.0-0' }}</td>
+            <td class="muted">{{ d.last_order_at ? (d.last_order_at * 1000 | date:'dd/MM/yyyy HH:mm') : '—' }}</td>
+          </tr>
+          <tr *ngIf="!doctorsLoading && !doctors.length"><td colspan="7" class="po-empty">Chưa có bác sĩ.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="cp-foot cp-pad">Danh sách lấy từ tài khoản người dùng trên DocSoft của phòng khám; số đơn tính theo bác sĩ chỉ định trên đơn gửi nhà thuốc.</p>
+    </section>
+
+    <section class="po-card po-table-card" *ngIf="tab === 'history'">
       <h4 class="cp-section-title"><mat-icon>history</mat-icon>Lịch sử</h4>
       <div class="table-wrap">
         <table class="po-table">

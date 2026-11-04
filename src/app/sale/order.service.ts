@@ -249,6 +249,10 @@ export class OrderService {
     const existing = (data.itemInvoice || []).find(e => e.prescription_order_id === cart.prescription_order_id);
     if (existing) {
       data.itemInvoice.forEach(e => e.active = e === existing);
+      // Chính sách phòng khám có thể đã đổi từ lần mở trước: lấy lại chiết khấu + công nợ mới nhất
+      existing.partner_discount_percent = cart.discount_percent || 0;
+      existing.partner_credit = cart.credit || null;
+      existing.discountSiderBar = {type: 'percent', number: existing.partner_discount_percent};
       this.setListInvoiceLocalStorage(data);
       return;
     }
@@ -270,6 +274,10 @@ export class OrderService {
     item.noteSiderBar = cart.note || '';
     item.paymentSiderBar = {type: 'Tiền mặt', number: 0};
     item.hasChangedCustomerPay = true; // khách trả 0 → nợ cả hoá đơn
+    // Chiết khấu phòng khám đối tác: % trên tiền hàng, server kiểm lại khi lưu
+    item.partner_discount_percent = cart.discount_percent || 0;
+    item.partner_credit = cart.credit || null;
+    item.discountSiderBar = {type: 'percent', number: item.partner_discount_percent};
     item.listProduct = (cart.products || []).map(product => {
       // Như giỏ Đơn thuốc quốc gia: giá bán đã gồm VAT, không cộng thêm VAT vào giỏ
       product.vat_included_percent = product.vat_percent || 0;

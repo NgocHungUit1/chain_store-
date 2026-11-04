@@ -2,7 +2,12 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {NotifierService} from 'angular-notifier';
-import {ClinicPartnerDetail, ClinicPartnerOptions, ClinicPartnerService, PARTNER_STATUS_CLASS} from './clinic-partner.service';
+import {
+  ClinicPartnerContract, ClinicPartnerDetail, ClinicPartnerDoctor, ClinicPartnerMonthStat, ClinicPartnerOptions, ClinicPartnerService,
+  PARTNER_STATUS_CLASS
+} from './clinic-partner.service';
+import {ClinicPartnerPolicyDialogComponent} from './clinic-partner-policy-dialog.component';
+import {ClinicPartnerContractDialogComponent} from './clinic-partner-contract-dialog.component';
 import {ClinicPartnerFormDialogComponent} from './clinic-partner-form-dialog.component';
 import {ClinicPartnerApproveDialogComponent} from './clinic-partner-approve-dialog.component';
 import {ClinicPartnerActionConfig, ClinicPartnerActionDialogComponent} from './clinic-partner-action-dialog.component';
@@ -14,11 +19,25 @@ const STATUS_LABELS = {
   active: 'Đang hoạt động', suspended: 'Tạm ngưng', terminated: 'Ngừng hợp tác',
 };
 
-/** Chi tiết phòng khám đối tác: hồ sơ, thiết lập nhà thuốc, DocSoft, lịch sử; nút thao tác theo trạng thái + quyền */
+const TABS = [
+  {key: 'overview', label: 'Tổng quan', icon: 'dashboard', approvedOnly: false},
+  {key: 'policy', label: 'Chính sách & hợp đồng', icon: 'percent', approvedOnly: true},
+  {key: 'orders', label: 'Đơn & doanh số', icon: 'bar_chart', approvedOnly: true},
+  {key: 'doctors', label: 'Bác sĩ', icon: 'medical_services', approvedOnly: true},
+  {key: 'history', label: 'Lịch sử', icon: 'history', approvedOnly: false},
+];
+
+const CONTRACT_LABELS = {active: 'Hiện hành', expiring: 'Sắp hết hạn', expired: 'Hết hạn', upcoming: 'Chưa hiệu lực', none: ''};
+
+/**
+ * Chi tiết phòng khám đối tác theo tab: tổng quan (hồ sơ, nhà thuốc, DocSoft), chính sách & hợp đồng, đơn & doanh số theo tháng,
+ * bác sĩ, lịch sử; nút thao tác theo trạng thái + quyền
+ */
 @Component({
   selector: 'app-clinic-partner-detail',
   templateUrl: './clinic-partner-detail.component.html',
   styleUrls: ['../prescription-order/prescription-order.scss', '../prescription-order/prescription-order-detail/prescription-order-detail.component.scss',
+    '../prescription-order/prescription-order-list/prescription-order-list.component.scss',
     './clinic-partner.scss', './clinic-partner-detail.component.scss']
 })
 export class ClinicPartnerDetailComponent implements OnInit {
@@ -30,6 +49,15 @@ export class ClinicPartnerDetailComponent implements OnInit {
   statusClass = PARTNER_STATUS_CLASS;
   linkLabel = {active: 'đang dùng', suspended: 'tạm ngưng', revoked: 'đã thu hồi'};
   canReconcile = false;
+  tab = 'overview';
+  contractLabels = CONTRACT_LABELS;
+  months: ClinicPartnerMonthStat[] = [];
+  statsLoading = false;
+  doctors: ClinicPartnerDoctor[] = [];
+  doctorsLoading = false;
+  doctorWarning = '';
+  doctorMonth = this.thisMonth;
+  private loaded: { [tab: string]: boolean } = {};
   private permissions: string[] = [];
   private options: ClinicPartnerOptions;
 
@@ -45,7 +73,130 @@ export class ClinicPartnerDetailComponent implements OnInit {
   ngOnInit(): void {
     this.permissions = getAllPermissions();
     this.canReconcile = this.permissions.indexOf('Report.Clinic-Reconciliation') >= 0;
+    this.tab = this.route.snapshot.queryParamMap.get('tab') || 'overview';
     this.load();
+  }
+
+  /** Đã duyệt (có thiết lập nhà thuốc): mới có chính sách, hợp đồng, thống kê */
+  get approved(): boolean {
+    return !!this.p && ['activating', 'active', 'suspended', 'terminated'].indexOf(this.p.status) >= 0;
+  }
+
+  get tabs() {
+    return TABS.filter(t => this.approved || !t.approvedOnly);
+  }
+
+  get overLimit(): boolean {
+    return !!this.p && this.p.debt_limit !== null && this.p.debt_limit !== undefined && (this.p.debt || 0) > this.p.debt_limit;
+  }
+
+  get debtPercent(): number {
+    return this.p && this.p.debt_limit ? Math.round((this.p.debt || 0) * 100 / this.p.debt_limit) : 0;
+  }
+
+  get contractAlert(): string {
+    const c = this.p && this.p.contract;
+    if (!c || ['active', 'suspended'].indexOf(this.p.status) < 0) {
+      return '';
+    }
+    if (c.state === 'expiring') {
+      return 'Hợp đồng hết hạn ngày ' + this.dmy(c.date_to) + ' (còn ' + c.days_left + ' ngày). Thêm hợp đồng gia hạn ở tab Chính sách & hợp đồng.';
+    }
+    if (c.state === 'expired') {
+      return 'Hợp đồng đã hết hạn. Phòng khám vẫn đặt thuốc bình thường; thêm hợp đồng gia hạn ở tab Chính sách & hợp đồng.';
+    }
+    return '';
+  }
+
+  get lastPolicyLog() {
+    return (this.p && this.p.logs || []).find(l => l.action === 'policy') || null;
+  }
+
+  selectTab(key: string) {
+    this.tab = key;
+    this.router.navigate([], {relativeTo: this.route, queryParams: {tab: key === 'overview' ? null : key}, replaceUrl: true});
+    this.loadTab();
+  }
+
+  monthLabel(month: string): string {
+    const [y, m] = (month || '').split('-');
+    return m + '/' + y;
+  }
+
+  get thisMonth(): string {
+    const d = new Date();
+    return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2);
+  }
+
+  shiftDoctorMonth(step: number) {
+    const [y, m] = this.doctorMonth.split('-').map(Number);
+    const d = new Date(y, m - 1 + step, 1);
+    this.doctorMonth = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2);
+    this.loadDoctors();
+  }
+
+  editPolicy() {
+    this.dialog.open(ClinicPartnerPolicyDialogComponent, {width: '640px', maxWidth: '96vw', data: {partner: this.p}, autoFocus: false})
+      .afterClosed().subscribe(res => res && this.apply(res, 'Đã lưu chính sách. Áp cho hoá đơn bốc thuốc lập từ bây giờ.'));
+  }
+
+  addContract() {
+    this.dialog.open(ClinicPartnerContractDialogComponent, {width: '640px', maxWidth: '96vw', data: {partner: this.p}, autoFocus: false})
+      .afterClosed().subscribe(res => res && this.apply(res, 'Đã thêm hợp đồng.'));
+  }
+
+  deleteContract(c: ClinicPartnerContract) {
+    this.ask({
+      title: 'Xoá hợp đồng ' + c.contract_no, subtitle: 'Dùng khi nhập nhầm; ghi vào lịch sử', icon: 'delete_outline', tone: 'danger',
+      danger: true, confirmLabel: 'Xoá hợp đồng',
+    }, () => this.run('contract-delete', {contract_id: c.id}, 'Đã xoá hợp đồng.'));
+  }
+
+  /** Mở file hợp đồng ở tab mới (tải qua API có đăng nhập) */
+  openFile(c: ClinicPartnerContract) {
+    const win = window.open('', '_blank');
+    this.partnerSer.contractFile(this.p.id, c.id).subscribe(blob => {
+      const url = URL.createObjectURL(blob);
+      if (win) {
+        win.location.href = url;
+      } else {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = c.file_name || 'hop-dong';
+        a.click();
+      }
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+    }, () => win && win.close());
+  }
+
+  private loadTab(force = false) {
+    if (!this.p || (this.loaded[this.tab] && !force)) {
+      return;
+    }
+    if (this.tab === 'orders') {
+      this.loaded.orders = true;
+      this.statsLoading = true;
+      this.partnerSer.stats(this.p.id).subscribe(res => {
+        this.months = res.months || [];
+        this.statsLoading = false;
+      }, () => this.statsLoading = false);
+    } else if (this.tab === 'doctors') {
+      this.loaded.doctors = true;
+      this.loadDoctors();
+    }
+  }
+
+  private loadDoctors() {
+    this.doctorsLoading = true;
+    this.partnerSer.doctors(this.p.id, this.doctorMonth).subscribe(res => {
+      this.doctors = res.doctors || [];
+      this.doctorWarning = res.warning || '';
+      this.doctorsLoading = false;
+    }, () => this.doctorsLoading = false);
+  }
+
+  private dmy(ymd: string): string {
+    return (ymd || '').split('-').reverse().join('/');
   }
 
   get id(): number {
@@ -70,6 +221,11 @@ export class ClinicPartnerDetailComponent implements OnInit {
     this.partnerSer.view(this.id).subscribe(p => {
       this.p = p;
       this.loading = false;
+      if (!this.tabs.find(t => t.key === this.tab)) {
+        this.tab = 'overview';
+      }
+      this.loaded = {};
+      this.loadTab();
     }, err => {
       this.loading = false;
       if (err && err.status === 404) {
@@ -216,6 +372,8 @@ export class ClinicPartnerDetailComponent implements OnInit {
 
   private apply(res: ClinicPartnerDetail, done?: string, credentialsTitle?: string) {
     this.p = res;
+    this.loaded = {};
+    this.loadTab();
     this.warning = res.warning || '';
     if (done) {
       this.notify.notify(res.warning ? 'warning' : 'success', done);

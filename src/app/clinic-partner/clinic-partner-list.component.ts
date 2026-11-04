@@ -21,7 +21,7 @@ const TABS = [
   selector: 'app-clinic-partner-list',
   templateUrl: './clinic-partner-list.component.html',
   styleUrls: ['../prescription-order/prescription-order.scss', '../prescription-order/prescription-order-list/prescription-order-list.component.scss',
-    './clinic-partner.scss', './clinic-partner-list.component.scss']
+    './clinic-partner.scss', './clinic-partner-list.component.scss', './clinic-partner-detail.component.scss']
 })
 export class ClinicPartnerListComponent implements OnInit, OnDestroy {
   tabs = TABS;
@@ -32,6 +32,8 @@ export class ClinicPartnerListComponent implements OnInit, OnDestroy {
   loading = false;
   canCreate = false;
   statusClass = PARTNER_STATUS_CLASS;
+  /** Lọc phòng khám sắp hết hạn (≤ 30 ngày) / đã hết hạn hợp đồng — chỉ nhắc, không chặn đặt thuốc (P5) */
+  contractOnly = false;
 
   private keyword$ = new Subject<string>();
   private destroy$ = new Subject<void>();
@@ -73,6 +75,18 @@ export class ClinicPartnerListComponent implements OnInit, OnDestroy {
       }
       this.rows = res.items || [];
     }, () => this.loading = false);
+  }
+
+  get shownRows(): ClinicPartnerRow[] {
+    return this.contractOnly ? this.rows.filter(r => this.contractDue(r)) : this.rows;
+  }
+
+  get contractCount(): number {
+    return this.rows.filter(r => this.contractDue(r)).length;
+  }
+
+  private contractDue(r: ClinicPartnerRow): boolean {
+    return !!r.contract && (r.contract.state === 'expiring' || r.contract.state === 'expired');
   }
 
   countOf(t: { statuses: string[] }): number {

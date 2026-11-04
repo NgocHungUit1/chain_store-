@@ -129,6 +129,11 @@ export class PrescriptionOrderDetailComponent implements OnInit, OnDestroy {
   }
 
   confirm() {
+    // Vượt hạn mức nợ: chỉ cảnh báo, vẫn xác nhận được (chốt Q6, P3)
+    if (this.order.credit && this.order.credit.over_limit
+      && !confirm(this.order.credit.message + '\n\nVẫn xác nhận đơn ' + this.order.code + '?')) {
+      return;
+    }
     this.busy = true;
     this.orderSer.confirm(this.order.id).subscribe(res => {
       this.order = res;

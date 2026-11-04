@@ -32,6 +32,22 @@
   </section>
 
   <section class="cff-section">
+    <h3 class="cff-title"><mat-icon>percent</mat-icon>Chính sách</h3>
+    <div class="cff-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Chiết khấu (%)</mat-label>
+        <input matInput id="ap-discount" type="number" min="0" max="100" step="0.5" [(ngModel)]="form.discount_percent" placeholder="0">
+        <mat-hint>Tự trừ vào hoá đơn bốc thuốc, dược sĩ không sửa được. Để trống = không chiết khấu</mat-hint>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Hạn mức nợ (đ)</mat-label>
+        <input matInput id="ap-limit" type="number" min="0" step="1000000" [(ngModel)]="form.debt_limit" placeholder="Không giới hạn">
+        <mat-hint>Vượt hạn mức chỉ cảnh báo lúc xác nhận đơn và bốc thuốc. Để trống = không giới hạn</mat-hint>
+      </mat-form-field>
+    </div>
+  </section>
+
+  <section class="cff-section">
     <h3 class="cff-title"><mat-icon>computer</mat-icon>Phòng khám trên DocSoft</h3>
     <div class="cp-mode" role="radiogroup" aria-label="Cách nối DocSoft">
       <button type="button" role="radio" class="cp-mode-opt" id="ap-mode-create" [class.on]="form.docsoft_mode === 'create'"

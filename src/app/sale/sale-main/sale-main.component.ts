@@ -178,6 +178,17 @@ export class SaleMainComponent implements OnInit, DoCheck {
       + this.expenseOrder;
   }
 
+  /** Bốc thuốc phòng khám đối tác có hạn mức: nợ sau hoá đơn này (chỉ cảnh báo) */
+  get partnerDebtAfter(): number | null {
+    const credit = this.localItemInvoice?.prescription_order_id ? this.localItemInvoice.partner_credit : null;
+    return credit && credit.debt_limit !== null && credit.debt_limit !== undefined ? credit.debt_now + this.total : null;
+  }
+
+  get partnerOverLimit(): boolean {
+    const after = this.partnerDebtAfter;
+    return after !== null && after > this.localItemInvoice.partner_credit.debt_limit;
+  }
+
   get selectedBankAccount(): BankAccount | null {
     return this._selectedBankAccount;
   }
@@ -447,6 +458,10 @@ export class SaleMainComponent implements OnInit, DoCheck {
           this.expenseOrder += element.price;
         }
       });
+    }
+    // Thu khác tự động nạp sau khi đã tính "Nợ": tính lại để ô Nợ gồm cả thu khác (vd bốc thuốc ghi nợ cả hoá đơn)
+    if (this.form) {
+      this.tinhLaiTienThua();
     }
   }
 
@@ -1385,6 +1400,10 @@ export class SaleMainComponent implements OnInit, DoCheck {
   }
 
   openDiscountSiderBar() {
+    if (this.localItemInvoice?.prescription_order_id) {
+      this.notifySer.notify('warning', 'Hoá đơn bốc thuốc giảm giá theo chính sách phòng khám, không sửa được. Muốn đổi thì công ty mẹ sửa chính sách phòng khám.');
+      return;
+    }
     const dialogRef = this.dialog.open(DiscountSiderbarDialogComponent, {
       width: '30%',
       minHeight: '80%',

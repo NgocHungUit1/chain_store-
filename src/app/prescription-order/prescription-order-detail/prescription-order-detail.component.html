@@ -48,6 +48,15 @@
         <mat-icon>warning_amber</mat-icon>
         <div>Chi nhánh không đủ hàng cho {{ missingItems.length }} thuốc: <b>{{ missingItems.join(', ') }}</b>. Nhà thuốc không tự thay thuốc — trả đơn để bác sĩ sửa nếu không bổ sung được hàng.</div>
       </div>
+      <div class="dt-alert warn" id="po-credit-warn" *ngIf="order.credit?.over_limit">
+        <mat-icon>account_balance_wallet</mat-icon>
+        <div>{{ order.credit.message }}</div>
+      </div>
+      <div class="dt-alert info" *ngIf="order.credit?.discount_percent && !order.invoice_id && (order.status === 'new' || order.status === 'confirmed' || order.status === 'preparing')">
+        <mat-icon>percent</mat-icon>
+        <div>Phòng khám đối tác {{ order.credit.partner_code }}: chiết khấu <b>{{ order.credit.discount_percent | number:'1.0-2' }}%</b>,
+          màn bán hàng tự trừ khi bốc thuốc (tạm tính sau chiết khấu {{ order.credit.pending | number:'1.0-0' }} đ).</div>
+      </div>
       <div class="dt-alert danger" *ngIf="order.status === 'returned'">
         <mat-icon>assignment_return</mat-icon>
         <div>Đã trả đơn về phòng khám. Lý do: <b>{{ order.return_reason }}</b><span *ngIf="order.return_note"> · {{ order.return_note }}</span></div>

@@ -65,8 +65,9 @@ test('Phòng khám đối tác: menu Chuỗi, đăng ký thiếu thì báo, gử
   await dialog(page).locator('#cpa-confirm').click();
   await expect(chip(page)).toHaveText('Bị từ chối');
   await expect(page.locator('.dt-alert.danger')).toContainText('Thiếu giấy phép hoạt động');
-  await expect(page.locator('.po-table tbody tr').first()).toContainText('Từ chối');
   await shot(page, 'pkdt-bi-tu-choi');
+  await page.locator('#cp-tab-history').click();
+  await expect(page.locator('.po-table tbody tr').first()).toContainText('Từ chối');
 
   // Xoá hồ sơ bị từ chối → về danh sách, không còn
   await page.locator('.dt-actions button', {hasText: 'Xoá'}).click();
@@ -92,7 +93,7 @@ test('Phòng khám đối tác: tạm ngưng / hoạt động lại, ngừng h�
   await dialog(page).getByRole('button', {name: 'Quá hạn công nợ'}).click();
   await dialog(page).locator('#cpa-confirm').click();
   await expect(chip(page)).toHaveText('Tạm ngưng');
-  await expect(page.locator('.dt-alert.warn')).toContainText('không gửi được đơn mới');
+  await expect(page.locator('.dt-alert.warn', {hasText: 'Tạm ngưng từ'})).toContainText('không gửi được đơn mới');
   await expect(page.locator('.cp-link-st')).toHaveText('tạm ngưng');
   await shot(page, 'pkdt-tam-ngung');
   await page.getByRole('button', {name: /Hoạt động lại/}).click();
@@ -119,7 +120,8 @@ test('Phòng khám đối tác: tạm ngưng / hoạt động lại, ngừng h�
   await expect(page.locator('.cp-link-st')).toHaveText('đang dùng');
   const unlocked = await docsoftLogin(page);
   expect(unlocked.status()).not.toBe(403);
-  // Lịch sử: dòng mới nhất là Kích hoạt, ngay trước là Mở lại hợp tác
+  // Lịch sử (tab riêng): dòng mới nhất là Kích hoạt, ngay trước là Mở lại hợp tác
+  await page.locator('#cp-tab-history').click();
   await expect(page.locator('.po-table tbody tr').nth(0)).toContainText('Kích hoạt');
   await expect(page.locator('.po-table tbody tr').nth(1)).toContainText('Mở lại hợp tác');
   await shot(page, 'pkdt-mo-lai');

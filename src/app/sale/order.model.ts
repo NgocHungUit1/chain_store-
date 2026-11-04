@@ -90,6 +90,9 @@ export class ItemInvoice {
   // Bốc thuốc cho đơn đặt thuốc phòng khám: gửi kèm khi lưu, hoá đơn ghi nợ cả cho phòng khám
   prescription_order_id?: number;
   prescription_order_code?: string;
+  // Phòng khám đối tác: chiết khấu % tự áp, khoá không cho sửa; công nợ / hạn mức để cảnh báo (không chặn)
+  partner_discount_percent?: number;
+  partner_credit?: { partner_code: string, discount_percent: number, debt_limit: number | null, debt_now: number } | null;
 }
 
 export class ListInvoice {
