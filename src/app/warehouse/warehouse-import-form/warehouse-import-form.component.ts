@@ -819,7 +819,9 @@ export class WarehouseImportFormComponent extends ListComponentBase implements O
                     no: 'PN' + res,
                     discount_amount: 0,
                     discount_type: 'price',
-                    ...formData
+                    ...formData,
+                    // Phiếu luôn lập ở chi nhánh đang làm việc (server chỉ nhận chi nhánh này); nháp cũ có thể mang chi nhánh khác
+                    branch_id: this.form.controls['branch_id'].value,
                   });
                   this.recalculateWarehouse();
                 } else {

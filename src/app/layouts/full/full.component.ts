@@ -142,6 +142,8 @@ export class FullComponent implements OnDestroy {
     const data = {'branch_store_id': event.value};
     this.userService.updateBranchLogin(data).subscribe(res => {
       if (res === true) {
+        // Hoá đơn đang soạn ở màn bán hàng thuộc chi nhánh cũ (server từ chối lưu): bỏ đi như khi đổi chi nhánh trong màn bán hàng
+        localStorage.removeItem('rs24_token_order_service');
         this.notifySer.notify('success', 'Chuyển chi nhánh thành công.');
         setTimeout(function () {
           location.reload();

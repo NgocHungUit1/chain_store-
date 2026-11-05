@@ -56,7 +56,8 @@ test('Sổ quỹ: form lập phiếu thu, phiếu chi mới', async ({page}) => 
 
 test('Sổ quỹ: phiếu thu tự động gắn hoá đơn chỉ xem; phiếu thu nợ có bảng hoá đơn', async ({page}) => {
   const w = watchErrors(page);
-  await open(page, '/cash-flow');
+  // Phiếu thu nợ mẫu lập từ mấy ngày trước; các test khác sinh thêm phiếu mỗi lần chạy nên mở 50 dòng / trang để vẫn thấy
+  await open(page, '/cash-flow?pageSize=50');
   const rows = page.locator('tr', {hasText: 'Phòng khám Da liễu Dr Tuấn'});
   // Không còn phiếu thu 0 đồng do bán nợ
   await expect(page.locator('tr.example-element-row', {hasText: /\s0\s*$/})).toHaveCount(0);

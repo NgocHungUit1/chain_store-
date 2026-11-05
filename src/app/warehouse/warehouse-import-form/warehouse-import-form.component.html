@@ -610,7 +610,8 @@
             <div fxLayout="row wrap">
               <div fxFlex="100" style='display: flex; justify-content: space-between;margin-bottom: 4px'>
                 <mat-form-field style='width: 150px'>
-                  <mat-select (selectionChange)="storeBranchToLocalStorage($event)" formControlName="branch_id" [disabled]="form?.controls['status'].value === '10'">
+                  <mat-select (selectionChange)="storeBranchToLocalStorage($event)" formControlName="branch_id" [disabled]="true"
+                              matTooltip="Phiếu lập ở chi nhánh đang làm việc. Muốn nhập cho chi nhánh khác thì đổi chi nhánh ở thanh trên.">
                     <mat-option *ngFor="let branch of branchList" value="{{branch.id}}">{{branch.name}}</mat-option>
                   </mat-select>
                 </mat-form-field>
