@@ -8,6 +8,7 @@ import {ORDER_STATUS_CLASS, PrescriptionOrderDetail, PrescriptionOrderService} f
 import {PrescriptionOrderReturnDialogComponent} from '../prescription-order-return-dialog/prescription-order-return-dialog.component';
 import {PrescriptionOrderCompleteDialogComponent} from '../prescription-order-complete-dialog/prescription-order-complete-dialog.component';
 import {PrescriptionOrderWarnDialogComponent} from '../prescription-order-warn-dialog/prescription-order-warn-dialog.component';
+import {PrescriptionOrderAssignDialogComponent} from '../prescription-order-assign-dialog/prescription-order-assign-dialog.component';
 import {OrderService} from '../../sale/order.service';
 import {getAllPermissions} from '../../shared/permission-storage';
 
@@ -87,13 +88,37 @@ export class PrescriptionOrderDetailComponent implements OnInit, OnDestroy {
     return this.preparingNoInvoice && this.permissions.indexOf('Prescription-Order.Unpick') >= 0;
   }
 
-  get canDeliver(): boolean {
-    return this.order && this.order.status === 'preparing' && !!this.order.invoice_id
-      && this.permissions.indexOf('Prescription-Order.Deliver') >= 0;
+  /** Đang soạn, đã lập hoá đơn, chưa giao cho shipper: giao cho shipper hoặc phòng khám tự lấy (chốt S9) */
+  private get readyToDeliver(): boolean {
+    return this.order && this.order.status === 'preparing' && !!this.order.invoice_id && !(this.order.delivery && this.order.delivery.active);
   }
 
+  get canAssign(): boolean {
+    return this.readyToDeliver && this.permissions.indexOf('Prescription-Order.Assign-Shipper') >= 0;
+  }
+
+  get canSelfPickup(): boolean {
+    return this.readyToDeliver && this.permissions.indexOf('Prescription-Order.Complete') >= 0;
+  }
+
+  /** Phiếu giao chưa lấy hàng: đổi người / huỷ giao được */
+  private get deliveryNotPicked(): boolean {
+    const d = this.order && this.order.delivery;
+    return !!d && (d.status === 'created' || d.status === 'picking');
+  }
+
+  get canChangeShipper(): boolean {
+    return this.deliveryNotPicked && this.permissions.indexOf('Prescription-Order.Assign-Shipper') >= 0;
+  }
+
+  get canCancelDelivery(): boolean {
+    return this.deliveryNotPicked && this.permissions.indexOf('Prescription-Order.Cancel-Delivery') >= 0;
+  }
+
+  /** Đơn đang giao kiểu cũ (nhân viên tự giao, không có phiếu giao shipper) */
   get canComplete(): boolean {
-    return this.order && this.order.status === 'delivering' && this.permissions.indexOf('Prescription-Order.Complete') >= 0;
+    return this.order && this.order.status === 'delivering' && !(this.order.delivery && this.order.delivery.active)
+      && this.permissions.indexOf('Prescription-Order.Complete') >= 0;
   }
 
   get missingItems(): string[] {
@@ -208,23 +233,40 @@ export class PrescriptionOrderDetailComponent implements OnInit, OnDestroy {
     this.runAction(this.orderSer.unpick(this.order.id), 'Đã huỷ soạn, đơn về Đã xác nhận.', 'Không huỷ soạn được.');
   }
 
-  deliver() {
-    this.runAction(this.orderSer.deliver(this.order.id), 'Đơn đang giao.', 'Không chuyển sang đang giao được.');
-  }
-
-  openComplete() {
-    const ref = this.dialog.open(PrescriptionOrderCompleteDialogComponent, {
-      width: '520px',
+  openAssign() {
+    const ref = this.dialog.open(PrescriptionOrderAssignDialogComponent, {
+      width: '480px',
       maxWidth: '95vw',
-      data: {code: this.order.code, clinic: this.order.clinic?.name || 'Phòng khám',
-        invoiceNo: this.order.invoice?.invoice_no, debt: this.order.invoice?.debt || 0},
+      data: {code: this.order.code, clinic: this.order.clinic?.name || 'Phòng khám', address: this.order.clinic?.address || null,
+        currentShipperId: this.order.delivery && this.order.delivery.active ? this.order.delivery.shipper_id : null},
     });
     ref.afterClosed().subscribe(result => {
       if (!result) {
         return;
       }
-      this.runAction(this.orderSer.complete(this.order.id, result.paid),
-        result.paid ? 'Đã hoàn thành đơn và ghi phiếu trả nợ.' : 'Đã hoàn thành đơn, ghi nợ phòng khám.', 'Không hoàn thành được đơn.');
+      this.runAction(this.orderSer.assignShipper(this.order.id, result.shipperId),
+        result.shipperId ? 'Đã giao đơn cho shipper.' : 'Đơn đã vào danh sách chờ shipper nhận.', 'Không giao cho shipper được.');
+    });
+  }
+
+  cancelDelivery() {
+    this.runAction(this.orderSer.cancelDelivery(this.order.id), 'Đã huỷ giao, đơn về chờ giao.', 'Không huỷ giao được.');
+  }
+
+  /** selfPickup: phòng khám tự đến lấy (đơn đang soạn); false: hoàn thành đơn đang giao kiểu cũ */
+  openComplete(selfPickup: boolean) {
+    const ref = this.dialog.open(PrescriptionOrderCompleteDialogComponent, {
+      width: '520px',
+      maxWidth: '95vw',
+      data: {code: this.order.code, clinic: this.order.clinic?.name || 'Phòng khám',
+        invoiceNo: this.order.invoice?.invoice_no, debt: this.order.invoice?.debt || 0, selfPickup},
+    });
+    ref.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
+      this.runAction(this.orderSer.complete(this.order.id, result.method),
+        result.method === 'debt' ? 'Đã hoàn thành đơn, ghi nợ phòng khám.' : 'Đã hoàn thành đơn và ghi phiếu trả nợ.', 'Không hoàn thành được đơn.');
     });
   }
 

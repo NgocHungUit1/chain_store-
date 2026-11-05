@@ -154,3 +154,11 @@ $muted: rgba(0, 0, 0, 0.56);
   &.st-returned { background: #ffebee; color: #c62828; }
   &.st-cancelled { background: #eceff1; color: #546e7a; }
 }
+
+/* Dòng phụ trạng thái giao shipper ở danh sách đơn */
+.po-dlv {
+  margin-top: 3px;
+  font-size: 12px;
+  color: #607080;
+  white-space: nowrap;
+}

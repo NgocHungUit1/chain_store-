@@ -1,0 +1,63 @@
+<div class="sp-page green">
+  <header class="sp-bar">
+    <div class="sp-bar-title">
+      <b>Giao hàng</b>
+      <small>{{ summary?.branch_name }}<ng-container *ngIf="summary?.me?.name"> · {{ summary.me.name }}</ng-container></small>
+    </div>
+    <button mat-icon-button [matMenuTriggerFor]="spMenu" aria-label="Tuỳ chọn"><mat-icon>more_vert</mat-icon></button>
+    <mat-menu #spMenu="matMenu">
+      <button mat-menu-item *ngIf="!shipperOnly" (click)="router.navigate(['/'])"><mat-icon>store</mat-icon>Về màn nhà thuốc</button>
+      <button mat-menu-item (click)="logout()"><mat-icon>logout</mat-icon>Đăng xuất</button>
+    </mat-menu>
+  </header>
+
+  <div class="sp-body">
+    <div class="sp-hold" id="sp-holding" *ngIf="summary?.holding_amount > 0">
+      <mat-icon>payments</mat-icon>
+      <div>Đang giữ <b>{{ summary.holding_amount | number }} đ</b> tiền mặt của {{ summary.holding_count }} đơn, chưa nộp thu ngân.</div>
+    </div>
+
+    <div class="sp-seg" role="tablist">
+      <button type="button" role="tab" *ngFor="let t of tabs" [id]="'sp-tab-' + t.key" [class.on]="tab === t.key"
+              [attr.aria-selected]="tab === t.key" (click)="selectTab(t.key)">
+        {{ t.label }}<span class="sp-count" *ngIf="t.key !== 'done' && count(t.key) > 0">{{ count(t.key) }}</span>
+      </button>
+    </div>
+
+    <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
+
+    <div class="sp-empty" *ngIf="!loading && !rows.length">
+      <mat-icon>{{ tab === 'done' ? 'inventory' : 'local_shipping' }}</mat-icon>
+      <div>{{ tab === 'waiting' ? 'Chưa có đơn chờ nhận.' : (tab === 'mine' ? 'Bạn chưa cầm đơn nào. Xem tab Chờ nhận.' : 'Chưa giao đơn nào trong 3 ngày gần đây.') }}</div>
+    </div>
+
+    <div class="sp-card" *ngFor="let d of rows" [attr.data-code]="d.order_code" (click)="open(d)" tabindex="0" (keydown.enter)="open(d)">
+      <div class="sp-card-top">
+        <label class="sp-check" *ngIf="d.status === 'picking'" (click)="togglePick(d, $event)">
+          <mat-icon>{{ picked[d.id] ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
+        </label>
+        <span class="mono">{{ d.order_code }}</span>
+        <span class="sp-chip" [ngClass]="'st-' + d.status">{{ d.status_label }}</span>
+      </div>
+      <div class="sp-clinic">{{ d.clinic.name }}</div>
+      <div class="sp-sub">{{ d.clinic.address || 'Chưa có địa chỉ' }}</div>
+      <div class="sp-sub">{{ d.item_count }} thuốc · bệnh nhân {{ d.patient_name }}</div>
+      <div class="sp-money" *ngIf="d.status !== 'delivered' && d.status !== 'failed'">Phải thu: <b>{{ d.amount | number }} đ</b></div>
+      <div class="sp-money" *ngIf="d.status === 'delivered'">
+        {{ d.collect_method === 'debt' ? 'Ghi nợ' : 'Đã thu ' + (d.collect_label | lowercase) + ' ' + (d.amount | number) + ' đ' }}
+        <span class="sp-sub" *ngIf="d.collect_method === 'cash' && d.amount > 0"> · {{ d.cash_received ? 'đã nộp thu ngân' : 'chưa nộp thu ngân' }}</span>
+      </div>
+      <div class="sp-money bad" *ngIf="d.status === 'failed'">Giao không được</div>
+      <div class="sp-sub" *ngIf="d.status === 'created' && d.assigned_to_me">Nhà thuốc giao cho bạn</div>
+      <button mat-flat-button color="primary" class="sp-btn" *ngIf="tab === 'waiting'" [disabled]="busy" (click)="take(d, $event)">
+        <mat-icon>back_hand</mat-icon>Nhận đơn
+      </button>
+    </div>
+  </div>
+
+  <div class="sp-footer" *ngIf="tab === 'mine' && pickedIds.length">
+    <button mat-flat-button color="primary" class="sp-btn" id="sp-pickup" [disabled]="busy" (click)="pickup()">
+      <mat-icon>local_shipping</mat-icon>Đã lấy hàng, đi giao ({{ pickedIds.length }})
+    </button>
+  </div>
+</div>

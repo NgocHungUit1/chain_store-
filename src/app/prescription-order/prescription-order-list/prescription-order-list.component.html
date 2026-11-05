@@ -69,7 +69,8 @@
           <td>{{ r.doctor_name }}</td>
           <td class="num">{{ r.item_count }}</td>
           <td class="num">{{ r.total_quote | number }}</td>
-          <td><span class="po-chip" [ngClass]="statusClass[r.status]">{{ r.status_label }}</span></td>
+          <td><span class="po-chip" [ngClass]="statusClass[r.status]">{{ r.status_label }}</span>
+            <div class="sub po-dlv" *ngIf="deliveryText(r) as t">{{ t }}</div></td>
         </tr>
         <tr *ngIf="!loading && !rows.length">
           <td colspan="8" class="po-empty">

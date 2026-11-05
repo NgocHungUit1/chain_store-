@@ -12,7 +12,7 @@ import {
 import {getAllPermissions} from '../../shared/permission-storage';
 
 /** Thứ tự tab trạng thái; '' = tất cả */
-const TAB_ORDER = ['new', 'confirmed', 'preparing', 'delivering', 'completed', 'returned', 'cancelled', ''];
+const TAB_ORDER = ['new', 'confirmed', 'preparing', 'to_deliver', 'delivering', 'completed', 'returned', 'cancelled', ''];
 
 @Component({
   selector: 'app-prescription-order-list',
@@ -69,7 +69,9 @@ export class PrescriptionOrderListComponent implements OnInit, OnDestroy {
       let total = 0;
       (res || []).forEach(s => {
         byStatus[s.status] = s;
-        total += s.count;
+        if (!s.subset) {
+          total += s.count;
+        }
       });
       this.tabs = TAB_ORDER.map(st => st === ''
         ? {status: '', label: 'Tất cả', count: total}
@@ -94,6 +96,21 @@ export class PrescriptionOrderListComponent implements OnInit, OnDestroy {
       this.loading = false;
       this.notify.notify('error', (err && err.error && err.error.message) || 'Không tải được danh sách đơn đặt thuốc.');
     });
+  }
+
+  /** Dòng phụ dưới trạng thái: phiếu giao shipper đang chạy / lần giao trước không được */
+  deliveryText(r: PrescriptionOrderRow): string {
+    const d = r.delivery;
+    if (!d || r.status === 'completed') {
+      return '';
+    }
+    if (d.status === 'failed') {
+      return r.status === 'preparing' ? 'Giao không được: ' + d.fail_reason : '';
+    }
+    if (d.status === 'delivered' || d.status === 'cancelled') {
+      return '';
+    }
+    return d.status_label + (d.shipper_name ? ' · ' + d.shipper_name : ' · chờ shipper nhận');
   }
 
   selectTab(status: string) {

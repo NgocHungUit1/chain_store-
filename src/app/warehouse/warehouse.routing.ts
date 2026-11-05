@@ -83,6 +83,11 @@ export const WarehouseRoutes: Routes = [
         path: 'prescription-order',
         loadChildren: () => import('../prescription-order/prescription-order.module').then(m => m.PrescriptionOrderModule)
       },
+      {
+        // Tài chính › Tiền shipper đang giữ
+        path: 'shipper-cash',
+        loadChildren: () => import('../shipper/shipper-cash.module').then(m => m.ShipperCashModule)
+      },
     ]
   }
 ];

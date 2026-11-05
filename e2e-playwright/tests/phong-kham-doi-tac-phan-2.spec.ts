@@ -106,7 +106,7 @@ test('Phòng khám đối tác Phần 2: chính sách, hợp đồng, bốc thu�
 
     // 4. Phòng khám gửi đơn (khoá mới cấp bằng lệnh console)
     const out = execSync(`php yii clinic-link/rotate-key --id=${p.clinic_link_id}`, {cwd: PHARMA_CHAIN}).toString();
-    const key = (out.match(/ck_\w+/) || [])[0];
+    const key = (out.match(/ck_[A-Za-z0-9_-]+/) || [])[0];
     expect(key, out).toBeTruthy();
     const clinic = await pwRequest.newContext({extraHTTPHeaders: {'X-Clinic-Key': key}});
     const created = await clinic.post(API + '/clinic-api/orders', {data: {

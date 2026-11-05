@@ -1,0 +1,92 @@
+<div class="sp-page green">
+  <header class="sp-bar">
+    <button mat-icon-button (click)="back()" aria-label="Quay lại"><mat-icon>arrow_back</mat-icon></button>
+    <div class="sp-bar-title"><b>{{ d?.order_code || 'Đơn giao' }}</b><small *ngIf="d">{{ d.status_label }}</small></div>
+  </header>
+
+  <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
+
+  <div class="sp-body" *ngIf="d">
+    <section class="sp-card static">
+      <div class="sp-clinic">{{ d.clinic.name }}</div>
+      <div class="sp-sub">{{ d.clinic.address || 'Phòng khám chưa có địa chỉ' }}</div>
+      <div class="sp-sub" *ngIf="d.clinic.phone">ĐT {{ d.clinic.phone }}</div>
+      <div class="sp-two">
+        <a mat-stroked-button class="sp-btn" id="sp-call" [href]="telUrl" *ngIf="telUrl"><mat-icon>call</mat-icon>Gọi</a>
+        <button mat-stroked-button class="sp-btn" disabled *ngIf="!telUrl"><mat-icon>call</mat-icon>Gọi</button>
+        <a mat-stroked-button class="sp-btn" id="sp-map" [href]="mapUrl" target="_blank" rel="noopener" *ngIf="mapUrl"><mat-icon>map</mat-icon>Chỉ đường</a>
+        <button mat-stroked-button class="sp-btn" disabled *ngIf="!mapUrl"><mat-icon>map</mat-icon>Chỉ đường</button>
+      </div>
+    </section>
+
+    <section class="sp-card static">
+      <div class="sp-sub">Bệnh nhân <b>{{ d.patient_name }}</b><ng-container *ngIf="d.doctor_name"> · {{ d.doctor_name }}</ng-container></div>
+      <table class="sp-items">
+        <tr *ngFor="let it of d.items"><td>{{ it.name }}</td><td class="num">{{ it.quantity | number:'1.0-3' }} {{ it.unit }}</td></tr>
+      </table>
+      <div class="sp-sub" *ngIf="d.note">Ghi chú: {{ d.note }}</div>
+      <div class="sp-total" *ngIf="d.status !== 'delivered' && d.status !== 'failed'">Phải thu <b id="sp-amount">{{ d.amount | number }} đ</b></div>
+      <div class="sp-total" *ngIf="d.status === 'delivered'">
+        {{ d.collect_method === 'debt' ? 'Ghi nợ' : 'Đã thu ' + (d.collect_label | lowercase) }} <b>{{ d.amount | number }} đ</b>
+        <div class="sp-sub" *ngIf="d.receiver_name">Người nhận: {{ d.receiver_name }}</div>
+      </div>
+      <div class="sp-total bad" *ngIf="d.status === 'failed'">Giao không được: {{ d.fail_reason }}<div class="sp-sub" *ngIf="d.fail_note">{{ d.fail_note }}</div></div>
+    </section>
+
+    <!-- Đã giao: chọn cách thu tiền -->
+    <section class="sp-card static" *ngIf="mode === 'deliver'" id="sp-deliver-form">
+      <h3>Xác nhận đã giao</h3>
+      <button type="button" class="sp-opt" id="sp-m-cash" [class.on]="method === 'cash'" (click)="method = 'cash'; error = ''">
+        <mat-icon>{{ method === 'cash' ? 'radio_button_checked' : 'radio_button_unchecked' }}</mat-icon>
+        <span><b>Thu tiền mặt {{ d.amount | number }} đ</b><small>Tính vào tiền bạn đang giữ, nộp thu ngân</small></span>
+      </button>
+      <button type="button" class="sp-opt" id="sp-m-transfer" [class.on]="method === 'transfer'" (click)="method = 'transfer'; error = ''">
+        <mat-icon>{{ method === 'transfer' ? 'radio_button_checked' : 'radio_button_unchecked' }}</mat-icon>
+        <span><b>Phòng khám chuyển khoản</b><small>Không tính vào tiền bạn giữ</small></span>
+      </button>
+      <button type="button" class="sp-opt" id="sp-m-debt" [class.on]="method === 'debt'" (click)="method = 'debt'; error = ''">
+        <mat-icon>{{ method === 'debt' ? 'radio_button_checked' : 'radio_button_unchecked' }}</mat-icon>
+        <span><b>Ghi nợ</b><small>Phòng khám trả khi đối soát cuối tháng</small></span>
+      </button>
+      <label class="sp-field">Người nhận (không bắt buộc)
+        <input id="sp-receiver" [(ngModel)]="receiver" maxlength="100" placeholder="Vd: chị Lan lễ tân">
+      </label>
+      <div class="sp-error" *ngIf="error">{{ error }}</div>
+      <button mat-flat-button color="primary" class="sp-btn" id="sp-deliver-ok" [disabled]="busy" (click)="deliver()"><mat-icon>task_alt</mat-icon>Đã giao</button>
+    </section>
+
+    <!-- Giao không được -->
+    <section class="sp-card static" *ngIf="mode === 'fail'" id="sp-fail-form">
+      <h3>Giao không được</h3>
+      <div class="sp-chips">
+        <button type="button" *ngFor="let r of failReasons" [class.on]="reason === r" (click)="reason = r; error = ''">{{ r }}</button>
+      </div>
+      <label class="sp-field">Lý do
+        <input id="sp-fail-reason" [(ngModel)]="reason" (ngModelChange)="error = ''" maxlength="255">
+      </label>
+      <label class="sp-field">Ghi chú (không bắt buộc)
+        <input id="sp-fail-note" [(ngModel)]="failNote" maxlength="500">
+      </label>
+      <div class="sp-error" *ngIf="error">{{ error }}</div>
+      <button mat-flat-button color="warn" class="sp-btn" id="sp-fail-ok" [disabled]="busy" (click)="submitFail()"><mat-icon>report</mat-icon>Báo giao không được</button>
+    </section>
+  </div>
+
+  <div class="sp-footer" *ngIf="d && mode === null">
+    <button mat-flat-button color="primary" class="sp-btn" id="sp-take" *ngIf="d.status === 'created'" [disabled]="busy" (click)="take()">
+      <mat-icon>back_hand</mat-icon>Nhận đơn
+    </button>
+    <button mat-flat-button color="primary" class="sp-btn" id="sp-pickup-one" *ngIf="d.status === 'picking' && d.assigned_to_me" [disabled]="busy" (click)="pickup()">
+      <mat-icon>local_shipping</mat-icon>Đã lấy hàng, đi giao
+    </button>
+    <button mat-flat-button color="primary" class="sp-btn" id="sp-deliver" *ngIf="d.status === 'delivering' && d.assigned_to_me" [disabled]="busy" (click)="open('deliver')">
+      <mat-icon>task_alt</mat-icon>Đã giao
+    </button>
+    <button mat-stroked-button color="warn" class="sp-btn" id="sp-fail" *ngIf="canFail" [disabled]="busy" (click)="open('fail')">
+      <mat-icon>report</mat-icon>Giao không được
+    </button>
+  </div>
+  <div class="sp-footer" *ngIf="d && mode !== null">
+    <button mat-button class="sp-btn" (click)="open(mode)">Bỏ qua</button>
+  </div>
+</div>

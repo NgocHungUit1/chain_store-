@@ -9,6 +9,8 @@ import {
 import {AuthService} from '../auth.service';
 import {StoreService} from '../../store/store.service';
 
+import {isShipperOnly} from '../../shared/shipper-only';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -66,7 +68,8 @@ export class LoginComponent implements OnInit {
           this.authSer.setToken(response.token);
           this.authSer.getPermissions().subscribe(res => {
             this.authSer.setPermissions(res);
-            this.router.navigate(['/']).then(() => {
+            // Tài khoản chỉ làm giao hàng: vào thẳng trang shipper trên điện thoại
+            this.router.navigate(isShipperOnly(res) ? ['/shipper'] : ['/']).then(() => {
               window.location.reload();
             });
           });

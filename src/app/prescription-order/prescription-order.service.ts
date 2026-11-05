@@ -15,6 +15,7 @@ export interface PrescriptionOrderRow {
   doctor_name: string;
   item_count: number;
   total_quote: number;
+  delivery: { status: string, status_label: string, shipper_name: string, fail_reason: string } | null;
   created_at: number;
   updated_at: number;
 }
@@ -23,7 +24,41 @@ export interface PrescriptionOrderSummary {
   status: string;
   label: string;
   count: number;
+  /** Tab con (vd "Chờ giao" nằm trong Đang soạn): không cộng vào "Tất cả" */
+  subset?: boolean;
 }
+
+/** Phiếu giao hiện tại của đơn (chốt giao hàng 05/11/2026) */
+export interface OrderDelivery {
+  id: number;
+  status: 'created' | 'picking' | 'delivering' | 'delivered' | 'failed';
+  status_label: string;
+  active: boolean;
+  shipper_id: number | null;
+  shipper_name: string | null;
+  shipper_phone: string | null;
+  created_at: number;
+  picking_at: number | null;
+  delivering_at: number | null;
+  delivered_at: number | null;
+  receiver_name: string | null;
+  collect_method: string | null;
+  collect_label: string | null;
+  collect_amount: number;
+  cash_received_at: number | null;
+  cash_received_by: string | null;
+  failed: { shipper_name: string, reason: string, note: string, at: number }[];
+}
+
+export interface BranchShipper {
+  id: number;
+  name: string;
+  phone: string | null;
+  active_count: number;
+}
+
+/** Cách thu tiền khi giao xong / phòng khám tự lấy */
+export type CollectMethod = 'cash' | 'transfer' | 'debt';
 
 export interface PrescriptionOrderItem {
   line_no: number;
@@ -70,7 +105,7 @@ export interface PrescriptionOrderDetail {
   code: string;
   status: string;
   status_label: string;
-  clinic: { link_id: number, name: string, customer_id: number, price_list_id: number };
+  clinic: { link_id: number, name: string, customer_id: number, price_list_id: number, address: string | null, phone: string | null };
   doctor: { code: string, name: string };
   patient: { name: string, phone: string, dob: string, gender: string, code: string };
   dtqg_code: string;
@@ -85,6 +120,7 @@ export interface PrescriptionOrderDetail {
   /** Phòng khám đối tác: chiết khấu, công nợ, hạn mức (null nếu liên kết không có hồ sơ đối tác hoặc đơn đã xong) */
   credit: PartnerCredit | null;
   all_in_stock: boolean;
+  delivery: OrderDelivery | null;
   items: PrescriptionOrderItem[];
   history: PrescriptionOrderHistory[];
   created_at: number;
@@ -164,7 +200,21 @@ export class PrescriptionOrderService {
     return this.http.post<PrescriptionOrderDetail>(this.url + '/' + id + '/deliver', {});
   }
 
-  complete(id: number, paid: boolean): Observable<PrescriptionOrderDetail> {
-    return this.http.post<PrescriptionOrderDetail>(this.url + '/' + id + '/complete', {paid});
+  /** Hoàn thành: đơn đang giao kiểu cũ, hoặc phòng khám tự lấy (đơn đang soạn đã có hoá đơn) */
+  complete(id: number, method: CollectMethod): Observable<PrescriptionOrderDetail> {
+    return this.http.post<PrescriptionOrderDetail>(this.url + '/' + id + '/complete', {method});
+  }
+
+  shippers(): Observable<BranchShipper[]> {
+    return this.http.get<BranchShipper[]>(this.url + '/shippers');
+  }
+
+  /** Giao cho shipper; shipperId null = để shipper tự nhận */
+  assignShipper(id: number, shipperId: number | null): Observable<PrescriptionOrderDetail> {
+    return this.http.post<PrescriptionOrderDetail>(this.url + '/' + id + '/assign-shipper', {shipper_id: shipperId});
+  }
+
+  cancelDelivery(id: number): Observable<PrescriptionOrderDetail> {
+    return this.http.post<PrescriptionOrderDetail>(this.url + '/' + id + '/cancel-delivery', {});
   }
 }

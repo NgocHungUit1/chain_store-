@@ -19,7 +19,7 @@ function clinicKey(): string {
   if (process.env.CLINIC_KEY) {
     return process.env.CLINIC_KEY;
   }
-  const line = readFileSync(KEY_FILE, 'utf8').split('\n').map(s => s.trim()).find(s => /^ck_\w+$/.test(s));
+  const line = readFileSync(KEY_FILE, 'utf8').split('\n').map(s => s.trim()).find(s => /^ck_[A-Za-z0-9_-]+$/.test(s));
   if (!line) {
     throw new Error('Không có khoá phòng khám: đặt CLINIC_KEY hoặc CLINIC_KEY_FILE');
   }
@@ -158,7 +158,7 @@ test('Đặt thuốc: đơn mới tự báo trên chuông trong 30 giây, hiện
   w.assertClean();
 });
 
-test('Đặt thuốc: bốc thuốc → hoá đơn ghi nợ phòng khám → đang giao → hoàn thành', async ({page}) => {
+test('Đặt thuốc: bốc thuốc → hoá đơn ghi nợ phòng khám → phòng khám tự lấy → hoàn thành', async ({page}) => {
   test.setTimeout(180_000);
   const w = watchErrors(page);
   // Thuốc có lô hợp lệ đủ tồn ở Chi nhánh trung tâm (bán theo lô)
@@ -186,10 +186,9 @@ test('Đặt thuốc: bốc thuốc → hoá đơn ghi nợ phòng khám → đa
   await expect(page.locator('.dt-status')).toHaveText('Đang soạn thuốc');
   const invoiceAlert = page.locator('.dt-alert.info', {hasText: 'Hoá đơn'});
   await expect(invoiceAlert).toContainText('phòng khám còn nợ');
-  await page.getByRole('button', {name: 'Đang giao'}).click();
-  await expect(page.locator('.dt-status')).toHaveText('Đang giao');
-
-  await page.getByRole('button', {name: 'Hoàn thành'}).click();
+  // Giao qua shipper ở giao-hang.spec.ts; ở đây phòng khám tự đến lấy (chốt S9), ghi nợ
+  await expect(page.locator('#po-assign')).toBeVisible();
+  await page.locator('#po-self-pickup').click();
   await page.locator('#po-complete-debt').click();
   await shot(page, 'dat-thuoc-hoan-thanh-dialog');
   await page.locator('mat-dialog-container').getByRole('button', {name: 'Hoàn thành'}).click();

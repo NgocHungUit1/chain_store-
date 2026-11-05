@@ -1,0 +1,91 @@
+<div class="po-page">
+  <section class="po-card po-head">
+    <div class="po-head-top">
+      <div class="po-title">
+        <span class="po-ico"><mat-icon>payments</mat-icon></span>
+        <div>
+          <h3>Tiền shipper đang giữ</h3>
+          <p>Tiền mặt shipper thu khi giao đơn phòng khám, đã trừ công nợ và vào sổ quỹ. Đếm tiền shipper nộp rồi bấm Nhận tiền.</p>
+        </div>
+      </div>
+      <button mat-stroked-button color="primary" class="po-btn" (click)="load()" [disabled]="loading">
+        <mat-icon>refresh</mat-icon>Làm mới
+      </button>
+    </div>
+  </section>
+
+  <section class="po-card po-table-card">
+    <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
+    <div class="table-wrap">
+      <table class="po-table">
+        <thead>
+        <tr>
+          <th>Shipper</th>
+          <th class="num">Số đơn</th>
+          <th class="num">Tiền mặt chưa nộp</th>
+          <th>Từ lúc</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <ng-container *ngFor="let r of rows">
+          <tr class="sc-row" [attr.data-shipper]="r.shipper_id">
+            <td><div class="name">{{ r.shipper_name }}</div><div class="sub" *ngIf="r.shipper_phone">{{ r.shipper_phone }}</div></td>
+            <td class="num">{{ r.count }}</td>
+            <td class="num"><b>{{ r.amount | number }}</b></td>
+            <td>{{ r.since * 1000 | date:'HH:mm dd/MM/yyyy' }}</td>
+            <td class="num">
+              <button mat-flat-button color="primary" class="po-btn sc-open" (click)="toggle(r)">
+                <mat-icon>{{ openId === r.shipper_id ? 'expand_less' : 'payments' }}</mat-icon>{{ openId === r.shipper_id ? 'Đóng' : 'Nhận tiền' }}
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="openId === r.shipper_id" class="sc-detail">
+            <td colspan="5">
+              <div class="sc-items">
+                <label class="sc-item" *ngFor="let i of items">
+                  <input type="checkbox" [(ngModel)]="checked[i.id]">
+                  <span class="mono">{{ i.order_code }}</span>
+                  <span class="sc-clinic">{{ i.clinic_name }}<span class="sub"> · giao {{ i.delivered_at * 1000 | date:'HH:mm dd/MM' }}<ng-container *ngIf="i.receiver_name">, {{ i.receiver_name }} nhận</ng-container></span></span>
+                  <b>{{ i.amount | number }}</b>
+                </label>
+              </div>
+              <div class="sc-actions">
+                <span>Đã chọn {{ checkedIds.length }} đơn · <b>{{ checkedAmount | number }} đ</b></span>
+                <button mat-flat-button color="primary" class="po-btn" id="sc-receive" [disabled]="busy || !checkedIds.length" (click)="receive()">
+                  <mat-icon>check_circle</mat-icon>Đã nhận {{ checkedAmount | number }} đ
+                </button>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+        <tr *ngIf="!loading && !rows.length"><td colspan="5" class="po-empty">Không có shipper nào đang giữ tiền.</td></tr>
+        </tbody>
+        <tfoot *ngIf="rows.length > 1">
+        <tr><td><b>Tổng</b></td><td></td><td class="num"><b>{{ total | number }}</b></td><td colspan="2"></td></tr>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+
+  <section class="po-card po-table-card" *ngIf="history.length">
+    <div class="dt-section-head"><mat-icon>history</mat-icon>Đã nhận gần đây</div>
+    <div class="table-wrap">
+      <table class="po-table">
+        <thead>
+        <tr><th>Nhận lúc</th><th>Shipper</th><th>Đơn</th><th>Phòng khám</th><th class="num">Tiền</th><th>Thu ngân</th></tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let h of history">
+          <td>{{ h.received_at * 1000 | date:'HH:mm dd/MM/yyyy' }}</td>
+          <td>{{ h.shipper_name }}</td>
+          <td class="mono">{{ h.order_code }}</td>
+          <td>{{ h.clinic_name }}</td>
+          <td class="num">{{ h.amount | number }}</td>
+          <td>{{ h.received_by }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

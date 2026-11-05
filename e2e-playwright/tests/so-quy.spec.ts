@@ -1,4 +1,4 @@
-import {test, expect, Page} from '@playwright/test';
+import {test, expect, Page, request as pwRequest} from '@playwright/test';
 import {open, watchErrors} from './helpers';
 
 /**
@@ -6,6 +6,23 @@ import {open, watchErrors} from './helpers';
  * phiếu thu nợ có bảng hoá đơn phân bổ. Dữ liệu mẫu: python3 pharma_chain/tools/dat-thuoc/demo_cong_no.py
  */
 const shot = (page: Page, name: string) => page.screenshot({path: `test-results/screens/${name}.png`});
+const API = process.env.E2E_API_URL || 'http://127.0.0.1:33081/v1';
+
+/**
+ * Mã phiếu thu mới nhất theo loại: 'auto' = phiếu tự động gắn thanh toán hoá đơn, 'debt' = phiếu thu nợ khách hàng
+ * (không gắn hoá đơn). Lấy qua API theo loại thay vì đoán theo số tiền (các test khác cũng sinh phiếu 20,000).
+ */
+async function receiptNo(kind: 'auto' | 'debt'): Promise<string> {
+  const login = await (await pwRequest.newContext()).post(API + '/auth/login', {data: {username: 'demo', password: 'Demo@123'}});
+  const body = await login.json();
+  const api = await pwRequest.newContext({extraHTTPHeaders: {Authorization: 'Bearer ' + (body.access_token || body.token)}});
+  const rows = await (await api.get(API + '/cash-flow?per-page=100&sort=-id')).json();
+  const row = rows.find(r => r.type === 'receipt' && +r.value > 0 && !+r.deleted
+    && (kind === 'auto' ? r.parent_table === 'payment' : !r.parent_table && r.doi_tuong_nop === 'customer'));
+  await api.dispose();
+  expect(row, 'Không có phiếu thu loại ' + kind + ' (chạy pharma_chain/tools/dat-thuoc/demo_cong_no.py)').toBeTruthy();
+  return row.no;
+}
 
 /** Mở rộng dòng phiếu có mã `no` rồi bấm Cập nhật để mở form */
 async function openCashFlow(page: Page, no: string) {
@@ -45,7 +62,7 @@ test('Sổ quỹ: phiếu thu tự động gắn hoá đơn chỉ xem; phiếu t
   await expect(page.locator('tr.example-element-row', {hasText: /\s0\s*$/})).toHaveCount(0);
 
   // Phiếu thu tự động (thanh toán hoá đơn khi giao)
-  const autoNo = (await page.locator('tr.example-element-row').filter({hasText: '30,000'}).first().locator('td').nth(1).innerText()).trim();
+  const autoNo = await receiptNo('auto');
   await openCashFlow(page, autoNo);
   const dialog = page.locator('mat-dialog-container');
   await expect(dialog.locator('.cff-auto')).toContainText('Phiếu thu tự động khi thanh toán hoá đơn');
@@ -56,7 +73,7 @@ test('Sổ quỹ: phiếu thu tự động gắn hoá đơn chỉ xem; phiếu t
   await page.locator('tr.example-element-row', {hasText: autoNo}).first().click(); // thu gọn dòng vừa mở
 
   // Phiếu thu nợ cuối tháng: có bảng hoá đơn còn nợ
-  const debtNo = (await page.locator('tr.example-element-row').filter({hasText: '20,000'}).first().locator('td').nth(1).innerText()).trim();
+  const debtNo = await receiptNo('debt');
   await openCashFlow(page, debtNo);
   await expect(dialog.getByText('Hoá đơn khách còn nợ')).toBeVisible();
   await expect(dialog.locator('.cff-table')).toContainText(/HD\d+-\d+/);

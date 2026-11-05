@@ -57,6 +57,7 @@ const SALES_CHILDREN: ChildrenItems[] = [
   {state: 'invoice', link: ['/transaction', 'invoice'], name: 'Hóa đơn bán', icon: 'receipt', permissions: ['Invoice.List']},
   {state: 'returns', link: ['/transaction', 'returns'], name: 'Trả hàng', icon: 'keyboard_return', permissions: ['Returns.List']},
   {state: 'prescription-order', link: ['/transaction', 'prescription-order'], name: 'Đơn đặt thuốc', icon: 'medical_services', permissions: ['Prescription-Order.List']},
+  {state: 'shipper', link: ['/shipper'], name: 'Giao hàng (shipper)', icon: 'local_shipping', permissions: ['Shipper.List']},
   {state: 'customer', link: ['/partner', 'customer'], name: 'Khách hàng', icon: 'person', permissions: ['Customer.List']},
   {state: 'doctor', link: ['/partner', 'doctor'], name: 'Bác sĩ', icon: 'local_hospital', permissions: ['Doctor.List']},
   {state: 'sample-prescription', link: ['/store', 'sample-prescription'], name: 'Đơn thuốc mẫu', icon: 'list_alt', permissions: ['Sample-Prescription.List']},
@@ -80,6 +81,7 @@ const PURCHASE_CHILDREN: ChildrenItems[] = [
 ];
 const FINANCE_CHILDREN: ChildrenItems[] = [
   {state: 'cash-flow', link: ['/cash-flow'], name: 'Sổ quỹ', icon: 'currency_exchange', permissions: ['Cash-Flow.List']},
+  {state: 'shipper-cash', link: ['/transaction', 'shipper-cash'], name: 'Tiền shipper đang giữ', icon: 'payments', permissions: ['Shipper-Cash.List']},
   {state: 'debt-customers', link: ['/report', 'debt-customers'], name: 'Công nợ khách hàng', icon: 'price_check', permissions: ['Report.Customers-Debt']},
   {state: 'debt-suppliers', link: ['/report', 'debt-suppliers'], name: 'Công nợ nhà cung cấp', icon: 'money_off', permissions: ['Report.Suppliers-Debt']},
   {state: 'bank-account', link: ['/setting', 'bank-account'], name: 'Tài khoản ngân hàng', icon: 'account_balance_wallet', permissions: ['Bank-Account.List']},

@@ -130,6 +130,11 @@ export const AppRoutes: Routes = [
         path: 'authentication',
         loadChildren:
           () => import('./authentication/authentication.module').then(m => m.AuthenticationModule)
+      },
+      {
+        // Trang giao hàng trên điện thoại cho shipper (không có menu nhà thuốc)
+        path: 'shipper',
+        loadChildren: () => import('./shipper/shipper.module').then(m => m.ShipperModule)
       }
     ]
   },

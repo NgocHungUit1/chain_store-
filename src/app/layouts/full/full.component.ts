@@ -20,6 +20,7 @@ import { UserService } from '../../user/user.service';
 import { NotifierService } from 'angular-notifier';
 import {StoreService} from '../../store/store.service';
 import {AuthService} from '../../authentication/auth.service';
+import {isShipperOnly} from '../../shared/shipper-only';
 
 /** @title Responsive sidenav */
 @Component({
@@ -100,6 +101,10 @@ export class FullComponent implements OnDestroy {
 
       this.authService.getPermissions().subscribe(res => {
         this.authService.setPermissions(res);
+        // Tài khoản chỉ làm giao hàng không dùng màn nhà thuốc (chốt S8): đưa về trang shipper
+        if (isShipperOnly(res)) {
+          this.router.navigate(['/shipper']);
+        }
       });
     });
 

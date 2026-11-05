@@ -1,0 +1,62 @@
+.sc-detail td {
+  background: #f6faf9;
+}
+
+.sc-items {
+  display: grid;
+  gap: 6px;
+}
+
+.sc-item {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 8px;
+  border: 1px solid #dde5e3;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+
+  .mono { font-family: monospace; font-size: 13px; }
+  .sc-clinic { min-width: 0; }
+}
+
+.sc-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+/* Cùng kiểu màn Đơn đặt thuốc (các class này nằm ở style riêng của màn danh sách / chi tiết đơn) */
+.po-head-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.po-empty {
+  text-align: center !important;
+  color: rgba(0, 0, 0, 0.5);
+  padding: 32px !important;
+}
+
+.dt-section-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: #00796b;
+  border-bottom: 1px solid #eef1f0;
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+}

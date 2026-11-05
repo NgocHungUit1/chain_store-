@@ -35,10 +35,19 @@
           <button mat-flat-button color="primary" class="po-btn" *ngIf="canPick" [disabled]="busy" (click)="pick()">
             <mat-icon>shopping_cart_checkout</mat-icon>{{ order.status === 'preparing' ? 'Mở lại màn bán hàng' : 'Bốc thuốc' }}
           </button>
-          <button mat-flat-button color="primary" class="po-btn" *ngIf="canDeliver" [disabled]="busy" (click)="deliver()">
-            <mat-icon>local_shipping</mat-icon>Đang giao
+          <button mat-stroked-button color="warn" class="po-btn" id="po-cancel-delivery" *ngIf="canCancelDelivery" [disabled]="busy" (click)="cancelDelivery()">
+            <mat-icon>close</mat-icon>Huỷ giao
           </button>
-          <button mat-flat-button color="primary" class="po-btn" *ngIf="canComplete" [disabled]="busy" (click)="openComplete()">
+          <button mat-stroked-button class="po-btn" id="po-change-shipper" *ngIf="canChangeShipper" [disabled]="busy" (click)="openAssign()">
+            <mat-icon>swap_horiz</mat-icon>Đổi shipper
+          </button>
+          <button mat-stroked-button class="po-btn" id="po-self-pickup" *ngIf="canSelfPickup" [disabled]="busy" (click)="openComplete(true)">
+            <mat-icon>storefront</mat-icon>Phòng khám tự lấy
+          </button>
+          <button mat-flat-button color="primary" class="po-btn" id="po-assign" *ngIf="canAssign" [disabled]="busy" (click)="openAssign()">
+            <mat-icon>local_shipping</mat-icon>Giao cho shipper
+          </button>
+          <button mat-flat-button color="primary" class="po-btn" *ngIf="canComplete" [disabled]="busy" (click)="openComplete(false)">
             <mat-icon>task_alt</mat-icon>Hoàn thành
           </button>
         </div>
@@ -71,6 +80,28 @@
           <span *ngIf="order.invoice.debt > 0">phòng khám còn nợ <b>{{ order.invoice.debt | number }} đ</b></span>
           <span *ngIf="order.invoice.debt <= 0">đã trả đủ</span></div>
       </div>
+      <ng-container *ngIf="order.delivery as d">
+        <div class="dt-alert info" id="po-delivery" *ngIf="d.active || d.status === 'delivered'">
+          <mat-icon>local_shipping</mat-icon>
+          <div>
+            <b>{{ d.status_label }}</b> ·
+            <ng-container *ngIf="d.shipper_name">shipper <b>{{ d.shipper_name }}</b><span *ngIf="d.shipper_phone"> ({{ d.shipper_phone }})</span></ng-container>
+            <ng-container *ngIf="!d.shipper_name">chờ shipper tự nhận</ng-container>
+            <ng-container *ngIf="d.status === 'delivering'"> · lấy hàng lúc {{ d.delivering_at * 1000 | date:'HH:mm dd/MM' }}</ng-container>
+            <ng-container *ngIf="d.status === 'delivered'"> · giao lúc {{ d.delivered_at * 1000 | date:'HH:mm dd/MM' }}<span *ngIf="d.receiver_name">, người nhận {{ d.receiver_name }}</span>
+              · {{ d.collect_method === 'debt' ? 'ghi nợ' : 'thu ' + (d.collect_label | lowercase) + ' ' + (d.collect_amount | number) + ' đ' }}
+              <ng-container *ngIf="d.collect_method === 'cash' && d.collect_amount > 0">
+                · {{ d.cash_received_at ? 'thu ngân ' + d.cash_received_by + ' đã nhận tiền' : 'shipper đang giữ tiền, chưa nộp thu ngân' }}
+              </ng-container>
+            </ng-container>
+          </div>
+        </div>
+        <div class="dt-alert warn" *ngFor="let f of d.failed">
+          <mat-icon>report</mat-icon>
+          <div>Giao không được lúc {{ f.at * 1000 | date:'HH:mm dd/MM' }} (shipper {{ f.shipper_name }}): <b>{{ f.reason }}</b><span *ngIf="f.note"> · {{ f.note }}</span>.
+            <ng-container *ngIf="!d.active && order.status === 'preparing'"> Giao lại hoặc trả đơn.</ng-container></div>
+        </div>
+      </ng-container>
       <div class="dt-alert muted" *ngIf="order.status === 'cancelled'">
         <mat-icon>block</mat-icon>
         <div>Phòng khám đã huỷ đơn<span *ngIf="order.cancel_reason">. Lý do: <b>{{ order.cancel_reason }}</b></span>.</div>
@@ -82,6 +113,7 @@
         <h4><mat-icon>local_hospital</mat-icon>Phòng khám</h4>
         <dl>
           <dt>Phòng khám</dt><dd>{{ order.clinic?.name }}</dd>
+          <dt>Địa chỉ</dt><dd>{{ order.clinic?.address || '—' }}<span class="sub" *ngIf="order.clinic?.phone"> · {{ order.clinic.phone }}</span></dd>
           <dt>Bác sĩ</dt><dd>{{ order.doctor.name || '—' }}<span class="sub" *ngIf="order.doctor.code"> · {{ order.doctor.code }}</span></dd>
           <dt>Mã ĐTQG</dt><dd>{{ order.dtqg_code || '—' }}</dd>
         </dl>

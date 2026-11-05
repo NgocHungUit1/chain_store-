@@ -1,9 +1,11 @@
 import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {CollectMethod} from '../prescription-order.service';
 
 /**
- * Hoàn thành đơn đặt thuốc: phòng khám đã trả tiền khi nhận (ghi phiếu trả nợ hoá đơn) hay để nợ đối soát cuối tháng.
- * Đóng với {paid: boolean}; bỏ qua thì đóng không giá trị.
+ * Hoàn thành đơn đặt thuốc: đơn đang giao (nhân viên tự giao), hoặc phòng khám tự đến lấy tại nhà thuốc (selfPickup).
+ * Chọn cách thu: tiền mặt / chuyển khoản (ghi phiếu trả nợ hoá đơn) hay ghi nợ (đối soát cuối tháng).
+ * Đóng với {method}; bỏ qua thì đóng không giá trị.
  */
 @Component({
   selector: 'app-prescription-order-complete-dialog',
@@ -11,18 +13,18 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
   styleUrls: ['../prescription-order-return-dialog/prescription-order-return-dialog.component.scss', './prescription-order-complete-dialog.component.scss']
 })
 export class PrescriptionOrderCompleteDialogComponent {
-  paid: boolean = null;
+  method: CollectMethod = null;
 
   constructor(
     public dialogRef: MatDialogRef<PrescriptionOrderCompleteDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { code: string, clinic: string, invoiceNo: string, debt: number },
+    @Inject(MAT_DIALOG_DATA) public data: { code: string, clinic: string, invoiceNo: string, debt: number, selfPickup?: boolean },
   ) {
   }
 
   submit() {
-    if (this.paid === null) {
+    if (this.method === null) {
       return;
     }
-    this.dialogRef.close({paid: this.paid});
+    this.dialogRef.close({method: this.method});
   }
 }

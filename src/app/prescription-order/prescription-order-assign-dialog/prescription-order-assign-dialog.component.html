@@ -1,0 +1,29 @@
+<div class="rd-head" mat-dialog-title>
+  <mat-icon class="rd-ico ok">local_shipping</mat-icon>
+  <div>
+    <h2>Giao đơn {{ data.code }} cho shipper</h2>
+    <p>{{ data.clinic }}<ng-container *ngIf="data.address"> · {{ data.address }}</ng-container></p>
+  </div>
+</div>
+<div mat-dialog-content>
+  <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
+  <div class="cd-options" *ngIf="!loading">
+    <button type="button" class="cd-option" *ngFor="let s of shippers" [attr.data-shipper]="s.id"
+            [class.on]="choice === s.id" (click)="choice = s.id">
+      <mat-icon>person</mat-icon>
+      <span><b>{{ s.name }}<ng-container *ngIf="s.phone"> · {{ s.phone }}</ng-container></b>
+        <small>{{ s.id === data.currentShipperId ? 'Đang được giao đơn này · ' : '' }}{{ s.active_count ? 'Đang cầm ' + s.active_count + ' đơn' : 'Rảnh' }}</small></span>
+    </button>
+    <button type="button" class="cd-option" id="po-assign-pool" [class.on]="choice === 0" (click)="choice = 0">
+      <mat-icon>groups</mat-icon>
+      <span><b>Để shipper tự nhận</b><small>Đơn hiện ở "Chờ nhận" của mọi shipper chi nhánh, ai nhận trước thì giao</small></span>
+    </button>
+    <p class="rd-hint" *ngIf="!shippers.length">Chi nhánh chưa có shipper. Tạo nhân viên với vai trò "Nhân viên giao hàng" ở màn Nhân viên.</p>
+  </div>
+</div>
+<div mat-dialog-actions class="rd-actions">
+  <button mat-button type="button" mat-dialog-close>Bỏ qua</button>
+  <button mat-flat-button color="primary" type="button" id="po-assign-ok" [disabled]="choice === undefined" (click)="submit()">
+    <mat-icon>local_shipping</mat-icon>Giao cho shipper
+  </button>
+</div>
