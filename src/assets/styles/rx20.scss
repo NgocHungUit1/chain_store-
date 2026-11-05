@@ -310,3 +310,15 @@ File: scss
     }
   }
 }
+
+// Thông báo góc phải: câu dài (lỗi từ máy chủ) xuống dòng trong khung thay vì tràn khỏi mép màn hình
+.notifier__notification--material {
+  max-width: min(520px, calc(100vw - 24px));
+
+  .notifier__notification-message {
+    max-width: calc(100% - 30px);
+    padding: 5px 0;
+    line-height: 22px;
+    white-space: normal;
+  }
+}

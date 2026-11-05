@@ -11,7 +11,8 @@ import {open, watchErrors} from './helpers';
 // Đặt CHAIN_YII để chỉ định lệnh khác.
 const YII = process.env.CHAIN_YII || (() => {
   try {
-    execSync('docker inspect chain-api', {stdio: 'ignore'});
+    // Docker cài mà không chạy thì lệnh này treo, chặn luôn việc nạp file test: tối đa 5 giây
+    execSync('docker inspect chain-api', {stdio: 'ignore', timeout: 5_000});
     return 'docker exec chain-api php /app/yii';
   } catch (e) {
     return `php ${resolve(__dirname, '../../../pharma_chain/yii')}`;

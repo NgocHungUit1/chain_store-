@@ -172,6 +172,14 @@ Main sidebar
           color: #009688;
         }
       }
+      // Đang ở màn Nhập hàng: nút được tô nền như mục đang chọn, chữ / icon phải đổi trắng (trước đây cùng màu nền nên mất chữ)
+      > .mat-list-item.menu-action-outline.selected > .mat-list-item-content > a {
+        background: #009688;
+        color: $white;
+        mat-icon {
+          color: $white;
+        }
+      }
       > .mat-list-item.menu-action-primary {
         margin-left: 8px;
         > .mat-list-item-content > a {
