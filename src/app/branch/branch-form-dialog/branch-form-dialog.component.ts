@@ -135,13 +135,13 @@ export class BranchFormDialogComponent implements OnInit {
       });
 
       this.nationalPharmacyLoginUsername =  branch['national_pharmacy_login_username'];
-      // @ts-ignore
-      this.nationalPharmacyLoginPassword = branch['national_pharmacy_login_password'];
+      // API chi nhánh không trả mật khẩu liên thông (chỉ cờ đã lưu); xem / sửa ở Thiết lập › liên thông
+      this.nationalPharmacyLoginPassword = branch['has_national_password'] ? '********' : '';
 
       this.useBranchNationalConnect = !!branch['use_branch_national_connect'];
 
       this.nationalPharmacyV2LoginUsername = branch['national_pharmacy_v2_login_username'];
-      this.nationalPharmacyV2LoginPassword = branch['national_pharmacy_v2_login_password'];
+      this.nationalPharmacyV2LoginPassword = branch['has_national_v2_password'] ? '********' : '';
       this.useBranchNationalV2Connect = !!branch['use_branch_national_v2_connect'];
 
       if (branch['province_id'] !== null) {
