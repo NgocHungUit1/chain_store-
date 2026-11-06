@@ -1,0 +1,55 @@
+.mr-from {
+  margin: 0 0 12px;
+  color: rgba(0, 0, 0, 0.7);
+}
+.mr-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.mr-table th {
+  text-align: left;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.6);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 6px 8px;
+}
+.mr-table td {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 6px 8px;
+}
+.mr-table .num {
+  text-align: right;
+  white-space: nowrap;
+}
+.mr-short td {
+  background: #fff8e1;
+}
+.mr-muted {
+  color: rgba(0, 0, 0, 0.5);
+}
+.mr-qty {
+  width: 72px;
+  padding: 3px 6px;
+  border: 1px solid rgba(0, 0, 0, 0.24);
+  border-radius: 4px;
+  text-align: right;
+  font-size: 13px;
+}
+.mr-qty.mr-bad {
+  border-color: #d32f2f;
+}
+.mr-error {
+  color: #d32f2f;
+  font-size: 12px;
+  margin-top: 8px;
+}
+.mr-warn {
+  color: #e65100;
+  font-size: 12px;
+  margin-top: 8px;
+}
+.mr-note {
+  width: 100%;
+  margin-top: 12px;
+}

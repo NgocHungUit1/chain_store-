@@ -66,3 +66,76 @@
 .span-product-no {
 
 }
+
+/* Chọn lô chuyển (06/11/2026) */
+.mc-lots {
+  padding: 6px 8px !important;
+  min-width: 360px;
+  vertical-align: top;
+}
+.mc-muted {
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 12px;
+}
+.mc-lot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 28px;
+}
+.mc-lot-no {
+  font-weight: 500;
+  min-width: 70px;
+}
+.mc-lot-qty {
+  width: 64px;
+  margin-left: auto;
+  padding: 2px 6px;
+  border: 1px solid rgba(0, 0, 0, 0.24);
+  border-radius: 4px;
+  text-align: right;
+  font-size: 13px;
+}
+.mc-lot-remove {
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+}
+.mc-lot-remove .mat-icon {
+  font-size: 18px;
+}
+.mc-lot-actions button {
+  font-size: 12px;
+  padding: 0 8px;
+}
+.mc-lot-error {
+  color: #d32f2f;
+  font-size: 12px;
+}
+.mc-hint {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 12px;
+  margin: 4px 0 10px;
+  line-height: 18px;
+}
+.mc-buttons {
+  display: flex;
+  gap: 8px;
+}
+.mc-buttons button {
+  flex: 1;
+}
+/* Bảng dạng <table>: đặt bề rộng cột để tiêu đề Đơn vị / Số lượng / Lô không dính nhau */
+th.mat-column-product_unit_id, td.mat-column-product_unit_id {
+  width: 110px;
+  max-width: none;
+  padding: 0 8px;
+}
+th.mat-column-amount, td.mat-column-amount {
+  width: 150px;
+  max-width: none;
+  padding: 0 8px;
+}
+th.mat-column-lots {
+  padding: 0 8px;
+}

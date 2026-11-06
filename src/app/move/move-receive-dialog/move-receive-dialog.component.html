@@ -1,0 +1,45 @@
+<h2 mat-dialog-title>Nhận hàng {{ data.move.no }}</h2>
+
+<mat-dialog-content>
+  <p class="mr-from">
+    Từ <b>{{ data.move.branchFrom?.name }}</b>. Kiểm đếm hàng thực nhận; thiếu (vỡ, thất lạc) thì sửa số và ghi lý do.
+  </p>
+  <table class="mr-table">
+    <thead>
+    <tr>
+      <th>Hàng</th>
+      <th>Lô · HSD</th>
+      <th class="num">Đã gửi</th>
+      <th class="num">Thực nhận</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let line of lines" [class.mr-short]="!invalid(line) && line.received < line.sent">
+      <td>{{ line.productName }}</td>
+      <td>
+        <ng-container *ngIf="line.parcelNo">{{ line.parcelNo }} · {{ line.expirationDate | date:'dd/MM/yyyy' }}</ng-container>
+        <span class="mr-muted" *ngIf="!line.parcelNo">Không theo lô</span>
+      </td>
+      <td class="num">{{ line.sent | number }} {{ line.unitName }}</td>
+      <td class="num">
+        <input class="mr-qty" type="number" min="0" [max]="line.sent" [(ngModel)]="line.received"
+               [class.mr-bad]="invalid(line)" [attr.aria-label]="'Thực nhận ' + line.productName + ' ' + line.parcelNo">
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <div class="mr-error" *ngIf="hasInvalid()">Thực nhận phải là số nguyên từ 0 đến số đã gửi.</div>
+  <div class="mr-warn" *ngIf="!hasInvalid() && shortage() > 0">Nhận thiếu {{ shortage() | number }} so với số đã gửi. Phần thiếu không vào kho nào.</div>
+  <mat-form-field class="mr-note" appearance="outline">
+    <mat-label>Ghi chú nhận hàng</mat-label>
+    <textarea matInput rows="2" maxlength="255" [(ngModel)]="note"
+              placeholder="Vd: vỡ 2 hộp khi vận chuyển"></textarea>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="dialogRef.close(false)">Quay lại</button>
+  <button mat-raised-button color="primary" (click)="confirm()" [disabled]="hasInvalid() || saving">
+    <mat-icon>inventory</mat-icon> Xác nhận nhận hàng
+  </button>
+</mat-dialog-actions>

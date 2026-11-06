@@ -65,7 +65,7 @@
                 <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_unit_id']}}</th>
                 <td mat-cell *matCellDef="let element; let i = index">
                   <mat-form-field *ngIf="element.productUnits.length">
-                    <mat-select matInput [(ngModel)]="data[i]['product_unit_id']"
+                    <mat-select [(ngModel)]="data[i]['product_unit_id']"
                                 (selectionChange)="onUnitChange(i, $event)">
                       <mat-option *ngFor="let unit of element.productUnits" [value]="unit.id">{{unit.name}}</mat-option>
                     </mat-select>
@@ -79,7 +79,7 @@
                   <mat-form-field>
                     <input matInput class="amount" style="text-align:center"
                            [value]="element['amount']"
-                           [(ngModel)]="data[i]['amount']"
+                           [(ngModel)]="data[i]['amount']" (ngModelChange)="onAmountChange(i)"
                            autocomplete="off">
                     <button mat-icon-button matPrefix (click)="changeQuantity(i, -1)"
                             [disabled]="element['amount'] === 1 ">
@@ -89,6 +89,37 @@
                       <mat-icon>add_box</mat-icon>
                     </button>
                   </mat-form-field>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="lots">
+                <th mat-header-cell *matHeaderCellDef> {{ columnsHeader['lots'] }}</th>
+                <td mat-cell *matCellDef="let element; let i = index" class="mc-lots">
+                  <span class="mc-muted" *ngIf="!isBatch(element)">Không theo lô</span>
+                  <ng-container *ngIf="isBatch(element)">
+                    <div class="mc-lot" *ngFor="let p of element.parcels; let j = index">
+                      <span class="mc-lot-no">{{ p.parcel_no }}</span>
+                      <span class="mc-muted">HSD {{ p.expiration_date | date:'dd/MM/yyyy' }} · còn {{ lotStock(element, p.parcel_no, p.expiration_date) | number }}</span>
+                      <input class="mc-lot-qty" type="number" min="1" [(ngModel)]="p.quantity" [attr.aria-label]="'Số lượng lô ' + p.parcel_no">
+                      <button mat-icon-button class="mc-lot-remove" (click)="removeLot(element, j)" matTooltip="Bỏ lô này">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </div>
+                    <div class="mc-lot-actions">
+                      <button mat-button color="primary" [matMenuTriggerFor]="lotMenu" [disabled]="remainingLots(element).length === 0">
+                        <mat-icon>add</mat-icon> Thêm lô
+                      </button>
+                      <mat-menu #lotMenu="matMenu">
+                        <button mat-menu-item *ngFor="let lot of remainingLots(element)" (click)="addLot(element, lot)">
+                          {{ lot.parcel_no }} · HSD {{ lot.expiration_date | date:'dd/MM/yyyy' }} · còn {{ lot.stock | number }}
+                        </button>
+                      </mat-menu>
+                      <button mat-button (click)="allocate(element)" matTooltip="Chọn lại lô hết hạn trước cho đủ số chuyển">
+                        <mat-icon>auto_fix_high</mat-icon> Tự chọn lô
+                      </button>
+                    </div>
+                    <div class="mc-lot-error" *ngIf="lotError(element)">{{ lotError(element) }}</div>
+                  </ng-container>
                 </td>
               </ng-container>
 
@@ -117,7 +148,7 @@
             <div fxFlex="60">
               <mat-form-field>
                 <input matInput [matDatepicker]="date_picker" [formControl]="form.controls['date']"
-                       placeholder="Ngày nhập">
+                       placeholder="Ngày lập">
                 <mat-datepicker-toggle matSuffix [for]="date_picker"></mat-datepicker-toggle>
                 <mat-datepicker #date_picker></mat-datepicker>
               </mat-form-field>
@@ -165,25 +196,19 @@
               </mat-form-field>
             </div>
 
-            <div fxFlex="100">
-              <mat-form-field>
-                <mat-label>Trạng thái</mat-label>
-                <mat-select [formControl]="form.controls['status']" placeholder="Chọn trạng thái">
-                  <mat-option *ngFor="let status of statuses" value="{{ status.id }}">{{ status.name }}</mat-option>
-                </mat-select>
-              </mat-form-field>
+            <div fxFlex="100" class="mc-hint">
+              Xuất chuyển trừ tồn và lô ở chi nhánh này; hàng vào kho chi nhánh nhận khi bên đó bấm "Nhận hàng".
             </div>
-
-            <div fxFlex="100">
-              <button mat-raised-button
-                      color="primary" fxFlex="100" (click)="saveSample()" [disabled]="this.form.invalid"
-                      tabindex="11">
-                <mat-icon>check</mat-icon>
-                Lưu phiếu
+            <div fxFlex="100" class="mc-buttons">
+              <button mat-stroked-button color="primary" (click)="save(false)" [disabled]="form.invalid || saving">
+                <mat-icon>save</mat-icon>
+                Lưu tạm
+              </button>
+              <button mat-raised-button color="primary" (click)="save(true)" [disabled]="form.invalid || saving || hasLotError()">
+                <mat-icon>local_shipping</mat-icon>
+                Xuất chuyển
               </button>
             </div>
-
-
           </div>
         </form>
       </mat-card-content>

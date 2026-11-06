@@ -5,50 +5,64 @@
 
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Mã nhập hàng:</span>
-            <strong>{{sample.no}}</strong>
+            <span class="product-field-label">Mã phiếu chuyển:</span>
+            <strong>{{ sample.no }}</strong>
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
             <span class="product-field-label">Trạng thái:</span>
-            <label class="{{ statusesColor[sample.status] }}">
-              {{ statusList[sample.status] }}
-            </label>
+            <label class="{{ statusesColor[sample.status] }}">{{ statusList[sample.status] }}</label>
           </div>
         </div>
 
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Thời gian: </span>
-            <span>{{ sample.date }}</span>
+            <span class="product-field-label">Từ chi nhánh:</span>
+            <span>{{ sample.branchFrom?.name }}</span>
           </div>
           <div fxFlex="4"></div>
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Người tạo: </span>
-            <span>{{ sample.user?.username }}</span>
+            <span class="product-field-label">Đến chi nhánh:</span>
+            <span>{{ sample.branchTo?.name }}</span>
           </div>
         </div>
 
         <div fxLayout="row wrap" class="product-info-row">
           <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Thời gian hoàn thành: </span>
-            <span>{{ sample.done_at }}</span>
+            <span class="product-field-label">Người lập:</span>
+            <span>{{ sample.user?.username }} · {{ sample.date | date:'dd/MM/yyyy' }}</span>
           </div>
           <div fxFlex="4"></div>
-          <div fxFlex="48" class="product-info-field">
-            <span class="product-field-label">Xác nhận hoàn thành: </span>
-            <span>{{ sample.doneBy?.username }}</span>
+          <div fxFlex="48" class="product-info-field" *ngIf="sample.sent_at > 0">
+            <span class="product-field-label">Xuất chuyển:</span>
+            <span>{{ sample.sentBy?.username }} · {{ sample.sent_at * 1000 | date:'dd/MM/yyyy HH:mm' }}</span>
           </div>
         </div>
 
-      </div>
-      <div fxFlex="30" class="product-info">
-        <div fxLayout="row wrap">
-          <div fxFlex="100" class="product-info-field model-note">
-
+        <div fxLayout="row wrap" class="product-info-row" *ngIf="sample.received_at > 0 || sample.cancelled_at > 0">
+          <div fxFlex="48" class="product-info-field" *ngIf="sample.received_at > 0">
+            <span class="product-field-label">Nhận hàng:</span>
+            <span>{{ sample.receivedBy?.username }} · {{ sample.received_at * 1000 | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          <div fxFlex="48" class="product-info-field" *ngIf="sample.cancelled_at > 0">
+            <span class="product-field-label">Huỷ chuyển:</span>
+            <span>{{ sample.cancelledBy?.username }} · {{ sample.cancelled_at * 1000 | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          <div fxFlex="4"></div>
+          <div fxFlex="48" class="product-info-field" *ngIf="sample.receive_note">
+            <span class="product-field-label">Ghi chú nhận:</span>
+            <span>{{ sample.receive_note }}</span>
           </div>
         </div>
+
+        <div class="mi-hint" *ngIf="is(STATUS.SENT) && isFrom">
+          Hàng đang trên đường: đã trừ tồn và lô ở chi nhánh này, chờ {{ sample.branchTo?.name }} bấm "Nhận hàng".
+        </div>
+        <div class="mi-hint" *ngIf="is(STATUS.SENT) && isTo">
+          Hàng chuyển đến chi nhánh này: kiểm đếm rồi bấm "Nhận hàng" để đưa vào kho.
+        </div>
       </div>
+      <div fxFlex="30" class="product-info"></div>
     </div>
   </div>
   <div fxFlex="100">
@@ -68,21 +82,38 @@
             <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_no']}}</th>
             <td mat-cell *matCellDef="let element">
               <a routerLink="/store/product/{{ element.product?.product_no }}">{{ element.product?.product_no }}</a>
-              <!--              {{ element.product.product_no }}-->
             </td>
           </ng-container>
 
           <ng-container matColumnDef="product_name">
             <th mat-header-cell *matHeaderCellDef> {{columnsHeader['product_name']}}</th>
             <td mat-cell *matCellDef="let element">
-              <p><b>{{ element.product.product_name }}</b></p>
-              <p>Đơn vị : {{ element.productUnit.name }}</p>
+              <p><b>{{ element.product?.product_name }}</b></p>
+              <p>Đơn vị : {{ element.productUnit?.name }}</p>
             </td>
           </ng-container>
 
           <ng-container matColumnDef="amount">
             <th mat-header-cell class="column-left" *matHeaderCellDef> {{columnsHeader['amount']}}</th>
             <td mat-cell class="column-left" *matCellDef="let element"> {{ element.amount | number }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="lots">
+            <th mat-header-cell *matHeaderCellDef> {{columnsHeader['lots']}}</th>
+            <td mat-cell *matCellDef="let element" class="mi-lots">
+              <div *ngFor="let p of element.parcels">
+                <b>{{ p.parcel_no }}</b> · {{ p.expiration_date | date:'dd/MM/yyyy' }} · gửi {{ p.quantity | number }}
+                <ng-container *ngIf="p.received_quantity !== null && p.received_quantity !== undefined">
+                  / nhận <span [class.mi-short]="p.received_quantity < p.quantity">{{ p.received_quantity | number }}</span>
+                </ng-container>
+              </div>
+              <div *ngIf="!element.parcels || element.parcels.length === 0">
+                <span class="mi-muted">Không theo lô</span> · gửi {{ sentBase(element) | number }}
+                <ng-container *ngIf="element.received_quantity !== null && element.received_quantity !== undefined">
+                  / nhận <span [class.mi-short]="element.received_quantity < sentBase(element)">{{ element.received_quantity | number }}</span>
+                </ng-container>
+              </div>
+            </td>
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
@@ -94,23 +125,26 @@
 
   <div fxFlex="100">
     <div fxLayout="row wrap">
-      <!-- kiem tra loai show form -->
       <div fxFlex="100" align="end">
-
-        <button class="m-r-10" mat-raised-button color="primary"
-                *ngIf="sample.status == '9'" (click)="reOpen()">
-          <mat-icon>check</mat-icon>
-          Cập nhật
+        <ng-container *ngIf="is(STATUS.DRAFT) && isFrom">
+          <button class="m-r-10" mat-stroked-button color="warn" (click)="delete()">
+            <mat-icon>delete</mat-icon>
+            Xoá
+          </button>
+          <button class="m-r-10" mat-raised-button color="primary" (click)="reOpen()">
+            <mat-icon>edit</mat-icon>
+            Cập nhật
+          </button>
+        </ng-container>
+        <button class="m-r-10" mat-stroked-button color="warn" *ngIf="is(STATUS.SENT) && isFrom" [disabled]="busy" (click)="cancel()">
+          <mat-icon>undo</mat-icon>
+          Huỷ chuyển
         </button>
-        <button class="m-r-10" mat-raised-button color="danger"
-                *ngIf="sample.status == '9'"
-                (click)="delete()">
-          <mat-icon>delete</mat-icon>
-          Xóa
+        <button class="m-r-10" mat-raised-button color="primary" *ngIf="is(STATUS.SENT) && isTo" [disabled]="isLoadingResults" (click)="receive()">
+          <mat-icon>inventory</mat-icon>
+          Nhận hàng
         </button>
-
       </div>
-
     </div>
   </div>
 </div>

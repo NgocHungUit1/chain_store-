@@ -11,7 +11,7 @@ import { SamplePrescription, SamplePrescriptionFilter } from '../../sample-presc
 import { debounceTime } from 'rxjs/operators';
 import { ListComponentBase } from '../../shared/base';
 import { MoveService } from '../move.service';
-import { Move, MoveFilter } from '../move.model';
+import { Move, MoveFilter, MOVE_STATUS_COLORS, MOVE_STATUS_LABELS } from '../move.model';
 
 @Component({
   selector: 'app-move-list',
@@ -70,25 +70,15 @@ export class MoveListComponent extends ListComponentBase implements OnInit {
   ];
 
   statusFilterList = [
-    {
-      'value': '10',
-      'name': 'Hoàn thành',
-    },
-    {
-      'value': '9',
-      'name': 'Khởi tạo',
-    },
+    {'value': '9', 'name': 'Khởi tạo'},
+    {'value': '5', 'name': 'Đang chuyển'},
+    {'value': '10', 'name': 'Đã nhận'},
+    {'value': '1', 'name': 'Đã huỷ'},
   ];
 
-  statusList = {
-    '10': 'Hoàn thành',
-    '9': 'Khởi tạo'
-  };
+  statusList = MOVE_STATUS_LABELS;
 
-  statusesColor: object = {
-    '9': 'label label-warning',
-    '10': 'label label-success',
-  };
+  statusesColor: object = MOVE_STATUS_COLORS;
 
   codeSearch: string;
 
@@ -124,7 +114,7 @@ export class MoveListComponent extends ListComponentBase implements OnInit {
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = this.route.snapshot.queryParams['pageSize'];
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'store,user,doneBy,branchFrom,branchTo';
+    filter.expand = 'store,user,doneBy,sentBy,receivedBy,cancelledBy,branchFrom,branchTo';
     filter.status = this.orderStatusFilter.controls['status'].value;
 
     return filter;
@@ -133,7 +123,7 @@ export class MoveListComponent extends ListComponentBase implements OnInit {
   buildFrom() {
     this.orderStatusFilter = this.fb.group({
       status: [
-        ['10', '9']
+        ['9', '5', '10', '1']
       ],
     });
   }

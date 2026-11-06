@@ -13,7 +13,8 @@ import { Product } from '../../product/product.model';
 import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs/internal/observable/of';
 import { ListComponentBase } from '../../shared/base';
-import { Move, MoveDetail, MoveDetailFilter } from '../move.model';
+import { Move, MoveDetail, MoveDetailFilter, MoveLot, MOVE_STATUS } from '../move.model';
+import { ConfirmationDialogComponent } from '../../shared/confirmation-dialog/confirmation-dialog.component';
 import { MoveService } from '../move.service';
 import { MoveDetailService } from '../move-detail.service';
 import { UserService } from '../../user/user.service';
@@ -55,16 +56,8 @@ export class MoveCreateComponent extends ListComponentBase implements OnInit {
   branchList: any;
 
 
-  statuses = [
-    {
-      id: '10',
-      name: 'Hoàn thành'
-    },
-    {
-      id: '9',
-      name: 'Khởi tạo'
-    },
-  ];
+  /** Đang gửi yêu cầu lưu: khoá 2 nút để không bấm hai lần */
+  saving = false;
 
   columnsHeader = {
     '#': '#',
@@ -72,6 +65,7 @@ export class MoveCreateComponent extends ListComponentBase implements OnInit {
     'product_name': 'Tên hàng',
     'product_unit_id': 'Đơn vị',
     'amount': 'Số lượng',
+    'lots': 'Lô chuyển (đơn vị cơ bản)',
   };
 
   displayedColumns: string[] = [];
@@ -80,6 +74,7 @@ export class MoveCreateComponent extends ListComponentBase implements OnInit {
     'product_name',
     'product_unit_id',
     'amount',
+    'lots',
     'actions'
   ];
 
@@ -101,7 +96,6 @@ export class MoveCreateComponent extends ListComponentBase implements OnInit {
     this.form = this.fb.group({
       date: date,
       no: [null],
-      status: ['9'],
       branch_from: [null],
       branch_to: [null, Validators.required]
     });
@@ -142,7 +136,6 @@ export class MoveCreateComponent extends ListComponentBase implements OnInit {
         this.form.patchValue({
           date: dateStr,
           no: res['no'],
-          status: res['status'] + '',
           branch_from: res['branch_from'],
           branch_to: res['branch_to'],
         });
@@ -153,7 +146,6 @@ export class MoveCreateComponent extends ListComponentBase implements OnInit {
       this.moveService.getRenderNo().subscribe(res => {
         this.form.patchValue({
           no: 'CK' + res,
-          status: '9',
         });
       });
 
@@ -198,12 +190,15 @@ export class MoveCreateComponent extends ListComponentBase implements OnInit {
         sampleItem.product_unit_id = item.product_unit_id;
         sampleItem.productUnits = item.productUnits;
         sampleItem.amount = item.amount;
+        sampleItem.parcels = (item.parcels || []).map(p => ({parcel_no: p.parcel_no, expiration_date: p.expiration_date, quantity: p.quantity}));
 
         newData.push(sampleItem);
       });
       this.data = newData;
       this.productDataSource = new MatTableDataSource<MoveDetail>(this.data);
       this.isLoadingResults = false;
+      // Phiếu lưu tạm: nạp tồn lô hiện tại để thấy còn bao nhiêu (không tự chia lại lô đã chọn)
+      this.data.filter(item => this.isBatch(item)).forEach(item => this.loadLots(item, false));
     });
   }
 
@@ -222,7 +217,7 @@ export class MoveCreateComponent extends ListComponentBase implements OnInit {
     filter.page = this.route.snapshot.queryParams['page'];
     filter.pageSize = 50;
     filter.sort = this.route.snapshot.queryParams['sort'];
-    filter.expand = 'product,productUnits';
+    filter.expand = 'product,productUnits,parcels';
     if (this.updateModelId !== null) {
       filter.move_id = this.updateModelId;
     }
@@ -260,7 +255,112 @@ export class MoveCreateComponent extends ListComponentBase implements OnInit {
       this.data = newData;
       this.productDataSource = new MatTableDataSource<MoveDetail>(this.data);
       this.selectProduct.patchValue(null);
+      if (this.isBatch(item)) {
+        this.loadLots(item, true);
+      }
     });
+  }
+
+  /** Thuốc quản lý theo lô: phải chọn lô khi chuyển */
+  isBatch(item: MoveDetail): boolean {
+    return !!(item.product && (item.product['batch_tracking_enabled'] === true || item.product['batch_tracking_enabled'] == 1));
+  }
+
+  unitValue(item: MoveDetail): number {
+    const unit = (item.productUnits || []).find(u => u['id'] == item.product_unit_id);
+    return unit ? Number(unit['value']) || 1 : 1;
+  }
+
+  baseUnitName(item: MoveDetail): string {
+    const unit = (item.productUnits || []).find(u => Number(u['value']) === 1);
+    return unit ? unit['name'] : '';
+  }
+
+  /** Số cần chuyển theo đơn vị cơ bản */
+  need(item: MoveDetail): number {
+    return (Number(item.amount) || 0) * this.unitValue(item);
+  }
+
+  chosen(item: MoveDetail): number {
+    return (item.parcels || []).reduce((sum, p) => sum + (Number(p.quantity) || 0), 0);
+  }
+
+  lotStock(item: MoveDetail, parcelNo: string, exp: string): number {
+    const lot = (item.lots || []).find(l => l.parcel_no === parcelNo && l.expiration_date === exp);
+    return lot ? lot.stock : 0;
+  }
+
+  /** Lô còn tồn chưa chọn (để thêm), bỏ lô đã hết hạn */
+  remainingLots(item: MoveDetail): MoveLot[] {
+    return (item.lots || []).filter(l => !l.expired
+      && !(item.parcels || []).some(p => p.parcel_no === l.parcel_no && p.expiration_date === l.expiration_date));
+  }
+
+  loadLots(item: MoveDetail, allocate: boolean) {
+    this.moveService.lots(item.product_id).subscribe(lots => {
+      item.lots = lots;
+      if (allocate) {
+        this.allocate(item);
+      }
+    });
+  }
+
+  /** Tự chọn lô: lấy lô hết hạn trước (FEFO), bỏ lô đã hết hạn, đến khi đủ số cần chuyển */
+  allocate(item: MoveDetail) {
+    if (!this.isBatch(item) || !item.lots) {
+      return;
+    }
+    let left = this.need(item);
+    const parcels = [];
+    for (const lot of item.lots) {
+      if (left <= 0) {
+        break;
+      }
+      if (lot.expired || lot.stock <= 0) {
+        continue;
+      }
+      const take = Math.min(left, lot.stock);
+      parcels.push({parcel_no: lot.parcel_no, expiration_date: lot.expiration_date, quantity: take});
+      left -= take;
+    }
+    item.parcels = parcels;
+  }
+
+  addLot(item: MoveDetail, lot: MoveLot) {
+    const missing = Math.max(this.need(item) - this.chosen(item), 0);
+    item.parcels = (item.parcels || []).concat([{parcel_no: lot.parcel_no, expiration_date: lot.expiration_date,
+      quantity: Math.min(missing || 1, lot.stock)}]);
+  }
+
+  removeLot(item: MoveDetail, index: number) {
+    item.parcels.splice(index, 1);
+  }
+
+  /** Câu báo lô của dòng chưa hợp lệ (để hiện đỏ và chặn Xuất chuyển); null = đúng */
+  lotError(item: MoveDetail): string {
+    if (!this.isBatch(item)) {
+      return null;
+    }
+    if (item.lots && item.lots.filter(l => !l.expired).length === 0) {
+      return 'Chi nhánh này không còn lô nào của thuốc.';
+    }
+    for (const p of item.parcels || []) {
+      const q = Number(p.quantity);
+      if (!Number.isInteger(q) || q <= 0) {
+        return 'Số lượng lô ' + p.parcel_no + ' phải là số nguyên > 0.';
+      }
+      if (item.lots && q > this.lotStock(item, p.parcel_no, p.expiration_date)) {
+        return 'Lô ' + p.parcel_no + ' chỉ còn ' + this.lotStock(item, p.parcel_no, p.expiration_date) + '.';
+      }
+    }
+    if (this.chosen(item) !== this.need(item)) {
+      return 'Đã chọn ' + this.chosen(item) + ' / cần ' + this.need(item) + ' ' + this.baseUnitName(item) + '.';
+    }
+    return null;
+  }
+
+  hasLotError(): boolean {
+    return this.data.some(item => this.lotError(item) !== null);
   }
 
   removeProduct(i) {
@@ -275,67 +375,80 @@ export class MoveCreateComponent extends ListComponentBase implements OnInit {
    * @param select
    */
   onUnitChange(index, select) {
-
+    this.allocate(this.data[index]);
   }
 
   changeQuantity(index, value) {
     this.data[index]['amount'] = Number(this.data[index]['amount']) + Number(value);
+    this.allocate(this.data[index]);
   }
 
-  saveSample() {
-    if (this.form.valid) {
-      const data = this.form.getRawValue();
+  onAmountChange(index) {
+    this.allocate(this.data[index]);
+  }
 
-      if (this.form.controls['date'].value !== null && typeof this.form.controls['date'].value === 'object') {
-        const effDate = new Date(this.form.controls['date'].value.getTime() + (420 * 60 * 1000));
-        data['date'] = effDate.toISOString().split('T')[0];
-      }
-      data['items'] = this.data;
-
-      if (data['status'] === '10') {
-        // console.log();
-        // return;
-        this.moveService.validate(data).subscribe(res => {
-          if (res !== true) {
-            if (typeof res === 'string') {
-              this.notifySer.notify('warning', res);
-              return;
-            }
-          } else {
-            if (this.updateModelId !== null) {
-              delete data['date'];
-              this.moveService.update(this.updateModelId, data).subscribe(res => {
-                this.notifySer.notify('success', 'Lưu thành công.');
-                this.router.navigate(['/transaction/move']);
-              });
-            } else {
-              this.moveService.create(data).subscribe(res => {
-                this.notifySer.notify('success', 'Lưu thành công.');
-                this.router.navigate(['/transaction/move']);
-              });
-            }
-          }
-        });
-      }
-
-      if (data['status'] === '9') {
-        if (this.updateModelId !== null) {
-          delete data['date'];
-          this.moveService.update(this.updateModelId, data).subscribe(res => {
-            this.notifySer.notify('success', 'Lưu thành công.');
-            this.router.navigate(['/transaction/move']);
-          });
-        } else {
-          this.moveService.create(data).subscribe(res => {
-            this.notifySer.notify('success', 'Lưu thành công.');
-            this.router.navigate(['/transaction/move']);
-          });
-        }
-      }
-
-
-      //
+  /** Lưu tạm (sửa / xoá được, chưa đổi tồn) hoặc Xuất chuyển (trừ tồn + lô chi nhánh gửi, chờ chi nhánh nhận xác nhận) */
+  save(send: boolean) {
+    if (!this.form.valid || this.saving) {
+      return;
     }
+    if (this.data.length === 0) {
+      this.notifySer.notify('warning', 'Phiếu chuyển chưa có hàng.');
+      return;
+    }
+    const data = this.form.getRawValue();
+    delete data['date'];
+    data['status'] = send ? MOVE_STATUS.SENT : MOVE_STATUS.DRAFT;
+    data['items'] = this.data.map(item => ({
+      id: item.id,
+      product_id: item.product_id,
+      product_unit_id: item.product_unit_id,
+      amount: Number(item.amount),
+      parcels: this.isBatch(item) ? (item.parcels || []).map(p => ({
+        parcel_no: p.parcel_no, expiration_date: p.expiration_date, quantity: Number(p.quantity),
+      })) : [],
+    }));
+    if (!send) {
+      this.submit(data, 'Đã lưu tạm phiếu chuyển.');
+      return;
+    }
+    if (this.hasLotError()) {
+      this.notifySer.notify('warning', 'Chọn đủ lô cho các thuốc theo lô trước khi xuất chuyển.');
+      return;
+    }
+    this.moveService.validate(data).subscribe(res => {
+      if (res !== true) {
+        this.notifySer.notify('warning', typeof res === 'string' ? res : 'Phiếu chuyển chưa hợp lệ.');
+        return;
+      }
+      const branchTo = (this.branchList || []).find(b => b.id == data['branch_to']);
+      this.dialog.open(ConfirmationDialogComponent, {
+        width: '460px',
+        data: {
+          title: 'Xuất chuyển hàng',
+          message: 'Xuất chuyển sẽ trừ tồn và lô ở chi nhánh này ngay. Hàng chỉ vào kho '
+            + (branchTo ? branchTo.name : 'chi nhánh nhận') + ' khi bên đó bấm "Nhận hàng". Sau khi xuất không sửa được phiếu, chỉ huỷ được khi bên nhận chưa nhận.',
+          confirmButtonText: 'Xuất chuyển',
+          cancelButtonText: 'Quay lại',
+        },
+      }).afterClosed().subscribe(ok => {
+        if (ok) {
+          this.submit(data, 'Đã xuất chuyển. Chờ chi nhánh nhận xác nhận.');
+        }
+      });
+    });
+  }
+
+  private submit(data, message: string) {
+    this.saving = true;
+    const request = this.updateModelId !== null ? this.moveService.update(this.updateModelId, data) : this.moveService.create(data);
+    request.subscribe(() => {
+      this.saving = false;
+      this.notifySer.notify('success', message);
+      this.router.navigate(['/transaction/move']);
+    }, () => {
+      this.saving = false;
+    });
   }
 
   /**

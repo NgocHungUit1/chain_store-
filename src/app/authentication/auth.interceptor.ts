@@ -92,7 +92,9 @@ export class AuthInterceptor implements HttpInterceptor {
 
       default:
         console.log(err);
-        this.notify.notify('error', err.statusText);
+        // Máy chủ có câu báo (409 phiếu đã xuất, 404 chứng từ chi nhánh khác...) thì hiện câu đó thay vì "Conflict" / "Not Found"
+        const serverMessage = err.error && typeof err.error === 'object' ? err.error['message'] : null;
+        this.notify.notify('error', serverMessage || err.statusText);
         return;
       // throwError(err);
     }

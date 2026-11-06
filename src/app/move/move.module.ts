@@ -12,11 +12,12 @@ import { MoveListComponent } from './move-list/move-list.component';
 import { MoveRoutes } from './move.routing';
 import { MoveCreateComponent } from './move-create/move-create.component';
 import { MoveInfoTabComponent } from './move-info-tab/move-info-tab.component';
+import { MoveReceiveDialogComponent } from './move-receive-dialog/move-receive-dialog.component';
 
 
 
 @NgModule({
-  declarations: [MoveListComponent, MoveCreateComponent, MoveInfoTabComponent],
+  declarations: [MoveListComponent, MoveCreateComponent, MoveInfoTabComponent, MoveReceiveDialogComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(MoveRoutes),

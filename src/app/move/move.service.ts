@@ -90,6 +90,21 @@ export class MoveService {
     return this.http.post(url, data);
   }
 
+  /** Lô còn tồn của thuốc ở chi nhánh đang làm việc, hạn gần trước */
+  lots(productId) {
+    return this.http.get<any[]>(environment.apiUrl + '/move/lots?product_id=' + productId);
+  }
+
+  /** Chi nhánh nhận xác nhận: parcels / details = {id: số thực nhận (đơn vị cơ bản)} */
+  receive(data: { id: string, parcels: object, details: object, note: string }) {
+    return this.http.post<Move>(environment.apiUrl + '/move/receive', data);
+  }
+
+  /** Chi nhánh gửi huỷ phiếu đang chuyển */
+  cancel(id: string) {
+    return this.http.post<Move>(environment.apiUrl + '/move/cancel', {id});
+  }
+
 
 }
 

@@ -26,3 +26,31 @@
 .column-left {
   text-align: end;
 }
+
+/* Chuyển kho theo lô (06/11/2026) */
+.mi-lots {
+  line-height: 22px;
+  white-space: normal;
+}
+.mi-muted {
+  color: rgba(0, 0, 0, 0.5);
+}
+.mi-short {
+  color: #e65100;
+  font-weight: 500;
+}
+.mi-hint {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #e3f2fd;
+  border-radius: 4px;
+  font-size: 13px;
+}
+th.mat-column-amount, td.mat-column-amount {
+  width: 90px;
+  padding-right: 24px !important;
+  text-align: right;
+}
+th.mat-column-lots, td.mat-column-lots {
+  padding-left: 16px !important;
+}

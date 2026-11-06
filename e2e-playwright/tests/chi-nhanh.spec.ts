@@ -3,8 +3,8 @@ import {open, watchErrors} from './helpers';
 
 /**
  * Nền nhiều chi nhánh (.claude/du-an/12-sua-nen-chi-nhanh.md): phiếu nhập lập ở chi nhánh đang làm việc (ô chi nhánh khoá),
- * hộp sửa chi nhánh không lộ mật khẩu CSDL Dược, chuyển kho thuốc quản lý theo lô bị chặn (chờ Kho tổng).
- * Kịch bản số liệu 2 chi nhánh ở API: python3 pharma_chain/tools/chi-nhanh/kiem-tra-nen-chi-nhanh.py
+ * hộp sửa chi nhánh không lộ mật khẩu CSDL Dược, màn lập phiếu chuyển (chi nhánh nhận khác chi nhánh gửi, thuốc theo lô tự chọn lô).
+ * Luồng chuyển kho đầy đủ: chuyen-kho.spec.ts. Kịch bản số liệu 2 chi nhánh ở API: python3 pharma_chain/tools/chi-nhanh/kiem-tra-nen-chi-nhanh.py
  */
 const shot = (page: Page, name: string) => page.screenshot({path: `test-results/screens/${name}.png`});
 const API = process.env.E2E_API_URL || 'http://127.0.0.1:33081/v1';
@@ -57,7 +57,7 @@ test('Chi nhánh: hộp cập nhật không hiện mật khẩu CSDL Dược', a
   w.assertClean();
 });
 
-test('Chuyển kho: thuốc quản lý theo lô chưa chuyển được, báo chờ Kho tổng', async ({page}) => {
+test('Chuyển kho: chi nhánh nhận khác chi nhánh gửi, thuốc theo lô tự chọn lô (không lưu)', async ({page}) => {
   const {current, other} = await branches();
   const w = watchErrors(page);
   await open(page, '/transaction/move/create');
@@ -65,20 +65,16 @@ test('Chuyển kho: thuốc quản lý theo lô chưa chuyển được, báo ch
 
   await page.getByPlaceholder('Tìm hàng hóa theo mã hoặc tên').fill(LOT_PRODUCT);
   await page.locator('mat-option').first().click();
+  // Thuốc theo lô: tự gợi ý lô hết hạn trước cho đủ 1 viên
+  await expect(page.locator('.mc-lot')).toHaveCount(1);
+  await expect(page.locator('.mc-lot input.mc-lot-qty')).toHaveValue('1');
   await page.locator('mat-select[formcontrolname="branch_to"]').click();
   // Chi nhánh nhận không có chính chi nhánh đang chuyển
   await expect(page.locator('mat-option', {hasText: other.name})).toBeVisible();
   await expect(page.locator('mat-option', {hasText: current.name})).toHaveCount(0);
   await shot(page, 'chi-nhanh-chuyen-kho-chi-nhanh-nhan');
   await page.locator('mat-option', {hasText: other.name}).click();
-  await page.locator('mat-select[placeholder="Chọn trạng thái"]').click();
-  await page.locator('mat-option', {hasText: 'Hoàn thành'}).click();
-  await page.getByRole('button', {name: /Lưu phiếu/}).click();
-
-  await expect(page.locator('.notifier__notification', {hasText: 'Kho tổng'})).toBeVisible();
-  await page.waitForTimeout(600); // thông báo trượt vào từ mép phải
-  await shot(page, 'chi-nhanh-chuyen-kho-theo-lo');
-  // Bị chặn ở bước kiểm: vẫn ở màn lập phiếu, không sinh phiếu
-  await expect(page).toHaveURL(/move\/create/);
+  await expect(page.getByRole('button', {name: /Xuất chuyển/})).toBeEnabled();
+  await expect(page.getByRole('button', {name: /Lưu tạm/})).toBeEnabled();
   w.assertClean();
 });
