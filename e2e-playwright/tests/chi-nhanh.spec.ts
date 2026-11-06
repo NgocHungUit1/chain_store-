@@ -66,6 +66,10 @@ test('Chuyển kho: thuốc quản lý theo lô chưa chuyển được, báo ch
   await page.getByPlaceholder('Tìm hàng hóa theo mã hoặc tên').fill(LOT_PRODUCT);
   await page.locator('mat-option').first().click();
   await page.locator('mat-select[formcontrolname="branch_to"]').click();
+  // Chi nhánh nhận không có chính chi nhánh đang chuyển
+  await expect(page.locator('mat-option', {hasText: other.name})).toBeVisible();
+  await expect(page.locator('mat-option', {hasText: current.name})).toHaveCount(0);
+  await shot(page, 'chi-nhanh-chuyen-kho-chi-nhanh-nhan');
   await page.locator('mat-option', {hasText: other.name}).click();
   await page.locator('mat-select[placeholder="Chọn trạng thái"]').click();
   await page.locator('mat-option', {hasText: 'Hoàn thành'}).click();

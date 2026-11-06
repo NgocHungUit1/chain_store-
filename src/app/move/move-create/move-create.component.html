@@ -155,9 +155,12 @@
                 </button>
                 <mat-select class="input-search" placeholder="Chi nhánh nhận" formControlName="branch_to"
                             (selectionChange)="changeBranchTo($event)">
-                  <mat-option *ngFor="let branch of branchList " [value]="branch.id">
-                    {{ branch.name }}
-                  </mat-option>
+                  <!-- Không chuyển cho chính chi nhánh đang chuyển (máy chủ cũng chặn) -->
+                  <ng-container *ngFor="let branch of branchList">
+                    <mat-option *ngIf="branch.id != form.controls['branch_from'].value" [value]="branch.id">
+                      {{ branch.name }}
+                    </mat-option>
+                  </ng-container>
                 </mat-select>
               </mat-form-field>
             </div>
