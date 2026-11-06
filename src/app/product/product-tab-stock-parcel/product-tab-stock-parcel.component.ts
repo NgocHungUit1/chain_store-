@@ -45,6 +45,8 @@ export class ProductTabStockParcelComponent extends ListComponentBase implements
 
   data: WarehouseProductParcel[] = [];
   parcelDataSource = new MatTableDataSource<WarehouseProductParcel>([]);
+  /** Mỗi lô (số lô + hạn) một dòng = tổng các phiếu nhập / nhận chuyển kho / trả / huỷ; mặc định ẩn lô đã hết */
+  showEmpty = false;
 
   constructor(
     private productService: ProductService,
@@ -66,14 +68,17 @@ export class ProductTabStockParcelComponent extends ListComponentBase implements
 
   loadData() {
     this.isLoadingResults = true;
-
-    this.warehouseParcelService.getList(this.apiFilter).subscribe(res => {
-      this.data = res.body;
-      // console.log(this.data);
+    // Gộp theo lô ở máy chủ (06/11/2026): trước đây mỗi lần lô vào kho (nhập, nhận chuyển kho) là một dòng, cùng lô hiện nhiều dòng
+    this.warehouseParcelService.lots(this.product_id, this.showEmpty).subscribe(res => {
+      this.data = res;
       this.parcelDataSource = new MatTableDataSource<WarehouseProductParcel>(this.data);
       this.isLoadingResults = false;
-      this.reloadFilter(res);
-    });
+    }, () => this.isLoadingResults = false);
+  }
+
+  toggleEmpty(checked: boolean) {
+    this.showEmpty = checked;
+    this.loadData();
   }
 
   buildFilterFromParams(): WarehouseProductParcelFilter {
@@ -108,9 +113,9 @@ export class ProductTabStockParcelComponent extends ListComponentBase implements
     return allPermissions.indexOf(permissionName) !== -1;
   }
 
-  openChangeWarehouseProductStockFormDialog(id) {
+  openChangeWarehouseProductStockFormDialog(lot) {
     const dialogRef = this.dialog.open(WarehouseProductParcelChangeStockFormDialogComponent, {
-      data: {productParcelId: id},
+      data: {productParcelId: lot.id, lot},
       width: '600px',
       minHeight: '60%',
     });
@@ -130,7 +135,7 @@ export class ProductTabStockParcelComponent extends ListComponentBase implements
   openChangeParcelNoDialog(element) {
     // Cùng một số lô có thể nằm ở nhiều phiếu nhập nên hiện thành nhiều dòng.
     // Đếm trước để hộp thoại nói rõ sẽ đổi mấy dòng.
-    const soDongCungLo = (this.data || []).filter(x => x['parcel_no'] === element.parcel_no).length;
+    const soDongCungLo = element['rows'] || 1;
 
     const dialogRef = this.dialog.open(ParcelNoChangeDialogComponent, {
       data: {parcelId: element.id, parcelNo: element.parcel_no, soDongCungLo: soDongCungLo},

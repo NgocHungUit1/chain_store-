@@ -1,6 +1,13 @@
 import {Page, expect} from '@playwright/test';
 
 /**
+ * Tài khoản chạy test (Store.Admin cửa hàng demo, đứng Chi nhánh trung tâm). Không dùng demo vì người dùng test tay bằng demo
+ * (đổi chi nhánh của demo là test chạy sai chi nhánh và ngược lại). Tạo bởi pharma_chain/tools/chi-nhanh/kiem-tra-chuyen-kho.py.
+ */
+export const E2E_USER = process.env.E2E_USER || 'e2ekho';
+export const E2E_PASS = process.env.E2E_PASS || 'Demo@123';
+
+/**
  * Ghi lại lỗi console và lỗi API (>= 500, hoặc 4xx ngoài danh sách cho phép) trong lúc test.
  * Cuối test gọi assertClean() để fail nếu màn hình có lỗi ngầm.
  */

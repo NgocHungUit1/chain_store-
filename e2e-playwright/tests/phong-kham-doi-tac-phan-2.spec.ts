@@ -2,7 +2,7 @@ import {test, expect, Page, APIRequestContext, request as pwRequest} from '@play
 import {execSync} from 'child_process';
 import {randomUUID} from 'crypto';
 import {resolve} from 'path';
-import {open, watchErrors} from './helpers';
+import {open, watchErrors, E2E_USER, E2E_PASS} from './helpers';
 
 /**
  * Chuỗi › Phòng khám đối tác Phần 2 (pharma_chain/tools/de-xuat/phong-kham-doi-tac-phan-2.html, chốt 04/11/2026):
@@ -26,7 +26,7 @@ const ymd = (offsetDays: number) => {
 };
 
 async function staffApi(): Promise<APIRequestContext> {
-  const login = await (await pwRequest.newContext()).post(API + '/auth/login', {data: {username: 'demo', password: 'Demo@123'}});
+  const login = await (await pwRequest.newContext()).post(API + '/auth/login', {data: {username: E2E_USER, password: E2E_PASS}});
   const body = await login.json();
   const token = body.access_token || body.token || (body.data && body.data.access_token);
   return pwRequest.newContext({extraHTTPHeaders: {Authorization: 'Bearer ' + token}});

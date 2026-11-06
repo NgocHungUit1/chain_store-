@@ -24,10 +24,13 @@ export class WarehouseProductParcelChangeStockFormDialogComponent implements OnI
     ) {
         this.local_data = {...data};
         this.productParcelId = this.local_data.productParcelId;
+        this.lot = this.local_data.lot || null;
     }
 
     local_data: any;
     productParcelId: string;
+    /** Sửa tồn của cả lô (tab Tồn kho theo Lô gộp theo lô): {parcel_no, expiration_date, quantity_of_stock} */
+    lot: any = null;
 
     form: FormGroup;
 
@@ -59,7 +62,9 @@ export class WarehouseProductParcelChangeStockFormDialogComponent implements OnI
     ngOnInit(): void {
         this.initForm();
 
-        if (this.productParcelId !== null && this.productParcelId !== undefined) {
+        if (this.lot) {
+            this.form.patchValue({quantity_of_stock: this.lot.quantity_of_stock});
+        } else if (this.productParcelId !== null && this.productParcelId !== undefined) {
             this.loadModel(this.productParcelId);
         } else {
             // this.groupService.getNo().subscribe(no => {
@@ -89,6 +94,9 @@ export class WarehouseProductParcelChangeStockFormDialogComponent implements OnI
     submit() {
         if (this.form.valid) {
             const data = this.form.getRawValue();
+            if (this.lot) {
+                data['whole_lot'] = 1;
+            }
 
             if (this.productParcelId !== null && this.productParcelId !== undefined) {
                 this.mainService.update(this.productParcelId, data).subscribe(res => {

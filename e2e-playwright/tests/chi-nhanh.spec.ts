@@ -1,5 +1,5 @@
 import {test, expect, Page, request as pwRequest} from '@playwright/test';
-import {open, watchErrors} from './helpers';
+import {open, watchErrors, E2E_USER, E2E_PASS} from './helpers';
 
 /**
  * Nền nhiều chi nhánh (.claude/du-an/12-sua-nen-chi-nhanh.md): phiếu nhập lập ở chi nhánh đang làm việc (ô chi nhánh khoá),
@@ -11,12 +11,12 @@ const API = process.env.E2E_API_URL || 'http://127.0.0.1:33081/v1';
 const LOT_PRODUCT = 'ZRPT'; // thuốc mẫu quản lý theo lô (product 535320)
 
 async function api() {
-  const login = await (await pwRequest.newContext()).post(API + '/auth/login', {data: {username: 'demo', password: 'Demo@123'}});
+  const login = await (await pwRequest.newContext()).post(API + '/auth/login', {data: {username: E2E_USER, password: E2E_PASS}});
   const body = await login.json();
   return pwRequest.newContext({extraHTTPHeaders: {Authorization: 'Bearer ' + (body.access_token || body.token)}});
 }
 
-/** Chi nhánh đang làm việc của demo và một chi nhánh khác đang hoạt động */
+/** Chi nhánh đang làm việc của tài khoản test và một chi nhánh khác đang hoạt động */
 async function branches() {
   const ctx = await api();
   const list = await (await ctx.get(API + '/branch?fields=id,name,status,has_national_v2_password')).json();
@@ -24,7 +24,7 @@ async function branches() {
   await ctx.dispose();
   const current = list.find(b => b.id === +loginId);
   const other = list.find(b => b.id !== +loginId && b.status === 10);
-  expect(current, 'Không thấy chi nhánh đang làm việc của demo').toBeTruthy();
+  expect(current, 'Không thấy chi nhánh đang làm việc của tài khoản test').toBeTruthy();
   expect(other, 'Cần ít nhất 2 chi nhánh đang hoạt động').toBeTruthy();
   return {list, current, other};
 }

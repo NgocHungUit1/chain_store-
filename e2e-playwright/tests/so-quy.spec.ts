@@ -1,5 +1,5 @@
 import {test, expect, Page, request as pwRequest} from '@playwright/test';
-import {open, watchErrors} from './helpers';
+import {open, watchErrors, E2E_USER, E2E_PASS} from './helpers';
 
 /**
  * Sổ quỹ: form phiếu thu / phiếu chi (kiểu form khách hàng), phiếu tự động gắn hoá đơn chỉ xem,
@@ -13,7 +13,7 @@ const API = process.env.E2E_API_URL || 'http://127.0.0.1:33081/v1';
  * (không gắn hoá đơn). Lấy qua API theo loại thay vì đoán theo số tiền (các test khác cũng sinh phiếu 20,000).
  */
 async function receiptNo(kind: 'auto' | 'debt'): Promise<string> {
-  const login = await (await pwRequest.newContext()).post(API + '/auth/login', {data: {username: 'demo', password: 'Demo@123'}});
+  const login = await (await pwRequest.newContext()).post(API + '/auth/login', {data: {username: E2E_USER, password: E2E_PASS}});
   const body = await login.json();
   const api = await pwRequest.newContext({extraHTTPHeaders: {Authorization: 'Bearer ' + (body.access_token || body.token)}});
   const rows = await (await api.get(API + '/cash-flow?per-page=100&sort=-id')).json();

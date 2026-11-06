@@ -191,6 +191,12 @@ export class WarehouseProductParcelService {
     return this.http.put<WarehouseProductParcel>(url, pos);
   }
 
+  /** Tồn theo lô (số lô + hạn dùng) ở chi nhánh đang làm việc, mỗi lô một dòng; includeEmpty: thêm lô đã hết */
+  lots(productId: string, includeEmpty: boolean) {
+    const url = environment.apiUrl + '/warehouse-product-parcel/lots?product_id=' + productId + '&include_empty=' + (includeEmpty ? 1 : 0);
+    return this.http.get<any[]>(url);
+  }
+
   updateExpiration(id: string, expiration_date: string) {
     const url = environment.apiUrl + '/warehouse-product-parcel/update-expiration';
     return this.http.post<any>(url, {id, expiration_date});

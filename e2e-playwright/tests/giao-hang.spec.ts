@@ -2,7 +2,7 @@ import {test, expect, Page, APIRequestContext, request as pwRequest, Browser} fr
 import {randomUUID} from 'crypto';
 import {readFileSync} from 'fs';
 import {resolve} from 'path';
-import {open, watchErrors} from './helpers';
+import {open, watchErrors, E2E_USER, E2E_PASS} from './helpers';
 
 /**
  * Giao hàng qua shipper (chốt S1–S10, 05/11/2026): dược sĩ giao đơn cho shipper / đổi / huỷ giao; shipper trên điện thoại
@@ -30,7 +30,7 @@ function clinicKey(): string {
 }
 
 async function staffApi(): Promise<APIRequestContext> {
-  const login = await (await pwRequest.newContext()).post(API + '/auth/login', {data: {username: 'demo', password: 'Demo@123'}});
+  const login = await (await pwRequest.newContext()).post(API + '/auth/login', {data: {username: E2E_USER, password: E2E_PASS}});
   const body = await login.json();
   return pwRequest.newContext({extraHTTPHeaders: {Authorization: 'Bearer ' + (body.access_token || body.token)}});
 }
@@ -256,7 +256,7 @@ test.describe.serial('Giao hàng qua shipper', () => {
     await shot(page, 'giao-hang-thu-ngan-nhan-tien');
     await page.locator('#sc-receive').click();
     await expect(row).toHaveCount(0);
-    await expect(page.locator('.po-table tr', {hasText: delivered.code}).first()).toContainText('Demo');
+    await expect(page.locator('.po-table tr', {hasText: delivered.code}).first()).toContainText(E2E_USER); // thu ngân = tài khoản đang chạy test (tên hoặc tên đăng nhập)
     w.assertClean();
   });
 });

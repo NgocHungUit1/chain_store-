@@ -4,13 +4,14 @@ import {open, watchErrors} from './helpers';
 /**
  * Chuyển kho theo lô, gửi / nhận hai bước (chốt 06/11/2026). Chạy bằng tài khoản thử e2ekho (Store.Admin, tạo bởi
  * pharma_chain/tools/chi-nhanh/kiem-tra-chuyen-kho.py) để đổi chi nhánh làm việc mà không đụng phiên demo của người test tay.
- * Thuốc ZMULTI (2 lô L1 150, L2 200 ở Chi nhánh trung tâm). Cuối test chuyển trả hàng về để số liệu không đổi qua các lần chạy.
+ * Thuốc thử riêng ZLOTEST-1 (lô L1C 10 hạn 06/2027, L1A 30 hạn 01/2028, L1B 50 hạn 01/2029 ở Chi nhánh trung tâm) — không dùng thuốc
+ * của trang test tay (ZMULTI nhóm J). Cuối test chuyển trả hàng về để số liệu không đổi qua các lần chạy.
  * Kịch bản số liệu chi tiết (trừ đúng dòng lô, huỷ trả lại, nhận thiếu, bán lô nhận về): kiem-tra-chuyen-kho.py.
  */
 const shot = (page: Page, name: string) => page.screenshot({path: `test-results/screens/${name}.png`});
 const API = process.env.E2E_API_URL || 'http://127.0.0.1:33081/v1';
 const USER = 'e2ekho';
-const PRODUCT = {id: 535321, no: 'ZMULTI'};
+const PRODUCT = {id: 535312, no: 'ZLOTEST-1', unit: 622378};
 
 async function apiAs(user: string): Promise<APIRequestContext> {
   const login = await (await pwRequest.newContext()).post(API + '/auth/login', {data: {username: user, password: 'Demo@123'}});
@@ -31,7 +32,9 @@ async function loginPage(browser: Browser): Promise<Page> {
   await page.locator('input[type="text"], input:not([type])').first().fill(USER);
   await page.locator('input[type="password"]').fill('Demo@123');
   await page.getByRole('button', {name: 'Đăng nhập'}).click();
-  await page.waitForURL(url => !url.pathname.includes('/authentication'), {timeout: 60_000});
+  // Đăng nhập xong app tự chuyển về Tổng quan: chờ tới đó, không thì lệnh mở trang tiếp theo bị cắt ngang
+  await page.waitForURL(/\/dashboard/, {timeout: 60_000});
+  await page.waitForLoadState('networkidle', {timeout: 60_000});
   return page;
 }
 
@@ -53,30 +56,30 @@ test('Chuyển kho theo lô: tự chia lô, xuất chuyển, chi nhánh nhận k
   const {central, other} = await branches(api);
   await switchBranch(api, central.id);
   const before = await lots(api);
-  const l1 = before.find(l => l.parcel_no === 'L1');
-  expect(l1 && l1.stock >= 150, 'ZMULTI lô L1 ở trung tâm còn ≥ 150').toBeTruthy();
+  const stockOf = (lots: any[], no: string) => (lots.find(l => l.parcel_no === no) || {stock: 0}).stock;
+  expect(stockOf(before, 'L1C') === 10 && stockOf(before, 'L1A') >= 25, 'ZLOTEST-1 ở trung tâm: L1C 10, L1A ≥ 25').toBeTruthy();
 
   const page = await loginPage(browser);
   const w = watchErrors(page);
   let moveId: number = null;
   try {
-    // 1. Lập phiếu: 160 viên → tự chia L1 150 (hết hạn trước) + L2 10
+    // 1. Lập phiếu: 35 viên → tự chia L1C 10 (hết hạn trước) + L1A 25
     await open(page, '/transaction/move/create');
     await page.getByPlaceholder('Tìm hàng hóa theo mã hoặc tên').fill(PRODUCT.no);
     await page.locator('mat-option', {hasText: PRODUCT.no}).first().click();
     const lotRows = page.locator('.mc-lot');
     await expect(lotRows).toHaveCount(1);
-    await page.locator('input.amount').fill('160');
+    await page.locator('input.amount').fill('35');
     await expect(lotRows).toHaveCount(2);
-    await expect(lotRows.nth(0)).toContainText('L1');
-    await expect(lotRows.nth(0).locator('input.mc-lot-qty')).toHaveValue('150');
-    await expect(lotRows.nth(1)).toContainText('L2');
-    await expect(lotRows.nth(1).locator('input.mc-lot-qty')).toHaveValue('10');
+    await expect(lotRows.nth(0)).toContainText('L1C');
+    await expect(lotRows.nth(0).locator('input.mc-lot-qty')).toHaveValue('10');
+    await expect(lotRows.nth(1)).toContainText('L1A');
+    await expect(lotRows.nth(1).locator('input.mc-lot-qty')).toHaveValue('25');
     await expect(page.locator('.mc-lot-error')).toHaveCount(0);
 
     // Sửa tay sai tổng → báo đỏ, khoá Xuất chuyển; Tự chọn lô chia lại
-    await lotRows.nth(1).locator('input.mc-lot-qty').fill('5');
-    await expect(page.locator('.mc-lot-error')).toContainText('Đã chọn 155 / cần 160');
+    await lotRows.nth(1).locator('input.mc-lot-qty').fill('20');
+    await expect(page.locator('.mc-lot-error')).toContainText('Đã chọn 30 / cần 35');
     await expect(page.getByRole('button', {name: /Xuất chuyển/})).toBeDisabled();
     await page.getByRole('button', {name: /Tự chọn lô/}).click();
     await expect(page.locator('.mc-lot-error')).toHaveCount(0);
@@ -97,7 +100,7 @@ test('Chuyển kho theo lô: tự chia lô, xuất chuyển, chi nhánh nhận k
     moveId = Number(sent[0].id);
     const moveNo = sent[0].no;
     const afterSend = await lots(api);
-    expect(afterSend.find(l => l.parcel_no === 'L1'), 'L1 đã xuất hết khỏi trung tâm').toBeUndefined();
+    expect(afterSend.find(l => l.parcel_no === 'L1C'), 'L1C đã xuất hết khỏi trung tâm').toBeUndefined();
 
     // Ở chi nhánh gửi: phiếu Đang chuyển, có Huỷ chuyển, không có Nhận hàng
     await open(page, '/transaction/move');
@@ -112,40 +115,40 @@ test('Chuyển kho theo lô: tự chia lô, xuất chuyển, chi nhánh nhận k
     await page.reload({waitUntil: 'networkidle'});
     await page.locator('tr.example-element-row', {hasText: moveNo}).first().click();
     await expect(detail).toContainText('kiểm đếm rồi bấm "Nhận hàng"');
-    await expect(detail).toContainText('L1');
+    await expect(detail).toContainText('L1C');
     await page.waitForTimeout(400); // dòng chi tiết mở có hiệu ứng, chờ xong mới chụp
     await shot(page, 'chuyen-kho-cho-nhan');
     await detail.getByRole('button', {name: /Nhận hàng/}).click();
     const dialog = page.locator('mat-dialog-container');
     await expect(dialog).toContainText('Nhận hàng ' + moveNo);
-    const qtyL2 = dialog.locator('tr', {hasText: 'L2'}).locator('input.mr-qty');
-    await qtyL2.fill('8');
+    const qtyL2 = dialog.locator('tr', {hasText: 'L1A'}).locator('input.mr-qty');
+    await qtyL2.fill('23');
     await expect(dialog.locator('.mr-warn')).toContainText('Nhận thiếu 2');
     await page.waitForTimeout(400);
     await shot(page, 'chuyen-kho-nhan-thieu');
-    await qtyL2.fill('11');
+    await qtyL2.fill('26');
     await expect(dialog.locator('.mr-error')).toBeVisible();
     await expect(dialog.getByRole('button', {name: /Xác nhận nhận hàng/})).toBeDisabled();
-    await qtyL2.fill('10');
+    await qtyL2.fill('25');
     await dialog.getByRole('button', {name: /Xác nhận nhận hàng/}).click();
     await expect(page.locator('.notifier__notification', {hasText: 'Đã nhận hàng'})).toBeVisible();
     await page.locator('tr.example-element-row', {hasText: moveNo}).first().click();
     await expect(detail).toContainText('Đã nhận');
-    await expect(detail).toContainText('/ nhận 150');
+    await expect(detail).toContainText('gửi 25 / nhận 25');
     await page.waitForTimeout(400); // dòng chi tiết mở có hiệu ứng, chờ xong mới chụp
     await shot(page, 'chuyen-kho-da-nhan');
 
     const atOther = await lots(api);
-    expect(atOther.find(l => l.parcel_no === 'L1').stock, 'B có lô L1').toBeGreaterThanOrEqual(150);
+    expect(stockOf(atOther, 'L1C'), 'B có lô L1C').toBeGreaterThanOrEqual(10);
     w.assertClean();
   } finally {
     // Trả hàng về trung tâm (API) để lần chạy sau dữ liệu như cũ
     if (moveId !== null) {
       await switchBranch(api, other.id);
-      const unit = 622387;
+      const unit = PRODUCT.unit;
       const back = await api.post(API + '/move', {data: {branch_from: other.id, branch_to: central.id, status: 5, note: 'e2e trả về',
-          items: [{product_id: PRODUCT.id, product_unit_id: unit, amount: 160,
-            parcels: [{parcel_no: 'L1', expiration_date: '2028-01-01', quantity: 150}, {parcel_no: 'L2', expiration_date: '2029-01-01', quantity: 10}]}]}});
+          items: [{product_id: PRODUCT.id, product_unit_id: unit, amount: 35,
+            parcels: [{parcel_no: 'L1C', expiration_date: '2027-06-01', quantity: 10}, {parcel_no: 'L1A', expiration_date: '2028-01-01', quantity: 25}]}]}});
       const backMove = await back.json();
       await switchBranch(api, central.id);
       if (backMove && backMove.id) {
@@ -161,9 +164,9 @@ test('Chuyển kho: chi nhánh gửi huỷ phiếu đang chuyển, lô trả l�
   const api = await apiAs(USER);
   const {central, other} = await branches(api);
   await switchBranch(api, central.id);
-  const before = (await lots(api)).find(l => l.parcel_no === 'L1').stock;
+  const before = (await lots(api)).find(l => l.parcel_no === 'L1B').stock;
   const created = await (await api.post(API + '/move', {data: {branch_from: central.id, branch_to: other.id, status: 5,
-      items: [{product_id: PRODUCT.id, product_unit_id: 622387, amount: 2, parcels: [{parcel_no: 'L1', expiration_date: '2028-01-01', quantity: 2}]}]}})).json();
+      items: [{product_id: PRODUCT.id, product_unit_id: PRODUCT.unit, amount: 2, parcels: [{parcel_no: 'L1B', expiration_date: '2029-01-01', quantity: 2}]}]}})).json();
   expect(created.status, 'Tạo phiếu xuất chuyển').toBe(5);
 
   const page = await loginPage(browser);
@@ -181,7 +184,48 @@ test('Chuyển kho: chi nhánh gửi huỷ phiếu đang chuyển, lô trả l�
     await expect(detail).toContainText('Đã huỷ');
     await page.waitForTimeout(400); // dòng chi tiết mở có hiệu ứng, chờ xong mới chụp
     await shot(page, 'chuyen-kho-da-huy');
-    expect((await lots(api)).find(l => l.parcel_no === 'L1').stock, 'L1 trả lại đủ').toBe(before);
+    expect((await lots(api)).find(l => l.parcel_no === 'L1B').stock, 'L1B trả lại đủ').toBe(before);
+    w.assertClean();
+  } finally {
+    await page.context().close();
+  }
+});
+
+test('Tồn kho theo Lô: mỗi lô một dòng (gộp các lần nhập), ẩn lô đã hết, sửa tồn cả lô', async ({browser}) => {
+  const api = await apiAs(USER);
+  const {central} = await branches(api);
+  await switchBranch(api, central.id);
+  // [TEST] Nhom A co lo that: lô LOA nằm ở 3 dòng nhập (29 + 5 + một dòng đã hết) → một dòng 34
+  const page = await loginPage(browser);
+  const w = watchErrors(page);
+  try {
+    await open(page, '/store/product/TEST-LOT-A');
+    // Mở theo mã thì dòng thuốc tự xổ chi tiết; chưa xổ thì bấm
+    const row = page.locator('tr.example-element-row', {hasText: 'TEST-LOT-A'}).first();
+    if (!(await row.evaluate(el => el.classList.contains('example-expanded-row')))) {
+      await row.click();
+    }
+    await page.getByRole('tab', {name: 'Tồn kho theo Lô'}).click();
+    const tab = page.locator('app-product-tab-stock-parcel');
+    const loa = tab.locator('tr.mat-row', {hasText: 'LOA'});
+    await expect(loa).toHaveCount(1);
+    await expect(loa).toContainText('34');
+    await page.waitForTimeout(300);
+    await shot(page, 'ton-theo-lo-gop');
+
+    // Mở hộp sửa tồn cả lô: hiện số lô, hạn, tồn hiện có; bỏ qua không lưu
+    await loa.getByRole('button', {name: /Cập nhật tồn kho/}).click();
+    const dialog = page.locator('mat-dialog-container');
+    await expect(dialog).toContainText('Cập nhật tồn kho lô LOA');
+    await expect(dialog).toContainText('đang có 34');
+    await expect(dialog.locator('input[formcontrolname="quantity_of_stock"]')).toHaveValue('34');
+    await page.waitForTimeout(400);
+    await shot(page, 'ton-theo-lo-sua-ca-lo');
+    await dialog.getByRole('button', {name: /Bỏ qua/}).click();
+
+    const before = await tab.locator('tr.mat-row').count();
+    await tab.getByText('Hiện lô đã hết').click();
+    await expect.poll(() => tab.locator('tr.mat-row').count()).toBeGreaterThanOrEqual(before);
     w.assertClean();
   } finally {
     await page.context().close();

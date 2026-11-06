@@ -1,4 +1,8 @@
-<h1 mat-dialog-title *ngIf="productParcelId !== null && productParcelId !== undefined">Cập nhật tồn kho</h1>
+<h1 mat-dialog-title *ngIf="productParcelId !== null && productParcelId !== undefined">Cập nhật tồn kho<ng-container *ngIf="lot"> lô {{ lot.parcel_no }}</ng-container></h1>
+<p class="lot-hint" *ngIf="lot">
+  Hạn dùng {{ lot.expiration_date | date:'dd/MM/yyyy' }} · đang có {{ lot.quantity_of_stock | number }}. Nhập tồn thực tế của cả lô ở chi nhánh này;
+  phần chênh lệch ghi vào thẻ kho như kiểm kho.
+</p>
 <div mat-dialog-content>
   <form [formGroup]="form">
     <div fxLayout="row">
